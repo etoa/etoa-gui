@@ -36,13 +36,13 @@ class UniverseController extends Game\AbstractGameController
         private readonly EntityService $entityService,
         private readonly CellRepository $cellRepository,
         private readonly PlanetRepository $planetRepo,
-       private readonly UserRepository $userRepository
+        private readonly UserRepository $userRepository
     )
     {
     }
 
     #[Route('/game/galaxy', name: 'game.galaxy')]
-    public function galaxy() {
+    public function galaxy(): Response {
         $sx_num = $this->config->param1Int('num_of_sectors');
         $sy_num = $this->config->param2Int('num_of_sectors');
 
@@ -99,7 +99,7 @@ class UniverseController extends Game\AbstractGameController
         int $id,
         CellRepository $cellRepository,
         CellRenderer $cellRenderer
-    ) {
+    ): Response {
         $cell = $cellRepository->getCellById($id);
         if ($cell) {
 
@@ -128,7 +128,7 @@ class UniverseController extends Game\AbstractGameController
     }
 
     #[Route('/game/entity/{id}', name: 'game.entity')]
-    public function entity($id) {
+    public function entity($id): Response {
         $ent = $this->entityRepository->getEntity($id);
         if($ent && $fullEnt =$this->entityService->getEntity($ent)) {
             $cell = $this->cellRepository->getCellById($ent->cellId);

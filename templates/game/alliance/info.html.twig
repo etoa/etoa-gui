@@ -1,0 +1,191 @@
+{% extends 'layout/game.html.twig' %}
+{% import 'macros.html.twig' as macros %}
+{% set infoAlliance = allianceRepository.getAlliance(id) %}
+
+{% block content %}
+    {% if infoAlliance %}
+        <twig:Table title="{{ infoAlliance.nameWithTag }}">
+            {% block table_content %}
+                {% if infoAlliance.getImageUrl %}
+                    <tr>
+                        <td colspan="3" style="text-align:center;background:#000">
+                            <img src="{{ infoAlliance.getImageUrl }}" alt="Allianz-Logo"/>
+                        </td>
+                    </tr>
+                {% endif %}
+
+                {% if configValue('allow_wings') and infoAlliance.motherId != 0 %}
+                    <tr>
+                        <th colspan="2" style="text-align:center;">
+                            Diese Allianz ist ein Wing von <b><a
+                                        href={{ path('game.alliance.info',{id:allianceRepository.getAlliance(infoAlliance.motherId).id}) }}>{{ allianceRepository.getAlliance(infoAlliance.motherId).nameWithTag }}</a></b>
+                        </th>
+                    </tr>
+                {% endif %}
+
+                {% if infoAlliance.text %}
+                    <tr>
+                        <td colspan="2" style="text-align:center;">
+                            {{ BBCodeToHTML(infoAlliance.text) }}
+                        </td>
+                    </tr>"
+                {% endif %}
+
+                {# Kriege #}
+                {% if allianceDiplomacyRepository.getDiplomacies(infoAlliance.id, constant('EtoA\\Alliance\\AllianceDiplomacyLevel::WAR')) %}
+                    <tr>
+                        <th>Kriege:</th>
+                        <td>
+                            <table class="tbl">
+                                <tr>
+                                    <th>Allianz</th>
+                                    <th>Punkte</th>
+                                    <th>Zeitraum</th>
+                                </tr>
+                                {% for diplomacy in allianceDiplomacyRepository.getDiplomacies(infoAlliance.id, constant('EtoA\\Alliance\\AllianceDiplomacyLevel::WAR')) %}
+                                    {% set opAlliance = allianceRepository.getAlliance(diplomacy.otherAllianceId) %}
+                                    <tr>
+                                        <td>
+                                            <a href="{{ path('game.alliance.info',{id:opAlliance.id}) }}">{{ opAlliance.nameWithTag }}</a>
+                                        </td>
+                                        <td>{{ opAlliance.points }} /
+                                            {{ opAlliance.averagePoints }}
+                                        </td>
+                                        <td>{{ formatTimestamp(diplomacy.date, false) }} bis
+                                            {{ formatTimestamp(diplomacy.date + 3600 * configValue('alliance_war_time'), false) }}
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </table>
+                        </td>
+                    </tr>
+                {% endif %}
+
+                {# Friedensabkommen #}
+                {% if allianceDiplomacyRepository.getDiplomacies(infoAlliance.id, constant('EtoA\\Alliance\\AllianceDiplomacyLevel::PEACE')) %}
+                    <tr>
+                        <th>Friedensabkommen:</th>
+                        <td>
+                            <table class="tbl">
+                                <tr>
+                                    <th>Allianz</th>
+                                    <th>Punkte</th>
+                                    <th>Zeitraum</th>
+                                </tr>
+                                {% for diplomacy in allianceDiplomacyRepository.getDiplomacies(infoAlliance.id, constant('EtoA\\Alliance\\AllianceDiplomacyLevel::PEACE')) %}
+                                    {% set opAlliance = allianceRepository.getAlliance(diplomacy.otherAllianceId) %}
+                                    <tr>
+                                        <td>
+                                            <a href="{{ path('game.alliance.info',{id:opAlliance.id}) }}">{{ opAlliance.nameWithTag }}</a>
+                                        </td>
+                                        <td>{{ opAlliance.points }} /
+                                            {{ opAlliance.averagePoints }}
+                                        </td>
+                                        <td>{{ formatTimestamp(diplomacy.date, false) }} bis
+                                            {{ formatTimestamp(diplomacy.date + 3600 * configValue('alliance_peace_time'), false) }}
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </table>
+                        </td>
+                    </tr>
+                {% endif %}
+
+                {# Bündnisse #}
+                {% if allianceDiplomacyRepository.getDiplomacies(infoAlliance.id, constant('EtoA\\Alliance\\AllianceDiplomacyLevel::BND_CONFIRMED')) %}
+                    <tr>
+                        <th>Bündnisse:</th>
+                        <td>
+                            <table class="tbl">
+                                <tr>
+                                    <th>Bündnisname</th>
+                                    <th>Allianz</th>
+                                    <th>Punkte</th>
+                                    <th>Seit</th>
+                                </tr>
+                                {% for diplomacy in allianceDiplomacyRepository.getDiplomacies(infoAlliance.id, constant('EtoA\\Alliance\\AllianceDiplomacyLevel::BND_CONFIRMED')) %}
+                                    {% set opAlliance = allianceRepository.getAlliance(diplomacy.otherAllianceId) %}
+                                    <tr>
+                                        <td>diplomacy.name)</td>
+                                        <td>
+                                            <a href="{{ path('game.alliance.info',{id:opAlliance.id}) }}">{{ opAlliance.nameWithTag }}</a>
+                                        </td>
+                                        <td>{{ formatNumber(opAlliance.points) }} /
+                                            {{ formatNumber(opAlliance.averagePoints) }}
+                                        </td>
+                                        <td>{{ formatTimestamp(diplomacy.date) }}
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </table>
+                        </td>
+                    </tr>
+                {% endif %}
+
+
+                {# Mitglieder #}
+                <tr>
+                    <th style="width:250px;">Mitglieder:</th>
+                    <td id="members">
+                        {{ infoAlliance.memberCount }}
+                        {% if infoAlliance.publicMemberList %}
+                            {{ component('AllianceMembers', {allianceId:id}) }}
+                        {% endif %}
+                    </td>
+                </tr>
+
+                {# Punkte #}
+                <tr>
+                    <th>Punkte / Durchschnitt:</th>
+                    <td>
+                        {{ infoAlliance.points }} /
+                        {{ infoAlliance.averagePoints }}
+                    </td>
+                </tr>
+
+                {# Gründer #}
+                <tr>
+                    <th>Gründer:</th>
+                    <td>
+                        <a href="?page=userinfo&amp;id="
+                           {{ infoAlliance.founderId }}>{{ userRepository.getNick(infoAlliance.founderId) }}</a>
+                    </td>
+                </tr>
+
+                {# Gründung #}
+                <tr>
+                    <th>Gründungsdatum:</th>
+                    <td>
+                        {{ formatTimestamp(infoAlliance.foundationTimestamp) }} (vor
+                        {{ formatTimespan(date().timestamp - infoAlliance.foundationTimestamp) }})
+                    </td>
+                </tr>
+
+                {# URL #}
+                {% if infoAlliance.url %}
+                    <tr>
+                        <th>Website/Forum:</th>
+                        <td><b>infoAlliance.url</b></td>
+                    </tr>
+                {% endif %}
+
+                {# Diverses #}
+                <tr>
+                    <th>Akzeptiert Bewerbungen:</th>
+                    <td>
+                        ({{ infoAlliance.acceptApplications ? "Ja" : "Nein" }})
+                    </td>
+                </tr>
+                <tr>
+                    <th>Akzeptiert Bündnissanfragen:</th>
+                    <td>
+                        ({{ infoAlliance.acceptBnd ? "Ja" : "Nein" }})
+                    </td>
+                </tr>
+            {% endblock %}
+        </twig:Table>
+    {% else %}
+        {{ macros.errorMessage('Diese Allianz existiert nicht!') }}
+    {% endif %}
+    <br/><br/><input type="button" onclick="history.back();" value="Zurück" />
+{% endblock %}

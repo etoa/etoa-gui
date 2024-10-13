@@ -1,0 +1,58 @@
+<div {{ attributes }}>
+    {% if this.show %}
+        {{ dump(this.entries) }}
+        {% if this.entries %}
+            <twig:Table>
+                <tr>
+                    <th colspan="2">Rang</th>
+                    <th>User</th>
+                    <th>Punkte</th>
+                    <th>Gebäude</th>
+                    <th>Flotten</th>
+                    <th>Tech</th>
+                    <th>XP</th>
+                </tr>
+                {% for entry in entries %}
+                    <tr>
+                        <td>
+                            {{ entry.rank }}
+                        </td>
+                        <td>
+                            {% if entry.shift == 2 %}
+                                <img src="{{asset('build/images/stats/stat_up.gif')}}" alt="up" width="9" height="12" />
+                            {% elseif entry.shift == 1 %}
+                                <img src="{{asset('build/images/stats/stat_down.gif')}}" alt="up" width="9" height="11" />
+                            {% else %}
+                                <img src="{{asset('build/images/stats/stat_same.gif')}}" alt="up" width="21" height="9" />
+                            {% endif %}
+                        </td>
+                        <td>
+                            <a href=\"?page=userinfo&id={{ entry.id }}">{{ entry.nick }}</a>
+                        </td>
+                        <td>
+                            {{ entry.points }}
+                        </td>
+                        <td>
+                            {{ entry.buildingPoints }}
+                        </td>
+                        <td>
+                            {{ entry.shipPoints }}
+                        </td>
+                        <td>
+                            {{ entry.techPoints }}
+                        </td>
+                        <td>
+                            {{ entry.expPoints }}
+                        </td>
+                    </tr>
+                {% endfor %}
+            </twig:Table>
+        {% endif %}
+    {% else %}
+        [<a data-model="show"
+            data-value="true"
+            data-action="live#update">
+            Anzeigen
+        </a>]
+    {% endif %}
+</div>
