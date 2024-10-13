@@ -32,4 +32,9 @@ class ImageUtil
 
         imagefilledpolygon($im, $poly, 3, $color);
     }
+
+    public static function icon($name): string
+    {
+        return "<img src=\"/build/images/icons/" . $name . ".png\" alt=\"$name\" />";
+    }
 }
