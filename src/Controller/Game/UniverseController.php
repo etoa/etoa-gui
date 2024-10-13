@@ -2,12 +2,16 @@
 
 namespace EtoA\Controller\Game;
 
+use EtoA\Admin\AdminUserRepository;
 use EtoA\Controller\Game;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\UI\Tooltip;
 use EtoA\Universe\Cell\Cell;
 use EtoA\Universe\Cell\CellRepository;
+use EtoA\Universe\CellRenderer;
 use EtoA\Universe\Entity\EntityRepository;
+use EtoA\Universe\Entity\EntitySearch;
+use EtoA\Universe\Entity\EntitySort;
 use EtoA\Universe\GalaxyMap;
 use EtoA\Universe\Planet\PlanetRepository;
 use EtoA\Universe\SectorMapRenderer;
@@ -21,6 +25,7 @@ class UniverseController extends Game\AbstractGameController
 {
     public function __construct(
         private readonly ConfigurationService $config,
+        private readonly EntityRepository $entityRepository,
     )
     {
     }
@@ -53,12 +58,9 @@ class UniverseController extends Game\AbstractGameController
     }
 
     #[Route('/game/sector', name: 'game.sector')]
-    public function sector(
-        EntityRepository $entityRepository,
-        Request $request,
-    ): Response
+    public function sector(Request $request): Response
     {
-        $cp = $entityRepository->getEntity($request->getSession()->get('cpid'));
+        $cp = $this->entityRepository->getEntity($request->getSession()->get('cpid'));
 
         // Coordinates by request
         if($request->query->has('sx') && $request->query->has('sy')) {
@@ -80,8 +82,39 @@ class UniverseController extends Game\AbstractGameController
         ]);
     }
 
+    // TODO: auto mapping
     #[Route('/game/cell/{id}', name: 'game.cell')]
-    public function cell(int $id) {
-        dd($id);
+    public function cell(
+        int $id,
+        CellRepository $cellRepository,
+        UserUniverseDiscoveryService $userUniverseDiscoveryService,
+        AdminUserRepository $adminUserRepository,
+        CellRenderer $cellRenderer
+    ) {
+        $cell = $cellRepository->getCellById($id);
+        if ($cell) {
+
+            $entities = $this->entityRepository->searchEntities(EntitySearch::create()->cellId($id), EntitySort::pos());
+            $sx_num = $this->config->param1Int('num_of_sectors');
+            $sy_num = $this->config->param2Int('num_of_sectors');
+            $cx_num = $this->config->param1Int('num_of_cells');
+            $cy_num = $this->config->param2Int('num_of_cells');
+
+            $abs = $cell->getAbsoluteCoordinates( $this->config->param1Int('num_of_cells'), $this->config->param2Int('num_of_cells'));
+
+            if ($userUniverseDiscoveryService->discovered($this->getUser()->getData(), $abs[0], $abs[1])) {
+                $renderedCells = $cellRenderer->render($entities);
+            }
+        } else {
+            $msg['error'] = "System nicht gefunden!";
+            echo "<input type=\"button\" value=\"Zur&uuml;ck zur Raumkarte\" onclick=\"document.location='?page=sector'\" />";
+        }
+
+        return $this->render('game/universe/cell.html.twig',[
+            'msg' => $msg??null,
+            'cell' =>$cell,
+            'cellRepository' => $cellRepository,
+            'renderedCells' => $renderedCells??null
+        ]);
     }
 }

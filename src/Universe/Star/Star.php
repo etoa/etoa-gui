@@ -5,8 +5,10 @@ declare(strict_types=1);
 namespace EtoA\Universe\Star;
 
 use EtoA\Core\ObjectWithImage;
+use EtoA\Fleet\FleetAction;
+use EtoA\Universe\Entity\AbstractEntity;
 
-class Star implements ObjectWithImage
+class Star extends AbstractEntity implements ObjectWithImage
 {
     public int $id;
     public ?string $name;
@@ -29,5 +31,15 @@ class Star implements ObjectWithImage
             default:
                 return self::BASE_PATH."/stars/star".$this->typeId.".png";
         }
+    }
+
+    public function getEntityCodeString(): string
+    {
+        return "Stern";
+    }
+
+    public function getAllowedFleetActions(): array
+    {
+        return [FleetAction::FLIGHT, FleetAction::EXPLORE];
     }
 }

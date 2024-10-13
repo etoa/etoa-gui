@@ -215,6 +215,20 @@ class CellRepository extends AbstractRepository
         return array_map(fn (array $arr) => new CellPopulation($arr), $data);
     }
 
+    public function getCellById(int $id): ?Cell
+    {
+        $data = $this->createQueryBuilder()
+            ->select('*')
+            ->from('cells')
+            ->where('id = :id')
+            ->setParameters([
+                'id' => $id,
+            ])
+            ->fetchAssociative();
+
+        return $data !== false ? new Cell($data) : null;
+    }
+
     public function getCellIdByCoordinates(int $sx, int $sy, int $cx, int $cy): ?Cell
     {
         $data = $this->createQueryBuilder()

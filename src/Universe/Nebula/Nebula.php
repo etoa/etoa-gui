@@ -4,7 +4,11 @@ declare(strict_types=1);
 
 namespace EtoA\Universe\Nebula;
 
-class Nebula
+use EtoA\Core\ObjectWithImage;
+use EtoA\Fleet\FleetAction;
+use EtoA\Universe\Entity\AbstractEntity;
+
+class Nebula extends AbstractEntity implements ObjectWithImage
 {
     public int $id;
     public int $resMetal;
@@ -23,5 +27,22 @@ class Nebula
         $this->resFuel = (int) $data['res_fuel'];
         $this->resFood = (int) $data['res_food'];
         $this->resPower = (int) $data['res_power'];
+    }
+
+    public function getImagePath(string $type = ""):string
+    {
+        $numImages = 9;
+        $r = ($this->id % $numImages) + 1;
+        return ObjectWithImage::BASE_PATH . "/nebulas/nebula" . $r . "_small.png";
+    }
+
+    public function getAllowedFleetActions():array
+    {
+        return [FleetAction::COLLECT_CRYSTAL, FleetAction::ANALYZE, FleetAction::FLIGHT, FleetAction::EXPLORE];
+    }
+
+    public function getEntityCodeString(): string
+    {
+        return "Interstellarer Gasnebel";
     }
 }

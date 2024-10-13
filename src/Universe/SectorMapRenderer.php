@@ -90,7 +90,7 @@ class SectorMapRenderer
     }
 
     /**
-     * Sets the URL when clickong on a cell
+     * Sets the URL when clicking on a cell
      */
     function setCellUrl($cellUrl): void
     {

@@ -5,8 +5,9 @@ declare(strict_types=1);
 namespace EtoA\Universe\Planet;
 
 use EtoA\Core\ObjectWithImage;
+use EtoA\Universe\Entity\AbstractEntity;
 
-class Planet implements ObjectWithImage
+class Planet extends AbstractEntity implements ObjectWithImage
 {
     public const COLONY_DELETE_THRESHOLD = 24 * 3600 * 5;
 
@@ -57,6 +58,7 @@ class Planet implements ObjectWithImage
     public int $peoplePlace;
     public ?string $description;
     public int $invadedBy;
+    private array $allowedFleetActions;
 
     public function __construct(array $data)
     {
@@ -618,6 +620,16 @@ class Planet implements ObjectWithImage
         $this->invadedBy = $invadedBy;
     }
 
+    public function getAllowedFleetActions(): array
+    {
+        return $this->allowedFleetActions;
+    }
+
+    public function setAllowedFleetActions(array $allowedFleetActions): void
+    {
+        $this->allowedFleetActions = $allowedFleetActions;
+    }
+
     public function getImagePath(string $type = "small"): string
     {
         switch ($type) {
@@ -628,5 +640,10 @@ class Planet implements ObjectWithImage
             default:
                 return self::BASE_PATH . "/planets/planet" . $this->image . ".png";
         }
+    }
+
+    public function getEntityCodeString(): string
+    {
+        return "Planet";
     }
 }

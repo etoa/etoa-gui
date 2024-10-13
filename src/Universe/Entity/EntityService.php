@@ -4,29 +4,37 @@ declare(strict_types=1);
 
 namespace EtoA\Universe\Entity;
 
+use EtoA\Alliance\AllianceRepository;
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Core\ObjectWithImage;
+use EtoA\Market\MarketRepository;
+use EtoA\Universe\Asteroid\AsteroidRepository;
+use EtoA\Universe\EmptySpace\EmptySpaceRepository;
+use EtoA\Universe\Nebula\NebulaRepository;
+use EtoA\Universe\Others\AllianceMarket;
+use EtoA\Universe\Others\Market;
+use EtoA\Universe\Others\UnknownEntity;
 use EtoA\Universe\Planet\PlanetRepository;
+use EtoA\Universe\Planet\PlanetService;
 use EtoA\Universe\Star\StarRepository;
+use EtoA\Universe\Wormhole\WormholeRepository;
 use EtoA\User\UserRepository;
 
 class EntityService
 {
-    private ConfigurationService $config;
-    private UserRepository $userRepository;
-    private PlanetRepository $planetRepository;
-    private StarRepository $starRepository;
-
     public function __construct(
-        ConfigurationService $config,
-        UserRepository $userRepository,
-        PlanetRepository $planetRepository,
-        StarRepository $starRepository
-    ) {
-        $this->config = $config;
-        $this->userRepository = $userRepository;
-        $this->planetRepository = $planetRepository;
-        $this->starRepository = $starRepository;
-    }
+        private readonly ConfigurationService $config,
+        private readonly UserRepository $userRepository,
+        private readonly PlanetRepository $planetRepository,
+        private readonly StarRepository $starRepository,
+        private readonly AsteroidRepository $asteroidRepository,
+        private readonly NebulaRepository $nebulaRepository,
+        private readonly WormholeRepository $wormholeRepository,
+        private readonly EmptySpaceRepository $emptySpaceRepository,
+        private readonly MarketRepository $marketRepository,
+        private readonly AllianceRepository $allianceRepository,
+        private readonly PlanetService $planetService
+    ){}
 
     public function formattedString(Entity $entity): string
     {
@@ -115,5 +123,32 @@ class EntityService
         }
 
         return round($finalDistance);
+    }
+
+    public function getEntity(Entity $entity)
+    {
+        switch ($entity->code)
+        {
+            case EntityType::STAR:
+                return $this->starRepository->find($entity->id);
+            case EntityType::PLANET:
+                $planet = $this->planetRepository->find($entity->id);
+                $planet->setAllowedFleetActions($this->planetService->getAllowedFleetActions($planet));
+                return $planet;
+            case EntityType::ASTEROID:
+                return $this->asteroidRepository->find($entity->id);
+            case EntityType::NEBULA:
+                return $this->nebulaRepository->find($entity->id);
+            case EntityType::WORMHOLE:
+                return $this->wormholeRepository->find($entity->id);
+            case EntityType::EMPTY_SPACE:
+                return $this->emptySpaceRepository->find($entity->id);
+            case EntityType::MARKET:
+                return new Market();
+            case EntityType::ALLIANCE_MARKET:
+                return new AllianceMarket();
+            default:
+                return new UnknownEntity();
+        }
     }
 }

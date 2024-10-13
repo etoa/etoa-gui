@@ -43,6 +43,23 @@ abstract class FleetAction
     public const EXPLORE = 'explore';
     public const CREATE_DEBRIS = 'createdebris';
     public const COLLECT_DEBRIS = 'collectdebris';
+    public const TRANSPORT = 'transport';
+    public const FETCH = 'fetch';
+    public const POSITION = 'position';
+    public const ATTACK = 'attack';
+    public const INVADE = 'invade';
+    public const SPY_ATTACK = 'spyattack';
+    public const STEALTH_ATTACK = 'stealthattack';
+    public const FAKE_ATTACK = 'fakeattack';
+    public const GAS_ATTACK = 'gasattack';
+    public const ANTRAX = 'antrax';
+    public const BOMBARD = 'bombard';
+    public const EMP = 'emp';
+    public const COLLECT_FUEL = 'collectfuel';
+    public const ANALYZE = 'analyze';
+    public const COLONIZE = 'colonize';
+    public const COLLECT_CRYSTAL = 'collectcrystal';
+    public const COLLECT_METAL = 'collectmetal';
     // TODO more to be added
 
     //
