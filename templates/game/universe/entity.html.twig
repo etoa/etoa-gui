@@ -1,0 +1,32 @@
+{% extends 'layout/game.html.twig' %}
+{% import 'macros.html.twig' as macros %}
+
+{% block content %}
+    "<h1>Übersicht über " . $ent . " (" . $ent->entityCodeString() . ")</h1>
+    <twig:Table title="Systemkarte">
+        {% block table_content %}
+            <tr>
+                <td colspan="6" style="text-align:center;vertical-align:middle;">
+                    <a href="{{ path('game.galaxy') }}">Galaxie</a>&nbsp;&raquo;&nbsp;
+                    <a href="{{ path('game.sector', { sx: cell.sx,sy: cell.sy }) }}">Sektor {{ cell.sx }}/{{ cell.sy }}</a>&nbsp;&raquo;&nbsp;
+                    <select name="cell" onchange="document.location=this.value">
+                        {% for x in 1..param1('num_of_cells') %}
+                            {% for y in 1..param2('num_of_cells') %}
+                                {% set cellAtCoordinates = cellRepository.getCellIdByCoordinates(cell.sx, cell.sy, x, y) %}
+                                <option value="{{ cellAtCoordinates.id }}" >System{{ x }}/{{ y }} </option>
+                            {% endfor %}
+                        {% endfor %}
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <th colspan="2" style="width:60px;">Position</th>
+                <th>Typ</th>
+                <th>Name</th>
+                <th>Besitzer</th>
+                <th style="width:150px;">Aktionen</th>
+            </tr>
+            {{ renderedCells|raw }}
+        {% endblock %}
+    </twig:Table>
+{% endblock %}

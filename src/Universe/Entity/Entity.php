@@ -48,4 +48,7 @@ class Entity
 
         return $types[$this->code] ?? 'Unbekannter Raum';
     }
+
+    public abstract function getEntityCodeString():string;
+    public abstract function getAllowedFleetActions():array;
 }
