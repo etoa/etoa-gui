@@ -1,0 +1,41 @@
+{% extends 'game/alliance/alliance.html.twig' %}
+{% import 'macros.html.twig' as macros %}
+
+{% block alliance %}
+    <h2>Allianz wählen</h2>
+    Nicht alle Allianzen akzeptieren jederzeit eine Bewerbung. <br/>
+    Im Folgenden findest du eine Liste der Allianzen die momentan Bewerbungen akzeptieren:<br/><br/>
+    {% if alliances %}
+        <twig:Table title="" width="400" style="margin:auto">
+            {% block table_content %}
+                <tr>
+                    <th>Tag</th>
+                    <th>Name</th>
+                    <th>Mitglieder</th>
+                    <th style="width:100px;">Aktionen</th>
+                </tr>
+                {% for alliance in alliances %}
+                    <tr>
+                        <td>{{ alliance.tag }}</td>
+                        <td>{{ alliance.name }}</td>
+                        <td>{{ alliance.memberCount }}</td>
+                        <td>
+                            <a href="{{path('game.alliance.info',{id:alliance.id})}}">Info</a>
+                            <a href="{{path('game.alliance.apply',{id:alliance.id})}}">Bewerben</a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            {% endblock %}
+        </twig:Table>
+        {% if  configValue("alliance_max_member_count") %}
+            <p>
+                <b>Hinweis:</b>
+                Eine Allianz darf maximal {{ configValue("alliance_max_member_count") }} Mitglieder haben!
+            </p>
+
+        {% else %}
+            {{ macros.errorMessage("Es gibt im Moment keine Allianzen denen man beitreten könnte!") }}
+            <a href="{{ path('game.alliance.create') }}">Gründe eine eigene Allianz.</a>
+        {% endif %}
+    {% endif %}
+{% endblock %}
