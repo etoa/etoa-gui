@@ -102,14 +102,14 @@ class AllianceService
         $this->userRepository->setAllianceId($founderId, $id);
 
         $this->userService->addToUserLog($founderId, "alliance", "{nick} hat die Allianz [b]" . $alliance->toString() . "[/b] gegründet.");
-        $this->allianceHistoryRepository->addEntry($id, "Die Allianz [b]" . $alliance->toString() . "[/b] wurde von [b]" . $founder->nick . "[/b] gegründet!");
+        $this->allianceHistoryRepository->addEntry($id, "Die Allianz [b]" . $alliance->toString() . "[/b] wurde von [b]" . $founder->getNick() . "[/b] gegründet!");
 
         return $alliance;
     }
 
     public function addMember(AllianceWithMemberCount $alliance, User $user): bool
     {
-        if ($alliance->id === $user->allianceId) {
+        if ($alliance->id === $user->getAllianceId()) {
             return false;
         }
 
@@ -119,13 +119,13 @@ class AllianceService
             return false;
         }
 
-        $this->messageRepository->createSystemMessage($user->id, MessageCategoryId::ALLIANCE, "Allianzaufnahme", "Du wurdest in die Allianz [b]" . $alliance->nameWithTag . "[/b] aufgenommen!");
-        $this->allianceHistoryRepository->addEntry($alliance->id, "[b]" . $user->nick . "[/b] wurde als neues Mitglied aufgenommen");
+        $this->messageRepository->createSystemMessage($user->getId(), MessageCategoryId::ALLIANCE, "Allianzaufnahme", "Du wurdest in die Allianz [b]" . $alliance->nameWithTag . "[/b] aufgenommen!");
+        $this->allianceHistoryRepository->addEntry($alliance->id, "[b]" . $user->getNick() . "[/b] wurde als neues Mitglied aufgenommen");
         $this->allianceMemberCosts->increase($alliance->id, $alliance->memberCount, $newMemberCount);
-        $this->userRepository->setAllianceId($user->id, $alliance->id);
-        if ($user->allianceId > 0) {
-            $previousAlliance = $this->repository->getAlliance($user->allianceId);
-            $this->userService->addToUserLog($user->id, "alliance", "{nick} ist nun kein Mitglied mehr der Allianz [b]" . $previousAlliance->nameWithTag . "[/b].");
+        $this->userRepository->setAllianceId($user->getId(), $alliance->id);
+        if ($user->getAllianceId() > 0) {
+            $previousAlliance = $this->repository->getAlliance($user->getAllianceId());
+            $this->userService->addToUserLog($user->getId(), "alliance", "{nick} ist nun kein Mitglied mehr der Allianz [b]" . $previousAlliance->nameWithTag . "[/b].");
         }
 
         $alliance->memberCount++;
@@ -135,7 +135,7 @@ class AllianceService
 
     public function kickMember(AllianceWithMemberCount $alliance, User $user, bool $kick = true): bool
     {
-        if ($alliance->id !== $user->allianceId) {
+        if ($alliance->id !== $user->getAllianceId()) {
             return false;
         }
 
@@ -143,19 +143,19 @@ class AllianceService
             return false;
         }
 
-        if ($this->fleetRepository->exists(FleetSearch::create()->user($user->id)->actionIn([FleetAction::ALLIANCE, FleetAction::SUPPORT]))) {
+        if ($this->fleetRepository->exists(FleetSearch::create()->user($user->getId())->actionIn([FleetAction::ALLIANCE, FleetAction::SUPPORT]))) {
             return false;
         }
 
         if ($kick) {
-            $this->messageRepository->createSystemMessage($user->id, MessageCategoryId::ALLIANCE, "Allianzausschluss", "Du wurdest aus der Allianz [b]" . $alliance->nameWithTag . "[/b] ausgeschlossen!");
+            $this->messageRepository->createSystemMessage($user->getId(), MessageCategoryId::ALLIANCE, "Allianzausschluss", "Du wurdest aus der Allianz [b]" . $alliance->nameWithTag . "[/b] ausgeschlossen!");
         } else {
-            $this->messageRepository->createSystemMessage($alliance->founderId, MessageCategoryId::ALLIANCE, "Allianzaustritt", "Der Spieler " . $user->nick . " trat aus der Allianz aus!");
+            $this->messageRepository->createSystemMessage($alliance->founderId, MessageCategoryId::ALLIANCE, "Allianzaustritt", "Der Spieler " . $user->getNick() . " trat aus der Allianz aus!");
         }
 
-        $this->allianceHistoryRepository->addEntry($alliance->id, "[b]" . $user->nick . "[/b] ist nun kein Mitglied mehr von uns.");
-        $this->userRepository->setAllianceId($user->id, $alliance->id, 0, time());
-        $this->userService->addToUserLog($user->id, "alliance", "{nick} ist nun kein Mitglied mehr der Allianz " . $alliance->nameWithTag . ".");
+        $this->allianceHistoryRepository->addEntry($alliance->id, "[b]" . $user->getNick() . "[/b] ist nun kein Mitglied mehr von uns.");
+        $this->userRepository->setAllianceId($user->getId(), $alliance->id, 0, time());
+        $this->userService->addToUserLog($user->getId(), "alliance", "{nick} ist nun kein Mitglied mehr der Allianz " . $alliance->nameWithTag . ".");
 
         $alliance->memberCount--;
 
@@ -164,13 +164,13 @@ class AllianceService
 
     public function changeFounder(Alliance $alliance, User $founder): bool
     {
-        if ($alliance->id !== $founder->allianceId) {
+        if ($alliance->id !== $founder->getAllianceId()) {
             return false;
         }
 
-        $this->allianceHistoryRepository->addEntry($alliance->id, "Der Spieler [b]" . $founder->nick . "[/b] wird zum Gründer befördert.");
-        $this->messageRepository->createSystemMessage($founder->id, MessageCategoryId::ALLIANCE, "Gründer", "Du hast nun die Gründerrechte deiner Allianz!");
-        $this->userService->addToUserLog($founder->id, "alliance", "{nick} ist nun Gründer der Allianz " . $alliance->nameWithTag);
+        $this->allianceHistoryRepository->addEntry($alliance->id, "Der Spieler [b]" . $founder->getNick() . "[/b] wird zum Gründer befördert.");
+        $this->messageRepository->createSystemMessage($founder->getId(), MessageCategoryId::ALLIANCE, "Gründer", "Du hast nun die Gründerrechte deiner Allianz!");
+        $this->userService->addToUserLog($founder->getId(), "alliance", "{nick} ist nun Gründer der Allianz " . $alliance->nameWithTag);
 
         return true;
     }
@@ -206,8 +206,8 @@ class AllianceService
 
             //Log schreiben
             if ($user !== null) {
-                $this->userService->addToUserLog($user->id, "alliance", "{nick} löst die Allianz [b]" . $alliance->nameWithTag . "[/b] auf.");
-                $this->logRepository->add(LogFacility::ALLIANCE, LogSeverity::INFO, "Die Allianz [b]" . $alliance->nameWithTag . "[/b] wurde von " . $user->nick . " aufgelöst!");
+                $this->userService->addToUserLog($user->getId(), "alliance", "{nick} löst die Allianz [b]" . $alliance->nameWithTag . "[/b] auf.");
+                $this->logRepository->add(LogFacility::ALLIANCE, LogSeverity::INFO, "Die Allianz [b]" . $alliance->nameWithTag . "[/b] wurde von " . $user->getNick() . " aufgelöst!");
             } else {
                 $this->logRepository->add(LogFacility::ALLIANCE, LogSeverity::INFO, "Die Allianz [b]" . $alliance->nameWithTag . "[/b] wurde gelöscht!");
             }
@@ -220,14 +220,14 @@ class AllianceService
 
     public function getUserAlliancePermissions(Alliance $alliance, User $user): UserAlliancePermission
     {
-        if ($alliance->founderId === $user->id) {
+        if ($alliance->founderId === $user->getId()) {
             return new UserAlliancePermission(true, []);
         }
 
         $userRights = [];
         $allianceRights = $this->allianceRightRepository->getRights();
         if (count($allianceRights) > 0) {
-            $rightIds = $this->allianceRankRepository->getAvailableRightIds($alliance->id, $user->allianceRankId);
+            $rightIds = $this->allianceRankRepository->getAvailableRightIds($alliance->id, $user->getAllianceRankId());
 
             foreach ($allianceRights as $right) {
                 $userRights[$right->key] = in_array($right->id, $rightIds, true);
