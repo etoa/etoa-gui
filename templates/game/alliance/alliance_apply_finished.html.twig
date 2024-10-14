@@ -1,0 +1,10 @@
+{% extends 'game/alliance/alliance.html.twig' %}
+{% import 'macros.html.twig' as macros %}
+
+{% block alliance %}
+    <h2>Bewerbung abschicken</h2>
+    {{ macros.successMessage('Deine Bewerbung bei der Allianz '~allianceName~' wurde gespeichert! Die Allianzleitung wurde informiert und wird deine Bewerbung ansehen.') }}
+    <a href="{{ path('game.overview') }}">
+        <input value="übersicht" type="button"/>
+    </a>
+{% endblock %}

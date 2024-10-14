@@ -1,0 +1,36 @@
+{% extends 'game/alliance/alliance.html.twig' %}
+{% import 'macros.html.twig' as macros %}
+
+{% block alliance %}
+    {% if not form.userAllianceApplication.vars.valid %}
+        {% for error in form.userAllianceApplication.vars.errors %}
+            {{ macros.errorMessage(error.message) }}
+        {% endfor %}
+    {% endif %}
+
+    {% if alliance %}
+        <h2>Bewerbung bei der Allianz {{ alliance.nameWithTag }}</h2>
+        {% if alliance.acceptApplications %}
+            {{ form_start(form) }}
+                <twig:Table title="Bewerbungstext">
+                    {% block table_content %}
+                        <tr>
+                            <th>Nachricht:</th>
+                            <td>
+                                {{ form_widget(form.userAllianceApplication) }}
+                                <br/> <a href="?page=help&amp;site=">Hilfe zur Formatierung</a>
+                            </td>
+                    {% endblock %}
+                </twig:Table>
+                {{ form_widget(form.submitApplication) }}&nbsp;
+                <a href="{{ path('game.alliance.join') }}">
+                    <input type="button" value="Zurück" />
+                </a>
+            {{ form_end(form) }}
+        {% else %}
+            {{ macros.errorMessage('Die Allianz nimmt keine Bewerbungen an!') }}
+        {% endif %}
+    {% else %}
+        {{ macros.errorMessage('Allianzdatensatz nicht gefunden!') }}
+    {% endif %}
+{% endblock %}
