@@ -1,0 +1,39 @@
+{% extends 'game/alliance/alliance.html.twig' %}
+{% import 'macros.html.twig' as macros %}
+
+{% block alliance %}
+    <h2>Gründung einer Allianz</h2>
+    {% if msg.success is defined%}
+        {{ macros.successMessage(BBCodeToHTML(msg.success))|raw }}
+    {% endif %}
+    {% if msg.error is defined%}
+        {{ macros.errorMessage(BBCodeToHTML(msg.error))|raw }}
+    {% endif %}
+
+    {% if finish %}
+        <a href="{{ path('game.overview') }}">
+            <input type="button" value="Weiter" />
+        </a>
+    {% else %}
+        {{ form_start(form) }}
+        <twig:Table title="Allianz-Daten">
+            {% block table_content %}
+                <tr>
+                    <th>Tag / Name:</th>
+                    <td>
+                        [{{ form_widget(form.alliance_tag) }}]
+                        {{ form_widget(form.alliance_name) }}
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2">Alle weiteren Daten könnten nach der Erstellung im Allianzmenü geändert werden.</td>
+                </tr>
+            {% endblock %}
+        </twig:Table>
+        {{ form_widget(form.create_submit) }}&nbsp;
+        <a href="{{ path('game.overview') }}">
+            <input type="button" value="Übersicht" />
+        </a>
+        {{ form_end(form) }}
+    {% endif %}
+{% endblock %}
