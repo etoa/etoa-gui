@@ -1,4 +1,4 @@
-<table style="{{ layout == "nondisplay" ? 'display:none;' : '' }}{{ this.calculatedWidth }}"
+<table style="{{ layout == "nondisplay" ? 'display:none;' : '' }}{{ this.calculatedWidth }} {{ style }}"
        class="{{ layout != "double" ? 'tb ': '' }}{{ class }}" {{ attributes }}>
     {% if layout == 'double' %} #}
         <colgroup>

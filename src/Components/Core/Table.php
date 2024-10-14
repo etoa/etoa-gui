@@ -17,6 +17,8 @@ class Table
 
     public string $class = '';
 
+    public string $style  = '';
+
     public function __construct(
         private readonly UserPropertiesRepository $userPropertiesRepository,
         private readonly ?UserInterface           $user = null,
