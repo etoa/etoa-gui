@@ -1,0 +1,47 @@
+{% extends 'game/alliance/alliance.html.twig' %}
+{% import 'macros.html.twig' as macros %}
+
+{% block alliance %}
+    {% if configValue('alliance_allow') %}
+        {% if date().timestamp > app.user.data.allianceLeave + configValue("alliance_leave_cooldown") %}
+            {% if application %}
+                <h2>Bewerbungsstatus</h2>
+                {% if alliance %}
+                    {{ macros.successMessage(
+                        'Du hast dich am '~formatTimestamp(application.timestamp)~' bei der Allianz '~alliance.nameWithTag~' beworben
+                        und musst nun darauf warten, dass deine Bewerbung akzeptiert wird!'
+                    ) }}
+                    {{ form_start(form) }}
+                    {{ form_widget(form.cancel) }}
+                    {{ form_end(form) }}
+                {% else %}
+                    {{ macros.errorMessage(
+                        'Du hast dich am formatTimestamp(application.timestamp) bei einer Allianz beworben, diese Allianz existiert aber leider nicht mehr.
+                        Deine Bewerbung wurde deshalb gelöscht!'
+                    ) }}
+                    <a href="{{ path('game.alliance.join') }}">
+                        <input type="button" value="Bei einer anderen Allianz bewerben" />
+                    </a>
+                {% endif %}
+            {% else %}
+                Es kann von Vorteil sein, wenn man sich nicht alleine gegen den Rest des Universums durchsetzen muss. Dazu gibt es das Allianz-System,
+                mit dem du dich mit anderen Spielern als Team zusammentun kannst. Viele Allianzen pflegen eine regelmässige Kommunikation, bieten Schutz vor
+                Angriffen oder rächen dich wenn du angegriffen worden bist. Trete einer Allianz bei oder gründe selber eine Allianz.<br/><br/>
+                <a href="{{ path('game.alliance.join') }}">
+                    <input type="button" value="Einer Allianz beitreten" />
+                </a>&nbsp;&nbsp;&nbsp;
+                <a href="{{ path('game.alliance.create') }}">
+                    <input type="button" value="Eine Allianz gründen" />
+                </a>
+            {% endif %}
+        {% else %}
+        <p>
+            <b>
+                Du musst {{ (((app.user.data.allianceLeave + configValue("alliance_leave_cooldown")) - date().timestamp) / 60)|round(0, 'floor')}} Minuten warten bis du dich bei einer neuen Allianz bewerben kannst!
+            </b>
+        </p>
+        {% endif %}
+    {% else %}
+        {{ macros.message('Info','Allianzen sind zur Zeit deaktiviert.') }}
+    {% endif %}
+{% endblock %}

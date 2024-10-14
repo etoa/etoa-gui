@@ -1,8 +1,8 @@
-{% extends 'layout/game.html.twig' %}
+{% extends 'game/alliance/alliance.html.twig' %}
 {% import 'macros.html.twig' as macros %}
 {% set infoAlliance = allianceRepository.getAlliance(id) %}
 
-{% block content %}
+{% block alliance %}
     {% if infoAlliance %}
         <twig:Table title="{{ infoAlliance.nameWithTag }}">
             {% block table_content %}

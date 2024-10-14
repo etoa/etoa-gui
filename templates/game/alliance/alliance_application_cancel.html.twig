@@ -1,0 +1,9 @@
+{% extends 'game/alliance/alliance.html.twig' %}
+{% import 'macros.html.twig' as macros %}
+
+{% block alliance %}
+    Deine Bewerbung wurde gelöscht!<br/><br/>
+    <a href="{{ path('game.alliance') }}">
+        <input type="button" value="OK" />
+    </a>
+{% endblock %}
