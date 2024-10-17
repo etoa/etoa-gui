@@ -1,0 +1,10 @@
+{% extends 'game/alliance/alliance.html.twig' %}
+{% import 'macros.html.twig' as macros %}
+
+{% block alliance %}
+    <p>
+        <b>
+            Du musst {{ (((app.user.data.allianceLeave + configValue("alliance_leave_cooldown")) - date().timestamp) / 60)|round(0, 'floor')}} Minuten warten bis du dich bei einer neuen Allianz bewerben kannst!
+        </b>
+    </p>
+{% endblock %}

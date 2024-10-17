@@ -40,11 +40,13 @@ class AllianceController extends AbstractGameController
         private readonly MessageRepository $messageRepository,
         private readonly AllianceHistoryRepository $allianceHistoryRepository,
         private readonly AllianceService $service,
-        private readonly EventDispatcherInterface $dispatcher
+        private readonly EventDispatcherInterface $dispatcher,
+        private readonly ConfigurationService $config
     )
     {
     }
 
+    // show alliance infos
     #[Route('/game/alliance/info/{id}', name: 'game.alliance.info')]
     public function info(int $id): Response {
         $infoAlliance = $this->allianceRepository->getAlliance($id);
@@ -63,10 +65,14 @@ class AllianceController extends AbstractGameController
         ]);
     }
 
+    // main alliance action
     #[Route('/game/alliance', name: 'game.alliance')]
-    public function overview(Request $request): Response {
+    public function alliance(Request $request): Response {
         $cu = $this->getUser()->getData();
         if ($cu->getAllianceId() === 0) {
+            if($this->onCooldown()) {
+                return $this->redirectToRoute('game.alliance.cooldown');
+            }
 
             $application = $this->allianceApplicationRepository->getUserApplication($cu->getId());
             $form = $this->createFormBuilder()
@@ -93,12 +99,15 @@ class AllianceController extends AbstractGameController
                 'alliance' => $application?$this->allianceRepository->getAlliance($application->allianceId):null
             ]);
         }
+
+        return $this->redirectToRoute('game.alliance.overview');
     }
 
+    //action for creating new alliance
     #[Route('/game/alliance/create', name: 'game.alliance.create')]
     public function create(Request $request): Response {
         if($this->getUser()->getData()->getAllianceId()) {
-            return $this->redirectToRoute('game.overview');
+            return $this->redirectToRoute('game.alliance');
         }
 
         $form = $this->createFormBuilder()
@@ -135,10 +144,11 @@ class AllianceController extends AbstractGameController
         ]);
     }
 
+    //overview for all join able alliances
     #[Route('/game/alliance/join', name: 'game.alliance.join')]
     public function join(): Response {
         if($this->getUser()->getData()->getAllianceId()) {
-            return $this->redirectToRoute('game.overview');
+            return $this->redirectToRoute('game.alliance');
         }
 
         $alliances = $this->allianceRepository->getAlliancesAcceptingApplications();
@@ -148,10 +158,15 @@ class AllianceController extends AbstractGameController
         ]);
     }
 
+    // application form action
     #[Route('/game/alliance/join/{id}', name: 'game.alliance.apply')]
     public function apply(int $id, Request $request): Response {
         if($this->getUser()->getData()->getAllianceId()) {
-            return $this->redirectToRoute('game.overview');
+            return $this->redirectToRoute('game.alliance');
+        }
+
+        if($this->onCooldown()) {
+            return $this->redirectToRoute('game.alliance.cooldown');
         }
 
         $alliance = $this->allianceRepository->getAlliance($id);
@@ -162,7 +177,8 @@ class AllianceController extends AbstractGameController
                         'attr' => ['rows' => "15", 'cols' => "80"],
                         'constraints'=> new NotBlank([
                             'message' => 'Du musst einen Bewerbungstext eingeben!',
-                        ])
+                        ]),
+                        'data'=>$alliance->applicationTemplate
                     ])
                     ->add('submitApplication', SubmitType::class, ['label' => 'Senden'])
                     ->getForm();
@@ -185,9 +201,35 @@ class AllianceController extends AbstractGameController
         ]);
     }
 
+    //redirect to this action when user can't join because of cooldown
+    #[Route('/game/alliance/cooldown', name: 'game.alliance.cooldown')]
+    public function cooldown(): Response {
+        if($this->onCooldown())
+            return $this->render('game/alliance/alliance_cooldown.html.twig');
+        return $this->render('game/alliance/alliance_no_alliance.html.twig');
+    }
+
+    #[Route('/game/alliance/overview', name: 'game.alliance.overview')]
+    public function overview(Request $request): Response {
+        if(!$this->getUser()->getData()->getAllianceId()) {
+            return $this->redirectToRoute('game.alliance');
+        }
+
+        $alliance = $this->allianceRepository->getAlliance($this->getUser()->getData()->getAllianceId());
+        $this->allianceRepository->addVisit($alliance->id);
+
+        return $this->render('game/alliance/alliance_overview.html.twig',[
+            'overview' =>$this->service->renderOverview($alliance),
+        ]);
+    }
+
     #[Route('/game/alliance/applications', name: 'game.alliance.applications')]
     public function applications(int $id, Request $request): Response {
 
     }
 
+    private function onCooldown():bool
+    {
+        return time() < ($this->getUser()->getData()->getAllianceLeave() + $this->config->getInt("alliance_leave_cooldown"));
+    }
 }
