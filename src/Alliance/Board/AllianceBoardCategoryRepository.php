@@ -90,7 +90,7 @@ class AllianceBoardCategoryRepository extends AbstractRepository
             ->select('*')
             ->from('allianceboard_cat')
             ->where('cat_id = :catId')
-            ->where('cat_alliance_id = :allianceId')
+            ->andWhere('cat_alliance_id = :allianceId')
             ->setParameters([
                 'catId' => $categoryId,
                 'allianceId' => $allianceId,

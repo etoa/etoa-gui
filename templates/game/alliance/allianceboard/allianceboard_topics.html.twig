@@ -1,0 +1,47 @@
+{% extends 'game/alliance/allianceboard/allianceboard.html.twig' %}
+{% import 'macros.html.twig' as macros %}
+{% set topics = allianceBoardTopicRepository.getTopics(category.id) %}
+{% block allianceboard %}
+    <h2>
+        <a href="{{ path('game.alliance.allianceboard.overview') }}">Übersicht</a>{{ category.name }}
+    </h2>
+    {% if topics %}
+        <twig:table>
+            {% block table_content %}
+                <tr>
+                    <th colspan="2">Thema</th>
+                    <th>Posts</th>
+                    <th>Aufrufe</th>
+                    <th>Autor</th>
+                    <th>Letzter Beitrag</th>
+                    {% if isAdmin %}
+                        <th>Aktionen</th>
+                    {% endif %}
+                </tr>
+            {% endblock %}
+        </twig:table>
+        {% for topic in topics %}
+            <tr>
+                <td style="width:37px;">
+                    {% if topic.top %}
+                        <img src="{{ asset('build/images/sticky.gif') }}" alt="top" style="width:22px;height:15px;{{ tm("
+                             Wichtiges Thema", "Dieses ist ein wichtiges Thema.") }}/>
+                    {% endif %}
+                    {% if topic.top %}
+                        <img src="{{ asset('build/images/closed.gif') }}" alt="closed" style="width:15px;height:16px;"
+                        {{tm("Geschlossen", "Es können keine weiteren Beiträge zu diesem Thema geschrieben werden.")}} />
+                    {% endif %}
+                </td>
+            <td style="width:250px;">
+                <a href="topic.id">{{ topic.subject }}</a>
+            </td>
+            <td>$postCounts[$topic->id]</td>
+            <td>{{ topic.count }}</td>
+            <td>{{ allianceUsers[topic.userId].getNick }}</td>
+            <td>
+                <a href="$topic->id>">{{ formatTimestamp(post.timestamp) }}</a><br/>{{ post.userNick }}</td>
+
+        {% endfor %}
+    {% else %}
+    {% endif %}
+{% endblock %}

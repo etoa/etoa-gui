@@ -1,0 +1,40 @@
+{{ form_start(form) }}
+<twig:Table>
+    {% block table_content %}
+        <tr>
+            <th>Name:</th>
+            <td>
+                {{form_widget(form.catName)}}
+            </td>
+        </tr>
+        <tr>
+            <th>Beschreibung:</th>
+            <td>
+                {{form_widget(form.catDesc)}}
+            </td>
+        </tr>
+        <tr>
+            <th>Reihenfolge/Position:</th>
+            <td>
+                {{ form_widget(form.catOrder) }}
+            </td>
+        </tr>
+        <tr>
+            <th>Zugriff:</th>
+            <td>
+                {{ form_widget(form.rank) }}
+            </td>
+        </tr>
+        <tr>
+            <th style="width:110px;">Symbol:</th>
+            <td>
+                {{ component('AllianceboardCategoryIcons',{dropdown:form_widget(form.catBullet), image:form.catBullet.vars.value}) }}
+            </td>
+        </tr>
+    {% endblock %}
+</twig:Table>
+{{ form_widget(form.catSave) }}
+<a href="{{ path('game.alliance.allianceboard.overview') }}">
+    <input type="button" value="Abbrechen"/>
+</a>
+{{ form_end(form) }}

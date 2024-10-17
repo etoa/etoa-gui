@@ -1,0 +1,9 @@
+{% extends 'game/alliance/allianceboard/allianceboard.html.twig' %}
+{% import 'macros.html.twig' as macros %}
+
+{% block allianceboard %}
+    {{ macros.errorMessage(message) }}
+    <a href="{{ path('game.alliance.allianceboard.overview') }}">
+        <input type="button" value="Zurück"/>
+    </a>
+{% endblock %}
