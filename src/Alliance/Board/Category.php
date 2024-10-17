@@ -18,4 +18,36 @@ class Category
         $this->description = $data['cat_desc'];
         $this->order = (int) $data['cat_order'];
     }
+
+    public function setCatName(string $catName):void {
+        $this->name = $catName;
+    }
+
+    public function getCatName():string {
+        return $this->name;
+    }
+
+    public function getCatDesc():string {
+        return $this->description;
+    }
+
+    public function setCatDesc(string $catDesc):void {
+        $this->description = $catDesc;
+    }
+
+    public function getCatOrder():int {
+        return $this->order;
+    }
+
+    public function setCatOrder(int $catOrder):void {
+        $this->order = $catOrder;
+    }
+
+    public function setCatBullet(string $catBullet):void {
+        $this->bullet = $catBullet;
+    }
+
+    public function getCatBullet():string {
+        return $this->bullet;
+    }
 }
