@@ -3,12 +3,12 @@
 namespace EtoA\Universe;
 
 use EtoA\Core\ObjectWithImage;
+use EtoA\Entity\User;
 use EtoA\UI\Tooltip;
+use EtoA\Universe\Cell\Cell;
 use EtoA\Universe\Entity\EntityRepository;
 use EtoA\Universe\Entity\EntitySearch;
-use EtoA\User\User;
 use EtoA\User\UserUniverseDiscoveryService;
-use EtoA\Universe\Cell\Cell;
 
 /**
  * Draws a map of a galaxy sector

@@ -12,6 +12,7 @@ use EtoA\Alliance\AllianceTechnologyId;
 use EtoA\Alliance\AllianceTechnologyRepository;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Defense\DefenseRepository;
+use EtoA\Entity\User;
 use EtoA\Fleet\Exception\FleetScanFailedException;
 use EtoA\Fleet\Exception\FleetScanPreconditionsNotMetException;
 use EtoA\Fleet\Exception\InvalidFleetScanParameterException;
@@ -24,12 +25,11 @@ use EtoA\Technology\TechnologyId;
 use EtoA\Technology\TechnologyRepository;
 use EtoA\Universe\Entity\Entity;
 use EtoA\Universe\Entity\EntityRepository;
-use EtoA\Universe\Entity\EntityType;
-use EtoA\Universe\Planet\PlanetRepository;
 use EtoA\Universe\Entity\EntityService;
+use EtoA\Universe\Entity\EntityType;
 use EtoA\Universe\Planet\Planet;
+use EtoA\Universe\Planet\PlanetRepository;
 use EtoA\Universe\Resources\ResourceNames;
-use EtoA\User\User;
 use EtoA\User\UserRepository;
 
 /**

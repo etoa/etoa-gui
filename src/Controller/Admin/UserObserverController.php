@@ -2,10 +2,10 @@
 
 namespace EtoA\Controller\Admin;
 
+use EtoA\Entity\User;
 use EtoA\Form\Request\Admin\UserObserveRequest;
 use EtoA\Form\Type\Admin\EditUserObserverType;
 use EtoA\Form\Type\Admin\UserObserveType;
-use EtoA\User\User;
 use EtoA\User\UserRepository;
 use EtoA\User\UserSearch;
 use EtoA\User\UserSessionRepository;

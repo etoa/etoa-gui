@@ -2,7 +2,7 @@
 
 namespace EtoA\Security\Player;
 
-use EtoA\User\User;
+use EtoA\Entity\User;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 

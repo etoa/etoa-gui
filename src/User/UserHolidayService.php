@@ -6,6 +6,7 @@ use EtoA\Backend\BackendMessageService;
 use EtoA\Building\BuildingRepository;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Defense\DefenseQueueRepository;
+use EtoA\Entity\User;
 use EtoA\Fleet\FleetAction;
 use EtoA\Fleet\FleetRepository;
 use EtoA\Fleet\FleetSearch;

@@ -2,9 +2,10 @@
 
 declare(strict_types=1);
 
-namespace EtoA\User;
+namespace EtoA\Entity;
 
 use EtoA\Admin\AllianceBoardAvatar;
+use EtoA\User\ProfileImage;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 
 class User implements \EtoA\User\UserInterface, PasswordAuthenticatedUserInterface

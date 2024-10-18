@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace EtoA\User;
 
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Entity\User;
 use EtoA\Universe\Cell\Cell;
 use EtoA\Universe\Entity\Entity;
 

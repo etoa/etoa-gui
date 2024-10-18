@@ -2,6 +2,8 @@
 
 namespace EtoA\User;
 
+use EtoA\Entity\User;
+
 class UserStatistic
 {
     public int $userId;

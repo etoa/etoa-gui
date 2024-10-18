@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace EtoA\User;
 
 use EtoA\Core\AbstractRepository;
+use EtoA\Entity\User;
 
 class UserRepository extends AbstractRepository
 {

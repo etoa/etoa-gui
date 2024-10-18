@@ -3,6 +3,7 @@
 namespace EtoA\Image;
 
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Entity\User;
 use EtoA\Universe\Cell\CellRepository;
 use EtoA\Universe\Entity\EntityRepository;
 use EtoA\Universe\Entity\EntitySearch;
@@ -10,7 +11,6 @@ use EtoA\Universe\Entity\EntityType;
 use EtoA\Universe\GalaxyMap;
 use EtoA\Universe\Star\StarRepository;
 use EtoA\Universe\Wormhole\WormholeRepository;
-use EtoA\User\User;
 use EtoA\User\UserRepository;
 use EtoA\User\UserUniverseDiscoveryService;
 

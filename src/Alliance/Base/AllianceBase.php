@@ -12,8 +12,8 @@ use EtoA\Alliance\AllianceTechnologyListItem;
 use EtoA\Alliance\AllianceTechnologyRepository;
 use EtoA\Alliance\AllianceWithMemberCount;
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Entity\User;
 use EtoA\Universe\Resources\BaseResources;
-use EtoA\User\User;
 
 class AllianceBase
 {
