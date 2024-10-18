@@ -21,6 +21,7 @@ use EtoA\User\User;
 use EtoA\User\UserRepository;
 use EtoA\User\UserService;
 use Symfony\Bundle\SecurityBundle\Security;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class AllianceService
 {
@@ -46,6 +47,7 @@ class AllianceService
     private FleetRepository $fleetRepository;
     private AllianceRightRepository $allianceRightRepository;
     private Security $security;
+    private UrlGeneratorInterface $router;
     public function __construct(
         AllianceRepository $repository,
         UserRepository $userRepository,
@@ -68,7 +70,8 @@ class AllianceService
         AllianceMemberCosts $allianceMemberCosts,
         FleetRepository $fleetRepository,
         AllianceRightRepository $allianceRightRepository,
-        Security $security
+        Security $security,
+        UrlGeneratorInterface $router,
     )
     {
         $this->repository = $repository;
@@ -93,6 +96,7 @@ class AllianceService
         $this->fleetRepository = $fleetRepository;
         $this->allianceRightRepository = $allianceRightRepository;
         $this->security =$security;
+        $this->router = $router;
     }
 
     public function create(string $tag, string $name, ?int $founderId): AllianceWithMemberCount
@@ -293,10 +297,10 @@ class AllianceService
         }
 
         if ($topic !== null) {
-            $ps = "Neuster Post: <a href=\"?page=allianceboard&amp;topic=" . $topic->id . "#" . $topic->post->id . "\"><b>" . $topic->subject . "</b>, geschrieben von: <b>" . $topic->post->userNick . "</b>, <b>" . StringUtils::formatDate($topic->timestamp) . "</b></a>";
+            $ps = "Neuster Post: <a href=".$this->router->generate('game.alliance.allianceboard.showposts',['id'=>$topic->id,'_fragment' =>$topic->post->id])."><b>" . $topic->subject . "</b>, geschrieben von: <b>" . $topic->post->userNick . "</b>, <b>" . StringUtils::formatDate($topic->timestamp) . "</b></a>";
         } else
             $ps = "<i>Noch keine Beitr&auml;ge vorhanden";
-        echo "<tr><th>Internes Forum</th><td colspan=\"2\"><b><a href=\"?page=allianceboard\">Forum&uuml;bersicht</a></b> &nbsp; $ps</td></tr>";
+        echo "<tr><th>Internes Forum</th><td colspan=\"2\"><b><a href=".$this->router->generate('game.alliance.allianceboard.overview').">Forum&uuml;bersicht</a></b> &nbsp; $ps</td></tr>";
 
         // Umfrage verlinken
         $polls = $this->alliancePollRepository->getPolls($alliance->id, 2);
