@@ -223,6 +223,11 @@ class AllianceController extends AbstractGameController
         ]);
     }
 
+    #[Route('/game/alliance/members', name: 'game.alliance.members')]
+    public function members(Request $request): Response {
+
+    }
+
     #[Route('/game/alliance/applications', name: 'game.alliance.applications')]
     public function applications(int $id, Request $request): Response {
 
