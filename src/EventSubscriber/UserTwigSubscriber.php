@@ -3,6 +3,7 @@
 namespace EtoA\EventSubscriber;
 
 use EtoA\BuddyList\BuddyListRepository;
+use EtoA\Controller\Game\AllianceBoardController;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Fleet\FleetRepository;
 use EtoA\Fleet\FleetSearch;
@@ -220,9 +221,17 @@ class UserTwigSubscriber implements EventSubscriberInterface
         }
 
         $cu = $this->security->getUser();
-        if($cu && !$cu->getData()->isSetup() && !in_array($event->getControllerReflector()->class,self::WHITELIST)) { //TODO $page != "help" && $page != "contact"
+
+        $controller = explode('::', $event->getRequest()->attributes->get('_controller'));
+
+        //redirect to setup if new account
+        if($cu && !$cu->getData()->isSetup() && !in_array($controller[0],self::WHITELIST)) { //TODO $page != "help" && $page != "contact"
             $event->setController(fn() => new RedirectResponse(($this->router->generate('game.setup.race'))));
         }
+
+        //block allianceboard if not in alliance
+        if($controller[0] == AllianceBoardController::class && !$cu->getData()->getAllianceId())
+            $event->setController(fn() => new RedirectResponse(($this->router->generate('game.alliance'))));
     }
 
     private function renderBlocked(RequestEvent $event,string $text, string $image, string $title):void

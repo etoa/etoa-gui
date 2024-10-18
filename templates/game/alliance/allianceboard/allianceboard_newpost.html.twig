@@ -1,0 +1,22 @@
+{% extends 'game/alliance/allianceboard/allianceboard.html.twig' %}
+{% import 'macros.html.twig' as macros %}
+
+{% block allianceboard %}
+    <h2>Neuer Beitrag:</h2>
+    {{ form_start(form) }}
+        <twig:Table>
+        {% block table_content %}
+            <tr>
+                <th>Text:</th>
+                <td>
+                    {{ form_widget(form.postText) }}
+                </td>
+            </tr>
+        {% endblock %}
+        </twig:Table>
+        {{ form_widget(form.submit) }} &nbsp;
+        <a href="{{ path('game.alliance.allianceboard.showtopics',{'id':id}) }}" onclick="return confirm('Soll die Erstellung des Themas abgebrochen werden?')">
+            <input type="button" value="Zurück" />
+        </a>
+    {{ form_end(form) }}
+{% endblock %}

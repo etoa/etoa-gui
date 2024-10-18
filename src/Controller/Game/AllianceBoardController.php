@@ -3,11 +3,9 @@
 namespace EtoA\Controller\Game;
 
 use EtoA\Admin\AllianceBoardAvatar;
-use EtoA\Alliance\AllianceApplicationRepository;
 use EtoA\Alliance\AllianceDiplomacy;
 use EtoA\Alliance\AllianceDiplomacyLevel;
 use EtoA\Alliance\AllianceDiplomacyRepository;
-use EtoA\Alliance\AllianceHistoryRepository;
 use EtoA\Alliance\AllianceRankRepository;
 use EtoA\Alliance\AllianceRepository;
 use EtoA\Alliance\AllianceRights;
@@ -17,27 +15,17 @@ use EtoA\Alliance\Board\AllianceBoardCategoryRepository;
 use EtoA\Alliance\Board\AllianceBoardPostRepository;
 use EtoA\Alliance\Board\AllianceBoardTopicRepository;
 use EtoA\Alliance\Board\Category;
-use EtoA\Alliance\Board\Topic;
-use EtoA\Alliance\Event\AllianceCreate;
-use EtoA\Alliance\InvalidAllianceParametersException;
-use EtoA\Core\Configuration\ConfigurationService;
-use EtoA\Form\Type\Core\AvatarUploadType;
-use EtoA\Form\Type\Core\ProfileUploadType;
 use EtoA\Image\ImageUtil;
-use EtoA\Message\MessageCategoryId;
-use EtoA\Message\MessageRepository;
 use EtoA\Support\BBCodeUtils;
 use EtoA\Support\StringUtils;
 use EtoA\User\UserRepository;
 use EtoA\User\UserSearch;
-use phpDocumentor\Reflection\Types\Boolean;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\FormInterface;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Form\Extension\Core\Type\ButtonType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
-use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -45,7 +33,6 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Constraints\Type;
-use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 class AllianceBoardController extends AbstractGameController
 {
@@ -53,12 +40,7 @@ class AllianceBoardController extends AbstractGameController
         private readonly AllianceRepository $allianceRepository,
         private readonly AllianceDiplomacyRepository $allianceDiplomacyRepository,
         private readonly UserRepository $userRepository,
-        private readonly AllianceApplicationRepository $allianceApplicationRepository,
-        private readonly MessageRepository $messageRepository,
-        private readonly AllianceHistoryRepository $allianceHistoryRepository,
         private readonly AllianceService $service,
-        private readonly EventDispatcherInterface $dispatcher,
-        private readonly ConfigurationService $config,
         private readonly AllianceBoardCategoryRepository $allianceBoardCategoryRepository,
         private readonly AllianceBoardTopicRepository $allianceBoardTopicRepository,
         private readonly AllianceBoardCategoryRankRepository $allianceBoardCategoryRankRepository,
@@ -69,7 +51,7 @@ class AllianceBoardController extends AbstractGameController
     }
 
     #[Route('/game/allianceboard', name: 'game.alliance.allianceboard.overview')]
-    public function allianceBoard(Request $request): Response {
+    public function allianceBoard(): Response {
         if(!$this->getUser()->getData()->getAllianceId()) {
             return $this->redirectToRoute('game.alliance');
         }
@@ -96,7 +78,7 @@ class AllianceBoardController extends AbstractGameController
             $postCounts = $this->allianceBoardCategoryRepository->getCategoryPostCounts($categoryIds);
             $topicCounts = $this->allianceBoardCategoryRepository->getCategoryTopicCounts($categoryIds);
 
-            echo '<table>';
+            echo '<table class="tb">';
             echo "<tr><th colspan=\"2\">Kategorie</th><th>Posts</th><th>Topics</th><th>Letzter Beitrag</th>";
             if ($isAdmin) {
                 echo "<th style=\"width:50px;\">Aktionen</th>";
@@ -132,7 +114,7 @@ class AllianceBoardController extends AbstractGameController
                         echo " " . tm("Admin-Info: " . $category->name, "<b>Position:</b> " . $category->order . "<br/><b>Zugriff:</b> " . $rstr) . "";
                     }
                     echo ">
-                                <b><a href=\"?page=$page&amp;bnd=0&cat=" . $category->id . "\">" . ($category->name != "" ? $category->name : "Unbenannt") . "</a></b>
+                                <b><a href=\"" . $this->generateUrl('game.alliance.allianceboard.showtopics',['id'=>$category->id]) . "\">" . ($category->name != "" ? $category->name : "Unbenannt") . "</a></b>
                                 <br/>" . BBCodeUtils::toHTML($category->description) . "</td>";
                     echo "<td>" . $postCounts[$category->id] . "</td>";
                     echo "<td>" . $topicCounts[$category->id] . "</td>";
@@ -309,7 +291,7 @@ class AllianceBoardController extends AbstractGameController
     // Show topics in category
     //TODO: use entity
     #[Route('/game/allianceboard/showtopics/{id}', name: 'game.alliance.allianceboard.showtopics')]
-    public function showTopics(Request $request, int $id): Response {
+    public function showTopics(int $id): Response {
         $myCat = [];
 
         $cu = $this->getUser()->getData();
@@ -324,59 +306,315 @@ class AllianceBoardController extends AbstractGameController
 
         if ($this->isAdmin() || (isset($myCat[$id]) && $myCat[$id])) {
             $category = $this->allianceBoardCategoryRepository->getCategory($id, $cu->getAllianceId());
-            if ($category) {
-                echo "<h2><a href=\"?page=\">&Uuml;bersicht</a> &gt; " . ($category->name != "" ? stripslashes($category->name) : "Unbenannt") . "</h2>";
-
-                $topics = $this->allianceBoardTopicRepository->getTopics($category->id);
-                if (count($topics) > 0) {
-                    $topicIds = array_map(fn (Topic $topic) => $topic->id, $topics);
-                    $postCounts = $this->allianceBoardTopicRepository->getTopicPostCounts($topicIds);
-                    tableStart();
-                    echo "<tr><th colspan=\"2\">Thema</th><th>Posts</th><th>Aufrufe</th><th>Autor</th><th>Letzer Beitrag</th>";
-                    if ($this->isAdmin()) {
-                        echo "<th>Aktionen</th>";
-                    }
-                    echo "</tr>";
-                    foreach ($topics as $topic) {
-                        echo "<tr><td style=\"width:37px;\">";
-                        if ($topic->top) echo "<img src=\"images/sticky.gif\" alt=\"top\" style=\"width:22px;height:15px;\" " . tm("Wichtiges Thema", "Dieses ist ein wichtiges Thema.") . "/>";
-                        if ($topic->closed) echo "<img src=\"images/closed.gif\" alt=\"closed\" style=\"width:15px;height:16px;\" " . tm("Geschlossen", "Es können keine weiteren Beiträge zu diesem Thema geschrieben werden.") . " />";
-                        echo "</td>";
-                        echo "<td style=\"width:250px;\"><a href=\"?page=&amp;topic=" . $topic->id . "\"";
-
-                        echo ">" . $topic->subject . "</a></td>";
-                        echo "<td>" . $postCounts[$topic->id] . "</td>";
-                        echo "<td>" . $topic->count . "</td>";
-                        echo "<td>" . $allianceUsers[$topic->userId]->getNick() . "</td>";
-                        $post = $this->allianceBoardPostRepository->getPosts($topic->id, 1)[0];
-                        echo "<td><a href=\"?page=&amp;topic=" . $topic->id . "#" . $post->id . "\">" . StringUtils::formatDate($post->timestamp) . "</a><br/>" . $post->userNick . "</td>";
-                        if ($this->isAdmin() || $cu->getId() == $topic->userId) {
-                            echo "<td style=\"vertical-align:middle;text-align:center;\">
-                                    <a href=\"?page=&edittopic=" . $topic->id . "\" title=\"Thema bearbeiten\">" . ImageUtil::icon('edit') . "</a>";
-                            if ($this->isAdmin())
-                                echo " <a href=\"?page=&deltopic=" . $topic->id . "\" title=\"Thema löschen \">" . ImageUtil::icon('delete') . "</a>";
-                            echo "</td>";
-                        }
-                        echo "</tr>";
-                    }
-                    tableEnd();
-                } else
-                    error_msg("Es sind noch keine Themen vorhanden!");
-                if ($cu->getId() > 0)
-                    echo "<input type=\"button\" value=\"Neues Thema\" onclick=\"document.location='?page=&newtopic=" . $id . "'\" /> &nbsp; ";
-            } else
-                error_msg("Kategorie existiert nicht!");
+            if (!$category) {
+                return $this->render('game/alliance/allianceboard/allianceboard_notfound.html.twig',[
+                    'message' => 'Kategorie existiert nicht!'
+                ]);
+            }
         } else
-            error_msg("Kein Zugriff!");
-        echo "<input type=\"button\" value=\"Zur &Uuml;bersicht\" onclick=\"document.location='?page='\" />";
+            return $this->render('game/alliance/allianceboard/allianceboard_notfound.html.twig',[
+                'message' => 'Kein Zugriff!'
+            ]);
 
         return $this->render('game/alliance/allianceboard/allianceboard_topics.html.twig',[
             'allianceBoardTopicRepository' => $this->allianceBoardTopicRepository,
             'category' => $category,
             'isAdmin' => $this->isAdmin(),
-            'allianceUsers' => $allianceUsers
-
+            'allianceUsers' => $allianceUsers,
+            'allianceBoardPostRepository' => $this->allianceBoardPostRepository
         ]);
+    }
+
+    //create new topic
+    //TODO: use entity
+    #[Route('/game/allianceboard/newtopic/{id}', name: 'game.alliance.allianceboard.newtopic')]
+    public function newTopic(int $id, Request $request): Response {
+        $category = $this->allianceBoardCategoryRepository->getCategory($id, $this->getUser()->getData()->getAllianceId());
+
+        if(!$category)
+            return $this->render('game/alliance/allianceboard/allianceboard_notfound.html.twig',[
+                'message' => 'Diese Kategorie existiert nicht!'
+            ]);
+
+        $form = $this->createFormBuilder()
+            ->add('topicSubject', TextType::class,
+                [
+                    'attr' => ['size'=>40],
+                    'constraints'=> new NotBlank([
+                        'message' => 'Du musst einen Text eingeben!',
+                    ]),
+                ]
+            )
+            ->add('postText', TextareaType::class,
+                [
+                    'attr' => [
+                        'rows'=>6,
+                        'cols' =>80
+                    ],
+                ]
+            )
+            ->add('submit', SubmitType::class, ['label' => 'Speichern'])
+            ->getForm();
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $cu = $this->getUser()->getData();
+            $mid = $this->allianceBoardTopicRepository->addTopic($form->getData()['topicSubject'], 0, $category->id, $cu->getId(), $cu->getNick());
+            $this->allianceBoardPostRepository->addPost($mid, $form->getData()['postText'], $cu->getId(), $cu->getNick());
+            return new RedirectResponse($this->generateUrl('game.alliance.allianceboard.showtopics',['id'=>$id]));
+        }
+
+        return $this->render('game/alliance/allianceboard/allianceboard_newtopic.html.twig',[
+            'category' => $category,
+            'form' => $form
+        ]);
+    }
+
+    //edit topic
+    //TODO: use entity
+    #[Route('/game/allianceboard/edittopic/{id}', name: 'game.alliance.allianceboard.edittopic')]
+    public function editTopic(int $id, Request $request): Response {
+        $topic = $this->allianceBoardTopicRepository->getTopic($id);
+
+        if (!$topic) {
+            return $this->render('game/alliance/allianceboard/allianceboard_notfound.html.twig',[
+                'message' => 'Datensatz nicht gefunden!'
+            ]);
+        }
+
+        if ($this->getUser()->getId() == $topic->userId || $this->isAdmin()) {
+            $form = $this->createFormBuilder($topic)
+                ->add('topicSubject', TextType::class,
+                    [
+                        'attr' => ['size'=>40],
+                        'constraints'=> new NotBlank([
+                            'message' => 'Du musst einen Text eingeben!',
+                        ]),
+                    ]
+                )
+                ->add('topicTop', CheckboxType::class,[
+                    'required' => false
+                ])
+                ->add('topicClosed', CheckboxType::class,[
+                    'required' => false
+                ])
+                ->add('topicCatId', ChoiceType::class, [
+                    'choices'=>$this->allianceBoardCategoryRepository->getCategories($this->getUser()->getData()->getAllianceId()),
+                    'choice_value' => 'id',
+                    'choice_label' => function (?Category $category): string {
+                        return $category ? strtoupper($category->name) : '';
+                    },
+                    'mapped' => false
+                ])
+                ->add('topicEdit', SubmitType::class, ['label' => 'Speichern'])
+                ->getForm();
+
+            $form->handleRequest($request);
+            if ($form->isSubmitted() && $form->isValid()) {
+                $this->allianceBoardTopicRepository->updateTopic($id, $topic->getTopicSubject(), 0, $form->get('topicCatId')->getData()->id, $topic->top, $topic->closed);
+                $msg = "Änderungen gespeichert!";
+            }
+
+            return $this->render('game/alliance/allianceboard/allianceboard_edittopic.html.twig',[
+                'msg' => $msg??null,
+                'form' => $form,
+                'isAdmin' => $this->isAdmin()
+            ]);
+        } else {
+            return $this->render('game/alliance/allianceboard/allianceboard_notfound.html.twig',[
+                'message' => 'Keine Berechtigung!'
+            ]);
+        }
+    }
+
+    //delete topic
+    #[Route('/game/allianceboard/deletetopic/{id}', name: 'game.alliance.allianceboard.deletetopic')]
+    public function deleteTopic(int $id, Request $request): Response
+    {
+        $topic = $this->allianceBoardTopicRepository->getTopic($id);
+
+        if(!$topic) {
+            return $this->render('game/alliance/allianceboard/allianceboard_notfound.html.twig',[
+                'message' => 'Datensatz nicht gefunden!'
+            ]);
+        }
+
+        if(!$this->isAdmin()) {
+            return $this->render('game/alliance/allianceboard/allianceboard_notfound.html.twig',[
+                'message' => 'Keine Berechtigung!'
+            ]);
+        }
+
+        $form = $this->createFormBuilder()
+           ->add('topicDelete', SubmitType::class, ['label' => 'Löschen'])
+           ->getForm();
+
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $this->allianceBoardTopicRepository->deleteTopic($id);
+            $msg['success'] = "Thema gelöscht!";
+        }
+
+        return $this->render('game/alliance/allianceboard/allianceboard_deletetopic.html.twig',[
+            'topicName' => $topic->subject,
+            'msg' => $msg??null,
+            'form' => $form
+        ]);
+    }
+
+    //show posts
+    #[Route('/game/allianceboard/posts/{id}', name: 'game.alliance.allianceboard.showposts')]
+    public function showPosts(int $id, Request $request): Response
+    {
+        $posts = $this->allianceBoardPostRepository->getPosts($id);
+        $topic = $this->allianceBoardTopicRepository->getTopic($id);
+
+        if($posts) {
+            return $this->render('game/alliance/allianceboard/allianceboard_posts.html.twig',[
+                'posts' => $posts,
+                'userRepository' => $this->userRepository,
+                'topic' => $topic,
+                'cpost' => $this->allianceBoardPostRepository->getUserAlliancePostCounts($this->getUser()->getData()->getAllianceId(), $this->getUser()->getId()),
+                'isAdmin' => $this->isAdmin(),
+                'category' => $this->allianceBoardCategoryRepository->getCategory($topic->categoryId , $this->getUser()->getData()->getAllianceId())
+            ]);
+        } else {
+            if ($topic) {
+                $this->allianceBoardTopicRepository->deleteTopic($id);
+            }
+            return new RedirectResponse($this->generateUrl('game.alliance.allianceboard.overview'));
+        }
+    }
+
+    //create new post
+    #[Route('/game/allianceboard/newpost/{id}', name: 'game.alliance.allianceboard.newpost')]
+    public function newPost(int $id, Request $request): Response
+    {
+        $topic = $this->allianceBoardTopicRepository->getTopic($id);
+
+        if(!$topic)
+            return $this->render('game/alliance/allianceboard/allianceboard_notfound.html.twig',[
+                'message' => 'Dieses Thema existiert nicht!'
+            ]);
+
+        if($topic->closed)
+            return $this->render('game/alliance/allianceboard/allianceboard_notfound.html.twig',[
+                'message' => 'Dieses Thema ist geschlossen!'
+            ]);
+
+
+        $form = $this->createFormBuilder()
+            ->add('submit', SubmitType::class, ['label' => 'Beitrag speichern'])
+            ->add('postText', TextareaType::class,
+                [
+                    'attr' => [
+                        'rows'=>10,
+                        'cols' =>90
+                    ],
+                    'constraints'=> new NotBlank([
+                        'message' => 'Du musst einen Text eingeben!',
+                    ]),
+                ]
+            )
+            ->getForm();
+
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $this->allianceBoardPostRepository->addPost($id, $form->getData()['postText'], $this->getUser()->getId(), $this->getUser()->getUserIdentifier());
+            $this->allianceBoardTopicRepository->updateTopicTimestamp($id);
+            return new RedirectResponse($this->generateUrl('game.alliance.allianceboard.showposts',['id'=>$topic->id]));
+        }
+
+        return $this->render('game/alliance/allianceboard/allianceboard_newpost.html.twig',[
+            'msg' => $msg??null,
+            'form' => $form,
+            'id' => $topic->categoryId
+        ]);
+    }
+
+    //edit post
+    #[Route('/game/allianceboard/editpost/{id}', name: 'game.alliance.allianceboard.editpost')]
+    public function editPost(int $id, Request $request): Response
+    {
+        $post = $this->allianceBoardPostRepository->getPost($id);
+
+        if(!$post)
+            return $this->render('game/alliance/allianceboard/allianceboard_notfound.html.twig',[
+                'message' => 'Datensatz nicht gefunden!'
+            ]);
+
+        if($this->getUser()->getId() == $post->userId || $this->isAdmin()) {
+            $form = $this->createFormBuilder($post)
+                ->add('postEdit', SubmitType::class, ['label' => 'Speichern'])
+                ->add('postText', TextareaType::class,
+                    [
+                        'attr' => [
+                            'rows'=>10,
+                            'cols' =>90
+                        ],
+                        'constraints'=> new NotBlank([
+                            'message' => 'Du musst einen Text eingeben!',
+                        ]),
+                    ]
+                )
+                ->getForm();
+
+            $form->handleRequest($request);
+            if ($form->isSubmitted() && $form->isValid()) {
+                if ($this->isAdmin())
+                    $this->allianceBoardPostRepository->updatePost($id, $post->text);
+                else
+                    $this->allianceBoardPostRepository->updatePost($id, $post->text, $this->getUser()->getId());
+                $msg['success'] = "Änderungen gespeichert!";
+            }
+
+            return $this->render('game/alliance/allianceboard/allianceboard_editpost.html.twig',[
+                'msg' => $msg??null,
+                'form' => $form,
+            ]);
+        }
+        else {
+            return $this->render('game/alliance/allianceboard/allianceboard_notfound.html.twig',[
+                'message' => 'Keine Berechtigung!'
+            ]);
+        }
+    }
+
+    //delete post
+    #[Route('/game/allianceboard/deletepost/{id}', name: 'game.alliance.allianceboard.deletepost')]
+    public function deletePost(int $id, Request $request): Response
+    {
+        $post = $this->allianceBoardPostRepository->getPost($id);
+
+        if(!$post) {
+            return $this->render('game/alliance/allianceboard/allianceboard_notfound.html.twig',[
+                'message' => 'Datensatz nicht gefunden!'
+            ]);
+        }
+
+        if($this->getUser()->getId() == $post->userId || $this->isAdmin()) {
+            $form = $this->createFormBuilder()
+                ->add('postDelete', SubmitType::class, ['label' => 'Löschen'])
+                ->getForm();
+
+            $form->handleRequest($request);
+            if ($form->isSubmitted() && $form->isValid()) {
+                $this->allianceBoardPostRepository->deletePost($id);
+                $msg['success'] = "Post gelöscht!";
+            }
+
+            return $this->render('game/alliance/allianceboard/allianceboard_deletepost.html.twig',[
+                'post' => $post,
+                'msg' => $msg??null,
+                'form' => $form
+            ]);
+        }
+        else {
+            return $this->render('game/alliance/allianceboard/allianceboard_notfound.html.twig',[
+                'message' => 'Keine Berechtigung!'
+            ]);
+        }
     }
 
     private function isAdmin():bool {

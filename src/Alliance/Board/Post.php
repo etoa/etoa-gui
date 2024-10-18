@@ -22,4 +22,14 @@ class Post
         $this->timestamp = (int) $data['post_timestamp'];
         $this->changed = $data['post_changed'] ? (int) $data['post_changed'] : null;
     }
+
+    public function getPostText():string
+    {
+        return $this->text;
+    }
+
+    public function setPostText(string $postText):void
+    {
+        $this->text = $postText;
+    }
 }

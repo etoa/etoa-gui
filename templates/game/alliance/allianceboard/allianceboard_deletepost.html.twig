@@ -1,0 +1,20 @@
+{% extends 'game/alliance/allianceboard/allianceboard.html.twig' %}
+{% import 'macros.html.twig' as macros %}
+
+{% block allianceboard %}
+    <h2>Beitrag löschen</h2>
+    {% if msg.success is defined %}
+        {{ macros.successMessage(msg.success) }}
+        <a href="{{ path('game.alliance.allianceboard.showposts',{id:post.topicId })}}">
+            <input type="button" value="Zurück"/>
+        </a>
+    {% else %}
+        {{ form_start(form) }}
+            {{ macros.message('Soll der folgende Beitrag wirklich gelöscht werden?',BBCodeToHTML(post.text)|raw) }}
+            {{ form_widget(form.postDelete) }}
+            <a href="{{ path('game.alliance.allianceboard.showtopics',{id:app.request.attributes.get('_route_params').id}) }}">
+                <input type="button" value="Abbrechen"/>
+            </a>
+        {{ form_end(form) }}
+    {% endif %}
+{% endblock %}

@@ -1,0 +1,51 @@
+{% extends 'game/alliance/allianceboard/allianceboard.html.twig' %}
+{% import 'macros.html.twig' as macros %}
+
+{% block allianceboard %}
+    <h2>
+        <a href="{{ path('game.alliance.allianceboard.overview') }}">Übersicht</a> > <a href="{{ path('game.alliance.allianceboard.showtopics',{'id':topic.categoryId})}}">
+        {{ category.name }}</a> >
+        {{ topic.subject }}</h2>
+    <twig:Table title="{{ topic.subject }}">
+    {% block table_content %}
+        {% for post in posts %}
+            <tr>
+                <th style="width:150px;">
+                    <a href="?page=userinfo&amp;id=">{{ post.userNick }}</a><br/>
+                    <div style="padding:8px;">
+                        <img id="avatar" src="{{ userRepository.user(post.userId).avatar?constant('EtoA\\Admin\\AllianceBoardAvatar::IMAGE_PATH')~userRepository.user(post.userId).avatar:constant('EtoA\\Admin\\AllianceBoardAvatar::IMAGE_PATH')~constant('EtoA\\Admin\\AllianceBoardAvatar::DEFAULT_IMAGE') }}" alt="avatar" style="width:64px;height:64px;"/>
+                    </div>
+                    Beiträge: {{ cpost }}<br/><br/> {{ formatTimestamp(post.timestamp) }} Uhr<br/>
+                    {% if isAdmin or post.userId == app.user.id %}
+                        <a href="{{path('game.alliance.allianceboard.editpost',{id:post.id})}}">
+                            <img src="{{ asset('build/images/edit.gif') }}" alt="edit" style="border:none" />
+                        </a>
+                        <a href="{{ path('game.alliance.allianceboard.deletepost',{id:post.id}) }}">
+                            <img src="{{ asset('build/images/delete.gif') }}" alt="del" style="border:none;" />
+                        </a>
+                    {% endif %}
+                </th>
+                <td>
+                    {{  BBCodeToHTML(post.text)|raw }}
+                    {% if post.changed %}
+                        <br/><br/>
+                        <span class='textSmall'>Dieser Beitrag wurde zuletzt geändert am {{ post.changed|date("d.m.Y") }} um {{ post.changed|date("H:i") }} Uhr.</span>
+                    {% endif %}
+                    {% if userRepository.user(app.user.id).signature %}
+                        <hr>
+                        {{ BBCodeToHTML(userRepository.user(app.user.id).signature )}}
+                    {% endif %}
+                </td>
+            </tr>
+        {% endfor %}
+    {% endblock %}
+    </twig:Table>
+    {% if not topic.closed %}
+        <a href="{{ path('game.alliance.allianceboard.newpost',{'id':topic.id}) }}">
+            <input type="button" value="Neues Thema"/>&nbsp;
+        </a>
+    {% endif %}
+    <a href="{{ path('game.alliance.allianceboard.showtopics',{id:topic.categoryId}) }}">
+        <input type="button" value="Zur Übersicht"/>
+    </a>
+{% endblock %}

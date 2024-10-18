@@ -6,6 +6,7 @@ use EtoA\Admin\AdminRoleManager;
 use EtoA\Admin\AdminUser;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\HostCache\NetworkNameService;
+use EtoA\Image\ImageUtil;
 use EtoA\Ranking\UserBannerService;
 use EtoA\Support\BBCodeUtils;
 use EtoA\Support\ExternalUrl;
@@ -67,6 +68,7 @@ class TwigExtension extends AbstractExtension
             new TwigFunction('formatNumber', [$this, 'formatNumber']),
             new TwigFunction('base64', [$this, 'base64']),
             new TwigFunction('tm', [$this, 'tm']),
+            new TwigFunction('icon', [$this, 'icon']),
             new TwigFunction('banner', [$this, 'getBannerValues']),
         ];
     }
@@ -160,6 +162,11 @@ class TwigExtension extends AbstractExtension
     public function getParam2(string $key): string
     {
         return $this->config->param2($key);
+    }
+
+    public function icon(string $key): string
+    {
+        return ImageUtil::icon($key);
     }
 
     public function getRuntimeValue(string $key): string
