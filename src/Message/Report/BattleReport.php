@@ -3,7 +3,7 @@
 namespace EtoA\Message\Report;
 
 use EtoA\Core\Database\PropertyAssign;
-use EtoA\Message\Report;
+use EtoA\Entity\Report;
 use EtoA\Message\ReportContext;
 use EtoA\Message\ReportData\BattleReportData;
 
@@ -45,7 +45,7 @@ class BattleReport extends Report implements ReportInterface
                 $subject = "Kampfbericht (";
                 switch ($this->data->result) {
                     case 1:
-                        if (in_array($this->userId, $this->data->users, true)) {
+                        if (in_array($this->getUserId(), $this->data->users, true)) {
                             $subject .= 'Gewonnen';
                         } else {
                             $subject .= 'Verloren';
@@ -53,7 +53,7 @@ class BattleReport extends Report implements ReportInterface
 
                         break;
                     case 2:
-                        if (in_array($this->userId, $this->data->users, true)) {
+                        if (in_array($this->getUserId(), $this->data->users, true)) {
                             $subject .= 'Verloren';
                         } else {
                             $subject .= 'Gewonnen';
@@ -64,7 +64,7 @@ class BattleReport extends Report implements ReportInterface
                         $subject .= 'Unentschieden';
                 }
 
-                return $subject . ') ' . $this->context->entities[$this->entity1Id]->toString();
+                return $subject . ') ' . $this->context->entities[$this->getEntity1Id()]->toString();
             default:
                 return self::SUB_TYPES[$this->data->subtype];
         }

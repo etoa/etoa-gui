@@ -3,7 +3,7 @@
 namespace EtoA\Message\Report;
 
 use EtoA\Core\Database\PropertyAssign;
-use EtoA\Message\Report;
+use EtoA\Entity\Report;
 use EtoA\Message\ReportContext;
 use EtoA\Message\ReportData\SpyReportData;
 
@@ -30,9 +30,9 @@ class SpyReport extends Report implements ReportInterface
     {
         switch ($this->data->subtype) {
             case 'spy':
-                return 'Spionagebericht ' . $this->context->entities[$this->entity1Id]->toString();
+                return 'Spionagebericht ' . $this->context->entities[$this->getEntity1Id()]->toString();
             case 'spyfailed':
-                return 'Spionage fehlgeschlagen auf ' . $this->context->entities[$this->entity1Id]->toString();
+                return 'Spionage fehlgeschlagen auf ' . $this->context->entities[$this->getEntity1Id()]->toString();
             default:
                 return self::SUB_TYPES[$this->data->subtype];
         }

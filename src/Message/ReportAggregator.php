@@ -6,6 +6,7 @@ use EtoA\Building\BuildingDataRepository;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Defense\DefenseDataRepository;
 use EtoA\Defense\DefenseSearch;
+use EtoA\Entity\Report;
 use EtoA\Fleet\FleetRepository;
 use EtoA\Fleet\FleetSearch;
 use EtoA\Message\Report\BattleReport;
@@ -47,13 +48,13 @@ class ReportAggregator
 
         $typeMap = [];
         foreach ($reports as $report) {
-            $typeMap[$report->type][$report->id] = $report->getTransformedDataFromContent();
+            $typeMap[$report->getType()][$report->getId()] = $report->getTransformedDataFromContent();
 
             $request
-                ->addEntityId($report->entity1Id)
-                ->addEntityId($report->entity2Id)
-                ->addUserId($report->userId)
-                ->addUserId($report->opponentId);
+                ->addEntityId($report->getEntity1Id())
+                ->addEntityId($report->getEntity2Id())
+                ->addUserId($report->getUserId())
+                ->addUserId($report->getOpponentId());
         }
 
         $battleReports = $this->reportRepository->getBattleData(array_keys($typeMap[ReportTypes::TYPE_BATTLE] ?? []));
@@ -120,9 +121,9 @@ class ReportAggregator
 
         $fullReports = [];
         foreach ($reports as $report) {
-            switch ($report->type) {
+            switch ($report->getType()) {
                 case ReportTypes::TYPE_BATTLE:
-                    $fullReports[] = new BattleReport($report, $battleReports[$report->id], $context);
+                    $fullReports[] = new BattleReport($report, $battleReports[$report->getId()], $context);
 
                     break;
                 case ReportTypes::TYPE_EXPLORE:
@@ -130,15 +131,15 @@ class ReportAggregator
 
                     break;
                 case ReportTypes::TYPE_MARKET:
-                    $fullReports[] = new MarketReport($report, $marketReports[$report->id], $context);
+                    $fullReports[] = new MarketReport($report, $marketReports[$report->getId()], $context);
 
                     break;
                 case ReportTypes::TYPE_OTHER:
-                    $fullReports[] = new OtherReport($report, $otherReports[$report->id], $context);
+                    $fullReports[] = new OtherReport($report, $otherReports[$report->getId()], $context);
 
                     break;
                 case ReportTypes::TYPE_SPY:
-                    $fullReports[] = new SpyReport($report, $spyReports[$report->id], $context);
+                    $fullReports[] = new SpyReport($report, $spyReports[$report->getId()], $context);
 
                     break;
             }

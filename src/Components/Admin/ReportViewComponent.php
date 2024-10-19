@@ -2,7 +2,7 @@
 
 namespace EtoA\Components\Admin;
 
-use EtoA\Message\Report;
+use EtoA\Entity\Report;
 use EtoA\Message\ReportAggregator;
 use EtoA\Message\ReportRepository;
 use EtoA\Message\ReportSearch;
@@ -36,8 +36,8 @@ class ReportViewComponent
     {
         $this->report = $report;
         if ($this->report !== null) {
-            $this->reportId = $report->id;
-            $this->userId = $report->userId;
+            $this->reportId = $report->getId();
+            $this->userId = $report->getUserId();
         }
     }
 

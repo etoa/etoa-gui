@@ -3,7 +3,7 @@
 namespace EtoA\Message\Report;
 
 use EtoA\Core\Database\PropertyAssign;
-use EtoA\Message\Report;
+use EtoA\Entity\Report;
 use EtoA\Message\ReportContext;
 
 class ExploreReport extends Report implements ReportInterface

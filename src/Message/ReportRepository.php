@@ -5,7 +5,9 @@ declare(strict_types=1);
 namespace EtoA\Message;
 
 use Doctrine\DBAL\ArrayParameterType;
+use Doctrine\Persistence\ManagerRegistry;
 use EtoA\Core\AbstractRepository;
+use EtoA\Entity\Report;
 use EtoA\Message\ReportData\BattleReportData;
 use EtoA\Message\ReportData\MarketReportData;
 use EtoA\Message\ReportData\OtherReportData;
@@ -13,6 +15,11 @@ use EtoA\Message\ReportData\SpyReportData;
 
 class ReportRepository extends AbstractRepository
 {
+    public function __construct(ManagerRegistry $registry)
+    {
+        parent::__construct($registry, Report::class);
+    }
+
     public function countNotArchived(): int
     {
         return (int) $this->createQueryBuilder('q')
