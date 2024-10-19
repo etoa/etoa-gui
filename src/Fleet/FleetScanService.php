@@ -12,6 +12,7 @@ use EtoA\Alliance\AllianceTechnologyId;
 use EtoA\Alliance\AllianceTechnologyRepository;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Defense\DefenseRepository;
+use EtoA\Entity\Fleet;
 use EtoA\Entity\User;
 use EtoA\Fleet\Exception\FleetScanFailedException;
 use EtoA\Fleet\Exception\FleetScanPreconditionsNotMetException;
@@ -335,8 +336,8 @@ class FleetScanService
 
     private function individualFleetReport(Fleet $fleet, string $direction, float $decryptLevel): string
     {
-        $fleetSourceEntity = $this->entityRepository->findIncludeCell($fleet->entityFrom);
-        $fleetOwner = $this->userRepository->getUser($fleet->userId);
+        $fleetSourceEntity = $this->entityRepository->findIncludeCell($fleet->getEntityFrom());
+        $fleetOwner = $this->userRepository->getUser($fleet->getUserId());
 
         $out = '[b]Besitzer:[/b] ' . ($fleetOwner !== null ? $fleetOwner->getNick() : 'Unbekannt') . "\n";
 
@@ -348,22 +349,22 @@ class FleetScanService
 
         $out .= "\n[b]Ankunft:[/b] ";
         if ($decryptLevel >= $this->config->getInt("crypto_time_sec_level")) {
-            $out .= date("d.m.Y H:i:s", $fleet->landTime) . " Uhr";
+            $out .= date("d.m.Y H:i:s", $fleet->getLandTime()) . " Uhr";
         } elseif ($decryptLevel >= $this->config->getInt("crypto_time_min_level")) {
-            $out .= date("d.m.Y H:i", $fleet->landTime) . " Uhr";
+            $out .= date("d.m.Y H:i", $fleet->getLandTime()) . " Uhr";
         } elseif ($decryptLevel >= $this->config->getInt("crypto_time_15_level")) {
             $rand = random_int(0, 15 * 60); // 15 times 60 seconds
-            $out .= "Zwischen " . date("d.m.Y H:i", $fleet->landTime - $rand) . " und " . date("d.m.Y H:i", $fleet->landTime + (15 * 60) - $rand) . " Uhr";
+            $out .= "Zwischen " . date("d.m.Y H:i", $fleet->getLandTime() - $rand) . " und " . date("d.m.Y H:i", $fleet->getLandTime() + (15 * 60) - $rand) . " Uhr";
         } elseif ($decryptLevel >= $this->config->getInt("crypto_time_30_level")) {
             $rand = random_int(0, 30 * 60); // 30 times 60 seconds
-            $out .= "Zwischen " . date("d.m.Y H:i", $fleet->landTime - $rand) . " und " . date("d.m.Y H:i", $fleet->landTime + (30 * 60) - $rand) . " Uhr";
+            $out .= "Zwischen " . date("d.m.Y H:i", $fleet->getLandTime() - $rand) . " und " . date("d.m.Y H:i", $fleet->getLandTime() + (30 * 60) - $rand) . " Uhr";
         } elseif ($decryptLevel >= $this->config->getInt("crypto_time_60_level")) {
             $rand = random_int(0, 60 * 60); // 60 times 60 seconds
-            $out .= "Zwischen " . date("d.m.Y H:i", $fleet->landTime - $rand) . " und " . date("d.m.Y H:i", $fleet->landTime + (60 * 60) - $rand) . " Uhr";
+            $out .= "Zwischen " . date("d.m.Y H:i", $fleet->getLandTime() - $rand) . " und " . date("d.m.Y H:i", $fleet->getLandTime() + (60 * 60) - $rand) . " Uhr";
         }
 
         if ($decryptLevel >= $this->config->getInt("crypto_action_level")) {
-            $action = LegacyFleetAction::createFactory($fleet->action);
+            $action = LegacyFleetAction::createFactory($fleet->getAction());
             $out .= "\n[b]Aktion:[/b] " . substr((string) $action, 25, -7) . "\n";
         } else {
             $out .= "\n";
@@ -373,7 +374,7 @@ class FleetScanService
             $decryptLevel >= $this->config->getInt("crypto_ships_count_all_level") ||
             $decryptLevel >= $this->config->getInt("crypto_ships_count_single_level")
         ) {
-            $shipEntries = $this->fleetRepository->findAllShipsInFleet($fleet->id);
+            $shipEntries = $this->fleetRepository->findAllShipsInFleet($fleet->getId());
             $totalShips = 0;
             $shipNames = $this->shipDataRepository->getShipNames(true);
             foreach ($shipEntries as $shipEntry) {
@@ -397,11 +398,11 @@ class FleetScanService
 
         if ($decryptLevel >= $this->config->getInt("crypto_resources_level")) {
             $out .= "[b]Ressourcen:[/b]";
-            $out .= " Titan: " . number_format($fleet->resMetal);
-            $out .= " Silizium: " . number_format($fleet->resCrystal);
-            $out .= " PVC: " . number_format($fleet->resPlastic);
-            $out .= " Tritium: " . number_format($fleet->resFuel);
-            $out .= " Nahrung: " . number_format($fleet->resFood);
+            $out .= " Titan: " . number_format($fleet->getResMetal());
+            $out .= " Silizium: " . number_format($fleet->getResCrystal());
+            $out .= " PVC: " . number_format($fleet->getResPlastic());
+            $out .= " Tritium: " . number_format($fleet->getResFuel());
+            $out .= " Nahrung: " . number_format($fleet->getResFood());
             $out .= "\n";
         }
 

@@ -3,7 +3,8 @@
 namespace EtoA\Message;
 
 use EtoA\Core\Configuration\ConfigurationService;
-use EtoA\Fleet\Fleet;
+use EtoA\Entity\Fleet;
+use EtoA\Fleet\FleetAction;
 use EtoA\Fleet\FleetStatus;
 use EtoA\Universe\Entity\EntityLabel;
 use EtoA\Universe\Resources\ResourceNames;
@@ -47,10 +48,10 @@ class ReportContext
 
         $this->fleets = [];
         foreach ($fleets as $fleet) {
-            $this->fleets[$fleet->id] = $fleet;
+            $this->fleets[$fleet->getId()] = $fleet;
         }
 
-        $actions = \FleetAction::getAll();
+        $actions = FleetAction::getAll();
         foreach ($actions as $action) {
             $this->fleetActions[$action->code()] = $action->name();
         }

@@ -2,6 +2,8 @@
 
 namespace EtoA\Fleet;
 
+use EtoA\Entity\Fleet;
+
 class ForeignFleets
 {
     /** @var Fleet[] */

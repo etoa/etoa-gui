@@ -2,8 +2,9 @@
 
 namespace EtoA\Controller\Admin;
 
+use Doctrine\ORM\EntityManagerInterface;
 use EtoA\Core\Configuration\ConfigurationService;
-use EtoA\Fleet\Fleet;
+use EtoA\Entity\Fleet;
 use EtoA\Fleet\FleetAction;
 use EtoA\Fleet\FleetRepository;
 use EtoA\Fleet\FleetSendRequest;
@@ -29,8 +30,8 @@ class FleetController extends AbstractAdminController
         private readonly FleetRepository      $fleetRepository,
         private readonly FleetService         $fleetService,
         private readonly PlanetRepository     $planetRepository,
-        private readonly ConfigurationService $config
-    )
+        private readonly ConfigurationService $config,
+        private readonly EntityManagerInterface $entityManager)
     {
     }
 
@@ -52,50 +53,16 @@ class FleetController extends AbstractAdminController
         $form = $this->createForm(FleetType::class, $fleet);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            $resources = new BaseResources();
-            $resources->metal = $fleet->resMetal;
-            $resources->crystal = $fleet->resCrystal;
-            $resources->plastic = $fleet->resPlastic;
-            $resources->fuel = $fleet->resFuel;
-            $resources->food = $fleet->resFood;
-            $resources->people = $fleet->resPeople;
-
-            $fetch = new BaseResources();
-            $fetch->metal = $fleet->fetchMetal;
-            $fetch->crystal = $fleet->fetchCrystal;
-            $fetch->plastic = $fleet->fetchPlastic;
-            $fetch->fuel = $fleet->fetchFuel;
-            $fetch->food = $fleet->fetchFood;
-            $fetch->people = $fleet->fetchPeople;
-
-            $fleetId = $this->fleetRepository->add(
-                $fleet->userId,
-                $fleet->launchTime,
-                $fleet->landTime,
-                $fleet->entityFrom,
-                $fleet->entityTo,
-                $fleet->action,
-                $fleet->status,
-                $resources,
-                $fetch,
-                $fleet->pilots,
-                $fleet->usageFuel,
-                $fleet->usageFood,
-                $fleet->usagePower,
-                $fleet->leaderId,
-                $fleet->nextId,
-                $fleet->nextActionTime,
-                $fleet->supportUsageFuel,
-                $fleet->supportUsageFood
-            );
+            $this->entityManager->persist($fleet);
+            $this->entityManager->flush();
 
             foreach ($fleet->ships as $ship) {
-                $this->fleetRepository->addShipsToFleet($fleetId, $ship['shipId'], $ship['count']);
+                $this->fleetRepository->addShipsToFleet($fleet->getId(), $ship['shipId'], $ship['count']);
             }
 
             $this->addFlash('success', 'Flotte erstellt!');
 
-            $this->redirectToRoute('admin.fleet.edit', ['id' => $fleetId]);
+            $this->redirectToRoute('admin.fleets.edit', ['id' => $fleet->getId()]);
         }
 
         return $this->render('admin/fleet/new.html.twig', [
@@ -161,13 +128,13 @@ class FleetController extends AbstractAdminController
                 foreach ($fleet->ships as $ship) {
                     $toBeAdded = $ship['count'] - ($shipMap[$ship['shipId']] ?? 0);
                     if ($toBeAdded !== 0) {
-                        $this->fleetRepository->addShipsToFleet($fleet->id, $ship['shipId'], $toBeAdded);
+                        $this->fleetRepository->addShipsToFleet($fleet->getId(), $ship['shipId'], $toBeAdded);
                     }
                     unset($shipMap[$ship['shipId']]);
                 }
 
                 foreach (array_keys($shipMap) as $shipId) {
-                    $this->fleetRepository->removeShipsFromFleet($fleet->id, $shipId);
+                    $this->fleetRepository->removeShipsFromFleet($fleet->getId(), $shipId);
                 }
 
                 $this->fleetRepository->save($fleet);

@@ -3,6 +3,7 @@
 namespace EtoA\Fleet;
 
 use EtoA\Core\Database\PropertyAssign;
+use EtoA\Entity\Fleet;
 
 class FleetWithShips extends Fleet
 {

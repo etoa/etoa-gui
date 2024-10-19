@@ -4,10 +4,8 @@ declare(strict_types=1);
 
 namespace EtoA\Fleet;
 
-use Doctrine\DBAL\Query\QueryBuilder;
 use EtoA\Core\AbstractRepository;
-use EtoA\Core\Database\AbstractSearch;
-use EtoA\Core\Database\AbstractSort;
+use EtoA\Entity\Fleet;
 use EtoA\Ship\ShipListItem;
 use EtoA\Universe\Resources\BaseResources;
 
