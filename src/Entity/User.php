@@ -4,199 +4,204 @@ declare(strict_types=1);
 
 namespace EtoA\Entity;
 
-use EtoA\Admin\AllianceBoardAvatar;
-use EtoA\Race\Race;
-use EtoA\Specialist\Specialist;
-use EtoA\User\ProfileImage;
-use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Doctrine\ORM\Mapping as ORM;
+use EtoA\User\UserInterface;
 use EtoA\User\UserRepository;
-
+use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
-class User implements \EtoA\User\UserInterface, PasswordAuthenticatedUserInterface,\Symfony\Component\Security\Core\User\UserInterface
+#[ORM\Table(name: 'users')]
+class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     public const NAME_PATTERN = '/^.[^0-9\'\"\?\<\>\$\!\=\;\&]*$/';
     public const NICK_PATTERN = '/^.[^\'\"\?\<\>\$\!\=\;\&]*$/';
 
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: "AUTO")]
-    #[ORM\Column(type: "integer")]
-    protected int $userId;
+    #[ORM\Column(name: "user_id", type: "integer")]
+    protected int $id;
 
-    #[ORM\Column(type: 'string', length: 180)]
-    protected string $userName;
+    #[ORM\Column(name: "user_name", type: 'string', length: 180)]
+    protected string $name;
 
-    #[ORM\Column(type: "string", length: 180, unique: true)]
-    protected string $userNick;
+    #[ORM\Column(name: "user_nick", type: "string", length: 180, unique: true)]
+    protected string $nick;
 
-    #[ORM\Column(type: "string")]
-    protected ?string $userPassword = null;
+    #[ORM\Column(name: "user_password", type: "string")]
+    protected ?string $password = null;
 
-    #[ORM\Column(type: "string")]
-    protected ?string $userPasswordTemp;
+    #[ORM\Column(name: "user_password_temp", type: "string")]
+    protected ?string $passwordTemp;
 
-    #[ORM\Column(type: "integer")]
-    protected int $userLastLogin;
+    #[ORM\Column(name: "user_last_login", type: "integer")]
+    protected int $lastLogin;
 
-    #[ORM\Column(type: "integer")]
-    protected int $userLastOnline;
+    #[ORM\Column(name: "user_last_online", type: "integer")]
+    protected int $lastOnline;
 
-    #[ORM\Column(type: "integer")]
-    protected int $userLoginTime;
+    #[ORM\Column(name: "user_logintime", type: "integer")]
+    protected int $loginTime;
 
-    #[ORM\Column(type: "integer")]
-    protected int $userActionTime;
+    #[ORM\Column(name: "user_acttime", type: "integer")]
+    protected int $actionTime;
 
-    #[ORM\Column(type: "integer")]
-    protected int $userLogoutTime;
+    #[ORM\Column(name: "user_logouttime", type: "integer")]
+    protected int $logoutTime;
 
-    #[ORM\Column(type: "string")]
-    protected ?string $userSessionKey;
+    #[ORM\Column(name: "user_session_key", type: "string")]
+    protected ?string $sessionKey;
 
-    #[ORM\Column(type: "string")]
-    protected string $userEmail;
+    #[ORM\Column(name: "user_email", type: "string")]
+    protected string $email;
 
-    #[ORM\Column(type: "string")]
-    protected string $userEmailFix;
+    #[ORM\Column(name: "user_email_fix", type: "string")]
+    protected string $emailFix;
 
-    #[ORM\Column(type: "string")]
-    protected ?string $userIp;
+    #[ORM\Column(name: "user_ip", type: "string")]
+    protected ?string $ip;
 
-    #[ORM\Column(type: "string")]
-    protected ?string $userHostname;
+    #[ORM\Column(name: "user_hostname", type: "string")]
+    protected ?string $hostname;
 
-    #[ORM\Column(type: "integer")]
-    protected int $userBlockedFrom;
+    #[ORM\Column(name: "user_blocked_from", type: "integer")]
+    protected int $blockedFrom;
 
-    #[ORM\Column(type: "integer")]
-    protected int $userBlockedTo;
+    #[ORM\Column(name: "user_blocked_to", type: "integer")]
+    protected int $blockedTo;
 
-    #[ORM\Column(type: "string")]
-    protected ?string $userBanReason;
+    #[ORM\Column(name: "user_ban_reason", type: "string")]
+    protected ?string $banReason;
 
-    #[ORM\Column(type: "integer")]
-    protected int $userAttackBans;
+    #[ORM\Column(name: "user_attack_bans", type: "integer")]
+    protected int $attackBans;
 
-    #[ORM\Column(type: "integer")]
-    protected int $userBanAdminId;
+    #[ORM\Column(name: "user_ban_admin_id", type: "integer")]
+    protected int $banAdminId;
 
-    #[ORM\Column(type: "integer")]
-    protected int $userHmodFrom;
+    #[ORM\Column(name: "user_hmode_from", type: "integer")]
+    protected int $hmodFrom;
 
-    #[ORM\Column(type: "integer")]
-    protected int $userhmodTo;
+    #[ORM\Column(name: "user_hmode_to", type: "integer")]
+    protected int $hmodTo;
 
+    #[ORM\Column(name: "user_race_id", type: "integer")]
+    protected int $raceId;
+
+    #[ORM\JoinColumn(name: 'user_race_id', referencedColumnName: 'race_id')]
     #[ORM\ManyToOne(targetEntity: Race::class)]
-    protected Race $userRaceId;
+    protected Race|null $race;
 
-    #[ORM\Column(type: "integer")]
-    protected int $userAllianceId;
+    #[ORM\Column(name: "user_alliance_id", type: "integer")]
+    protected int $allianceId;
 
-    #[ORM\Column(type: "integer")]
-    protected int $userAllianceShipPoints;
+    #[ORM\Column(name: "user_alliance_shippoints", type: "integer")]
+    protected int $allianceShipPoints;
 
-    #[ORM\Column(type: "integer")]
-    protected int $userAllianceShipPointsUsed;
+    #[ORM\Column(name: "user_alliance_shippoints_used", type: "integer")]
+    protected int $allianceShipPointsUsed;
 
-    #[ORM\Column(type: "integer")]
-    protected int $userallianceLeave;
+    #[ORM\Column(name: "user_alliance_leave", type: "integer")]
+    protected int $allianceLeave;
 
-    #[ORM\Column(type: "integer")]
-    protected int $usersittingDays;
+    #[ORM\Column(name: "user_sitting_days", type: "integer")]
+    protected int $sittingDays;
 
-    #[ORM\Column(type: "integer")]
-    protected int $userMultiDelets;
+    #[ORM\Column(name: "user_multi_delets", type: "integer")]
+    protected int $multiDelets;
 
-    #[ORM\Column(type: "boolean")]
-    protected bool $userSetup;
+    #[ORM\Column(name: "user_setup", type: "boolean")]
+    protected bool $setup;
 
 
-    #[ORM\Column(type: "integer")]
-    protected int $userPoints;
+    #[ORM\Column(name: "user_points", type: "integer")]
+    protected int $points;
 
-    #[ORM\Column(type: "integer")]
-    protected int $userRank;
+    #[ORM\Column(name: "user_rank", type: "integer")]
+    protected int $rank;
 
-    #[ORM\Column(type: "integer")]
-    protected int $userRankHighest;
+    #[ORM\Column(name: "user_rank_highest", type: "integer")]
+    protected int $rankHighest;
 
-    #[ORM\Column(type: "integer")]
-    protected int $userAllianceRankId;
+    #[ORM\Column(name: "user_alliance_rank_id", type: "integer")]
+    protected int $allianceRankId;
 
-    #[ORM\Column(type: "integer")]
-    protected int $userRegistered;
+    #[ORM\Column(name: "user_registered", type: "integer")]
+    protected int $registered;
 
-    #[ORM\Column(type: "string")]
-    protected ?string $userProfileText;
+    #[ORM\Column(name: "user_profile_text", type: "string")]
+    protected ?string $profileText;
 
-    #[ORM\Column(type: "boolean")]
-    protected bool $userGhost;
+    #[ORM\Column(name: "user_ghost", type: "boolean")]
+    protected bool $ghost;
 
     #[ORM\Column(type: "integer")]
     protected int $admin;
 
-    #[ORM\Column(type: "integer")]
-    protected int $userChatAdmin;
+    #[ORM\Column(name: "user_chatadmin", type: "integer")]
+    protected int $chatAdmin;
 
-    #[ORM\Column(type: "integer")]
-    protected int $userVisits;
+    #[ORM\Column(name: "user_visits", type: "integer")]
+    protected int $visits;
 
-    #[ORM\Column(type: "string")]
-    protected ?string $userAvatar;
+    #[ORM\Column(name: "user_avatar", type: "string")]
+    protected ?string $avatar;
 
-    #[ORM\Column(type: "string")]
-    protected ?string $userSignature;
+    #[ORM\Column(name: "user_signature", type: "string")]
+    protected ?string $signature;
 
-    #[ORM\Column(type: "string")]
-    protected ?string $userClient;
+    #[ORM\Column(name: "user_client", type: "string")]
+    protected ?string $client;
 
-    #[ORM\Column(type: "integer")]
-    protected int $userResFromRaid;
+    #[ORM\Column(name: "user_res_from_raid", type: "integer")]
+    protected int $resFromRaid;
 
-    #[ORM\Column(type: "integer")]
-    protected int $userResFromTf;
+    #[ORM\Column(name: "user_res_from_tf", type: "integer")]
+    protected int $resFromTf;
 
-    #[ORM\Column(type: "integer")]
-    protected int $userResFromAsteroid;
+    #[ORM\Column(name: "user_res_from_asteroid", type: "integer")]
+    protected int $resFromAsteroid;
 
-    #[ORM\Column(type: "integer")]
-    protected int $userResFromNebula;
+    #[ORM\Column(name: "user_res_from_nebula", type: "integer")]
+    protected int $resFromNebula;
 
     #[ORM\Column(type: "integer")]
     protected int $userMainPlanetChanged;
 
-    #[ORM\Column(type: "string")]
-    protected ?string $userProfileBoardUrl;
+    #[ORM\Column(name: "user_profile_board_url", type: "string")]
+    protected ?string $profileBoardUrl;
 
-    #[ORM\Column(type: "string")]
-    protected ?string $userProfileImage;
+    #[ORM\Column(name: "user_profile_img", type: "string")]
+    protected ?string $profileImage;
 
-    #[ORM\Column(type: "boolean")]
-    protected bool $userProfileImageCheck;
+    #[ORM\Column(name: "user_profile_img_check", type: "boolean")]
+    protected bool $profileImageCheck;
+
+    #[ORM\Column(name: "user_specialist_id", type: "integer")]
+    protected int $specialistId;
 
     #[ORM\ManyToOne(targetEntity: Specialist::class)]
-    protected Specialist $userSpecialistId;
+    #[ORM\JoinColumn(name: 'user_specialist_id', referencedColumnName: 'specialist_id')]
+    protected Specialist $specialist;
 
-    #[ORM\Column(type: "integer")]
-    protected int $userSpecialistTime;
+    #[ORM\Column(name: "user_specialist_time", type: "integer")]
+    protected int $specialistTime;
 
-    #[ORM\Column(type: "integer")]
-    protected int $userDeleted;
+    #[ORM\Column(name: "user_deleted", type: "integer")]
+    protected int $deleted;
 
-    #[ORM\Column(type: "string")]
-    protected ?string $userObserve;
+    #[ORM\Column(name: "user_observe", type: "string")]
+    protected ?string $observe;
 
-    #[ORM\Column(type: "integer")]
+    #[ORM\Column(name: "lastinvasion", type: "integer")]
     protected int $lastInvasion;
 
-    #[ORM\Column(type: "integer")]
+    #[ORM\Column(name: "spyattack_counter", type: "integer")]
     protected int $spyAttackCounter;
 
-    #[ORM\Column(type: "string")]
+    #[ORM\Column(name: "discoverymask", type: "string")]
     protected ?string $discoveryMask;
 
-    #[ORM\Column(type: "integer")]
+    #[ORM\Column(name: "discoverymask_last_updated", type: "integer")]
     protected int $discoveryMaskLastUpdated;
 
     #[ORM\Column(type: "float")]
@@ -220,443 +225,439 @@ class User implements \EtoA\User\UserInterface, PasswordAuthenticatedUserInterfa
     #[ORM\Column(type: "boolean")]
     protected bool $userChangedMainPlanet;
 
-
     public function getPassword(): ?string
     {
-        return $this->userPassword;
+        return $this->password;
     }
 
     public function getId(): int
     {
-        return $this->userId;
+        return $this->id;
     }
 
     public function getNick(): string
     {
-        return $this->userNick;
+        return $this->nick;
     }
 
-    public function getUserId(): ?int
+    public function getName(): ?string
     {
-        return $this->userId;
+        return $this->name;
     }
 
-    public function getUserName(): ?string
+    public function setName(string $name): static
     {
-        return $this->userName;
-    }
-
-    public function setUserName(string $userName): static
-    {
-        $this->userName = $userName;
+        $this->name = $name;
 
         return $this;
     }
 
-    public function getUserNick(): ?string
+    public function setNick(string $nick): static
     {
-        return $this->userNick;
-    }
-
-    public function setUserNick(string $userNick): static
-    {
-        $this->userNick = $userNick;
+        $this->nick = $nick;
 
         return $this;
     }
 
-    public function getUserPassword(): ?string
+    public function setPassword(string $password): static
     {
-        return $this->userPassword;
-    }
-
-    public function setUserPassword(string $userPassword): static
-    {
-        $this->userPassword = $userPassword;
+        $this->password = $password;
 
         return $this;
     }
 
-    public function getUserPasswordTemp(): ?string
+    public function getPasswordTemp(): ?string
     {
-        return $this->userPasswordTemp;
+        return $this->passwordTemp;
     }
 
-    public function setUserPasswordTemp(string $userPasswordTemp): static
+    public function setPasswordTemp(string $passwordTemp): static
     {
-        $this->userPasswordTemp = $userPasswordTemp;
+        $this->passwordTemp = $passwordTemp;
 
         return $this;
     }
 
-    public function getUserLastLogin(): ?int
+    public function getLastLogin(): ?int
     {
-        return $this->userLastLogin;
+        return $this->lastLogin;
     }
 
-    public function setUserLastLogin(int $userLastLogin): static
+    public function setLastLogin(int $lastLogin): static
     {
-        $this->userLastLogin = $userLastLogin;
+        $this->lastLogin = $lastLogin;
 
         return $this;
     }
 
-    public function getUserLastOnline(): ?int
+    public function getLastOnline(): ?int
     {
-        return $this->userLastOnline;
+        return $this->lastOnline;
     }
 
-    public function setUserLastOnline(int $userLastOnline): static
+    public function setLastOnline(int $lastOnline): static
     {
-        $this->userLastOnline = $userLastOnline;
+        $this->lastOnline = $lastOnline;
 
         return $this;
     }
 
-    public function getUserLoginTime(): ?int
+    public function getLoginTime(): ?int
     {
-        return $this->userLoginTime;
+        return $this->loginTime;
     }
 
-    public function setUserLoginTime(int $userLoginTime): static
+    public function setLoginTime(int $loginTime): static
     {
-        $this->userLoginTime = $userLoginTime;
+        $this->loginTime = $loginTime;
 
         return $this;
     }
 
-    public function getUserActionTime(): ?int
+    public function getActionTime(): ?int
     {
-        return $this->userActionTime;
+        return $this->actionTime;
     }
 
-    public function setUserActionTime(int $userActionTime): static
+    public function setActionTime(int $actionTime): static
     {
-        $this->userActionTime = $userActionTime;
+        $this->actionTime = $actionTime;
 
         return $this;
     }
 
-    public function getUserLogoutTime(): ?int
+    public function getLogoutTime(): ?int
     {
-        return $this->userLogoutTime;
+        return $this->logoutTime;
     }
 
-    public function setUserLogoutTime(int $userLogoutTime): static
+    public function setLogoutTime(int $logoutTime): static
     {
-        $this->userLogoutTime = $userLogoutTime;
+        $this->logoutTime = $logoutTime;
 
         return $this;
     }
 
-    public function getUserSessionKey(): ?string
+    public function getSessionKey(): ?string
     {
-        return $this->userSessionKey;
+        return $this->sessionKey;
     }
 
-    public function setUserSessionKey(string $userSessionKey): static
+    public function setSessionKey(string $sessionKey): static
     {
-        $this->userSessionKey = $userSessionKey;
+        $this->sessionKey = $sessionKey;
 
         return $this;
     }
 
-    public function getUserEmail(): ?string
+    public function getEmail(): ?string
     {
-        return $this->userEmail;
+        return $this->email;
     }
 
-    public function setUserEmail(string $userEmail): static
+    public function setEmail(string $email): static
     {
-        $this->userEmail = $userEmail;
+        $this->email = $email;
 
         return $this;
     }
 
-    public function getUserEmailFix(): ?string
+    public function getEmailFix(): ?string
     {
-        return $this->userEmailFix;
+        return $this->emailFix;
     }
 
-    public function setUserEmailFix(string $userEmailFix): static
+    public function setEmailFix(string $emailFix): static
     {
-        $this->userEmailFix = $userEmailFix;
+        $this->emailFix = $emailFix;
 
         return $this;
     }
 
-    public function getUserIp(): ?string
+    public function getIp(): ?string
     {
-        return $this->userIp;
+        return $this->ip;
     }
 
-    public function setUserIp(string $userIp): static
+    public function setIp(string $ip): static
     {
-        $this->userIp = $userIp;
+        $this->ip = $ip;
 
         return $this;
     }
 
-    public function getUserHostname(): ?string
+    public function getHostname(): ?string
     {
-        return $this->userHostname;
+        return $this->hostname;
     }
 
-    public function setUserHostname(string $userHostname): static
+    public function setHostname(string $hostname): static
     {
-        $this->userHostname = $userHostname;
+        $this->hostname = $hostname;
 
         return $this;
     }
 
-    public function getUserBlockedFrom(): ?int
+    public function getBlockedFrom(): ?int
     {
-        return $this->userBlockedFrom;
+        return $this->blockedFrom;
     }
 
-    public function setUserBlockedFrom(int $userBlockedFrom): static
+    public function setBlockedFrom(int $blockedFrom): static
     {
-        $this->userBlockedFrom = $userBlockedFrom;
+        $this->blockedFrom = $blockedFrom;
 
         return $this;
     }
 
-    public function getUserBlockedTo(): ?int
+    public function getBlockedTo(): ?int
     {
-        return $this->userBlockedTo;
+        return $this->blockedTo;
     }
 
-    public function setUserBlockedTo(int $userBlockedTo): static
+    public function setBlockedTo(int $blockedTo): static
     {
-        $this->userBlockedTo = $userBlockedTo;
+        $this->blockedTo = $blockedTo;
 
         return $this;
     }
 
-    public function getUserBanReason(): ?string
+    public function getBanReason(): ?string
     {
-        return $this->userBanReason;
+        return $this->banReason;
     }
 
-    public function setUserBanReason(string $userBanReason): static
+    public function setBanReason(string $banReason): static
     {
-        $this->userBanReason = $userBanReason;
+        $this->banReason = $banReason;
 
         return $this;
     }
 
-    public function getUserAttackBans(): ?int
+    public function getAttackBans(): ?int
     {
-        return $this->userAttackBans;
+        return $this->attackBans;
     }
 
-    public function setUserAttackBans(int $userAttackBans): static
+    public function setAttackBans(int $attackBans): static
     {
-        $this->userAttackBans = $userAttackBans;
+        $this->attackBans = $attackBans;
 
         return $this;
     }
 
-    public function getUserBanAdminId(): ?int
+    public function getBanAdminId(): ?int
     {
-        return $this->userBanAdminId;
+        return $this->banAdminId;
     }
 
-    public function setUserBanAdminId(int $userBanAdminId): static
+    public function setBanAdminId(int $banAdminId): static
     {
-        $this->userBanAdminId = $userBanAdminId;
+        $this->banAdminId = $banAdminId;
 
         return $this;
     }
 
-    public function getUserHmodFrom(): ?int
+    public function getHmodFrom(): ?int
     {
-        return $this->userHmodFrom;
+        return $this->hmodFrom;
     }
 
-    public function setUserHmodFrom(int $userHmodFrom): static
+    public function setHmodFrom(int $hmodFrom): static
     {
-        $this->userHmodFrom = $userHmodFrom;
+        $this->hmodFrom = $hmodFrom;
 
         return $this;
     }
 
-    public function getUserhmodTo(): ?int
+    public function getHmodTo(): ?int
     {
-        return $this->userhmodTo;
+        return $this->hmodTo;
     }
 
-    public function setUserhmodTo(int $userhmodTo): static
+    public function setHmodTo(int $hmodTo): static
     {
-        $this->userhmodTo = $userhmodTo;
+        $this->hmodTo = $hmodTo;
 
         return $this;
     }
 
-    public function getUserAllianceId(): ?int
+    public function getRaceId(): ?int
     {
-        return $this->userAllianceId;
+        return $this->raceId;
     }
 
-    public function setUserAllianceId(int $userAllianceId): static
+    public function setRaceId(int $raceId): static
     {
-        $this->userAllianceId = $userAllianceId;
+        $this->raceId = $raceId;
 
         return $this;
     }
 
-    public function getUserAllianceShipPoints(): ?int
+    public function getAllianceId(): ?int
     {
-        return $this->userAllianceShipPoints;
+        return $this->allianceId;
     }
 
-    public function setUserAllianceShipPoints(int $userAllianceShipPoints): static
+    public function setAllianceId(int $allianceId): static
     {
-        $this->userAllianceShipPoints = $userAllianceShipPoints;
+        $this->allianceId = $allianceId;
 
         return $this;
     }
 
-    public function getUserAllianceShipPointsUsed(): ?int
+    public function getAllianceShipPoints(): ?int
     {
-        return $this->userAllianceShipPointsUsed;
+        return $this->allianceShipPoints;
     }
 
-    public function setUserAllianceShipPointsUsed(int $userAllianceShipPointsUsed): static
+    public function setAllianceShipPoints(int $allianceShipPoints): static
     {
-        $this->userAllianceShipPointsUsed = $userAllianceShipPointsUsed;
+        $this->allianceShipPoints = $allianceShipPoints;
 
         return $this;
     }
 
-    public function getUserallianceLeave(): ?int
+    public function getAllianceShipPointsUsed(): ?int
     {
-        return $this->userallianceLeave;
+        return $this->allianceShipPointsUsed;
     }
 
-    public function setUserallianceLeave(int $userallianceLeave): static
+    public function setAllianceShipPointsUsed(int $allianceShipPointsUsed): static
     {
-        $this->userallianceLeave = $userallianceLeave;
+        $this->allianceShipPointsUsed = $allianceShipPointsUsed;
 
         return $this;
     }
 
-    public function getUsersittingDays(): ?int
+    public function getAllianceLeave(): ?int
     {
-        return $this->usersittingDays;
+        return $this->allianceLeave;
     }
 
-    public function setUsersittingDays(int $usersittingDays): static
+    public function setAllianceLeave(int $allianceLeave): static
     {
-        $this->usersittingDays = $usersittingDays;
+        $this->allianceLeave = $allianceLeave;
 
         return $this;
     }
 
-    public function getUserMultiDelets(): ?int
+    public function getSittingDays(): ?int
     {
-        return $this->userMultiDelets;
+        return $this->sittingDays;
     }
 
-    public function setUserMultiDelets(int $userMultiDelets): static
+    public function setSittingDays(int $sittingDays): static
     {
-        $this->userMultiDelets = $userMultiDelets;
+        $this->sittingDays = $sittingDays;
 
         return $this;
     }
 
-    public function isUserSetup(): ?bool
+    public function getMultiDelets(): ?int
     {
-        return $this->userSetup;
+        return $this->multiDelets;
     }
 
-    public function setUserSetup(bool $userSetup): static
+    public function setMultiDelets(int $multiDelets): static
     {
-        $this->userSetup = $userSetup;
+        $this->multiDelets = $multiDelets;
 
         return $this;
     }
 
-    public function getUserPoints(): ?int
+    public function isSetup(): ?bool
     {
-        return $this->userPoints;
+        return $this->setup;
     }
 
-    public function setUserPoints(int $userPoints): static
+    public function setSetup(bool $setup): static
     {
-        $this->userPoints = $userPoints;
+        $this->setup = $setup;
 
         return $this;
     }
 
-    public function getUserRank(): ?int
+    public function getPoints(): ?int
     {
-        return $this->userRank;
+        return $this->points;
     }
 
-    public function setUserRank(int $userRank): static
+    public function setPoints(int $points): static
     {
-        $this->userRank = $userRank;
+        $this->points = $points;
 
         return $this;
     }
 
-    public function getUserRankHighest(): ?int
+    public function getRank(): ?int
     {
-        return $this->userRankHighest;
+        return $this->rank;
     }
 
-    public function setUserRankHighest(int $userRankHighest): static
+    public function setRank(int $rank): static
     {
-        $this->userRankHighest = $userRankHighest;
+        $this->rank = $rank;
 
         return $this;
     }
 
-    public function getUserAllianceRankId(): ?int
+    public function getRankHighest(): ?int
     {
-        return $this->userAllianceRankId;
+        return $this->rankHighest;
     }
 
-    public function setUserAllianceRankId(int $userAllianceRankId): static
+    public function setRankHighest(int $rankHighest): static
     {
-        $this->userAllianceRankId = $userAllianceRankId;
+        $this->rankHighest = $rankHighest;
 
         return $this;
     }
 
-    public function getUserRegistered(): ?int
+    public function getAllianceRankId(): ?int
     {
-        return $this->userRegistered;
+        return $this->allianceRankId;
     }
 
-    public function setUserRegistered(int $userRegistered): static
+    public function setAllianceRankId(int $allianceRankId): static
     {
-        $this->userRegistered = $userRegistered;
+        $this->allianceRankId = $allianceRankId;
 
         return $this;
     }
 
-    public function getUserProfileText(): ?string
+    public function getRegistered(): ?int
     {
-        return $this->userProfileText;
+        return $this->registered;
     }
 
-    public function setUserProfileText(string $userProfileText): static
+    public function setRegistered(int $registered): static
     {
-        $this->userProfileText = $userProfileText;
+        $this->registered = $registered;
 
         return $this;
     }
 
-    public function isUserGhost(): ?bool
+    public function getProfileText(): ?string
     {
-        return $this->userGhost;
+        return $this->profileText;
     }
 
-    public function setUserGhost(bool $userGhost): static
+    public function setProfileText(string $profileText): static
     {
-        $this->userGhost = $userGhost;
+        $this->profileText = $profileText;
+
+        return $this;
+    }
+
+    public function isGhost(): ?bool
+    {
+        return $this->ghost;
+    }
+
+    public function setGhost(bool $ghost): static
+    {
+        $this->ghost = $ghost;
 
         return $this;
     }
@@ -673,110 +674,110 @@ class User implements \EtoA\User\UserInterface, PasswordAuthenticatedUserInterfa
         return $this;
     }
 
-    public function getUserChatAdmin(): ?int
+    public function getChatAdmin(): ?int
     {
-        return $this->userChatAdmin;
+        return $this->chatAdmin;
     }
 
-    public function setUserChatAdmin(int $userChatAdmin): static
+    public function setChatAdmin(int $chatAdmin): static
     {
-        $this->userChatAdmin = $userChatAdmin;
+        $this->chatAdmin = $chatAdmin;
 
         return $this;
     }
 
-    public function getUserVisits(): ?int
+    public function getVisits(): ?int
     {
-        return $this->userVisits;
+        return $this->visits;
     }
 
-    public function setUserVisits(int $userVisits): static
+    public function setVisits(int $visits): static
     {
-        $this->userVisits = $userVisits;
+        $this->visits = $visits;
 
         return $this;
     }
 
-    public function getUserAvatar(): ?string
+    public function getAvatar(): ?string
     {
-        return $this->userAvatar;
+        return $this->avatar;
     }
 
-    public function setUserAvatar(string $userAvatar): static
+    public function setAvatar(string $avatar): static
     {
-        $this->userAvatar = $userAvatar;
+        $this->avatar = $avatar;
 
         return $this;
     }
 
-    public function getUserSignature(): ?string
+    public function getSignature(): ?string
     {
-        return $this->userSignature;
+        return $this->signature;
     }
 
-    public function setUserSignature(string $userSignature): static
+    public function setSignature(string $signature): static
     {
-        $this->userSignature = $userSignature;
+        $this->signature = $signature;
 
         return $this;
     }
 
-    public function getUserClient(): ?string
+    public function getClient(): ?string
     {
-        return $this->userClient;
+        return $this->client;
     }
 
-    public function setUserClient(string $userClient): static
+    public function setClient(string $client): static
     {
-        $this->userClient = $userClient;
+        $this->client = $client;
 
         return $this;
     }
 
-    public function getUserResFromRaid(): ?int
+    public function getResFromRaid(): ?int
     {
-        return $this->userResFromRaid;
+        return $this->resFromRaid;
     }
 
-    public function setUserResFromRaid(int $userResFromRaid): static
+    public function setResFromRaid(int $resFromRaid): static
     {
-        $this->userResFromRaid = $userResFromRaid;
+        $this->resFromRaid = $resFromRaid;
 
         return $this;
     }
 
-    public function getUserResFromTf(): ?int
+    public function getResFromTf(): ?int
     {
-        return $this->userResFromTf;
+        return $this->resFromTf;
     }
 
-    public function setUserResFromTf(int $userResFromTf): static
+    public function setResFromTf(int $resFromTf): static
     {
-        $this->userResFromTf = $userResFromTf;
+        $this->resFromTf = $resFromTf;
 
         return $this;
     }
 
-    public function getUserResFromAsteroid(): ?int
+    public function getResFromAsteroid(): ?int
     {
-        return $this->userResFromAsteroid;
+        return $this->resFromAsteroid;
     }
 
-    public function setUserResFromAsteroid(int $userResFromAsteroid): static
+    public function setResFromAsteroid(int $resFromAsteroid): static
     {
-        $this->userResFromAsteroid = $userResFromAsteroid;
+        $this->resFromAsteroid = $resFromAsteroid;
 
         return $this;
     }
 
-    public function getUserResFromNebula(): ?int
+    public function getResFromNebula(): ?int
     {
-        return $this->userResFromNebula;
+        return $this->resFromNebula;
     }
 
-    public function setUserResFromNebula(int $userResFromNebula): static
+    public function setResFromNebula(int $resFromNebula): static
     {
-        $this->userResFromNebula = $userResFromNebula;
+        $this->resFromNebula = $resFromNebula;
 
         return $this;
     }
@@ -793,74 +794,86 @@ class User implements \EtoA\User\UserInterface, PasswordAuthenticatedUserInterfa
         return $this;
     }
 
-    public function getUserProfileBoardUrl(): ?string
+    public function getProfileBoardUrl(): ?string
     {
-        return $this->userProfileBoardUrl;
+        return $this->profileBoardUrl;
     }
 
-    public function setUserProfileBoardUrl(string $userProfileBoardUrl): static
+    public function setProfileBoardUrl(string $profileBoardUrl): static
     {
-        $this->userProfileBoardUrl = $userProfileBoardUrl;
+        $this->profileBoardUrl = $profileBoardUrl;
 
         return $this;
     }
 
-    public function getUserProfileImage(): ?string
+    public function getProfileImage(): ?string
     {
-        return $this->userProfileImage;
+        return $this->profileImage;
     }
 
-    public function setUserProfileImage(string $userProfileImage): static
+    public function setProfileImage(string $profileImage): static
     {
-        $this->userProfileImage = $userProfileImage;
+        $this->profileImage = $profileImage;
 
         return $this;
     }
 
-    public function isUserProfileImageCheck(): ?bool
+    public function isProfileImageCheck(): ?bool
     {
-        return $this->userProfileImageCheck;
+        return $this->profileImageCheck;
     }
 
-    public function setUserProfileImageCheck(bool $userProfileImageCheck): static
+    public function setProfileImageCheck(bool $profileImageCheck): static
     {
-        $this->userProfileImageCheck = $userProfileImageCheck;
+        $this->profileImageCheck = $profileImageCheck;
 
         return $this;
     }
 
-    public function getUserSpecialistTime(): ?int
+    public function getSpecialistId()
     {
-        return $this->userSpecialistTime;
+        return $this->specialistId;
     }
 
-    public function setUserSpecialistTime(int $userSpecialistTime): static
+    public function setSpecialistId($specialistId): static
     {
-        $this->userSpecialistTime = $userSpecialistTime;
+        $this->specialistId = $specialistId;
 
         return $this;
     }
 
-    public function getUserDeleted(): ?int
+    public function getSpecialistTime(): ?int
     {
-        return $this->userDeleted;
+        return $this->specialistTime;
     }
 
-    public function setUserDeleted(int $userDeleted): static
+    public function setSpecialistTime(int $specialistTime): static
     {
-        $this->userDeleted = $userDeleted;
+        $this->specialistTime = $specialistTime;
 
         return $this;
     }
 
-    public function getUserObserve(): ?string
+    public function getDeleted(): ?int
     {
-        return $this->userObserve;
+        return $this->deleted;
     }
 
-    public function setUserObserve(string $userObserve): static
+    public function setDeleted(int $deleted): static
     {
-        $this->userObserve = $userObserve;
+        $this->deleted = $deleted;
+
+        return $this;
+    }
+
+    public function getObserve(): ?string
+    {
+        return $this->observe;
+    }
+
+    public function setObserve(string $observe): static
+    {
+        $this->observe = $observe;
 
         return $this;
     }
@@ -997,42 +1010,27 @@ class User implements \EtoA\User\UserInterface, PasswordAuthenticatedUserInterfa
         return $this;
     }
 
-    public function getUserRaceId(): ?Race
+    public function getRace(): ?Race
     {
-        return $this->userRaceId;
+        return $this->race;
     }
 
-    public function setUserRaceId(?Race $userRaceId): static
+    public function setRace(?Race $race): static
     {
-        $this->userRaceId = $userRaceId;
+        $this->race = $race;
 
         return $this;
     }
 
-    public function getUserSpecialistId(): ?Specialist
+    public function getSpecialist(): ?Specialist
     {
-        return $this->userSpecialistId;
+        return $this->specialist;
     }
 
-    public function setUserSpecialistId(?Specialist $userSpecialistId): static
+    public function setSpecialist(?Specialist $specialist): static
     {
-        $this->userSpecialistId = $userSpecialistId;
+        $this->specialist = $specialist;
 
         return $this;
-    }
-
-    public function getRoles(): array
-    {
-        return ['ROLE_PLAYER'];
-    }
-
-    public function eraseCredentials()
-    {
-
-    }
-
-    public function getUserIdentifier(): string
-    {
-        return $this->userNick;
     }
 }

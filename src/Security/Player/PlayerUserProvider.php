@@ -22,7 +22,7 @@ class PlayerUserProvider implements UserProviderInterface, PasswordUpgraderInter
             throw new UnsupportedUserException(sprintf('Instances of "%s" are not supported.', get_debug_type($user)));
         }
 
-        $data = $this->userRepository->getUser($user->getId());
+        $data = $this->userRepository->find($user->getId());
         if ($data === null) {
             $e = new UserNotFoundException('User with id ' . $user->getId() . ' not found.');
             $e->setUserIdentifier(json_encode($user->getId()));
@@ -40,8 +40,7 @@ class PlayerUserProvider implements UserProviderInterface, PasswordUpgraderInter
 
     public function loadUserByIdentifier(string $identifier): CurrentPlayer
     {
-        $user = $this->userRepository->findOneBy(['userNick'=>$identifier]);
-        dd($user);
+        $user = $this->userRepository->findOneBy(['nick'=>$identifier]);
         if (null === $user) {
             $e = new UserNotFoundException(sprintf('User "%s" not found.', $identifier));
             $e->setUserIdentifier($identifier);

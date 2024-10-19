@@ -36,8 +36,8 @@ class UserStatistic
     public static function createFromCalculation(User $user, bool $blocked, bool $hmod, bool $inactive, int $allianceId, ?string $allianceTag, ?string $raceName, int $sx, int $sy, int $points, int $shipPoints, int $techPoints, int $buildingPoints, int $expPoints): UserStatistic
     {
         $stats = new UserStatistic();
-        $stats->userId = $user->id;
-        $stats->nick = $user->nick;
+        $stats->userId = $user->getId();
+        $stats->nick = $user->getNick();
         $stats->blocked = $blocked;
         $stats->hmod = $hmod;
         $stats->inactive = $inactive;

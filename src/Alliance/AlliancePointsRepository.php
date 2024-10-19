@@ -4,7 +4,6 @@ namespace EtoA\Alliance;
 
 use Doctrine\Persistence\ManagerRegistry;
 use EtoA\Core\AbstractRepository;
-use EtoA\Entity\User;
 
 class AlliancePointsRepository extends AbstractRepository
 {

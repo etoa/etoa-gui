@@ -81,7 +81,7 @@ class AllianceBase
             $this->allianceTechnologyRepository->updateForAlliance($alliance->id, $technology->id, $level - 1, $alliance->memberCount, $startTime, $endTime);
         }
 
-        $this->allianceHistoryRepository->addEntry($alliance->id, "[b]" . $user->nick . "[/b] hat die Forschung [b]" . $technology->name . " (" . $level . ")[/b] in Auftrag gegeben.");
+        $this->allianceHistoryRepository->addEntry($alliance->id, "[b]" . $user->getNick() . "[/b] hat die Forschung [b]" . $technology->name . " (" . $level . ")[/b] in Auftrag gegeben.");
 
         return $costs;
     }
@@ -135,7 +135,7 @@ class AllianceBase
             $this->allianceBuildingRepository->updateForAlliance($alliance->id, $building->id, $level - 1, $alliance->memberCount, $startTime, $endTime);
         }
 
-        $this->allianceHistoryRepository->addEntry($alliance->id, "[b]" . $user->nick . "[/b] hat die Forschung [b]" . $building->name . " (" . $level . ")[/b] in Auftrag gegeben.");
+        $this->allianceHistoryRepository->addEntry($alliance->id, "[b]" . $user->getNick() . "[/b] hat die Forschung [b]" . $building->name . " (" . $level . ")[/b] in Auftrag gegeben.");
 
         return $costs;
     }

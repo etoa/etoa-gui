@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace EtoA\Specialist;
 
+use EtoA\Entity\Specialist;
 use EtoA\User\UserRepository;
 
 class SpecialistService

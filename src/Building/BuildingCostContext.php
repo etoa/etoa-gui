@@ -2,8 +2,8 @@
 
 namespace EtoA\Building;
 
-use EtoA\Race\Race;
-use EtoA\Specialist\Specialist;
+use EtoA\Entity\Race;
+use EtoA\Entity\Specialist;
 use EtoA\Universe\Planet\PlanetType;
 use EtoA\Universe\Star\SolarType;
 

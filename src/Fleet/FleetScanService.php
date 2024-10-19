@@ -110,7 +110,7 @@ class FleetScanService
 
     public function scanFleets(User $currentUser, Planet $planet, int $cryptoCenterLevel, ?Entity $targetEntity): string
     {
-        $userCooldownDiff = $this->getUserCooldownDifference($currentUser->id);
+        $userCooldownDiff = $this->getUserCooldownDifference($currentUser->getId());
         if ($userCooldownDiff > 0) {
             throw new FleetScanPreconditionsNotMetException("Diese Funktion wurde vor kurzem benutzt. Sie ist wieder verfügbar in " . StringUtils::formatTimespan($userCooldownDiff) . ".");
         }
@@ -120,7 +120,7 @@ class FleetScanService
             throw new FleetScanPreconditionsNotMetException("Zuwenig " . ResourceNames::FUEL . ", " . StringUtils::formatNumber($cryptoFuelCostsPerScan) . " benötigt, " . StringUtils::formatNumber($planet->resFuel) . " vorhanden!");
         }
 
-        $alliance = $this->allianceRepository->getAlliance($currentUser->allianceId);
+        $alliance = $this->allianceRepository->getAlliance($currentUser->getAllianceId());
         if ($alliance->resFuel < $cryptoFuelCostsPerScan) {
             throw new FleetScanPreconditionsNotMetException("Zuwenig Allianzrohstoffe " . ResourceNames::FUEL . ", " . StringUtils::formatNumber($cryptoFuelCostsPerScan) . " benötigt, " . StringUtils::formatNumber($alliance->resFuel) . " vorhanden!");
         }
@@ -137,10 +137,10 @@ class FleetScanService
         }
 
         $cooldownTime = time() + $this->calculateCooldown($cryptoCenterLevel);
-        $this->allianceBuildingRepository->setUserCooldown($currentUser->id, AllianceBuildingId::CRYPTO, $cooldownTime);
+        $this->allianceBuildingRepository->setUserCooldown($currentUser->getId(), AllianceBuildingId::CRYPTO, $cooldownTime);
 
         $targetPlanet = $this->planetRepository->find($targetEntity->id);
-        $this->allianceHistoryRepository->addEntry($currentUser->allianceId, "Der Spieler [b]" . $currentUser->nick . "[/b] hat den Planeten " . $targetPlanet->name . "[/b] (" . $targetEntity->coordinatesString() . ") gescannt!");
+        $this->allianceHistoryRepository->addEntry($currentUser->getAllianceId(), "Der Spieler [b]" . $currentUser->getNick() . "[/b] hat den Planeten " . $targetPlanet->name . "[/b] (" . $targetEntity->coordinatesString() . ") gescannt!");
 
         $targetOwner = $this->userRepository->getUser($targetPlanet->userId);
         $opJam = $this->defenseRepository->countJammingDevicesOnEntity($targetEntity->id);
@@ -154,7 +154,7 @@ class FleetScanService
         if ($chance < 0) {
             if ($opJam > 0 && $targetOwner !== null) {
                 $this->messageRepository->createSystemMessage(
-                    $targetOwner->id,
+                    $targetOwner->getId(),
                     MessageCategoryId::SHIP_SPY,
                     "Störsender erfolgreich",
                     "Eure Techniker haben festgestellt, dass von einem anderen Planeten eine Entschlüsselung eures Funkverkehrs versucht wurde. Daraufhin haben eure Störsender die Funknetze mit falschen Werten überlastet, so dass die gegnerische Analyse fehlschlug!"
@@ -193,11 +193,11 @@ class FleetScanService
 
         // Subtract resources
         $this->planetRepository->addResources($planet->id, 0, 0, 0, -$cryptoFuelCostsPerScan, 0);
-        $this->allianceRepository->addResources($currentUser->allianceId, 0, 0, 0, -$cryptoFuelCostsPerScan, 0);
+        $this->allianceRepository->addResources($currentUser->getAllianceId(), 0, 0, 0, -$cryptoFuelCostsPerScan, 0);
 
         if ($targetOwner !== null) {
             $this->messageRepository->createSystemMessage(
-                $targetOwner->id,
+                $targetOwner->getId(),
                 MessageCategoryId::SHIP_SPY,
                 "Funkstörung",
                 "Eure Flottenkontrolle hat soeben eine kurzzeitige Störung des Kommunikationsnetzes festgestellt. Es kann sein, dass fremde Spione in das Netz eingedrungen sind und Flottendaten geklaut haben."
@@ -205,7 +205,7 @@ class FleetScanService
         }
 
         $this->messageRepository->createSystemMessage(
-            $currentUser->id,
+            $currentUser->getId(),
             MessageCategoryId::MISC,
             "Kryptocenter-Bericht",
             $out
@@ -220,15 +220,15 @@ class FleetScanService
             return 0;
         }
 
-        $value = $this->technologyRepository->getTechnologyLevel($user->id, TechnologyId::TARN);
+        $value = $this->technologyRepository->getTechnologyLevel($user->getId(), TechnologyId::TARN);
 
-        if ($user->allianceId > 0) {
-            $value += $this->allianceTechnologyRepository->getLevel($user->allianceId, AllianceTechnologyId::TARN);
+        if ($user->getAllianceId() > 0) {
+            $value += $this->allianceTechnologyRepository->getLevel($user->getAllianceId(), AllianceTechnologyId::TARN);
         }
 
-        $specialist = $this->specialistDataRepository->getSpecialist($user->specialistId);
+        $specialist = $this->specialistDataRepository->getSpecialist($user->getSpecialistId());
         if ($specialist !== null) {
-            $value += $specialist->tarnLevel;
+            $value += $specialist->getTarnLevel();
         }
 
         return $value;
@@ -240,7 +240,7 @@ class FleetScanService
             return 0;
         }
 
-        return $this->technologyRepository->getTechnologyLevel($user->id, TechnologyId::COMPUTER);
+        return $this->technologyRepository->getTechnologyLevel($user->getId(), TechnologyId::COMPUTER);
     }
 
     private function getSpyTechLevel(?User $user): int
@@ -249,15 +249,15 @@ class FleetScanService
             return 0;
         }
 
-        $value = $this->technologyRepository->getTechnologyLevel($user->id, TechnologyId::SPY);
+        $value = $this->technologyRepository->getTechnologyLevel($user->getId(), TechnologyId::SPY);
 
-        if ($user->allianceId > 0) {
-            $value += $this->allianceTechnologyRepository->getLevel($user->allianceId, AllianceTechnologyId::SPY);
+        if ($user->getAllianceId() > 0) {
+            $value += $this->allianceTechnologyRepository->getLevel($user->getAllianceId(), AllianceTechnologyId::SPY);
         }
 
-        $specialist = $this->specialistDataRepository->getSpecialist($user->specialistId);
+        $specialist = $this->specialistDataRepository->getSpecialist($user->getSpecialistId());
         if ($specialist !== null) {
-            $value += $specialist->spyLevel;
+            $value += $specialist->getSpyLevel();
         }
 
         return $value;
@@ -338,7 +338,7 @@ class FleetScanService
         $fleetSourceEntity = $this->entityRepository->findIncludeCell($fleet->entityFrom);
         $fleetOwner = $this->userRepository->getUser($fleet->userId);
 
-        $out = '[b]Besitzer:[/b] ' . ($fleetOwner !== null ? $fleetOwner->nick : 'Unbekannt') . "\n";
+        $out = '[b]Besitzer:[/b] ' . ($fleetOwner !== null ? $fleetOwner->getNick() : 'Unbekannt') . "\n";
 
         if ($direction == self::FLEET_DIRECTION_ARRIVING) {
             $out .= '[b]Herkunft:[/b] ' . $fleetSourceEntity->toString();

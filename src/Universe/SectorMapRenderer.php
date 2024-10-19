@@ -3,7 +3,6 @@
 namespace EtoA\Universe;
 
 use EtoA\Core\ObjectWithImage;
-use EtoA\Entity\User;
 use EtoA\UI\Tooltip;
 use EtoA\Universe\Cell\Cell;
 use EtoA\Universe\Entity\EntityRepository;

@@ -4,7 +4,6 @@ namespace EtoA\Alliance\Board;
 
 use Doctrine\Persistence\ManagerRegistry;
 use EtoA\Core\AbstractRepository;
-use EtoA\Entity\User;
 
 class AllianceBoardCategoryRankRepository extends AbstractRepository
 {

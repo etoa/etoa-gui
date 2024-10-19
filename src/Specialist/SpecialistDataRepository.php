@@ -3,6 +3,7 @@
 namespace EtoA\Specialist;
 
 use EtoA\Core\AbstractRepository;
+use EtoA\Entity\Specialist;
 
 class SpecialistDataRepository extends AbstractRepository
 {

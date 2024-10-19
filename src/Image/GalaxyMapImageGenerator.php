@@ -3,7 +3,6 @@
 namespace EtoA\Image;
 
 use EtoA\Core\Configuration\ConfigurationService;
-use EtoA\Entity\User;
 use EtoA\Universe\Cell\CellRepository;
 use EtoA\Universe\Entity\EntityRepository;
 use EtoA\Universe\Entity\EntitySearch;

@@ -3,6 +3,7 @@
 namespace EtoA\Race;
 
 use EtoA\Core\AbstractRepository;
+use EtoA\Entity\Race;
 
 class RaceDataRepository extends AbstractRepository
 {

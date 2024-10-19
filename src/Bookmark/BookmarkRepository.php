@@ -6,7 +6,6 @@ namespace EtoA\Bookmark;
 
 use Doctrine\Persistence\ManagerRegistry;
 use EtoA\Core\AbstractRepository;
-use EtoA\Entity\User;
 
 class BookmarkRepository extends AbstractRepository
 {
