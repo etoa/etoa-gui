@@ -5,14 +5,14 @@ declare(strict_types=1);
 namespace EtoA\Core\Configuration;
 
 use Doctrine\Persistence\ManagerRegistry;
-use EtoA\Building\Building;
 use EtoA\Core\AbstractRepository;
+use EtoA\Entity\Config;
 
 class ConfigurationRepository extends AbstractRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, ConfigItem::class);
+        parent::__construct($registry, Config::class);
     }
 
     /**
@@ -20,20 +20,11 @@ class ConfigurationRepository extends AbstractRepository
      */
     public function findAll(): array
     {
-        $data = $this->createQueryBuilder('q')
-                ->select(
-                    'config_name',
-                    'config_value',
-                    'config_param1',
-                    'config_param2'
-                )
-                ->from('config')
-                ->fetchAllAssociativeIndexed();
-
-        return array_map(fn ($arr) => new ConfigItem(
-            $arr['config_value'],
-            $arr['config_param1'],
-            $arr['config_param2']
+        $data = parent::findAll();
+        return array_map(fn ($value) => new ConfigItem(
+            $value->getValue(),
+            $value->getParam1(),
+            $value->getParam2()
         ), $data);
     }
 
