@@ -12,6 +12,7 @@ use EtoA\Alliance\AllianceTechnologyId;
 use EtoA\Alliance\AllianceTechnologyRepository;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Defense\DefenseRepository;
+use EtoA\Entity\Entity;
 use EtoA\Entity\Fleet;
 use EtoA\Entity\User;
 use EtoA\Fleet\Exception\FleetScanFailedException;
@@ -24,7 +25,6 @@ use EtoA\Specialist\SpecialistDataRepository;
 use EtoA\Support\StringUtils;
 use EtoA\Technology\TechnologyId;
 use EtoA\Technology\TechnologyRepository;
-use EtoA\Universe\Entity\Entity;
 use EtoA\Universe\Entity\EntityRepository;
 use EtoA\Universe\Entity\EntityService;
 use EtoA\Universe\Entity\EntityType;
@@ -126,7 +126,7 @@ class FleetScanService
             throw new FleetScanPreconditionsNotMetException("Zuwenig Allianzrohstoffe " . ResourceNames::FUEL . ", " . StringUtils::formatNumber($cryptoFuelCostsPerScan) . " benötigt, " . StringUtils::formatNumber($alliance->resFuel) . " vorhanden!");
         }
 
-        if ($targetEntity === null || $targetEntity->code != EntityType::PLANET) {
+        if ($targetEntity === null || $targetEntity->getCode() != EntityType::PLANET) {
             throw new InvalidFleetScanParameterException('Am gewählten Ziel existiert kein Planet!');
         }
 
@@ -140,11 +140,11 @@ class FleetScanService
         $cooldownTime = time() + $this->calculateCooldown($cryptoCenterLevel);
         $this->allianceBuildingRepository->setUserCooldown($currentUser->getId(), AllianceBuildingId::CRYPTO, $cooldownTime);
 
-        $targetPlanet = $this->planetRepository->find($targetEntity->id);
+        $targetPlanet = $this->planetRepository->find($targetEntity->getId());
         $this->allianceHistoryRepository->addEntry($currentUser->getAllianceId(), "Der Spieler [b]" . $currentUser->getNick() . "[/b] hat den Planeten " . $targetPlanet->name . "[/b] (" . $targetEntity->coordinatesString() . ") gescannt!");
 
         $targetOwner = $this->userRepository->getUser($targetPlanet->userId);
-        $opJam = $this->defenseRepository->countJammingDevicesOnEntity($targetEntity->id);
+        $opJam = $this->defenseRepository->countJammingDevicesOnEntity($targetEntity->getId());
         $opStealth = $this->getStealthTechLevel($targetOwner);
         $opComputer = $this->getComputerTechLevel($targetOwner);
 
@@ -295,9 +295,9 @@ class FleetScanService
     {
         $params = new FleetSearchParameters();
         if ($direction == self::FLEET_DIRECTION_ARRIVING) {
-            $params->entityTo = $targetEntity->id;
+            $params->entityTo = $targetEntity->getId();
         } elseif ($direction == self::FLEET_DIRECTION_DEPARTING) {
-            $params->entityFrom = $targetEntity->id;
+            $params->entityFrom = $targetEntity->getId();
         }
 
         return $this->fleetRepository->findByParameters($params);

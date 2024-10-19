@@ -5,11 +5,18 @@ declare(strict_types=1);
 namespace EtoA\Universe\Entity;
 
 use Doctrine\DBAL\Query\QueryBuilder;
+use Doctrine\Persistence\ManagerRegistry;
 use EtoA\Core\AbstractRepository;
 use EtoA\Core\Database\AbstractSort;
+use EtoA\Entity\Entity;
 
 class EntityRepository extends AbstractRepository
 {
+    public function __construct(ManagerRegistry $registry)
+    {
+        parent::__construct($registry, Entity::class);
+    }
+
     public function countEntitiesOfCodeInSector(int $sx, int $sy, string $code): int
     {
         return (int) $this->createQueryBuilder('q')
@@ -202,7 +209,7 @@ class EntityRepository extends AbstractRepository
         $entities = [];
         foreach ($data as $row) {
             $entity = new EntityLabel($row);
-            $entities[$entity->id] = $entity;
+            $entities[$entity->getId()] = $entity;
         }
 
         return $entities;

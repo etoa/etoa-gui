@@ -3,6 +3,7 @@
 namespace EtoA\Universe;
 
 use EtoA\Core\ObjectWithImage;
+use EtoA\Entity\User;
 use EtoA\UI\Tooltip;
 use EtoA\Universe\Cell\Cell;
 use EtoA\Universe\Entity\EntityRepository;
@@ -136,7 +137,7 @@ class SectorMapRenderer
 
         echo '<table class="galaxyTableSector">';
 
-        /** @var array<int, array<int, \EtoA\Universe\Entity\Entity>> $cells */
+        /** @var array<int, array<int, \EtoA\Entity\Entity>> $cells */
         $cells = [];
         foreach ($entities as $entity) {
             $cells[$entity->cx][$entity->cy] = $entity;
@@ -172,7 +173,7 @@ class SectorMapRenderer
                 $overlayClasses = array();
                 if ($this->selectedCell != null && $this->selectedCell->sx == $sx && $this->selectedCell->sy == $sy && $this->selectedCell->cx == $xcoords && $this->selectedCell->cy == $ycoords) {
                     $overlayClasses[] = 'selected';
-                } elseif (in_array($cells[$xcoords][$ycoords]->cellId, $this->userCellsIDs, true)) {
+                } elseif (in_array($cells[$xcoords][$ycoords]->getCellId(), $this->userCellsIDs, true)) {
                     $overlayClasses[] = 'owned';
                 }
 
@@ -180,13 +181,13 @@ class SectorMapRenderer
 
                 // Discovered cell or no user specified
                 if ($this->impersonatedUser == null || $userUniverseDiscoveryService->discovered($this->impersonatedUser, (($sx - 1) * $this->numberOfCellsX) + $xcoords, (($sy - 1) * $this->numberOfCellsY) + $ycoords)) {
-                    $entity = $entityRepository->searchEntityLabel(EntitySearch::create()->id($cells[$xcoords][$ycoords]->id));
+                    $entity = $entityRepository->searchEntityLabel(EntitySearch::create()->id($cells[$xcoords][$ycoords]->getId()));
 
                     if ($this->tooltipsEnabled) {
                         $tt = new Tooltip();
                         $tt->addTitle($entity->codeString());
                         $tt->addText("Position: $sx/$sy : $xcoords/$ycoords");
-                        if ($entity->code === \EtoA\Universe\Entity\EntityType::WORMHOLE && $entity->wormholeTarget !== null) {
+                        if ($entity->getCode() === \EtoA\Universe\Entity\EntityType::WORMHOLE && $entity->wormholeTarget !== null) {
                             $tent = $entityRepository->searchEntityLabel(EntitySearch::create()->id($entity->wormholeTarget));
                             $tt->addComment("Ziel: " . $tent->toString() . "</a>");
                         } else {
@@ -194,7 +195,7 @@ class SectorMapRenderer
                         }
                     }
 
-                    $url = isset($this->cellUrl) ? $this->cellUrl . $cells[$xcoords][$ycoords]->cellId : '#';
+                    $url = isset($this->cellUrl) ? $this->cellUrl . $cells[$xcoords][$ycoords]->getCellId() : '#';
                     $img = $entity->getImagePath();
                     unset($entity);
                 } // Undiscovered cell
@@ -222,9 +223,9 @@ class SectorMapRenderer
                         $tt->addComment("Expedition senden um Zelle sichtbar zu machen.");
                     }
 
-                    $url = isset($this->undiscoveredCellUrl) ? $this->undiscoveredCellUrl . $cells[$xcoords][$ycoords]->cellId : '#';
+                    $url = isset($this->undiscoveredCellUrl) ? $this->undiscoveredCellUrl . $cells[$xcoords][$ycoords]->getCellId() : '#';
                     if (isset($this->undiscoveredCellJavaScript)) {
-                        $js = preg_replace('/##ID##/', (string)$cells[$xcoords][$ycoords]->cellId, $this->undiscoveredCellJavaScript);
+                        $js = preg_replace('/##ID##/', (string)$cells[$xcoords][$ycoords]->getCellId(), $this->undiscoveredCellJavaScript);
                     }
                     $img = ObjectWithImage::BASE_PATH . "/unexplored/" . $fogImg . ".png";
                 }
@@ -248,7 +249,7 @@ class SectorMapRenderer
                     echo "<a href=\"" . $url . "\" ";
                 }
                 echo " style=\"background-image:url('" . $img . "');\"$class$mouseOver>";
-                echo "<img src=\"/build/images/blank.gif\" alt=\"Raumzelle\" " . $title . " data-id=\"" . $cells[$xcoords][$ycoords]->cellId . "\" $overlayClass/></a>";
+                echo "<img src=\"/build/images/blank.gif\" alt=\"Raumzelle\" " . $title . " data-id=\"" . $cells[$xcoords][$ycoords]->getCellId() . "\" $overlayClass/></a>";
                 echo "</td>";
             }
 

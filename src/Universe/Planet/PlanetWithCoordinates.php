@@ -2,7 +2,7 @@
 
 namespace EtoA\Universe\Planet;
 
-use EtoA\Universe\Entity\Entity;
+use EtoA\Entity\Entity;
 
 class PlanetWithCoordinates extends Planet
 {

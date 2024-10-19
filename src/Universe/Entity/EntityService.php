@@ -6,7 +6,7 @@ namespace EtoA\Universe\Entity;
 
 use EtoA\Alliance\AllianceRepository;
 use EtoA\Core\Configuration\ConfigurationService;
-use EtoA\Core\ObjectWithImage;
+use EtoA\Entity\Entity;
 use EtoA\Market\MarketRepository;
 use EtoA\Universe\Asteroid\AsteroidRepository;
 use EtoA\Universe\EmptySpace\EmptySpaceRepository;
@@ -42,8 +42,8 @@ class EntityService
 
         $extra = [];
 
-        if ($entity->code == EntityType::PLANET) {
-            $planet = $this->planetRepository->find($entity->id);
+        if ($entity->getCode() == EntityType::PLANET) {
+            $planet = $this->planetRepository->find($entity->getId());
             if (filled($planet->name)) {
                 $extra[] = $planet->name;
             }
@@ -55,8 +55,8 @@ class EntityService
             }
         }
 
-        if ($entity->code == EntityType::STAR) {
-            $star = $this->starRepository->find($entity->id);
+        if ($entity->getCode() == EntityType::STAR) {
+            $star = $this->starRepository->find($entity->getId());
             if (filled($star->name)) {
                 $extra[] = $star->name;
             }
@@ -127,22 +127,22 @@ class EntityService
 
     public function getEntity(Entity $entity)
     {
-        switch ($entity->code)
+        switch ($entity->getCode())
         {
             case EntityType::STAR:
-                return $this->starRepository->find($entity->id);
+                return $this->starRepository->find($entity->getId());
             case EntityType::PLANET:
-                $planet = $this->planetRepository->find($entity->id);
+                $planet = $this->planetRepository->find($entity->getId());
                 $planet->setAllowedFleetActions($this->planetService->getAllowedFleetActions($planet));
                 return $planet;
             case EntityType::ASTEROID:
-                return $this->asteroidRepository->find($entity->id);
+                return $this->asteroidRepository->find($entity->getId());
             case EntityType::NEBULA:
-                return $this->nebulaRepository->find($entity->id);
+                return $this->nebulaRepository->find($entity->getId());
             case EntityType::WORMHOLE:
-                return $this->wormholeRepository->find($entity->id);
+                return $this->wormholeRepository->find($entity->getId());
             case EntityType::EMPTY_SPACE:
-                return $this->emptySpaceRepository->find($entity->id);
+                return $this->emptySpaceRepository->find($entity->getId());
             case EntityType::MARKET:
                 return new Market();
             case EntityType::ALLIANCE_MARKET:

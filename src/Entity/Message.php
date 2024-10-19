@@ -14,46 +14,46 @@ class Message
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: "AUTO")]
     #[ORM\Column(name:"message_id", type: "integer")]
-    public int $id;
+    private int $id;
 
     #[ORM\Column(name:"message_cat_id", type: "integer")]
-    public int $catId;
+    private int $catId;
 
     #[ORM\Column(name:"message_user_from", type: "integer")]
-    public int $userFrom;
+    private int $userFrom;
 
     #[ORM\Column(name:"message_user_to", type: "integer")]
-    public int $userTo;
+    private int $userTo;
 
     #[ORM\Column(name:"message_timestamp", type: "integer")]
-    public int $timestamp;
+    private int $timestamp;
 
     #[ORM\Column(name:"message_subject", type: "string")]
-    public string $subject;
+    private string $subject;
 
     #[ORM\Column(name:"message_text", type: "string")]
-    public string $text;
+    private string $text;
 
     #[ORM\Column(name:"message_read", type: "boolean")]
-    public bool $read;
+    private bool $read;
 
     #[ORM\Column(name:"message_deleted", type: "boolean")]
-    public bool $deleted;
+    private bool $deleted;
 
     #[ORM\Column(name:"message_massmail", type: "boolean")]
-    public bool $massMail;
+    private bool $massMail;
 
     #[ORM\Column(name:"message_archived", type: "boolean")]
-    public bool $archived;
+    private bool $archived;
 
     #[ORM\Column(name:"message_forwarded", type: "boolean")]
-    public bool $forwarded;
+    private bool $forwarded;
 
     #[ORM\Column(name:"message_replied", type: "boolean")]
-    public bool $replied;
+    private bool $replied;
 
     #[ORM\Column(name:"message_mailed", type: "boolean")]
-    public bool $mailed;
+    private bool $mailed;
 
     public function getId(): ?int
     {

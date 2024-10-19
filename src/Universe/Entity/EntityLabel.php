@@ -3,6 +3,7 @@
 namespace EtoA\Universe\Entity;
 
 use EtoA\Core\ObjectWithImage;
+use EtoA\Entity\Entity;
 
 class EntityLabel extends Entity
 {
@@ -38,7 +39,7 @@ class EntityLabel extends Entity
 
     public function displayName(): ?string
     {
-        switch ($this->code) {
+        switch ($this->getCode()) {
             case EntityType::PLANET:
                 return (filled($this->planetName) ? $this->planetName : 'Unbenannt');
             case EntityType::STAR:
@@ -50,7 +51,7 @@ class EntityLabel extends Entity
 
     public function toString(): string
     {
-        switch ($this->code) {
+        switch ($this->getCode()) {
             case EntityType::PLANET:
             case EntityType::STAR:
                 return $this->coordinatesString() . ' ' . $this->displayName();
@@ -74,13 +75,13 @@ class EntityLabel extends Entity
 
     public function getImagePath(): string
     {
-        switch ($this->code) {
+        switch ($this->getCode()) {
             case EntityType::ASTEROID:
-                $r = ($this->id % 5) + 1;
+                $r = ($this->getId() % 5) + 1;
 
                 return ObjectWithImage::BASE_PATH . "/asteroids/asteroids" . $r . "_small.png";
             case EntityType::NEBULA:
-                $r = ($this->id % 9) + 1;
+                $r = ($this->getId() % 9) + 1;
 
                 return ObjectWithImage::BASE_PATH . "/nebulas/nebula" . $r . "_small.png";
             case EntityType::PLANET:
