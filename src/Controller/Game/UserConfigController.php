@@ -215,22 +215,21 @@ class UserConfigController extends AbstractGameController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $properties->chatColor = substr($properties->chatColor, 1);
+            $properties->setChatColor(substr($properties->getChatColor(), 1));
 
-            if ($properties->chatColor === '000' || $properties->chatColor === '000000') {
+            if ($properties->getChatColor() === '000' || $properties->getChatColor() === '000000') {
                 $msg['success'] = 'Chatfarbe schwarz auf schwarz ist eine Weile ja ganz lustig, aber in ein paar Minuten bitte zurückändern';
             } else {
                 $msg['success'] = 'Benutzer-Daten wurden geändert!';
             }
 
-            //TODO: use entity manager for it
-            $this->userPropertiesRepository->storeProperties($this->getUser()->getId(),$properties);
+            $this->userPropertiesRepository->storeProperties($properties);
         }
 
         return $this->render('game/userconfig/game.html.twig', [
             'form' => $form,
             'msg' => $msg??null,
-            'chatColor' => $properties->chatColor
+            'chatColor' => $properties->getChatColor()
         ]);
     }
 
@@ -284,7 +283,7 @@ class UserConfigController extends AbstractGameController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->userPropertiesRepository->storeProperties($this->getUser()->getId(),$properties);
+            $this->userPropertiesRepository->storeProperties($properties);
             $msg['success'] = 'Nachrichten-Einstellungen wurden geändert!';
         }
 
@@ -343,7 +342,7 @@ class UserConfigController extends AbstractGameController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->userPropertiesRepository->storeProperties($this->getUser()->getId(),$properties);
+            $this->userPropertiesRepository->storeProperties($properties);
             $msg['success'] = 'Design-Daten wurden geändert!';
         }
 

@@ -40,14 +40,7 @@ class ReportRepository extends AbstractRepository
 
     public function countUserUnread(int $userId): int
     {
-        return (int) $this->createQueryBuilder('q')
-            ->select('COUNT(id)')
-            ->from('reports')
-            ->where('user_id = :userId')
-            ->andWhere('`read` = 0')
-            ->andWhere('`deleted` = 0')
-            ->setParameter('userId', $userId)
-            ->fetchOne();
+        return $this->count(['userId'=>$userId,'read'=>0,'deleted'=>0]);
     }
 
     /**

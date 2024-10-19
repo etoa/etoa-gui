@@ -251,7 +251,7 @@ class UserController extends AbstractAdminController
 
         // Handle profile image
         if ($request->request->has('profile_img_del')) {
-            $existingProfileImage = $this->projectDir . $user->buildProfileImageUrl();
+            $existingProfileImage = $this->projectDir . $this->userService->buildProfileImageUrl($user->getProfileImage());
             if (file_exists($existingProfileImage)) {
                 unlink($existingProfileImage);
             }
@@ -261,7 +261,7 @@ class UserController extends AbstractAdminController
 
         // Handle avatar
         if ($request->request->has('avatar_img_del')) {
-            $existingAvatarPath = $this->projectDir . $user->buildAvatarUrl();
+            $existingAvatarPath = $this->projectDir . $this->userService->buildAvatarUrl($user->getAvatar());
             if (file_exists($existingAvatarPath)) {
                 unlink($existingAvatarPath);
             }
@@ -315,24 +315,24 @@ class UserController extends AbstractAdminController
         //
 
         $properties = $this->userPropertiesRepository->getOrCreateProperties($id);
-        $properties->cssStyle = filled($request->request->get('css_style')) ? $request->request->get('css_style') : null;
-        $properties->planetCircleWidth = $request->request->getInt('planet_circle_width');
-        $properties->itemShow = $request->request->get('item_show');
-        $properties->imageFilter = $request->request->getInt('image_filter') == 1;
-        $properties->msgSignature = filled($request->request->get('msgsignature')) ? $request->request->get('msgsignature') : null;
-        $properties->msgCreationPreview = $request->request->getInt('msgcreation_preview') == 1;
-        $properties->msgPreview = $request->request->getInt('msg_preview') == 1;
-        $properties->msgCopy = $request->request->getInt('msg_copy') == 1;
-        $properties->msgBlink = $request->request->getInt('msg_blink') == 1;
-        $properties->spyShipId = $request->request->getInt('spyship_id');
-        $properties->spyShipCount = $request->request->getInt('spyship_count');
-        $properties->analyzeShipId = $request->request->getInt('analyzeship_id');
-        $properties->analyzeShipCount = $request->request->getInt('analyzeship_count');
-        $properties->havenShipsButtons = $request->request->getInt('havenships_buttons') == 1;
-        $properties->showAdds = $request->request->getInt('show_adds') == 1;
-        $properties->fleetRtnMsg = $request->request->getInt('fleet_rtn_msg') == 1;
+        $properties->setCssStyle(filled($request->request->get('css_style')) ? $request->request->get('css_style') : null);
+        $properties->setPlanetCircleWidth($request->request->getInt('planet_circle_width'));
+        $properties->setItemShow($request->request->get('item_show'));
+        $properties->setImageFilter($request->request->getInt('image_filter') == 1);
+        $properties->setMsgSignature(filled($request->request->get('msgsignature')) ? $request->request->get('msgsignature') : null);
+        $properties->setMsgCreationPreview($request->request->getInt('msgcreation_preview') == 1);
+        $properties->setMsgPreview($request->request->getInt('msgcreation_preview') == 1);
+        $properties->setMsgCopy($request->request->getInt('msg_copy') == 1);
+        $properties->setMsgBlink($request->request->getInt('msg_blink') == 1);
+        $properties->setSpyShipId($request->request->getInt('spyship_id'));
+        $properties->setSpyShipCount($request->request->getInt('spyship_count'));
+        $properties->setAnalyzeShipId($request->request->getInt('analyzeship_id'));
+        $properties->setAnalyzeShipCount($request->request->getInt('analyzeship_count'));
+        $properties->setHavenShipsButtons($request->request->getInt('havenships_buttons') == 1);
+        $properties->setShowAdds($request->request->getInt('show_adds') == 1);
+        $properties->setFleetRtnMsg( $request->request->getInt('fleet_rtn_msg') == 1);
 
-        $this->userPropertiesRepository->storeProperties($id, $properties);
+        $this->userPropertiesRepository->storeProperties($properties);
 
         $this->addFlash('success', "Änderungen wurden übernommen!");
 
@@ -632,7 +632,7 @@ class UserController extends AbstractAdminController
 
         return $this->render('admin/user/messages.html.twig', [
             'user' => $user,
-            'messages' => $this->messageRepository->findBy(['user_to_id' => $id,], $limit),
+            'messages' => $this->messageRepository->findBy(['user_to_id' => $id,],null, $limit),
             'limit' => $limit,
         ]);
     }
