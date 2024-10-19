@@ -2,22 +2,30 @@
 
 namespace EtoA\Controller\Game;
 
-use EtoA\Controller\AbstractLegacyShowController;
+use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Design\Design;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 
-class SecurityController extends AbstractLegacyShowController
+class SecurityController extends AbstractController
 {
+    public function __construct(
+        private readonly ConfigurationService $config
+    )
+    {
+    }
+
     #[Route("/game/login", name: "game.login", methods: ['GET'])]
     public function login(AuthenticationUtils $authenticationUtils): Response
     {
-        return $this->handle(function () use ($authenticationUtils) {
-            return $this->render('game/login/login.html.twig', [
-                'error' => $authenticationUtils->getLastAuthenticationError(),
-                'lastUsername' => $authenticationUtils->getLastUsername(),
-            ]);
-        });
+        return $this->render('game/login/login.html.twig', [
+            'error' => $authenticationUtils->getLastAuthenticationError(),
+            'lastUsername' => $authenticationUtils->getLastUsername(),
+            'templateDir' => '/' . Design::DIRECTORY . '/official/' . $this->config->get('default_css_style'),
+            'roundName' => $this->config->get('roundname'),
+        ]);
     }
 
     #[Route("/game/login/check", name: "game.login.check", methods: ['POST'])]
