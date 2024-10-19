@@ -29,9 +29,8 @@ class ChatController extends AbstractController
     {
     }
 
-    /**
-     * @Route("/api/chat/users", methods={"GET"}, name="api.chat.users")
-     */
+
+    #[Route("/api/chat/users", name: "api.chat.users", methods: "GET")]
     public function users(TokenContext $context): JsonResponse
     {
         $user = $context->getCurrentUser();
@@ -44,9 +43,8 @@ class ChatController extends AbstractController
         return new JsonResponse($users);
     }
 
-    /**
-     * @Route("/api/chat/poll", methods={"GET"}, name="api.chat.poll")
-     */
+
+    #[Route("/api/chat/poll", name: "api.chat.poll", methods: "GET")]
     public function poll(TokenContext $context, Request $request): JsonResponse
     {
         $data = array();
@@ -109,28 +107,27 @@ class ChatController extends AbstractController
         return new JsonResponse($data);
     }
 
-    /**
-     * @Route("/api/chat/push", methods={"GET"}, name="api.chat.push")
-     */
+
+    #[Route("/api/chat/push", name: "api.chat.push", methods: "GET")]
     public function push(TokenContext $context, Request $request): JsonResponse
     {
         $admin = 0;
         $user = $this->userRepository->getUser($context->getCurrentUser()->getId());
         // chatadmins = 2, admins = 1, noadmin-entwickler = 3,
         // leiter team community = 4, admin-entwickler = 5
-        if ($user->admin === 1) {
-            if ($user->chatAdmin === 3) {
+        if ($user->getAdmin() === 1) {
+            if ($user->getChatAdmin() === 3) {
                 $admin = 5; // Entwickler mit Adminrechten
             } else {
                 $admin = 1; // Admin
             }
-        } elseif ($user->chatAdmin === 1) {
+        } elseif ($user->getChatAdmin() === 1) {
             $admin = 2;
         } // Chatadmin
-        elseif ($user->chatAdmin === 2) {
+        elseif ($user->getChatAdmin() === 2) {
             $admin = 4;
         } // Leiter Team Community
-        elseif ($user->admin === 2) {
+        elseif ($user->getAdmin() === 2) {
             $admin = 3;
         } // Entwickler ohne Adminrechte
 
@@ -274,9 +271,8 @@ class ChatController extends AbstractController
         return new JsonResponse(['cmd' => 'de']);
     }
 
-    /**
-     * @Route("/api/chat/logout", methods={"GET"}, name="api.chat.logout")
-     */
+
+    #[Route("/api/chat/logout", name: "api.chat.logout", methods: "GET")]
     public function logout(TokenContext $context): JsonResponse
     {
         $user = $context->getCurrentUser();
