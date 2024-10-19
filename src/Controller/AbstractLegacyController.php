@@ -6,7 +6,6 @@ use EtoA\BuddyList\BuddyListRepository;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Fleet\FleetRepository;
 use EtoA\Legacy\UserSession;
-use EtoA\Legacy\UtilityMethodProvider;
 use EtoA\Message\MessageRepository;
 use EtoA\Message\ReportRepository;
 use EtoA\Support\GameVersionService;
@@ -31,7 +30,6 @@ abstract class AbstractLegacyController extends AbstractController
         protected readonly BuddyListRepository      $buddyListRepository,
         protected readonly RuntimeDataStore         $runtimeDataStore,
         protected readonly UserSession              $userSession,
-        protected readonly UtilityMethodProvider    $utilities,
         protected readonly GameVersionService       $versionService,
         protected readonly Environment              $twig,
         protected readonly string                   $projectDir,
