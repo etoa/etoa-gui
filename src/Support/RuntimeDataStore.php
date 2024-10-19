@@ -10,7 +10,7 @@ class RuntimeDataStore extends AbstractRepository
 {
     public function get(string $key, string $default = null): ?string
     {
-        $value = $this->createQueryBuilder()
+        $value = $this->createQueryBuilder('q')
             ->select('data_value')
             ->from('runtime_data')
             ->where('data_key = :key')

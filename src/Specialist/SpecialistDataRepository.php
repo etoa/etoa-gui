@@ -11,7 +11,7 @@ class SpecialistDataRepository extends AbstractRepository
      */
     public function getSpecialistNames(): array
     {
-        return $this->createQueryBuilder()
+        return $this->createQueryBuilder('q')
             ->select('s.specialist_id, s.specialist_name')
             ->from('specialists', 's')
             ->andWhere('s.specialist_enabled = 1')
@@ -21,7 +21,7 @@ class SpecialistDataRepository extends AbstractRepository
 
     public function getSpecialist(int $specialistId): ?Specialist
     {
-        $data = $this->createQueryBuilder()
+        $data = $this->createQueryBuilder('q')
             ->select('s.*')
             ->from('specialists', 's')
             ->where('s.specialist_enabled = 1')
@@ -37,7 +37,7 @@ class SpecialistDataRepository extends AbstractRepository
      */
     public function getActiveSpecialists(): array
     {
-        $data = $this->createQueryBuilder()
+        $data = $this->createQueryBuilder('q')
             ->select('s.*')
             ->from('specialists', 's')
             ->where('s.specialist_enabled = 1')

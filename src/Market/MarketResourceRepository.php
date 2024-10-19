@@ -10,7 +10,7 @@ class MarketResourceRepository extends AbstractRepository
 {
     public function add(int $userId, int $entityId, int $forUserId, int $forAllianceId, string $text, BaseResources $sell, BaseResources $buy): int
     {
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->insert('market_ressource')
             ->values([
                 'user_id' => ':userId',
@@ -57,7 +57,7 @@ class MarketResourceRepository extends AbstractRepository
      */
     public function getAll(): array
     {
-        $data = $this->createQueryBuilder()
+        $data = $this->createQueryBuilder('q')
             ->select('*')
             ->from('market_ressource')
             ->orderBy('datum', 'ASC')
@@ -71,7 +71,7 @@ class MarketResourceRepository extends AbstractRepository
      */
     public function getBuyableOffers(int $userId, int $allianceId, BaseResources $sellFilter, BaseResources $buyFilter): array
     {
-        $qb = $this->createQueryBuilder()
+        $qb = $this->createQueryBuilder('q')
             ->select('*')
             ->from('market_ressource')
             ->where('user_id <> :userId')
@@ -110,7 +110,7 @@ class MarketResourceRepository extends AbstractRepository
 
     public function countBuyableOffers(int $userId, int $allianceId): int
     {
-        return (int) $this->createQueryBuilder()
+        return (int) $this->createQueryBuilder('q')
             ->select('count(*)')
             ->from('market_ressource')
             ->where('user_id <> :userId')
@@ -125,7 +125,7 @@ class MarketResourceRepository extends AbstractRepository
 
     public function getBuyableOffer(int $id, int $userId, int $allianceId): ?MarketResource
     {
-        $data = $this->createQueryBuilder()
+        $data = $this->createQueryBuilder('q')
             ->select('*')
             ->from('market_ressource')
             ->where('id = :id')
@@ -148,7 +148,7 @@ class MarketResourceRepository extends AbstractRepository
      */
     public function getUserOffers(int $userId): array
     {
-        $data = $this->createQueryBuilder()
+        $data = $this->createQueryBuilder('q')
             ->select('*')
             ->from('market_ressource')
             ->where('user_id = :userId')
@@ -164,7 +164,7 @@ class MarketResourceRepository extends AbstractRepository
 
     public function getUserOffer(int $id, int $userId): ?MarketResource
     {
-        $data = $this->createQueryBuilder()
+        $data = $this->createQueryBuilder('q')
             ->select('*')
             ->from('market_ressource')
             ->where('id = :id')
@@ -180,7 +180,7 @@ class MarketResourceRepository extends AbstractRepository
 
     public function deleteUserOffers(int $userId) : void
     {
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->delete('market_ressource')
             ->where('user_id = :userId')
             ->setParameter('userId', $userId)
@@ -189,7 +189,7 @@ class MarketResourceRepository extends AbstractRepository
 
     public function delete(int $offerId) : void
     {
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->delete('market_ressource')
             ->where('id = :id')
             ->setParameter('id', $offerId)

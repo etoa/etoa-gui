@@ -2,13 +2,19 @@
 
 namespace EtoA\Alliance;
 
+use Doctrine\Persistence\ManagerRegistry;
 use EtoA\Core\AbstractRepository;
 
 class AllianceApplicationRepository extends AbstractRepository
 {
+    public function __construct(ManagerRegistry $registry)
+    {
+        parent::__construct($registry, AllianceApplication::class);
+    }
+
     public function countApplications(int $allianceId): int
     {
-        return (int) $this->createQueryBuilder()
+        return (int) $this->createQueryBuilder('q')
             ->select('COUNT(user_id)')
             ->from('alliance_applications')
             ->where('alliance_id = :allianceId')
@@ -18,7 +24,7 @@ class AllianceApplicationRepository extends AbstractRepository
 
     public function getUserApplication(int $userId): ?UserAllianceApplication
     {
-        $data = $this->createQueryBuilder()
+        $data = $this->createQueryBuilder('q')
             ->select('alliance_id, timestamp')
             ->from('alliance_applications')
             ->where('user_id = :userId')
@@ -33,7 +39,7 @@ class AllianceApplicationRepository extends AbstractRepository
      */
     public function getAllianceApplications(int $allianceId): array
     {
-        $data = $this->createQueryBuilder()
+        $data = $this->createQueryBuilder('q')
             ->select('a.timestamp, a.text, u.user_id, u.user_nick, u.user_points, u.user_rank, u.user_registered')
             ->from('alliance_applications', 'a')
             ->innerJoin('a', 'users', 'u', 'a.user_id = u.user_id')
@@ -46,7 +52,7 @@ class AllianceApplicationRepository extends AbstractRepository
 
     public function addApplication(int $userId, int $allianceId, string $application): void
     {
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->insert('alliance_applications')
             ->values([
                 'user_id' => ':userId',
@@ -65,7 +71,7 @@ class AllianceApplicationRepository extends AbstractRepository
 
     public function deleteApplication(int $userId, int $allianceId): bool
     {
-        return (bool) $this->createQueryBuilder()
+        return (bool) $this->createQueryBuilder('q')
             ->delete('alliance_applications')
             ->where('alliance_id = :allianceId')
             ->andWhere('user_id = :userId')
@@ -79,7 +85,7 @@ class AllianceApplicationRepository extends AbstractRepository
 
     public function deleteAllianceApplication(int $allianceId): int
     {
-        return $this->createQueryBuilder()
+        return $this->createQueryBuilder('q')
             ->delete('alliance_applications')
             ->where('alliance_id = :allianceId')
             ->setParameters([
@@ -91,7 +97,7 @@ class AllianceApplicationRepository extends AbstractRepository
 
     public function deleteUserApplication(int $userId): bool
     {
-        return (bool) $this->createQueryBuilder()
+        return (bool) $this->createQueryBuilder('q')
             ->delete('alliance_applications')
             ->where('user_id = :userId')
             ->setParameters([

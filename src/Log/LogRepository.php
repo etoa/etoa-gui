@@ -11,7 +11,7 @@ class LogRepository extends AbstractRepository
      */
     public function searchLogs(LogSearch $search, int $limit = null, int $offset = null): array
     {
-        $data = $this->applySearchSortLimit($this->createQueryBuilder(), $search, null, $limit, $offset)
+        $data = $this->applySearchSortLimit($this->createQueryBuilder('q'), $search, null, $limit, $offset)
             ->select('*')
             ->from('logs')
             ->orderBy('timestamp', 'DESC')
@@ -43,17 +43,9 @@ class LogRepository extends AbstractRepository
         ]);
     }
 
-    public function count(LogSearch $search = null): int
-    {
-        return (int) $this->applySearchSortLimit($this->createQueryBuilder(), $search)
-            ->select('COUNT(id)')
-            ->from('logs')
-            ->fetchOne();
-    }
-
     public function cleanup(int $threshold): int
     {
-        return $this->createQueryBuilder()
+        return $this->createQueryBuilder('q')
             ->delete('logs')
             ->where('timestamp < :threshold')
             ->setParameter('threshold', $threshold)

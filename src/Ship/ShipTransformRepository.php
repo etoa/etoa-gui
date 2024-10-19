@@ -74,7 +74,7 @@ class ShipTransformRepository extends AbstractRepository
 
     private function shipQueryBuilder(int $userId, int $entityId): QueryBuilder
     {
-        return $this->createQueryBuilder()
+        return $this->createQueryBuilder('q')
             ->from('obj_transforms')
             ->innerJoin('obj_transforms', 'shiplist', 'l', 'l.shiplist_ship_id = ship_id')
             ->where('l.shiplist_user_id = :userId')
@@ -88,7 +88,7 @@ class ShipTransformRepository extends AbstractRepository
 
     private function defenseQueryBuilder(int $userId, int $entityId): QueryBuilder
     {
-        return $this->createQueryBuilder()
+        return $this->createQueryBuilder('q')
             ->from('obj_transforms')
             ->innerJoin('obj_transforms', 'deflist', 'l', 'l.deflist_def_id = def_id')
             ->where('l.deflist_user_id = :userId')

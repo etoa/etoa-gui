@@ -13,7 +13,7 @@ class DefenseRepository extends AbstractRepository
      */
     public function findForUser(int $userId, ?int $entityId = null): array
     {
-        $qb = $this->createQueryBuilder()
+        $qb = $this->createQueryBuilder('q')
             ->select('*')
             ->from('deflist')
             ->where('deflist_user_id = :userId')
@@ -34,7 +34,7 @@ class DefenseRepository extends AbstractRepository
 
     public function getItem(int $id): ?DefenseListItem
     {
-        $data = $this->createQueryBuilder()
+        $data = $this->createQueryBuilder('q')
             ->select('*')
             ->from('deflist')
             ->where('deflist_id = :id')
@@ -56,7 +56,7 @@ class DefenseRepository extends AbstractRepository
 
     public function setDefenseCount(int $id, int $count): void
     {
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->update('deflist')
             ->set('deflist_count', ':count')
             ->where('deflist_id = :id')
@@ -68,7 +68,7 @@ class DefenseRepository extends AbstractRepository
 
     public function removeEntry(int $id): void
     {
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->delete('deflist')
             ->where('deflist_id = :id')
             ->setParameters([
@@ -82,7 +82,7 @@ class DefenseRepository extends AbstractRepository
             throw new \InvalidArgumentException('Cannot remove negative defense count');
         }
 
-        $available = (int) $this->createQueryBuilder()
+        $available = (int) $this->createQueryBuilder('q')
             ->select('deflist_count')
             ->from('deflist')
             ->where('deflist_def_id = :defenseId')
@@ -96,7 +96,7 @@ class DefenseRepository extends AbstractRepository
 
         $amount = min($available, $amount);
 
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->update('deflist')
             ->set('deflist_count', 'deflist_count - :amount')
             ->where('deflist_def_id = :defenseId')
@@ -146,7 +146,7 @@ class DefenseRepository extends AbstractRepository
      */
     public function getEntityDefenseCounts(int $userId, int $entityId): array
     {
-        $data = $this->createQueryBuilder()
+        $data = $this->createQueryBuilder('q')
             ->select('deflist_def_id, deflist_count')
             ->from('deflist')
             ->where('deflist_user_id = :userId')
@@ -163,7 +163,7 @@ class DefenseRepository extends AbstractRepository
 
     public function getDefenseCount(int $userId, int $defenseId): int
     {
-        return (int) $this->createQueryBuilder()
+        return (int) $this->createQueryBuilder('q')
             ->select('SUM(deflist_count)')
             ->from('deflist')
             ->where('deflist_user_id = :userId')
@@ -177,7 +177,7 @@ class DefenseRepository extends AbstractRepository
 
     public function countBuildInProgress(int $userId, int $entityId): int
     {
-        return (int) $this->createQueryBuilder()
+        return (int) $this->createQueryBuilder('q')
             ->select('COUNT(queue_id)')
             ->from('def_queue')
             ->where('queue_entity_id = :entityId')
@@ -193,7 +193,7 @@ class DefenseRepository extends AbstractRepository
 
     public function countJammingDevicesOnEntity(int $entityId): int
     {
-        return (int) $this->createQueryBuilder()
+        return (int) $this->createQueryBuilder('q')
             ->select('dl.deflist_count')
             ->from('deflist', 'dl')
             ->where('dl.deflist_entity_id = :entityId')
@@ -207,13 +207,13 @@ class DefenseRepository extends AbstractRepository
 
     public function removeForEntity(int $entityId): void
     {
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->delete('def_queue')
             ->where('queue_entity_id = :entityId')
             ->setParameter('entityId', $entityId)
             ->executeQuery();
 
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->delete('deflist')
             ->where('deflist_entity_id = :entityId')
             ->setParameter('entityId', $entityId)
@@ -222,13 +222,13 @@ class DefenseRepository extends AbstractRepository
 
     public function removeForUser(int $userId): void
     {
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->delete('def_queue')
             ->where('queue_user_id = :userId')
             ->setParameter('userId', $userId)
             ->executeQuery();
 
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->delete('deflist')
             ->where('deflist_user_id = :userId')
             ->setParameter('userId', $userId)
@@ -237,23 +237,15 @@ class DefenseRepository extends AbstractRepository
 
     public function cleanupEmpty(): void
     {
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->delete('deflist')
             ->where('deflist_count = 0')
             ->executeQuery();
     }
 
-    public function count(DefenseListSearch $search = null): int
-    {
-        return (int) $this->applySearchSortLimit($this->createQueryBuilder(), $search)
-            ->select('COUNT(*)')
-            ->from('deflist')
-            ->fetchOne();
-    }
-
     public function countEmpty(): int
     {
-        return (int) $this->createQueryBuilder()
+        return (int) $this->createQueryBuilder('q')
             ->select('COUNT(deflist_id)')
             ->from('deflist')
             ->where('deflist_count = 0')
@@ -316,7 +308,7 @@ class DefenseRepository extends AbstractRepository
      */
     public function search(DefenseListSearch $search, int $limit = null, int $offset = null): array
     {
-        $data = $this->applySearchSortLimit($this->createQueryBuilder(), $search, null, $limit, $offset)
+        $data = $this->applySearchSortLimit($this->createQueryBuilder('q'), $search, null, $limit, $offset)
             ->select('deflist.*')
             ->from('deflist')
             ->fetchAllAssociative();

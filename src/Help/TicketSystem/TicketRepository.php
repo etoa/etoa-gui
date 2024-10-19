@@ -10,7 +10,7 @@ class TicketRepository extends AbstractRepository
 {
     public function countNew(): int
     {
-        return (int) $this->createQueryBuilder()
+        return (int) $this->createQueryBuilder('q')
             ->select("COUNT(*)")
             ->from('tickets')
             ->where("status = :status")
@@ -24,7 +24,7 @@ class TicketRepository extends AbstractRepository
             return 0;
         }
 
-        return (int) $this->createQueryBuilder()
+        return (int) $this->createQueryBuilder('q')
             ->select("COUNT(*)")
             ->from('tickets')
             ->where("status = :status")
@@ -34,45 +34,12 @@ class TicketRepository extends AbstractRepository
             ->fetchOne();
     }
 
-    public function find(int $id): ?Ticket
-    {
-        $data = $this->createQueryBuilder()
-            ->select("*")
-            ->from('tickets')
-            ->where('id = :id')
-            ->setParameter('id', $id)
-            ->fetchAssociative();
-
-        return $data ? Ticket::createFromArray($data) : null;
-    }
-
-    /**
-     * @param array<string, int|string> $args
-     * @return array<Ticket>
-     */
-    public function findBy(array $args = []): array
-    {
-        $qry = $this->createQueryBuilder()
-            ->select("*")
-            ->from('tickets')
-            ->orderBy('status')
-            ->addOrderBy('timestamp', 'DESC');
-        foreach ($args as $key => $val) {
-            $qry->andWhere($key . ' = :' . $key)
-                ->setParameter($key, $val);
-        }
-        $data = $qry
-            ->fetchAllAssociative();
-
-        return array_map(fn (array $arr) => Ticket::createFromArray($arr), $data);
-    }
-
     public function persist(Ticket $ticket): bool
     {
         $ticket->timestamp = time();
 
         if ($ticket->id > 0) {
-            $affected = $this->createQueryBuilder()
+            $affected = $this->createQueryBuilder('q')
                 ->update('tickets')
                 ->set('status', ':status')
                 ->set('solution', ':solution')
@@ -95,7 +62,7 @@ class TicketRepository extends AbstractRepository
 
             return $affected > 0;
         }
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->insert('tickets')
             ->values([
                 'status' => ':status',
@@ -126,7 +93,7 @@ class TicketRepository extends AbstractRepository
      */
     public function findAssignedIds(): array
     {
-        $data = $this->createQueryBuilder()
+        $data = $this->createQueryBuilder('q')
             ->select("id")
             ->from('tickets')
             ->where("status = :status")
@@ -145,7 +112,7 @@ class TicketRepository extends AbstractRepository
             return 0;
         }
 
-        $qry = $this->createQueryBuilder()
+        $qry = $this->createQueryBuilder('q')
             ->delete('tickets')
             ->where('id IN(' . implode(',', array_fill(0, count($ticketIds), '?')) . ')');
         foreach ($ticketIds as $k => $id) {
@@ -157,7 +124,7 @@ class TicketRepository extends AbstractRepository
 
     public function removeForUser(int $userId) : void
     {
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->delete('tickets')
             ->where('user_id = :userId')
             ->setParameter('userId', $userId)
@@ -169,7 +136,7 @@ class TicketRepository extends AbstractRepository
      */
     public function findAllCategoriesAsMap(): array
     {
-        return $this->createQueryBuilder()
+        return $this->createQueryBuilder('q')
             ->select("id", 'name')
             ->from('ticket_cat')
             ->orderBy('sort')
@@ -179,7 +146,7 @@ class TicketRepository extends AbstractRepository
 
     public function getCategoryName(int $catId): ?string
     {
-        $data = $this->createQueryBuilder()
+        $data = $this->createQueryBuilder('q')
             ->select('name')
             ->from('ticket_cat')
             ->where('id = :id')

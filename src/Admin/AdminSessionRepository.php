@@ -4,13 +4,19 @@ declare(strict_types=1);
 
 namespace EtoA\Admin;
 
+use Doctrine\Persistence\ManagerRegistry;
 use EtoA\Core\AbstractRepository;
 
 class AdminSessionRepository extends AbstractRepository
 {
+    public function __construct(ManagerRegistry $registry)
+    {
+        parent::__construct($registry, AdminSession::class);
+    }
+
     public function countActiveSessions(int $timeout): int
     {
-        return (int) $this->createQueryBuilder()
+        return (int) $this->createQueryBuilder('q')
             ->select('COUNT(*)')
             ->from('admin_user_sessions')
             ->where('time_action > :timeout')
@@ -18,25 +24,12 @@ class AdminSessionRepository extends AbstractRepository
             ->fetchOne();
     }
 
-    public function find(string $id): ?AdminSession
-    {
-        $data = $this->createQueryBuilder()
-            ->select('s.*', 'u.user_nick')
-            ->from('admin_user_sessions', 's')
-            ->innerJoin('s', 'admin_users', 'u', 's.user_id=u.user_id')
-            ->where('id = :id')
-            ->setParameter('id', $id)
-            ->fetchAssociative();
-
-        return $data !== false ? new AdminSession($data) : null;
-    }
-
     /**
      * @return string[]
      */
     public function findByTimeout(int $timeout): array
     {
-        return $this->createQueryBuilder()
+        return $this->createQueryBuilder('q')
             ->select("id")
             ->from('admin_user_sessions')
             ->where('time_action + :timeout = ' . time())
@@ -49,7 +42,7 @@ class AdminSessionRepository extends AbstractRepository
      */
     public function findAll(): array
     {
-        $data = $this->createQueryBuilder()
+        $data = $this->createQueryBuilder('q')
             ->select('s.*', 'u.user_nick')
             ->from('admin_user_sessions', 's')
             ->innerJoin('s', 'admin_users', 'u', 's.user_id=u.user_id')
@@ -61,7 +54,7 @@ class AdminSessionRepository extends AbstractRepository
 
     public function exists(string $id, int $userId, string $userAgent): bool
     {
-        return (bool) $this->createQueryBuilder()
+        return (bool) $this->createQueryBuilder('q')
             ->select("COUNT(*)")
             ->from('admin_user_sessions')
             ->where('id = :id')
@@ -77,7 +70,7 @@ class AdminSessionRepository extends AbstractRepository
 
     public function create(string $id, int $userId, string $ipAddr, string $userAgent, int $timeLogin): void
     {
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->insert('admin_user_sessions')
             ->values([
                 'id' => ':id',
@@ -98,7 +91,7 @@ class AdminSessionRepository extends AbstractRepository
 
     public function update(string $id, int $userId, int $time, string $ipAddress): void
     {
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->update('admin_user_sessions')
             ->set('time_action', ':time')
             ->set('ip_addr', ':ip_addr')
@@ -115,7 +108,7 @@ class AdminSessionRepository extends AbstractRepository
 
     public function remove(string $id): void
     {
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->delete('admin_user_sessions')
             ->where('id = :id')
             ->setParameter('id', $id)
@@ -124,7 +117,7 @@ class AdminSessionRepository extends AbstractRepository
 
     public function removeByUserOrId(string $id, int $userId): void
     {
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->delete('admin_user_sessions')
             ->where('id = :id')
             ->orWhere('user_id = :user_id')
@@ -135,7 +128,7 @@ class AdminSessionRepository extends AbstractRepository
 
     public function countSessionLog(): int
     {
-        return (int) $this->createQueryBuilder()
+        return (int) $this->createQueryBuilder('q')
             ->select("COUNT(*)")
             ->from("admin_user_sessionlog")
             ->fetchOne();
@@ -145,7 +138,7 @@ class AdminSessionRepository extends AbstractRepository
     {
         // TODO: Introduce admin session class for $adminSession and set it as type
 
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->insert('admin_user_sessionlog')
             ->values([
                 'session_id' => ':id',
@@ -169,7 +162,7 @@ class AdminSessionRepository extends AbstractRepository
 
     public function removeSessionLogs(int $timestamp): int
     {
-        return $this->createQueryBuilder()
+        return $this->createQueryBuilder('q')
             ->delete('admin_user_sessionlog')
             ->where('time_action < :timestamp')
             ->setParameter('timestamp', $timestamp)
@@ -182,7 +175,7 @@ class AdminSessionRepository extends AbstractRepository
      */
     public function findSessionLogsByUser(int $userId): array
     {
-        $data = $this->createQueryBuilder()
+        $data = $this->createQueryBuilder('q')
             ->select("l.*", 'u.user_nick')
             ->from("admin_user_sessionlog", 'l')
             ->innerJoin('l', 'admin_users', 'u', 'l.user_id=u.user_id AND l.user_id = :user_id')
@@ -198,7 +191,7 @@ class AdminSessionRepository extends AbstractRepository
      */
     public function findUsersWithSessionLogs(): array
     {
-        $data = $this->createQueryBuilder()
+        $data = $this->createQueryBuilder('q')
             ->select("user_nick", 'u.user_id', 'COUNT(*) as cnt')
             ->from("admin_users", 'u')
             ->innerJoin('u', 'admin_user_sessionlog', 'l', 'l.user_id=u.user_id')

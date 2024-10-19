@@ -8,7 +8,7 @@ class UserLogRepository extends AbstractRepository
 {
     public function add(int $userId, string $zone, string $message, string $host, bool $public): void
     {
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->insert('user_log')
             ->values([
                 'user_id' => ':userId',
@@ -34,7 +34,7 @@ class UserLogRepository extends AbstractRepository
      */
     public function getUserLogs(int $userId, int $limit, bool $public = null): array
     {
-        $qb = $this->createQueryBuilder()
+        $qb = $this->createQueryBuilder('q')
             ->select('*')
             ->from('user_log')
             ->where('user_id = :userId')
@@ -56,7 +56,7 @@ class UserLogRepository extends AbstractRepository
 
     public function deleteAll(): void
     {
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->delete('user_log')
             ->executeQuery();
     }

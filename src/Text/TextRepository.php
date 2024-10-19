@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace EtoA\Text;
 
+use Doctrine\Persistence\ManagerRegistry;
+use EtoA\Building\Building;
 use EtoA\Core\AbstractRepository;
 
 use Doctrine\DBAL\Connection;
@@ -13,9 +15,9 @@ class TextRepository extends AbstractRepository
     /** @var array<string, array<string, string>> */
     private array $textDef;
 
-    public function __construct(Connection $connection)
+    public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($connection);
+        parent::__construct($registry, Text::class);
         $this->textDef = fetchJsonConfig("texts.conf");
     }
 
@@ -35,35 +37,6 @@ class TextRepository extends AbstractRepository
     public function getAllTextIDs(): array
     {
         return array_keys($this->textDef);
-    }
-
-    public function find(string $id): ?Text
-    {
-        if (!$this->isValidTextId($id)) {
-            return null;
-        }
-
-        $data = $this->createQueryBuilder()
-            ->select("*")
-            ->from('texts')
-            ->where('text_id = :id')
-            ->setParameter('id', $id)
-            ->fetchAssociative();
-        if ($data) {
-            $t = new Text($id, $data['text_content']);
-            $t->updated = (int) $data['text_updated'];
-            $t->enabled = ($data['text_enabled'] > 0);
-            $t->label = $this->textDef[$id]['label'];
-            $t->description = $this->textDef[$id]['description'];
-            $t->isOriginal = $data['text_content'] === $this->textDef[$id]['default'];
-
-            return $t;
-        }
-        $t = new Text($id, $this->textDef[$id]['default']);
-        $t->label = $this->textDef[$id]['label'];
-        $t->description = $this->textDef[$id]['description'];
-
-        return $t;
     }
 
     public function save(Text $text): void
@@ -89,7 +62,7 @@ class TextRepository extends AbstractRepository
 
     public function enableText(string $id): void
     {
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->update('texts')
             ->set('text_enabled', '1')
             ->where('text_id = :id')
@@ -101,7 +74,7 @@ class TextRepository extends AbstractRepository
 
     public function disableText(string $id): void
     {
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->update('texts')
             ->set('text_enabled', '0')
             ->where('text_id = :id')
@@ -113,7 +86,7 @@ class TextRepository extends AbstractRepository
 
     public function reset(string $id): void
     {
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->delete('texts')
             ->where('text_id = :id')
             ->setParameters([

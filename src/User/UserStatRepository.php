@@ -76,14 +76,6 @@ class UserStatRepository extends AbstractRepository
             ) VALUES ' . $insertRow, $parameters);
     }
 
-    public function count(): int
-    {
-        return (int) $this->createQueryBuilder()
-            ->select('COUNT(id)')
-            ->from('user_stats')
-            ->fetchOne();
-    }
-
     /**
      * @return array{id: string, rank: string, rank_ships: string, rank_tech: string, rank_buildings: string, rank_exp: string}[]
      */
@@ -108,7 +100,7 @@ class UserStatRepository extends AbstractRepository
     public function searchStats(UserStatSearch $search, UserRatingSort $sort = null, int $limit = null, int $offset = null): array
     {
         //TODO use https://www.doctrine-project.org/projects/doctrine-orm/en/latest/reference/basic-mapping.html#quoting-reserved-words instead
-        $qb = $this->createQueryBuilder()
+        $qb = $this->createQueryBuilder('q')
             ->select('id', 'nick', 'blocked', 'hmod', 'inactive', 'race_name', 'alliance_tag', 'sx', 'sy', 'points_ships', 'points_tech', 'points_buildings', 'points_exp')
             ->addSelect('`' . $search->order . '`' . ' AS ranking')
             ->addSelect('`' . $search->field . '`' . ' AS points')

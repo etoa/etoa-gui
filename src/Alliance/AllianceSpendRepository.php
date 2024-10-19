@@ -2,14 +2,20 @@
 
 namespace EtoA\Alliance;
 
+use Doctrine\Persistence\ManagerRegistry;
 use EtoA\Core\AbstractRepository;
 use EtoA\Universe\Resources\BaseResources;
 
 class AllianceSpendRepository extends AbstractRepository
 {
+    public function __construct(ManagerRegistry $registry)
+    {
+        parent::__construct($registry, AllianceSpend::class);
+    }
+
     public function addEntry(int $allianceId, int $userId, BaseResources $resources): void
     {
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->insert('alliance_spends')
             ->values([
                 'alliance_spend_alliance_id' => ':allianceId',
@@ -36,7 +42,7 @@ class AllianceSpendRepository extends AbstractRepository
 
     public function getTotalSpent(int $allianceId, int $userId = null): BaseResources
     {
-        $qb = $this->createQueryBuilder()
+        $qb = $this->createQueryBuilder('q')
             ->select('SUM(alliance_spend_metal) AS metal, SUM(alliance_spend_crystal) AS crystal, SUM(alliance_spend_plastic) AS plastic, SUM(alliance_spend_fuel) AS fuel, SUM(alliance_spend_food) AS food')
             ->from('alliance_spends')
             ->where('alliance_spend_alliance_id = :allianceId')
@@ -68,7 +74,7 @@ class AllianceSpendRepository extends AbstractRepository
      */
     public function getSpent(int $allianceId, ?int $userId, int $limit): array
     {
-        $qb = $this->createQueryBuilder()
+        $qb = $this->createQueryBuilder('q')
             ->select('*')
             ->from('alliance_spends')
             ->where('alliance_spend_alliance_id = :allianceId')
@@ -93,7 +99,7 @@ class AllianceSpendRepository extends AbstractRepository
 
     public function deleteAllianceEntries(int $allianceId): void
     {
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->delete('alliance_spends')
             ->where('alliance_spend_alliance_id = :allianceId')
             ->setParameter('allianceId', $allianceId)

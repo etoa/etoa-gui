@@ -4,13 +4,19 @@ declare(strict_types=1);
 
 namespace EtoA\Admin;
 
+use Doctrine\Persistence\ManagerRegistry;
 use EtoA\Core\AbstractRepository;
 
 class AdminUserRepository extends AbstractRepository
 {
-    public function count(): int
+    public function __construct(ManagerRegistry $registry)
     {
-        return (int)$this->createQueryBuilder()
+        parent::__construct($registry, AdminUser::class);
+    }
+
+    public function count(array $criteria = []): int
+    {
+        return (int)$this->createQueryBuilder('q')
             ->select("COUNT(*)")
             ->from('admin_users')
             ->fetchOne();
@@ -21,7 +27,7 @@ class AdminUserRepository extends AbstractRepository
      */
     public function getAdminPlayerIds(): array
     {
-        $data = $this->createQueryBuilder()
+        $data = $this->createQueryBuilder('q')
             ->select('player_id')
             ->from('admin_users')
             ->where('player_id <> 0')
@@ -30,21 +36,9 @@ class AdminUserRepository extends AbstractRepository
         return array_map(fn($value) => (int)$value, $data);
     }
 
-    public function find(int $id): ?AdminUser
-    {
-        $data = $this->createQueryBuilder()
-            ->select("*")
-            ->from('admin_users')
-            ->where('user_id = :id')
-            ->setParameter('id', $id)
-            ->fetchAssociative();
-
-        return $data !== false ? AdminUser::createFromArray($data) : null;
-    }
-
     public function findOneByNick(string $nick): ?AdminUser
     {
-        $data = $this->createQueryBuilder()
+        $data = $this->createQueryBuilder('q')
             ->select("*")
             ->from('admin_users')
             ->where('LCASE(user_nick) = LCASE(:nick)')
@@ -56,7 +50,7 @@ class AdminUserRepository extends AbstractRepository
 
     public function findOneByNickAndEmail(string $nick, string $email): ?AdminUser
     {
-        $data = $this->createQueryBuilder()
+        $data = $this->createQueryBuilder('q')
             ->select("*")
             ->from('admin_users')
             ->where('LCASE(user_nick) = LCASE(:nick)')
@@ -73,7 +67,7 @@ class AdminUserRepository extends AbstractRepository
      */
     public function findAll(): array
     {
-        $data = $this->createQueryBuilder()
+        $data = $this->createQueryBuilder('q')
             ->select("*")
             ->from('admin_users')
             ->orderBy('user_nick')
@@ -87,7 +81,7 @@ class AdminUserRepository extends AbstractRepository
      */
     public function searchNicknames(): array
     {
-        $qb = $this->createQueryBuilder()
+        $qb = $this->createQueryBuilder('q')
             ->select('user_id, user_nick')
             ->from('admin_users')
             ->orderBy('user_nick');
@@ -101,7 +95,7 @@ class AdminUserRepository extends AbstractRepository
      */
     public function findAllAsList(): array
     {
-        return $this->createQueryBuilder()
+        return $this->createQueryBuilder('q')
             ->select("user_id", 'user_nick')
             ->from('admin_users')
             ->orderBy('user_nick')
@@ -110,7 +104,7 @@ class AdminUserRepository extends AbstractRepository
 
     public function setPassword(AdminUser $adminUser, string $newHashedPassword, bool $forceChange = false): void
     {
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->update('admin_users')
             ->set('user_password', ':password')
             ->set('user_force_pwchange', ':pwchange')
@@ -128,7 +122,7 @@ class AdminUserRepository extends AbstractRepository
 
     public function setTfaSecret(AdminUser $adminUser, string $secret): void
     {
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->update('admin_users')
             ->set('tfa_secret', ':secret')
             ->where('user_id = :id')
@@ -142,7 +136,7 @@ class AdminUserRepository extends AbstractRepository
     public function save(AdminUser $adminUser): void
     {
         if ($adminUser->id != null) {
-            $this->createQueryBuilder()
+            $this->createQueryBuilder('q')
                 ->update('admin_users')
                 ->set('user_nick', ':nick')
                 ->set('user_name', ':name')
@@ -173,7 +167,7 @@ class AdminUserRepository extends AbstractRepository
                 ->executeQuery();
         } else {
             $password = saltPasswort(generatePasswort());
-            $this->createQueryBuilder()
+            $this->createQueryBuilder('q')
                 ->insert('admin_users')
                 ->values([
                     'user_nick' => ':nick',
@@ -210,7 +204,7 @@ class AdminUserRepository extends AbstractRepository
 
     public function remove(AdminUser $adminUser): bool
     {
-        $affected = $this->createQueryBuilder()
+        $affected = $this->createQueryBuilder('q')
             ->delete('admin_users')
             ->where('user_id = :id')
             ->setParameter('id', $adminUser->id)
@@ -227,7 +221,7 @@ class AdminUserRepository extends AbstractRepository
 
     private function getUserProperty(int $userId, string $property): ?string
     {
-        $data = $this->createQueryBuilder()
+        $data = $this->createQueryBuilder('q')
             ->select($property)
             ->from('admin_users')
             ->where('user_id = :userId')

@@ -10,7 +10,7 @@ class MessageIgnoreRepository extends AbstractRepository
 {
     public function isRecipientIgnoringSender(int $senderId, int $recipientId): bool
     {
-        $data = (int) $this->createQueryBuilder()
+        $data = (int) $this->createQueryBuilder('q')
             ->select('COUNT(ignore_id)')
             ->from('message_ignore')
             ->where('ignore_owner_id = :recipient')
@@ -29,7 +29,7 @@ class MessageIgnoreRepository extends AbstractRepository
      */
     public function findForOwner(int $ownerId): array
     {
-        $data = $this->createQueryBuilder()
+        $data = $this->createQueryBuilder('q')
             ->select('ignore_target_id')
             ->from('message_ignore')
             ->where('ignore_owner_id = :ownerId')
@@ -46,7 +46,7 @@ class MessageIgnoreRepository extends AbstractRepository
      */
     public function findForTarget(int $targetId): array
     {
-        $data = $this->createQueryBuilder()
+        $data = $this->createQueryBuilder('q')
             ->select('ignore_owner_id')
             ->from('message_ignore')
             ->where('ignore_target_id = :targetId')
@@ -60,7 +60,7 @@ class MessageIgnoreRepository extends AbstractRepository
 
     public function add(int $ownerId, int $targetId): void
     {
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->insert('message_ignore')
             ->values([
                 'ignore_owner_id' => ':ownerId',
@@ -75,7 +75,7 @@ class MessageIgnoreRepository extends AbstractRepository
 
     public function remove(int $ownerId, int $targetId): void
     {
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->delete('message_ignore')
             ->where('ignore_owner_id = :ownerId')
             ->andWhere('ignore_target_id = :targetId')

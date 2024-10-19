@@ -59,7 +59,7 @@ class OverviewController extends AbstractGameController
     #[Route('/game/overview', name: 'game.overview')]
     public function overview(Request $request): Response
     {
-
+dd($this->getUser());
         $s = $request->getSession();
 
         $failureCount = $this->userLoginFailureRepository->countLoginFailuresSince($this->getUser()->getId(), $this->getUser()->getData()->getLastOnline());

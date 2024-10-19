@@ -11,7 +11,7 @@ class UserWarningRepository extends AbstractRepository
      */
     public function getWarningCountsByUser(): array
     {
-        $data = $this->createQueryBuilder()
+        $data = $this->createQueryBuilder('q')
             ->select('u.user_nick, u.user_id, COUNT(*) as cnt')
             ->from('user_warnings', 'w')
             ->innerJoin('w', 'users', 'u', 'u.user_id = w.warning_user_id')
@@ -27,7 +27,7 @@ class UserWarningRepository extends AbstractRepository
      */
     public function search(UserWarningSearch $search = null): array
     {
-        $data = $this->applySearchSortLimit($this->createQueryBuilder(), $search)
+        $data = $this->applySearchSortLimit($this->createQueryBuilder('q'), $search)
             ->select('w.*, a.user_nick as admin_user_nick, u.user_nick')
             ->from('user_warnings', 'w')
             ->leftJoin('w', 'admin_users', 'a', 'a.user_id = w.warning_admin_id')
@@ -40,7 +40,7 @@ class UserWarningRepository extends AbstractRepository
 
     public function getWarning(int $id): ?UserWarning
     {
-        $data = $this->createQueryBuilder()
+        $data = $this->createQueryBuilder('q')
             ->select('w.*, a.user_nick as admin_user_nick, u.user_nick')
             ->from('user_warnings', 'w')
             ->leftJoin('w', 'admin_users', 'a', 'a.user_id = w.warning_admin_id')
@@ -57,7 +57,7 @@ class UserWarningRepository extends AbstractRepository
      */
     public function getCountAndLatestWarning(int $userId): array
     {
-        $data = $this->createQueryBuilder()
+        $data = $this->createQueryBuilder('q')
             ->select('COUNT(warning_id) count, MAX(warning_date) max')
             ->from('user_warnings')
             ->where('warning_user_id = :userId')
@@ -69,7 +69,7 @@ class UserWarningRepository extends AbstractRepository
 
     public function deleteAllUserEntries(int $userId): void
     {
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->delete('user_warnings')
             ->where('warning_user_id = :userId')
             ->setParameter('userId', $userId)
@@ -78,7 +78,7 @@ class UserWarningRepository extends AbstractRepository
 
     public function addEntry(int $userId, string $text, int $adminId): void
     {
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->insert('user_warnings')
             ->values([
                 'warning_user_id' => ':userId',
@@ -97,7 +97,7 @@ class UserWarningRepository extends AbstractRepository
 
     public function updateEntry(int $id, string $text, int $adminId): void
     {
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->update('user_warnings')
             ->set('warning_text', ':text')
             ->set('warning_admin_id', ':adminId')
@@ -112,7 +112,7 @@ class UserWarningRepository extends AbstractRepository
 
     public function deleteEntry(int $id): void
     {
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->delete('user_warnings')
             ->where('warning_id = :id')
             ->setParameter('id', $id)

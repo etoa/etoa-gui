@@ -11,7 +11,7 @@ class UserCommentRepository extends AbstractRepository
      */
     public function getCommentInformation(int $userId): array
     {
-        $data = $this->createQueryBuilder()
+        $data = $this->createQueryBuilder('q')
             ->select('COUNT(comment_id) count, MAX(comment_timestamp) latest')
             ->from('user_comments')
             ->where('comment_user_id = :userId')
@@ -26,7 +26,7 @@ class UserCommentRepository extends AbstractRepository
      */
     public function getComments(int $userId): array
     {
-        $data = $this->createQueryBuilder()
+        $data = $this->createQueryBuilder('q')
             ->select('c.*')
             ->addSelect('a.user_nick')
             ->from('user_comments', 'c')
@@ -41,7 +41,7 @@ class UserCommentRepository extends AbstractRepository
 
     public function addComment(int $userId, int $adminUserId, string $text): void
     {
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->insert('user_comments')
             ->values([
                 'comment_timestamp' => ':now',
@@ -60,7 +60,7 @@ class UserCommentRepository extends AbstractRepository
 
     public function deleteComment(int $commentId): void
     {
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->delete('user_comments')
             ->where('comment_id = :id')
             ->setParameter('id', $commentId)
@@ -69,7 +69,7 @@ class UserCommentRepository extends AbstractRepository
 
     public function removeForUser(int $userId) : void
     {
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->delete('user_comments')
             ->where('comment_user_id = :userId')
             ->setParameter('userId', $userId)

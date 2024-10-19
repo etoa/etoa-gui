@@ -8,7 +8,7 @@ class UserLoginFailureRepository extends AbstractRepository
 {
     public function add(int $userId, int $time, string $ip, string $client): void
     {
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->insert('login_failures')
             ->values([
                 'failure_time' => ':time',
@@ -30,7 +30,7 @@ class UserLoginFailureRepository extends AbstractRepository
      */
     public function getUserLoginFailures(int $userId, int $limit = null): array
     {
-        $qb = $this->createQueryBuilder()
+        $qb = $this->createQueryBuilder('q')
             ->select('l.*')
             ->addSelect('u.user_nick')
             ->from('login_failures', 'l')
@@ -54,7 +54,7 @@ class UserLoginFailureRepository extends AbstractRepository
      */
     public function getIpLoginFailures(string $ip): array
     {
-        $data = $this->createQueryBuilder()
+        $data = $this->createQueryBuilder('q')
             ->select('l.*')
             ->addSelect('u.user_nick')
             ->from('login_failures', 'l')
@@ -69,7 +69,7 @@ class UserLoginFailureRepository extends AbstractRepository
 
     public function countLoginFailuresSince(int $userId, int $since): int
     {
-        return (int) $this->createQueryBuilder()
+        return (int) $this->createQueryBuilder('q')
             ->select('COUNT(failure_user_id)')
             ->from('login_failures')
             ->where('failure_user_id = :userId')
@@ -86,7 +86,7 @@ class UserLoginFailureRepository extends AbstractRepository
      */
     public function getLoginFailureCountsByIp(string $ip): array
     {
-        $data = $this->createQueryBuilder()
+        $data = $this->createQueryBuilder('q')
             ->select('COUNT(failure_user_id) as count, failure_user_id, user_nick')
             ->from('login_failures', 'l')
             ->leftJoin('l', 'users', 'u', 'u.user_id = l.failure_user_id')
@@ -108,7 +108,7 @@ class UserLoginFailureRepository extends AbstractRepository
      */
     public function getLoginFailureCountsByUser(int $userId): array
     {
-        $data = $this->createQueryBuilder()
+        $data = $this->createQueryBuilder('q')
             ->select('COUNT(failure_ip) as count, failure_ip, failure_host')
             ->from('login_failures', 'l')
             ->leftJoin('l', 'users', 'u', 'u.user_id = l.failure_user_id')
@@ -130,7 +130,7 @@ class UserLoginFailureRepository extends AbstractRepository
      */
     public function findLoginFailures(string $sort, string $order): array
     {
-        $data = $this->createQueryBuilder()
+        $data = $this->createQueryBuilder('q')
             ->select('l.*')
             ->addSelect('u.user_nick')
             ->from('login_failures', 'l')
@@ -142,20 +142,12 @@ class UserLoginFailureRepository extends AbstractRepository
         return array_map(fn (array $row) => new UserLoginFailure($row), $data);
     }
 
-    public function count(UserLoginFailureSearch $search = null): int
-    {
-        return (int) $this->applySearchSortLimit($this->createQueryBuilder(), $search)
-            ->select('COUNT(*)')
-            ->from('login_failures', 'l')
-            ->fetchOne();
-    }
-
     /**
      * @return UserLoginFailure[]
      */
     public function search(UserLoginFailureSearch $search = null, int $limit = null, int $offset = null): array
     {
-        $data = $this->applySearchSortLimit($this->createQueryBuilder(), $search, null, $limit, $offset)
+        $data = $this->applySearchSortLimit($this->createQueryBuilder('q'), $search, null, $limit, $offset)
             ->select('l.*')
             ->addSelect('u.user_nick')
             ->from('login_failures', 'l')

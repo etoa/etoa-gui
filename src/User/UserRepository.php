@@ -4,11 +4,17 @@ declare(strict_types=1);
 
 namespace EtoA\User;
 
+use Doctrine\Persistence\ManagerRegistry;
 use EtoA\Core\AbstractRepository;
 use EtoA\Entity\User;
 
 class UserRepository extends AbstractRepository
 {
+    public function __construct(ManagerRegistry $registry)
+    {
+        parent::__construct($registry, User::class);
+    }
+
     public function getDiscoverMask(int $userId): string
     {
         return $this->getUserProperty($userId, 'discoverymask');
@@ -36,7 +42,7 @@ class UserRepository extends AbstractRepository
 
     private function getUserProperty(int $userId, string $property): ?string
     {
-        $data = $this->createQueryBuilder()
+        $data = $this->createQueryBuilder('q')
             ->select($property)
             ->from('users')
             ->where('user_id = :userId')
@@ -46,17 +52,9 @@ class UserRepository extends AbstractRepository
         return $data !== false ? $data : null;
     }
 
-    public function count(): int
-    {
-        return (int)$this->createQueryBuilder()
-            ->select("COUNT(*)")
-            ->from('users')
-            ->fetchOne();
-    }
-
     public function setAllianceId(int $userId, int $allianceId, int $rankId = null, int $leaveTimestamp = null): void
     {
-        $qb = $this->createQueryBuilder()
+        $qb = $this->createQueryBuilder('q')
             ->update('users')
             ->set('user_alliance_id', ':allianceId')
             ->where('user_id = :id')
@@ -83,7 +81,7 @@ class UserRepository extends AbstractRepository
 
     public function resetAllianceId(int $allianceId): void
     {
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->update('users')
             ->set('user_alliance_id', ':zero')
             ->set('user_alliance_rank_id', ':zero')
@@ -97,7 +95,7 @@ class UserRepository extends AbstractRepository
 
     public function hasUserRankId(int $allianceId, int $userId, int $rankId): bool
     {
-        return (bool)$this->createQueryBuilder()
+        return (bool)$this->createQueryBuilder('q')
             ->select('user_id')
             ->from('users')
             ->where('user_id = :userId')
@@ -114,7 +112,7 @@ class UserRepository extends AbstractRepository
 
     public function setLogoutTime(int $userId, ?int $time = null): void
     {
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->update('users')
             ->set('user_logouttime', ':time')
             ->where('user_id = :id')
@@ -127,7 +125,7 @@ class UserRepository extends AbstractRepository
 
     public function addSpecialistTime(int $userId, int $time): void
     {
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->update('users')
             ->set('user_specialist_time', 'user_specialist_time + :time')
             ->where('user_id = :id')
@@ -141,7 +139,7 @@ class UserRepository extends AbstractRepository
 
     public function setSpecialist(int $userId, int $specialistId, int $time): void
     {
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->update('users')
             ->set('user_specialist_time', ':time')
             ->set('user_specialist_id', ':specialistId')
@@ -160,7 +158,7 @@ class UserRepository extends AbstractRepository
      */
     public function countUsersWithSpecialists(): array
     {
-        $data = $this->createQueryBuilder()
+        $data = $this->createQueryBuilder('q')
             ->select('user_specialist_id, COUNT(user_id)')
             ->from('users')
             ->where('user_specialist_time > :now')
@@ -175,7 +173,7 @@ class UserRepository extends AbstractRepository
 
     public function activateHolidayMode(int $userId, int $from, int $to): void
     {
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->update('users')
             ->set('user_hmode_from', (string)$from)
             ->set('user_hmode_to', (string)$to)
@@ -189,7 +187,7 @@ class UserRepository extends AbstractRepository
 
     public function disableHolidayMode(int $userId): void
     {
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->update('users')
             ->set('user_hmode_from', (string)0)
             ->set('user_hmode_to', (string)0)
@@ -203,7 +201,7 @@ class UserRepository extends AbstractRepository
 
     public function removePointsByTimestamp(int $timestamp): int
     {
-        return $this->createQueryBuilder()
+        return $this->createQueryBuilder('q')
             ->delete('user_points')
             ->where("point_timestamp < :timestamp")
             ->setParameter('timestamp', $timestamp)
@@ -213,7 +211,7 @@ class UserRepository extends AbstractRepository
 
     public function getUserIdByNick(string $nick): ?int
     {
-        $result = $this->createQueryBuilder()
+        $result = $this->createQueryBuilder('q')
             ->select('user_id')
             ->from('users')
             ->where('user_nick = :nick')
@@ -225,7 +223,7 @@ class UserRepository extends AbstractRepository
 
     public function markVerifiedByVerificationKey(string $verificationKey): bool
     {
-        return (bool)$this->createQueryBuilder()
+        return (bool)$this->createQueryBuilder('q')
             ->update('users')
             ->set('verification_key', ':updatedKey')
             ->where('verification_key = :key')
@@ -238,7 +236,7 @@ class UserRepository extends AbstractRepository
 
     public function saveDiscoveryMask(int $userId, string $mask): void
     {
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->update('users')
             ->set('discoverymask', ":mask")
             ->where('user_id = :userId')
@@ -251,7 +249,7 @@ class UserRepository extends AbstractRepository
 
     public function resetDiscoveryMask(): void
     {
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->update('users')
             ->set('discoverymask', "''")
             ->set('user_setup', (string)0)
@@ -260,7 +258,7 @@ class UserRepository extends AbstractRepository
 
     public function setSetupFinished(int $userId): void
     {
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->update('users')
             ->set('user_setup', (string)1)
             ->where('user_id = :userId')
@@ -280,13 +278,12 @@ class UserRepository extends AbstractRepository
 
     public function findUser(UserSearch $search): ?User
     {
-        $data = $this->applySearchSortLimit($this->createQueryBuilder(), $search)
-            ->select('*')
-            ->from('users')
+        $query = $this->applySearchSortLimit($this->createQueryBuilder('q'), $search)
             ->setMaxResults(1)
-            ->fetchAssociative();
+            ->getQuery();
 
-        return $data !== false ? new User($data) : null;
+
+        return $query->execute();
     }
 
     public function getUser(int $userId): ?User
@@ -352,7 +349,7 @@ class UserRepository extends AbstractRepository
      */
     public function findInactive(int $registerTime, int $onlineTime): array
     {
-        $data = $this->createQueryBuilder()
+        $data = $this->createQueryBuilder('q')
             ->select('*')
             ->from('users')
             ->where('user_ghost = 0')
@@ -375,7 +372,7 @@ class UserRepository extends AbstractRepository
      */
     public function findLongInactive(int $logoutTimeFrom, int $logoutTimeTo): array
     {
-        $data = $this->createQueryBuilder()
+        $data = $this->createQueryBuilder('q')
             ->select('*')
             ->from('users')
             ->where('user_ghost = 0')
@@ -399,7 +396,7 @@ class UserRepository extends AbstractRepository
      */
     public function findInactiveInHolidayMode(int $threshold): array
     {
-        $data = $this->createQueryBuilder()
+        $data = $this->createQueryBuilder('q')
             ->select('*')
             ->from('users')
             ->where('user_ghost = 0')
@@ -421,7 +418,7 @@ class UserRepository extends AbstractRepository
      */
     public function findDeleted(): array
     {
-        $data = $this->createQueryBuilder()
+        $data = $this->createQueryBuilder('q')
             ->select('*')
             ->from('users')
             ->where('user_deleted > 0')
@@ -436,7 +433,7 @@ class UserRepository extends AbstractRepository
 
     public function markDeleted(int $userId, int $timestamp): void
     {
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->update('users')
             ->set('user_deleted', ':timestamp')
             ->where('user_id = :userId')
@@ -452,7 +449,7 @@ class UserRepository extends AbstractRepository
      */
     public function getEmailAddressesWithNickname(): array
     {
-        return $this->createQueryBuilder()
+        return $this->createQueryBuilder('q')
             ->select('user_email', 'user_nick')
             ->from('users')
             ->orderBy('user_nick')
@@ -461,7 +458,7 @@ class UserRepository extends AbstractRepository
 
     public function blockUser(int $userId, int $from, int $to, string $reason, int $adminId): void
     {
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->update('users')
             ->set('user_blocked_from', ':from')
             ->set('user_blocked_to', ':to')
@@ -480,7 +477,7 @@ class UserRepository extends AbstractRepository
 
     public function removeOldBans(): int
     {
-        return $this->createQueryBuilder()
+        return $this->createQueryBuilder('q')
             ->update('users')
             ->set('`user_blocked_from`', '0')
             ->set('`user_blocked_to`', '0')
@@ -497,7 +494,7 @@ class UserRepository extends AbstractRepository
 
     public function updateImgCheck(int $userId, bool $check, string $image = null): bool
     {
-        $qb = $this->createQueryBuilder()
+        $qb = $this->createQueryBuilder('q')
             ->update('users')
             ->set('user_profile_img_check', ':check')
             ->where('user_id = :userId')
@@ -517,7 +514,7 @@ class UserRepository extends AbstractRepository
 
     public function addSittingDays(int $days): void
     {
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->update('users')
             ->set('`user_sitting_days`', '`user_sitting_days` + :days')
             ->setParameter('days', $days)
@@ -526,7 +523,7 @@ class UserRepository extends AbstractRepository
 
     public function setSittingDays(int $userId, int $days): void
     {
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->update('users')
             ->set('user_sitting_days', ':days')
             ->where('user_id = :userId')
@@ -539,7 +536,7 @@ class UserRepository extends AbstractRepository
 
     public function setVerified(int $userId, bool $verified): void
     {
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->update('users')
             ->set('verification_key', ':verificationKey')
             ->where('user_id = :userId')
@@ -555,7 +552,7 @@ class UserRepository extends AbstractRepository
      */
     public function getUsedAllianceShipPoints(): array
     {
-        return $this->createQueryBuilder()
+        return $this->createQueryBuilder('q')
             ->select('user_alliance_id, SUM(user_alliace_shippoints_used)')
             ->from('users')
             ->groupBy('user_alliance_id')
@@ -564,7 +561,7 @@ class UserRepository extends AbstractRepository
 
     public function markAllianceShipPointsAsUsed(int $userId, int $shipCost): void
     {
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->update('users')
             ->set('user_alliace_shippoints', 'user_alliace_shippoints - :costs')
             ->set('user_alliace_shippoints_used', 'user_alliace_shippoints_used + :costs')
@@ -578,7 +575,7 @@ class UserRepository extends AbstractRepository
 
     public function addAllianceShipPoints(int $allianceId, int $points): void
     {
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->update('users')
             ->set('user_alliace_shippoints', 'user_alliace_shippoints + :points')
             ->where('user_alliance_id = :allianceId')
@@ -591,7 +588,7 @@ class UserRepository extends AbstractRepository
 
     public function remove(int $id): bool
     {
-        $affected = $this->createQueryBuilder()
+        $affected = $this->createQueryBuilder('q')
             ->delete('users')
             ->where('user_id = :id')
             ->setParameter('id', $id)
@@ -603,7 +600,7 @@ class UserRepository extends AbstractRepository
 
     public function exists(UserSearch $search): bool
     {
-        return (bool)$this->applySearchSortLimit($this->createQueryBuilder(), $search)
+        return (bool)$this->applySearchSortLimit($this->createQueryBuilder('q'), $search)
             ->select("1")
             ->from('users')
             ->setMaxResults(1)
@@ -612,7 +609,7 @@ class UserRepository extends AbstractRepository
 
     public function create(string $nick, string $name, string $email, string $password, int $race = 0, bool $ghost = false): int
     {
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->insert('users')
             ->values([
                 'user_nick' => ':nick',
@@ -641,7 +638,7 @@ class UserRepository extends AbstractRepository
     public function updatePassword(int $userId, string $password, bool $isHashedPassword = false): string
     {
         $saltedPassword = $isHashedPassword ? $password : saltPasswort($password);
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->update('users')
             ->set('user_password', ':password')
             ->where('user_id = :userId')
@@ -656,7 +653,7 @@ class UserRepository extends AbstractRepository
 
     public function increaseMultiDeletes(int $userId): void
     {
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->update('users')
             ->set('user_multi_delets', 'user_multi_delets + 1')
             ->where('user_id = :userId')
@@ -668,7 +665,7 @@ class UserRepository extends AbstractRepository
 
     public function updateObserve(int $userId, ?string $observe): void
     {
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->update('users')
             ->set('user_observe', ':observe')
             ->where('user_id = :userId')
@@ -681,7 +678,7 @@ class UserRepository extends AbstractRepository
 
     public function markMainPlanetChanged(int $userId): void
     {
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->update('users')
             ->set('user_changed_main_planet', '1')
             ->where('user_id = :userId')
@@ -693,7 +690,7 @@ class UserRepository extends AbstractRepository
 
     public function save(User $user): void
     {
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->update('users')
             ->set('user_name', ':name')
             ->set('npc', ':npc')
@@ -777,7 +774,7 @@ class UserRepository extends AbstractRepository
      */
     public function searchUserNicknames(UserSearch $search = null, int $limit = null): array
     {
-        $qb = $this->createQueryBuilder()
+        $qb = $this->createQueryBuilder('q')
             ->select('user_id, user_nick')
             ->from('users')
             ->orderBy('user_nick');
@@ -791,7 +788,7 @@ class UserRepository extends AbstractRepository
      */
     public function searchUsers(UserSearch $search = null, UserSort $sort = null, int $limit = null): array
     {
-        $qb = $this->createQueryBuilder()
+        $qb = $this->createQueryBuilder('q')
             ->select('*')
             ->from('users');
 
@@ -820,7 +817,7 @@ class UserRepository extends AbstractRepository
      */
     public function getPillory(): array
     {
-        $data = $this->createQueryBuilder()
+        $data = $this->createQueryBuilder('q')
             ->select('u.user_nick, u.user_blocked_from, u.user_blocked_to, u.user_ban_reason')
             ->addSelect('a.user_nick AS admin_nick, a.user_email AS admin_email')
             ->from('users', 'u')
@@ -836,7 +833,7 @@ class UserRepository extends AbstractRepository
 
     public function updatePointsAndRank(UserStatistic $userStatistic, int $highestRank): void
     {
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->update('users')
             ->set('user_rank', ':rank')
             ->set('user_points', ':points')
@@ -853,7 +850,7 @@ class UserRepository extends AbstractRepository
 
     public function updateUserBoost(int $userId, float $productionBoost, float $buildingBoost): void
     {
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->update('users')
             ->set('boost_bonus_production', ':production')
             ->set('boost_bonus_building', ':building')
@@ -868,7 +865,7 @@ class UserRepository extends AbstractRepository
 
     public function resetBoost(): void
     {
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->update('users')
             ->set('boost_bonus_production', ':zero')
             ->set('boost_bonus_building', ':zero')
@@ -933,7 +930,7 @@ class UserRepository extends AbstractRepository
 
     public function addVisit(int $userId): void
     {
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->update('users')
             ->set('user_visits', 'user_visits + 1')
             ->where('user_id = :userId')

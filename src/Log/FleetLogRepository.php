@@ -13,21 +13,13 @@ class FleetLogRepository extends AbstractRepository
      */
     public function searchLogs(FleetLogSearch $search, int $limit = null, int $offset = null): array
     {
-        $data = $this->applySearchSortLimit($this->createQueryBuilder(), $search, null, $limit, $offset)
+        $data = $this->applySearchSortLimit($this->createQueryBuilder('q'), $search, null, $limit, $offset)
             ->select('*')
             ->from('logs_fleet')
             ->orderBy('timestamp', 'DESC')
             ->fetchAllAssociative();
 
         return array_map(fn (array $row) => new FleetLog($row), $data);
-    }
-
-    public function count(FleetLogSearch $search = null): int
-    {
-        return (int) $this->applySearchSortLimit($this->createQueryBuilder(), $search)
-            ->select('COUNT(id)')
-            ->from('logs_fleet')
-            ->fetchOne();
     }
 
     public function addLaunch(int $fleetId, int $userId, int $entityFromId, int $targetEntityId, int $launchTime, int $landTime, string $action, int $pilots, int $fuel, int $food, BaseResources $resource, BaseResources $fetch, string $fleetShipEnd, string $entityResStart, string $entityResEnd): void
@@ -169,7 +161,7 @@ class FleetLogRepository extends AbstractRepository
 
     public function cleanup(int $threshold): int
     {
-        return $this->createQueryBuilder()
+        return $this->createQueryBuilder('q')
             ->delete('logs_fleet')
             ->where('timestamp < :threshold')
             ->setParameter('threshold', $threshold)

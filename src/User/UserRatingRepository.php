@@ -9,15 +9,6 @@ use EtoA\Core\AbstractRepository;
 
 class UserRatingRepository extends AbstractRepository
 {
-    public function count(): int
-    {
-        return (int) $this->createQueryBuilder()
-            ->select('COUNT(id)')
-            ->from('user_ratings', 'r')
-            ->innerJoin('r', 'users', 'u', 'u.user_id = r.id')
-            ->fetchOne();
-    }
-
     /**
      * @return UserDiplomacyRating[]
      */
@@ -59,7 +50,7 @@ class UserRatingRepository extends AbstractRepository
 
     private function createSpecialRatingQueryBuilder(UserRatingSearch $search = null, UserRatingSort $sort = null, int $limit = null, int $offset = null): QueryBuilder
     {
-        return $this->applySearchSortLimit($this->createQueryBuilder(), $search, $sort, $limit, $offset)
+        return $this->applySearchSortLimit($this->createQueryBuilder('q'), $search, $sort, $limit, $offset)
             ->select('u.user_id', 'u.user_nick', 'ra.race_name', 'a.alliance_tag')
             ->from('user_ratings', 'r')
             ->innerJoin('r', 'users', 'u', 'u.user_id = r.id')
@@ -69,7 +60,7 @@ class UserRatingRepository extends AbstractRepository
 
     public function addTradeRating(int $userId, int $rating, bool $sell = true): void
     {
-        $qry = $this->createQueryBuilder()
+        $qry = $this->createQueryBuilder('q')
             ->update('user_ratings')
             ->set('trade_rating', 'trade_rating + :rating')
             ->where('id = :userId')
@@ -87,7 +78,7 @@ class UserRatingRepository extends AbstractRepository
 
     public function addDiplomacyRating(int $userId, int $rating): void
     {
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->update('user_ratings')
             ->set('diplomacy_rating', 'diplomacy_rating + :rating')
             ->where('id = :userId')
@@ -100,7 +91,7 @@ class UserRatingRepository extends AbstractRepository
 
     public function addBlank(int $id): void
     {
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->delete('user_ratings')
             ->where('id = :id')
             ->setParameters([
@@ -108,7 +99,7 @@ class UserRatingRepository extends AbstractRepository
             ])
             ->executeQuery();
 
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->insert('user_ratings')
             ->values([
                 'id' => ':id',
@@ -121,7 +112,7 @@ class UserRatingRepository extends AbstractRepository
 
     public function removeForUser(int $userId) : void
     {
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->delete('user_ratings')
             ->where('id = :userId')
             ->setParameter('userId', $userId)

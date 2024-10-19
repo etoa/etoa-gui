@@ -10,7 +10,7 @@ class MarketReportRepository extends ReportRepository
     {
         $reportId = $this->addReport(ReportTypes::TYPE_MARKET, $userId, 0, $content, $entityId, 0, $opponentId);
 
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->insert('reports_market')
             ->values([
                 'id' => ':id',
@@ -57,7 +57,7 @@ class MarketReportRepository extends ReportRepository
     {
         $reportId = $this->addReport(ReportTypes::TYPE_MARKET, $userId, 0, $content, $entityId, $entity2Id, $opponentId);
 
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->insert('reports_market')
             ->values([
                 'id' => ':id',
@@ -100,7 +100,7 @@ class MarketReportRepository extends ReportRepository
     {
         $reportId = $this->addReport(ReportTypes::TYPE_MARKET, $userId, 0, $content, $entityId, $entity2Id, $opponentId);
 
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->insert('reports_market')
             ->values([
                 'id' => ':id',

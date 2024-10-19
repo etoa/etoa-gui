@@ -10,7 +10,7 @@ class UserSittingRepository extends AbstractRepository
 {
     public function addEntry(int $userId, int $sitterId, string $password, int $dateFrom, int $dateTo): void
     {
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->insert('user_sitting')
             ->values([
                 'user_id' => ':userId',
@@ -105,7 +105,7 @@ class UserSittingRepository extends AbstractRepository
 
     public function existsEntry(int $userId, string $password): bool
     {
-        return (bool)$this->createQueryBuilder()
+        return (bool)$this->createQueryBuilder('q')
             ->select('1')
             ->from('user_sitting')
             ->where('user_id = :userId')
@@ -119,7 +119,7 @@ class UserSittingRepository extends AbstractRepository
 
     public function hasSittingEntryForTimeSpan(int $userId, int $from, int $to): bool
     {
-        return (bool)$this->createQueryBuilder()
+        return (bool)$this->createQueryBuilder('q')
             ->select('1')
             ->from('user_sitting')
             ->where('user_id = :userId')
@@ -134,7 +134,7 @@ class UserSittingRepository extends AbstractRepository
 
     public function getUsedSittingTime(int $userId): int
     {
-        return (int)$this->createQueryBuilder()
+        return (int)$this->createQueryBuilder('q')
             ->select('SUM(CEIL((date_to - date_from) / 86400))')
             ->from('user_sitting')
             ->where('user_id = :userId')
@@ -146,7 +146,7 @@ class UserSittingRepository extends AbstractRepository
 
     private function createSitterQueryBuilder(): QueryBuilder
     {
-        return $this->createQueryBuilder()
+        return $this->createQueryBuilder('q')
             ->select('s.*', 'u.user_nick as user_nick', 'us.user_nick as sitter_nick')
             ->from('user_sitting', 's')
             ->leftJoin('s', 'users', 'u', 'u.user_id = s.user_id')
@@ -156,7 +156,7 @@ class UserSittingRepository extends AbstractRepository
 
     public function cancelEntry(int $id): void
     {
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->update('user_sitting')
             ->set('date_to', 'UNIX_TIMESTAMP()')
             ->where('id = :id')
@@ -166,7 +166,7 @@ class UserSittingRepository extends AbstractRepository
 
     public function cancelUserEntry(int $id, int $userId): bool
     {
-        return (bool)$this->createQueryBuilder()
+        return (bool)$this->createQueryBuilder('q')
             ->update('user_sitting')
             ->set('date_to', 'UNIX_TIMESTAMP()')
             ->where('id = :id')
@@ -184,7 +184,7 @@ class UserSittingRepository extends AbstractRepository
 
     public function deleteFutureUserEntry(int $id, int $userId): bool
     {
-        return (bool)$this->createQueryBuilder()
+        return (bool)$this->createQueryBuilder('q')
             ->delete('user_sitting')
             ->where('id = :id')
             ->andWhere('user_id = :userId')
@@ -200,7 +200,7 @@ class UserSittingRepository extends AbstractRepository
 
     public function deleteAllUserEntries(int $userId): void
     {
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->delete('user_sitting')
             ->where('user_id = :userId')
             ->setParameter('userId', $userId)

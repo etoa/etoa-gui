@@ -11,7 +11,7 @@ class ChatLogRepository extends AbstractRepository
      */
     public function getLogs(string $order = 'timestamp', string $sort = 'ASC'): array
     {
-        $data = $this->createQueryBuilder()
+        $data = $this->createQueryBuilder('q')
             ->select('*')
             ->from('chat_log')
             ->orderBy($order, $sort)
@@ -21,20 +21,12 @@ class ChatLogRepository extends AbstractRepository
         return array_map(fn (array $row) => new ChatLog($row), $data);
     }
 
-    public function count(ChatLogSearch $search = null): int
-    {
-        return (int) $this->applySearchSortLimit($this->createQueryBuilder(), $search)
-            ->select('COUNT(*)')
-            ->from('chat_log')
-            ->fetchOne();
-    }
-
     /**
      * @return ChatLog[]
      */
     public function search(ChatLogSearch $search = null, int $limit = null, int $offset = null): array
     {
-        $data = $this->applySearchSortLimit($this->createQueryBuilder(), $search, null, $limit, $offset)
+        $data = $this->applySearchSortLimit($this->createQueryBuilder('q'), $search, null, $limit, $offset)
             ->select('*')
             ->from('chat_log')
             ->orderBy('id', 'DESC')
@@ -45,7 +37,7 @@ class ChatLogRepository extends AbstractRepository
 
     public function addLog(int $userId, string $nick, string $text, string $color, int $admin, string $channel = ''): void
     {
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->insert('chat_log')
             ->values([
                 'timestamp' => ':time',

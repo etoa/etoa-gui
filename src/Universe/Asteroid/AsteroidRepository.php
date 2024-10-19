@@ -13,7 +13,7 @@ class AsteroidRepository extends AbstractRepository
      */
     public function getAllIds(): array
     {
-        $data = $this->createQueryBuilder()
+        $data = $this->createQueryBuilder('q')
             ->select("id")
             ->from('asteroids')
             ->fetchAllAssociative();
@@ -21,31 +21,9 @@ class AsteroidRepository extends AbstractRepository
         return array_map(fn (array $row) => (int) $row['id'], $data);
     }
 
-    public function count(): int
-    {
-        return (int) $this->createQueryBuilder()
-            ->select("COUNT(id)")
-            ->from('asteroids')
-            ->fetchOne();
-    }
-
-    public function find(int $id): ?Asteroid
-    {
-        $data = $this->createQueryBuilder()
-            ->select('*')
-            ->from('asteroids')
-            ->where('id = :id')
-            ->setParameters([
-                'id' => $id,
-            ])
-            ->fetchAssociative();
-
-        return $data !== false ? new Asteroid($data) : null;
-    }
-
     public function add(int $id, int $resMetal, int $resCrystal, int $resPlastic): void
     {
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->insert('asteroids')
             ->values([
                 'id' => ':id',
@@ -71,7 +49,7 @@ class AsteroidRepository extends AbstractRepository
         int $resFood,
         int $resPower
     ): bool {
-        $affected = $this->createQueryBuilder()
+        $affected = $this->createQueryBuilder('q')
             ->update('asteroids')
             ->set('res_metal', ':res_metal')
             ->set('res_crystal', ':res_crystal')
@@ -104,7 +82,7 @@ class AsteroidRepository extends AbstractRepository
         int $resFood,
         int $resPower
     ): bool {
-        $affected = $this->createQueryBuilder()
+        $affected = $this->createQueryBuilder('q')
             ->update('asteroids')
             ->set('res_metal', 'res_metal + :res_metal')
             ->set('res_crystal', 'res_crystal + :res_crystal')
@@ -130,7 +108,7 @@ class AsteroidRepository extends AbstractRepository
 
     public function remove(int $id): void
     {
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->delete('asteroids')
             ->where('id = :id')
             ->setParameter('id', $id)

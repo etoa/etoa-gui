@@ -12,7 +12,7 @@ class UserSurveillanceRepository extends AbstractRepository
      */
     public function search(UserSurveillanceSearch $search): array
     {
-        $data = $this->applySearchSortLimit($this->createQueryBuilder(), $search)
+        $data = $this->applySearchSortLimit($this->createQueryBuilder('q'), $search)
             ->select('*')
             ->from('user_surveillance')
             ->orderBy('timestamp', 'DESC')
@@ -26,7 +26,7 @@ class UserSurveillanceRepository extends AbstractRepository
      */
     public function countPerSession(UserSurveillanceSearch $search): array
     {
-        $data = $this->applySearchSortLimit($this->createQueryBuilder(), $search)
+        $data = $this->applySearchSortLimit($this->createQueryBuilder('q'), $search)
             ->select('session, COUNT(id)')
             ->from('user_surveillance')
             ->groupBy('session')
@@ -40,7 +40,7 @@ class UserSurveillanceRepository extends AbstractRepository
      */
     public function timestampsPerSession(UserSurveillanceSearch $search): array
     {
-        $data = $this->applySearchSortLimit($this->createQueryBuilder(), $search)
+        $data = $this->applySearchSortLimit($this->createQueryBuilder('q'), $search)
             ->select('session, MAX(timestamp) max, MIN(timestamp) min')
             ->from('user_surveillance')
             ->groupBy('session')
@@ -58,14 +58,6 @@ class UserSurveillanceRepository extends AbstractRepository
         return $result;
     }
 
-    public function count(UserSurveillanceSearch $search): int
-    {
-        return (int) $this->applySearchSortLimit($this->createQueryBuilder(), $search)
-            ->select('COUNT(*)')
-            ->from('user_surveillance')
-            ->fetchOne();
-    }
-
     /**
      * @param list<int> $userIds
      * @return array<int, int>
@@ -76,7 +68,7 @@ class UserSurveillanceRepository extends AbstractRepository
             return [];
         }
 
-        $data = $this->createQueryBuilder()
+        $data = $this->createQueryBuilder('q')
             ->select('user_id, COUNT(*)')
             ->from('user_surveillance')
             ->where('user_id IN (:userIds)')
@@ -127,7 +119,7 @@ class UserSurveillanceRepository extends AbstractRepository
      */
     public function getOrphanedUserIds(): array
     {
-        $data = $this->createQueryBuilder()
+        $data = $this->createQueryBuilder('q')
             ->select('s.user_id')
             ->from('user_surveillance', 's')
             ->innerJoin('s', 'users', 'u', 's.user_id=u.user_id')
@@ -140,7 +132,7 @@ class UserSurveillanceRepository extends AbstractRepository
 
     public function removeForUser(int $userId) : void
     {
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->delete('user_surveillance')
             ->where('user_id = :userId')
             ->setParameter('userId', $userId)

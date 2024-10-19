@@ -11,7 +11,7 @@ class ChatUserRepository extends AbstractRepository
      */
     public function getChatUsers(): array
     {
-        $data = $this->createQueryBuilder()
+        $data = $this->createQueryBuilder('q')
             ->select('*')
             ->from('chat_users')
             ->orderBy('nick')
@@ -25,7 +25,7 @@ class ChatUserRepository extends AbstractRepository
      */
     public function getTimedOutChatUsers(int $timeout): array
     {
-        $data = $this->createQueryBuilder()
+        $data = $this->createQueryBuilder('q')
             ->select('*')
             ->from('chat_users')
             ->where('timestamp < UNIX_TIMESTAMP() - :timeout')
@@ -37,7 +37,7 @@ class ChatUserRepository extends AbstractRepository
 
     public function getChatUser(int $userId): ?ChatUser
     {
-        $data = $this->createQueryBuilder()
+        $data = $this->createQueryBuilder('q')
             ->select('*')
             ->from('chat_users')
             ->where('user_id = :userId')

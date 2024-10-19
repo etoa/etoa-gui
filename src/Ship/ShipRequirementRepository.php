@@ -18,7 +18,7 @@ class ShipRequirementRepository extends AbstractRequirementRepository
      */
     public function getRequiredSpeedTechnologies(int $shipId): array
     {
-        $data = $this->createQueryBuilder()
+        $data = $this->createQueryBuilder('q')
             ->select('t.tech_id, t.tech_name, r.req_level')
             ->from('ship_requirements', 'r')
             ->innerJoin('r', 'technologies', 't', 'req_tech_id = tech_id')
@@ -38,7 +38,7 @@ class ShipRequirementRepository extends AbstractRequirementRepository
      */
     public function getShipsWithRequiredTechnology(int $techId): array
     {
-        $data = $this->createQueryBuilder()
+        $data = $this->createQueryBuilder('q')
             ->select('s.ship_id, s.ship_name, r.req_level')
             ->from('ship_requirements', 'r')
             ->innerJoin('r', 'ships', 's', 'r.obj_id = s.ship_id')

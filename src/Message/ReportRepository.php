@@ -13,17 +13,9 @@ use EtoA\Message\ReportData\SpyReportData;
 
 class ReportRepository extends AbstractRepository
 {
-    public function count(ReportSearch $search = null): int
-    {
-        return (int) $this->applySearchSortLimit($this->createQueryBuilder(), $search)
-            ->select('COUNT(*)')
-            ->from('reports')
-            ->fetchOne();
-    }
-
     public function countNotArchived(): int
     {
-        return (int) $this->createQueryBuilder()
+        return (int) $this->createQueryBuilder('q')
             ->select('COUNT(*)')
             ->from('reports')
             ->where('archived = 0')
@@ -32,7 +24,7 @@ class ReportRepository extends AbstractRepository
 
     public function countDeleted(): int
     {
-        return (int) $this->createQueryBuilder()
+        return (int) $this->createQueryBuilder('q')
             ->select('COUNT(*)')
             ->from('reports')
             ->where('deleted = 1')
@@ -41,7 +33,7 @@ class ReportRepository extends AbstractRepository
 
     public function countUserUnread(int $userId): int
     {
-        return (int) $this->createQueryBuilder()
+        return (int) $this->createQueryBuilder('q')
             ->select('COUNT(id)')
             ->from('reports')
             ->where('user_id = :userId')
@@ -56,7 +48,7 @@ class ReportRepository extends AbstractRepository
      */
     public function searchReports(ReportSearch $search, int $limit, int $first = null): array
     {
-        $qb = $this->createQueryBuilder()
+        $qb = $this->createQueryBuilder('q')
             ->select('*')
             ->from('reports')
             ->orderBy('timestamp', 'DESC');
@@ -69,7 +61,7 @@ class ReportRepository extends AbstractRepository
 
     public function searchReport(ReportSearch $search): ?Report
     {
-        $data = $this->applySearchSortLimit($this->createQueryBuilder(), $search)
+        $data = $this->applySearchSortLimit($this->createQueryBuilder('q'), $search)
             ->select('*')
             ->from('reports')
             ->orderBy('timestamp', 'DESC')
@@ -81,7 +73,7 @@ class ReportRepository extends AbstractRepository
 
     protected function addReport(string $type, int $userId, int $allianceId, ?string $content, int $entity1Id, int $entity2Id, int $opponentId): int
     {
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->insert('reports')
             ->values([
                 'timestamp' => ':time',
@@ -117,7 +109,7 @@ class ReportRepository extends AbstractRepository
             return;
         }
 
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->update('reports')
             ->set('archived', '1')
             ->where('user_id = :userId')
@@ -136,7 +128,7 @@ class ReportRepository extends AbstractRepository
             return;
         }
 
-        $qb = $this->createQueryBuilder()
+        $qb = $this->createQueryBuilder('q')
             ->update('reports')
             ->set('deleted', '1')
             ->where('user_id = :userId')
@@ -162,7 +154,7 @@ class ReportRepository extends AbstractRepository
 
     public function setDeleted(int $id, bool $deleted): void
     {
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->update('reports')
             ->set('deleted', ':deleted')
             ->where('id = :id')
@@ -182,7 +174,7 @@ class ReportRepository extends AbstractRepository
             return;
         }
 
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->update('reports')
             ->set('read', '1')
             ->where('user_id = :userId')
@@ -194,7 +186,7 @@ class ReportRepository extends AbstractRepository
 
     public function removeUnarchivedread(int $beforeTimestamp): int
     {
-        return $this->createQueryBuilder()
+        return $this->createQueryBuilder('q')
             ->delete('reports')
             ->where('archived = 0')
             ->andWhere('`read` = 1')
@@ -206,7 +198,7 @@ class ReportRepository extends AbstractRepository
 
     public function removeDeleted(int $beforeTimestamp): int
     {
-        return $this->createQueryBuilder()
+        return $this->createQueryBuilder('q')
             ->delete('reports')
             ->where('deleted = 1')
             ->andWhere('timestamp < :timestamp')

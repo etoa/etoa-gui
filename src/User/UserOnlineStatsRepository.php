@@ -8,7 +8,7 @@ class UserOnlineStatsRepository extends AbstractRepository
 {
     public function addEntry(int $userCount, int $sessionCount): void
     {
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->insert('user_onlinestats')
             ->values([
                 'stats_timestamp' => ':now',
@@ -28,7 +28,7 @@ class UserOnlineStatsRepository extends AbstractRepository
      */
     public function getEntries(int $limit): array
     {
-        $data = $this->createQueryBuilder()
+        $data = $this->createQueryBuilder('q')
             ->select('*')
             ->from('user_onlinestats')
             ->setMaxResults($limit)

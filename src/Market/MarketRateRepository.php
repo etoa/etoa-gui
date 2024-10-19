@@ -11,7 +11,7 @@ class MarketRateRepository extends AbstractRepository
      */
     public function getRates(int $amount, int $offset = 0): array
     {
-        $data = $this->createQueryBuilder()
+        $data = $this->createQueryBuilder('q')
             ->select("*")
             ->from('market_rates')
             ->orderBy('id', 'DESC')
@@ -25,7 +25,7 @@ class MarketRateRepository extends AbstractRepository
     public function save(MarketRate $rate): void
     {
         if ($rate->id !== null) {
-            $this->createQueryBuilder()
+            $this->createQueryBuilder('q')
                 ->update('market_rates')
                 ->set('timestamp', ':timestamp')
                 ->set('supply_0', ':supply0')
@@ -74,7 +74,7 @@ class MarketRateRepository extends AbstractRepository
             return;
         }
 
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->insert('market_rates')
             ->values([
                 'timestamp' => ':timestamp',
@@ -125,7 +125,7 @@ class MarketRateRepository extends AbstractRepository
 
     public function removeWhereIdLowerThan(int $id): void
     {
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
         ->delete('market_rates')
         ->where('id < :id')
         ->setParameters([

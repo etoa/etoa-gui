@@ -2,16 +2,24 @@
 
 namespace EtoA\Alliance\Board;
 
+use Doctrine\Persistence\ManagerRegistry;
 use EtoA\Core\AbstractRepository;
+use EtoA\Entity\User;
 
 class AllianceBoardCategoryRankRepository extends AbstractRepository
 {
+    //TODO: add correct entity
+    public function __construct(ManagerRegistry $registry)
+    {
+        parent::__construct($registry, Category::class);
+    }
+
     /**
      * @return int[]
      */
     public function getCategoriesForRank(int $allianceId, int $rankId): array
     {
-        $data = $this->createQueryBuilder()
+        $data = $this->createQueryBuilder('q')
             ->select('DISTINCT c.cr_cat_id')
             ->from('alliance_ranks', 'r')
             ->innerJoin('r', 'allianceboard_catranks', 'c', 'r.rank_id = c.cr_rank_id')
@@ -31,7 +39,7 @@ class AllianceBoardCategoryRankRepository extends AbstractRepository
      */
     public function getRanksForCategories(int $categoryId): array
     {
-        $data = $this->createQueryBuilder()
+        $data = $this->createQueryBuilder('q')
             ->select('cr_rank_id')
             ->from('allianceboard_catranks')
             ->where('cr_cat_id = :categoryId')
@@ -46,7 +54,7 @@ class AllianceBoardCategoryRankRepository extends AbstractRepository
      */
     public function getRanksForBnd(int $bndId): array
     {
-        $data = $this->createQueryBuilder()
+        $data = $this->createQueryBuilder('q')
             ->select('cr_rank_id')
             ->from('allianceboard_catranks')
             ->where('cr_bnd_id = :bndId')
@@ -61,7 +69,7 @@ class AllianceBoardCategoryRankRepository extends AbstractRepository
      */
     public function replaceRanks(int $categoryId, int $bndId, array $rankIds): void
     {
-        $qb = $this->createQueryBuilder()
+        $qb = $this->createQueryBuilder('q')
             ->delete('allianceboard_catranks');
 
         if ($categoryId > 0) {

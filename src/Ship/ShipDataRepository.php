@@ -22,7 +22,7 @@ class ShipDataRepository extends AbstractRepository
      */
     public function searchShipNames(ShipSearch $search = null, ShipSort $orderBy = null, int $limit = null): array
     {
-        $qb = $this->createQueryBuilder()
+        $qb = $this->createQueryBuilder('q')
             ->select('ship_id', 'ship_name')
             ->from('ships');
 
@@ -35,7 +35,7 @@ class ShipDataRepository extends AbstractRepository
      */
     public function getShipPoints(): array
     {
-        $data = $this->createQueryBuilder()
+        $data = $this->createQueryBuilder('q')
             ->select('ship_id', 'ship_points')
             ->from('ships')
             ->fetchAllKeyValue();
@@ -45,7 +45,7 @@ class ShipDataRepository extends AbstractRepository
 
     public function updateShipPoints(int $shipId, float $points): void
     {
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->update('ships')
             ->set('ship_points', ':points')
             ->where('ship_id = :shipId')
@@ -61,7 +61,7 @@ class ShipDataRepository extends AbstractRepository
      */
     public function getAllShips(bool $showAll = false, string $oderBy = null): array
     {
-        $qb = $this->createQueryBuilder()
+        $qb = $this->createQueryBuilder('q')
             ->select('*')
             ->from('ships');
 
@@ -93,7 +93,7 @@ class ShipDataRepository extends AbstractRepository
      */
     public function getSpecialShips(): array
     {
-        $data = $this->createQueryBuilder()
+        $data = $this->createQueryBuilder('q')
             ->select('*')
             ->from('ships')
             ->andWhere('special_ship = 1')
@@ -108,7 +108,7 @@ class ShipDataRepository extends AbstractRepository
      */
     public function getFakeableShipNames(): array
     {
-        return $this->createQueryBuilder()
+        return $this->createQueryBuilder('q')
             ->select('*')
             ->from('ships')
             ->andWhere('ship_fakeable = 1')
@@ -140,7 +140,7 @@ class ShipDataRepository extends AbstractRepository
 
     private function shipActionQueryBuilder(string $action): QueryBuilder
     {
-        return $this->createQueryBuilder()
+        return $this->createQueryBuilder('q')
             ->from('ships')
             ->where('ship_buildable=1')
             ->andWhere('special_ship=0')
@@ -159,7 +159,7 @@ class ShipDataRepository extends AbstractRepository
      */
     public function getShipWithPowerProduction(): array
     {
-        $data = $this->createQueryBuilder()
+        $data = $this->createQueryBuilder('q')
             ->select('*')
             ->from('ships')
             ->where('ship_prod_power > 0')
@@ -174,7 +174,7 @@ class ShipDataRepository extends AbstractRepository
      */
     public function getAllianceShips(): array
     {
-        $data = $this->createQueryBuilder()
+        $data = $this->createQueryBuilder('q')
             ->select('*')
             ->from('ships')
             ->where('ship_alliance_shipyard_level > 0')
@@ -186,7 +186,7 @@ class ShipDataRepository extends AbstractRepository
 
     public function getShip(int $shipId, bool $onlyShipShow = true): ?Ship
     {
-        $qb = $this->createQueryBuilder()
+        $qb = $this->createQueryBuilder('q')
             ->select('*')
             ->from('ships')
             ->andWhere('ship_id = :shipId')
@@ -207,7 +207,7 @@ class ShipDataRepository extends AbstractRepository
      */
     public function getShipsByCategory(int $shipCategory, string $order = 'ship_order', string $sort = 'ASC'): array
     {
-        $data = $this->createQueryBuilder()
+        $data = $this->createQueryBuilder('q')
             ->select('*')
             ->from('ships')
             ->where('ship_cat_id = :category')
@@ -224,7 +224,7 @@ class ShipDataRepository extends AbstractRepository
      */
     public function getShipsByRace(int $raceId): array
     {
-        $data = $this->createQueryBuilder()
+        $data = $this->createQueryBuilder('q')
             ->select('*')
             ->from('ships')
             ->where('ship_race_id = :raceId')
@@ -240,7 +240,7 @@ class ShipDataRepository extends AbstractRepository
 
     public function getTransformedShipForDefense(int $defenseId): ?Ship
     {
-        $data = $this->createQueryBuilder()
+        $data = $this->createQueryBuilder('q')
             ->select('s.*')
             ->from('ships', 's')
             ->innerJoin('s', 'obj_transforms', 't', 't.ship_id=s.ship_id')
@@ -258,7 +258,7 @@ class ShipDataRepository extends AbstractRepository
      */
     public function searchShips(ShipSearch $search = null, ShipSort $sort = null, int $limit = null): array
     {
-        $data = $this->applySearchSortLimit($this->createQueryBuilder(), $search, $sort, $limit)
+        $data = $this->applySearchSortLimit($this->createQueryBuilder('q'), $search, $sort, $limit)
             ->select('*')
             ->from('ships')
             ->fetchAllAssociative();
@@ -274,7 +274,7 @@ class ShipDataRepository extends AbstractRepository
 
     public function searchShip(ShipSearch $search = null): ?Ship
     {
-        $data = $this->applySearchSortLimit($this->createQueryBuilder(), $search)
+        $data = $this->applySearchSortLimit($this->createQueryBuilder('q'), $search)
             ->select('*')
             ->from('ships')
             ->setMaxResults(1)

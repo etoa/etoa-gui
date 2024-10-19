@@ -2,13 +2,19 @@
 
 namespace EtoA\Alliance;
 
+use Doctrine\Persistence\ManagerRegistry;
 use EtoA\Core\AbstractRepository;
 
 class AllianceNewsRepository extends AbstractRepository
 {
+    public function __construct(ManagerRegistry $registry)
+    {
+        parent::__construct($registry, AllianceNews::class);
+    }
+
     public function add(int $userId, int $allianceId, string $title, string $text, int $toAllianceId): int
     {
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->insert('alliance_news')
             ->values([
                 'alliance_news_alliance_id' => ':allianceId',
@@ -33,7 +39,7 @@ class AllianceNewsRepository extends AbstractRepository
 
     public function update(AllianceNews $news): void
     {
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->update('alliance_news')
             ->set('alliance_news_alliance_id', ':allianceId')
             ->set('alliance_news_user_id', ':userId')
@@ -57,7 +63,7 @@ class AllianceNewsRepository extends AbstractRepository
      */
     public function getNewsEntries(?int $allianceId, int $limit = null): array
     {
-        $qb = $this->createQueryBuilder()
+        $qb = $this->createQueryBuilder('q')
             ->select('n.*')
             ->addSelect('a.alliance_name, a.alliance_tag')
             ->addSelect('u.user_id, u.user_nick')
@@ -89,7 +95,7 @@ class AllianceNewsRepository extends AbstractRepository
      */
     public function getNewsIds(): array
     {
-        $data = $this->createQueryBuilder()
+        $data = $this->createQueryBuilder('q')
             ->select('alliance_news_id')
             ->from('alliance_news')
             ->fetchAllAssociative();
@@ -99,7 +105,7 @@ class AllianceNewsRepository extends AbstractRepository
 
     public function getEntry(int $id): ?AllianceNews
     {
-        $data = $this->createQueryBuilder()
+        $data = $this->createQueryBuilder('q')
             ->select('n.*')
             ->addSelect('a.alliance_name, a.alliance_tag')
             ->addSelect('u.user_id, u.user_nick')
@@ -117,7 +123,7 @@ class AllianceNewsRepository extends AbstractRepository
 
     public function countNewEntriesSince(int $allianceId, int $timestamp): int
     {
-        return (int) $this->createQueryBuilder()
+        return (int) $this->createQueryBuilder('q')
             ->select('COUNT(alliance_news_id)')
             ->from('alliance_news')
             ->where('alliance_news_alliance_to_id = :allianceId OR alliance_news_alliance_to_id = 0')
@@ -131,7 +137,7 @@ class AllianceNewsRepository extends AbstractRepository
 
     public function deleteAllianceEntries(int $allianceId): void
     {
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->delete('alliance_news')
             ->where('alliance_news_alliance_id = :allianceId')
             ->setParameter('allianceId', $allianceId)
@@ -140,7 +146,7 @@ class AllianceNewsRepository extends AbstractRepository
 
     public function deleteOlderThan(int $timestamp): int
     {
-        return $this->createQueryBuilder()
+        return $this->createQueryBuilder('q')
             ->delete('alliance_news')
             ->where('alliance_news_date < :timestamp')
             ->setParameter('timestamp', $timestamp)
@@ -150,7 +156,7 @@ class AllianceNewsRepository extends AbstractRepository
 
     public function deleteEntry(int $newsId): void
     {
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->delete('alliance_news')
             ->where('alliance_news_id = :id')
             ->setParameter('id', $newsId)

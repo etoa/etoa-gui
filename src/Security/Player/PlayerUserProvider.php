@@ -40,8 +40,8 @@ class PlayerUserProvider implements UserProviderInterface, PasswordUpgraderInter
 
     public function loadUserByIdentifier(string $identifier): CurrentPlayer
     {
-        $user = $this->userRepository->getUserByNick($identifier);
-
+        $user = $this->userRepository->findOneBy(['userNick'=>$identifier]);
+        dd($user);
         if (null === $user) {
             $e = new UserNotFoundException(sprintf('User "%s" not found.', $identifier));
             $e->setUserIdentifier($identifier);

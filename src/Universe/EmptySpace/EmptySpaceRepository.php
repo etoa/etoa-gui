@@ -13,7 +13,7 @@ class EmptySpaceRepository extends AbstractRepository
      */
     public function getAllIds(): array
     {
-        $data = $this->createQueryBuilder()
+        $data = $this->createQueryBuilder('q')
             ->select("id")
             ->from('space')
             ->fetchAllAssociative();
@@ -21,31 +21,9 @@ class EmptySpaceRepository extends AbstractRepository
         return array_map(fn (array $row) => (int) $row['id'], $data);
     }
 
-    public function count(): int
-    {
-        return (int) $this->createQueryBuilder()
-            ->select("COUNT(id)")
-            ->from('space')
-            ->fetchOne();
-    }
-
-    public function find(int $id): ?EmptySpace
-    {
-        $data = $this->createQueryBuilder()
-            ->select('*')
-            ->from('space')
-            ->where('id = :id')
-            ->setParameters([
-                'id' => $id,
-            ])
-            ->fetchAssociative();
-
-        return $data !== false ? new EmptySpace($data) : null;
-    }
-
     public function add(int $id, int $lastVisited = 0): void
     {
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->insert('space')
             ->values([
                 'id' => ':id',
@@ -60,7 +38,7 @@ class EmptySpaceRepository extends AbstractRepository
 
     public function remove(int $id): void
     {
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->delete('space')
             ->where('id = :id')
             ->setParameter('id', $id)

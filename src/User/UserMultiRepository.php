@@ -22,7 +22,7 @@ class UserMultiRepository extends AbstractRepository
             ->fetchOne();
 
         if ($exists) {
-            $this->createQueryBuilder()
+            $this->createQueryBuilder('q')
                 ->update('user_multi')
                 ->set('activ', ':active')
                 ->set('connection', ':reason')
@@ -38,7 +38,7 @@ class UserMultiRepository extends AbstractRepository
                 ])
                 ->executeQuery();
         } else {
-            $this->createQueryBuilder()
+            $this->createQueryBuilder('q')
                 ->insert('user_multi')
                 ->values([
                     'connection' => ':reason',
@@ -58,7 +58,7 @@ class UserMultiRepository extends AbstractRepository
 
     public function addEmptyEntry(int $userId): void
     {
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->insert('user_multi')
             ->values([
                 'user_id' => ':userId',
@@ -73,7 +73,7 @@ class UserMultiRepository extends AbstractRepository
 
     public function updateEntry(int $id, int $userId, int $multiId, string $reason): void
     {
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->update('user_multi')
             ->set('multi_id', ':multiId')
             ->set('connection', ':reason')
@@ -92,7 +92,7 @@ class UserMultiRepository extends AbstractRepository
 
     public function deactivateEntry(int $id): void
     {
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->update('user_multi')
             ->set('active', ':active')
             ->set('timestamp', ':now')
@@ -107,7 +107,7 @@ class UserMultiRepository extends AbstractRepository
 
     public function deactivate(int $userId, int $multiId): void
     {
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->update('user_multi')
             ->set('activ', ':active')
             ->set('timestamp', ':now')
@@ -127,7 +127,7 @@ class UserMultiRepository extends AbstractRepository
      */
     public function getUserEntries(int $userId, bool $active = null): array
     {
-        $qb = $this->createQueryBuilder()
+        $qb = $this->createQueryBuilder('q')
             ->select('m.*, u.user_nick as multi_nick')
             ->from('user_multi', 'm')
             ->leftJoin('m', 'users', 'u', 'u.user_id = m.multi_id')
@@ -157,7 +157,7 @@ class UserMultiRepository extends AbstractRepository
             return [];
         }
 
-        $data = $this->createQueryBuilder()
+        $data = $this->createQueryBuilder('q')
             ->select('m.*, u.user_nick as multi_nick')
             ->from('user_multi', 'm')
             ->leftJoin('m', 'users', 'u', 'u.user_id = m.multi_id')
@@ -176,7 +176,7 @@ class UserMultiRepository extends AbstractRepository
 
     public function getUserEntry(int $userId, int $id): ?UserMulti
     {
-        $data = $this->createQueryBuilder()
+        $data = $this->createQueryBuilder('q')
             ->select('m.*, u.user_nick as multi_nick')
             ->from('user_multi', 'm')
             ->leftJoin('m', 'users', 'u', 'u.user_id = m.multi_id')
@@ -191,7 +191,7 @@ class UserMultiRepository extends AbstractRepository
 
     public function existsEntryWith(int $userId, int $otherUserId): bool
     {
-        return (bool) $this->createQueryBuilder()
+        return (bool) $this->createQueryBuilder('q')
             ->select('1')
             ->from('user_multi')
             ->where('user_id = :userId AND multi_id = :otherUserId')
@@ -205,7 +205,7 @@ class UserMultiRepository extends AbstractRepository
 
     public function deleteUserEntries(int $userId): int
     {
-        $qb = $this->createQueryBuilder();
+        $qb = $this->createQueryBuilder('q');
 
         return $qb
             ->delete('user_multi')
@@ -218,7 +218,7 @@ class UserMultiRepository extends AbstractRepository
 
     public function deleteEntry(int $id): int
     {
-        $qb = $this->createQueryBuilder();
+        $qb = $this->createQueryBuilder('q');
 
         return $qb
             ->delete('user_multi')

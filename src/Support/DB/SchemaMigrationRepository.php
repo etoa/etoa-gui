@@ -12,7 +12,7 @@ class SchemaMigrationRepository extends AbstractRepository
 
     public function hasMigrationTable(): bool
     {
-        $data = $this->createQueryBuilder()
+        $data = $this->createQueryBuilder('q')
             ->select("*")
             ->from('information_schema.TABLES')
             ->where('table_schema = :db')
@@ -31,7 +31,7 @@ class SchemaMigrationRepository extends AbstractRepository
      */
     public function getMigrations(): array
     {
-        return $this->createQueryBuilder()
+        return $this->createQueryBuilder('q')
             ->select("version", "date")
             ->from(self::SCHEMA_MIGRATIONS_TABLE)
             ->orderBy('version')
@@ -40,7 +40,7 @@ class SchemaMigrationRepository extends AbstractRepository
 
     public function getMigrationDate(string $version): ?string
     {
-        $date = $this->createQueryBuilder()
+        $date = $this->createQueryBuilder('q')
             ->select("date")
             ->from(self::SCHEMA_MIGRATIONS_TABLE)
             ->where('version = :version')
@@ -52,7 +52,7 @@ class SchemaMigrationRepository extends AbstractRepository
 
     public function addMigration(string $version): void
     {
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->insert(self::SCHEMA_MIGRATIONS_TABLE)
             ->values([
                 'version' => ':version',

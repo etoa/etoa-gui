@@ -15,7 +15,7 @@ class BuildingRepository extends AbstractRepository
      */
     public function getBuildingLevels(int $entityId): array
     {
-        $data = $this->createQueryBuilder()
+        $data = $this->createQueryBuilder('q')
             ->select('buildlist_building_id, buildlist_current_level')
             ->from('buildlist')
             ->andWhere('buildlist_entity_id = :entityId')
@@ -33,7 +33,7 @@ class BuildingRepository extends AbstractRepository
      */
     public function getWorkplaceBuildings(int $entityId): array
     {
-        $data = $this->createQueryBuilder()
+        $data = $this->createQueryBuilder('q')
             ->select('buildlist_people_working')
             ->addSelect('building_id, building_name, building_people_place')
             ->from('buildlist')
@@ -54,7 +54,7 @@ class BuildingRepository extends AbstractRepository
      */
     public function getPeopleStorageBuildings(int $entityId): array
     {
-        $data = $this->createQueryBuilder()
+        $data = $this->createQueryBuilder('q')
             ->select('buildlist_current_level')
             ->addSelect('building_store_factor, building_name, building_people_place')
             ->from('buildlist')
@@ -72,7 +72,7 @@ class BuildingRepository extends AbstractRepository
 
     public function getBuildingLevel(int $userId, int $buildingId, int $entityId): int
     {
-        return (int)$this->createQueryBuilder()
+        return (int)$this->createQueryBuilder('q')
             ->select('buildlist_current_level')
             ->from('buildlist')
             ->where('buildlist_building_id = :buildingId')
@@ -88,7 +88,7 @@ class BuildingRepository extends AbstractRepository
 
     public function getHighestBuildingLevel(int $userId, int $buildingId): int
     {
-        return (int)$this->createQueryBuilder()
+        return (int)$this->createQueryBuilder('q')
             ->select('MAX(buildlist_current_level)')
             ->from('buildlist')
             ->where('buildlist_building_id = :buildingId')
@@ -102,7 +102,7 @@ class BuildingRepository extends AbstractRepository
 
     public function getNumberOfBuildings(int $buildingId): int
     {
-        return (int)$this->createQueryBuilder()
+        return (int)$this->createQueryBuilder('q')
             ->select('COUNT(buildlist_id)')
             ->from('buildlist')
             ->where('buildlist_building_id = :buildingId')
@@ -112,7 +112,7 @@ class BuildingRepository extends AbstractRepository
 
     public function numBuildingListEntries(): int
     {
-        return (int)$this->createQueryBuilder()
+        return (int)$this->createQueryBuilder('q')
             ->select('COUNT(buildlist_id)')
             ->from('buildlist')
             ->fetchOne();
@@ -120,7 +120,7 @@ class BuildingRepository extends AbstractRepository
 
     public function countBuildInProgress(int $userId, int $entityId): int
     {
-        return (int)$this->createQueryBuilder()
+        return (int)$this->createQueryBuilder('q')
             ->select('COUNT(buildlist_id)')
             ->from('buildlist')
             ->where('buildlist_entity_id = :entityId')
@@ -134,17 +134,9 @@ class BuildingRepository extends AbstractRepository
             ->fetchOne();
     }
 
-    public function count(BuildingListItemSearch $search = null): int
-    {
-        return (int)$this->applySearchSortLimit($this->createQueryBuilder(), $search)
-            ->select('COUNT(buildlist_id)')
-            ->from('buildlist')
-            ->fetchOne();
-    }
-
     public function countEmpty(): int
     {
-        return (int)$this->createQueryBuilder()
+        return (int)$this->createQueryBuilder('q')
             ->select('COUNT(buildlist_id)')
             ->from('buildlist')
             ->where('buildlist_current_level=0')
@@ -155,7 +147,7 @@ class BuildingRepository extends AbstractRepository
 
     public function deleteEmpty(): int
     {
-        return $this->createQueryBuilder()
+        return $this->createQueryBuilder('q')
             ->delete('buildlist')
             ->where('buildlist_current_level=0')
             ->andWhere('buildlist_build_start_time=0')
@@ -169,7 +161,7 @@ class BuildingRepository extends AbstractRepository
      */
     public function buildingNames(): array
     {
-        return $this->createQueryBuilder()
+        return $this->createQueryBuilder('q')
             ->select('building_id', 'building_name')
             ->from('buildings')
             ->orderBy('building_type_id')
@@ -180,7 +172,7 @@ class BuildingRepository extends AbstractRepository
 
     public function fetchBuildingListEntry(int $id): ?array
     {
-        $data = $this->createQueryBuilder()
+        $data = $this->createQueryBuilder('q')
             ->select(
                 'bl.buildlist_id',
                 'bl.buildlist_current_level',
@@ -203,7 +195,7 @@ class BuildingRepository extends AbstractRepository
 
     public function updateBuildingListEntry(int $id, int $level, int $type, int $start, int $end): bool
     {
-        $affected = $this->createQueryBuilder()
+        $affected = $this->createQueryBuilder('q')
             ->update('buildlist')
             ->set('buildlist_current_level', ':level')
             ->set('buildlist_build_type', ':type')
@@ -225,7 +217,7 @@ class BuildingRepository extends AbstractRepository
 
     public function updateUserForEntity(int $newUserId, int $entityId): void
     {
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->update('buildlist')
             ->set('buildlist_user_id', ':newUserId')
             ->where('buildlist_entity_id = :entityId')
@@ -238,13 +230,13 @@ class BuildingRepository extends AbstractRepository
 
     public function removeForEntity(int $entityId): void
     {
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->delete('building_queue')
             ->where('entity_id = :entityId')
             ->setParameter('entityId', $entityId)
             ->executeQuery();
 
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->delete('buildlist')
             ->where('buildlist_entity_id = :entityId')
             ->setParameters([
@@ -255,7 +247,7 @@ class BuildingRepository extends AbstractRepository
 
     public function deleteBuildingListEntry(int $id): bool
     {
-        $affected = $this->createQueryBuilder()
+        $affected = $this->createQueryBuilder('q')
             ->delete('buildlist')
             ->where('buildlist_id = :id')
             ->setParameter('id', $id)
@@ -270,7 +262,7 @@ class BuildingRepository extends AbstractRepository
      */
     public function findByFormData(array $formData): array
     {
-        $qry = $this->createQueryBuilder()
+        $qry = $this->createQueryBuilder('q')
             ->select('*')
             ->from('buildlist', 'l')
             ->innerJoin('l', 'planets', 'p', 'p.id = l.buildlist_entity_id')
@@ -374,7 +366,7 @@ class BuildingRepository extends AbstractRepository
      */
     public function search(BuildingListItemSearch $search, int $limit = null, int $offset = null): array
     {
-        $data = $this->applySearchSortLimit($this->createQueryBuilder(), $search, null, $limit, $offset)
+        $data = $this->applySearchSortLimit($this->createQueryBuilder('q'), $search, null, $limit, $offset)
             ->select('*')
             ->from('buildlist')
             ->fetchAllAssociative();
@@ -387,7 +379,7 @@ class BuildingRepository extends AbstractRepository
      */
     public function findForUser(int $userId, int $entityId = null, int $endTimeAfter = null): array
     {
-        $qb = $this->createQueryBuilder()
+        $qb = $this->createQueryBuilder('q')
             ->select('*')
             ->from('buildlist')
             ->where('buildlist_user_id = :userId')
@@ -413,7 +405,7 @@ class BuildingRepository extends AbstractRepository
 
     public function getEntry(int $id): ?BuildingListItem
     {
-        $data = $this->createQueryBuilder()
+        $data = $this->createQueryBuilder('q')
             ->select('*')
             ->from('buildlist')
             ->where('buildlist_id = :id')
@@ -427,7 +419,7 @@ class BuildingRepository extends AbstractRepository
 
     public function getEntityBuilding(int $userId, int $entityId, int $buildingId): ?BuildingListItem
     {
-        $data = $this->createQueryBuilder()
+        $data = $this->createQueryBuilder('q')
             ->select('*')
             ->from('buildlist')
             ->where('buildlist_user_id = :userId')
@@ -475,7 +467,7 @@ class BuildingRepository extends AbstractRepository
 
     public function deactivateBuilding(int $id, int $deactivateTime): void
     {
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->update('buildlist')
             ->set('buildlist_deactivated', ':deactivated')
             ->where('buildlist_id = :id')
@@ -488,7 +480,7 @@ class BuildingRepository extends AbstractRepository
 
     public function save(BuildingListItem $item): void
     {
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->update('buildlist')
             ->set('buildlist_user_id', ':userId')
             ->set('buildlist_building_id', ':buildingId')
@@ -523,7 +515,7 @@ class BuildingRepository extends AbstractRepository
 
     public function getPeopleWorking(int $entityId, bool $onlyWorkingStatus = false): PeopleWorking
     {
-        $qb = $this->createQueryBuilder()
+        $qb = $this->createQueryBuilder('q')
             ->select('buildlist_building_id, buildlist_people_working')
             ->from('buildlist')
             ->where('buildlist_entity_id = :entityId')
@@ -541,7 +533,7 @@ class BuildingRepository extends AbstractRepository
 
     public function updateProductionPercent(int $userId, int $entityId, int $buildingId, float $percent): void
     {
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->update('buildlist')
             ->set('buildlist_prod_percent', ':percent')
             ->where('buildlist_entity_id = :entityId')
@@ -558,7 +550,7 @@ class BuildingRepository extends AbstractRepository
 
     public function setPeopleWorking(int $entityId, int $buildingId, int $people): void
     {
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->update('buildlist')
             ->set('buildlist_people_working', ':peopleWorking')
             ->where('buildlist_entity_id = :entityId')
@@ -573,7 +565,7 @@ class BuildingRepository extends AbstractRepository
 
     public function markBuildingWorkingStatus(int $userId, int $entityId, int $buildingId, bool $working): bool
     {
-        return (bool)$this->createQueryBuilder()
+        return (bool)$this->createQueryBuilder('q')
             ->update('buildlist')
             ->set('buildlist_people_working_status', ':status')
             ->where('buildlist_building_id = :buildingId')
@@ -665,7 +657,7 @@ class BuildingRepository extends AbstractRepository
 
     public function removeForUser(int $userId): void
     {
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->delete('buildlist')
             ->where('buildlist_user_id = :userId')
             ->setParameter('userId', $userId)
@@ -674,7 +666,7 @@ class BuildingRepository extends AbstractRepository
 
     public function removeEntry(int $id): void
     {
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->delete('buildlist')
             ->where('buildlist_id = :id')
             ->setParameter('id', $id)
@@ -683,7 +675,7 @@ class BuildingRepository extends AbstractRepository
 
     public function freezeConstruction(int $userId): void
     {
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->update('buildlist')
             ->set('buildlist_build_type', 'buildlist_build_type - 2')
             ->where('buildlist_user_id = :userId')
@@ -696,7 +688,7 @@ class BuildingRepository extends AbstractRepository
 
     public function unfreezeConstruction(int $userId, int $duration): void
     {
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->update('buildlist')
             ->set('buildlist_build_type', 'buildlist_build_type + 2')
             ->set('buildlist_build_start_time', 'buildlist_build_start_time + :duration')

@@ -13,7 +13,7 @@ class UserSessionRepository extends AbstractRepository
      */
     public function logCountPerIp(UserSessionSearch $search): array
     {
-        $data = $this->applySearchSortLimit($this->createQueryBuilder(), $search)
+        $data = $this->applySearchSortLimit($this->createQueryBuilder('q'), $search)
             ->select('s.ip_addr, COUNT(s.ip_addr) cnt')
             ->from('user_sessionlog', 's')
             ->groupBy('s.ip_addr')
@@ -28,7 +28,7 @@ class UserSessionRepository extends AbstractRepository
      */
     public function countPerUserId(UserSessionSearch $search): array
     {
-        $data = $this->applySearchSortLimit($this->createQueryBuilder(), $search)
+        $data = $this->applySearchSortLimit($this->createQueryBuilder('q'), $search)
             ->select('s.user_id, COUNT(s.user_id) cnt')
             ->from('user_session', 's')
             ->groupBy('s.user_id')
@@ -43,7 +43,7 @@ class UserSessionRepository extends AbstractRepository
      */
     public function logCountPerUserId(UserSessionSearch $search): array
     {
-        $data = $this->applySearchSortLimit($this->createQueryBuilder(), $search)
+        $data = $this->applySearchSortLimit($this->createQueryBuilder('q'), $search)
             ->select('s.user_id, COUNT(s.user_id) cnt')
             ->from('user_sessionlog', 's')
             ->groupBy('s.user_id')
@@ -53,20 +53,12 @@ class UserSessionRepository extends AbstractRepository
         return array_map(fn ($value) => (int) $value, $data);
     }
 
-    public function count(): int
-    {
-        return (int) $this->createQueryBuilder()
-            ->select('COUNT(*)')
-            ->from('user_sessions')
-            ->fetchOne();
-    }
-
     /**
      * @return string[]
      */
     public function getUserSessionIds(): array
     {
-        return $this->createQueryBuilder()
+        return $this->createQueryBuilder('q')
             ->select('id')
             ->from('user_sessions')
             ->fetchFirstColumn();
@@ -74,7 +66,7 @@ class UserSessionRepository extends AbstractRepository
 
     public function countActiveSessions(int $timeout): int
     {
-        return (int) $this->createQueryBuilder()
+        return (int) $this->createQueryBuilder('q')
             ->select('COUNT(*)')
             ->from('user_sessions')
             ->where('time_action > :timeout')
@@ -82,21 +74,9 @@ class UserSessionRepository extends AbstractRepository
             ->fetchOne();
     }
 
-    public function find(string $id): ?UserSession
-    {
-        $data = $this->createQueryBuilder()
-            ->select("*")
-            ->from('user_sessions')
-            ->where('id = :id')
-            ->setParameter('id', $id)
-            ->fetchAssociative();
-
-        return $data !== false ? new UserSession($data) : null;
-    }
-
     public function findLog(string $sessionId): ?UserSessionLog
     {
-        $data = $this->createQueryBuilder()
+        $data = $this->createQueryBuilder('q')
             ->select("*")
             ->from('user_sessionlog')
             ->where('session_id = :id')
@@ -109,7 +89,7 @@ class UserSessionRepository extends AbstractRepository
 
     public function findByParameters(string $id, int $userId, string $userAgent, int $timeLogin): ?UserSession
     {
-        $data = $this->createQueryBuilder()
+        $data = $this->createQueryBuilder('q')
             ->select("*")
             ->from('user_sessions')
             ->where('id = :id')
@@ -132,7 +112,7 @@ class UserSessionRepository extends AbstractRepository
      */
     public function getSessions(UserSessionSearch $search = null): array
     {
-        $data = $this->applySearchSortLimit($this->createQueryBuilder(), $search)
+        $data = $this->applySearchSortLimit($this->createQueryBuilder('q'), $search)
             ->select('*')
             ->from('user_sessions', 's')
             ->orderBy('s.time_action', 'DESC')
@@ -146,7 +126,7 @@ class UserSessionRepository extends AbstractRepository
      */
     public function getActiveUserSessions(int $userId): array
     {
-        $data = $this->createQueryBuilder()
+        $data = $this->createQueryBuilder('q')
             ->select('*')
             ->from('user_sessions')
             ->where('user_id = :userId')
@@ -162,7 +142,7 @@ class UserSessionRepository extends AbstractRepository
      */
     public function findByTimeout(int $timeout): array
     {
-        $data = $this->createQueryBuilder()
+        $data = $this->createQueryBuilder('q')
             ->select("*")
             ->from('user_sessions')
             ->where('time_action + :timeout = ' . time())
@@ -174,7 +154,7 @@ class UserSessionRepository extends AbstractRepository
 
     public function add(string $id, int $userId, string $ipAddress, string $userAgent, int $timeLogin): void
     {
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->insert('user_sessions')
             ->values([
                 'id' => ':id',
@@ -196,7 +176,7 @@ class UserSessionRepository extends AbstractRepository
 
     public function update(string $id, int $timeAction, int $botCount, int $lastSpan, string $ipAddress): void
     {
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->update('user_sessions')
             ->set('time_action', ':timeAction')
             ->set('bot_count', ':botCount')
@@ -215,7 +195,7 @@ class UserSessionRepository extends AbstractRepository
 
     public function remove(string $id): void
     {
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->delete('user_sessions')
             ->where('id = :id')
             ->setParameter('id', $id)
@@ -224,7 +204,7 @@ class UserSessionRepository extends AbstractRepository
 
     public function removeForUser(int $userId): void
     {
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->delete('user_sessions')
             ->where('user_id = :userId')
             ->setParameter('userId', $userId)
@@ -233,7 +213,7 @@ class UserSessionRepository extends AbstractRepository
 
     public function addSessionLog(UserSession $userSession, ?int $logoutTime): void
     {
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->insert('user_sessionlog')
             ->values([
                 'session_id' => ':id',
@@ -257,7 +237,7 @@ class UserSessionRepository extends AbstractRepository
 
     public function removeSessionLogs(int $timestamp): int
     {
-        return $this->createQueryBuilder()
+        return $this->createQueryBuilder('q')
             ->delete('user_sessionlog')
             ->where('time_action < :timestamp')
             ->setParameter('timestamp', $timestamp)
@@ -267,7 +247,7 @@ class UserSessionRepository extends AbstractRepository
 
     public function countLogs(UserSessionSearch $search = null): int
     {
-        return (int) $this->applySearchSortLimit($this->createQueryBuilder(), $search)
+        return (int) $this->applySearchSortLimit($this->createQueryBuilder('q'), $search)
             ->select('COUNT(*)')
             ->from('user_sessionlog', 's')
             ->fetchOne();
@@ -278,7 +258,7 @@ class UserSessionRepository extends AbstractRepository
      */
     public function getSessionLogs(UserSessionSearch $search, int $limit = null, int $offset = null): array
     {
-        $rows = $this->applySearchSortLimit($this->createQueryBuilder(), $search, null, $limit, $offset)
+        $rows = $this->applySearchSortLimit($this->createQueryBuilder('q'), $search, null, $limit, $offset)
             ->select('*')
             ->from('user_sessionlog', 's')
             ->orderBy('s.time_action', 'DESC')

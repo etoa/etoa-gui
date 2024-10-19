@@ -31,7 +31,7 @@ abstract class SimpleGameDataCrudController extends GameDataCrudController
         }
 
         echo '<form action="?" method="post">';
-        $rows = $this->createQueryBuilder()
+        $rows = $this->createQueryBuilder('q')
             ->select('*')
             ->from($this->getTable())
             ->orderBy($this->getOverviewOrderField(), $this->getOverviewOrder())
@@ -78,7 +78,7 @@ abstract class SimpleGameDataCrudController extends GameDataCrudController
             $params[$field['name']] = $field['def_val'] ?? "";
         }
 
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->insert($this->getTable())
             ->values($values)
             ->setParameters($params)
@@ -93,7 +93,7 @@ abstract class SimpleGameDataCrudController extends GameDataCrudController
         foreach ($request->request->all() as $key => $val) {
             if ($key != "apply_submit" && $key != "del") {
                 foreach ($val as $k => $vl) {
-                    $affected += $this->createQueryBuilder()
+                    $affected += $this->createQueryBuilder('q')
                         ->update($this->getTable())
                         ->set($key, ':val')
                         ->where($this->getTableId() . " = :id")
@@ -118,7 +118,7 @@ abstract class SimpleGameDataCrudController extends GameDataCrudController
         foreach ($request->request->all() as $key => $val) {
             if ($key == "del") {
                 foreach (array_keys($val) as $id) {
-                    $this->createQueryBuilder()
+                    $this->createQueryBuilder('q')
                         ->delete($this->getTable())
                         ->where($this->getTableId() . " = :id")
                         ->setParameter('id', $id)

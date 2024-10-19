@@ -43,7 +43,7 @@ class UserPointsRepository extends AbstractRepository
      */
     public function getPoints(int $userId, int $limit = null, int $start = null, int $end = null): array
     {
-        $qb = $this->createQueryBuilder()
+        $qb = $this->createQueryBuilder('q')
             ->select("*")
             ->from('user_points')
             ->where('point_user_id = :userId')
@@ -73,17 +73,9 @@ class UserPointsRepository extends AbstractRepository
         return array_map(fn (array $row) => new UserPoints($row), $data);
     }
 
-    public function count(): int
-    {
-        return (int) $this->createQueryBuilder()
-            ->select('COUNT(*)')
-            ->from('user_points')
-            ->fetchOne();
-    }
-
     public function removeForUser(int $userId) : void
     {
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->delete('user_points')
             ->where('point_user_id = :userId')
             ->setParameter('userId', $userId)

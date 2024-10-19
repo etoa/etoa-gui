@@ -11,7 +11,7 @@ class MissileDataRepository extends AbstractRepository
      */
     public function getMissileNames(bool $showAll = false, bool $orderById = false): array
     {
-        $qb = $this->createQueryBuilder()
+        $qb = $this->createQueryBuilder('q')
             ->select('missile_id', 'missile_name')
             ->from('missiles');
 
@@ -26,7 +26,7 @@ class MissileDataRepository extends AbstractRepository
 
     public function getMissile(int $missileId): ?Missile
     {
-        $data = $this->createQueryBuilder()
+        $data = $this->createQueryBuilder('q')
             ->select('*')
             ->from('missiles')
             ->where('missile_show=1')
@@ -42,7 +42,7 @@ class MissileDataRepository extends AbstractRepository
      */
     public function getMissiles(): array
     {
-        $data = $this->createQueryBuilder()
+        $data = $this->createQueryBuilder('q')
             ->select('*')
             ->from('missiles')
             ->where('missile_show=1')

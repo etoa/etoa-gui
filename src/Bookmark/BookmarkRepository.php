@@ -4,16 +4,23 @@ declare(strict_types=1);
 
 namespace EtoA\Bookmark;
 
+use Doctrine\Persistence\ManagerRegistry;
 use EtoA\Core\AbstractRepository;
+use EtoA\Entity\User;
 
 class BookmarkRepository extends AbstractRepository
 {
+    public function __construct(ManagerRegistry $registry)
+    {
+        parent::__construct($registry, Bookmark::class);
+    }
+
     /**
      * @return array<Bookmark>
      */
     public function findForUser(int $userId, BookmarkOrder $order = null): array
     {
-        $qb = $this->createQueryBuilder()
+        $qb = $this->createQueryBuilder('q')
             ->select('bookmarks.*')
             ->addSelect('entities.code as entityCode')
             ->from('bookmarks')
@@ -45,7 +52,7 @@ class BookmarkRepository extends AbstractRepository
      */
     public function getBookmarkedEntities(int $userId): array
     {
-        $data = $this->createQueryBuilder()
+        $data = $this->createQueryBuilder('q')
             ->select(
                 'e.id',
                 'c.id as cid',
@@ -80,7 +87,7 @@ class BookmarkRepository extends AbstractRepository
 
     public function getBookmark(int $id, int $userId): ?Bookmark
     {
-        $data = $this->createQueryBuilder()
+        $data = $this->createQueryBuilder('q')
             ->select('b.*')
             ->addSelect('e.code as entityCode')
             ->from('bookmarks', 'b')
@@ -98,7 +105,7 @@ class BookmarkRepository extends AbstractRepository
 
     public function hasEntityBookmark(int $userId, int $entity): bool
     {
-        return (bool) $this->createQueryBuilder()
+        return (bool) $this->createQueryBuilder('q')
             ->select('1')
             ->from('bookmarks')
             ->where('entity_id = :entityId')
@@ -112,7 +119,7 @@ class BookmarkRepository extends AbstractRepository
 
     public function add(int $userId, int $entityId, string $comment): int
     {
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->insert('bookmarks')
             ->values([
                 'user_id' => ':userId',
@@ -131,7 +138,7 @@ class BookmarkRepository extends AbstractRepository
 
     public function updateComment(int $id, int $userId, string $comment): bool
     {
-        return (bool) $this->createQueryBuilder()
+        return (bool) $this->createQueryBuilder('q')
             ->update('bookmarks')
             ->set('comment', ':comment')
             ->where('id = :id')
@@ -147,7 +154,7 @@ class BookmarkRepository extends AbstractRepository
 
     public function remove(int $id, int $userId): bool
     {
-        return (bool) $this->createQueryBuilder()
+        return (bool) $this->createQueryBuilder('q')
             ->delete('bookmarks')
             ->where('user_id = :userId')
             ->andWhere('id = :id')
@@ -161,7 +168,7 @@ class BookmarkRepository extends AbstractRepository
 
     public function removeForUser(int $userId) : void
     {
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->delete('bookmarks')
             ->where('user_id = :userId')
             ->setParameter('userId', $userId)

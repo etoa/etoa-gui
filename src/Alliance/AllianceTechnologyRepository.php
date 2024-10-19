@@ -4,10 +4,16 @@ declare(strict_types=1);
 
 namespace EtoA\Alliance;
 
+use Doctrine\Persistence\ManagerRegistry;
 use EtoA\Core\AbstractRepository;
 
 class AllianceTechnologyRepository extends AbstractRepository
 {
+    public function __construct(ManagerRegistry $registry)
+    {
+        parent::__construct($registry, AllianceTechnology::class);
+    }
+
     /**
      * @return array<int, string>
      */
@@ -21,7 +27,7 @@ class AllianceTechnologyRepository extends AbstractRepository
      */
     public function findAll(): array
     {
-        $data = $this->createQueryBuilder()
+        $data = $this->createQueryBuilder('q')
             ->select("*")
             ->from('alliance_technologies')
             ->fetchAllAssociative();
@@ -37,7 +43,7 @@ class AllianceTechnologyRepository extends AbstractRepository
 
     public function existsInAlliance(int $allianceId, int $technologyId): bool
     {
-        $test = $this->createQueryBuilder()
+        $test = $this->createQueryBuilder('q')
             ->select('alliance_techlist_id')
             ->from('alliance_techlist')
             ->where('alliance_techlist_alliance_id = :alliance')
@@ -53,7 +59,7 @@ class AllianceTechnologyRepository extends AbstractRepository
 
     public function getLevel(int $allianceId, int $technologyId): int
     {
-        return (int) $this->createQueryBuilder()
+        return (int) $this->createQueryBuilder('q')
             ->select('alliance_techlist_current_level')
             ->from('alliance_techlist')
             ->where('alliance_techlist_alliance_id = :alliance')
@@ -70,7 +76,7 @@ class AllianceTechnologyRepository extends AbstractRepository
      */
     public function getLevels(int $allianceId): array
     {
-        return $this->createQueryBuilder()
+        return $this->createQueryBuilder('q')
             ->select('alliance_techlist_tech_id, alliance_techlist_current_level')
             ->from('alliance_techlist')
             ->where('alliance_techlist_alliance_id = :alliance')
@@ -83,7 +89,7 @@ class AllianceTechnologyRepository extends AbstractRepository
 
     public function addToAlliance(int $allianceId, int $technologyId, int $level, int $amount, int $startTime = 0, int $endTime = 0): void
     {
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->insert('alliance_techlist')
             ->values([
                 'alliance_techlist_alliance_id' => ':alliance',
@@ -106,7 +112,7 @@ class AllianceTechnologyRepository extends AbstractRepository
 
     public function updateMembersForAlliance(int $allianceId, int $amount): void
     {
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->update('alliance_techlist')
             ->set('alliance_techlist_member_for', ':amount')
             ->where('alliance_techlist_alliance_id = :alliance')
@@ -120,7 +126,7 @@ class AllianceTechnologyRepository extends AbstractRepository
 
     public function updateForAlliance(int $allianceId, int $technologyId, int $level, int $amount, int $startTime = 0, int $endTime = 0): void
     {
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->update('alliance_techlist')
             ->set('alliance_techlist_current_level', ':level')
             ->set('alliance_techlist_member_for', ':amount')
@@ -141,7 +147,7 @@ class AllianceTechnologyRepository extends AbstractRepository
 
     public function removeForAlliance(int $allianceId): void
     {
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->delete('alliance_techlist')
             ->where('alliance_techlist_alliance_id = :allianceId')
             ->setParameter('allianceId', $allianceId)
@@ -154,7 +160,7 @@ class AllianceTechnologyRepository extends AbstractRepository
      */
     public function getTechnologyList(int $allianceId): array
     {
-        $data = $this->createQueryBuilder()
+        $data = $this->createQueryBuilder('q')
             ->select('*')
             ->from('alliance_techlist')
             ->where('alliance_techlist_alliance_id = :allianceId')
@@ -175,7 +181,7 @@ class AllianceTechnologyRepository extends AbstractRepository
      */
     public function getInProgress(int $allianceId): ?array
     {
-        $data = $this->createQueryBuilder()
+        $data = $this->createQueryBuilder('q')
             ->select('alliance_tech_name, alliance_techlist_build_end_time')
             ->from('alliance_techlist')
             ->innerJoin('alliance_techlist', 'alliance_technologies', 'alliance_technologies', 'alliance_tech_id=alliance_techlist_tech_id')

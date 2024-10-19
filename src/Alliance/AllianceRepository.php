@@ -4,10 +4,17 @@ declare(strict_types=1);
 
 namespace EtoA\Alliance;
 
+use Doctrine\Persistence\ManagerRegistry;
 use EtoA\Core\AbstractRepository;
+use EtoA\Entity\User;
 
 class AllianceRepository extends AbstractRepository
 {
+    public function __construct(ManagerRegistry $registry)
+    {
+        parent::__construct($registry, Alliance::class);
+    }
+
     /**
      * @return AllianceMember[]
      */
@@ -31,20 +38,12 @@ class AllianceRepository extends AbstractRepository
         return array_map(fn (array $row) => new AllianceMember($row), $data);
     }
 
-    public function count(): int
-    {
-        return (int) $this->createQueryBuilder()
-            ->select("COUNT(*)")
-            ->from('alliances')
-            ->fetchOne();
-    }
-
     /**
      * @return array<int, string>
      */
     public function getAllianceNames(AllianceSearch $search = null, int $limit = null): array
     {
-        return $this->applySearchSortLimit($this->createQueryBuilder(), $search, null, $limit)
+        return $this->applySearchSortLimit($this->createQueryBuilder('q'), $search, null, $limit)
             ->select("alliance_id, alliance_name")
             ->from('alliances')
             ->orderBy('alliance_name')
@@ -56,7 +55,7 @@ class AllianceRepository extends AbstractRepository
      */
     public function searchAlliances(AllianceSearch $search = null, int $limit = null): array
     {
-        $data = $this->applySearchSortLimit($this->createQueryBuilder(), $search, null, $limit)
+        $data = $this->applySearchSortLimit($this->createQueryBuilder('q'), $search, null, $limit)
             ->select("a.*")
             ->addSelect('COUNT(u.user_id) as member_count')
             ->from('alliances', 'a')
@@ -80,7 +79,7 @@ class AllianceRepository extends AbstractRepository
      */
     public function getAllianceTags(): array
     {
-        return $this->createQueryBuilder()
+        return $this->createQueryBuilder('q')
             ->select("alliance_id, alliance_tag")
             ->from('alliances')
             ->orderBy('alliance_name')
@@ -92,7 +91,7 @@ class AllianceRepository extends AbstractRepository
      */
     public function getAllianceNamesWithTags(AllianceSearch $search = null, int $limit = null): array
     {
-        $rows = $this->applySearchSortLimit($this->createQueryBuilder(), $search, null, $limit)
+        $rows = $this->applySearchSortLimit($this->createQueryBuilder('q'), $search, null, $limit)
             ->select("alliance_id, alliance_name, alliance_tag")
             ->from('alliances')
             ->orderBy('alliance_name')
@@ -112,7 +111,7 @@ class AllianceRepository extends AbstractRepository
      */
     public function getAlliances(): array
     {
-        $data = $this->createQueryBuilder()
+        $data = $this->createQueryBuilder('q')
             ->select("*")
             ->from('alliances')
             ->orderBy('alliance_name')
@@ -127,7 +126,7 @@ class AllianceRepository extends AbstractRepository
      */
     public function getAlliancesAcceptingApplications(): array
     {
-        $data = $this->createQueryBuilder()
+        $data = $this->createQueryBuilder('q')
             ->select("a.*")
             ->addSelect('COUNT(u.user_id) as member_count')
             ->from('alliances', 'a')
@@ -147,7 +146,7 @@ class AllianceRepository extends AbstractRepository
             return null;
         }
 
-        $data = $this->createQueryBuilder()
+        $data = $this->createQueryBuilder('q')
             ->select("a.*")
             ->addSelect('COUNT(u.user_id) as member_count')
             ->from('alliances', 'a')
@@ -162,7 +161,7 @@ class AllianceRepository extends AbstractRepository
 
     public function getFounderId(int $allianceId): int
     {
-        return (int) $this->createQueryBuilder()
+        return (int) $this->createQueryBuilder('q')
             ->select('alliance_founder_id')
             ->from('alliances')
             ->where('alliance_id = :id')
@@ -171,7 +170,7 @@ class AllianceRepository extends AbstractRepository
     }
     public function setFounderId(int $allianceId, int $founder): void
     {
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->update('alliances')
             ->set('alliance_founder_id', ':founder')
             ->where('alliance_id = :id')
@@ -184,7 +183,7 @@ class AllianceRepository extends AbstractRepository
 
     public function exists(string $tag, string $name, int $ignoreAllianceId = null): bool
     {
-        $qb = $this->createQueryBuilder()
+        $qb = $this->createQueryBuilder('q')
             ->select('alliance_id')
             ->from('alliances')
             ->where('alliance_tag = :tag OR alliance_name = :name')
@@ -206,7 +205,7 @@ class AllianceRepository extends AbstractRepository
 
     public function create(string $tag, string $name, int $founderId): int
     {
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->insert('alliances')
             ->values([
                 'alliance_tag' => ':tag',
@@ -226,7 +225,7 @@ class AllianceRepository extends AbstractRepository
 
     public function updateApplicationText(int $allianceId, string $template): void
     {
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->update('alliances')
             ->set('alliance_application_template', ':template')
             ->where('alliance_id = :id')
@@ -239,7 +238,7 @@ class AllianceRepository extends AbstractRepository
 
     public function update(int $id, string $tag, string $name, ?string $text, ?string $template, ?string $url, int $founder, string $updatedAllianceImage = null, bool $acceptsApplications = null, bool $acceptsBnd = null, bool $publicMemberList = null): bool
     {
-        $qb = $this->createQueryBuilder()
+        $qb = $this->createQueryBuilder('q')
             ->update('alliances')
             ->set('alliance_name', ':name')
             ->set('alliance_tag', ':tag')
@@ -293,7 +292,7 @@ class AllianceRepository extends AbstractRepository
 
     public function remove(int $id): bool
     {
-        $affected = $this->createQueryBuilder()
+        $affected = $this->createQueryBuilder('q')
             ->delete('alliances')
             ->where('alliance_id = :id')
             ->setParameter('id', $id)
@@ -305,7 +304,7 @@ class AllianceRepository extends AbstractRepository
 
     public function getPicture(int $allianceId): ?string
     {
-        return $this->createQueryBuilder()
+        return $this->createQueryBuilder('q')
             ->select('alliance_img')
             ->from('alliances')
             ->where('alliance_id = :allianceId')
@@ -315,7 +314,7 @@ class AllianceRepository extends AbstractRepository
 
     public function clearPicture(int $allianceId): bool
     {
-        $affected = $this->createQueryBuilder()
+        $affected = $this->createQueryBuilder('q')
             ->update('alliances')
             ->set('alliance_img', ':image')
             ->set('alliance_img_check', ':check')
@@ -333,7 +332,7 @@ class AllianceRepository extends AbstractRepository
 
     public function markPictureChecked(int $allianceId): bool
     {
-        $affected = $this->createQueryBuilder()
+        $affected = $this->createQueryBuilder('q')
             ->update('alliances')
             ->set('alliance_img_check', ':check')
             ->where('alliance_id = :allianceId')
@@ -352,7 +351,7 @@ class AllianceRepository extends AbstractRepository
      */
     public function findAllWithUncheckedPictures(): array
     {
-        return $this->createQueryBuilder()
+        return $this->createQueryBuilder('q')
             ->select(
                 'alliance_id',
                 'alliance_tag',
@@ -370,7 +369,7 @@ class AllianceRepository extends AbstractRepository
      */
     public function findAllWithPictures(): array
     {
-        return $this->createQueryBuilder()
+        return $this->createQueryBuilder('q')
             ->select(
                 'alliance_id',
                 'alliance_tag',
@@ -424,7 +423,7 @@ class AllianceRepository extends AbstractRepository
 
     public function countUsers(int $allianceId): int
     {
-        return (int) $this->createQueryBuilder()
+        return (int) $this->createQueryBuilder('q')
             ->select("COUNT(*)")
             ->from('users')
             ->where('user_alliance_id = :id')
@@ -437,7 +436,7 @@ class AllianceRepository extends AbstractRepository
      */
     public function findUsers(int $allianceId): array
     {
-        $data = $this->createQueryBuilder()
+        $data = $this->createQueryBuilder('q')
             ->select(
                 'user_id',
                 'user_nick',
@@ -461,7 +460,7 @@ class AllianceRepository extends AbstractRepository
 
     public function assignRankToUser(int $rankId, int $userId): void
     {
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->update('users')
             ->set('user_alliance_rank_id', ':rank')
             ->where('user_id = :user')
@@ -474,7 +473,7 @@ class AllianceRepository extends AbstractRepository
 
     public function removeUser(int $userId): void
     {
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->update('users')
             ->set('user_alliance_id', (string) 0)
             ->set('user_alliance_rank_id', (string) 0)
@@ -488,7 +487,7 @@ class AllianceRepository extends AbstractRepository
      */
     public function listSoloUsers(): array
     {
-        return $this->createQueryBuilder()
+        return $this->createQueryBuilder('q')
             ->select("user_id", "user_nick")
             ->from('users')
             ->where('user_alliance_id = 0')
@@ -526,7 +525,7 @@ class AllianceRepository extends AbstractRepository
         int $fuel,
         int $food
     ): void {
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->update('alliances')
             ->set('alliance_res_metal', ':metal')
             ->set('alliance_res_crystal', ':crystal')
@@ -554,7 +553,7 @@ class AllianceRepository extends AbstractRepository
         int $addFood,
         int $newMemberCount = null
     ): void {
-        $qb = $this->createQueryBuilder()
+        $qb = $this->createQueryBuilder('q')
             ->update('alliances')
             ->set('alliance_res_metal', 'alliance_res_metal + :addMetal')
             ->set('alliance_res_crystal', 'alliance_res_crystal + :addCrystal')
@@ -586,7 +585,7 @@ class AllianceRepository extends AbstractRepository
      */
     public function getAllianceStats(): array
     {
-        return $this->createQueryBuilder()
+        return $this->createQueryBuilder('q')
             ->select('a.alliance_tag, a.alliance_name, a.alliance_id, a.alliance_rank_current')
             ->addSelect('COUNT(*) AS cnt, SUM(u.points) AS upoints, AVG(u.points) AS uavg')
             ->from('alliances', 'a')
@@ -598,7 +597,7 @@ class AllianceRepository extends AbstractRepository
 
     public function updatePointsAndRank(int $allianceId, int $points, int $rank, int $lastRank): void
     {
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->update('alliances')
             ->set('alliance_points', ':points')
             ->set('alliance_rank_current', ':rank')
@@ -615,7 +614,7 @@ class AllianceRepository extends AbstractRepository
 
     public function removePointsByTimestamp(int $timestamp): int
     {
-        return $this->createQueryBuilder()
+        return $this->createQueryBuilder('q')
             ->delete('alliance_points')
             ->where("point_timestamp < :timestamp")
             ->setParameter('timestamp', $timestamp)
@@ -625,7 +624,7 @@ class AllianceRepository extends AbstractRepository
 
     public function resetMother(int $allianceId): void
     {
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->update('alliances')
             ->set('alliance_mother', ':zero')
             ->set('alliance_mother', ':zero')
@@ -639,7 +638,7 @@ class AllianceRepository extends AbstractRepository
 
     public function setMotherOrRequest(int $allianceId, int $motherId, int $motherRequestId): void
     {
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->update('alliances')
             ->set('alliance_mother', ':motherId')
             ->set('alliance_mother_request', ':motherRequestId')
@@ -656,7 +655,7 @@ class AllianceRepository extends AbstractRepository
     {
         $property = $external ? 'alliance_visits_ext' : 'alliance_visits';
 
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->update('alliances')
             ->set($property, $property . ' + 1')
             ->where('alliance_id = :allianceId')

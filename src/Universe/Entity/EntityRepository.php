@@ -12,7 +12,7 @@ class EntityRepository extends AbstractRepository
 {
     public function countEntitiesOfCodeInSector(int $sx, int $sy, string $code): int
     {
-        return (int) $this->createQueryBuilder()
+        return (int) $this->createQueryBuilder('q')
             ->select('COUNT(e.id)')
             ->from('entities', 'e')
             ->innerJoin('e', 'cells', 'c', 'e.cell_id = c.id')
@@ -29,7 +29,7 @@ class EntityRepository extends AbstractRepository
 
     public function findRandomId(string $code): ?int
     {
-        $id = $this->createQueryBuilder()
+        $id = $this->createQueryBuilder('q')
             ->select('id')
             ->from('entities')
             ->where('code = :code')
@@ -132,7 +132,7 @@ class EntityRepository extends AbstractRepository
 
     public function getAllianceMarketId(): int
     {
-        return (int) $this->createQueryBuilder()
+        return (int) $this->createQueryBuilder('q')
             ->select('id')
             ->from('entities')
             ->where('code = :code')
@@ -142,7 +142,7 @@ class EntityRepository extends AbstractRepository
 
     public function add(int $cellId, string $code, int $pos = 0): int
     {
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->insert('entities')
             ->values([
                 'cell_id' => ':cell_id',
@@ -161,7 +161,7 @@ class EntityRepository extends AbstractRepository
 
     public function updateCode(int $id, string $code): void
     {
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->update('entities')
             ->set('code', ':code')
             ->where('id = :id')
@@ -177,7 +177,7 @@ class EntityRepository extends AbstractRepository
      */
     public function getEntityCodes(): array
     {
-        return $this->createQueryBuilder()
+        return $this->createQueryBuilder('q')
             ->select('id, code')
             ->from('entities')
             ->fetchAllKeyValue();
@@ -185,7 +185,7 @@ class EntityRepository extends AbstractRepository
 
     public function getMaxEntityId(): int
     {
-        return (int) $this->createQueryBuilder()
+        return (int) $this->createQueryBuilder('q')
             ->select('MAX(id)')
             ->from('entities')
             ->fetchOne();
@@ -241,7 +241,7 @@ class EntityRepository extends AbstractRepository
 
     private function getEntityCoordinatesQueryBuilder(EntitySearch $search = null, AbstractSort $sort = null, int $limit = null, int $offset = null): QueryBuilder
     {
-        return $this->applySearchSortLimit($this->createQueryBuilder(), $search, $sort, $limit, $offset)
+        return $this->applySearchSortLimit($this->createQueryBuilder('q'), $search, $sort, $limit, $offset)
             ->select(
                 'e.id',
                 'c.id as cid',

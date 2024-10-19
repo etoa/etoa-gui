@@ -11,7 +11,7 @@ class ChatRepository extends AbstractRepository
      */
     public function getMessagesAfter(int $minId, int $channelId = 0): array
     {
-        $data = $this->createQueryBuilder()
+        $data = $this->createQueryBuilder('q')
             ->select('*')
             ->from('chat')
             ->where('id > :minId')
@@ -29,7 +29,7 @@ class ChatRepository extends AbstractRepository
 
     public function addSystemMessage(string $message): void
     {
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->insert('chat')
             ->values([
                 'timestamp' => ':time',
@@ -43,7 +43,7 @@ class ChatRepository extends AbstractRepository
 
     public function addMessage(int $userId, string $nick, string $message, string $color, int $admin): void
     {
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->insert('chat')
             ->values([
                 'timestamp' => ':time',
@@ -65,7 +65,7 @@ class ChatRepository extends AbstractRepository
 
     public function cleanupMessage(int $keep): int
     {
-        $keepId = (int) $this->createQueryBuilder()
+        $keepId = (int) $this->createQueryBuilder('q')
             ->select('id')
             ->from('chat')
             ->orderBy('id', 'DESC')

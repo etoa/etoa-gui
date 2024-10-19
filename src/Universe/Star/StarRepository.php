@@ -13,7 +13,7 @@ class StarRepository extends AbstractRepository
      */
     public function getAllIds(): array
     {
-        $data = $this->createQueryBuilder()
+        $data = $this->createQueryBuilder('q')
             ->select("id")
             ->from('stars')
             ->fetchAllAssociative();
@@ -21,31 +21,9 @@ class StarRepository extends AbstractRepository
         return array_map(fn (array $row) => (int) $row['id'], $data);
     }
 
-    public function count(): int
-    {
-        return (int) $this->createQueryBuilder()
-            ->select("COUNT(id)")
-            ->from('stars')
-            ->fetchOne();
-    }
-
-    public function find(int $id): ?Star
-    {
-        $data = $this->createQueryBuilder()
-            ->select('*')
-            ->from('stars')
-            ->where('id = :id')
-            ->setParameters([
-                'id' => $id,
-            ])
-            ->fetchAssociative();
-
-        return $data !== false ? new Star($data) : null;
-    }
-
     public function findStarForCell(int $cellId): ?Star
     {
-        $data = $this->createQueryBuilder()
+        $data = $this->createQueryBuilder('q')
             ->select('s.*')
             ->from('stars', 's')
             ->innerJoin('s', 'entities', 'e', 'e.id = s.id')
@@ -61,7 +39,7 @@ class StarRepository extends AbstractRepository
 
     public function add(int $id, int $typeId): void
     {
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->insert('stars')
             ->values([
                 'id' => ':id',
@@ -76,7 +54,7 @@ class StarRepository extends AbstractRepository
 
     public function update(int $id, ?string $name, int $typeId = null): bool
     {
-        $qb = $this->createQueryBuilder()
+        $qb = $this->createQueryBuilder('q')
             ->update('stars')
             ->set('name', ':name')
             ->where('id = :id')
@@ -98,7 +76,7 @@ class StarRepository extends AbstractRepository
 
     public function remove(int $id): void
     {
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->delete('stars')
             ->where('id = :id')
             ->setParameter('id', $id)

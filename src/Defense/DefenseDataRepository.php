@@ -25,7 +25,7 @@ class DefenseDataRepository extends AbstractRepository
      */
     public function searchDefenseNames(DefenseSearch $search = null, DefenseSort $orderBy = null, int $limit = null): array
     {
-        return $this->applySearchSortLimit($this->createQueryBuilder(), $search, $orderBy ?? DefenseSort::name(), $limit)
+        return $this->applySearchSortLimit($this->createQueryBuilder('q'), $search, $orderBy ?? DefenseSort::name(), $limit)
             ->select('def_id', 'def_name')
             ->from('defense')
             ->fetchAllKeyValue();
@@ -36,7 +36,7 @@ class DefenseDataRepository extends AbstractRepository
      */
     public function getDefensePoints(): array
     {
-        $data = $this->createQueryBuilder()
+        $data = $this->createQueryBuilder('q')
             ->select('def_id', 'def_points')
             ->from('defense')
             ->fetchAllKeyValue();
@@ -46,7 +46,7 @@ class DefenseDataRepository extends AbstractRepository
 
     public function updateDefensePoints(int $defenseId, float $points): void
     {
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->update('defense')
             ->set('def_points', ':points')
             ->where('def_id = :defenseId')
@@ -59,7 +59,7 @@ class DefenseDataRepository extends AbstractRepository
 
     public function getDefense(int $defenseId): ?Defense
     {
-        $data = $this->createQueryBuilder()
+        $data = $this->createQueryBuilder('q')
             ->select('*')
             ->from('defense')
             ->where('def_show = 1')
@@ -75,7 +75,7 @@ class DefenseDataRepository extends AbstractRepository
      */
     public function getDefenseByRace(int $raceId): array
     {
-        $data = $this->createQueryBuilder()
+        $data = $this->createQueryBuilder('q')
             ->select('*')
             ->from('defense')
             ->where('def_race_id = :raceId')
@@ -93,7 +93,7 @@ class DefenseDataRepository extends AbstractRepository
      */
     public function getDefenseByCategory(int $categoryId): array
     {
-        $data = $this->createQueryBuilder()
+        $data = $this->createQueryBuilder('q')
             ->select('*')
             ->from('defense')
             ->where('def_cat_id = :categoryId')
@@ -111,7 +111,7 @@ class DefenseDataRepository extends AbstractRepository
      */
     public function getAllDefenses(): array
     {
-        $data = $this->createQueryBuilder()
+        $data = $this->createQueryBuilder('q')
             ->select('*')
             ->from('defense')
             ->orderBy('def_order')
@@ -131,7 +131,7 @@ class DefenseDataRepository extends AbstractRepository
      */
     public function searchDefense(DefenseSearch $search, DefenseSort $sort = null, int $limit = null): array
     {
-        $data = $this->applySearchSortLimit($this->createQueryBuilder(), $search, $sort, $limit)
+        $data = $this->applySearchSortLimit($this->createQueryBuilder('q'), $search, $sort, $limit)
             ->select('*')
             ->from('defense')
             ->fetchAllAssociative();

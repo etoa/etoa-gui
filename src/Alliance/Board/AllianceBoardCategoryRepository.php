@@ -3,17 +3,23 @@
 namespace EtoA\Alliance\Board;
 
 use Doctrine\DBAL\ArrayParameterType;
+use Doctrine\Persistence\ManagerRegistry;
 use EtoA\Core\AbstractRepository;
 
 class AllianceBoardCategoryRepository extends AbstractRepository
 {
+    public function __construct(ManagerRegistry $registry)
+    {
+        parent::__construct($registry, Category::class);
+    }
+
     /**
      * @param int[] $categoryIds
      * @return array<int, int>
      */
     public function getCategoryPostCounts(array $categoryIds): array
     {
-        $data = $this->createQueryBuilder()
+        $data = $this->createQueryBuilder('q')
             ->select('t.topic_cat_id, COUNT(p.post_id)')
             ->from('allianceboard_topics', 't')
             ->innerJoin('t', 'allianceboard_posts', 'p', 'p.post_topic_id = t.topic_id')
@@ -36,7 +42,7 @@ class AllianceBoardCategoryRepository extends AbstractRepository
      */
     public function getCategoryTopicCounts(array $categoryIds): array
     {
-        $data = $this->createQueryBuilder()
+        $data = $this->createQueryBuilder('q')
             ->select('t.topic_cat_id, COUNT(t.topic_id)')
             ->from('allianceboard_topics', 't')
             ->where('t.topic_cat_id IN (:categoryIds)')
@@ -57,7 +63,7 @@ class AllianceBoardCategoryRepository extends AbstractRepository
      */
     public function getCategories(int $allianceId): array
     {
-        $data = $this->createQueryBuilder()
+        $data = $this->createQueryBuilder('q')
             ->select('*')
             ->from('allianceboard_cat')
             ->where('cat_alliance_id = :allianceId')
@@ -74,7 +80,7 @@ class AllianceBoardCategoryRepository extends AbstractRepository
      */
     public function getCategoryIds(int $allianceId): array
     {
-        $data = $this->createQueryBuilder()
+        $data = $this->createQueryBuilder('q')
             ->select('cat_id')
             ->from('allianceboard_cat')
             ->where('cat_alliance_id = :allianceId')
@@ -86,7 +92,7 @@ class AllianceBoardCategoryRepository extends AbstractRepository
 
     public function getCategory(int $categoryId, int $allianceId): ?Category
     {
-        $data = $this->createQueryBuilder()
+        $data = $this->createQueryBuilder('q')
             ->select('*')
             ->from('allianceboard_cat')
             ->where('cat_id = :catId')
@@ -102,7 +108,7 @@ class AllianceBoardCategoryRepository extends AbstractRepository
 
     public function addCategory(string $name, string $description, int $order, string $bullet, int $allianceId): int
     {
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->insert('allianceboard_cat')
             ->values([
                 'cat_name' => ':name',
@@ -125,7 +131,7 @@ class AllianceBoardCategoryRepository extends AbstractRepository
 
     public function updateCategory(int $categoryId, string $name, string $description, int $order, string $bullet, int $allianceId): void
     {
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->update('allianceboard_cat')
             ->set('cat_name', ':name')
             ->set('cat_desc', ':description')
@@ -146,7 +152,7 @@ class AllianceBoardCategoryRepository extends AbstractRepository
 
     public function deleteAllCategories(int $allianceId): void
     {
-        $categoryIds = $this->createQueryBuilder()
+        $categoryIds = $this->createQueryBuilder('q')
             ->select('cat_id')
             ->from('allianceboard_cat')
             ->where('cat_alliance_id = :allianceId')
@@ -159,7 +165,7 @@ class AllianceBoardCategoryRepository extends AbstractRepository
             return;
         }
 
-        $topicIds = $this->createQueryBuilder()
+        $topicIds = $this->createQueryBuilder('q')
             ->select('topic_id')
             ->from('allianceboard_topics')
             ->where('topic_cat_id IN (:categoryIds)')
@@ -167,26 +173,26 @@ class AllianceBoardCategoryRepository extends AbstractRepository
             ->fetchFirstColumn();
 
         if (count($topicIds) > 0) {
-            $this->createQueryBuilder()
+            $this->createQueryBuilder('q')
                 ->delete('allianceboard_posts')
                 ->where('post_topic_id IN (:topicId)')
                 ->setParameter('topicId', $topicIds, ArrayParameterType::INTEGER)
                 ->executeQuery();
 
-            $this->createQueryBuilder()
+            $this->createQueryBuilder('q')
                 ->delete('allianceboard_topics')
                 ->where('topic_id IN (:topicId)')
                 ->setParameter('topicId', $topicIds, ArrayParameterType::INTEGER)
                 ->executeQuery();
         }
 
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->delete('allianceboard_catranks')
             ->where('cr_cat_id IN (:categoryIds)')
             ->setParameter('categoryIds', $categoryIds, ArrayParameterType::INTEGER)
             ->executeQuery();
 
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->delete('allianceboard_cat')
             ->where('cat_alliance_id = :allianceId')
             ->setParameters([
@@ -197,7 +203,7 @@ class AllianceBoardCategoryRepository extends AbstractRepository
 
     public function deleteCategory(int $categoryId, int $allianceId): void
     {
-        $topicIds = $this->createQueryBuilder()
+        $topicIds = $this->createQueryBuilder('q')
             ->select('topic_id')
             ->from('allianceboard_topics')
             ->where('topic_cat_id = :categoryId')
@@ -205,20 +211,20 @@ class AllianceBoardCategoryRepository extends AbstractRepository
             ->fetchFirstColumn();
 
         if (count($topicIds) > 0) {
-            $this->createQueryBuilder()
+            $this->createQueryBuilder('q')
                 ->delete('allianceboard_posts')
                 ->where('post_topic_id IN (:topicId)')
                 ->setParameter('topicId', $topicIds, ArrayParameterType::INTEGER)
                 ->executeQuery();
 
-            $this->createQueryBuilder()
+            $this->createQueryBuilder('q')
                 ->delete('allianceboard_topics')
                 ->where('topic_id IN (:topicId)')
                 ->setParameter('topicId', $topicIds, ArrayParameterType::INTEGER)
                 ->executeQuery();
         }
 
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->delete('allianceboard_cat')
             ->where('cat_id = :catId')
             ->andWhere('cat_alliance_id = :allianceId')

@@ -3,17 +3,23 @@
 namespace EtoA\Alliance\Board;
 
 use Doctrine\DBAL\ArrayParameterType;
+use Doctrine\Persistence\ManagerRegistry;
 use EtoA\Core\AbstractRepository;
 
 class AllianceBoardTopicRepository extends AbstractRepository
 {
+    public function __construct(ManagerRegistry $registry)
+    {
+        parent::__construct($registry, Topic::class);
+    }
+
     /**
      * @param int[] $topicIds
      * @return array<int, int>
      */
     public function getTopicPostCounts(array $topicIds): array
     {
-        $data = $this->createQueryBuilder()
+        $data = $this->createQueryBuilder('q')
             ->select('p.post_topic_id, COUNT(p.post_id)')
             ->from('allianceboard_posts', 'p')
             ->where('p.post_topic_id IN (:topicIds)')
@@ -35,7 +41,7 @@ class AllianceBoardTopicRepository extends AbstractRepository
      */
     public function getBndTopicCounts(array $bndIds): array
     {
-        $data = $this->createQueryBuilder()
+        $data = $this->createQueryBuilder('q')
             ->select('topic_bnd_id, COUNT(topic_id)')
             ->from('allianceboard_topics')
             ->where('topic_bnd_id IN (:bndIds)')
@@ -56,7 +62,7 @@ class AllianceBoardTopicRepository extends AbstractRepository
      */
     public function getBndPostCounts(array $bndIds): array
     {
-        $data = $this->createQueryBuilder()
+        $data = $this->createQueryBuilder('q')
             ->select('t.topic_bnd_id, COUNT(p.post_id)')
             ->from('allianceboard_topics', 't')
             ->innerJoin('t', 'allianceboard_posts', 'p', 'p.post_topic_id = t.topic_id')
@@ -76,7 +82,7 @@ class AllianceBoardTopicRepository extends AbstractRepository
      */
     public function getTopics(int $categoryId): array
     {
-        $data = $this->createQueryBuilder()
+        $data = $this->createQueryBuilder('q')
             ->select('*')
             ->from('allianceboard_topics')
             ->where('topic_cat_id = :categoryId')
@@ -94,7 +100,7 @@ class AllianceBoardTopicRepository extends AbstractRepository
      */
     public function getBndTopics(int $bndId): array
     {
-        $data = $this->createQueryBuilder()
+        $data = $this->createQueryBuilder('q')
             ->select('*')
             ->from('allianceboard_topics')
             ->where('topic_bnd_id = :bndId')
@@ -109,7 +115,7 @@ class AllianceBoardTopicRepository extends AbstractRepository
 
     public function getTopic(int $topicId, int $bndId = null): ?Topic
     {
-        $qb = $this->createQueryBuilder()
+        $qb = $this->createQueryBuilder('q')
             ->select('*')
             ->from('allianceboard_topics')
             ->where('topic_id = :topicId')
@@ -130,7 +136,7 @@ class AllianceBoardTopicRepository extends AbstractRepository
 
     public function getAllianceTopicWithLatestPost(int $allianceId, int $myRankId = null): ?TopicWithLatestPost
     {
-        $qb = $this->createQueryBuilder()
+        $qb = $this->createQueryBuilder('q')
             ->select('t.*', 'p.*')
             ->from('allianceboard_cat', 'c')
             ->innerJoin('c', 'allianceboard_topics', 't', 't.topic_cat_id = c.cat_id')
@@ -155,7 +161,7 @@ class AllianceBoardTopicRepository extends AbstractRepository
 
     public function getTopicWithLatestPost(int $categoryId, int $bndId = null): ?TopicWithLatestPost
     {
-        $qb = $this->createQueryBuilder()
+        $qb = $this->createQueryBuilder('q')
             ->select('*')
             ->from('allianceboard_topics', 't')
             ->innerJoin('t', 'allianceboard_posts', 'p', 'p.post_topic_id = t.topic_id')
@@ -180,7 +186,7 @@ class AllianceBoardTopicRepository extends AbstractRepository
 
     public function addTopic(string $subject, ?int $bndId, int $categoryId, int $userId, string $userNick): int
     {
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->insert('allianceboard_topics')
             ->values([
                 'topic_subject' => ':subject',
@@ -206,7 +212,7 @@ class AllianceBoardTopicRepository extends AbstractRepository
 
     public function updateTopic(int $topicId, string $subject, int $bndId, int $categoryId, bool $top, bool $closed): void
     {
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->update('allianceboard_topics')
             ->set('topic_subject', ':subject')
             ->set('topic_top', ':top')
@@ -227,7 +233,7 @@ class AllianceBoardTopicRepository extends AbstractRepository
 
     public function updateTopicTimestamp(int $topicId): void
     {
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->update('allianceboard_topics')
             ->set('topic_timestamp', ':now')
             ->where('topic_id = :topicId')
@@ -240,7 +246,7 @@ class AllianceBoardTopicRepository extends AbstractRepository
 
     public function increaseTopicCount(int $topicId): void
     {
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->update('allianceboard_topics')
             ->set('topic_count', 'topic_count + 1')
             ->where('topic_id = :topicId')
@@ -252,13 +258,13 @@ class AllianceBoardTopicRepository extends AbstractRepository
 
     public function deleteTopic(int $topicId): void
     {
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->delete('allianceboard_posts')
             ->where('post_topic_id = :topicId')
             ->setParameter('topicId', $topicId)
             ->executeQuery();
 
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->delete('allianceboard_topics')
             ->where('topic_id = :topicId')
             ->setParameter('topicId', $topicId)
@@ -267,7 +273,7 @@ class AllianceBoardTopicRepository extends AbstractRepository
 
     public function deleteBndTopic(int $bndId): void
     {
-        $topicIds = array_column($this->createQueryBuilder()
+        $topicIds = array_column($this->createQueryBuilder('q')
             ->select('topic_id')
             ->from('allianceboard_topics')
             ->where('topic_bnd_id = :bndId')
@@ -275,14 +281,14 @@ class AllianceBoardTopicRepository extends AbstractRepository
             ->fetchAllAssociative(), 'topic_id');
 
         if (count($topicIds) > 0) {
-            $this->createQueryBuilder()
+            $this->createQueryBuilder('q')
                 ->delete('allianceboard_posts')
                 ->where('post_topic_id IN (:topicId)')
                 ->setParameter('topicId', $topicIds, ArrayParameterType::INTEGER)
                 ->executeQuery();
         }
 
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->delete('allianceboard_topics')
             ->where('topic_bnd_id = :bndId')
             ->setParameter('bndId', $bndId)

@@ -2,16 +2,23 @@
 
 namespace EtoA\Alliance;
 
+use Doctrine\Persistence\ManagerRegistry;
 use EtoA\Core\AbstractRepository;
+use EtoA\Entity\User;
 
 class AlliancePointsRepository extends AbstractRepository
 {
+    public function __construct(ManagerRegistry $registry)
+    {
+        parent::__construct($registry, AlliancePoints::class);
+    }
+
     /**
      * @return AlliancePoints[]
      */
     public function getPoints(int $allianceId, int $limit, int $start = null, int $end = null): array
     {
-        $qb = $this->createQueryBuilder()
+        $qb = $this->createQueryBuilder('q')
             ->select("*")
             ->from('alliance_points')
             ->where('point_alliance_id = :allianceId')
@@ -40,7 +47,7 @@ class AlliancePointsRepository extends AbstractRepository
 
     public function add(AllianceStats $stats): void
     {
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->insert('alliance_stats')
             ->values([
                 'alliance_id' => ':allianceId',
@@ -76,17 +83,9 @@ class AlliancePointsRepository extends AbstractRepository
             ])->executeQuery();
     }
 
-    public function count(): int
-    {
-        return (int) $this->createQueryBuilder()
-            ->select('COUNT(*)')
-            ->from('alliance_points')
-            ->fetchOne();
-    }
-
     public function removeForAlliance(int $allianceId): void
     {
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->delete('alliance_points')
             ->where('point_alliance_id = :allianceId')
             ->setParameter('allianceId', $allianceId)

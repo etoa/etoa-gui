@@ -13,7 +13,7 @@ class TechnologyRepository extends AbstractRepository
      */
     public function findForUser(int $userId, int $endTimeAfter = null): array
     {
-        $qb = $this->createQueryBuilder()
+        $qb = $this->createQueryBuilder('q')
             ->select('*')
             ->from('techlist')
             ->where('techlist_user_id = :userId')
@@ -33,7 +33,7 @@ class TechnologyRepository extends AbstractRepository
 
     public function getEntry(int $id): ?TechnologyListItem
     {
-        $data = $this->createQueryBuilder()
+        $data = $this->createQueryBuilder('q')
             ->select('*')
             ->from('techlist')
             ->where('techlist_id = :id')
@@ -45,7 +45,7 @@ class TechnologyRepository extends AbstractRepository
 
     public function searchEntry(TechnologyListItemSearch $search): ?TechnologyListItem
     {
-        $data = $this->applySearchSortLimit($this->createQueryBuilder(), $search, null, 1)
+        $data = $this->applySearchSortLimit($this->createQueryBuilder('q'), $search, null, 1)
             ->select('*')
             ->from('techlist')
             ->fetchAssociative();
@@ -55,7 +55,7 @@ class TechnologyRepository extends AbstractRepository
 
     public function save(TechnologyListItem $item): void
     {
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->update('techlist')
             ->set('techlist_user_id', ':userId')
             ->set('techlist_tech_id', ':technologyId')
@@ -85,7 +85,7 @@ class TechnologyRepository extends AbstractRepository
      */
     public function getTechnologyLevels(int $userId): array
     {
-        $data = $this->createQueryBuilder()
+        $data = $this->createQueryBuilder('q')
             ->select('techlist_tech_id, techlist_current_level')
             ->from('techlist')
             ->where('techlist_user_id = :userId')
@@ -99,7 +99,7 @@ class TechnologyRepository extends AbstractRepository
 
     public function getTechnologyLevel(int $userId, int $technologyId): int
     {
-        return (int) $this->createQueryBuilder()
+        return (int) $this->createQueryBuilder('q')
             ->select('techlist_current_level')
             ->from('techlist')
             ->where('techlist_tech_id = :technologyId')
@@ -163,7 +163,7 @@ class TechnologyRepository extends AbstractRepository
 
     public function countResearchInProgress(int $userId, int $entityId): bool
     {
-        return (bool) $this->createQueryBuilder()
+        return (bool) $this->createQueryBuilder('q')
             ->select('COUNT(techlist_id)')
             ->from('techlist')
             ->where('techlist_user_id = :userId')
@@ -180,7 +180,7 @@ class TechnologyRepository extends AbstractRepository
 
     public function isTechInProgress(int $userId, int $technologyId): bool
     {
-        return (bool) $this->createQueryBuilder()
+        return (bool) $this->createQueryBuilder('q')
             ->select('1')
             ->from('techlist')
             ->where('techlist_user_id = :userId')
@@ -193,17 +193,9 @@ class TechnologyRepository extends AbstractRepository
             ->fetchOne();
     }
 
-    public function count(TechnologyListItemSearch $search = null): int
-    {
-        return (int) $this->applySearchSortLimit($this->createQueryBuilder(), $search)
-            ->select('COUNT(techlist_id)')
-            ->from('techlist')
-            ->fetchOne();
-    }
-
     public function countEmpty(): int
     {
-        return (int) $this->createQueryBuilder()
+        return (int) $this->createQueryBuilder('q')
             ->select('COUNT(techlist_id)')
             ->from('techlist')
             ->where('techlist_current_level=0')
@@ -214,7 +206,7 @@ class TechnologyRepository extends AbstractRepository
 
     public function deleteEmpty(): int
     {
-        return $this->createQueryBuilder()
+        return $this->createQueryBuilder('q')
             ->delete('techlist')
             ->where('techlist_current_level=0')
             ->andWhere('techlist_build_start_time=0')
@@ -225,7 +217,7 @@ class TechnologyRepository extends AbstractRepository
 
     public function removeEntry(int $id): void
     {
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->delete('techlist')
             ->where('techlist_id = :id')
             ->setParameter('id', $id)
@@ -271,7 +263,7 @@ class TechnologyRepository extends AbstractRepository
 
     public function removeForUser(int $userId): void
     {
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->delete('techlist')
             ->where('techlist_user_id = :userId')
             ->setParameter('userId', $userId)
@@ -280,7 +272,7 @@ class TechnologyRepository extends AbstractRepository
 
     public function freezeConstruction(int $userId): void
     {
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->update('techlist')
             ->set('techlist_build_type', 'techlist_build_type - 2')
             ->where('techlist_user_id = :userId')
@@ -294,7 +286,7 @@ class TechnologyRepository extends AbstractRepository
 
     public function unfreezeConstruction(int $userId, int $duration): void
     {
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->update('techlist')
             ->set('techlist_build_type', 'techlist_build_type + 2')
             ->set('techlist_build_start_time', 'techlist_build_start_time + :duration')
@@ -313,7 +305,7 @@ class TechnologyRepository extends AbstractRepository
      */
     public function search(TechnologyListItemSearch $search, int $limit = null, int $offset = null): array
     {
-        $data = $this->applySearchSortLimit($this->createQueryBuilder(), $search, null, $limit, $offset)
+        $data = $this->applySearchSortLimit($this->createQueryBuilder('q'), $search, null, $limit, $offset)
             ->select('techlist.*')
             ->from('techlist')
             ->fetchAllAssociative();

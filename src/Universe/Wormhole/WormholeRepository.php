@@ -13,7 +13,7 @@ class WormholeRepository extends AbstractRepository
      */
     public function getAllIds(): array
     {
-        $data = $this->createQueryBuilder()
+        $data = $this->createQueryBuilder('q')
             ->select("id")
             ->from('wormholes')
             ->fetchAllAssociative();
@@ -21,17 +21,9 @@ class WormholeRepository extends AbstractRepository
         return array_map(fn (array $row) => (int) $row['id'], $data);
     }
 
-    public function count(): int
-    {
-        return (int) $this->createQueryBuilder()
-            ->select("COUNT(id)")
-            ->from('wormholes')
-            ->fetchOne();
-    }
-
     public function getOneId(): ?int
     {
-        $id = $this->createQueryBuilder()
+        $id = $this->createQueryBuilder('q')
             ->select("id")
             ->from('wormholes')
             ->fetchOne();
@@ -39,26 +31,12 @@ class WormholeRepository extends AbstractRepository
         return $id !== false ? (int) $id : null;
     }
 
-    public function find(int $id): ?Wormhole
-    {
-        $data = $this->createQueryBuilder()
-            ->select('*')
-            ->from('wormholes')
-            ->where('id = :id')
-            ->setParameters([
-                'id' => $id,
-            ])
-            ->fetchAssociative();
-
-        return $data !== false ? new Wormhole($data) : null;
-    }
-
     /**
      * @return array<Wormhole>
      */
     public function findAll(): array
     {
-        $data = $this->createQueryBuilder()
+        $data = $this->createQueryBuilder('q')
             ->select("*")
             ->from('wormholes')
             ->fetchAllAssociative();
@@ -71,7 +49,7 @@ class WormholeRepository extends AbstractRepository
      */
     public function findNonPersistentInRandomOrder(int $changedBefore, ?int $limit = null): array
     {
-        $data = $this->createQueryBuilder()
+        $data = $this->createQueryBuilder('q')
             ->select("*")
             ->from('wormholes')
             ->where('persistent = 0')
@@ -89,7 +67,7 @@ class WormholeRepository extends AbstractRepository
 
     public function add(int $id, bool $persistent, int $targetId = 0): void
     {
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->insert('wormholes')
             ->values([
                 'id' => ':id',
@@ -108,7 +86,7 @@ class WormholeRepository extends AbstractRepository
 
     public function updateTarget(int $id, int $targetId): void
     {
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->update('wormholes')
             ->set('target_id', ':target_id')
             ->where('id = :id')
@@ -121,7 +99,7 @@ class WormholeRepository extends AbstractRepository
 
     public function setPersistent(int $id, bool $persistent): void
     {
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->update('wormholes')
             ->set('persistent', ':persistent')
             ->where('id = :id')
@@ -134,7 +112,7 @@ class WormholeRepository extends AbstractRepository
 
     public function remove(int $id): void
     {
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->delete('wormholes')
             ->where('id = :id')
             ->setParameter('id', $id)

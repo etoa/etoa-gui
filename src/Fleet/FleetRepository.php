@@ -13,20 +13,12 @@ use EtoA\Universe\Resources\BaseResources;
 
 class FleetRepository extends AbstractRepository
 {
-    public function count(FleetSearch $search = null): int
-    {
-        return (int) $this->applySearchSortLimit($this->createQueryBuilder(), $search)
-            ->select("COUNT(id)")
-            ->from('fleet')
-            ->fetchOne();
-    }
-
     /**
      * @return int[]
      */
     public function getUserIds(FleetSearch $search = null): array
     {
-        return array_map(fn (array $row) => (int) $row['user_id'], $this->applySearchSortLimit($this->createQueryBuilder(), $search)
+        return array_map(fn (array $row) => (int) $row['user_id'], $this->applySearchSortLimit($this->createQueryBuilder('q'), $search)
             ->select("DISTINCT user_id")
             ->from('fleet')
             ->fetchAllAssociative());
@@ -37,7 +29,7 @@ class FleetRepository extends AbstractRepository
      */
     public function getEntityToIds(FleetSearch $search = null): array
     {
-        return array_map(fn (array $row) => (int) $row['entity_to'], $this->applySearchSortLimit($this->createQueryBuilder(), $search)
+        return array_map(fn (array $row) => (int) $row['entity_to'], $this->applySearchSortLimit($this->createQueryBuilder('q'), $search)
             ->select("DISTINCT entity_to")
             ->from('fleet')
             ->fetchAllAssociative());
@@ -45,7 +37,7 @@ class FleetRepository extends AbstractRepository
 
     public function countLeaderFleets(int $leaderId): int
     {
-        return (int) $this->createQueryBuilder()
+        return (int) $this->createQueryBuilder('q')
             ->select("COUNT(id)")
             ->from('fleet')
             ->where('leader_id = :leaderId')
@@ -55,7 +47,7 @@ class FleetRepository extends AbstractRepository
 
     public function countShipsInFleet(int $fleetId): int
     {
-        return (int) $this->createQueryBuilder()
+        return (int) $this->createQueryBuilder('q')
             ->select('SUM(fs_ship_cnt)')
             ->from('fleet_ships')
             ->where('fs_fleet_id = :fleetId')
@@ -68,7 +60,7 @@ class FleetRepository extends AbstractRepository
      */
     public function getFleetShipCounts(int $fleetId): array
     {
-        return array_map(fn ($value) => (int) $value, $this->createQueryBuilder()
+        return array_map(fn ($value) => (int) $value, $this->createQueryBuilder('q')
             ->select('fs_ship_id, fs_ship_cnt')
             ->from('fleet_ships')
             ->where('fs_fleet_id = :fleetId')
@@ -82,7 +74,7 @@ class FleetRepository extends AbstractRepository
      */
     public function getLeaderShipCounts(int $leaderId): array
     {
-        return array_map(fn ($value) => (int) $value, $this->createQueryBuilder()
+        return array_map(fn ($value) => (int) $value, $this->createQueryBuilder('q')
             ->select('fs_ship_id, SUM(fs_ship_cnt)')
             ->from('fleet_ships')
             ->innerJoin('fleet_ships', 'fleet', 'fleet', 'fleet.id = fs_fleet_id')
@@ -95,7 +87,7 @@ class FleetRepository extends AbstractRepository
 
     public function hasFleetsRelatedToEntity(int $entityId): bool
     {
-        $count = (int) $this->createQueryBuilder()
+        $count = (int) $this->createQueryBuilder('q')
             ->select('COUNT(id)')
             ->from('fleet')
             ->where('entity_to = :entityId')
@@ -106,26 +98,12 @@ class FleetRepository extends AbstractRepository
         return $count > 0;
     }
 
-    public function find(int $id): ?Fleet
-    {
-        $data = $this->createQueryBuilder()
-            ->select('*')
-            ->from('fleet')
-            ->where('id = :id')
-            ->setParameters([
-                'id' => $id,
-            ])
-            ->fetchAssociative();
-
-        return $data !== false ? new Fleet($data) : null;
-    }
-
     /**
      * @return array<int, int>
      */
     public function getUserFleetShipCounts(int $userId): array
     {
-        $data = $this->createQueryBuilder()
+        $data = $this->createQueryBuilder('q')
             ->select('fs_ship_id, SUM(fs.fs_ship_cnt)')
             ->from('fleet', 'f')
             ->innerJoin('f', 'fleet_ships', 'fs', 'f.id = fs.fs_fleet_id')
@@ -142,7 +120,7 @@ class FleetRepository extends AbstractRepository
      */
     public function findByParameters(FleetSearchParameters $parameters): array
     {
-        $qry = $this->createQueryBuilder()
+        $qry = $this->createQueryBuilder('q')
             ->select('f.*')
             ->from('fleet', 'f');
 
@@ -187,7 +165,7 @@ class FleetRepository extends AbstractRepository
     {
         $fetch = $fetch !== null ? $fetch : new BaseResources();
 
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->insert('fleet')
             ->values([
                 'user_id' => ':userId',
@@ -256,7 +234,7 @@ class FleetRepository extends AbstractRepository
 
     public function update(int $id, int $launchTime, int $landTime, int $entityFrom, int $entityTo, int $status, int $leaderId = 0, BaseResources $resources = null, int $usageFuel = null, int $usageFood = null): bool
     {
-        $qb = $this->createQueryBuilder()
+        $qb = $this->createQueryBuilder('q')
             ->update('fleet')
             ->set('launchtime', ':launchTime')
             ->set('landtime', ':landTime')
@@ -310,7 +288,7 @@ class FleetRepository extends AbstractRepository
 
     public function markAsLeader(int $id, int $allianceId): void
     {
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->update('fleet')
             ->set('leader_id', ':id')
             ->set('next_id', ':allianceId')
@@ -324,7 +302,7 @@ class FleetRepository extends AbstractRepository
 
     public function promoteNewAllianceFleetLeader(int $newLeader, int $existingLeader, int $landTime): void
     {
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->update('fleet')
             ->set('status', ':status')
             ->set('landtime', ':landTime')
@@ -336,7 +314,7 @@ class FleetRepository extends AbstractRepository
             ])
             ->executeQuery();
 
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->update('fleet')
             ->set('leader_id', ':newLeaderId')
             ->where('leader_id = :existingLeaderId')
@@ -349,7 +327,7 @@ class FleetRepository extends AbstractRepository
 
     public function removeSupportRes(int $fleetId): void
     {
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->update('fleet')
             ->set('support_usage_fuel', '0')
             ->set('support_usage_food', '0')
@@ -362,7 +340,7 @@ class FleetRepository extends AbstractRepository
 
     public function save(Fleet $fleet): void
     {
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->update('fleet')
             ->set('user_id', ':userId')
             ->set('launchtime', ':launchTime')
@@ -423,7 +401,7 @@ class FleetRepository extends AbstractRepository
 
     public function remove(int $id): void
     {
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->delete('fleet')
             ->where('id = :id')
             ->setParameter('id', $id)
@@ -435,7 +413,7 @@ class FleetRepository extends AbstractRepository
      */
     public function findAllShipsInFleet(int $fleetId, ?bool $faked = false): array
     {
-        $data = $this->createQueryBuilder()
+        $data = $this->createQueryBuilder('q')
             ->select('*')
             ->from('fleet_ships')
             ->where('fs_fleet_id = :fleetId')
@@ -454,7 +432,7 @@ class FleetRepository extends AbstractRepository
      */
     public function findAllShipsForLeader(int $leaderId): array
     {
-        $data = $this->createQueryBuilder()
+        $data = $this->createQueryBuilder('q')
             ->select('fs.*')
             ->from('fleet_ships', 'fs')
             ->innerJoin('fs', 'fleet', 'f', 'f.id = fs.fleet_id')
@@ -469,7 +447,7 @@ class FleetRepository extends AbstractRepository
 
     public function findShipsInFleet(int $fleetId, int $shipId): ?FleetShip
     {
-        $data = $this->createQueryBuilder()
+        $data = $this->createQueryBuilder('q')
             ->select('*')
             ->from('fleet_ships')
             ->where('fs_fleet_id = :fleetId')
@@ -485,7 +463,7 @@ class FleetRepository extends AbstractRepository
 
     public function addSpecialShipsToFleet(int $fleetId, int $shipId, int $count, ShipListItem $item): void
     {
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->insert('fleet_ships')
             ->values([
                 'fs_fleet_id' => ':fleetId',
@@ -537,7 +515,7 @@ class FleetRepository extends AbstractRepository
     {
         $entry = $this->findShipsInFleet($fleetId, $shipId);
         if ($entry !== null) {
-            $this->createQueryBuilder()
+            $this->createQueryBuilder('q')
                 ->update('fleet_ships')
                 ->set('fs_ship_cnt', 'fs_ship_cnt + :count')
                 ->where('fs_fleet_id = :fleetId')
@@ -552,7 +530,7 @@ class FleetRepository extends AbstractRepository
             return;
         }
 
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->insert('fleet_ships')
             ->values([
                 'fs_fleet_id' => ':fleetId',
@@ -571,7 +549,7 @@ class FleetRepository extends AbstractRepository
 
     public function updateShipsInFleet(int $fleetId, int $shipId, int $count): void
     {
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->update('fleet_ships')
             ->set('fs_ship_cnt', ':count')
             ->where('fs_fleet_id = :fleetId')
@@ -586,7 +564,7 @@ class FleetRepository extends AbstractRepository
 
     public function removeShipsFromFleet(int $fleetId, int $shipId): void
     {
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->delete('fleet_ships')
             ->where('fs_fleet_id = :fleetId')
             ->andWhere('fs_ship_id = :shipId')
@@ -599,7 +577,7 @@ class FleetRepository extends AbstractRepository
 
     public function removeAllShipsFromFleet(int $fleetId): void
     {
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->delete('fleet_ships')
             ->where('fs_fleet_id = :fleetId')
             ->setParameter('fleetId', $fleetId)
@@ -608,7 +586,7 @@ class FleetRepository extends AbstractRepository
 
     public function getSpecialShipExperienceSumForUser(int $userId): int
     {
-        return (int) $this->createQueryBuilder()
+        return (int) $this->createQueryBuilder('q')
             ->select('SUM(fs_special_ship_exp)')
             ->from('fleet_ships', 'fs')
             ->innerJoin('fs', 'fleet', 'f', 'f.id = fs.fs_fleet_id AND f.user_id = :userId')
@@ -619,7 +597,7 @@ class FleetRepository extends AbstractRepository
 
     public function getGlobalResources(): BaseResources
     {
-        $data = $this->createQueryBuilder()
+        $data = $this->createQueryBuilder('q')
             ->select(
                 'SUM(res_metal) as metal',
                 'SUM(res_crystal) as crystal',
@@ -642,7 +620,7 @@ class FleetRepository extends AbstractRepository
 
     public function exists(FleetSearch $search): bool
     {
-        return (bool) $this->applySearchSortLimit($this->createQueryBuilder(), $search)
+        return (bool) $this->applySearchSortLimit($this->createQueryBuilder('q'), $search)
             ->select('1')
             ->from('fleet')
             ->setMaxResults(1)
@@ -656,7 +634,7 @@ class FleetRepository extends AbstractRepository
     {
         $sort = $sort !== null ? $sort : FleetSort::landtime('DESC');
 
-        $data = $this->applySearchSortLimit($this->createQueryBuilder(), $search, $sort)
+        $data = $this->applySearchSortLimit($this->createQueryBuilder('q'), $search, $sort)
             ->select('fleet.*')
             ->from('fleet')
             ->fetchAllAssociative();
@@ -666,7 +644,7 @@ class FleetRepository extends AbstractRepository
 
     public function getFleetSpecialTarnBonus(int $fleetId): float
     {
-        $data = $this->createQueryBuilder()
+        $data = $this->createQueryBuilder('q')
             ->select('s.special_ship_bonus_tarn, fs.fs_special_ship_bonus_tarn')
             ->from('fleet_ships', 'fs')
             ->innerJoin('fs', 'ships', 's', 's.ship_id = fs.fs_ship_id')
@@ -681,20 +659,5 @@ class FleetRepository extends AbstractRepository
         }
 
         return $value;
-    }
-
-    protected function applySearchSortLimit(QueryBuilder $qb, AbstractSearch $search = null, AbstractSort $sorts = null, int $limit = null, int $offset = null): QueryBuilder
-    {
-        $qb = parent::applySearchSortLimit($qb, $search, $sorts, $limit, $offset);
-
-        if (isset($search->parameters['planetUserId'])) {
-            $qb->innerJoin('fleet', 'planets', 'planets', 'fleet.entity_to = planets.id');
-        }
-
-        if (isset($search->parameters['allianceId'])) {
-            $qb->innerJoin('fleet', 'users', 'users', 'fleet.user_id = users.user_id');
-        }
-
-        return $qb;
     }
 }

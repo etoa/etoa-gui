@@ -2,16 +2,24 @@
 
 namespace EtoA\Alliance;
 
+use Doctrine\Persistence\ManagerRegistry;
 use EtoA\Core\AbstractRepository;
+use EtoA\Entity\User;
 
 class AllianceStatsRepository extends AbstractRepository
 {
+
+    public function __construct(ManagerRegistry $registry)
+    {
+        parent::__construct($registry, AllianceStats::class);
+    }
+
     /**
      * @return AllianceStats[]
      */
     public function getStats(AllianceStatsSort $sort): array
     {
-        $qb = $this->createQueryBuilder()
+        $qb = $this->createQueryBuilder('q')
             ->select('*')
             ->from('alliance_stats');
 
@@ -24,7 +32,7 @@ class AllianceStatsRepository extends AbstractRepository
 
     public function add(AllianceStats $stats): void
     {
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->insert('alliance_stats')
             ->values([
                 'alliance_id' => ':allianceId',

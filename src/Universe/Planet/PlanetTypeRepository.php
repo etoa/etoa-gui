@@ -15,7 +15,7 @@ class PlanetTypeRepository extends AbstractRepository
      */
     public function getPlanetTypeNames(bool $showAll = false): array
     {
-        $qb = $this->createQueryBuilder()
+        $qb = $this->createQueryBuilder('q')
             ->select('p.type_id, p.type_name')
             ->from('planet_types', 'p');
 
@@ -35,7 +35,7 @@ class PlanetTypeRepository extends AbstractRepository
      */
     public function getPlanetTypes(string $order = 'type_name', string $sort = 'ASC'): array
     {
-        $data = $this->createQueryBuilder()
+        $data = $this->createQueryBuilder('q')
             ->select('p.*')
             ->from('planet_types', 'p')
             ->andWhere('p.type_consider = 1')
@@ -43,20 +43,6 @@ class PlanetTypeRepository extends AbstractRepository
             ->fetchAllAssociative();
 
         return array_map(fn ($row) => new PlanetType($row), $data);
-    }
-
-    public function find(int $id): ?PlanetType
-    {
-        $data = $this->createQueryBuilder()
-            ->select('*')
-            ->from('planet_types')
-            ->where('type_id = :id')
-            ->setParameters([
-                'id' => $id,
-            ])
-            ->fetchAssociative();
-
-        return $data !== false ? new PlanetType($data) : null;
     }
 
     public function isHabitable(int $typeId): bool
@@ -68,7 +54,7 @@ class PlanetTypeRepository extends AbstractRepository
 
     public function getName(int $id): ?string
     {
-        $data = $this->createQueryBuilder()
+        $data = $this->createQueryBuilder('q')
             ->select('type_name')
             ->from('planet_types')
             ->where('type_id = :id')
@@ -82,7 +68,7 @@ class PlanetTypeRepository extends AbstractRepository
 
     public function get(int $id): ?PlanetType
     {
-        $data = $this->createQueryBuilder()
+        $data = $this->createQueryBuilder('q')
             ->select('*')
             ->from('planet_types')
             ->where('type_id = :id')

@@ -6,7 +6,7 @@ class MissileRepository extends \EtoA\Core\AbstractRepository
 {
     public function addMissile(int $missileId, int $amount, int $userId, int $entityId): void
     {
-        $hasMissiles = (bool) $this->createQueryBuilder()
+        $hasMissiles = (bool) $this->createQueryBuilder('q')
             ->select('missilelist_id')
             ->from('missilelist')
             ->where('missilelist_user_id = :userId')
@@ -19,7 +19,7 @@ class MissileRepository extends \EtoA\Core\AbstractRepository
             ])->fetchOne();
 
         if ($hasMissiles) {
-            $this->createQueryBuilder()
+            $this->createQueryBuilder('q')
                 ->update('missilelist')
                 ->set('missilelist_count', 'missilelist_count + :amount')
                 ->where('missilelist_missile_id = :missileId')
@@ -32,7 +32,7 @@ class MissileRepository extends \EtoA\Core\AbstractRepository
                     'entityId' => $entityId,
                 ])->executeQuery();
         } else {
-            $this->createQueryBuilder()
+            $this->createQueryBuilder('q')
                 ->insert('missilelist')
                 ->values([
                     'missilelist_count' => ':amount',
@@ -49,17 +49,9 @@ class MissileRepository extends \EtoA\Core\AbstractRepository
         }
     }
 
-    public function count(MissileListSearch $search = null): int
-    {
-        return (int) $this->applySearchSortLimit($this->createQueryBuilder(), $search)
-            ->select("COUNT(missilelist_id)")
-            ->from('missilelist')
-            ->fetchOne();
-    }
-
     public function countEmpty(): int
     {
-        return (int) $this->createQueryBuilder()
+        return (int) $this->createQueryBuilder('q')
             ->select("COUNT(missilelist_id)")
             ->from('missilelist')
             ->where('missilelist_count = 0')
@@ -71,7 +63,7 @@ class MissileRepository extends \EtoA\Core\AbstractRepository
      */
     public function getMissilesCounts(int $userId, int $entityId): array
     {
-        $data = $this->createQueryBuilder()
+        $data = $this->createQueryBuilder('q')
             ->select("missilelist_missile_id, missilelist_count")
             ->from('missilelist')
             ->where('missilelist_user_id = :userId')
@@ -90,7 +82,7 @@ class MissileRepository extends \EtoA\Core\AbstractRepository
      */
     public function search(MissileListSearch $search, int $limit, int $offset): array
     {
-        $data = $this->applySearchSortLimit($this->createQueryBuilder(), $search, null, $limit, $offset)
+        $data = $this->applySearchSortLimit($this->createQueryBuilder('q'), $search, null, $limit, $offset)
             ->select('*')
             ->from('missilelist')
             ->fetchAllAssociative();
@@ -100,7 +92,7 @@ class MissileRepository extends \EtoA\Core\AbstractRepository
 
     public function searchOne(MissileListSearch $search): ?MissileListItem
     {
-        $data = $this->applySearchSortLimit($this->createQueryBuilder(), $search)
+        $data = $this->applySearchSortLimit($this->createQueryBuilder('q'), $search)
             ->select('*')
             ->from('missilelist')
             ->fetchAssociative();
@@ -113,7 +105,7 @@ class MissileRepository extends \EtoA\Core\AbstractRepository
      */
     public function findForUser(int $userId, ?int $entityId = null): array
     {
-        $qb = $this->createQueryBuilder()
+        $qb = $this->createQueryBuilder('q')
             ->select('*')
             ->from('missilelist')
             ->where('missilelist_user_id = :userId')
@@ -133,7 +125,7 @@ class MissileRepository extends \EtoA\Core\AbstractRepository
 
     public function setMissileCount(int $id, int $count): void
     {
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->update('missilelist')
             ->set('missilelist_count', ':count')
             ->where('missilelist_id = :id')
@@ -145,7 +137,7 @@ class MissileRepository extends \EtoA\Core\AbstractRepository
 
     public function removeForUser(int $userId): void
     {
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->delete('missilelist')
             ->where('missilelist_user_id = :userId')
             ->setParameter('userId', $userId)
@@ -154,7 +146,7 @@ class MissileRepository extends \EtoA\Core\AbstractRepository
 
     public function remove(int $id): void
     {
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->delete('missilelist')
             ->where('missilelist_id = :id')
             ->setParameter('id', $id)
@@ -163,7 +155,7 @@ class MissileRepository extends \EtoA\Core\AbstractRepository
 
     public function deleteEmpty(): int
     {
-        return $this->createQueryBuilder()
+        return $this->createQueryBuilder('q')
             ->delete('missilelist')
             ->where('missilelist_count=0')
             ->executeQuery()

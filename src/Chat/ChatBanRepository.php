@@ -8,7 +8,7 @@ class ChatBanRepository extends AbstractRepository
 {
     public function getUserBan(int $userId): ?ChatBan
     {
-        $data = $this->createQueryBuilder()
+        $data = $this->createQueryBuilder('q')
             ->select('b.*', 'u.user_nick')
             ->from('chat_banns', 'b')
             ->innerJoin('b', 'users', 'u', 'u.user_id=b.user_id')
@@ -24,7 +24,7 @@ class ChatBanRepository extends AbstractRepository
      */
     public function getBans(): array
     {
-        $data = $this->createQueryBuilder()
+        $data = $this->createQueryBuilder('q')
             ->select('b.*', 'u.user_nick')
             ->from('chat_banns', 'b')
             ->innerJoin('b', 'users', 'u', 'u.user_id=b.user_id')

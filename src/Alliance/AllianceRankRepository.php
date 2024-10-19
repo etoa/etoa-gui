@@ -3,13 +3,20 @@
 namespace EtoA\Alliance;
 
 use Doctrine\DBAL\ArrayParameterType;
+use Doctrine\Persistence\ManagerRegistry;
 use EtoA\Core\AbstractRepository;
+use EtoA\Entity\User;
 
 class AllianceRankRepository extends AbstractRepository
 {
+    public function __construct(ManagerRegistry $registry)
+    {
+        parent::__construct($registry, AllianceRank::class);
+    }
+
     public function add(int $allianceId): int
     {
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->insert('alliance_ranks')
             ->values([
                 'rank_alliance_id' => ':allianceId',
@@ -22,7 +29,7 @@ class AllianceRankRepository extends AbstractRepository
 
     public function addRankRight(int $rankId, int $rightId): void
     {
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->insert('alliance_rankrights')
             ->values([
                 'rr_right_id' => ':rightId',
@@ -40,7 +47,7 @@ class AllianceRankRepository extends AbstractRepository
      */
     public function getRanks(int $allianceId): array
     {
-        $data = $this->createQueryBuilder()
+        $data = $this->createQueryBuilder('q')
             ->select(
                 'rank_id',
                 'rank_level',
@@ -57,7 +64,7 @@ class AllianceRankRepository extends AbstractRepository
 
     public function getRank(int $rankId, int $allianceId): ?AllianceRank
     {
-        $data = $this->createQueryBuilder()
+        $data = $this->createQueryBuilder('q')
             ->select('*')
             ->from('alliance_ranks')
             ->where('rank_alliance_id = :allianceId')
@@ -76,7 +83,7 @@ class AllianceRankRepository extends AbstractRepository
      */
     public function getRightIds(int $rankId): array
     {
-        $data = $this->createQueryBuilder()
+        $data = $this->createQueryBuilder('q')
             ->select('rr_right_id')
             ->from('alliance_rankrights')
             ->where('rr_rank_id = :rankId')
@@ -90,7 +97,7 @@ class AllianceRankRepository extends AbstractRepository
 
     public function hasActionRights(int $allianceId, int $rankId, string $action): bool
     {
-        return (bool) $this->createQueryBuilder()
+        return (bool) $this->createQueryBuilder('q')
             ->select('1')
             ->from('alliance_ranks', 'ra')
             ->innerJoin('ra', 'alliance_rankrights', 'rr', 'ra.rank_id = rr.rr_rank_id')
@@ -111,7 +118,7 @@ class AllianceRankRepository extends AbstractRepository
      */
     public function getAvailableRightIds(int $allianceId, int $rankId): array
     {
-        $data = $this->createQueryBuilder()
+        $data = $this->createQueryBuilder('q')
             ->select('rr.rr_right_id')
             ->from('alliance_ranks', 'ra')
             ->innerJoin('ra', 'alliance_rankrights', 'rr', 'ra.rank_id = rr.rr_rank_id')
@@ -128,7 +135,7 @@ class AllianceRankRepository extends AbstractRepository
 
     public function updateRank(int $id, string $name, int $level): void
     {
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->update('alliance_ranks')
             ->set('rank_name', ':name')
             ->set('rank_level', ':level')
@@ -143,7 +150,7 @@ class AllianceRankRepository extends AbstractRepository
 
     public function removeRank(int $rankId): void
     {
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->delete('alliance_ranks')
             ->where('rank_id = :rankId')
             ->setParameter('rankId', $rankId)
@@ -154,7 +161,7 @@ class AllianceRankRepository extends AbstractRepository
 
     public function deleteRights(int $rankId): void
     {
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->delete('alliance_rankrights')
             ->where('rr_rank_id = :rankId')
             ->setParameter('rankId', $rankId)
@@ -163,20 +170,20 @@ class AllianceRankRepository extends AbstractRepository
 
     public function deleteAllianceRanks(int $allianceId): void
     {
-        $rankIds = array_column($this->createQueryBuilder()
+        $rankIds = array_column($this->createQueryBuilder('q')
             ->select('rank_id')
             ->from('alliance_ranks')
             ->where('rank_alliance_id = :allianceId')
             ->setParameter('allianceId', $allianceId)
             ->fetchAllAssociative(), 'rank_id');
 
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->delete('alliance_rankrights')
             ->where('rr_rank_id IN (:rankIds)')
             ->setParameter('rankIds', $rankIds, ArrayParameterType::INTEGER)
             ->executeQuery();
 
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->delete('alliance_ranks')
             ->where('rank_alliance_id = :allianceId')
             ->setParameter('allianceId', $allianceId)

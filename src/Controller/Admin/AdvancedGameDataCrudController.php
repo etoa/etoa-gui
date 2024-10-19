@@ -86,7 +86,7 @@ abstract class AdvancedGameDataCrudController extends GameDataCrudController
         echo '<form action="?" method="post">';
         echo '<input type="button" value="Neuer Datensatz hinzufügen" name="new" onclick="document.location=\'?&amp;action=new\'" /><br/><br/>';
 
-        $rows = $this->createQueryBuilder()
+        $rows = $this->createQueryBuilder('q')
             ->select('*')
             ->from($this->getTable())
             ->orderBy($this->getOverviewOrderField(), $this->getOverviewOrder())
@@ -246,7 +246,7 @@ abstract class AdvancedGameDataCrudController extends GameDataCrudController
             }
         }
 
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->insert($this->getTable())
             ->values($values)
             ->setParameters($params)
@@ -262,7 +262,7 @@ abstract class AdvancedGameDataCrudController extends GameDataCrudController
 
     private function duplicateRecord(string $table, string $id_field, int $id): bool
     {
-        $arr = $this->createQueryBuilder()
+        $arr = $this->createQueryBuilder('q')
             ->select('*')
             ->from($table)
             ->where($id_field . ' = :' . $id_field)
@@ -281,7 +281,7 @@ abstract class AdvancedGameDataCrudController extends GameDataCrudController
             $params[$key] = $value;
         }
 
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->insert($table)
             ->values($values)
             ->setParameters($params)
@@ -292,7 +292,7 @@ abstract class AdvancedGameDataCrudController extends GameDataCrudController
 
     public function edit(Request $request): void
     {
-        $arr = $this->createQueryBuilder()
+        $arr = $this->createQueryBuilder('q')
             ->select('*')
             ->from($this->getTable())
             ->where($this->getTableId() . " = :id")
@@ -361,7 +361,7 @@ abstract class AdvancedGameDataCrudController extends GameDataCrudController
 
     private function updateRecord(Request $request): bool
     {
-        $qb = $this->createQueryBuilder()
+        $qb = $this->createQueryBuilder('q')
             ->update($this->getTable())
             ->where($this->getTableId() . " = :" . $this->getTableId());
 
@@ -393,7 +393,7 @@ abstract class AdvancedGameDataCrudController extends GameDataCrudController
 
     public function switch(Request $request): void
     {
-        $affected = $this->createQueryBuilder()
+        $affected = $this->createQueryBuilder('q')
             ->update($this->getTable())
             ->set($request->query->get('switch'), "(" . $request->query->get('switch') . " + 1) % 2")
             ->where($this->getTableId() . ' = :id')
@@ -410,7 +410,7 @@ abstract class AdvancedGameDataCrudController extends GameDataCrudController
 
     public function moveUp(Request $request): void
     {
-        $ids = $this->createQueryBuilder()
+        $ids = $this->createQueryBuilder('q')
             ->select($this->getTableId())
             ->from($this->getTable())
             ->where($this->getTableSortParent() . " = :parentId")
@@ -421,7 +421,7 @@ abstract class AdvancedGameDataCrudController extends GameDataCrudController
         $cnt = 0;
         $sorter = 0;
         foreach ($ids as $id) {
-            $this->createQueryBuilder()
+            $this->createQueryBuilder('q')
                 ->update($this->getTable())
                 ->set($this->getTableSort(), (string)$cnt)
                 ->where($this->getTableId() . " = :id")
@@ -434,7 +434,7 @@ abstract class AdvancedGameDataCrudController extends GameDataCrudController
             $cnt++;
         }
 
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->update($this->getTable())
             ->set($this->getTableSort(), (string)$sorter)
             ->where($this->getTableSortParent() . " = :parentId")
@@ -442,7 +442,7 @@ abstract class AdvancedGameDataCrudController extends GameDataCrudController
             ->setParameter('parentId', $request->query->get('parentId'))
             ->executeQuery();
 
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->update($this->getTable())
             ->set($this->getTableSort(), (string)($sorter - 1))
             ->where($this->getTableId() . " = :sortUp")
@@ -452,7 +452,7 @@ abstract class AdvancedGameDataCrudController extends GameDataCrudController
 
     public function moveDown(Request $request): void
     {
-        $ids = $this->createQueryBuilder()
+        $ids = $this->createQueryBuilder('q')
             ->select($this->getTableId())
             ->from($this->getTable())
             ->where($this->getTableSortParent() . " = :parentId")
@@ -463,7 +463,7 @@ abstract class AdvancedGameDataCrudController extends GameDataCrudController
         $cnt = 0;
         $sorter = 0;
         foreach ($ids as $id) {
-            $this->createQueryBuilder()
+            $this->createQueryBuilder('q')
                 ->update($this->getTable())
                 ->set($this->getTableSort(), (string)$cnt)
                 ->where($this->getTableId() . " = :id")
@@ -476,7 +476,7 @@ abstract class AdvancedGameDataCrudController extends GameDataCrudController
             $cnt++;
         }
 
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->update($this->getTable())
             ->set($this->getTableSort(), (string)$sorter)
             ->where($this->getTableSortParent() . " = :parentId")
@@ -484,7 +484,7 @@ abstract class AdvancedGameDataCrudController extends GameDataCrudController
             ->setParameter('parentId', $request->query->get('parentId'))
             ->executeQuery();
 
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->update($this->getTable())
             ->set($this->getTableSort(), (string)($sorter + 1))
             ->where($this->getTableId() . " = :sortUp")
@@ -494,7 +494,7 @@ abstract class AdvancedGameDataCrudController extends GameDataCrudController
 
     public function confirmDelete(Request $request): void
     {
-        $arr = $this->createQueryBuilder()
+        $arr = $this->createQueryBuilder('q')
             ->select('*')
             ->from($this->getTable())
             ->where($this->getTableId() . " = :id")
@@ -525,7 +525,7 @@ abstract class AdvancedGameDataCrudController extends GameDataCrudController
 
     public function delete(Request $request): void
     {
-        $affected = $this->createQueryBuilder()
+        $affected = $this->createQueryBuilder('q')
             ->delete($this->getTable())
             ->where($this->getTableId() . ' = :id')
             ->setParameter('id', $request->request->get($this->getTableId()))
@@ -550,7 +550,7 @@ abstract class AdvancedGameDataCrudController extends GameDataCrudController
             }
         }
 
-        $rows = $this->createQueryBuilder()
+        $rows = $this->createQueryBuilder('q')
             ->select($value_field, $text_field)
             ->from($table)
             ->orderBy($order)

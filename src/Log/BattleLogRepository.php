@@ -11,7 +11,7 @@ class BattleLogRepository extends AbstractRepository
      */
     public function searchLogs(BattleLogSearch $search): array
     {
-        $data = $this->applySearchSortLimit($this->createQueryBuilder(), $search)
+        $data = $this->applySearchSortLimit($this->createQueryBuilder('q'), $search)
             ->select('*')
             ->from('logs_battle')
             ->orderBy('timestamp', 'DESC')
@@ -22,7 +22,7 @@ class BattleLogRepository extends AbstractRepository
 
     public function cleanup(int $threshold): int
     {
-        return $this->createQueryBuilder()
+        return $this->createQueryBuilder('q')
             ->delete('logs_battle')
             ->where('timestamp < :threshold')
             ->setParameter('threshold', $threshold)

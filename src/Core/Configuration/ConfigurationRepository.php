@@ -4,16 +4,23 @@ declare(strict_types=1);
 
 namespace EtoA\Core\Configuration;
 
+use Doctrine\Persistence\ManagerRegistry;
+use EtoA\Building\Building;
 use EtoA\Core\AbstractRepository;
 
 class ConfigurationRepository extends AbstractRepository
 {
+    public function __construct(ManagerRegistry $registry)
+    {
+        parent::__construct($registry, ConfigItem::class);
+    }
+
     /**
      * @return array<string,ConfigItem>
      */
     public function findAll(): array
     {
-        $data = $this->createQueryBuilder()
+        $data = $this->createQueryBuilder('q')
                 ->select(
                     'config_name',
                     'config_value',
@@ -65,7 +72,7 @@ class ConfigurationRepository extends AbstractRepository
 
     public function remove(string $name): void
     {
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->delete('config')
             ->where('config_name = :name')
             ->setParameter('name', $name)

@@ -4,17 +4,24 @@ declare(strict_types=1);
 
 namespace EtoA\Bookmark;
 
+use Doctrine\Persistence\ManagerRegistry;
 use EtoA\Core\AbstractRepository;
+use EtoA\Entity\User;
 use EtoA\Universe\Resources\BaseResources;
 
 class FleetBookmarkRepository extends AbstractRepository
 {
+    public function __construct(ManagerRegistry $registry)
+    {
+        parent::__construct($registry, FleetBookmark::class);
+    }
+
     /**
      * @return FleetBookmark[]
      */
     public function getForUser(int $userId): array
     {
-        $data = $this->createQueryBuilder()
+        $data = $this->createQueryBuilder('q')
             ->select('*')
             ->from('fleet_bookmarks')
             ->where('user_id = :userId')
@@ -29,7 +36,7 @@ class FleetBookmarkRepository extends AbstractRepository
 
     public function get(int $id, int $userId): ?FleetBookmark
     {
-        $data = $this->createQueryBuilder()
+        $data = $this->createQueryBuilder('q')
             ->select('*')
             ->from('fleet_bookmarks')
             ->where('id = :id')
@@ -45,7 +52,7 @@ class FleetBookmarkRepository extends AbstractRepository
 
     public function add(int $userId, string $name, int $targetId, string $ships, BaseResources $freight, BaseResources $fetch, string $action, int $speed): int
     {
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->insert('fleet_bookmarks')
             ->values([
                 'user_id' => ':userId',
@@ -74,7 +81,7 @@ class FleetBookmarkRepository extends AbstractRepository
 
     public function update(int $id, int $userId, string $name, int $targetId, string $ships, BaseResources $freight, BaseResources $fetch, string $action, int $speed): void
     {
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->update('fleet_bookmarks')
             ->set('name', ':name')
             ->set('target_id', ':targetId')
@@ -101,7 +108,7 @@ class FleetBookmarkRepository extends AbstractRepository
 
     public function remove(int $id, int $userId): bool
     {
-        return (bool) $this->createQueryBuilder()
+        return (bool) $this->createQueryBuilder('q')
             ->delete('fleet_bookmarks')
             ->where('user_id = :userId')
             ->andWhere('id = :id')
@@ -115,7 +122,7 @@ class FleetBookmarkRepository extends AbstractRepository
 
     public function removeForUser(int $userId) : void
     {
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->delete('fleet_bookmarks')
             ->where('user_id = :userId')
             ->setParameter('userId', $userId)

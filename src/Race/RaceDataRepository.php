@@ -13,7 +13,7 @@ class RaceDataRepository extends AbstractRepository
      */
     public function getRaceNames(bool $showAll = false, bool $orderById = false): array
     {
-        $qry = $this->createQueryBuilder()
+        $qry = $this->createQueryBuilder('q')
             ->select('race_id', 'race_name')
             ->from('races');
 
@@ -32,7 +32,7 @@ class RaceDataRepository extends AbstractRepository
      */
     public function getRaceLeaderTitles(): array
     {
-        return $this->createQueryBuilder()
+        return $this->createQueryBuilder('q')
             ->select('r.race_id, r.race_leadertitle')
             ->from('races', 'r')
             ->andWhere('r.race_active = 1')
@@ -42,7 +42,7 @@ class RaceDataRepository extends AbstractRepository
 
     public function getRace(int $raceId): ?Race
     {
-        $data = $this->createQueryBuilder()
+        $data = $this->createQueryBuilder('q')
             ->select('r.*')
             ->from('races', 'r')
             ->where('r.race_id = :id')
@@ -58,7 +58,7 @@ class RaceDataRepository extends AbstractRepository
      */
     public function getActiveRaces(string $order = 'race_name', string $sort = 'ASC'): array
     {
-        $data = $this->createQueryBuilder()
+        $data = $this->createQueryBuilder('q')
             ->select('r.*')
             ->from('races', 'r')
             ->where('r.race_active = 1')
@@ -96,7 +96,7 @@ class RaceDataRepository extends AbstractRepository
 
     public function getNumberOfUsersWithRace(int $raceId): int
     {
-        return (int) $this->createQueryBuilder()
+        return (int) $this->createQueryBuilder('q')
             ->select('COUNT(user_race_id)')
             ->from('users')
             ->where(' user_race_id = :raceId')

@@ -2,13 +2,18 @@
 
 namespace EtoA\Alliance\Board;
 
+use Doctrine\Persistence\ManagerRegistry;
 use EtoA\Core\AbstractRepository;
 
 class AllianceBoardPostRepository extends AbstractRepository
 {
+    public function __construct(ManagerRegistry $registry)
+    {
+        parent::__construct($registry, Post::class);
+    }
     public function getUserAlliancePostCounts(int $allianceId, int $userId): int
     {
-        $posts = (int) $this->createQueryBuilder()
+        $posts = (int) $this->createQueryBuilder('q')
             ->select('COUNT(p.post_id)')
             ->from('allianceboard_cat', 'c')
             ->innerJoin('c', 'allianceboard_topics', 't', 't.topic_cat_id = c.cat_id')
@@ -21,7 +26,7 @@ class AllianceBoardPostRepository extends AbstractRepository
             ])
             ->fetchOne();
 
-        $bndPosts = (int) $this->createQueryBuilder()
+        $bndPosts = (int) $this->createQueryBuilder('q')
             ->select('COUNT(p.post_id)')
             ->from('alliance_bnd', 'b')
             ->innerJoin('b', 'allianceboard_topics', 't', 't.topic_bnd_id = b.alliance_bnd_id')
@@ -39,7 +44,7 @@ class AllianceBoardPostRepository extends AbstractRepository
 
     public function addPost(int $topicId, string $text, int $userId, string $userNick): int
     {
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->insert('allianceboard_posts')
             ->values([
                 'post_topic_id' => ':topicId',
@@ -63,7 +68,7 @@ class AllianceBoardPostRepository extends AbstractRepository
 
     public function updatePost(int $postId, string $text, int $authorId = null): void
     {
-        $qb = $this->createQueryBuilder()
+        $qb = $this->createQueryBuilder('q')
             ->update('allianceboard_posts')
             ->set('post_text', ':text')
             ->set('post_changed', ':now')
@@ -87,7 +92,7 @@ class AllianceBoardPostRepository extends AbstractRepository
      */
     public function getPosts(int $topicId, int $limit = null): array
     {
-        $qb = $this->createQueryBuilder()
+        $qb = $this->createQueryBuilder('q')
             ->select('*')
             ->from('allianceboard_posts')
             ->where('post_topic_id = :topicId')
@@ -106,7 +111,7 @@ class AllianceBoardPostRepository extends AbstractRepository
 
     public function getPost(int $postId): ?Post
     {
-        $data = $this->createQueryBuilder()
+        $data = $this->createQueryBuilder('q')
             ->select('*')
             ->from('allianceboard_posts')
             ->where('post_id = :postId')
@@ -118,7 +123,7 @@ class AllianceBoardPostRepository extends AbstractRepository
 
     public function deletePost(int $postId, int $authorId = null): void
     {
-        $qb = $this->createQueryBuilder()
+        $qb = $this->createQueryBuilder('q')
             ->delete('allianceboard_posts')
             ->where('post_id = :postId')
             ->setParameter('postId', $postId);

@@ -2,13 +2,20 @@
 
 namespace EtoA\BuddyList;
 
+use Doctrine\Persistence\ManagerRegistry;
 use EtoA\Core\AbstractRepository;
 
 class BuddyListRepository extends AbstractRepository
 {
+    public function __construct(ManagerRegistry $registry)
+    {
+        parent::__construct($registry, Buddy::class);
+    }
+
+
     public function countFriendsOnline(int $userId): int
     {
-        return (int) $this->createQueryBuilder()
+        return (int) $this->createQueryBuilder('q')
             ->select('COUNT(user_id)')
             ->from('buddylist', 'b')
             ->innerJoin('b', 'user_sessions', 's', 'b.bl_buddy_id = s.user_id')
@@ -20,7 +27,7 @@ class BuddyListRepository extends AbstractRepository
 
     public function hasPendingFriendRequest(int $userId): bool
     {
-        return (bool) $this->createQueryBuilder()
+        return (bool) $this->createQueryBuilder('q')
             ->select('COUNT(bl_id)')
             ->from('buddylist')
             ->where('bl_allow = 0')
@@ -54,7 +61,7 @@ class BuddyListRepository extends AbstractRepository
 
     public function getBuddy(int $userId, int $buddyId): ?Buddy
     {
-        $data = $this->createQueryBuilder()
+        $data = $this->createQueryBuilder('q')
             ->select('b.*')
             ->addSelect('u.user_id, u.user_nick, u.user_points')
             ->addSelect('p.id as planetId')
@@ -79,7 +86,7 @@ class BuddyListRepository extends AbstractRepository
      */
     public function getPendingBuddyRequests(int $userId): array
     {
-        $data = $this->createQueryBuilder()
+        $data = $this->createQueryBuilder('q')
             ->select('b.*')
             ->addSelect('u.user_id, u.user_nick, u.user_points')
             ->from('buddylist', 'b')
@@ -95,7 +102,7 @@ class BuddyListRepository extends AbstractRepository
 
     public function addBuddyRequest(int $userId, int $buddyId): void
     {
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->insert('buddylist')
             ->values([
                 'bl_user_id' => ':userId',
@@ -112,7 +119,7 @@ class BuddyListRepository extends AbstractRepository
 
     public function acceptBuddyRequest(int $userId, int $buddyId): bool
     {
-        $existed = (bool) $this->createQueryBuilder()
+        $existed = (bool) $this->createQueryBuilder('q')
             ->update('buddylist')
             ->set('bl_allow', ':allow')
             ->where('bl_user_id = :buddyId')
@@ -131,7 +138,7 @@ class BuddyListRepository extends AbstractRepository
         }
 
         if ($this->buddyListEntryExist($userId, $buddyId)) {
-            $this->createQueryBuilder()
+            $this->createQueryBuilder('q')
                 ->update('buddylist')
                 ->set('bl_allow', ':allow')
                 ->where('bl_user_id = :userId')
@@ -146,7 +153,7 @@ class BuddyListRepository extends AbstractRepository
             return true;
         }
 
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->insert('buddylist')
             ->values([
                 'bl_allow' => ':allow',
@@ -165,7 +172,7 @@ class BuddyListRepository extends AbstractRepository
 
     public function rejectBuddyRequest(int $userId, int $buddyId): bool
     {
-        return (bool) $this->createQueryBuilder()
+        return (bool) $this->createQueryBuilder('q')
             ->delete('buddylist')
             ->where('bl_user_id = :buddyId')
             ->andWhere('bl_buddy_id = :userId')
@@ -180,7 +187,7 @@ class BuddyListRepository extends AbstractRepository
 
     public function updateComment(int $userId, int $buddyId, string $comment): void
     {
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->update('buddylist')
             ->set('bl_comment', ':comment')
             ->where('bl_user_id = :userId')
@@ -195,7 +202,7 @@ class BuddyListRepository extends AbstractRepository
 
     public function buddyListEntryExist(int $userId, int $buddyId): bool
     {
-        return (bool) $this->createQueryBuilder()
+        return (bool) $this->createQueryBuilder('q')
             ->select('1')
             ->from('buddylist')
             ->where('bl_user_id = :userId')
@@ -209,7 +216,7 @@ class BuddyListRepository extends AbstractRepository
 
     public function removeBuddy(int $userId, int $buddyId): bool
     {
-        $counts = $this->createQueryBuilder()
+        $counts = $this->createQueryBuilder('q')
             ->delete('buddylist')
             ->where('bl_user_id = :userId AND bl_buddy_id = :buddyId')
             ->orWhere('bl_user_id = :buddyId AND bl_buddy_id = :userId')
@@ -225,7 +232,7 @@ class BuddyListRepository extends AbstractRepository
 
     public function removeForUser(int $userId): void
     {
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->delete('buddylist')
             ->where('bl_user_id = :userId')
             ->orWhere('bl_buddy_id = :userId')

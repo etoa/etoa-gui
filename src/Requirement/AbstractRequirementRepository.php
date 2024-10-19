@@ -17,7 +17,7 @@ abstract class AbstractRequirementRepository extends AbstractRepository
 
     public function getAll(): RequirementsCollection
     {
-        $data = $this->createQueryBuilder()
+        $data = $this->createQueryBuilder('q')
             ->select('*')
             ->from($this->table)
             ->fetchAllAssociative();
@@ -27,7 +27,7 @@ abstract class AbstractRequirementRepository extends AbstractRepository
 
     public function getRequirements(int $objectId): RequirementsCollection
     {
-        $data = $this->createQueryBuilder()
+        $data = $this->createQueryBuilder('q')
             ->select('*')
             ->from($this->table)
             ->where('obj_id = :objectId')
@@ -43,7 +43,7 @@ abstract class AbstractRequirementRepository extends AbstractRepository
      */
     public function getRequiredByBuilding(int $buildingId): array
     {
-        $data = $this->createQueryBuilder()
+        $data = $this->createQueryBuilder('q')
             ->select('*')
             ->from($this->table)
             ->where('req_building_id = :buildingId')
@@ -59,7 +59,7 @@ abstract class AbstractRequirementRepository extends AbstractRepository
      */
     public function getRequiredByTechnology(int $technologyId): array
     {
-        $data = $this->createQueryBuilder()
+        $data = $this->createQueryBuilder('q')
             ->select('*')
             ->from($this->table)
             ->where('req_tech_id = :technologyId')
@@ -86,7 +86,7 @@ abstract class AbstractRequirementRepository extends AbstractRepository
 
     public function remove(int $id): void
     {
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->delete($this->table)
             ->where('id = :id')
             ->setParameter('id', $id)

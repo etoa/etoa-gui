@@ -11,7 +11,7 @@ class BuildingTypeDataRepository extends AbstractRepository
      */
     public function getTypeNames(): array
     {
-        return $this->createQueryBuilder()
+        return $this->createQueryBuilder('q')
             ->select('type_id, type_name')
             ->from('building_types')
             ->orderBy('type_order')

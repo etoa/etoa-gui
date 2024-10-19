@@ -10,7 +10,7 @@ class UserPropertiesRepository extends AbstractRepository
 {
     public function addBlank(int $id): void
     {
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->delete('user_properties')
             ->where('id = :id')
             ->setParameters([
@@ -18,7 +18,7 @@ class UserPropertiesRepository extends AbstractRepository
             ])
             ->executeQuery();
 
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->insert('user_properties')
             ->values([
                 'id' => ':id',
@@ -43,7 +43,7 @@ class UserPropertiesRepository extends AbstractRepository
 
     public function getProperties(int $userId): ?UserProperties
     {
-        $data = $this->createQueryBuilder()
+        $data = $this->createQueryBuilder('q')
             ->select('*')
             ->from('user_properties')
             ->where('id = :userId')
@@ -55,7 +55,7 @@ class UserPropertiesRepository extends AbstractRepository
 
     public function storeProperties(int $userId, UserProperties $properties): void
     {
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->update('user_properties')
             ->where('id = :userId')
             ->set('css_style', ':cssStyle')
@@ -142,7 +142,7 @@ class UserPropertiesRepository extends AbstractRepository
 
     public function removeForUser(int $userId) : void
     {
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->delete('user_properties')
             ->where('id = :userId')
             ->setParameter('userId', $userId)

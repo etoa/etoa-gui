@@ -13,7 +13,7 @@ class NebulaRepository extends AbstractRepository
      */
     public function getAllIds(): array
     {
-        $data = $this->createQueryBuilder()
+        $data = $this->createQueryBuilder('q')
             ->select("id")
             ->from('nebulas')
             ->fetchAllAssociative();
@@ -21,31 +21,9 @@ class NebulaRepository extends AbstractRepository
         return array_map(fn (array $row) => (int) $row['id'], $data);
     }
 
-    public function count(): int
-    {
-        return (int) $this->createQueryBuilder()
-            ->select("COUNT(id)")
-            ->from('nebulas')
-            ->fetchOne();
-    }
-
-    public function find(int $id): ?Nebula
-    {
-        $data = $this->createQueryBuilder()
-            ->select('*')
-            ->from('nebulas')
-            ->where('id = :id')
-            ->setParameters([
-                'id' => $id,
-            ])
-            ->fetchAssociative();
-
-        return $data !== false ? new Nebula($data) : null;
-    }
-
     public function add(int $id, int $resCrystal): void
     {
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->insert('nebulas')
             ->values([
                 'id' => ':id',
@@ -67,7 +45,7 @@ class NebulaRepository extends AbstractRepository
         int $resFood,
         int $resPower
     ): bool {
-        $affected = $this->createQueryBuilder()
+        $affected = $this->createQueryBuilder('q')
             ->update('nebulas')
             ->set('res_metal', ':res_metal')
             ->set('res_crystal', ':res_crystal')
@@ -100,7 +78,7 @@ class NebulaRepository extends AbstractRepository
         int $resFood,
         int $resPower
     ): bool {
-        $affected = $this->createQueryBuilder()
+        $affected = $this->createQueryBuilder('q')
             ->update('nebulas')
             ->set('res_metal', 'res_metal + :res_metal')
             ->set('res_crystal', 'res_crystal + :res_crystal')
@@ -126,7 +104,7 @@ class NebulaRepository extends AbstractRepository
 
     public function remove(int $id): void
     {
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->delete('nebulas')
             ->where('id = :id')
             ->setParameter('id', $id)

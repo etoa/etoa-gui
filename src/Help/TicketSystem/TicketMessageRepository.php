@@ -8,38 +8,16 @@ use EtoA\Core\AbstractRepository;
 
 class TicketMessageRepository extends AbstractRepository
 {
-    public function count(int $ticketId): int
-    {
-        return (int) $this->createQueryBuilder()
-            ->select("COUNT(*)")
-            ->from('ticket_msg')
-            ->where('ticket_id = :ticket_id')
-            ->setParameter('ticket_id', $ticketId)
-            ->fetchOne();
-    }
-
     /**
      * @return array<int, int>
      */
     public function countsByTicket(): array
     {
-        return $this->createQueryBuilder()
+        return $this->createQueryBuilder('q')
             ->select("ticket_id, COUNT(*)")
             ->from('ticket_msg')
             ->groupBy('ticket_id')
             ->fetchAllKeyValue();
-    }
-
-    public function find(int $id): ?TicketMessage
-    {
-        $data = $this->createQueryBuilder()
-            ->select("*")
-            ->from('ticket_msg')
-            ->where('id = :id')
-            ->setParameter('id', $id)
-            ->fetchAssociative();
-
-        return $data ? TicketMessage::createFromArray($data) : null;
     }
 
     /**
@@ -47,7 +25,7 @@ class TicketMessageRepository extends AbstractRepository
      */
     public function findByTicket(int $ticketId): array
     {
-        $data = $this->createQueryBuilder()
+        $data = $this->createQueryBuilder('q')
             ->select("*")
             ->from('ticket_msg')
             ->where('ticket_id = :ticket_id')
@@ -60,7 +38,7 @@ class TicketMessageRepository extends AbstractRepository
 
     public function findLastMessageForTicket(int $ticketId): ?TicketMessage
     {
-        $data = $this->createQueryBuilder()
+        $data = $this->createQueryBuilder('q')
             ->select("*")
             ->from('ticket_msg')
             ->where('ticket_id = :ticket_id')
@@ -78,7 +56,7 @@ class TicketMessageRepository extends AbstractRepository
             $message->timestamp = time();
         }
 
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->insert('ticket_msg')
             ->values([
                 'ticket_id' => ':ticket_id',
@@ -108,7 +86,7 @@ class TicketMessageRepository extends AbstractRepository
             return;
         }
 
-        $qry = $this->createQueryBuilder()
+        $qry = $this->createQueryBuilder('q')
             ->delete('ticket_msg')
             ->where('ticket_id IN('.implode(',', array_fill(0, count($ticketIds), '?')).')');
         foreach ($ticketIds as $k => $id) {

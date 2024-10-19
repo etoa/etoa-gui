@@ -13,7 +13,7 @@ class CellRepository extends AbstractRepository
      */
     public function getAllIds(): array
     {
-        $data = $this->createQueryBuilder()
+        $data = $this->createQueryBuilder('q')
             ->select("id")
             ->from('cells')
             ->fetchAllAssociative();
@@ -21,20 +21,12 @@ class CellRepository extends AbstractRepository
         return array_map(fn (array $row) => (int) $row['id'], $data);
     }
 
-    public function count(): int
-    {
-        return (int) $this->createQueryBuilder()
-            ->select("COUNT(id)")
-            ->from('cells')
-            ->fetchOne();
-    }
-
     /**
      * @return array{x: int, y: int}
      */
     public function getSectorDimensions(): array
     {
-        $data = $this->createQueryBuilder()
+        $data = $this->createQueryBuilder('q')
             ->select('MAX(sx)', 'MAX(sy)')
             ->from('cells')
             ->fetchNumeric();
@@ -54,7 +46,7 @@ class CellRepository extends AbstractRepository
      */
     public function getCellDimensions(): array
     {
-        $data = $this->createQueryBuilder()
+        $data = $this->createQueryBuilder('q')
             ->select('MAX(cx)', 'MAX(cy)')
             ->from('cells')
             ->fetchNumeric();
@@ -74,7 +66,7 @@ class CellRepository extends AbstractRepository
      */
     public function findAllCoordinates(): array
     {
-        $data = $this->createQueryBuilder()
+        $data = $this->createQueryBuilder('q')
             ->select(
                 "id",
                 "sx",
@@ -90,7 +82,7 @@ class CellRepository extends AbstractRepository
 
     public function create(int $sx, int $sy, int $cx, int $cy): int
     {
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->insert('cells')
             ->values([
                 'sx' => ':sx',
@@ -134,7 +126,7 @@ class CellRepository extends AbstractRepository
      */
     public function getCellPopulation(): array
     {
-        $data = $this->createQueryBuilder()
+        $data = $this->createQueryBuilder('q')
             ->select(
                 'c.sx',
                 'c.cx',
@@ -156,7 +148,7 @@ class CellRepository extends AbstractRepository
      */
     public function getUserCellIds(int $userId): array
     {
-        $data = $this->createQueryBuilder()
+        $data = $this->createQueryBuilder('q')
             ->select('DISTINCT c.id')
             ->from('cells', 'c')
             ->innerJoin('c', 'entities', 'e', 'e.cell_id = c.id')
@@ -172,7 +164,7 @@ class CellRepository extends AbstractRepository
      */
     public function getCellPopulationForUser(int $userId): array
     {
-        $data = $this->createQueryBuilder()
+        $data = $this->createQueryBuilder('q')
             ->select(
                 'c.sx',
                 'c.cx',
@@ -195,7 +187,7 @@ class CellRepository extends AbstractRepository
      */
     public function getCellPopulationForUserAlliance(int $userId): array
     {
-        $data = $this->createQueryBuilder()
+        $data = $this->createQueryBuilder('q')
             ->select(
                 'c.sx',
                 'c.cx',
@@ -217,7 +209,7 @@ class CellRepository extends AbstractRepository
 
     public function getCellById(int $id): ?Cell
     {
-        $data = $this->createQueryBuilder()
+        $data = $this->createQueryBuilder('q')
             ->select('*')
             ->from('cells')
             ->where('id = :id')
@@ -231,7 +223,7 @@ class CellRepository extends AbstractRepository
 
     public function getCellIdByCoordinates(int $sx, int $sy, int $cx, int $cy): ?Cell
     {
-        $data = $this->createQueryBuilder()
+        $data = $this->createQueryBuilder('q')
             ->select('*')
             ->from('cells')
             ->where('sx = :sx')

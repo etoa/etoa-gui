@@ -17,7 +17,7 @@ class PlanetRepository extends AbstractRepository
      */
     public function getAllIds(): array
     {
-        $data = $this->createQueryBuilder()
+        $data = $this->createQueryBuilder('q')
             ->select("id")
             ->from('planets')
             ->fetchAllAssociative();
@@ -63,7 +63,7 @@ class PlanetRepository extends AbstractRepository
 
     private function userPlanetsQueryBuilder(int $userId): QueryBuilder
     {
-        return $this->createQueryBuilder()
+        return $this->createQueryBuilder('q')
             ->select('planets.*')
             ->from('planets')
             ->where('planet_user_id = :userId')
@@ -77,7 +77,7 @@ class PlanetRepository extends AbstractRepository
      */
     public function search(PlanetSearch $search): array
     {
-        $data = $this->applySearchSortLimit($this->createQueryBuilder(), $search)
+        $data = $this->applySearchSortLimit($this->createQueryBuilder('q'), $search)
             ->select('*')
             ->from('planets', 'p')
             ->fetchAllAssociative();
@@ -90,7 +90,7 @@ class PlanetRepository extends AbstractRepository
      */
     public function getMainPlanets(): array
     {
-        $data = $this->createQueryBuilder()
+        $data = $this->createQueryBuilder('q')
             ->select('*')
             ->from('planets')
             ->where('planet_user_main = 1')
@@ -102,7 +102,7 @@ class PlanetRepository extends AbstractRepository
 
     public function getPlanetUserId(int $planetId): int
     {
-        return (int) $this->createQueryBuilder()
+        return (int) $this->createQueryBuilder('q')
             ->select('planet_user_id')
             ->from('planets')
             ->where('id = :planetId')
@@ -115,7 +115,7 @@ class PlanetRepository extends AbstractRepository
      */
     public function searchPlanetNamesWithUserNick(PlanetSearch $search): array
     {
-        $data = $this->applySearchSortLimit($this->createQueryBuilder(), $search)
+        $data = $this->applySearchSortLimit($this->createQueryBuilder('q'), $search)
             ->select('p.id, p.planet_name')
             ->addSelect('u.user_id, u.user_nick')
             ->from('planets', 'p')
@@ -127,7 +127,7 @@ class PlanetRepository extends AbstractRepository
 
     public function getUserMainId(int $userId): int
     {
-        return (int) $this->createQueryBuilder()
+        return (int) $this->createQueryBuilder('q')
             ->select('p.id')
             ->from('planets', 'p')
             ->where('p.planet_user_main = 1')
@@ -139,7 +139,7 @@ class PlanetRepository extends AbstractRepository
 
     public function getPlanetCount(int $userId): int
     {
-        return (int) $this->createQueryBuilder()
+        return (int) $this->createQueryBuilder('q')
             ->select('COUNT(p.id)')
             ->from('planets', 'p')
             ->where('p.planet_user_id = :userId')
@@ -148,17 +148,9 @@ class PlanetRepository extends AbstractRepository
             ])->fetchOne();
     }
 
-    public function count(): int
-    {
-        return (int) $this->createQueryBuilder()
-            ->select("COUNT(id)")
-            ->from('planets')
-            ->fetchOne();
-    }
-
     public function countWithUser(): int
     {
-        return (int) $this->createQueryBuilder()
+        return (int) $this->createQueryBuilder('q')
             ->select("COUNT(id)")
             ->from('planets')
             ->where('planet_user_id > 0')
@@ -167,7 +159,7 @@ class PlanetRepository extends AbstractRepository
 
     public function countWithUserInSector(int $sx, int $sy): int
     {
-        return (int) $this->createQueryBuilder()
+        return (int) $this->createQueryBuilder('q')
             ->select('COUNT(e.id)')
             ->from('entities', 'e')
             ->innerJoin('e', 'cells', 'c', 'e.cell_id = c.id')
@@ -183,23 +175,9 @@ class PlanetRepository extends AbstractRepository
             ->fetchOne();
     }
 
-    public function find(int $id): ?Planet
-    {
-        $data = $this->createQueryBuilder()
-            ->select('*')
-            ->from('planets')
-            ->where('id = :id')
-            ->setParameters([
-                'id' => $id,
-            ])
-            ->fetchAssociative();
-
-        return $data !== false ? new Planet($data) : null;
-    }
-
     public function getRandomFreePlanetId(int $sx = 0, int $sy = 0, ?int $minFields = null, ?int $planetType = null, ?int $starType = null): ?int
     {
-        $qry = $this->createQueryBuilder()
+        $qry = $this->createQueryBuilder('q')
             ->select('p.id')
             ->from('planets', 'p')
             ->where('p.planet_user_id = 0')
@@ -252,7 +230,7 @@ class PlanetRepository extends AbstractRepository
         int $tempFrom,
         int $tempTo
     ): void {
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->insert('planets')
             ->values([
                 'id' => ':id',
@@ -275,7 +253,7 @@ class PlanetRepository extends AbstractRepository
 
     public function update(Planet $planet): bool
     {
-        $affected = $this->createQueryBuilder()
+        $affected = $this->createQueryBuilder('q')
             ->update('planets')
             ->set('planet_type_id', ':type_id')
             ->set('planet_name', ':name')
@@ -330,7 +308,7 @@ class PlanetRepository extends AbstractRepository
         int $resFood,
         int $people
     ): bool {
-        $affected = $this->createQueryBuilder()
+        $affected = $this->createQueryBuilder('q')
             ->update('planets')
             ->set('planet_res_metal', ':res_metal')
             ->set('planet_res_crystal', ':res_crystal')
@@ -364,7 +342,7 @@ class PlanetRepository extends AbstractRepository
         int $people = 0,
         int $fields = 0
     ): bool {
-        $affected = $this->createQueryBuilder()
+        $affected = $this->createQueryBuilder('q')
             ->update('planets')
             ->set('planet_res_metal', 'planet_res_metal + :res_metal')
             ->set('planet_res_crystal', 'planet_res_crystal + :res_crystal')
@@ -405,7 +383,7 @@ class PlanetRepository extends AbstractRepository
             return false;
         }
 
-        $affected = $this->createQueryBuilder()
+        $affected = $this->createQueryBuilder('q')
             ->update('planets')
             ->set('planet_res_metal', 'planet_res_metal - :res_metal')
             ->set('planet_res_crystal', 'planet_res_crystal - :res_crystal')
@@ -431,7 +409,7 @@ class PlanetRepository extends AbstractRepository
 
     public function getPlanetResources(int $id): ?PreciseResources
     {
-        $data = $this->createQueryBuilder()
+        $data = $this->createQueryBuilder('q')
             ->select('planet_res_metal', 'planet_res_crystal', 'planet_res_plastic, planet_res_fuel, planet_res_food, planet_people')
             ->from('planets')
             ->where('id = :id')
@@ -455,7 +433,7 @@ class PlanetRepository extends AbstractRepository
 
     public function addPeople(int $id, int $amount): void
     {
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->update('planets')
             ->set('planet_people', 'planet_people + :people')
             ->where('id = :id')
@@ -468,7 +446,7 @@ class PlanetRepository extends AbstractRepository
 
     public function assignToUser(int $id, int $userId, bool $main = false): void
     {
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->update('planets')
             ->set('planet_user_id', ':userId')
             ->set('planet_user_main', ':main')
@@ -483,7 +461,7 @@ class PlanetRepository extends AbstractRepository
 
     public function changeUser(int $id, int $userId, ?string $name = null): bool
     {
-        $qry = $this->createQueryBuilder()
+        $qry = $this->createQueryBuilder('q')
             ->update('planets')
             ->set('planet_user_id', ':userId')
             ->set('planet_user_changed', 'UNIX_TIMESTAMP()')
@@ -506,7 +484,7 @@ class PlanetRepository extends AbstractRepository
 
     public function setNameAndComment(int $id, string $name, string $comment): void
     {
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->update('planets')
             ->set('planet_name', ':name')
             ->set('planet_desc', ':comment')
@@ -527,7 +505,7 @@ class PlanetRepository extends AbstractRepository
         float $fuel,
         float $food
     ): void {
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->update('planets')
             ->set('planet_bunker_metal', ':metal')
             ->set('planet_bunker_crystal', ':crystal')
@@ -548,7 +526,7 @@ class PlanetRepository extends AbstractRepository
 
     public function reset(int $id): void
     {
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->update('planets')
             ->set('planet_user_id', (string) 0)
             ->set('planet_name', '""')
@@ -590,7 +568,7 @@ class PlanetRepository extends AbstractRepository
 
     public function resetUserChanged(int $id): void
     {
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->update('planets')
             ->set('planet_user_changed', (string) 0)
             ->where('id = :id')
@@ -602,7 +580,7 @@ class PlanetRepository extends AbstractRepository
 
     public function setLastUpdated(int $id, int $timestamp): void
     {
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->update('planets')
             ->set('planet_last_updated', ':timestamp')
             ->where('id = :id')
@@ -619,7 +597,7 @@ class PlanetRepository extends AbstractRepository
             return false;
         }
 
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->update('planets')
             ->set('planet_user_main', (string) 0)
             ->where('planet_user_id = :userId')
@@ -628,7 +606,7 @@ class PlanetRepository extends AbstractRepository
             ])
             ->executeQuery();
 
-        $affected = $this->createQueryBuilder()
+        $affected = $this->createQueryBuilder('q')
             ->update('planets')
             ->set('planet_user_main', (string) 1)
             ->where('id = :id')
@@ -645,7 +623,7 @@ class PlanetRepository extends AbstractRepository
 
     public function unsetMain(int $id): bool
     {
-        $affected = $this->createQueryBuilder()
+        $affected = $this->createQueryBuilder('q')
             ->update('planets')
             ->set('planet_user_main', (string) 0)
             ->where('id = :id')
@@ -660,7 +638,7 @@ class PlanetRepository extends AbstractRepository
 
     public function remove(int $id): void
     {
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->delete('planets')
             ->where('id = :id')
             ->setParameter('id', $id)
@@ -669,7 +647,7 @@ class PlanetRepository extends AbstractRepository
 
     public function freezeProduction(int $userId): void
     {
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->update('planets')
             ->set('planet_last_updated', (string) 0)
             ->set('planet_prod_metal', (string) 0)
@@ -687,7 +665,7 @@ class PlanetRepository extends AbstractRepository
 
     public function getGlobalResources(): BaseResources
     {
-        $data = $this->createQueryBuilder()
+        $data = $this->createQueryBuilder('q')
             ->select(
                 'SUM(planet_res_metal) as metal',
                 'SUM(planet_res_crystal) as crystal',

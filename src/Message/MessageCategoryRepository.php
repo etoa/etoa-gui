@@ -13,7 +13,7 @@ class MessageCategoryRepository extends AbstractRepository
      */
     public function getNames(): array
     {
-        return $this->createQueryBuilder()
+        return $this->createQueryBuilder('q')
             ->select('cat_id', 'cat_name')
             ->from('message_cat')
             ->orderBy('cat_order')
@@ -25,7 +25,7 @@ class MessageCategoryRepository extends AbstractRepository
      */
     public function findAll(): array
     {
-        $data = $this->createQueryBuilder()
+        $data = $this->createQueryBuilder('q')
             ->select('cat_id', 'cat_name', 'cat_desc', 'cat_sender')
             ->from('message_cat')
             ->orderBy('cat_order')
@@ -36,7 +36,7 @@ class MessageCategoryRepository extends AbstractRepository
 
     public function getName(int $catId): ?string
     {
-        $data = $this->createQueryBuilder()
+        $data = $this->createQueryBuilder('q')
             ->select('cat_name')
             ->from('message_cat')
             ->where('cat_id = :cat_id')
@@ -48,7 +48,7 @@ class MessageCategoryRepository extends AbstractRepository
 
     public function getSender(int $catId): ?string
     {
-        $data = $this->createQueryBuilder()
+        $data = $this->createQueryBuilder('q')
             ->select('cat_sender')
             ->from('message_cat')
             ->where('cat_id = :cat_id')

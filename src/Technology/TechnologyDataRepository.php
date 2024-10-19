@@ -11,7 +11,7 @@ class TechnologyDataRepository extends AbstractRepository
      */
     public function getTechnologyNames(bool $showAll = false, TechnologySort $orderBy = null): array
     {
-        $qb = $this->createQueryBuilder()
+        $qb = $this->createQueryBuilder('q')
             ->select('t.tech_id', 't.tech_name')
             ->from('technologies', 't')
             ->innerJoin('t', 'tech_types', 'tt', 't.tech_type_id = tt.type_id');
@@ -31,7 +31,7 @@ class TechnologyDataRepository extends AbstractRepository
 
     public function getTechnologyName(int $technologyId): string
     {
-        return (string) $this->createQueryBuilder()
+        return (string) $this->createQueryBuilder('q')
             ->select('t.tech_name')
             ->from('technologies', 't')
             ->where('t.tech_id = :techId')
@@ -44,7 +44,7 @@ class TechnologyDataRepository extends AbstractRepository
      */
     public function getTechnologies(): array
     {
-        $data = $this->createQueryBuilder()
+        $data = $this->createQueryBuilder('q')
             ->select('*')
             ->from('technologies')
             ->where('tech_show = 1')
@@ -63,7 +63,7 @@ class TechnologyDataRepository extends AbstractRepository
 
     public function getTechnology(int $techId): ?Technology
     {
-        $data = $this->createQueryBuilder()
+        $data = $this->createQueryBuilder('q')
             ->select('*')
             ->from('technologies')
             ->where('tech_show = 1')
@@ -79,7 +79,7 @@ class TechnologyDataRepository extends AbstractRepository
      */
     public function getTechnologiesByType(int $typeId): array
     {
-        $data = $this->createQueryBuilder()
+        $data = $this->createQueryBuilder('q')
             ->select('*')
             ->from('technologies')
             ->where('tech_show = 1')

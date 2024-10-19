@@ -8,7 +8,7 @@ class DefenseQueueRepository extends AbstractRepository
 {
     public function add(int $userId, int $defenseId, int $entityId, int $count, int $startTime, int $endTime, int $objectTime): int
     {
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->insert('def_queue')
             ->values([
                 'queue_user_id' => ':userId',
@@ -36,7 +36,7 @@ class DefenseQueueRepository extends AbstractRepository
 
     public function getQueueItem(int $id): ?DefenseQueueItem
     {
-        $data = $this->createQueryBuilder()
+        $data = $this->createQueryBuilder('q')
             ->select('*')
             ->from('def_queue')
             ->where('queue_id = :id')
@@ -51,7 +51,7 @@ class DefenseQueueRepository extends AbstractRepository
      */
     public function searchQueueItems(DefenseQueueSearch $search, int $limit = null, int $offset = null): array
     {
-        $data = $this->applySearchSortLimit($this->createQueryBuilder(), $search, null, $limit, $offset)
+        $data = $this->applySearchSortLimit($this->createQueryBuilder('q'), $search, null, $limit, $offset)
             ->select('*')
             ->from('def_queue')
             ->orderBy('queue_starttime', 'ASC')
@@ -62,7 +62,7 @@ class DefenseQueueRepository extends AbstractRepository
 
     public function saveQueueItem(DefenseQueueItem $item): void
     {
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->update('def_queue')
             ->set('queue_user_id', ':userId')
             ->set('queue_def_id', ':defenseId')
@@ -91,24 +91,16 @@ class DefenseQueueRepository extends AbstractRepository
 
     public function deleteQueueItem(int $id): void
     {
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->delete('def_queue')
             ->where('queue_id = :id')
             ->setParameter('id', $id)
             ->executeQuery();
     }
 
-    public function count(DefenseQueueSearch $search = null): int
-    {
-        return (int) $this->applySearchSortLimit($this->createQueryBuilder(), $search)
-            ->select('COUNT(*)')
-            ->from('def_queue')
-            ->fetchOne();
-    }
-
     public function freezeConstruction(int $userId): void
     {
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->update('def_queue')
             ->set('queue_build_type', ':type')
             ->where('queue_user_id = :userId')
@@ -121,7 +113,7 @@ class DefenseQueueRepository extends AbstractRepository
 
     public function unfreezeConstruction(int $userId, int $duration): void
     {
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->update('def_queue')
             ->set('queue_build_type', ':type')
             ->set('queue_starttime', 'queue_starttime + :duration')

@@ -8,7 +8,7 @@ class ShipQueueRepository extends AbstractRepository
 {
     public function add(int $userId, int $shipId, int $entityId, int $count, int $startTime, int $endTime, int $objectTime): int
     {
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->insert('ship_queue')
             ->values([
                 'queue_user_id' => ':userId',
@@ -34,7 +34,7 @@ class ShipQueueRepository extends AbstractRepository
 
     public function getQueueItem(int $id): ?ShipQueueItem
     {
-        $data = $this->createQueryBuilder()
+        $data = $this->createQueryBuilder('q')
             ->select('*')
             ->from('ship_queue')
             ->where('queue_id = :id')
@@ -49,7 +49,7 @@ class ShipQueueRepository extends AbstractRepository
      */
     public function getUserQueuedShipCounts(int $userId): array
     {
-        $data = $this->createQueryBuilder()
+        $data = $this->createQueryBuilder('q')
             ->select('queue_ship_id, SUM(queue_cnt)')
             ->from('ship_queue')
             ->where('queue_user_id = :userId')
@@ -69,7 +69,7 @@ class ShipQueueRepository extends AbstractRepository
      */
     public function searchQueueItems(ShipQueueSearch $search, int $limit = null, int $offset = null): array
     {
-        $data = $this->applySearchSortLimit($this->createQueryBuilder(), $search, null, $limit, $offset)
+        $data = $this->applySearchSortLimit($this->createQueryBuilder('q'), $search, null, $limit, $offset)
             ->select('*')
             ->from('ship_queue')
             ->orderBy('queue_starttime', 'ASC')
@@ -80,7 +80,7 @@ class ShipQueueRepository extends AbstractRepository
 
     public function saveQueueItem(ShipQueueItem $item): void
     {
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->update('ship_queue')
             ->set('queue_user_id', ':userId')
             ->set('queue_ship_id', ':shipId')
@@ -107,24 +107,16 @@ class ShipQueueRepository extends AbstractRepository
 
     public function deleteQueueItem(int $id): void
     {
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->delete('ship_queue')
             ->where('queue_id = :id')
             ->setParameter('id', $id)
             ->executeQuery();
     }
 
-    public function count(ShipQueueSearch $search = null): int
-    {
-        return (int) $this->applySearchSortLimit($this->createQueryBuilder(), $search)
-            ->select('COUNT(*)')
-            ->from('ship_queue')
-            ->fetchOne();
-    }
-
     public function freezeConstruction(int $userId): void
     {
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->update('ship_queue')
             ->set('queue_build_type', ':type')
             ->where('queue_user_id = :userId')
@@ -137,7 +129,7 @@ class ShipQueueRepository extends AbstractRepository
 
     public function unfreezeConstruction(int $userId, int $duration): void
     {
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->update('ship_queue')
             ->set('queue_build_type', ':type')
             ->set('queue_starttime', 'queue_starttime + :duration')

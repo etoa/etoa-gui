@@ -13,7 +13,7 @@ class MessageRepository extends AbstractRepository
      */
     public function search(MessageSearch $search, int $limit = null, int $offset = null): array
     {
-        $data = $this->applySearchSortLimit($this->createQueryBuilder(), $search, null, $limit, $offset)
+        $data = $this->applySearchSortLimit($this->createQueryBuilder('q'), $search, null, $limit, $offset)
             ->select('m.*', 'd.*')
             ->from('messages', 'm')
             ->innerJoin('m', 'message_data', 'd', 'd.id = m.message_id')
@@ -24,18 +24,9 @@ class MessageRepository extends AbstractRepository
         return array_map(fn (array $row) => Message::createFromArray($row), $data);
     }
 
-    public function count(MessageSearch $search = null): int
-    {
-        return (int) $this->applySearchSortLimit($this->createQueryBuilder(), $search)
-            ->select('COUNT(*)')
-            ->from('messages', 'm')
-            ->innerJoin('m', 'message_data', 'd', 'd.id = m.message_id')
-            ->fetchOne();
-    }
-
     public function countNotArchived(): int
     {
-        return (int) $this->createQueryBuilder()
+        return (int) $this->createQueryBuilder('q')
             ->select('COUNT(*)')
             ->from('messages')
             ->where('message_archived = 0')
@@ -44,7 +35,7 @@ class MessageRepository extends AbstractRepository
 
     public function countDeleted(): int
     {
-        return (int) $this->createQueryBuilder()
+        return (int) $this->createQueryBuilder('q')
             ->select('COUNT(*)')
             ->from('messages')
             ->where('message_deleted = 1')
@@ -53,7 +44,7 @@ class MessageRepository extends AbstractRepository
 
     public function countNewForUser(int $userId): int
     {
-        return (int) $this->createQueryBuilder()
+        return (int) $this->createQueryBuilder('q')
             ->select('COUNT(message_id)')
             ->from('messages')
             ->where('message_deleted = 0')
@@ -67,7 +58,7 @@ class MessageRepository extends AbstractRepository
 
     public function countReadForUser(int $userId): int
     {
-        return (int) $this->createQueryBuilder()
+        return (int) $this->createQueryBuilder('q')
             ->select('COUNT(message_id)')
             ->from('messages')
             ->where('message_read = 1')
@@ -82,7 +73,7 @@ class MessageRepository extends AbstractRepository
 
     public function countArchivedForUser(int $userId): int
     {
-        return (int) $this->createQueryBuilder()
+        return (int) $this->createQueryBuilder('q')
             ->select('COUNT(message_id)')
             ->from('messages')
             ->where('message_archived = 1')
@@ -99,7 +90,7 @@ class MessageRepository extends AbstractRepository
      */
     public function findIdsOfDeletedOlderThan(int $timestamp): array
     {
-        $data = $this->createQueryBuilder()
+        $data = $this->createQueryBuilder('q')
             ->select('message_id')
             ->from('messages')
             ->where('message_deleted = 1')
@@ -117,7 +108,7 @@ class MessageRepository extends AbstractRepository
      */
     public function findIdsOfReadNotArchivedOlderThan(int $timestamp): array
     {
-        $data = $this->createQueryBuilder()
+        $data = $this->createQueryBuilder('q')
             ->select('message_id')
             ->from('messages')
             ->where('message_archived = 0')
@@ -147,7 +138,7 @@ class MessageRepository extends AbstractRepository
     {
         try {
             $this->getConnection()->beginTransaction();
-            $this->createQueryBuilder()
+            $this->createQueryBuilder('q')
                 ->insert('messages')
                 ->values([
                     'message_user_from' => 0,
@@ -163,7 +154,7 @@ class MessageRepository extends AbstractRepository
 
             $id = (int) $this->getConnection()->lastInsertId();
 
-            $this->createQueryBuilder()
+            $this->createQueryBuilder('q')
                 ->insert('message_data')
                 ->values([
                     'id' => $id,
@@ -196,7 +187,7 @@ class MessageRepository extends AbstractRepository
         try {
             $this->getConnection()->beginTransaction();
 
-            $this->createQueryBuilder()
+            $this->createQueryBuilder('q')
                 ->insert('messages')
                 ->values([
                     'message_user_from' => ':senderId',
@@ -213,7 +204,7 @@ class MessageRepository extends AbstractRepository
 
             $id = (int) $this->getConnection()->lastInsertId();
 
-            $this->createQueryBuilder()
+            $this->createQueryBuilder('q')
                 ->insert('message_data')
                 ->values([
                     'id' => $id,
@@ -236,123 +227,12 @@ class MessageRepository extends AbstractRepository
         }
     }
 
-    public function find(int $id): ?Message
-    {
-        $data = $this->createQueryBuilder()
-            ->select("*")
-            ->from('messages', 'm')
-            ->innerJoin('m', 'message_data', 'd', 'd.id = m.message_id')
-            ->where('message_id = :message_id')
-            ->setParameter('message_id', $id)
-            ->executeQuery()
-            ->fetchAssociative();
-
-        return $data !== false ? Message::createFromArray($data) : null;
-    }
-
-    /**
-     * @param array<string, int|string|bool> $params
-     * @return array<Message>
-     */
-    public function findBy(array $params = [], ?int $limit = null): array
-    {
-        $qry = $this->createQueryBuilder()
-            ->select('m.*', 'd.*')
-            ->from('messages', 'm')
-            ->innerJoin('m', 'message_data', 'd', 'd.id = m.message_id')
-            ->orderBy('message_read', 'ASC')
-            ->addOrderBy('message_timestamp', 'DESC')
-            ->setMaxResults($limit);
-
-        if (isset($params['id'])) {
-            $qry->andWhere('message_id = :id')
-                ->setParameter('id', $params['id']);
-        }
-
-        if (isset($params['user_from_id'])) {
-            $qry->andWhere('message_user_from = :user_from_id')
-                ->setParameter('user_from_id', $params['user_from_id']);
-        }
-
-        if (isset($params['user_from_nick'])) {
-            $qry->andWhere('s.user_nick = :user_from_nick')
-                ->setParameter('user_from_nick', $params['user_from_nick'])
-                ->innerJoin('m', 'users', 's', 's.user_id = m.message_user_from');
-        }
-
-        if (isset($params['user_to_id'])) {
-            $qry->andWhere('message_user_to = :user_to_id')
-                ->setParameter('user_to_id', $params['user_to_id']);
-        }
-
-        if (isset($params['user_to_nick'])) {
-            $qry->andWhere('r.user_nick = :user_to_nick')
-                ->setParameter('user_to_nick', $params['user_to_nick'])
-                ->innerJoin('m', 'users', 'r', 'r.user_id = m.message_user_to');
-        }
-
-        if (isset($params['subject'])) {
-            $qry->andWhere('d.subject LIKE :subject')
-                ->setParameter('subject', '%' . $params['subject'] . '%');
-        }
-
-        if (isset($params['text'])) {
-            $qry->andWhere('d.text LIKE :text')
-                ->setParameter('text', '%' . $params['text'] . '%');
-        }
-
-        if (isset($params['fleet_id'])) {
-            $qry->andWhere('fleet_id = :fleet_id')
-                ->setParameter('fleet_id', $params['fleet_id']);
-        }
-
-        if (isset($params['entity_id'])) {
-            $qry->andWhere('entity_id = :entity_id')
-                ->setParameter('entity_id', $params['entity_id']);
-        }
-
-        if (isset($params['cat_id'])) {
-            $qry->andWhere('message_cat_id = :cat_id')
-                ->setParameter('cat_id', $params['cat_id']);
-        }
-
-        if (isset($params['read'])) {
-            $qry->andWhere('message_read = :read')
-                ->setParameter('read', $params['read']);
-        }
-
-        if (isset($params['massmail'])) {
-            $qry->andWhere('message_massmail = :massmail')
-                ->setParameter('massmail', $params['massmail']);
-        }
-
-        if (isset($params['deleted'])) {
-            $qry->andWhere('message_deleted = :deleted')
-                ->setParameter('deleted', $params['deleted']);
-        }
-
-        if (isset($params['archived'])) {
-            $qry->andWhere('message_archived = :archived')
-                ->setParameter('archived', $params['archived']);
-        }
-
-        if (isset($params['mailed'])) {
-            $qry->andWhere('message_mailed = :mailed')
-                ->setParameter('mailed', $params['mailed']);
-        }
-
-        $data = $qry
-            ->fetchAllAssociative();
-
-        return array_map(fn ($arr) => Message::createFromArray($arr), $data);
-    }
-
     /**
      * @return array<Message>
      */
     public function findByRecipient(int $userId): array
     {
-        $data = $this->createQueryBuilder()
+        $data = $this->createQueryBuilder('q')
             ->select("*")
             ->from('messages', 'm')
             ->innerJoin('m', 'message_data', 'd', 'd.id = m.message_id')
@@ -366,7 +246,7 @@ class MessageRepository extends AbstractRepository
 
     public function setArchived(int $id, bool $archived = true, ?int $userToId = null): bool
     {
-        $qry = $this->createQueryBuilder()
+        $qry = $this->createQueryBuilder('q')
             ->update('messages')
             ->set('message_archived', ':archived')
             ->where('message_id = :id')
@@ -387,7 +267,7 @@ class MessageRepository extends AbstractRepository
 
     public function setDeleted(int $id, bool $deleted = true, ?int $userToId = null, ?bool $isArchived = null): bool
     {
-        $qry = $this->createQueryBuilder()
+        $qry = $this->createQueryBuilder('q')
             ->update('messages')
             ->set('message_deleted', ':deleted')
             ->where('message_id = :id')
@@ -413,7 +293,7 @@ class MessageRepository extends AbstractRepository
 
     public function setDeletedForUser(int $userId, bool $deleted = true, int $userFromId = null, ?bool $isArchived = null): bool
     {
-        $qry = $this->createQueryBuilder()
+        $qry = $this->createQueryBuilder('q')
             ->update('messages')
             ->set('message_deleted', ':deleted')
             ->where('message_user_to = :userId')
@@ -439,7 +319,7 @@ class MessageRepository extends AbstractRepository
 
     public function setRead(int $id, bool $read = true): bool
     {
-        $affected = $this->createQueryBuilder()
+        $affected = $this->createQueryBuilder('q')
             ->update('messages')
             ->set('message_read', ':read')
             ->where('message_id = :id')
@@ -455,7 +335,7 @@ class MessageRepository extends AbstractRepository
 
     public function setMailed(int $userTo, bool $mailed = true): bool
     {
-        $affected = $this->createQueryBuilder()
+        $affected = $this->createQueryBuilder('q')
             ->update('messages')
             ->set('message_mailed', ':mailed')
             ->where('message_user_to = :userTo')
@@ -471,13 +351,13 @@ class MessageRepository extends AbstractRepository
 
     public function remove(int $id): void
     {
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->delete('messages')
             ->where('message_id = :id')
             ->setParameter('id', $id)
             ->executeQuery();
 
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->delete('message_data')
             ->where('id = :id')
             ->setParameter('id', $id)
@@ -493,14 +373,14 @@ class MessageRepository extends AbstractRepository
             return 0;
         }
 
-        $affected = $this->createQueryBuilder()
+        $affected = $this->createQueryBuilder('q')
             ->delete('messages')
             ->where('message_id IN (' . implode(',', array_fill(0, count($ids), '?')) . ')')
             ->setParameters($ids)
             ->executeQuery()
             ->rowCount();
 
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->delete('message_data')
             ->where('id IN (' . implode(',', array_fill(0, count($ids), '?')) . ')')
             ->setParameters($ids)

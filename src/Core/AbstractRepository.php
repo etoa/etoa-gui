@@ -2,54 +2,20 @@
 
 namespace EtoA\Core;
 
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\DBAL\ArrayParameterType;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Exception;
-use Doctrine\DBAL\Query\QueryBuilder;
+use Doctrine\ORM\QueryBuilder;
+use Doctrine\Persistence\ManagerRegistry;
 use EtoA\Core\Database\AbstractSearch;
 use EtoA\Core\Database\AbstractSort;
 
-abstract class AbstractRepository
+abstract class AbstractRepository extends ServiceEntityRepository
 {
-    public function __construct(private readonly Connection $connection)
+    public function __construct(ManagerRegistry $registry, string $className='')
     {
-    }
-
-    protected function createQueryBuilder(): QueryBuilder
-    {
-        return $this->connection->createQueryBuilder();
-    }
-
-    protected function getConnection(): Connection
-    {
-        return $this->connection;
-    }
-
-    /**
-     * @return int[]
-     * @throws Exception
-     */
-    protected function fetchIds(string $table, string $idField): array
-    {
-        $data = $this->createQueryBuilder()
-            ->select($idField)
-            ->from($table)
-            ->fetchFirstColumn();
-
-        return array_map(fn($val) => (int)$val, $data);
-    }
-
-    /**
-     * @return array<int, string>
-     * @throws Exception
-     */
-    protected function fetchIdsWithNames(string $table, string $idField, string $nameField, bool $orderById = false): array
-    {
-        return $this->createQueryBuilder()
-            ->select($idField, $nameField)
-            ->from($table)
-            ->orderBy($orderById ? $idField : $nameField)
-            ->fetchAllKeyValue();
+        parent::__construct($registry, $className);
     }
 
     protected function applySearchSortLimit(QueryBuilder $qb, AbstractSearch $search = null, AbstractSort $sorts = null, int $limit = null, int $offset = null): QueryBuilder

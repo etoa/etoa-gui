@@ -11,7 +11,7 @@ class ShipRepository extends AbstractRepository
 {
     public function getNumberOfShips(int $shipId): int
     {
-        return (int) $this->createQueryBuilder()
+        return (int) $this->createQueryBuilder('q')
             ->select('COUNT(shiplist_id)')
             ->from('shiplist')
             ->where('shiplist_ship_id = :shipId')
@@ -24,7 +24,7 @@ class ShipRepository extends AbstractRepository
      */
     public function getEntityShipCounts(int $userId, int $entityId): array
     {
-        $data = $this->createQueryBuilder()
+        $data = $this->createQueryBuilder('q')
             ->select('shiplist_ship_id, shiplist_count')
             ->from('shiplist')
             ->where('shiplist_user_id = :userId')
@@ -45,7 +45,7 @@ class ShipRepository extends AbstractRepository
      */
     public function findForUser(int $userId, ?int $entityId = null, array $shipIds = null): array
     {
-        $qb = $this->createQueryBuilder()
+        $qb = $this->createQueryBuilder('q')
             ->select('*')
             ->from('shiplist')
             ->where('shiplist_user_id = :userId')
@@ -75,7 +75,7 @@ class ShipRepository extends AbstractRepository
      */
     public function search(ShipListSearch $search, int $limit = null, int $offset = null): array
     {
-        $data = $this->applySearchSortLimit($this->createQueryBuilder(), $search, null, $limit, $offset)
+        $data = $this->applySearchSortLimit($this->createQueryBuilder('q'), $search, null, $limit, $offset)
             ->select('*')
             ->from('shiplist')
             ->fetchAllAssociative();
@@ -83,24 +83,12 @@ class ShipRepository extends AbstractRepository
         return array_map(fn ($row) => ShipListItem::createFromData($row), $data);
     }
 
-    public function find(int $id): ?ShipListItem
-    {
-        $data = $this->createQueryBuilder()
-            ->select('*')
-            ->from('shiplist')
-            ->where('shiplist_id = :id')
-            ->setParameter('id', $id)
-            ->fetchAssociative();
-
-        return $data !== false ? ShipListItem::createFromData($data) : null;
-    }
-
     /**
      * @return array<int, ShipListItemCount>
      */
     public function getUserShipCounts(int $userId): array
     {
-        $data = $this->createQueryBuilder()
+        $data = $this->createQueryBuilder('q')
             ->select('shiplist_ship_id, SUM(shiplist_count) as count, SUM(shiplist_bunkered) as bunkered, SUM(shiplist_special_ship_exp) as shiplist_special_ship_exp')
             ->from('shiplist')
             ->where('shiplist_user_id = :userId')
@@ -132,7 +120,7 @@ class ShipRepository extends AbstractRepository
             throw new \InvalidArgumentException('Cannot remove negative ship count');
         }
 
-        $available = (int) $this->createQueryBuilder()
+        $available = (int) $this->createQueryBuilder('q')
             ->select('shiplist_count')
             ->from('shiplist')
             ->where('shiplist_ship_id = :shipId')
@@ -146,7 +134,7 @@ class ShipRepository extends AbstractRepository
 
         $amount = min($available, $amount);
 
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->update('shiplist')
             ->set('shiplist_count', 'shiplist_count - :amount')
             ->where('shiplist_ship_id = :shipId')
@@ -187,13 +175,13 @@ class ShipRepository extends AbstractRepository
 
     public function removeForEntity(int $entityId): void
     {
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->delete('ship_queue')
             ->where('queue_entity_id = :entityId')
             ->setParameter('entityId', $entityId)
             ->executeQuery();
 
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->delete('shiplist')
             ->where('shiplist_entity_id = :entityId')
             ->setParameter('entityId', $entityId)
@@ -202,13 +190,13 @@ class ShipRepository extends AbstractRepository
 
     public function removeForUser(int $userId): void
     {
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->delete('ship_queue')
             ->where('queue_user_id = :userId')
             ->setParameter('userId', $userId)
             ->executeQuery();
 
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->delete('shiplist')
             ->where('shiplist_user_id = :userId')
             ->setParameter('userId', $userId)
@@ -217,7 +205,7 @@ class ShipRepository extends AbstractRepository
 
     public function removeEntry(int $id): void
     {
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->delete('shiplist')
             ->where('shiplist_id = :id')
             ->setParameter('id', $id)
@@ -226,7 +214,7 @@ class ShipRepository extends AbstractRepository
 
     public function hasShipsOnEntity(int $entityId): bool
     {
-        $count = (int) $this->createQueryBuilder()
+        $count = (int) $this->createQueryBuilder('q')
             ->select('COUNT(shiplist_id)')
             ->from('shiplist')
             ->where('shiplist_entity_id = :entityId')
@@ -239,7 +227,7 @@ class ShipRepository extends AbstractRepository
 
     public function countBuildInProgress(int $userId, int $entityId): int
     {
-        return (int) $this->createQueryBuilder()
+        return (int) $this->createQueryBuilder('q')
             ->select('COUNT(queue_id)')
             ->from('ship_queue')
             ->where('queue_entity_id = :entityId')
@@ -258,7 +246,7 @@ class ShipRepository extends AbstractRepository
      */
     public function findQueueItemsForUser(int $userId): array
     {
-        $data = $this->createQueryBuilder()
+        $data = $this->createQueryBuilder('q')
             ->select('*')
             ->from('ship_queue')
             ->where('queue_user_id = :userId')
@@ -271,7 +259,7 @@ class ShipRepository extends AbstractRepository
 
     public function saveQueueItem(ShipQueueItem $item): void
     {
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->update('ship_queue')
             ->set('queue_user_id', ':userId')
             ->set('queue_ship_id', ':shipId')
@@ -298,7 +286,7 @@ class ShipRepository extends AbstractRepository
 
     public function saveItem(ShipListItem $item): void
     {
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->update('shiplist')
             ->set('shiplist_user_id', ':userId')
             ->set('shiplist_ship_id', ':shipId')
@@ -355,7 +343,7 @@ class ShipRepository extends AbstractRepository
 
     public function bunker(int $userId, int $entityId, int $shipId, int $count): int
     {
-        $info = $this->createQueryBuilder()
+        $info = $this->createQueryBuilder('q')
             ->select('shiplist_id', 'shiplist_count')
             ->from('shiplist')
             ->where('shiplist_ship_id = :shipId')
@@ -373,7 +361,7 @@ class ShipRepository extends AbstractRepository
 
         $delable = max(0, min($count, (int) $info['shiplist_count']));
 
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->update('shiplist')
             ->set('shiplist_bunkered', 'shiplist_bunkered + :change')
             ->set('shiplist_count', 'shiplist_count - :change')
@@ -393,7 +381,7 @@ class ShipRepository extends AbstractRepository
      */
     public function getBunkeredCount(int $userId, int $entityId): array
     {
-        $data = $this->createQueryBuilder()
+        $data = $this->createQueryBuilder('q')
             ->select('shiplist_ship_id, shiplist_bunkered')
             ->from('shiplist')
             ->where('shiplist_entity_id = :entityId')
@@ -410,7 +398,7 @@ class ShipRepository extends AbstractRepository
 
     public function leaveBunker(int $userId, int $entityId, int $shipId, int $count): int
     {
-        $info = $this->createQueryBuilder()
+        $info = $this->createQueryBuilder('q')
             ->select('shiplist_id', 'shiplist_bunkered')
             ->from('shiplist')
             ->where('shiplist_ship_id = :shipId')
@@ -428,7 +416,7 @@ class ShipRepository extends AbstractRepository
 
         $delable = max(0, min($count, (int) $info['shiplist_bunkered']));
 
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->update('shiplist')
             ->set('shiplist_bunkered', 'shiplist_bunkered - :change')
             ->set('shiplist_count', 'shiplist_count + :change')
@@ -443,17 +431,9 @@ class ShipRepository extends AbstractRepository
         return $delable;
     }
 
-    public function count(ShipListSearch $search = null): int
-    {
-        return (int) $this->applySearchSortLimit($this->createQueryBuilder(), $search)
-            ->select('COUNT(shiplist_id)')
-            ->from('shiplist')
-            ->fetchOne();
-    }
-
     public function countEmpty(): int
     {
-        return (int) $this->createQueryBuilder()
+        return (int) $this->createQueryBuilder('q')
             ->select('COUNT(shiplist_id)')
             ->from('shiplist')
             ->where('shiplist_count = 0')
@@ -544,7 +524,7 @@ class ShipRepository extends AbstractRepository
 
     public function getSpecialShipExperienceSumForUser(int $userId): int
     {
-        return (int) $this->createQueryBuilder()
+        return (int) $this->createQueryBuilder('q')
             ->select('SUM(shiplist_special_ship_exp)')
             ->from('shiplist')
             ->where('shiplist_user_id = :userId')

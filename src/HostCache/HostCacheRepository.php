@@ -8,7 +8,7 @@ class HostCacheRepository extends AbstractRepository
 {
     public function getAddr(string $host): ?string
     {
-        $data = $this->createQueryBuilder()
+        $data = $this->createQueryBuilder('q')
             ->select('addr')
             ->from('hostname_cache')
             ->where('host = :host')
@@ -25,7 +25,7 @@ class HostCacheRepository extends AbstractRepository
 
     public function getHost(string $ip): ?string
     {
-        $data = $this->createQueryBuilder()
+        $data = $this->createQueryBuilder('q')
             ->select('host')
             ->from('hostname_cache')
             ->where('addr = :ip')
@@ -56,7 +56,7 @@ class HostCacheRepository extends AbstractRepository
 
     public function clear(): void
     {
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->delete('v')
             ->where('timestamp < :time')
             ->setParameter(':time', time() - 86400);

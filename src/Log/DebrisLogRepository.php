@@ -11,7 +11,7 @@ class DebrisLogRepository extends AbstractRepository
      */
     public function searchLogs(DebrisLogSearch $search, int $limit = null, int $offset = null): array
     {
-        $data = $this->applySearchSortLimit($this->createQueryBuilder(), $search, null, $limit, $offset)
+        $data = $this->applySearchSortLimit($this->createQueryBuilder('q'), $search, null, $limit, $offset)
             ->select('*')
             ->from('logs_debris')
             ->orderBy('time', 'DESC')
@@ -20,17 +20,9 @@ class DebrisLogRepository extends AbstractRepository
         return array_map(fn (array $row) => new DebrisLog($row), $data);
     }
 
-    public function count(DebrisLogSearch $search = null): int
-    {
-        return (int) $this->applySearchSortLimit($this->createQueryBuilder(), $search)
-            ->select('COUNT(id)')
-            ->from('logs_debris')
-            ->fetchOne();
-    }
-
     public function add(int $adminId, int $userId, int $metal, int $crystal, int $plastic): void
     {
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->insert('logs_debris')
             ->values([
                 'time' => ':now',

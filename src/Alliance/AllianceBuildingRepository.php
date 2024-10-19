@@ -4,10 +4,16 @@ declare(strict_types=1);
 
 namespace EtoA\Alliance;
 
+use Doctrine\Persistence\ManagerRegistry;
 use EtoA\Core\AbstractRepository;
 
 class AllianceBuildingRepository extends AbstractRepository
 {
+    public function __construct(ManagerRegistry $registry)
+    {
+        parent::__construct($registry, AllianceBuilding::class);
+    }
+
     /**
      * @return array<int, string>
      */
@@ -21,7 +27,7 @@ class AllianceBuildingRepository extends AbstractRepository
      */
     public function findAll(): array
     {
-        $data = $this->createQueryBuilder()
+        $data = $this->createQueryBuilder('q')
             ->select("*")
             ->from('alliance_buildings')
             ->fetchAllAssociative();
@@ -37,7 +43,7 @@ class AllianceBuildingRepository extends AbstractRepository
 
     public function existsInAlliance(int $allianceId, int $buildingId): bool
     {
-        $test = $this->createQueryBuilder()
+        $test = $this->createQueryBuilder('q')
             ->select('alliance_buildlist_id')
             ->from('alliance_buildlist')
             ->where('alliance_buildlist_alliance_id = :alliance')
@@ -53,7 +59,7 @@ class AllianceBuildingRepository extends AbstractRepository
 
     public function getLevel(int $allianceId, int $buildingId): int
     {
-        return (int) $this->createQueryBuilder()
+        return (int) $this->createQueryBuilder('q')
             ->select('alliance_buildlist_current_level')
             ->from('alliance_buildlist')
             ->where('alliance_buildlist_alliance_id = :alliance')
@@ -70,7 +76,7 @@ class AllianceBuildingRepository extends AbstractRepository
      */
     public function getLevels(int $allianceId): array
     {
-        return $this->createQueryBuilder()
+        return $this->createQueryBuilder('q')
             ->select('alliance_buildlist_building_id, alliance_buildlist_current_level')
             ->from('alliance_buildlist')
             ->where('alliance_buildlist_alliance_id = :alliance')
@@ -83,7 +89,7 @@ class AllianceBuildingRepository extends AbstractRepository
 
     public function getCooldown(int $allianceId, int $buildingId): int
     {
-        return (int) $this->createQueryBuilder()
+        return (int) $this->createQueryBuilder('q')
             ->select('alliance_buildlist_cooldown')
             ->from('alliance_buildlist')
             ->where('alliance_buildlist_alliance_id = :allianceId')
@@ -97,7 +103,7 @@ class AllianceBuildingRepository extends AbstractRepository
 
     public function setCooldown(int $allianceId, int $buildingId, int $cooldownEnd): void
     {
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->update('alliance_buildlist')
             ->set('alliance_buildlist_cooldown', ':cooldownEnd')
             ->where('alliance_buildlist_alliance_id = :alliance')
@@ -112,7 +118,7 @@ class AllianceBuildingRepository extends AbstractRepository
 
     public function getUserCooldown(int $userId, int $buildingId): int
     {
-        return (int) $this->createQueryBuilder()
+        return (int) $this->createQueryBuilder('q')
             ->select('cooldown_end')
             ->from('alliance_building_cooldown')
             ->where('cooldown_user_id = :userId')
@@ -151,7 +157,7 @@ class AllianceBuildingRepository extends AbstractRepository
      */
     public function getBuildList(int $allianceId): array
     {
-        $data = $this->createQueryBuilder()
+        $data = $this->createQueryBuilder('q')
             ->select('*')
             ->from('alliance_buildlist')
             ->where('alliance_buildlist_alliance_id = :allianceId')
@@ -172,7 +178,7 @@ class AllianceBuildingRepository extends AbstractRepository
      */
     public function getInProgress(int $allianceId): ?array
     {
-        $data = $this->createQueryBuilder()
+        $data = $this->createQueryBuilder('q')
             ->select('alliance_building_name, alliance_buildlist_build_end_time')
             ->from('alliance_buildlist')
             ->innerJoin('alliance_buildlist', 'alliance_buildings', 'alliance_buildings', 'alliance_building_id=alliance_buildlist_building_id')
@@ -186,7 +192,7 @@ class AllianceBuildingRepository extends AbstractRepository
 
     public function addToAlliance(int $allianceId, int $buildingId, int $level, int $amount, int $startTime = 0, int $endTime = 0): void
     {
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->insert('alliance_buildlist')
             ->values([
                 'alliance_buildlist_alliance_id' => ':alliance',
@@ -210,7 +216,7 @@ class AllianceBuildingRepository extends AbstractRepository
 
     public function updateMembersForAlliance(int $allianceId, int $amount): void
     {
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->update('alliance_buildlist')
             ->set('alliance_buildlist_member_for', ':amount')
             ->where('alliance_buildlist_alliance_id = :alliance')
@@ -224,7 +230,7 @@ class AllianceBuildingRepository extends AbstractRepository
 
     public function updateForAlliance(int $allianceId, int $buildingId, int $level, int $amount, int $startTime = 0, int $endTime = 0): void
     {
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->update('alliance_buildlist')
             ->set('alliance_buildlist_current_level', ':level')
             ->set('alliance_buildlist_member_for', ':amount')
@@ -245,7 +251,7 @@ class AllianceBuildingRepository extends AbstractRepository
 
     public function removeForAlliance(int $allianceId): void
     {
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->delete('alliance_buildlist')
             ->where('alliance_buildlist_alliance_id = :allianceId')
             ->setParameter('allianceId', $allianceId)
@@ -258,7 +264,7 @@ class AllianceBuildingRepository extends AbstractRepository
      */
     public function getShipyardLevelsWhereNonNegativeResources(): array
     {
-        $data = $this->createQueryBuilder()
+        $data = $this->createQueryBuilder('q')
             ->select('alliance_id, alliance_buildlist_current_level')
             ->addSelect('alliance_buildlist_current_level')
             ->from('alliances')

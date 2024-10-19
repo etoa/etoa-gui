@@ -9,7 +9,7 @@ class MarketShipRepository extends AbstractRepository
 {
     public function add(int $userId, int $entityId, int $forUserId, int $forAllianceId, string $text, int $shipId, int $shipCount, BaseResources $costs): int
     {
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->insert('market_ship')
             ->values([
                 'user_id' => ':userId',
@@ -50,7 +50,7 @@ class MarketShipRepository extends AbstractRepository
      */
     public function getAll(): array
     {
-        $data = $this->createQueryBuilder()
+        $data = $this->createQueryBuilder('q')
             ->select('*')
             ->from('market_ship')
             ->orderBy('datum', 'ASC')
@@ -64,7 +64,7 @@ class MarketShipRepository extends AbstractRepository
      */
     public function getBuyableOffers(int $userId, int $allianceId): array
     {
-        $data = $this->createQueryBuilder()
+        $data = $this->createQueryBuilder('q')
             ->select('*')
             ->from('market_ship')
             ->where('user_id <> :userId')
@@ -81,7 +81,7 @@ class MarketShipRepository extends AbstractRepository
 
     public function getBuyableOffer(int $id, int $userId, int $allianceId): ?MarketShip
     {
-        $data = $this->createQueryBuilder()
+        $data = $this->createQueryBuilder('q')
             ->select('*')
             ->from('market_ship')
             ->where('id = :id')
@@ -104,7 +104,7 @@ class MarketShipRepository extends AbstractRepository
      */
     public function getUserOffers(int $userId): array
     {
-        $data = $this->createQueryBuilder()
+        $data = $this->createQueryBuilder('q')
             ->select('*')
             ->from('market_ship')
             ->where('user_id = :userId')
@@ -120,7 +120,7 @@ class MarketShipRepository extends AbstractRepository
 
     public function getUserOffer(int $id, int $userId): ?MarketShip
     {
-        $data = $this->createQueryBuilder()
+        $data = $this->createQueryBuilder('q')
             ->select('*')
             ->from('market_ship')
             ->where('id = :id')
@@ -136,7 +136,7 @@ class MarketShipRepository extends AbstractRepository
 
     public function deleteUserOffers(int $userId) : void
     {
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->delete('market_ship')
             ->where('user_id = :userId')
             ->setParameter('userId', $userId)
@@ -145,7 +145,7 @@ class MarketShipRepository extends AbstractRepository
 
     public function delete(int $offerId) : void
     {
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->delete('market_ship')
             ->where('id = :id')
             ->setParameter('id', $offerId)

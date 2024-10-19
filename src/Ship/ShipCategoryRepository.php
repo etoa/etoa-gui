@@ -11,7 +11,7 @@ class ShipCategoryRepository extends AbstractRepository
      */
     public function getAllCategories(): array
     {
-        $data = $this->createQueryBuilder()
+        $data = $this->createQueryBuilder('q')
             ->select('*')
             ->from('ship_cat')
             ->orderBy('cat_order')
@@ -25,7 +25,7 @@ class ShipCategoryRepository extends AbstractRepository
      */
     public function getCategoryNames(): array
     {
-        return $this->createQueryBuilder()
+        return $this->createQueryBuilder('q')
             ->select('cat_id, cat_name')
             ->from('ship_cat')
             ->orderBy('cat_order')
@@ -34,7 +34,7 @@ class ShipCategoryRepository extends AbstractRepository
 
     public function getCategory(int $categoryId): ?ShipCategory
     {
-        $data = $this->createQueryBuilder()
+        $data = $this->createQueryBuilder('q')
             ->select('*')
             ->from('ship_cat')
             ->where('cat_id = :id')

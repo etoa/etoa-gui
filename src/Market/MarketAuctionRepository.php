@@ -9,7 +9,7 @@ class MarketAuctionRepository extends AbstractRepository
 {
     public function add(int $userId, int $entityId, int $dateEnd, string $text, BaseResources $sell, BaseResources $currency): int
     {
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->insert('market_auction')
             ->values([
                 'user_id' => ':userId',
@@ -65,7 +65,7 @@ class MarketAuctionRepository extends AbstractRepository
             'buy4' => $bid->food,
         ];
 
-        $qb = $this->createQueryBuilder()
+        $qb = $this->createQueryBuilder('q')
             ->update('market_auction')
             ->set('current_buyer_id', ':buyerId')
             ->set('current_buyer_entity_id', ':buyerEntityId')
@@ -95,7 +95,7 @@ class MarketAuctionRepository extends AbstractRepository
      */
     public function getAll(): array
     {
-        $data = $this->createQueryBuilder()
+        $data = $this->createQueryBuilder('q')
             ->select('*')
             ->from('market_auction')
             ->orderBy('date_end', 'ASC')
@@ -109,7 +109,7 @@ class MarketAuctionRepository extends AbstractRepository
      */
     public function getBuyableAuctions(int $userId): array
     {
-        $data = $this->createQueryBuilder()
+        $data = $this->createQueryBuilder('q')
             ->select('*')
             ->from('market_auction')
             ->where('buyable = 1')
@@ -123,7 +123,7 @@ class MarketAuctionRepository extends AbstractRepository
 
     public function getNonUserAuction(int $id, int $userId): ?MarketAuction
     {
-        $data = $this->createQueryBuilder()
+        $data = $this->createQueryBuilder('q')
             ->select('*')
             ->from('market_auction')
             ->where('id = :id')
@@ -142,7 +142,7 @@ class MarketAuctionRepository extends AbstractRepository
      */
     public function getUserAuctions(int $userId): array
     {
-        $data = $this->createQueryBuilder()
+        $data = $this->createQueryBuilder('q')
             ->select('*')
             ->from('market_auction')
             ->where('user_id = :userId')
@@ -157,7 +157,7 @@ class MarketAuctionRepository extends AbstractRepository
 
     public function getUserAuction(int $id, int $userId): ?MarketAuction
     {
-        $data = $this->createQueryBuilder()
+        $data = $this->createQueryBuilder('q')
             ->select('*')
             ->from('market_auction')
             ->where('id = :id')
@@ -173,7 +173,7 @@ class MarketAuctionRepository extends AbstractRepository
 
     public function deleteUserAuctions(int $userId) : void
     {
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->delete('market_auction')
             ->where('user_id = :userId')
             ->setParameter('userId', $userId)
@@ -182,7 +182,7 @@ class MarketAuctionRepository extends AbstractRepository
 
     public function deleteAuction(int $auctionId) : void
     {
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->delete('market_auction')
             ->where('id = :id')
             ->setParameter('id', $auctionId)

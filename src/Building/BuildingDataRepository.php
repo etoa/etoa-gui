@@ -2,10 +2,17 @@
 
 namespace EtoA\Building;
 
+use Doctrine\Persistence\ManagerRegistry;
+use EtoA\BuddyList\Buddy;
 use EtoA\Core\AbstractRepository;
 
 class BuildingDataRepository extends AbstractRepository
 {
+    public function __construct(ManagerRegistry $registry)
+    {
+        parent::__construct($registry, Building::class);
+    }
+
     /**
      * @return array<int, Building>
      */
@@ -19,7 +26,7 @@ class BuildingDataRepository extends AbstractRepository
      */
     public function searchBuildings(BuildingSearch $search = null, BuildingSort $sort = null): array
     {
-        $data = $this->applySearchSortLimit($this->createQueryBuilder(), $search, $sort)
+        $data = $this->applySearchSortLimit($this->createQueryBuilder('q'), $search, $sort)
             ->select('*')
             ->from('buildings')
             ->fetchAllAssociative();
@@ -35,7 +42,7 @@ class BuildingDataRepository extends AbstractRepository
 
     public function getBuilding(int $buildingId): ?Building
     {
-        $data = $this->createQueryBuilder()
+        $data = $this->createQueryBuilder('q')
             ->select('b.*')
             ->from('buildings', 'b')
             ->andWhere('b.building_id = :building_id')
@@ -51,7 +58,7 @@ class BuildingDataRepository extends AbstractRepository
      */
     public function getBuildingsByType(int $type): array
     {
-        $data = $this->createQueryBuilder()
+        $data = $this->createQueryBuilder('q')
             ->select('b.*')
             ->from('buildings', 'b')
             ->andWhere('b.building_type_id = :type')
@@ -70,7 +77,7 @@ class BuildingDataRepository extends AbstractRepository
     public function getBuildingNames(bool $showAll = false, BuildingSort $orderBy = null): array
     {
         $orderBy = $orderBy ?? BuildingSort::name();
-        $qb = $this->applySearchSortLimit($this->createQueryBuilder(), null, $orderBy)
+        $qb = $this->applySearchSortLimit($this->createQueryBuilder('q'), null, $orderBy)
             ->select('building_id', 'building_name')
             ->from('buildings');
 
@@ -84,7 +91,7 @@ class BuildingDataRepository extends AbstractRepository
 
     public function getBuildingName(int $buildingId): string
     {
-        return (string) $this->applySearchSortLimit($this->createQueryBuilder())
+        return (string) $this->applySearchSortLimit($this->createQueryBuilder('q'))
             ->select('building_name')
             ->from('buildings')
             ->where('building_id = :buildingId')
@@ -97,7 +104,7 @@ class BuildingDataRepository extends AbstractRepository
      */
     public function getBuildingNamesHavingPlaceForPeople(): array
     {
-        return $this->createQueryBuilder()
+        return $this->createQueryBuilder('q')
             ->select('building_id, building_name')
             ->from('buildings')
             ->where('building_people_place > 0')

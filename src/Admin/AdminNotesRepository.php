@@ -4,13 +4,18 @@ declare(strict_types=1);
 
 namespace EtoA\Admin;
 
+use Doctrine\Persistence\ManagerRegistry;
 use EtoA\Core\AbstractRepository;
 
 class AdminNotesRepository extends AbstractRepository
 {
+    public function __construct(ManagerRegistry $registry)
+    {
+        parent::__construct($registry, AdminNote::class);
+    }
     public function countForAdmin(int $adminId): int
     {
-        return (int) $this->createQueryBuilder()
+        return (int) $this->createQueryBuilder('q')
             ->select("COUNT(*)")
             ->from('admin_notes')
             ->where('admin_id = :adminId')
@@ -23,7 +28,7 @@ class AdminNotesRepository extends AbstractRepository
      */
     public function findAllForAdmin(int $adminId): array
     {
-        $data = $this->createQueryBuilder()
+        $data = $this->createQueryBuilder('q')
             ->select("*")
             ->from('admin_notes')
             ->where('admin_id = :adminId')
@@ -36,7 +41,7 @@ class AdminNotesRepository extends AbstractRepository
 
     public function findForAdmin(int $id, int $adminId): ?AdminNote
     {
-        $data = $this->createQueryBuilder()
+        $data = $this->createQueryBuilder('q')
             ->select("*")
             ->from('admin_notes')
             ->where('notes_id = :id')
@@ -52,7 +57,7 @@ class AdminNotesRepository extends AbstractRepository
 
     public function create(AdminNote $note): int
     {
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->insert('admin_notes')
             ->values([
                 'titel' => ':titel',
@@ -73,7 +78,7 @@ class AdminNotesRepository extends AbstractRepository
 
     public function update(AdminNote $note): bool
     {
-        return (bool) $this->createQueryBuilder()
+        return (bool) $this->createQueryBuilder('q')
             ->update('admin_notes')
             ->set('titel', ':titel')
             ->set('text', ':text')
@@ -89,7 +94,7 @@ class AdminNotesRepository extends AbstractRepository
 
     public function remove(int $id): bool
     {
-        return (bool) $this->createQueryBuilder()
+        return (bool) $this->createQueryBuilder('q')
             ->delete('admin_notes')
             ->where('notes_id = :id')
             ->setParameter('id', $id)

@@ -2,13 +2,19 @@
 
 namespace EtoA\Alliance;
 
+use Doctrine\Persistence\ManagerRegistry;
 use EtoA\Core\AbstractRepository;
 
 class AllianceDiplomacyRepository extends AbstractRepository
 {
+    public function __construct(ManagerRegistry $registry)
+    {
+        parent::__construct($registry, AllianceDiplomacy::class);
+    }
+
     public function add(int $allianceId, int $otherAllianceId, int $level, string $text, string $name, int $diplomatId, int $points = 0, string $publicText = ''): int
     {
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->insert('alliance_bnd')
             ->values([
                 'alliance_bnd_alliance_id1' => ':allianceId',
@@ -42,7 +48,7 @@ class AllianceDiplomacyRepository extends AbstractRepository
      */
     public function search(AllianceDiplomacySearch $search, int $limit = null): array
     {
-        $data = $this->applySearchSortLimit($this->createQueryBuilder(), $search, null, $limit)
+        $data = $this->applySearchSortLimit($this->createQueryBuilder('q'), $search, null, $limit)
             ->select('b.*')
             ->addSelect('a1.alliance_name as alliance1Name, a1.alliance_tag as alliance1Tag')
             ->addSelect('a2.alliance_name as alliance2Name, a2.alliance_tag as alliance2Tag')
@@ -60,7 +66,7 @@ class AllianceDiplomacyRepository extends AbstractRepository
      */
     public function getDiplomacies(int $allianceId, int $level = null): array
     {
-        $qb = $this->createQueryBuilder()
+        $qb = $this->createQueryBuilder('q')
             ->select('b.*')
             ->addSelect('a1.alliance_name as alliance1Name, a1.alliance_tag as alliance1Tag')
             ->addSelect('a2.alliance_name as alliance2Name, a2.alliance_tag as alliance2Tag')
@@ -86,7 +92,7 @@ class AllianceDiplomacyRepository extends AbstractRepository
 
     public function getDiplomacy(int $id, int $allianceId, int $level = null): ?AllianceDiplomacy
     {
-        $qb = $this->createQueryBuilder()
+        $qb = $this->createQueryBuilder('q')
             ->select('b.*')
             ->addSelect('a1.alliance_name as alliance1Name, a1.alliance_tag as alliance1Tag')
             ->addSelect('a2.alliance_name as alliance2Name, a2.alliance_tag as alliance2Tag')
@@ -118,7 +124,7 @@ class AllianceDiplomacyRepository extends AbstractRepository
             return false;
         }
 
-        $qb = $this->createQueryBuilder()
+        $qb = $this->createQueryBuilder('q')
             ->select('1')
             ->from('alliance_bnd')
             ->where('(alliance_bnd_alliance_id1 = :allianceId AND alliance_bnd_alliance_id2 = :otherAllianceId) OR (alliance_bnd_alliance_id2 = :allianceId AND alliance_bnd_alliance_id1 = :otherAllianceId)')
@@ -141,7 +147,7 @@ class AllianceDiplomacyRepository extends AbstractRepository
 
     public function updateDiplomacy(int $id, int $level, string $name, int $points = null, int $date = null): void
     {
-        $qb = $this->createQueryBuilder()
+        $qb = $this->createQueryBuilder('q')
             ->update('alliance_bnd')
             ->set('alliance_bnd_level', ':level')
             ->set('alliance_bnd_name', ':name')
@@ -170,7 +176,7 @@ class AllianceDiplomacyRepository extends AbstractRepository
 
     public function acceptBnd(int $id, int $points): void
     {
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->update('alliance_bnd')
             ->set('alliance_bnd_level', ':level')
             ->set('alliance_bnd_points', ':points')
@@ -185,7 +191,7 @@ class AllianceDiplomacyRepository extends AbstractRepository
 
     public function updatePublicText(int $id, int $allianceId, int $level, string $publicText): void
     {
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->update('alliance_bnd')
             ->set('alliance_bnd_text_pub', ':publicText')
             ->where('alliance_bnd_id = :id')
@@ -202,7 +208,7 @@ class AllianceDiplomacyRepository extends AbstractRepository
 
     public function wasWarDeclaredAgainstSince(int $allianceId, int $since): bool
     {
-        return (bool) $this->createQueryBuilder()
+        return (bool) $this->createQueryBuilder('q')
             ->select('1')
             ->from('alliance_bnd')
             ->where('alliance_bnd_alliance_id2 = :allianceId')
@@ -218,7 +224,7 @@ class AllianceDiplomacyRepository extends AbstractRepository
 
     public function isAtWar(int $allianceId, int $atWarWithAllianceId = null): bool
     {
-        $qb = $this->createQueryBuilder()
+        $qb = $this->createQueryBuilder('q')
             ->select('1')
             ->from('alliance_bnd')
             ->where('alliance_bnd_alliance_id1 = :allianceId OR alliance_bnd_alliance_id2 = :allianceId')
@@ -240,7 +246,7 @@ class AllianceDiplomacyRepository extends AbstractRepository
 
     public function hasPendingBndRequests(int $allianceId): bool
     {
-        return (bool) $this->createQueryBuilder()
+        return (bool) $this->createQueryBuilder('q')
             ->select('1')
             ->from('alliance_bnd')
             ->where('alliance_bnd_alliance_id2 = :allianceId')
@@ -254,7 +260,7 @@ class AllianceDiplomacyRepository extends AbstractRepository
 
     public function deleteDiplomacy(int $id): void
     {
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->delete('alliance_bnd')
             ->where('alliance_bnd_id = :id')
             ->setParameter('id', $id)
@@ -263,7 +269,7 @@ class AllianceDiplomacyRepository extends AbstractRepository
 
     public function deleteAllianceDiplomacies(int $allianceId): void
     {
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->delete('alliance_bnd')
             ->where('alliance_bnd_alliance_id1 = :allianceId OR alliance_bnd_alliance_id2 = :allianceId')
             ->setParameter('allianceId', $allianceId)

@@ -11,7 +11,7 @@ class MissileFlightRepository extends AbstractRepository
      */
     public function getFlights(MissileFlightSearch $search): array
     {
-        $data = $this->applySearchSortLimit($this->createQueryBuilder(), $search)
+        $data = $this->applySearchSortLimit($this->createQueryBuilder('q'), $search)
             ->select('f.flight_landtime, f.flight_id, p.planet_name, p.id, f.flight_entity_from')
             ->from('missile_flights', 'f')
             ->innerJoin('f', 'planets', 'p', 'p.id = f.flight_entity_to')
@@ -21,7 +21,7 @@ class MissileFlightRepository extends AbstractRepository
         $objects = [];
         if (count($data) > 0) {
             $ids = array_map(fn (array $row) => $row['flight_id'], $data);
-            $qb = $this->createQueryBuilder();
+            $qb = $this->createQueryBuilder('q');
             $rows = $qb
                 ->select('f.obj_flight_id, f.obj_missile_id, f.obj_cnt')
                 ->from('missile_flights_obj', 'f')
@@ -41,7 +41,7 @@ class MissileFlightRepository extends AbstractRepository
      */
     public function startFlight(int $fromEntity, int $toEntity, int $duration, array $missiles): int
     {
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->insert('missile_flights')
             ->values([
                 'flight_entity_from' => ':fromEntity',
@@ -57,7 +57,7 @@ class MissileFlightRepository extends AbstractRepository
 
         $flightId = (int) $this->getConnection()->lastInsertId();
         foreach ($missiles as $missileId => $count) {
-            $this->createQueryBuilder()
+            $this->createQueryBuilder('q')
                 ->insert('missile_flights_obj')
                 ->values([
                     'obj_flight_id' => ':flightId',
@@ -76,7 +76,7 @@ class MissileFlightRepository extends AbstractRepository
 
     public function deleteFlight(int $flightId, int $fromEntity): bool
     {
-        $deleted = (bool) $this->createQueryBuilder()
+        $deleted = (bool) $this->createQueryBuilder('q')
             ->delete('missile_flights')
             ->where('flight_id = :flightId')
             ->andWhere('flight_entity_from = :fromEntity')
@@ -91,7 +91,7 @@ class MissileFlightRepository extends AbstractRepository
             return false;
         }
 
-        $this->createQueryBuilder()
+        $this->createQueryBuilder('q')
             ->delete('missile_flights_obj')
             ->where('obj_flight_id = :flightId')
             ->setParameters([
