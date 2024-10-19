@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace EtoA\Fleet;
 
+use Doctrine\Persistence\ManagerRegistry;
 use EtoA\Core\AbstractRepository;
 use EtoA\Entity\Fleet;
 use EtoA\Ship\ShipListItem;
@@ -11,6 +12,11 @@ use EtoA\Universe\Resources\BaseResources;
 
 class FleetRepository extends AbstractRepository
 {
+    public function __construct(ManagerRegistry $registry)
+    {
+        parent::__construct($registry, Fleet::class);
+    }
+
     /**
      * @return int[]
      */
