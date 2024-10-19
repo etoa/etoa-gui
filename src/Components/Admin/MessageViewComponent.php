@@ -2,7 +2,7 @@
 
 namespace EtoA\Components\Admin;
 
-use EtoA\Message\Message;
+use EtoA\Entity\Message;
 use EtoA\Message\MessageRepository;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
 use Symfony\UX\LiveComponent\Attribute\LiveAction;

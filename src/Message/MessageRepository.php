@@ -4,10 +4,17 @@ declare(strict_types=1);
 
 namespace EtoA\Message;
 
+use Doctrine\Persistence\ManagerRegistry;
 use EtoA\Core\AbstractRepository;
+use EtoA\Entity\Message;
 
 class MessageRepository extends AbstractRepository
 {
+    public function __construct(ManagerRegistry $registry)
+    {
+        parent::__construct($registry, Message::class);
+    }
+
     /**
      * @return Message[]
      */
@@ -137,9 +144,7 @@ class MessageRepository extends AbstractRepository
     public function createSystemMessage(int $userId, int $catId, string $subject, string $text): int
     {
         try {
-            $this->getConnection()->beginTransaction();
             $this->createQueryBuilder('q')
-                ->insert('messages')
                 ->values([
                     'message_user_from' => 0,
                     'message_user_to' => ':userId',
