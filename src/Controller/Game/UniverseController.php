@@ -2,12 +2,10 @@
 
 namespace EtoA\Controller\Game;
 
-use EtoA\Admin\AdminUserRepository;
 use EtoA\Controller\Game;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Support\StringUtils;
 use EtoA\UI\Tooltip;
-use EtoA\Universe\Cell\Cell;
 use EtoA\Universe\Cell\CellRepository;
 use EtoA\Universe\CellRenderer;
 use EtoA\Universe\Entity\EntityRepository;
@@ -19,7 +17,6 @@ use EtoA\Universe\GalaxyMap;
 use EtoA\Universe\Planet\PlanetRepository;
 use EtoA\Universe\Resources\ResIcons;
 use EtoA\Universe\Resources\ResourceNames;
-use EtoA\Universe\SectorMapRenderer;
 use EtoA\User\UserRepository;
 use EtoA\User\UserUniverseDiscoveryService;
 use Symfony\Component\HttpFoundation\Request;
@@ -80,8 +77,8 @@ class UniverseController extends Game\AbstractGameController
         }
         // Current Planet
         elseif ($cp) {
-            $sx = $cp->sx;
-            $sy = $cp->sy;
+            $sx = $cp->getCell()->getSx();
+            $sy = $cp->getCell()->getSy();
         } // Default coordinates (galactic center)
         else {
             $sx = $this->config->param1Int('map_init_sector');
@@ -131,10 +128,10 @@ class UniverseController extends Game\AbstractGameController
     public function entity($id): Response {
         $ent = $this->entityRepository->getEntity($id);
         if($ent && $fullEnt =$this->entityService->getEntity($ent)) {
-            $cell = $this->cellRepository->getCellById($ent->cellId);
-            $abs = $cell->getAbsoluteCoordinates($cell->sx,$cell->sy);
+            $cell = $this->cellRepository->getCellById($ent->getCellId());
+            $abs = $cell->getAbsoluteCoordinates($cell->getSx(),$cell->getSy());
             if ($this->userUniverseDiscoveryService->discovered($this->getUser()->getData(), $abs[0], $abs([1]))) {
-                    if ($ent->code == EntityType::PLANET) {
+                    if ($ent->getCode() == EntityType::PLANET) {
                         $rowSpan = 7;
                         if (filled($fullEnt->name)) {
                             $rowSpan++;
@@ -153,8 +150,8 @@ class UniverseController extends Game\AbstractGameController
                         </td>";
                         echo "<th>Besitzer:</th>
                     <td>";
-                        if ($fullEnt-getUserId() > 0)
-                            echo "<a href=\"?page=userinfo&amp;id=" . $fullEnt-getUserId() . "\">" . $this->userRepository->getUser($fullEnt-getUserId())->getNick() . "</a>";
+                        if ($fullEnt->getUserId() > 0)
+                            echo "<a href=\"?page=userinfo&amp;id=" . $fullEnt->getUserId() . "\">" . $this->userRepository->getUser($fullEnt-getUserId())->getNick() . "</a>";
                         else
                             echo 'Niemand';
                         echo "</td>
@@ -210,7 +207,7 @@ class UniverseController extends Game\AbstractGameController
                         }
 
                         tableEnd();
-                    } elseif ($ent->code == 's') {
+                    } elseif ($ent->getCode() == 's') {
                         tableStart("Sterndaten");
                         echo "<tr>
                         <td width=\"220\" style=\"background:#000;vertical-align:middle\" rowspan=\"2\">
@@ -235,7 +232,7 @@ class UniverseController extends Game\AbstractGameController
                     // Previous and next entity
                     $idprev = $id - 1;
                     $idnext = $id + 1;
-                    $pmarr = $entityRepository->getMaxEntityId();
+                    $pmarr = $this->entityRepository->getMaxEntityId();
                     if ($idprev > 0) {
                         $str_prev =    "<td><input type=\"button\" value=\"&lt;\" onclick=\"document.location='?page=$page&amp;id=" . $idprev . "'\" /></td>";
                     }

@@ -3,9 +3,9 @@
 namespace EtoA\Universe;
 
 use EtoA\Core\ObjectWithImage;
+use EtoA\Entity\Cell;
 use EtoA\Entity\User;
 use EtoA\UI\Tooltip;
-use EtoA\Universe\Cell\Cell;
 use EtoA\Universe\Entity\EntityRepository;
 use EtoA\Universe\Entity\EntitySearch;
 use EtoA\User\UserUniverseDiscoveryService;
@@ -140,7 +140,7 @@ class SectorMapRenderer
         /** @var array<int, array<int, \EtoA\Entity\Entity>> $cells */
         $cells = [];
         foreach ($entities as $entity) {
-            $cells[$entity->cx][$entity->cy] = $entity;
+            $cells[$entity->getCell()->getCx()][$entity->getCell()->getCy()] = $entity;
         }
 
         for ($y = 0; $y < $this->numberOfCellsX; $y++) {
@@ -171,7 +171,7 @@ class SectorMapRenderer
 
                 // Overlay image classes
                 $overlayClasses = array();
-                if ($this->selectedCell != null && $this->selectedCell->sx == $sx && $this->selectedCell->sy == $sy && $this->selectedCell->cx == $xcoords && $this->selectedCell->cy == $ycoords) {
+                if ($this->selectedCell != null && $this->selectedCell->getSx() == $sx && $this->selectedCell->getSy() == $sy && $this->selectedCell->getCx() == $xcoords && $this->selectedCell->getCy() == $ycoords) {
                     $overlayClasses[] = 'selected';
                 } elseif (in_array($cells[$xcoords][$ycoords]->getCellId(), $this->userCellsIDs, true)) {
                     $overlayClasses[] = 'owned';

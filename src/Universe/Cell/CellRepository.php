@@ -4,10 +4,17 @@ declare(strict_types=1);
 
 namespace EtoA\Universe\Cell;
 
+use Doctrine\Persistence\ManagerRegistry;
 use EtoA\Core\AbstractRepository;
+use EtoA\Entity\Cell;
 
 class CellRepository extends AbstractRepository
 {
+    public function __construct(ManagerRegistry $registry)
+    {
+        parent::__construct($registry, Cell::class);
+    }
+
     /**
      * @return int[]
      */

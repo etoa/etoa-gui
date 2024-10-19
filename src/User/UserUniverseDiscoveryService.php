@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace EtoA\User;
 
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Entity\Cell;
 use EtoA\Entity\Entity;
 use EtoA\Entity\User;
-use EtoA\Universe\Cell\Cell;
 
 class UserUniverseDiscoveryService
 {
@@ -40,8 +40,8 @@ class UserUniverseDiscoveryService
         $cx_num = $this->config->param1Int('num_of_cells');
         $cy_num = $this->config->param2Int('num_of_cells');
 
-        $absX = (($entity->sx - 1) * $cx_num) + $entity->cx;
-        $absY = (($entity->sy - 1) * $cy_num) + $entity->cy;
+        $absX = (($entity->getCell()->getSx() - 1) * $cx_num) + $entity->getCell()->getCx();
+        $absY = (($entity->getCell()->getSy() - 1) * $cy_num) + $entity->getCell()->getCy();
 
         return $this->discovered($user, $absX, $absY);
     }

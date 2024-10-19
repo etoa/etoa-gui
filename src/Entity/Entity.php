@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace EtoA\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use EtoA\Universe\Cell\Cell;
 use EtoA\Universe\Entity\EntityCoordinates;
 use EtoA\Universe\Entity\EntityRepository;
 use EtoA\Universe\Entity\EntityType;
@@ -42,12 +41,12 @@ class Entity
 
     public function getCoordinates(): EntityCoordinates
     {
-        return new EntityCoordinates($this->sx, $this->sy, $this->cx, $this->cy, $this->pos);
+        return new EntityCoordinates($this->cell->getSx(), $this->cell->getSy(), $this->cell->getCx(), $this->cell->getCy(), $this->pos);
     }
 
     public function coordinatesString(): string
     {
-        return $this->sx . "/" . $this->sy . " : " . $this->cx . "/" . $this->cy . " : " . $this->pos;
+        return $this->cell->getSx() . "/" . $this->cell->getSy() . " : " . $this->cell->getCx() . "/" . $this->cell->getCy() . " : " . $this->pos;
     }
 
     public function codeString(): string
