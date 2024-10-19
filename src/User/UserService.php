@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace EtoA\User;
 
+use EtoA\Admin\AllianceBoardAvatar;
 use EtoA\Alliance\AllianceApplicationRepository;
 use EtoA\Alliance\AllianceRepository;
 use EtoA\Bookmark\BookmarkRepository;
@@ -160,8 +161,8 @@ class UserService
         $userFleets = $this->fleetRepository->findByParameters((new FleetSearchParameters())
             ->userId($userId));
         foreach ($userFleets as $fleet) {
-            $this->fleetRepository->removeAllShipsFromFleet($fleet->id);
-            $this->fleetRepository->remove($fleet->id);
+            $this->fleetRepository->removeAllShipsFromFleet($fleet->getId());
+            $this->fleetRepository->remove($fleet->getId());
         }
 
         $userPlanets = $this->planetRepository->getUserPlanets($userId);
@@ -416,5 +417,23 @@ die Spielleitung";
             LogSeverity::INFO,
             'Der Benutzer ' . $user->getNick() . ' hat ein neues Passwort per E-Mail angefordert!'
         );
+    }
+
+    public function buildProfileImageUrl($profileImage): ?string
+    {
+        if ($profileImage == '') {
+            return null;
+        }
+
+        return ProfileImage::IMAGE_PATH . $profileImage;
+    }
+
+    public function buildAvatarUrl($avatar): ?string
+    {
+        if ($avatar == '') {
+            return null;
+        }
+
+        return AllianceBoardAvatar::IMAGE_PATH . $avatar;
     }
 }
