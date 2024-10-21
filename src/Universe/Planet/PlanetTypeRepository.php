@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace EtoA\Universe\Planet;
 
 use EtoA\Core\AbstractRepository;
+use EtoA\Entity\PlanetType;
 
 class PlanetTypeRepository extends AbstractRepository
 {
@@ -49,7 +50,7 @@ class PlanetTypeRepository extends AbstractRepository
     {
         $type = $this->find($typeId);
 
-        return $type !== null && $type->habitable;
+        return $type !== null && $type->isHabitable();
     }
 
     public function getName(int $id): ?string

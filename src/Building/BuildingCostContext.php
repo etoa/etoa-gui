@@ -2,9 +2,9 @@
 
 namespace EtoA\Building;
 
+use EtoA\Entity\PlanetType;
 use EtoA\Entity\Race;
 use EtoA\Entity\Specialist;
-use EtoA\Universe\Planet\PlanetType;
 use EtoA\Universe\Star\SolarType;
 
 class BuildingCostContext
