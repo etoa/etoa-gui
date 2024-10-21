@@ -3,6 +3,7 @@
 namespace EtoA\Universe\Planet;
 
 use EtoA\Entity\Entity;
+use EtoA\Entity\Planet;
 
 class PlanetWithCoordinates extends Planet
 {

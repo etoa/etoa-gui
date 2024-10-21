@@ -2,13 +2,13 @@
 
 namespace EtoA\Universe;
 
+use EtoA\Entity\Planet;
 use EtoA\Universe\Asteroid\AsteroidRepository;
 use EtoA\Universe\Cell\CellRepository;
 use EtoA\Universe\EmptySpace\EmptySpaceRepository;
 use EtoA\Universe\Entity\EntityRepository;
 use EtoA\Universe\Entity\EntityType;
 use EtoA\Universe\Nebula\NebulaRepository;
-use EtoA\Universe\Planet\Planet;
 use EtoA\Universe\Planet\PlanetRepository;
 use EtoA\Universe\Planet\PlanetSearch;
 use EtoA\Universe\Star\StarRepository;
@@ -40,7 +40,7 @@ class GalaxyChecker
 
         $invalidPlanets = [];
         foreach ($planets as $planet) {
-            if (!isset($user[$planet->userId])) {
+            if (!isset($user[$planet->getUserId()])) {
                 $invalidPlanets[] = $planet;
             }
         }
@@ -67,9 +67,9 @@ class GalaxyChecker
         $userPlanetCounts = [];
         $userHasMainPlanet = [];
         foreach ($planets as $planet) {
-            if ($planet->mainPlanet) {
-                $userPlanetCounts[$planet->userId] = isset($userPlanetCounts[$planet->userId]) ? $userPlanetCounts[$planet->userId] + 1 : 1;
-                $userHasMainPlanet[$planet->userId] = true;
+            if ($planet->isMainPlanet()) {
+                $userPlanetCounts[$planet->getUserId()] = isset($userPlanetCounts[$planet->getUserId()]) ? $userPlanetCounts[$planet->getUserId()] + 1 : 1;
+                $userHasMainPlanet[$planet->getUserId()] = true;
             }
         }
 

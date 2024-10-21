@@ -7,6 +7,7 @@ namespace EtoA\Universe\Planet;
 use EtoA\Building\BuildingRepository;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Defense\DefenseRepository;
+use EtoA\Entity\Planet;
 use EtoA\Fleet\FleetAction;
 use EtoA\Log\LogFacility;
 use EtoA\Log\LogRepository;
@@ -32,7 +33,7 @@ class PlanetService
     {
         $data = array();
         foreach ($this->repository->getUserPlanets($userId) as $planet) {
-            $data[$planet->id] = $planet->displayName();
+            $data[$planet->getId()] = $planet->displayName();
         }
 
         return $data;
@@ -84,7 +85,7 @@ class PlanetService
     }
 
     public function getAllowedFleetActions(Planet $planet):array {
-        $planetType = $this->planetTypeRepository->get($planet->typeId);
+        $planetType = $this->planetTypeRepository->get($planet->getTypeId());
 
         $arr = array();
         if ($planet->getUserId() > 0) {
@@ -106,11 +107,11 @@ class PlanetService
             $arr[] = FleetAction::MARKET;
             $arr[] = FleetAction::EMP;
         }
-        if ($planet->getUserId() == 0 && $planetType->habitable)
+        if ($planet->getUserId() == 0 && $planetType->isHabitable())
             $arr[] = FleetAction::COLONIZE;
         if ($planet->getWfMetal() || $planet->getWfCrystal() || $planet->getWfPlastic())
             $arr[] = FleetAction::COLLECT_DEBRIS;
-        if ($planetType->collectGas) {
+        if ($planetType->isCollectGas()) {
             $arr[] = FleetAction::COLLECT_FUEL;
             $arr[] = FleetAction::ANALYZE;
         }

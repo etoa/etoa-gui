@@ -4,14 +4,22 @@ declare(strict_types=1);
 
 namespace EtoA\Universe\Planet;
 
-use Doctrine\DBAL\Query\QueryBuilder;
+use Doctrine\ORM\QueryBuilder;
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\Persistence\ManagerRegistry;
 use EtoA\Core\AbstractRepository;
+use EtoA\Entity\Planet;
 use EtoA\Universe\Entity\EntityType;
 use EtoA\Universe\Resources\BaseResources;
 use EtoA\Universe\Resources\PreciseResources;
 
 class PlanetRepository extends AbstractRepository
 {
+    public function __construct(ManagerRegistry $registry,private readonly EntityManagerInterface $entityManager)
+    {
+        parent::__construct($registry, Planet::class);
+    }
+
     /**
      * @return int[]
      */
@@ -30,10 +38,7 @@ class PlanetRepository extends AbstractRepository
      */
     public function getUserPlanets(int $userId): array
     {
-        $data = $this->userPlanetsQueryBuilder($userId)
-            ->fetchAllAssociative();
-
-        return array_map(fn ($row) => new Planet($row), $data);
+        return $this->findBy(['userId'=>$userId]);
     }
 
     /**
@@ -65,7 +70,6 @@ class PlanetRepository extends AbstractRepository
     {
         return $this->createQueryBuilder('q')
             ->select('planets.*')
-            ->from('planets')
             ->where('planet_user_id = :userId')
             ->setParameter('userId', $userId)
             ->orderBy('planet_user_main', 'DESC')
@@ -251,52 +255,10 @@ class PlanetRepository extends AbstractRepository
             ->executeQuery();
     }
 
-    public function update(Planet $planet): bool
+    public function update(Planet $planet): void
     {
-        $affected = $this->createQueryBuilder('q')
-            ->update('planets')
-            ->set('planet_type_id', ':type_id')
-            ->set('planet_name', ':name')
-            ->set('planet_fields', ':fields')
-            ->set('planet_fields_extra', ':extra_fields')
-            ->set('planet_image', ':image')
-            ->set('planet_temp_from', ':temp_from')
-            ->set('planet_temp_to', ':temp_to')
-            ->set('planet_res_metal', ':res_metal')
-            ->set('planet_res_crystal', ':res_crystal')
-            ->set('planet_res_plastic', ':res_plastic')
-            ->set('planet_res_fuel', ':res_fuel')
-            ->set('planet_res_food', ':res_food')
-            ->set('planet_wf_metal', ':wf_metal')
-            ->set('planet_wf_crystal', ':wf_crystal')
-            ->set('planet_wf_plastic', ':wf_plastic')
-            ->set('planet_people', ':people')
-            ->set('planet_desc', ':description')
-            ->where('id = :id')
-            ->setParameters([
-                'id' => $planet->id,
-                'type_id' => $planet->typeId,
-                'name' => $planet->name,
-                'fields' => $planet->fields,
-                'extra_fields' => $planet->fieldsExtra,
-                'image' => $planet->image,
-                'temp_from' => $planet->tempFrom,
-                'temp_to' => $planet->tempTo,
-                'res_metal' => $planet->resMetal,
-                'res_crystal' => $planet->resCrystal,
-                'res_plastic' => $planet->resPlastic,
-                'res_fuel' => $planet->resFuel,
-                'res_food' => $planet->resFood,
-                'wf_metal' => $planet->wfMetal,
-                'wf_crystal' => $planet->wfCrystal,
-                'wf_plastic' => $planet->wfPlastic,
-                'people' => $planet->people,
-                'description' => $planet->description !== null && strlen($planet->description) > 0 ? $planet->description : null,
-            ])
-            ->executeQuery()
-            ->rowCount();
-
-        return $affected > 0;
+        $this->entityManager->persist($planet);
+        $this->entityManager->flush();
     }
 
     public function setResources(

@@ -2,11 +2,11 @@
 
 namespace EtoA\Image;
 
-use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Building\BuildingDataRepository;
 use EtoA\Building\BuildingTypeId;
+use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Entity\Planet;
 use EtoA\Ship\ShipDataRepository;
-use EtoA\Universe\Planet\Planet;
 
 class PowerProductionImageGenerator
 {

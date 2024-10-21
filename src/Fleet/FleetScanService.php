@@ -14,6 +14,7 @@ use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Defense\DefenseRepository;
 use EtoA\Entity\Entity;
 use EtoA\Entity\Fleet;
+use EtoA\Entity\Planet;
 use EtoA\Entity\User;
 use EtoA\Fleet\Exception\FleetScanFailedException;
 use EtoA\Fleet\Exception\FleetScanPreconditionsNotMetException;
@@ -28,7 +29,6 @@ use EtoA\Technology\TechnologyRepository;
 use EtoA\Universe\Entity\EntityRepository;
 use EtoA\Universe\Entity\EntityService;
 use EtoA\Universe\Entity\EntityType;
-use EtoA\Universe\Planet\Planet;
 use EtoA\Universe\Planet\PlanetRepository;
 use EtoA\Universe\Resources\ResourceNames;
 use EtoA\User\UserRepository;
@@ -117,8 +117,8 @@ class FleetScanService
         }
 
         $cryptoFuelCostsPerScan = $this->config->getInt('crypto_fuel_costs_per_scan');
-        if ($planet->resFuel < $cryptoFuelCostsPerScan) {
-            throw new FleetScanPreconditionsNotMetException("Zuwenig " . ResourceNames::FUEL . ", " . StringUtils::formatNumber($cryptoFuelCostsPerScan) . " benötigt, " . StringUtils::formatNumber($planet->resFuel) . " vorhanden!");
+        if ($planet->getResFuel() < $cryptoFuelCostsPerScan) {
+            throw new FleetScanPreconditionsNotMetException("Zuwenig " . ResourceNames::FUEL . ", " . StringUtils::formatNumber($cryptoFuelCostsPerScan) . " benötigt, " . StringUtils::formatNumber($planet->getResFuel()) . " vorhanden!");
         }
 
         $alliance = $this->allianceRepository->getAlliance($currentUser->getAllianceId());
@@ -130,7 +130,7 @@ class FleetScanService
             throw new InvalidFleetScanParameterException('Am gewählten Ziel existiert kein Planet!');
         }
 
-        $sourceEntity = $this->entityRepository->findIncludeCell($planet->id);
+        $sourceEntity = $this->entityRepository->findIncludeCell($planet->getId());
         $dist = $this->entityService->distance($sourceEntity, $targetEntity);
         $cryptoRangePerLevel = $this->config->getInt('crypto_range_per_level');
         if ($dist > $cryptoRangePerLevel * $cryptoCenterLevel) {
@@ -193,7 +193,7 @@ class FleetScanService
         $out .= "\nEntschlüsselchance: $decryptLevel";
 
         // Subtract resources
-        $this->planetRepository->addResources($planet->id, 0, 0, 0, -$cryptoFuelCostsPerScan, 0);
+        $this->planetRepository->addResources($planet->getId(), 0, 0, 0, -$cryptoFuelCostsPerScan, 0);
         $this->allianceRepository->addResources($currentUser->getAllianceId(), 0, 0, 0, -$cryptoFuelCostsPerScan, 0);
 
         if ($targetOwner !== null) {

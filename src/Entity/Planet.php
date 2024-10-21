@@ -2,114 +2,170 @@
 
 declare(strict_types=1);
 
-namespace EtoA\Universe\Planet;
+namespace EtoA\Entity;
 
+use Doctrine\ORM\Mapping as ORM;
 use EtoA\Core\ObjectWithImage;
 use EtoA\Universe\Entity\AbstractEntity;
+use EtoA\Universe\Planet\PlanetRepository;
 
+#[ORM\Entity(repositoryClass: PlanetRepository::class)]
+#[ORM\Table(name: 'planets')]
 class Planet extends AbstractEntity implements ObjectWithImage
 {
     public const COLONY_DELETE_THRESHOLD = 24 * 3600 * 5;
 
-    public int $id;
-    public int $userId;
-    public bool $mainPlanet;
-    public int $userChanged;
-    public int $lastUserId;
-    public ?string $name;
-    public int $typeId;
-    public int $fields;
-    public int $fieldsExtra;
-    public int $fieldsUsed;
-    public string $image;
-    public int $tempFrom;
-    public int $tempTo;
-    public float $semiMajorAxis;
-    public float $ecccentricity;
-    public int $mass;
-    public float $resMetal;
-    public float $resCrystal;
-    public float $resPlastic;
-    public float $resFuel;
-    public float $resFood;
-    public int $usePower;
-    public int $lastUpdated;
-    public int $bunkerMetal;
-    public int $bunkerCrystal;
-    public int $bunkerPlastic;
-    public int $bunkerFuel;
-    public int $bunkerFood;
-    public int $prodMetal;
-    public int $prodCrystal;
-    public int $prodPlastic;
-    public int $prodFuel;
-    public int $prodFood;
-    public int $prodPower;
-    public int $prodPeople;
-    public int $storeMetal;
-    public int $storeCrystal;
-    public int $storePlastic;
-    public int $storeFuel;
-    public int $storeFood;
-    public int $wfMetal;
-    public int $wfCrystal;
-    public int $wfPlastic;
-    public float $people;
-    public int $peoplePlace;
-    public ?string $description;
-    public int $invadedBy;
-    private array $allowedFleetActions;
+    #[ORM\Id]
+    #[ORM\GeneratedValue(strategy: "AUTO")]
+    #[ORM\Column(type: "integer")]
+    private int $id;
 
-    public function __construct(array $data)
-    {
-        $this->id = (int) $data['id'];
-        $this->userId = (int) $data['planet_user_id'];
-        $this->mainPlanet = (bool) $data['planet_user_main'];
-        $this->userChanged = (int) $data['planet_user_changed'];
-        $this->lastUserId = (int) $data['planet_last_user_id'];
-        $this->name = $data['planet_name'];
-        $this->typeId = (int) $data['planet_type_id'];
-        $this->fields = (int) $data['planet_fields'];
-        $this->fieldsExtra = (int) $data['planet_fields_extra'];
-        $this->fieldsUsed = (int) $data['planet_fields_used'];
-        $this->image = $data['planet_image'];
-        $this->tempFrom = (int) $data['planet_temp_from'];
-        $this->tempTo = (int) $data['planet_temp_to'];
-        $this->semiMajorAxis = (float) $data['planet_semi_major_axis'];
-        $this->ecccentricity = (float) $data['planet_ecccentricity'];
-        $this->mass = (int) $data['planet_mass'];
-        $this->resMetal = (float) $data['planet_res_metal'];
-        $this->resCrystal = (float) $data['planet_res_crystal'];
-        $this->resPlastic = (float) $data['planet_res_plastic'];
-        $this->resFuel = (float) $data['planet_res_fuel'];
-        $this->resFood = (float) $data['planet_res_food'];
-        $this->usePower = (int) $data['planet_use_power'];
-        $this->lastUpdated = (int) $data['planet_last_updated'];
-        $this->bunkerMetal = (int) $data['planet_bunker_metal'];
-        $this->bunkerCrystal = (int) $data['planet_bunker_crystal'];
-        $this->bunkerPlastic = (int) $data['planet_bunker_plastic'];
-        $this->bunkerFuel = (int) $data['planet_bunker_fuel'];
-        $this->bunkerFood = (int) $data['planet_bunker_food'];
-        $this->prodMetal = (int) $data['planet_prod_metal'];
-        $this->prodCrystal = (int) $data['planet_prod_crystal'];
-        $this->prodPlastic = (int) $data['planet_prod_plastic'];
-        $this->prodFuel = (int) $data['planet_prod_fuel'];
-        $this->prodFood = (int) $data['planet_prod_food'];
-        $this->prodPower = (int) $data['planet_prod_power'];
-        $this->prodPeople = (int) $data['planet_prod_people'];
-        $this->storeMetal = (int) $data['planet_store_metal'];
-        $this->storeCrystal = (int) $data['planet_store_crystal'];
-        $this->storePlastic = (int) $data['planet_store_plastic'];
-        $this->storeFuel = (int) $data['planet_store_fuel'];
-        $this->storeFood = (int) $data['planet_store_food'];
-        $this->wfMetal = (int) $data['planet_wf_metal'];
-        $this->wfCrystal = (int) $data['planet_wf_crystal'];
-        $this->wfPlastic = (int) $data['planet_wf_plastic'];
-        $this->people = (int) $data['planet_people'];
-        $this->peoplePlace = (int) $data['planet_people_place'];
-        $this->description = $data['planet_desc'];
-        $this->invadedBy = (int) $data['invadedby'];
-    }
+    #[ORM\Column(name: "planet_user_id", type: "integer")]
+    private int $userId;
+
+    #[ORM\JoinColumn(name: 'planet_user_id', referencedColumnName: 'user_id')]
+    #[ORM\ManyToOne(targetEntity: User::class)]
+    private User $user;
+
+    #[ORM\Column(name: "planet_user_main", type: "boolean")]
+    private bool $mainPlanet;
+
+    #[ORM\Column(name: "planet_user_changed", type: "integer")]
+    private int $userChanged;
+
+    #[ORM\Column(name: "planet_last_user_id", type: "integer")]
+    private int $lastUserId;
+
+    #[ORM\Column(name: "planet_name", type: "string")]
+    private ?string $name;
+
+    #[ORM\JoinColumn(name: 'planet_type_id', referencedColumnName: 'type_id')]
+    #[ORM\ManyToOne(targetEntity: PlanetType::class)]
+    private PlanetType $planetType;
+
+    #[ORM\Column(name: "planet_type_id", type: "integer")]
+    private int $typeId;
+
+    #[ORM\Column(name: "planet_fields", type: "integer")]
+    private int $fields;
+
+    #[ORM\Column(name: "planet_fields_extra", type: "integer")]
+    private int $fieldsExtra;
+
+    #[ORM\Column(name: "planet_fields_used", type: "integer")]
+    private int $fieldsUsed;
+
+    #[ORM\Column(name: "planet_image", type: "string")]
+    private string $image;
+
+    #[ORM\Column(name: "planet_temp_from", type: "integer")]
+    private int $tempFrom;
+
+    #[ORM\Column(name: "planet_temp_to", type: "integer")]
+    private int $tempTo;
+
+    #[ORM\Column(name: "planet_semi_major_axis", type: "float")]
+    private float $semiMajorAxis;
+
+    #[ORM\Column(name: "planet_ecccentricity", type: "float")]
+    private float $ecccentricity;
+
+    #[ORM\Column(name: "planet_mass", type: "integer")]
+    private int $mass;
+
+    #[ORM\Column(name: "planet_res_metal", type: "float")]
+    private float $resMetal;
+
+    #[ORM\Column(name: "planet_res_crystal", type: "float")]
+    private float $resCrystal;
+
+    #[ORM\Column(name: "planet_res_plastic", type: "float")]
+    private float $resPlastic;
+
+    #[ORM\Column(name: "planet_res_fuel", type: "float")]
+    private float $resFuel;
+
+    #[ORM\Column(name: "planet_res_food", type: "float")]
+    private float $resFood;
+
+    #[ORM\Column(name: "planet_use_power", type: "integer")]
+    private int $usePower;
+
+    #[ORM\Column(name: "planet_last_updated", type: "integer")]
+    private int $lastUpdated;
+
+    #[ORM\Column(name: "planet_bunker_metal", type: "integer")]
+    private int $bunkerMetal;
+
+    #[ORM\Column(name: "planet_bunker_crystal", type: "integer")]
+    private int $bunkerCrystal;
+
+    #[ORM\Column(name: "planet_bunker_plastic", type: "integer")]
+    private int $bunkerPlastic;
+
+    #[ORM\Column(name: "planet_bunker_fuel", type: "integer")]
+    private int $bunkerFuel;
+
+    #[ORM\Column(name: "planet_bunker_food", type: "integer")]
+    private int $bunkerFood;
+
+    #[ORM\Column(name: "planet_prod_metal", type: "integer")]
+    private int $prodMetal;
+
+    #[ORM\Column(name: "planet_prod_crystal", type: "integer")]
+    private int $prodCrystal;
+
+    #[ORM\Column(name: "planet_prod_plastic", type: "integer")]
+    private int $prodPlastic;
+
+    #[ORM\Column(name: "planet_prod_fuel", type: "integer")]
+    private int $prodFuel;
+
+    #[ORM\Column(name: "planet_prod_food", type: "integer")]
+    private int $prodFood;
+
+    #[ORM\Column(name: "planet_prod_power", type: "integer")]
+    private int $prodPower;
+
+    #[ORM\Column(name: "planet_prod_people", type: "integer")]
+    private int $prodPeople;
+
+    #[ORM\Column(name: "planet_store_metal", type: "integer")]
+    private int $storeMetal;
+
+    #[ORM\Column(name: "planet_store_crystal", type: "integer")]
+    private int $storeCrystal;
+
+    #[ORM\Column(name: "planet_store_plastic", type: "integer")]
+    private int $storePlastic;
+
+    #[ORM\Column(name: "planet_store_fuel", type: "integer")]
+    private int $storeFuel;
+
+    #[ORM\Column(name: "planet_store_food", type: "integer")]
+    private int $storeFood;
+
+    #[ORM\Column(name: "planet_wf_metal", type: "integer")]
+    private int $wfMetal;
+
+    #[ORM\Column(name: "planet_wf_crystal", type: "integer")]
+    private int $wfCrystal;
+
+    #[ORM\Column(name: "planet_wf_plastic", type: "integer")]
+    private int $wfPlastic;
+
+    #[ORM\Column(name: "planet_people", type: "float")]
+    private float $people;
+
+    #[ORM\Column(name: "planet_people_place", type: "integer")]
+    private int $peoplePlace;
+
+    #[ORM\Column(name: "planet_desc", type: "string")]
+    private ?string $description;
+
+    #[ORM\Column(name: "invadedby", type: "integer")]
+    private int $invadedBy;
+    private array $allowedFleetActions;
 
     public function displayName(): string
     {
@@ -645,5 +701,29 @@ class Planet extends AbstractEntity implements ObjectWithImage
     public function getEntityCodeString(): string
     {
         return "Planet";
+    }
+
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
+
+    public function setUser(?User $user): static
+    {
+        $this->user = $user;
+
+        return $this;
+    }
+
+    public function getPlanetType(): ?PlanetType
+    {
+        return $this->planetType;
+    }
+
+    public function setPlanetType(?PlanetType $planetType): static
+    {
+        $this->planetType = $planetType;
+
+        return $this;
     }
 }

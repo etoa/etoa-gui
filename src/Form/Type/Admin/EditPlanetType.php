@@ -2,11 +2,11 @@
 
 namespace EtoA\Form\Type\Admin;
 
+use EtoA\Entity\Planet;
 use EtoA\Form\Type\Core\AdjustResourceType;
 use EtoA\Form\Type\Core\PlanetImageType;
 use EtoA\Form\Type\Core\PlanetTypeType;
 use EtoA\Form\Type\Core\UserType;
-use EtoA\Universe\Planet\Planet;
 use EtoA\Universe\Resources\ResourceNames;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
