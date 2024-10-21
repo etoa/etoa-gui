@@ -17,6 +17,7 @@ use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Defense\Defense;
 use EtoA\Defense\DefenseDataRepository;
 use EtoA\Defense\DefenseRepository;
+use EtoA\Entity\Technology;
 use EtoA\Fleet\FleetRepository;
 use EtoA\Fleet\FleetSearchParameters;
 use EtoA\Race\RaceDataRepository;
@@ -24,7 +25,6 @@ use EtoA\Ship\Ship;
 use EtoA\Ship\ShipDataRepository;
 use EtoA\Ship\ShipRepository;
 use EtoA\Support\RuntimeDataStore;
-use EtoA\Technology\Technology;
 use EtoA\Technology\TechnologyDataRepository;
 use EtoA\Technology\TechnologyPointRepository;
 use EtoA\Technology\TechnologyRepository;
@@ -143,9 +143,9 @@ class RankingService
         foreach ($users as $user) {
             // first 24hours no highest rank calculation
             if (time() > (3600 * 24 + $this->config->param1Int("enable_login"))) {
-                $user_rank_highest[$user->id] = $user->rankHighest > 0 ? $user->rankHighest : 9999;
+                $user_rank_highest[$user->getId()] = $user->getRankHighest() > 0 ? $user->getRankHighest() : 9999;
             } else {
-                $user_rank_highest[$user->id] = 0;
+                $user_rank_highest[$user->getId()] = 0;
             }
 
             $points = 0.0;
@@ -155,34 +155,34 @@ class RankingService
             $sx = 0;
             $sy = 0;
 
-            $planets = $this->planetRepository->getUserPlanets($user->id);
+            $planets = $this->planetRepository->getUserPlanets($user->getId());
             foreach ($planets as $planet) {
-                if ($planet->mainPlanet) {
-                    $entity = $this->entityRepository->findIncludeCell($planet->id);
-                    $sx = $entity->sx;
-                    $sy = $entity->sy;
+                if ($planet->isMainPlanet()) {
+                    $entity = $this->entityRepository->findIncludeCell($planet->getId());
+                    $sx = $entity->getCell()->getSx();
+                    $sy = $entity->getCell()->getSy();
 
                     break;
                 }
             }
 
-            $shipListItems = $this->shipRepository->findForUser($user->id);
+            $shipListItems = $this->shipRepository->findForUser($user->getId());
             foreach ($shipListItems as $shipListItem) {
                 $p = ($shipListItem->bunkered + $shipListItem->count) * $shipPoints[$shipListItem->shipId];
                 $points += $p;
                 $points_ships += $p;
             }
 
-            $fleets = $this->fleetRepository->findByParameters(FleetSearchParameters::create()->userId($user->id));
+            $fleets = $this->fleetRepository->findByParameters(FleetSearchParameters::create()->userId($user->getId()));
             foreach ($fleets as $fleet) {
-                foreach ($this->fleetRepository->findAllShipsInFleet($fleet->id) as $shipEntry) {
+                foreach ($this->fleetRepository->findAllShipsInFleet($fleet->getId()) as $shipEntry) {
                     $p = $shipEntry->count * $shipPoints[$shipEntry->shipId];
                     $points += $p;
                     $points_ships += $p;
                 }
             }
 
-            $defenseListItems = $this->defenseRepository->findForUser($user->id);
+            $defenseListItems = $this->defenseRepository->findForUser($user->getId());
             foreach ($defenseListItems as $defenseListItem) {
                 $p = round($defenseListItem->count * $defensePoints[$defenseListItem->defenseId]);
                 $points += $p;
@@ -190,7 +190,7 @@ class RankingService
             }
 
             foreach ($planets as $planet) {
-                $buildingLevels = $this->buildingRepository->getBuildingLevels($planet->id);
+                $buildingLevels = $this->buildingRepository->getBuildingLevels($planet->getId());
                 foreach ($buildingLevels as $buildingId => $level) {
                     $p = round($buildingPoints[$buildingId][$level]);
                     $points += $p;
@@ -198,24 +198,24 @@ class RankingService
                 }
             }
 
-            $techList = $this->technologyRepository->getTechnologyLevels($user->id);
+            $techList = $this->technologyRepository->getTechnologyLevels($user->getId());
             foreach ($techList as $technologyId => $level) {
                 $p = round($techPoints[$technologyId][$level] ?? 0);
                 $points += $p;
                 $points_tech += $p;
             }
 
-            $points_exp = max(0, $this->shipRepository->getSpecialShipExperienceSumForUser($user->id));
-            $points_exp += max(0, $this->fleetRepository->getSpecialShipExperienceSumForUser($user->id));
+            $points_exp = max(0, $this->shipRepository->getSpecialShipExperienceSumForUser($user->getId()));
+            $points_exp += max(0, $this->fleetRepository->getSpecialShipExperienceSumForUser($user->getId()));
 
             $userStats[] = UserStatistic::createFromCalculation(
                 $user,
-                $user->blockedTo > $time,
-                $user->hmodFrom > 0,
-                $user->logoutTime < $time - $inactiveTime,
-                $user->allianceId,
-                $user->allianceId > 0 ? $allianceTags[$user->allianceId] : null,
-                $user->raceId > 0 ? $race[$user->raceId] : null,
+                $user->getBlockedTo() > $time,
+                $user->getHmodFrom() > 0,
+                $user->getLogoutTime() < $time - $inactiveTime,
+                $user->getAllianceId(),
+                $user->getAllianceId() > 0 ? $allianceTags[$user->getAllianceId()] : null,
+                $user->getRaceId() > 0 ? $race[$user->getRaceId()] : null,
                 $sx,
                 $sy,
                 (int) $points,
@@ -492,7 +492,7 @@ class RankingService
         $this->technologyPointRepository->deleteAll();
 
         foreach ($technologies as $technology) {
-            $this->technologyPointRepository->add($technology->id, $this->calculatePointsForTechnology($technology));
+            $this->technologyPointRepository->add($technology->getId(), $this->calculatePointsForTechnology($technology));
         }
 
         return count($technologies);
@@ -504,14 +504,14 @@ class RankingService
     private function calculatePointsForTechnology(Technology $technology): array
     {
         $points = [];
-        for ($level = 1; $level <= $technology->lastLevel; $level++) {
-            $r = $technology->costsMetal
-                + $technology->costsCrystal
-                + $technology->costsFuel
-                + $technology->costsPlastic
-                + $technology->costsFood;
-            $p = ($r * (1 - $technology->buildCostsFactor ** $level)
-                / (1 - $technology->buildCostsFactor))
+        for ($level = 1; $level <= $technology->getLastLevel(); $level++) {
+            $r = $technology->getCostsMetal()
+                + $technology->getCostsCrystal()
+                + $technology->getCostsFuel()
+                + $technology->getCostsPlastic()
+                + $technology->getCostsFood();
+            $p = ($r * (1 - $technology->getBuildCostsFactor() ** $level)
+                / (1 - $technology->getBuildCostsFactor()))
                 / $this->config->param1Int('points_update');
 
             $points[$level] = $p;

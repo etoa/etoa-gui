@@ -3,6 +3,7 @@
 namespace EtoA\Technology;
 
 use EtoA\Core\AbstractRepository;
+use EtoA\Entity\Technology;
 
 class TechnologyDataRepository extends AbstractRepository
 {
@@ -44,18 +45,18 @@ class TechnologyDataRepository extends AbstractRepository
      */
     public function getTechnologies(): array
     {
+
         $data = $this->createQueryBuilder('q')
             ->select('*')
-            ->from('technologies')
             ->where('tech_show = 1')
             ->orderBy('tech_order')
             ->addOrderBy('tech_name')
-            ->fetchAllAssociative();
+            ->getQuery()
+            ->execute();
 
         $technologies = [];
         foreach ($data as $row) {
-            $technology = new Technology($row);
-            $technologies[$technology->id] = $technology;
+            $technologies[$row->getId()] = $row;
         }
 
         return $technologies;
