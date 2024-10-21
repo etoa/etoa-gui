@@ -5,10 +5,8 @@ declare(strict_types=1);
 namespace EtoA\Text;
 
 use Doctrine\Persistence\ManagerRegistry;
-use EtoA\Building\Building;
 use EtoA\Core\AbstractRepository;
-
-use Doctrine\DBAL\Connection;
+use EtoA\Entity\Text;
 
 class TextRepository extends AbstractRepository
 {
