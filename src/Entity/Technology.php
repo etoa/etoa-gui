@@ -4,10 +4,10 @@ namespace EtoA\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use EtoA\Core\ObjectWithImage;
-use EtoA\Technology\TechnologyRepository;
+use EtoA\Technology\TechnologyDataRepository;
 
-#[ORM\Entity(repositoryClass: TechnologyRepository::class)]
-#[ORM\Table(name: 'users')]
+#[ORM\Entity(repositoryClass: TechnologyDataRepository::class)]
+#[ORM\Table(name: 'technologies')]
 class Technology implements ObjectWithImage
 {
 

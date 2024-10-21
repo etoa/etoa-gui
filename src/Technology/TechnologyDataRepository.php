@@ -2,11 +2,17 @@
 
 namespace EtoA\Technology;
 
+use Doctrine\Persistence\ManagerRegistry;
 use EtoA\Core\AbstractRepository;
 use EtoA\Entity\Technology;
 
 class TechnologyDataRepository extends AbstractRepository
 {
+    public function __construct(ManagerRegistry $registry)
+    {
+        parent::__construct($registry, Technology::class);
+    }
+
     /**
      * @return array<int, string>
      */

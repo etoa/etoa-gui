@@ -4,11 +4,11 @@ namespace EtoA\Components\Admin;
 
 use EtoA\Components\Helper\SearchComponentTrait;
 use EtoA\Components\Helper\SearchResult;
+use EtoA\Entity\TechnologyListItem;
 use EtoA\Form\Request\Admin\TechnologySearchRequest;
 use EtoA\Form\Type\Admin\TechnologySearchType;
 use EtoA\Technology\TechnologyBuildType;
 use EtoA\Technology\TechnologyDataRepository;
-use EtoA\Technology\TechnologyListItem;
 use EtoA\Technology\TechnologyListItemSearch;
 use EtoA\Technology\TechnologyRepository;
 use EtoA\Universe\Entity\EntityLabel;
@@ -64,7 +64,7 @@ class TechnologySearchComponent extends AbstractController
             $search->buildType($this->request->buildType);
         }
 
-        $total = $this->technologyRepository->count($search);
+        $total = $this->technologyRepository->countSearch($search);
 
         $limit = $this->getLimit($total);
 
@@ -72,7 +72,7 @@ class TechnologySearchComponent extends AbstractController
         if ($total > 0) {
             $this->userNicks = $this->userRepository->searchUserNicknames();
             $this->technologyNames = $this->technologyDataRepository->getTechnologyNames(true);
-            $entityIds = array_map(fn (TechnologyListItem $item) => $item->entityId, $entries);
+            $entityIds = array_map(fn (TechnologyListItem $item) => $item->getEntityId(), $entries);
             $this->entities = array_map(fn (EntityLabel $label) => $label->toString(), $this->entityRepository->searchEntityLabels(EntitySearch::create()->ids($entityIds)));
         }
 

@@ -2,6 +2,7 @@
 
 namespace EtoA\Controller\Admin;
 
+use EtoA\Entity\TechnologyListItem;
 use EtoA\Form\Type\Admin\AddTechnologyItemType;
 use EtoA\Form\Type\Admin\ObjectRequirementListType;
 use EtoA\Form\Type\Admin\TechnologySearchType;
@@ -9,7 +10,6 @@ use EtoA\Ranking\RankingService;
 use EtoA\Requirement\ObjectRequirement;
 use EtoA\Requirement\RequirementsUpdater;
 use EtoA\Technology\TechnologyDataRepository;
-use EtoA\Technology\TechnologyListItem;
 use EtoA\Technology\TechnologyPointRepository;
 use EtoA\Technology\TechnologyRepository;
 use EtoA\Technology\TechnologyRequirementRepository;
@@ -41,16 +41,16 @@ class TechnologyController extends AbstractAdminController
         $addForm = $this->createForm(AddTechnologyItemType::class, $addItem);
         $addForm->handleRequest($request);
         if ($addForm->isSubmitted() && $addForm->isValid()) {
-            $userId = $this->planetRepository->getPlanetUserId($addItem->entityId);
+            $userId = $this->planetRepository->getPlanetUserId($addItem->getEntityId());
             if ((bool)$addForm->get('all')->getData()) {
                 $techIds = array_keys($this->technologyDataRepository->getTechnologyNames(true));
                 foreach ($techIds as $techId) {
-                    $this->technologyRepository->addTechnology($techId, $addItem->currentLevel, $userId, $addItem->entityId);
+                    $this->technologyRepository->addTechnology($techId, $addItem->getCurrentLevel(), $userId, $addItem->getEntityId());
                 }
 
                 $this->addFlash('success', count($techIds) . ' Forschungen hinzugefügt');
             } else {
-                $this->technologyRepository->addTechnology($addItem->technologyId, $addItem->currentLevel, $userId, $addItem->entityId);
+                $this->technologyRepository->addTechnology($addItem->getTechnologyId(), $addItem->getCurrentLevel(), $userId, $addItem->getEntityId());
 
                 $this->addFlash('success', 'Forschung hinzugefügt');
             }
@@ -74,12 +74,12 @@ class TechnologyController extends AbstractAdminController
             if ((bool)$form->get('all')->getData()) {
                 $techIds = array_keys($this->technologyDataRepository->getTechnologyNames(true));
                 foreach ($techIds as $techId) {
-                    $this->technologyRepository->addTechnology($techId, $item->currentLevel, $item->userId, $item->entityId);
+                    $this->technologyRepository->addTechnology($techId, $item->getCurrentLevel(), $item->getUserId(), $item->getEntityId());
                 }
 
                 $this->addFlash('success', count($techIds) . ' Forschungen hinzugefügt');
             } else {
-                $this->technologyRepository->addTechnology($item->technologyId, $item->currentLevel, $item->userId, $item->entityId);
+                $this->technologyRepository->addTechnology($item->getTechnologyId(), $item->getCurrentLevel(), $item->getUserId(), $item->getEntityId());
 
                 $this->addFlash('success', 'Forschung hinzugefügt');
             }
@@ -114,8 +114,8 @@ class TechnologyController extends AbstractAdminController
         $requirements = [];
         $names = [];
         foreach ($technologies as $technology) {
-            $names[$technology->id] = $technology->name;
-            $requirements[$technology->id] = $collection->getAll($technology->id);
+            $names[$technology->getId()] = $technology->getName();
+            $requirements[$technology->getId()] = $collection->getAll($technology->getId());
         }
 
         $requirementsCopy = deep_copy($requirements);

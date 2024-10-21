@@ -3,9 +3,9 @@
 namespace EtoA\Components\Admin;
 
 use EtoA\Components\Helper\AbstractEditComponent;
+use EtoA\Entity\TechnologyListItem;
 use EtoA\Form\Type\Admin\EditTechnologyItemType;
 use EtoA\Technology\TechnologyBuildType;
-use EtoA\Technology\TechnologyListItem;
 use EtoA\Technology\TechnologyRepository;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
@@ -32,7 +32,7 @@ class TechnologyViewComponent extends AbstractEditComponent
     {
         $this->item = $item;
         if ($item !== null) {
-            $this->itemId = $item->id;
+            $this->itemId = $item->getId();
         }
     }
 

@@ -4,10 +4,18 @@ declare(strict_types=1);
 
 namespace EtoA\Technology;
 
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\Persistence\ManagerRegistry;
 use EtoA\Core\AbstractRepository;
+use EtoA\Entity\TechnologyListItem;
 
 class TechnologyRepository extends AbstractRepository
 {
+    public function __construct(ManagerRegistry $registry, private readonly EntityManagerInterface $entityManager)
+    {
+        parent::__construct($registry, TechnologyListItem::class);
+    }
+
     /**
      * @return TechnologyListItem[]
      */
@@ -43,11 +51,17 @@ class TechnologyRepository extends AbstractRepository
         return $data !== false ? TechnologyListItem::createFromData($data) : null;
     }
 
+    public function countSearch(TechnologyListItemSearch $search = null): int
+    {
+        return (int) $this->applySearchSortLimit($this->createQueryBuilder('q'), $search)
+            ->select('COUNT(techlist_id)')
+            ->getFirstResult();
+    }
+
     public function searchEntry(TechnologyListItemSearch $search): ?TechnologyListItem
     {
         $data = $this->applySearchSortLimit($this->createQueryBuilder('q'), $search, null, 1)
             ->select('*')
-            ->from('techlist')
             ->fetchAssociative();
 
         return $data !== false ? TechnologyListItem::createFromData($data) : null;
@@ -55,29 +69,7 @@ class TechnologyRepository extends AbstractRepository
 
     public function save(TechnologyListItem $item): void
     {
-        $this->createQueryBuilder('q')
-            ->update('techlist')
-            ->set('techlist_user_id', ':userId')
-            ->set('techlist_tech_id', ':technologyId')
-            ->set('techlist_entity_id', ':entityId')
-            ->set('techlist_current_level', ':currentLevel')
-            ->set('techlist_build_type', ':buildType')
-            ->set('techlist_build_start_time', ':startTime')
-            ->set('techlist_build_end_time', ':endTime')
-            ->set('techlist_prod_percent', ':prodPercent')
-            ->where('techlist_id = :id')
-            ->setParameters([
-                'id' => $item->id,
-                'userId' => $item->userId,
-                'technologyId' => $item->technologyId,
-                'entityId' => $item->entityId,
-                'currentLevel' => $item->currentLevel,
-                'buildType' => $item->buildType,
-                'startTime' => $item->startTime,
-                'endTime' => $item->endTime,
-                'prodPercent' => $item->prodPercent,
-            ])
-            ->executeQuery();
+       $this->entityManager->flush();
     }
 
     /**
@@ -87,7 +79,6 @@ class TechnologyRepository extends AbstractRepository
     {
         $data = $this->createQueryBuilder('q')
             ->select('techlist_tech_id, techlist_current_level')
-            ->from('techlist')
             ->where('techlist_user_id = :userId')
             ->setParameters([
                 'userId' => $userId,
@@ -101,14 +92,13 @@ class TechnologyRepository extends AbstractRepository
     {
         return (int) $this->createQueryBuilder('q')
             ->select('techlist_current_level')
-            ->from('techlist')
             ->where('techlist_tech_id = :technologyId')
             ->andWhere('techlist_user_id = :userId')
             ->setParameters([
                 'technologyId' => $technologyId,
                 'userId' => $userId,
             ])
-            ->fetchOne();
+            ->getFirstResult();
     }
 
     public function addTechnology(int $technologyId, int $level, int $userId, int $entityId): void
@@ -175,14 +165,13 @@ class TechnologyRepository extends AbstractRepository
                 'entityId' => $entityId,
                 'techId' => TechnologyId::GEN,
             ])
-            ->fetchOne();
+            ->getFirstResult();
     }
 
     public function isTechInProgress(int $userId, int $technologyId): bool
     {
         return (bool) $this->createQueryBuilder('q')
             ->select('1')
-            ->from('techlist')
             ->where('techlist_user_id = :userId')
             ->andWhere('techlist_build_type > 2')
             ->andWhere('techlist_tech_id = :techId')
@@ -190,18 +179,17 @@ class TechnologyRepository extends AbstractRepository
                 'userId' => $userId,
                 'techId' => $technologyId,
             ])
-            ->fetchOne();
+            ->getFirstResult();
     }
 
     public function countEmpty(): int
     {
         return (int) $this->createQueryBuilder('q')
             ->select('COUNT(techlist_id)')
-            ->from('techlist')
             ->where('techlist_current_level=0')
             ->andWhere('techlist_build_start_time=0')
             ->andWhere('techlist_build_end_time=0')
-            ->fetchOne();
+            ->getFirstResult();
     }
 
     public function deleteEmpty(): int
