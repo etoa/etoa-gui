@@ -2,10 +2,18 @@
 
 namespace EtoA\User;
 
+use Doctrine\Persistence\ManagerRegistry;
 use EtoA\Core\AbstractRepository;
+use EtoA\Entity\UserWarning;
 
 class UserWarningRepository extends AbstractRepository
 {
+
+    public function __construct(ManagerRegistry $registry)
+    {
+        parent::__construct($registry, UserWarning::class);
+    }
+
     /**
      * @return array<array{userId: int, nick: string, count: int}>
      */
