@@ -25,7 +25,7 @@ class ForeignFleetLoader
         $userSpyTechLevel = $this->technologyRepository->getTechnologyLevel($userId, TechnologyId::SPY);
         $specialist = $this->specialistService->getSpecialistOfUser($userId);
         if ($specialist !== null) {
-            $userSpyTechLevel += $specialist->spyLevel;
+            $userSpyTechLevel += $specialist->getSpyLevel();
         }
 
         if (SpyTechFleetLevel::SHOW_ATTITUDE > $userSpyTechLevel) {
@@ -47,8 +47,8 @@ class ForeignFleetLoader
         $visibleFleets = [];
         $aggressiveCount = 0;
         foreach ($foreignFleets as $fleet) {
-            /** @var \FleetAction $action */
-            $action = \FleetAction::createFactory($fleet->action);
+            /** @var FleetAction $action */
+            $action = FleetAction::createFactory($fleet->getAction());
             if (!$action->visible()) {
                 continue;
             }
@@ -59,10 +59,10 @@ class ForeignFleetLoader
                 continue;
             }
 
-            $opponentTarnTech = $this->technologyRepository->getTechnologyLevel($fleet->userId, TechnologyId::TARN);
-            $opponentSpecialist = $this->specialistService->getSpecialistOfUser($fleet->userId);
+            $opponentTarnTech = $this->technologyRepository->getTechnologyLevel($fleet->getUserId(), TechnologyId::TARN);
+            $opponentSpecialist = $this->specialistService->getSpecialistOfUser($fleet->getUserId());
             if ($opponentSpecialist !== null) {
-                $opponentTarnTech += $opponentSpecialist->tarnLevel;
+                $opponentTarnTech += $opponentSpecialist->getTarnLevel();
             }
 
             $diffTimeFactor = max($opponentTarnTech - $userSpyTechLevel, 0);
@@ -70,13 +70,13 @@ class ForeignFleetLoader
 
             // Minbari fleet hide ability does not work with alliance attacks
             // TODO: Improvement would be differentiation between single fleets
-            if ($fleet->action !== FleetAction::ALLIANCE) {
-                $specialShipBonusTarn = $this->fleetRepository->getFleetSpecialTarnBonus($fleet->id);
+            if ($fleet->getAction() !== FleetAction::ALLIANCE) {
+                $specialShipBonusTarn = $this->fleetRepository->getFleetSpecialTarnBonus($fleet->getId());
             }
 
             $diffTimeFactor = 0.1 * min(9, $diffTimeFactor + 10 * $specialShipBonusTarn);
 
-            if ($fleet->getRemainingTime() < ($fleet->landTime - $fleet->launchTime) * (1 - $diffTimeFactor)) {
+            if ($fleet->getRemainingTime() < ($fleet->getLandTime() - $fleet->getLaunchTime()) * (1 - $diffTimeFactor)) {
                 $visibleFleets[] = $fleet;
                 $aggressiveCount++;
             }

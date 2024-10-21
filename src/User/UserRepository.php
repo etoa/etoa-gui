@@ -288,7 +288,7 @@ class UserRepository extends AbstractRepository
 
     public function getUser(int $userId): ?User
     {
-        return $this->findUser(UserSearch::create()->user($userId));
+        return $this->find($userId);
     }
 
     /**

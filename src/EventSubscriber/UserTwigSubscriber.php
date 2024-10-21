@@ -175,7 +175,7 @@ class UserTwigSubscriber implements EventSubscriberInterface
             'userNick' => $cu->getData()->getNick(),
             'page' => $page,
             'mode' => $mode,
-            'infoText' => $infoText->isEnabled() ? $infoText->content : null,
+            'infoText' => $infoText->isEnabled() ? $infoText->getContent() : null,
             'viewportScale' => $_SESSION['viewportScale'] ?? 0,
             'fontSize' => ($_SESSION['viewportScale'] ?? 1) * 16 . "px",
             'helpBox' => false,
