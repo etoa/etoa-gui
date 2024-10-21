@@ -25,7 +25,8 @@ class UserWarningRepository extends AbstractRepository
             ->innerJoin('w', 'users', 'u', 'u.user_id = w.warning_user_id')
             ->orderBy('u.user_nick')
             ->groupBy('w.warning_user_id')
-            ->fetchAllAssociative();
+            ->getQuery()
+            ->execute();
 
         return array_map(fn (array $row) => ['userId' => (int) $row['user_id'], 'nick' => $row['user_nick'], 'count' => (int) $row['cnt']], $data);
     }
@@ -41,7 +42,8 @@ class UserWarningRepository extends AbstractRepository
             ->leftJoin('w', 'admin_users', 'a', 'a.user_id = w.warning_admin_id')
             ->innerJoin('w', 'users', 'u', 'u.user_id = w.warning_user_id')
             ->orderBy('w.warning_date', 'DESC')
-            ->fetchAllAssociative();
+            ->getQuery()
+            ->execute();
 
         return array_map(fn (array $row) => new UserWarning($row), $data);
     }

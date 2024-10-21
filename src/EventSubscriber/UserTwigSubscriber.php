@@ -179,7 +179,7 @@ class UserTwigSubscriber implements EventSubscriberInterface
             'viewportScale' => $_SESSION['viewportScale'] ?? 0,
             'fontSize' => ($_SESSION['viewportScale'] ?? 1) * 16 . "px",
             'helpBox' => false,
-            'warnings' => $this->userWarningRepository->search(\EtoA\User\UserWarningSearch::create()->userId($cu->getId()))
+            'warnings' => $this->userWarningRepository->findBy(['userId'=>$cu->getId()])
         ]);
         foreach ($globals as $key => $value) {
             $this->twig->addGlobal($key, $value);
