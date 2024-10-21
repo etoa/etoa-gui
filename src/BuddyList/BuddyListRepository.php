@@ -4,6 +4,7 @@ namespace EtoA\BuddyList;
 
 use Doctrine\Persistence\ManagerRegistry;
 use EtoA\Core\AbstractRepository;
+use EtoA\Entity\Buddy;
 
 class BuddyListRepository extends AbstractRepository
 {
@@ -22,18 +23,17 @@ class BuddyListRepository extends AbstractRepository
             ->where('b.bl_allow = 1')
             ->andWhere('bl_user_id = :userId')
             ->setParameter('userId', $userId)
-            ->fetchOne();
+            ->getFirstResult();
     }
 
     public function hasPendingFriendRequest(int $userId): bool
     {
         return (bool) $this->createQueryBuilder('q')
             ->select('COUNT(bl_id)')
-            ->from('buddylist')
             ->where('bl_allow = 0')
             ->andWhere('bl_buddy_id = :userId')
             ->setParameter('userId', $userId)
-            ->fetchOne();
+            ->getFirstResult();
     }
 
     /**
