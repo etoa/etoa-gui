@@ -3,7 +3,6 @@
 namespace EtoA\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use EtoA\Admin\AdminUser;
 use EtoA\User\UserWarningRepository;
 
 #[ORM\Entity(repositoryClass: UserWarningRepository::class)]

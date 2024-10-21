@@ -4,12 +4,14 @@ declare(strict_types=1);
 
 namespace EtoA\Admin;
 
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use EtoA\Core\AbstractRepository;
+use EtoA\Entity\AdminUser;
 
 class AdminUserRepository extends AbstractRepository
 {
-    public function __construct(ManagerRegistry $registry)
+    public function __construct(ManagerRegistry $registry, private readonly EntityManagerInterface $entityManager)
     {
         parent::__construct($registry, AdminUser::class);
     }
@@ -135,71 +137,7 @@ class AdminUserRepository extends AbstractRepository
 
     public function save(AdminUser $adminUser): void
     {
-        if ($adminUser->id != null) {
-            $this->createQueryBuilder('q')
-                ->update('admin_users')
-                ->set('user_nick', ':nick')
-                ->set('user_name', ':name')
-                ->set('user_email', ':email')
-                ->set('tfa_secret', ':tfa_secret')
-                ->set('user_board_url', ':board_url')
-                ->set('user_theme', ':user_theme')
-                ->set('ticketmail', ':ticketmail')
-                ->set('player_id', ':player_id')
-                ->set('user_locked', ':user_locked')
-                ->set('is_contact', ':is_contact')
-                ->set('roles', ':roles')
-                ->where('user_id = :id')
-                ->setParameters([
-                    'id' => $adminUser->id,
-                    'nick' => $adminUser->nick,
-                    'name' => $adminUser->name,
-                    'email' => $adminUser->email,
-                    'tfa_secret' => $adminUser->tfaSecret,
-                    'board_url' => (string)$adminUser->boardUrl,
-                    'user_theme' => $adminUser->userTheme,
-                    'ticketmail' => $adminUser->ticketEmail ? 1 : 0,
-                    'player_id' => $adminUser->playerId,
-                    'user_locked' => $adminUser->locked ? 1 : 0,
-                    'is_contact' => $adminUser->isContact ? 1 : 0,
-                    'roles' => implode(',', $adminUser->roles),
-                ])
-                ->executeQuery();
-        } else {
-            $password = saltPasswort(generatePasswort());
-            $this->createQueryBuilder('q')
-                ->insert('admin_users')
-                ->values([
-                    'user_nick' => ':nick',
-                    'user_name' => ':name',
-                    'user_email' => ':email',
-                    'tfa_secret' => ':tfa_secret',
-                    'user_board_url' => ':board_url',
-                    'user_theme' => ':user_theme',
-                    'ticketmail' => ':ticketmail',
-                    'player_id' => ':player_id',
-                    'user_locked' => ':user_locked',
-                    'is_contact' => ':is_contact',
-                    'roles' => ':roles',
-                    'user_password' => ':password',
-                ])
-                ->setParameters([
-                    'nick' => $adminUser->nick,
-                    'name' => $adminUser->name,
-                    'email' => $adminUser->email,
-                    'tfa_secret' => $adminUser->tfaSecret,
-                    'board_url' => $adminUser->boardUrl,
-                    'user_theme' => $adminUser->userTheme,
-                    'ticketmail' => $adminUser->ticketEmail ? 1 : 0,
-                    'player_id' => $adminUser->playerId,
-                    'user_locked' => $adminUser->locked ? 1 : 0,
-                    'is_contact' => $adminUser->isContact ? 1 : 0,
-                    'roles' => implode(',', $adminUser->roles),
-                    'password' => $password,
-                ])
-                ->executeQuery();
-            $adminUser->id = (int)$this->getConnection()->lastInsertId();
-        }
+        $this->entityManager->flush();
     }
 
     public function remove(AdminUser $adminUser): bool

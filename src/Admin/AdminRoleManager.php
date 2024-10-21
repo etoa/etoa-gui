@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace EtoA\Admin;
 
+use EtoA\Entity\AdminUser;
+
 class AdminRoleManager
 {
     /** @var array<string, string> */
@@ -25,7 +27,7 @@ class AdminRoleManager
     public function getRolesStr(AdminUser $user): string
     {
         $rs = array();
-        foreach ($user->roles as $role) {
+        foreach ($user->getRoles() as $role) {
             $rs[] = $this->getRoleName($role);
         }
 
@@ -45,7 +47,7 @@ class AdminRoleManager
      */
     public function checkAllowed(AdminUser $user, $rolesToCheck): bool
     {
-        return $this->checkAllowedRoles($user->roles, $rolesToCheck);
+        return $this->checkAllowedRoles($user->getRoles(), $rolesToCheck);
     }
 
     /**

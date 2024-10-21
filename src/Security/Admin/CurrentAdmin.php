@@ -2,7 +2,7 @@
 
 namespace EtoA\Security\Admin;
 
-use EtoA\Admin\AdminUser;
+use EtoA\Entity\AdminUser;
 use Scheb\TwoFactorBundle\Model\Totp\TotpConfiguration;
 use Scheb\TwoFactorBundle\Model\Totp\TwoFactorInterface;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
@@ -16,7 +16,7 @@ class CurrentAdmin implements UserInterface, PasswordAuthenticatedUserInterface,
 
     public function getId(): int
     {
-        return $this->adminUser->id;
+        return $this->adminUser->getId();
     }
 
     /**
@@ -24,12 +24,12 @@ class CurrentAdmin implements UserInterface, PasswordAuthenticatedUserInterface,
      */
     public function getRoles(): array
     {
-        return array_map(fn(string $role) => 'ROLE_ADMIN_' . strtoupper($role), $this->adminUser->roles);
+        return array_map(fn(string $role) => 'ROLE_ADMIN_' . strtoupper($role), $this->adminUser->getRoles());
     }
 
     public function getPassword(): string
     {
-        return $this->adminUser->passwordString;
+        return $this->adminUser->getPasswordString();
     }
 
     public function eraseCredentials(): void
@@ -38,12 +38,12 @@ class CurrentAdmin implements UserInterface, PasswordAuthenticatedUserInterface,
 
     public function getUsername(): string
     {
-        return $this->adminUser->nick;
+        return $this->adminUser->getNick();
     }
 
     public function getUserIdentifier(): string
     {
-        return $this->adminUser->nick;
+        return $this->adminUser->getNick();
     }
 
     public function getData(): AdminUser
@@ -53,16 +53,16 @@ class CurrentAdmin implements UserInterface, PasswordAuthenticatedUserInterface,
 
     public function isTotpAuthenticationEnabled(): bool
     {
-        return (bool)$this->adminUser->tfaSecret;
+        return (bool)$this->adminUser->getTfaSecret();
     }
 
     public function getTotpAuthenticationUsername(): string
     {
-        return $this->adminUser->nick;
+        return $this->adminUser->getNick();
     }
 
     public function getTotpAuthenticationConfiguration(): TotpConfiguration
     {
-        return new TotpConfiguration($this->adminUser->tfaSecret, TotpConfiguration::ALGORITHM_SHA1, 30, 6);
+        return new TotpConfiguration($this->adminUser->getTfaSecret(), TotpConfiguration::ALGORITHM_SHA1, 30, 6);
     }
 }

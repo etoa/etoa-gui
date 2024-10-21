@@ -2,8 +2,8 @@
 
 namespace EtoA\Controller\Admin;
 
-use EtoA\Admin\AdminUser;
 use EtoA\Admin\AdminUserRepository;
+use EtoA\Entity\AdminUser;
 use EtoA\Form\Type\Admin\AdminUserType;
 use EtoA\Log\LogFacility;
 use EtoA\Log\LogRepository;
@@ -43,7 +43,7 @@ class AdminManagementController extends AbstractAdminController
             $this->adminUserRepository->save($admin);
 
             $this->addFlash('success', "Gespeichert!");
-            $this->logRepository->add(LogFacility::ADMIN, LogSeverity::INFO, "Der Administrator " . $this->getUser()->getUsername() . " erstellt einen neuen Administrator: " . $admin->nick . "(" . $admin->id . ").");
+            $this->logRepository->add(LogFacility::ADMIN, LogSeverity::INFO, "Der Administrator " . $this->getUser()->getUsername() . " erstellt einen neuen Administrator: " . $admin->getNick() . "(" . $admin->getId() . ").");
 
             return $this->redirectToRoute('admin.admin_management');
         }

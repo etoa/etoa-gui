@@ -2,11 +2,11 @@
 
 namespace EtoA\Controller\External;
 
-use EtoA\Admin\AdminUser;
 use EtoA\Admin\AdminUserRepository;
 use EtoA\Controller\AbstractLegacyShowController;
 use EtoA\Core\AppName;
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Entity\AdminUser;
 use EtoA\HostCache\NetworkNameService;
 use EtoA\Support\BBCodeUtils;
 use EtoA\Support\Mail\MailSenderService;
@@ -27,7 +27,7 @@ class ContactController extends AbstractLegacyShowController
         ConfigurationService $config,
     ): Response
     {
-        $admins = array_filter($adminUserRepo->findAll(), fn(AdminUser $admin) => $admin->isContact);
+        $admins = array_filter($adminUserRepo->findAll(), fn(AdminUser $admin) => $admin->isIsContact());
 
         return $this->handle(function () use (
             $textRepo,
@@ -40,7 +40,7 @@ class ContactController extends AbstractLegacyShowController
             $contactText = $textRepo->find('contact_message');
             if ($contactText->isEnabled()) {
                 iBoxStart();
-                echo BBCodeUtils::toHTML($contactText->content);
+                echo BBCodeUtils::toHTML($contactText->getContent());
                 iBoxEnd();
             }
 
@@ -53,17 +53,17 @@ class ContactController extends AbstractLegacyShowController
                 <th>Foren-Profil</th>
             </tr>';
                 foreach ($admins as $admin) {
-                    $showMailAddress = preg_match('/' . AdminUser::CONTACT_REQUIRED_EMAIL_SUFFIX . '/i', $admin->email);
+                    $showMailAddress = preg_match('/' . AdminUser::CONTACT_REQUIRED_EMAIL_SUFFIX . '/i', $admin->getEmail());
 
-                    echo '<tr><td>' . $admin->nick . '</td>';
+                    echo '<tr><td>' . $admin->getNick() . '</td>';
                     if ($showMailAddress) {
-                        echo '<td><a href="mailto:' . $admin->email . '">' . $admin->email . '</a></td>';
+                        echo '<td><a href="mailto:' . $admin->getEmail() . '">' . $admin->getEmail() . '</a></td>';
                     } else {
                         echo '<td>(nicht öffentlich)</td>';
                     }
-                    echo '<td><a href="' . $this->generateUrl('external.contact.message', ['adminId' => $admin->id]) . '">Mail senden</a></td>';
-                    if ($admin->boardUrl != '') {
-                        echo '<td><a href="' . $admin->boardUrl . '" target="_blank">Profil</a></td>';
+                    echo '<td><a href="' . $this->generateUrl('external.contact.message', ['adminId' => $admin->getId()]) . '">Mail senden</a></td>';
+                    if ($admin->getBoardUrl() != '') {
+                        echo '<td><a href="' . $admin->getBoardUrl() . '" target="_blank">Profil</a></td>';
                     } else {
                         echo '<td>-</td>';
                     }
@@ -117,7 +117,7 @@ class ContactController extends AbstractLegacyShowController
 
                 if (filled($mail_subject) && filled($mail_text) && filled($sender)) {
                     $subject = "Kontakt-Anfrage: " . $mail_subject;
-                    $recipient = $admin->email;
+                    $recipient = $admin->getEmail();
 
                     // Text
                     $text = "Kontakt-Anfrage " . AppName::NAME . " " . $config->get('roundname') . "\n----------------------\n\n";
@@ -139,8 +139,8 @@ class ContactController extends AbstractLegacyShowController
                 }
             }
 
-            echo '<form action="' . $this->generateUrl('external.contact.message', ['adminId' => $admin->id]) . '" method="post"><div>';
-            tableStart('Nachricht an ' . $admin->nick . ' senden');
+            echo '<form action="' . $this->generateUrl('external.contact.message', ['adminId' => $admin->getId()]) . '" method="post"><div>';
+            tableStart('Nachricht an ' . $admin->getNick() . ' senden');
             echo '<tr><th>Absender E-Mail:</th><td><input type="email" name="mail_sender" value="' . $sender . '" size="50" autofocus required />';
             echo '</td></tr>';
             echo '<tr><th>Titel:</th><td><input type="text" name="mail_subject" value="' . $mail_subject . '" size="50" required /></td></tr>';
@@ -157,8 +157,8 @@ class ContactController extends AbstractLegacyShowController
 
     private function getAdmin(AdminUserRepository $adminUserRepo, int $adminId): ?AdminUser
     {
-        $admins = array_filter($adminUserRepo->findAll(), fn(AdminUser $admin) => $admin->isContact);
-        $admins = array_filter($admins, fn(AdminUser $admin) => $admin->id == $adminId);
+        $admins = array_filter($adminUserRepo->findAll(), fn(AdminUser $admin) => $admin->isIsContact());
+        $admins = array_filter($admins, fn(AdminUser $admin) => $admin->getId() == $adminId);
         return array_values($admins)[0] ?? null;
     }
 }

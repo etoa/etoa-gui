@@ -2,9 +2,9 @@
 
 namespace EtoA\Controller\Admin;
 
-use EtoA\Admin\AdminUser;
 use EtoA\Admin\AdminUserRepository;
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Entity\AdminUser;
 use EtoA\Form\Type\Admin\FirstAdminUserType;
 use EtoA\Form\Type\Admin\ResetPasswordType;
 use EtoA\HostCache\NetworkNameService;
@@ -60,7 +60,7 @@ class SecurityController extends AbstractController
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
 
-            $user = $this->adminUserRepository->findOneByNickAndEmail($admin->nick, $admin->email);
+            $user = $this->adminUserRepository->findOneByNickAndEmail($admin->getNick(), $admin->getEmail());
             if ($user === null) {
                 $this->addFlash('error', 'Dieser Benutzer existiert nicht!');
                 return $this->redirectToRoute('admin.login.reset');
@@ -75,9 +75,9 @@ class SecurityController extends AbstractController
                 'newPassword' => $newPassword,
                 'hostname' => $this->networkNameService->getHost($request->getClientIp()),
             ]);
-            $this->mailer->send("Neues Administrationspasswort", $emailText, $user->email);
+            $this->mailer->send("Neues Administrationspasswort", $emailText, $user->getEmail());
 
-            $this->logRepository->add(LogFacility::ADMIN, LogSeverity::INFO, "Der Administrator " . $user->nick . " (ID: " . $user->id . ") fordert per E-Mail (" . $user->email . ") von " . $_SERVER['REMOTE_ADDR'] . " aus ein neues Passwort an.");
+            $this->logRepository->add(LogFacility::ADMIN, LogSeverity::INFO, "Der Administrator " . $user->getNick() . " (ID: " . $user->getId() . ") fordert per E-Mail (" . $user->getEmail() . ") von " . $_SERVER['REMOTE_ADDR'] . " aus ein neues Passwort an.");
 
             $this->addFlash('success', 'Das Passwort wurde geändert und dir per Mail zugestellt!');
             return $this->redirectToRoute('admin.login');
@@ -99,11 +99,11 @@ class SecurityController extends AbstractController
         $form = $this->createForm(FirstAdminUserType::class, $newAdmin);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            $newAdmin->nick = $newAdmin->name;
-            $newAdmin->roles = ['master'];
+            $newAdmin->setNick($newAdmin->getName());
+            $newAdmin->setRoles(['master']);
             $this->adminUserRepository->save($newAdmin);
 
-            $hashPassword = $passwordHasher->hashPassword(new CurrentAdmin($newAdmin), $newAdmin->passwordString);
+            $hashPassword = $passwordHasher->hashPassword(new CurrentAdmin($newAdmin), $newAdmin->getPasswordString());
             $this->adminUserRepository->setPassword($newAdmin, $hashPassword);
 
             $this->addFlash('success', 'User erstellt');

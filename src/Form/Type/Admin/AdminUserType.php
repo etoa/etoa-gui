@@ -3,7 +3,7 @@
 namespace EtoA\Form\Type\Admin;
 
 use EtoA\Admin\AdminRoleManager;
-use EtoA\Admin\AdminUser;
+use EtoA\Entity\AdminUser;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
@@ -30,7 +30,7 @@ class AdminUserType extends AbstractType
             ->add('name', TextType::class, [
                 'label' => 'Realer Name',
                 'attr' => [
-                    'autofocus' => $admin?->id === null,
+                    'autofocus' => $admin?->getId() === null,
                 ]
             ])
             ->add('email', EmailType::class, [
@@ -40,7 +40,7 @@ class AdminUserType extends AbstractType
                 'label' => 'Nickname',
             ]);
 
-        if ($admin->id) {
+        if ($admin->getId()) {
             $builder
                 ->add('passwordString', PasswordType::class, [
                     'required' => false,
@@ -48,7 +48,7 @@ class AdminUserType extends AbstractType
                 ]);
         }
 
-        if ($admin->tfaSecret !== '') {
+        if ($admin->getTfaSecret() !== '') {
             $builder
                 ->add('tfa_remove', CheckboxType::class, [
                     'required' => false,

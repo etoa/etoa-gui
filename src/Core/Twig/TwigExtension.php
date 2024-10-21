@@ -3,8 +3,8 @@
 namespace EtoA\Core\Twig;
 
 use EtoA\Admin\AdminRoleManager;
-use EtoA\Admin\AdminUser;
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Entity\AdminUser;
 use EtoA\HostCache\NetworkNameService;
 use EtoA\Image\ImageUtil;
 use EtoA\Ranking\UserBannerService;
