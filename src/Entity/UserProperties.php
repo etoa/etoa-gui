@@ -10,10 +10,15 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Entity(repositoryClass: UserPropertiesRepository::class)]
 class UserProperties
 {
+    #[ORM\Id]
+    #[ORM\GeneratedValue(strategy: "AUTO")]
+    #[ORM\Column(type: "integer")]
+    private int $id;
+
     #[ORM\Column(type: "string")]
     private ?string $cssStyle;
 
-    #[ORM\Column(type: "int")]
+    #[ORM\Column(type: "integer")]
     private int $planetCircleWidth;
 
     #[ORM\Column(type: "string")]
@@ -34,10 +39,10 @@ class UserProperties
     #[ORM\Column(type: "boolean")]
     private bool $imageFilter;
 
-    #[ORM\Column(type: "string")]
+    #[ORM\Column(name:"msgsignature", type: "string")]
     private ?string $msgSignature;
 
-    #[ORM\Column(type: "boolean")]
+    #[ORM\Column(name:"msgcreation_preview", type: "boolean")]
     private bool $msgCreationPreview;
 
     #[ORM\Column(type: "boolean")]
@@ -49,28 +54,28 @@ class UserProperties
     #[ORM\Column(type: "boolean")]
     private bool $msgBlink;
 
-    #[ORM\Column(type: "int")]
+    #[ORM\Column(name:"spyship_id", type: "integer")]
     private int $spyShipId;
 
-    #[ORM\Column(type: "int")]
+    #[ORM\Column(name:"spyship_count", type: "integer")]
     private int $spyShipCount;
 
-    #[ORM\Column(type: "int")]
+    #[ORM\Column(name:"analyzeship_id", type: "integer")]
     private int $analyzeShipId;
 
-    #[ORM\Column(type: "int")]
+    #[ORM\Column(name:"analyzeship_count", type: "integer")]
     private int $analyzeShipCount;
 
-    #[ORM\Column(type: "int")]
+    #[ORM\Column(name:"exploreship_id", type: "integer")]
     private int $exploreShipId;
 
-    #[ORM\Column(type: "int")]
+    #[ORM\Column(name:"exploreship_count", type: "integer")]
     private int $exploreShipCount;
 
     #[ORM\Column(type: "boolean")]
     private bool $showCellreports;
 
-    #[ORM\Column(type: "boolean")]
+    #[ORM\Column(name:"havenships_buttons",type: "boolean")]
     private bool $havenShipsButtons;
 
     #[ORM\Column(type: "boolean")]
@@ -82,13 +87,13 @@ class UserProperties
     #[ORM\Column(type: "boolean")]
     private bool $smallResBox;
 
-    #[ORM\Column(type: "boolean")]
+    #[ORM\Column(name:"startup_chat",type: "boolean")]
     private bool $startUpChat;
 
     #[ORM\Column(type: "string")]
     private string $chatColor;
 
-    #[ORM\Column(type: "boolean")]
+    #[ORM\Column(name:"keybinds_enable",type: "boolean")]
     private bool $enableKeybinds;
 
     public function getCssStyle(): ?string
@@ -413,5 +418,10 @@ class UserProperties
         $this->enableKeybinds = $enableKeybinds;
 
         return $this;
+    }
+
+    public function getId(): ?int
+    {
+        return $this->id;
     }
 }

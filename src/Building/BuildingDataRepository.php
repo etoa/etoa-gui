@@ -3,7 +3,7 @@
 namespace EtoA\Building;
 
 use Doctrine\Persistence\ManagerRegistry;
-use EtoA\BuddyList\Buddy;
+use EtoA\Entity\Buddy;
 use EtoA\Core\AbstractRepository;
 
 class BuildingDataRepository extends AbstractRepository

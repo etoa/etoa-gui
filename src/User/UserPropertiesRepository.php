@@ -51,21 +51,12 @@ class UserPropertiesRepository extends AbstractRepository
 
     public function getProperties(int $userId): ?UserProperties
     {
-        $data = $this->createQueryBuilder('q')
-            ->select('*')
-            ->from('user_properties')
-            ->where('id = :userId')
-            ->setParameter('userId', $userId)
-            ->fetchAssociative();
-
-        return $data !== false ? new UserProperties($data) : null;
+        return $this->find($userId);
     }
 
     public function storeProperties(UserProperties $properties): void
     {
         $this->entityManager->persist($properties);
-
-        // actually executes the queries (i.e. the INSERT query)
         $this->entityManager->flush();
 
     }

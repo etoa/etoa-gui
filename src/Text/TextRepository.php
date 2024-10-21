@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace EtoA\Text;
 
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use EtoA\Core\AbstractRepository;
 use EtoA\Entity\Text;
@@ -13,7 +14,7 @@ class TextRepository extends AbstractRepository
     /** @var array<string, array<string, string>> */
     private array $textDef;
 
-    public function __construct(ManagerRegistry $registry)
+    public function __construct(ManagerRegistry $registry, private readonly EntityManagerInterface $entityManager)
     {
         parent::__construct($registry, Text::class);
         $this->textDef = fetchJsonConfig("texts.conf");
@@ -39,23 +40,7 @@ class TextRepository extends AbstractRepository
 
     public function save(Text $text): void
     {
-        $this->getConnection()
-            ->executeStatement(
-                "REPLACE INTO
-                    texts
-                (
-                    text_id,
-                    text_content,
-                    text_updated,
-                    text_enabled
-                )
-                VALUES (?, ?, UNIX_TIMESTAMP(), ?);",
-                [
-                    $text->id,
-                    $text->content,
-                    $text->enabled ? 1 : 0,
-                ]
-            );
+        $this->entityManager->flush($text);
     }
 
     public function enableText(string $id): void
@@ -97,8 +82,8 @@ class TextRepository extends AbstractRepository
     {
         $text = $this->find($key);
         if ($text !== null) {
-            if ($text->enabled && $text->content !== '') {
-                return $text->content;
+            if ($text->isEnabled() && $text->getContent() !== '') {
+                return $text->getContent();
             }
 
             return $default;

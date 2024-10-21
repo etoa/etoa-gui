@@ -100,14 +100,23 @@ class UserTwigSubscriber implements EventSubscriberInterface
                 $xajax = require_once $this->projectDir . '/src/xajax/xajax.inc.php';
         }
 
+
+        //TODO:refactor
+        /*
+         prev() - moves the internal pointer to, and outputs, the previous element in the array
+        current() - returns the value of the current element in an array
+        end() - moves the internal pointer to, and outputs, the last element in the array
+        reset() - moves the internal pointer to the first element of the array
+        each() - returns the current element key and value, and moves the internal pointer forward
+         */
         if ($cu->getData()->isSetup()) {
             $userPlanets = $this->planetRepository->getUserPlanets($cu->getId());
             $planets = [];
             $mainplanet = 0;
             foreach ($userPlanets as $planet) {
-                $planets[] = $planet->id;
-                if ($planet->mainPlanet) {
-                    $mainplanet = $planet->id;
+                $planets[] = $planet->getId();
+                if ($planet->isMainPlanet()) {
+                    $mainplanet = $planet->getId();
                 }
             }
 
@@ -126,9 +135,11 @@ class UserTwigSubscriber implements EventSubscriberInterface
             $pm = new \EtoA\Legacy\PlanetManager($planets, $this->planetRepository);
         }
 
+
+
         if (isset($cp, $pm)) {
             $currentPlanetData = [
-                'currentPlanetName' => $cp->name,
+                'currentPlanetName' => $cp->getName(),
                 'currentPlanetImage' => $cp->getImagePath('m'),
                 'planetList' => $pm->getLinkList($s->get('cpid')),
                 'nextPlanetId' => $pm->nextId($s->get('cpid')),
@@ -146,7 +157,7 @@ class UserTwigSubscriber implements EventSubscriberInterface
         }
 
         $globals = array_merge($currentPlanetData, [
-            'design' => $properties->cssStyle,
+            'design' => $properties->getCssStyle(),
             'gameTitle' => $this->versionService->getGameIdentifier(),
             'xajaxJS' => isset($xajax)?$xajax->getJavascript():null,
             'templateDir' => '/' .$this->designService->getCurrentDesign(),
@@ -154,11 +165,11 @@ class UserTwigSubscriber implements EventSubscriberInterface
             'ownFleetCount' => $ownFleetCount,
             'messages' => $newMessages,
             'newreports' => $newReports,
-            'blinkMessages' => $properties->msgBlink,
+            'blinkMessages' => $properties->isMsgBlink(),
             'buddys' => $this->buddyListRepository->countFriendsOnline($cu->getId()),
             'buddyreq' => $this->buddyListRepository->hasPendingFriendRequest($cu->getId()),
             'fleetAttack' => $this->foreignFleetLoader->getVisibleFleets($cu->getId())->aggressiveCount,
-            'enableKeybinds' => $properties->enableKeybinds,
+            'enableKeybinds' => $properties->isEnableKeybinds(),
             'isAdmin' => $cu->getData()->getAdmin(),
             'userPoints' => StringUtils::formatNumber($cu->getData()->getPoints()),
             'userNick' => $cu->getData()->getNick(),

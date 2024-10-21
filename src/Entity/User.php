@@ -21,6 +21,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(name: "user_id", type: "integer")]
     protected int $id;
 
+    #[ORM\JoinColumn(name: 'user_id', referencedColumnName: 'id')]
+    #[ORM\OneToOne(targetEntity: UserProperties::class)]
+    protected UserProperties $userProperties;
+
     #[ORM\Column(name: "user_name", type: 'string', length: 180)]
     protected string $name;
 
@@ -1030,6 +1034,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setSpecialist(?Specialist $specialist): static
     {
         $this->specialist = $specialist;
+
+        return $this;
+    }
+
+    public function getUserProperties(): ?UserProperties
+    {
+        return $this->userProperties;
+    }
+
+    public function setUserProperties(?UserProperties $userProperties): static
+    {
+        $this->userProperties = $userProperties;
 
         return $this;
     }
