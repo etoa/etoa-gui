@@ -4,10 +4,18 @@ declare(strict_types=1);
 
 namespace EtoA\Help\TicketSystem;
 
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\Persistence\ManagerRegistry;
 use EtoA\Core\AbstractRepository;
+use EtoA\Entity\Ticket;
 
 class TicketRepository extends AbstractRepository
 {
+    public function __construct(ManagerRegistry $registry, EntityManagerInterface $entityManager)
+    {
+        parent::__construct($registry, Ticket::class);
+    }
+
     public function countNew(): int
     {
         return (int) $this->createQueryBuilder('q')
@@ -36,54 +44,10 @@ class TicketRepository extends AbstractRepository
 
     public function persist(Ticket $ticket): bool
     {
-        $ticket->timestamp = time();
+        $ticket->setTimestamp(time());
 
-        if ($ticket->id > 0) {
-            $affected = $this->createQueryBuilder('q')
-                ->update('tickets')
-                ->set('status', ':status')
-                ->set('solution', ':solution')
-                ->set('cat_id', ':cat_id')
-                ->set('admin_id', ':admin_id')
-                ->set('admin_comment', ':admin_comment')
-                ->set('timestamp', ':timestamp')
-                ->where('id = :ticket_id')
-                ->setParameters([
-                    'ticket_id' => $ticket->id,
-                    'status' => $ticket->status,
-                    'solution' => $ticket->solution,
-                    'cat_id' => $ticket->catId,
-                    'admin_id' => $ticket->adminId,
-                    'admin_comment' => $ticket->adminComment,
-                    'timestamp' => $ticket->timestamp,
-                ])
-                ->executeQuery()
-                ->rowCount();
-
-            return $affected > 0;
-        }
-        $this->createQueryBuilder('q')
-            ->insert('tickets')
-            ->values([
-                'status' => ':status',
-                'solution' => ':solution',
-                'user_id' => ':user_id',
-                'cat_id' => ':cat_id',
-                'admin_id' => ':admin_id',
-                'admin_comment' => ':admin_comment',
-                'timestamp' => ':timestamp',
-            ])
-            ->setParameters([
-                'status' => $ticket->status,
-                'solution' => $ticket->solution,
-                'user_id' => $ticket->userId,
-                'cat_id' => $ticket->catId,
-                'admin_id' => $ticket->adminId ?? 0,
-                'admin_comment' => $ticket->adminComment,
-                'timestamp' => $ticket->timestamp,
-            ])
-            ->executeQuery();
-        $ticket->id = (int) $this->getConnection()->lastInsertId();
+        $this->entityManager->persist($ticket);
+        $this->entityManager->flush();
 
         return true;
     }

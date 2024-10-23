@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace EtoA\Help\TicketSystem;
 
 use EtoA\Admin\AdminUserRepository;
+use EtoA\Entity\Ticket;
 use EtoA\Entity\TicketMessage;
 use EtoA\Message\MessageCategoryId;
 use EtoA\Message\MessageRepository;
@@ -37,36 +38,36 @@ class TicketService
     public function create(int $userId, int $catId, string $message): Ticket
     {
         $ticket = new Ticket();
-        $ticket->solution = TicketSolution::OPEN;
-        $ticket->status = TicketStatus::NEW;
-        $ticket->userId = $userId;
-        $ticket->catId = $catId;
+        $ticket->setSolution(TicketSolution::OPEN);
+        $ticket->setStatus(TicketStatus::NEW);
+        $ticket->setUserId($userId);
+        $ticket->setCatId($catId);
         $this->ticketRepo->persist($ticket);
 
         $ticketMessage = new TicketMessage();
-        $ticketMessage->ticketId = $ticket->id;
-        $ticketMessage->userId = $ticket->userId;
-        $ticketMessage->message = $message;
+        $ticketMessage->setTicketId($ticket->getId());
+        $ticketMessage->setUserId($ticket->getUserId());
+        $ticketMessage->setMessage($message);
         $this->messageRepo->create($ticketMessage);
 
         $text = "Hallo!
 
-Dein [page ticket id=" . $ticket->id . "]Ticket #" . $ticket->getIdString() . "[/page] wurde erfolgreich erstellt.
+Dein [page ticket id=" . $ticket->getId() . "]Ticket #" . $ticket->getIdString() . "[/page] wurde erfolgreich erstellt.
 Es wird sich in Kürze ein Admin um dein Anliegen kümmern.
 
 Dein Admin-Team";
-        $this->userMessageRepo->createSystemMessage($ticket->userId, MessageCategoryId::USER, "Dein Ticket " . $ticket->getIdString() . ' wurde erstellt', $text);
+        $this->userMessageRepo->createSystemMessage($ticket->getUserId(), MessageCategoryId::USER, "Dein Ticket " . $ticket->getIdString() . ' wurde erstellt', $text);
 
         return $ticket;
     }
 
     public function assign(Ticket $ticket, int $adminId): bool
     {
-        $ticket->adminId = $adminId;
-        $ticket->status = TicketStatus::ASSIGNED;
+        $ticket->setAdminId($adminId);
+        $ticket->setStatus(TicketStatus::ASSIGNED);
         $changed = $this->ticketRepo->persist($ticket);
         if ($changed) {
-            $this->addMessage($ticket, "Das Ticket wurde dem Administrator " . $this->adminUserRepo->getNick($ticket->adminId) . " zugewiesen.");
+            $this->addMessage($ticket, "Das Ticket wurde dem Administrator " . $this->adminUserRepo->getNick($ticket->getAdminId()) . " zugewiesen.");
         }
 
         return $changed;
@@ -74,12 +75,12 @@ Dein Admin-Team";
 
     public function close(Ticket $ticket, string $solution): bool
     {
-        if ($ticket->status == TicketStatus::ASSIGNED) {
-            $ticket->status = TicketStatus::CLOSED;
-            $ticket->solution = $solution;
+        if ($ticket->getStatus() == TicketStatus::ASSIGNED) {
+            $ticket->setStatus(TicketStatus::CLOSED);
+            $ticket->setSolution($solution);
             $changed = $this->ticketRepo->persist($ticket);
             if ($changed) {
-                $this->addMessage($ticket, "Das Ticket wurde geschlossen und als " . TicketSolution::label($ticket->solution) . " gekennzeichnet.");
+                $this->addMessage($ticket, "Das Ticket wurde geschlossen und als " . TicketSolution::label($ticket->getSolution()) . " gekennzeichnet.");
             }
 
             return $changed;
@@ -90,10 +91,10 @@ Dein Admin-Team";
 
     public function reopen(Ticket $ticket): bool
     {
-        if ($ticket->status == TicketStatus::CLOSED) {
-            $ticket->adminId = 0;
-            $ticket->status = TicketStatus::NEW;
-            $ticket->solution = TicketSolution::OPEN;
+        if ($ticket->getStatus() == TicketStatus::CLOSED) {
+            $ticket->setAdminId(0);
+            $ticket->setStatus(TicketStatus::NEW);
+            $ticket->setSolution(TicketSolution::OPEN);
             $changed = $this->ticketRepo->persist($ticket);
             if ($changed) {
                 $this->addMessage($ticket, "Das Ticket wurde wieder eröffnet.");
@@ -101,9 +102,9 @@ Dein Admin-Team";
 
             return $changed;
         }
-        if ($ticket->status == TicketStatus::ASSIGNED) {
-            $ticket->adminId = 0;
-            $ticket->status = TicketStatus::NEW;
+        if ($ticket->getStatus() == TicketStatus::ASSIGNED) {
+            $ticket->setAdminId(0);
+            $ticket->setStatus(TicketStatus::NEW);
             $changed = $this->ticketRepo->persist($ticket);
             if ($changed) {
                 $this->addMessage($ticket, "Der Ticketadministrator hat das Ticket wieder als Neu markiert.");
@@ -124,7 +125,7 @@ Dein Admin-Team";
         foreach ($ticketIds as $id) {
             $message = $this->messageRepo->findLastMessageForTicket($id);
             if ($message != null) {
-                if ($message->adminId > 0 && $message->timestamp < $threshold) {
+                if ($message->getAdminId() > 0 && $message->getTimestamp() < $threshold) {
                     $ticket = $this->ticketRepo->find($id);
                     $this->addMessage($ticket, "Das Ticket wurde automatisch geschlossen, da wir innerhalb der letzten 72 Stunden nichts mehr von dir gehört haben.");
                     $this->close($ticket, "solved");
@@ -139,21 +140,21 @@ Dein Admin-Team";
     public function addMessage(Ticket $ticket, string $message, int $userId = 0, int $adminId = 0, bool $informUser = true): TicketMessage
     {
         $ticketMessage = new TicketMessage();
-        $ticketMessage->ticketId = $ticket->id;
-        $ticketMessage->userId = $userId;
-        $ticketMessage->adminId = $adminId;
-        $ticketMessage->message = $message;
+        $ticketMessage->setTicketId( $ticket->getId());
+        $ticketMessage->setUserId( $userId);
+        $ticketMessage->setAdminId( $adminId);
+        $ticketMessage->setMessage($message);
         $this->messageRepo->create($ticketMessage);
 
-        if ($informUser && $ticketMessage->userId == 0) {
+        if ($informUser && $ticketMessage->getUserId() == 0) {
             $text = "Hallo!
 
-Dein [page ticket id=" . $ticket->id . "]Ticket " . $ticket->getIdString() . "[/page] wurde aktualisiert!
+Dein [page ticket id=" . $ticket->getId() . "]Ticket " . $ticket->getIdString() . "[/page] wurde aktualisiert!
 
-[page ticket id=" . $ticket->id . "]Klicke HIER um die Änderungen anzusehen.[/page]
+[page ticket id=" . $ticket->getId() . "]Klicke HIER um die Änderungen anzusehen.[/page]
 
 Dein Admin-Team";
-            $this->userMessageRepo->createSystemMessage($ticket->userId, MessageCategoryId::USER, "Dein Ticket " . $ticket->getIdString() . ' wurde aktualisiert', $text);
+            $this->userMessageRepo->createSystemMessage($ticket->getUserId(), MessageCategoryId::USER, "Dein Ticket " . $ticket->getIdString() . ' wurde aktualisiert', $text);
         }
 
         return $ticketMessage;
@@ -164,16 +165,16 @@ Dein Admin-Team";
      */
     public function getMessages(Ticket $ticket): array
     {
-        return $this->messageRepo->findByTicket($ticket->id);
+        return $this->messageRepo->findByTicket($ticket->getId());
     }
 
     public function getAuthorNick(TicketMessage $message): string
     {
-        if ($message->userId > 0) {
-            return $this->userRepo->getNick($message->userId);
+        if ($message->getUserId() > 0) {
+            return $this->userRepo->getNick($message->getUserId());
         }
-        if ($message->adminId > 0) {
-            return $this->adminUserRepo->getNick($message->adminId) . " (Admin)";
+        if ($message->getAdminId() > 0) {
+            return $this->adminUserRepo->getNick($message->getAdminId()) . " (Admin)";
         }
 
         return "System";
