@@ -2,10 +2,17 @@
 
 namespace EtoA\Defense;
 
+use Doctrine\Persistence\ManagerRegistry;
 use EtoA\Core\AbstractRepository;
+use EtoA\Entity\User;
 
 class DefenseCategoryRepository extends AbstractRepository
 {
+    public function __construct(ManagerRegistry $registry)
+    {
+        parent::__construct($registry, DefenseCategory::class);
+    }
+
     /**
      * @return DefenseCategory[]
      */
