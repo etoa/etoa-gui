@@ -2,10 +2,17 @@
 
 namespace EtoA\Missile;
 
+use Doctrine\Persistence\ManagerRegistry;
 use EtoA\Core\AbstractRepository;
+use EtoA\Entity\Missile;
 
 class MissileDataRepository extends AbstractRepository
 {
+    public function __construct(ManagerRegistry $registry)
+    {
+        parent::__construct($registry, Missile::class);
+    }
+
     /**
      * @return array<int, string>
      */

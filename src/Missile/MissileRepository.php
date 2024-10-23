@@ -2,8 +2,16 @@
 
 namespace EtoA\Missile;
 
+use Doctrine\Persistence\ManagerRegistry;
+use EtoA\Entity\MissileListItem;
+
 class MissileRepository extends \EtoA\Core\AbstractRepository
 {
+    public function __construct(ManagerRegistry $registry)
+    {
+        parent::__construct($registry, MissileListItem::class);
+    }
+
     public function addMissile(int $missileId, int $amount, int $userId, int $entityId): void
     {
         $hasMissiles = (bool) $this->createQueryBuilder('q')

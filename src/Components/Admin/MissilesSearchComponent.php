@@ -4,10 +4,10 @@ namespace EtoA\Components\Admin;
 
 use EtoA\Components\Helper\SearchComponentTrait;
 use EtoA\Components\Helper\SearchResult;
+use EtoA\Entity\MissileListItem;
 use EtoA\Form\Request\Admin\MissilesSearchRequest;
 use EtoA\Form\Type\Admin\MissileSearchType;
 use EtoA\Missile\MissileDataRepository;
-use EtoA\Missile\MissileListItem;
 use EtoA\Missile\MissileListSearch;
 use EtoA\Missile\MissileRepository;
 use EtoA\Universe\Entity\EntityLabel;

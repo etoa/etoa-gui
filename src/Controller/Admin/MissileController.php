@@ -2,11 +2,11 @@
 
 namespace EtoA\Controller\Admin;
 
+use EtoA\Entity\MissileListItem;
 use EtoA\Form\Type\Admin\AddMissileListType;
 use EtoA\Form\Type\Admin\MissileSearchType;
 use EtoA\Form\Type\Admin\ObjectRequirementListType;
 use EtoA\Missile\MissileDataRepository;
-use EtoA\Missile\MissileListItem;
 use EtoA\Missile\MissileRepository;
 use EtoA\Missile\MissileRequirementRepository;
 use EtoA\Requirement\ObjectRequirement;
@@ -38,10 +38,10 @@ class MissileController extends AbstractAdminController
         $addForm = $this->createForm(AddMissileListType::class, $addItem);
         $addForm->handleRequest($request);
         if ($addForm->isSubmitted() && $addForm->isValid()) {
-            $userId = $this->planetRepository->getPlanetUserId($addItem->entityId);
-            $this->missileRepository->addMissile($addItem->missileId, $addItem->count, $userId, $addItem->entityId);
+            $userId = $this->planetRepository->getPlanetUserId($addItem->getEntityId());
+            $this->missileRepository->addMissile($addItem->getMissileId(), $addItem->getCount(), $userId, $addItem->getEntityId());
 
-            $this->addFlash('success', sprintf('%s Raketen hinzugefügt', StringUtils::formatNumber($addItem->count)));
+            $this->addFlash('success', sprintf('%s Raketen hinzugefügt', StringUtils::formatNumber($addItem->getCount())));
         }
 
         return $this->render('admin/missiles/search.html.twig', [
@@ -60,8 +60,8 @@ class MissileController extends AbstractAdminController
         $requirements = [];
         $names = [];
         foreach ($missiles as $missile) {
-            $names[$missile->id] = $missile->name;
-            $requirements[$missile->id] = $collection->getAll($missile->id);
+            $names[$missile->getId()] = $missile->getName();
+            $requirements[$missile->getId()] = $collection->getAll($missile->getId());
         }
 
         $requirementsCopy = deep_copy($requirements);

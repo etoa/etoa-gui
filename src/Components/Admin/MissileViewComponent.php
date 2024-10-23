@@ -3,8 +3,8 @@
 namespace EtoA\Components\Admin;
 
 use EtoA\Components\Helper\AbstractEditComponent;
+use EtoA\Entity\MissileListItem;
 use EtoA\Form\Type\Admin\EditMissileListType;
-use EtoA\Missile\MissileListItem;
 use EtoA\Missile\MissileListSearch;
 use EtoA\Missile\MissileRepository;
 use Symfony\Component\Form\FormInterface;
@@ -30,7 +30,7 @@ class MissileViewComponent extends AbstractEditComponent
     {
         $this->item = $item;
         if ($item !== null) {
-            $this->itemId = $item->id;
+            $this->itemId = $item->getId();
         }
     }
 
@@ -62,6 +62,6 @@ class MissileViewComponent extends AbstractEditComponent
 
     protected function storeItem(): void
     {
-        $this->missileRepository->setMissileCount($this->itemId, $this->item->count);
+        $this->missileRepository->setMissileCount($this->itemId, $this->item->getCount());
     }
 }
