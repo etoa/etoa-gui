@@ -3,9 +3,16 @@
 namespace EtoA\Technology;
 
 use EtoA\Core\AbstractRepository;
+use EtoA\Entity\TechnologyType;
+use Doctrine\Persistence\ManagerRegistry;
 
 class TechnologyTypeRepository extends AbstractRepository
 {
+    public function __construct(ManagerRegistry $registry)
+    {
+        parent::__construct($registry, TechnologyType::class);
+    }
+
     /**
      * @return TechnologyType[]
      */
