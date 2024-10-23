@@ -6,13 +6,14 @@ namespace EtoA\Building;
 
 use Doctrine\DBAL\ArrayParameterType;
 use Doctrine\DBAL\Query\QueryBuilder;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use EtoA\Core\AbstractRepository;
-use EtoA\Entity\BuildingPoint;
+use EtoA\Entity\BuildingListItem;
 
 class BuildingListItemRepository extends AbstractRepository
 {
-    public function __construct(ManagerRegistry $registry)
+    public function __construct(ManagerRegistry $registry, private readonly EntityManagerInterface $entityManager)
     {
         parent::__construct($registry, BuildingListItem::class);
     }
@@ -345,35 +346,10 @@ class BuildingListItemRepository extends AbstractRepository
         return $qry;
     }
 
-    public function addBuilding(int $buildingId, int $level, int $userId, int $entityId, int $buildType = 0, int $startTime = 0, int $endTime = 0): void
+    public function addBuilding(BuildingListItem $buildingListItem): void
     {
-        $this->getConnection()->executeQuery('INSERT INTO buildlist (
-                buildlist_user_id,
-                buildlist_entity_id,
-                buildlist_building_id,
-                buildlist_current_level,
-                buildlist_build_type,
-                buildlist_build_start_time,
-                buildlist_build_end_time
-            ) VALUES (
-                :userId,
-                :entityId,
-                :buildingId,
-                :level,
-                :buildType,
-                :startTime,
-                :endTime
-            ) ON DUPLICATE KEY
-            UPDATE buildlist_current_level = :level;
-        ', [
-            'userId' => $userId,
-            'level' => max(0, $level),
-            'entityId' => $entityId,
-            'buildingId' => $buildingId,
-            'buildType' => $buildType,
-            'startTime' => $startTime,
-            'endTime' => $endTime,
-        ]);
+        $this->entityManager->persist($buildingListItem);
+        $this->entityManager->flush();
     }
 
     /**
@@ -495,37 +471,8 @@ class BuildingListItemRepository extends AbstractRepository
 
     public function save(BuildingListItem $item): void
     {
-        $this->createQueryBuilder('q')
-            ->update('buildlist')
-            ->set('buildlist_user_id', ':userId')
-            ->set('buildlist_building_id', ':buildingId')
-            ->set('buildlist_entity_id', ':entityId')
-            ->set('buildlist_current_level', ':currentLevel')
-            ->set('buildlist_build_type', ':buildType')
-            ->set('buildlist_build_start_time', ':startTime')
-            ->set('buildlist_build_end_time', ':endTime')
-            ->set('buildlist_prod_percent', ':prodPercent')
-            ->set('buildlist_people_working', ':peopleWorking')
-            ->set('buildlist_people_working_status', ':peopleWorkingStatus')
-            ->set('buildlist_deactivated', ':deactivated')
-            ->set('buildlist_cooldown', ':cooldown')
-            ->where('buildlist_id = :id')
-            ->setParameters([
-                'id' => $item->id,
-                'userId' => $item->userId,
-                'buildingId' => $item->buildingId,
-                'entityId' => $item->entityId,
-                'currentLevel' => $item->currentLevel,
-                'buildType' => $item->buildType,
-                'startTime' => $item->startTime,
-                'endTime' => $item->endTime,
-                'prodPercent' => $item->prodPercent,
-                'peopleWorking' => $item->peopleWorking,
-                'peopleWorkingStatus' => $item->peopleWorkingStatus,
-                'deactivated' => $item->deactivated,
-                'cooldown' => $item->cooldown,
-            ])
-            ->executeQuery();
+        $this->entityManager->persist($item);
+        $this->entityManager->flush();
     }
 
     public function getPeopleWorking(int $entityId, bool $onlyWorkingStatus = false): PeopleWorking

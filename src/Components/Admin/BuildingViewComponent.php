@@ -3,9 +3,9 @@
 namespace EtoA\Components\Admin;
 
 use EtoA\Building\BuildingBuildType;
-use EtoA\Building\BuildingListItem;
 use EtoA\Building\BuildingListItemRepository;
 use EtoA\Components\Helper\AbstractEditComponent;
+use EtoA\Entity\BuildingListItem;
 use EtoA\Form\Type\Admin\EditBuildingType;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;

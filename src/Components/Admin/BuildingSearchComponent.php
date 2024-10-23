@@ -3,11 +3,11 @@
 namespace EtoA\Components\Admin;
 
 use EtoA\Building\BuildingDataRepository;
-use EtoA\Building\BuildingListItem;
-use EtoA\Building\BuildingListItemSearch;
 use EtoA\Building\BuildingListItemRepository;
+use EtoA\Building\BuildingListItemSearch;
 use EtoA\Components\Helper\SearchComponentTrait;
 use EtoA\Components\Helper\SearchResult;
+use EtoA\Entity\BuildingListItem;
 use EtoA\Form\Request\Admin\BuildingSearchRequest;
 use EtoA\Form\Type\Admin\BuildingSearchType;
 use EtoA\Universe\Entity\EntityLabel;
