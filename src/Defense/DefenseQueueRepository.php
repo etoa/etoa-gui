@@ -2,10 +2,17 @@
 
 namespace EtoA\Defense;
 
+use Doctrine\Persistence\ManagerRegistry;
 use EtoA\Core\AbstractRepository;
+use EtoA\Entity\DefenseQueueItem;
 
 class DefenseQueueRepository extends AbstractRepository
 {
+    public function __construct(ManagerRegistry $registry)
+    {
+        parent::__construct($registry, DefenseQueueItem::class);
+    }
+
     public function add(int $userId, int $defenseId, int $entityId, int $count, int $startTime, int $endTime, int $objectTime): int
     {
         $this->createQueryBuilder('q')

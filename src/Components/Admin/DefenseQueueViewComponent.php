@@ -3,9 +3,9 @@
 namespace EtoA\Components\Admin;
 
 use EtoA\Components\Helper\AbstractEditComponent;
-use EtoA\Defense\DefenseQueueItem;
 use EtoA\Defense\DefenseQueueRepository;
 use EtoA\Defense\DefenseRepository;
+use EtoA\Entity\DefenseQueueItem;
 use EtoA\Form\Type\Admin\EditDefenseQueueType;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
