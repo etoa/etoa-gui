@@ -22,9 +22,9 @@ class DesignService
         $properties = $this->userPropertiesRepository->getOrCreateProperties($cu->getId());
 
         $design = Design::DIRECTORY . "/official/" . $this->config->get('default_css_style');
-        if (filled($properties->cssStyle)) {
-            if (is_dir(Design::DIRECTORY . "/official/" . $properties->cssStyle)) {
-                $design = Design::DIRECTORY . "/official/" . $properties->cssStyle;
+        if (filled($properties->getCssStyle())) {
+            if (is_dir(Design::DIRECTORY . "/official/" . $properties->getCssStyle())) {
+                $design = Design::DIRECTORY . "/official/" . $properties->getCssStyle();
             }
         }
 

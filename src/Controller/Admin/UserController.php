@@ -10,6 +10,7 @@ use EtoA\Building\BuildingDataRepository;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Defense\DefenseDataRepository;
 use EtoA\Design\DesignsService;
+use EtoA\Entity\UserSitting;
 use EtoA\Form\Request\Admin\UserCreateRequest;
 use EtoA\Form\Request\Admin\UserLogEntryRequest;
 use EtoA\Form\Type\Admin\ManualUserLogEntryType;
@@ -44,7 +45,6 @@ use EtoA\User\UserRatingRepository;
 use EtoA\User\UserRatingSearch;
 use EtoA\User\UserRepository;
 use EtoA\User\UserService;
-use EtoA\User\UserSitting;
 use EtoA\User\UserSittingRepository;
 use EtoA\User\UserWarningRepository;
 use Exception;
@@ -414,107 +414,107 @@ class UserController extends AbstractAdminController
             $val_time = [];
             foreach ($userPlanets as $planet) {
                 //Speichert die aktuellen Rohstoffe in ein Array
-                $val_res[$planet->id][0] = floor($planet->resMetal);
-                $val_res[$planet->id][1] = floor($planet->resCrystal);
-                $val_res[$planet->id][2] = floor($planet->resPlastic);
-                $val_res[$planet->id][3] = floor($planet->resFuel);
-                $val_res[$planet->id][4] = floor($planet->resFood);
-                $val_res[$planet->id][5] = floor($planet->people);
+                $val_res[$planet->getId()][0] = floor($planet->getResMetal());
+                $val_res[$planet->getId()][1] = floor($planet->getResCrystal());
+                $val_res[$planet->getId()][2] = floor($planet->getResPlastic());
+                $val_res[$planet->getId()][3] = floor($planet->getResFuel());
+                $val_res[$planet->getId()][4] = floor($planet->getResFood());
+                $val_res[$planet->getId()][5] = floor($planet->getPeople());
 
                 for ($x = 0; $x < 6; $x++) {
-                    $max_res[$x] = max($max_res[$x], $val_res[$planet->id][$x]);
-                    $min_res[$x] = min($min_res[$x], $val_res[$planet->id][$x]);
-                    $tot_res[$x] += $val_res[$planet->id][$x];
+                    $max_res[$x] = max($max_res[$x], $val_res[$planet->getId()][$x]);
+                    $min_res[$x] = min($min_res[$x], $val_res[$planet->getId()][$x]);
+                    $tot_res[$x] += $val_res[$planet->getId()][$x];
                 }
 
                 //Speichert die aktuellen Rohstoffproduktionen in ein Array
-                $val_prod[$planet->id][0] = floor($planet->prodMetal);
-                $val_prod[$planet->id][1] = floor($planet->prodCrystal);
-                $val_prod[$planet->id][2] = floor($planet->prodPlastic);
-                $val_prod[$planet->id][3] = floor($planet->prodFuel);
-                $val_prod[$planet->id][4] = floor($planet->prodFood);
-                $val_prod[$planet->id][5] = floor($planet->prodPeople);
+                $val_prod[$planet->getId()][0] = floor($planet->getProdMetal());
+                $val_prod[$planet->getId()][1] = floor($planet->getStoreCrystal());
+                $val_prod[$planet->getId()][2] = floor($planet->getProdPlastic());
+                $val_prod[$planet->getId()][3] = floor($planet->getProdFuel());
+                $val_prod[$planet->getId()][4] = floor($planet->getProdFood());
+                $val_prod[$planet->getId()][5] = floor($planet->getProdPeople());
 
                 for ($x = 0; $x < 6; $x++) {
-                    $max_prod[$x] = max($max_prod[$x], $val_prod[$planet->id][$x]);
-                    $min_prod[$x] = min($min_prod[$x], $val_prod[$planet->id][$x]);
-                    $tot_prod[$x] += $val_prod[$planet->id][$x];
+                    $max_prod[$x] = max($max_prod[$x], $val_prod[$planet->getId()][$x]);
+                    $min_prod[$x] = min($min_prod[$x], $val_prod[$planet->getId()][$x]);
+                    $tot_prod[$x] += $val_prod[$planet->getId()][$x];
                 }
 
                 //Speichert die aktuellen Speicher in ein Array
-                $val_store[$planet->id][0] = floor($planet->storeMetal);
-                $val_store[$planet->id][1] = floor($planet->storeCrystal);
-                $val_store[$planet->id][2] = floor($planet->storePlastic);
-                $val_store[$planet->id][3] = floor($planet->storeFuel);
-                $val_store[$planet->id][4] = floor($planet->storeFood);
-                $val_store[$planet->id][5] = floor($planet->peoplePlace);
+                $val_store[$planet->getId()][0] = floor($planet->getStoreMetal());
+                $val_store[$planet->getId()][1] = floor($planet->getStoreCrystal());
+                $val_store[$planet->getId()][2] = floor($planet->getStorePlastic());
+                $val_store[$planet->getId()][3] = floor($planet->getStoreFuel());
+                $val_store[$planet->getId()][4] = floor($planet->getStoreFood());
+                $val_store[$planet->getId()][5] = floor($planet->getPeoplePlace());
 
                 //Berechnet die dauer bis die Speicher voll sind (zuerst prüfen ob Division By Zero!)
 
                 //Titan
-                if ($planet->prodMetal > 0) {
-                    if ($planet->storeMetal - $planet->resMetal > 0) {
-                        $val_time[$planet->id][0] = ceil(($planet->storeMetal - $planet->resMetal) / $planet->prodMetal * 3600);
+                if ($planet->getProdMetal() > 0) {
+                    if ($planet->getStoreMetal() - $planet->getResMetal() > 0) {
+                        $val_time[$planet->getId()][0] = ceil(($planet->getStoreMetal() - $planet->getResMetal()) / $planet->getProdMetal() * 3600);
                     } else {
-                        $val_time[$planet->id][0] = 0;
+                        $val_time[$planet->getId()][0] = 0;
                     }
                 } else {
-                    $val_time[$planet->id][0] = 0;
+                    $val_time[$planet->getId()][0] = 0;
                 }
 
                 //Silizium
-                if ($planet->prodCrystal > 0) {
-                    if ($planet->storeCrystal - $planet->resCrystal > 0) {
-                        $val_time[$planet->id][1] = ceil(($planet->storeCrystal - $planet->resCrystal) / $planet->prodCrystal * 3600);
+                if ($planet->getProdCrystal() > 0) {
+                    if ($planet->getStoreCrystal() - $planet->getResCrystal() > 0) {
+                        $val_time[$planet->getId()][1] = ceil(($planet->getStoreCrystal() - $planet->getResCrystal()) / $planet->getProdCrystal() * 3600);
                     } else {
-                        $val_time[$planet->id][1] = 0;
+                        $val_time[$planet->getId()][1] = 0;
                     }
                 } else {
-                    $val_time[$planet->id][1] = 0;
+                    $val_time[$planet->getId()][1] = 0;
                 }
 
                 //PVC
-                if ($planet->prodPlastic > 0) {
-                    if ($planet->storePlastic - $planet->resPlastic > 0) {
-                        $val_time[$planet->id][2] = ceil(($planet->storePlastic - $planet->resPlastic) / $planet->prodPlastic * 3600);
+                if ($planet->getProdPlastic() > 0) {
+                    if ($planet->getStorePlastic() - $planet->getResPlastic() > 0) {
+                        $val_time[$planet->getId()][2] = ceil(($planet->getStorePlastic() - $planet->getResPlastic()) / $planet->getProdPlastic() * 3600);
                     } else {
-                        $val_time[$planet->id][2] = 0;
+                        $val_time[$planet->getId()][2] = 0;
                     }
                 } else {
-                    $val_time[$planet->id][2] = 0;
+                    $val_time[$planet->getId()][2] = 0;
                 }
 
                 //Tritium
-                if ($planet->prodFuel > 0) {
-                    if ($planet->storeFuel - $planet->resFuel > 0) {
-                        $val_time[$planet->id][3] = ceil(($planet->storeFuel - $planet->resFuel) / $planet->prodFuel * 3600);
+                if ($planet->getProdFuel() > 0) {
+                    if ($planet->getStoreFuel() - $planet->getResFuel() > 0) {
+                        $val_time[$planet->getId()][3] = ceil(($planet->getStoreFuel() - $planet->getResFuel()) / $planet->getProdFuel() * 3600);
                     } else {
-                        $val_time[$planet->id][3] = 0;
+                        $val_time[$planet->getId()][3] = 0;
                     }
                 } else {
-                    $val_time[$planet->id][3] = 0;
+                    $val_time[$planet->getId()][3] = 0;
                 }
 
                 //Nahrung
-                if ($planet->prodFood > 0) {
-                    if ($planet->storeFood - $planet->resFood > 0) {
-                        $val_time[$planet->id][4] = ceil(($planet->storeFood - $planet->resFood) / $planet->prodFood * 3600);
+                if ($planet->getProdFood() > 0) {
+                    if ($planet->getStoreFood() - $planet->getResFood() > 0) {
+                        $val_time[$planet->getId()][4] = ceil(($planet->getStoreFood() - $planet->getResFood()) / $planet->getProdFood() * 3600);
                     } else {
-                        $val_time[$planet->id][4] = 0;
+                        $val_time[$planet->getId()][4] = 0;
                     }
                 } else {
-                    $val_time[$planet->id][4] = 0;
+                    $val_time[$planet->getId()][4] = 0;
                 }
 
                 //Bewohner
-                if ($planet->prodPeople > 0) {
-                    if ($planet->peoplePlace - $planet->people > 0) {
-                        $val_time[$planet->id][5] = ceil(($planet->peoplePlace - $planet->people) / $planet->prodPeople * 3600);
+                if ($planet->getProdPeople() > 0) {
+                    if ($planet->getPeoplePlace() - $planet->getPeople() > 0) {
+                        $val_time[$planet->getId()][5] = ceil(($planet->getPeoplePlace() - $planet->getPeople()) / $planet->getProdPeople() * 3600);
                     } else {
-                        $val_time[$planet->id][5] = 0;
+                        $val_time[$planet->getId()][5] = 0;
                     }
                 } else {
-                    $val_time[$planet->id][5] = 0;
+                    $val_time[$planet->getId()][5] = 0;
                 }
             }
         }
@@ -527,12 +527,12 @@ class UserController extends AbstractAdminController
         foreach ($userPlanets as $planet) {
             // TODO
             //Speichert die aktuellen Energieproduktionen in ein Array (Bewohnerproduktion [5] wird überschrieben)
-            $val_prod[$planet->id][5] = floor($planet->prodPower);
+            $val_prod[$planet->getId()][5] = floor($planet->getProdPower());
 
             // Gibt Min. / Max. aus
-            $max_prod[5] = max($max_prod[5], $val_prod[$planet->id][5]);
-            $min_prod[5] = min($min_prod[5], $val_prod[$planet->id][5]);
-            $tot_prod[5] += $val_prod[$planet->id][5];
+            $max_prod[5] = max($max_prod[5], $val_prod[$planet->getId()][5]);
+            $min_prod[5] = min($min_prod[5], $val_prod[$planet->getId()][5]);
+            $tot_prod[5] += $val_prod[$planet->getId()][5];
         }
 
         $buildLogs = $this->gameLogRepository->searchLogs(GameLogSearch::create()->userId($id)->facility(GameLogFacility::BUILD), 5);
@@ -890,7 +890,7 @@ class UserController extends AbstractAdminController
         }
 
         $userSittings = $this->userSittingRepository->getWhereUser($user->getId());
-        $used_days = array_reduce($userSittings, fn($carry, UserSitting $entry) => $carry + (($entry->dateTo - $entry->dateFrom) / 86400), 0);
+        $used_days = array_reduce($userSittings, fn($carry, UserSitting $entry) => $carry + (($entry->getDateTo() - $entry->getDateFrom()) / 86400), 0);
 
         return $this->render('admin/user/user_sitting.html.twig', [
             'user' => $user,

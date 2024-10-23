@@ -44,6 +44,8 @@ class PlanetType implements ObjectWithImage
 
     #[ORM\Column(name:"type_f_people", type: "float")]
     private float $people;
+
+    #[ORM\Column(name:"type_build_time", type: "float")]
     private float $buildTime;
 
     #[ORM\Column(name:"type_comment", type: "string")]
@@ -119,6 +121,18 @@ class PlanetType implements ObjectWithImage
     public function setCrystal(float $crystal): static
     {
         $this->crystal = $crystal;
+
+        return $this;
+    }
+
+    public function getBuildTime(): float
+    {
+        return $this->buildTime;
+    }
+
+    public function setBuildTime(float $buildTime): static
+    {
+        $this->buildTime = $buildTime;
 
         return $this;
     }

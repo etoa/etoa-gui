@@ -3,7 +3,7 @@
 namespace EtoA\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use EtoA\Repository\TutorialUserProgressRepository;
+use EtoA\Tutorial\TutorialUserProgressRepository;
 
 #[ORM\Entity(repositoryClass: TutorialUserProgressRepository::class)]
 class TutorialUserProgress

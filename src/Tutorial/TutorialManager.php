@@ -11,7 +11,7 @@ use EtoA\Entity\TutorialText;
 
 class TutorialManager extends AbstractRepository
 {
-    public function __construct(ManagerRegistry $registry, private readonly EntityManagerInterface $entityManager)
+    public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, TutorialText::class);
     }
@@ -26,40 +26,38 @@ class TutorialManager extends AbstractRepository
                 'text_content',
                 'text_step'
             )
-            ->from('tutorial_texts')
             ->where('text_id = :id')
             ->setParameter('id', $id)
-            ->fetchAssociative();
+            ->getQuery()
+            ->execute();
 
         if ($data !== false) {
             $text = TutorialText::createFromArray($data);
 
             $prevStep = $this->createQueryBuilder('q')
                 ->select('text_step')
-                ->from('tutorial_texts')
                 ->where('text_tutorial_id = :tutorialId')
                 ->andWhere('text_step < :step')
                 ->orderBy('text_step', 'DESC')
                 ->setParameters([
-                    'tutorialId' => $text->tutorialId,
+                    'tutorialId' => $text->getTutorialId(),
                     'step' => $text->getStep(),
                 ])
-                ->fetchOne();
+                ->getFirstResult();
             if ($prevStep !== false) {
                 $text->prev = (int) $prevStep;
             }
 
             $nextStep = $this->createQueryBuilder('q')
                 ->select('text_step')
-                ->from('tutorial_texts')
                 ->where('text_tutorial_id = :tutorialId')
                 ->andWhere('text_step > :step')
                 ->orderBy('text_step')
                 ->setParameters([
-                    'tutorialId' => $text->tutorialId,
-                    'step' => $text->step,
+                    'tutorialId' => $text->getTutorialId(),
+                    'step' => $text->getStep(),
                 ])
-                ->fetchOne();
+                ->getFirstResult();
             if ($nextStep !== false) {
                 $text->next = (int) $nextStep;
             }
@@ -74,7 +72,6 @@ class TutorialManager extends AbstractRepository
     {
         $id = $this->createQueryBuilder('q')
             ->select('text_id')
-            ->from('tutorial_texts')
             ->where('text_tutorial_id = :tutorialId')
             ->andWhere('text_step <= :step')
             ->orderBy('text_step', 'DESC')
@@ -82,7 +79,7 @@ class TutorialManager extends AbstractRepository
                 'tutorialId' => $tutorialId,
                 'step' => $step,
             ])
-            ->fetchOne();
+            ->getFirstResult();
 
         if ($id !== false) {
             return $this->getTextById((int) $id);

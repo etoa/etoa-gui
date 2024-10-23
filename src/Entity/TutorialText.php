@@ -100,4 +100,16 @@ class TutorialText
 
         return $this;
     }
+
+    public function getTutorial(): ?Tutorial
+    {
+        return $this->tutorial;
+    }
+
+    public function setTutorial(?Tutorial $tutorial): static
+    {
+        $this->tutorial = $tutorial;
+
+        return $this;
+    }
 }

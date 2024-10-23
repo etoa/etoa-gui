@@ -22,14 +22,13 @@ class TutorialUserProgressRepository extends AbstractRepository
     {
         return (bool) $this->createQueryBuilder('q')
             ->select('tup_closed')
-            ->from('tutorial_user_progress')
             ->where('tup_user_id = :userId')
             ->andWhere('tup_tutorial_id = :tutorialId')
             ->setParameters([
                 'userId' => $userId,
                 'tutorialId' => $tutorialId,
             ])
-            ->fetchOne();
+            ->getFirstResult();
     }
 
     public function closeTutorial(int $userId, int $tutorial): void
