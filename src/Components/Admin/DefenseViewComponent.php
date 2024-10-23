@@ -3,8 +3,8 @@
 namespace EtoA\Components\Admin;
 
 use EtoA\Components\Helper\AbstractEditComponent;
-use EtoA\Defense\DefenseListItem;
 use EtoA\Defense\DefenseRepository;
+use EtoA\Entity\DefenseListItem;
 use EtoA\Form\Type\Admin\EditDefenseType;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;

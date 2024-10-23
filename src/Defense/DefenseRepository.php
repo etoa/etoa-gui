@@ -4,10 +4,18 @@ declare(strict_types=1);
 
 namespace EtoA\Defense;
 
+use Doctrine\Persistence\ManagerRegistry;
 use EtoA\Core\AbstractRepository;
+use EtoA\Entity\DefenseListItem;
+use EtoA\Entity\User;
 
 class DefenseRepository extends AbstractRepository
 {
+    public function __construct(ManagerRegistry $registry)
+    {
+        parent::__construct($registry, DefenseListItem::class);
+    }
+
     /**
      * @return DefenseListItem[]
      */
