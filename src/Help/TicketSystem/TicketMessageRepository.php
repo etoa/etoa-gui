@@ -4,10 +4,17 @@ declare(strict_types=1);
 
 namespace EtoA\Help\TicketSystem;
 
+use Doctrine\Persistence\ManagerRegistry;
 use EtoA\Core\AbstractRepository;
+use EtoA\Entity\TicketMessage;
 
 class TicketMessageRepository extends AbstractRepository
 {
+    public function __construct(ManagerRegistry $registry)
+    {
+        parent::__construct($registry, TicketMessage::class);
+    }
+
     /**
      * @return array<int, int>
      */

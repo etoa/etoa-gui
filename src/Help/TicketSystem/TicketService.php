@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace EtoA\Help\TicketSystem;
 
 use EtoA\Admin\AdminUserRepository;
+use EtoA\Entity\TicketMessage;
 use EtoA\Message\MessageCategoryId;
 use EtoA\Message\MessageRepository;
 use EtoA\User\UserRepository;

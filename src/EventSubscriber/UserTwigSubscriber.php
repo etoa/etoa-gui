@@ -15,6 +15,7 @@ use EtoA\Support\GameVersionService;
 use EtoA\Support\StringUtils;
 use EtoA\Text\TextRepository;
 use EtoA\Tutorial\TutorialManager;
+use EtoA\Tutorial\TutorialUserProgressRepository;
 use EtoA\Universe\Planet\PlanetRepository;
 use EtoA\User\UserPropertiesRepository;
 use Symfony\Bundle\SecurityBundle\Security;
@@ -56,6 +57,7 @@ class UserTwigSubscriber implements EventSubscriberInterface
         private readonly ForeignFleetLoader       $foreignFleetLoader,
         private readonly PlanetRepository         $planetRepository,
         private readonly UserWarningRepository    $userWarningRepository,
+        private readonly TutorialUserProgressRepository $tutorialUserProgressRepository
     )
     {
     }
@@ -216,11 +218,11 @@ class UserTwigSubscriber implements EventSubscriberInterface
             $this->renderBlocked($event,$text,$image,$title);
         }
 
-        if (!$this->tutorialManager->hasReadTutorial($cu->getId(), 1)) {
+        if (!$this->tutorialUserProgressRepository->find(['userId'=>$cu->getId(), 'tutorialId'=>1])) {
             $this->twig->addGlobal('tutorial_id', 1);
-        } else if ($cu->getdata()->isSetup() && !$this->tutorialManager->hasReadTutorial($cu->getId(), 2)) {
+        } else if ($cu->getdata()->isSetup() && !$this->tutorialUserProgressRepository->find(['userId'=>$cu->getId(), 'tutorialId'=>2])) {
             $this->twig->addGlobal('tutorial_id', 2);
-        } elseif ($cu->getdata()->isSetup() && $this->tutorialManager->hasReadTutorial($cu->getId(), 2) && $this->config->getInt('quest_system_enable')) {
+        } elseif ($cu->getdata()->isSetup() && $this->tutorialUserProgressRepository->find(['userId'=>$cu->getId(), 'tutorialId'=>2]) && $this->config->getInt('quest_system_enable')) {
             //$app['cubicle.quests.initializer']->initialize($this->getUser()->getId()); //TODO migrate quests
         }
     }
