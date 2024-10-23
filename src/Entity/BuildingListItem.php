@@ -254,4 +254,16 @@ class BuildingListItem
 
         return $this;
     }
+
+    public function getEntity(): ?Entity
+    {
+        return $this->entity;
+    }
+
+    public function setEntity(?Entity $entity): static
+    {
+        $this->entity = $entity;
+
+        return $this;
+    }
 }
