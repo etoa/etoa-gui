@@ -2,10 +2,17 @@
 
 namespace EtoA\HostCache;
 
+use Doctrine\Persistence\ManagerRegistry;
 use EtoA\Core\AbstractRepository;
+use EtoA\Entity\HostnameCache;
 
 class HostCacheRepository extends AbstractRepository
 {
+    public function __construct(ManagerRegistry $registry)
+    {
+        parent::__construct($registry, HostnameCache::class);
+    }
+
     public function getAddr(string $host): ?string
     {
         $data = $this->createQueryBuilder('q')
