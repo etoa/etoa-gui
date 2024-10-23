@@ -2,10 +2,17 @@
 
 namespace EtoA\Log;
 
+use Doctrine\Persistence\ManagerRegistry;
 use EtoA\Core\AbstractRepository;
+use EtoA\Entity\Log;
 
 class LogRepository extends AbstractRepository
 {
+    public function __construct(ManagerRegistry $registry)
+    {
+        parent::__construct($registry, Log::class);
+    }
+
     /**
      * @return Log[]
      */

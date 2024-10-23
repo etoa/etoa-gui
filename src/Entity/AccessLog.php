@@ -3,7 +3,7 @@
 namespace EtoA\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use EtoA\Repository\AccessLogRepository;
+use EtoA\Log\AccessLogRepository;
 
 #[ORM\Entity(repositoryClass: AccessLogRepository::class)]
 #[ORM\Table(name: 'accesslog')]

@@ -2,10 +2,18 @@
 
 namespace EtoA\Log;
 
+use Doctrine\Persistence\ManagerRegistry;
 use EtoA\Core\AbstractRepository;
+use EtoA\Entity\GameLog;
+use EtoA\Entity\User;
 
 class GameLogRepository extends AbstractRepository
 {
+    public function __construct(ManagerRegistry $registry)
+    {
+        parent::__construct($registry, GameLog::class);
+    }
+
     /**
      * @return GameLog[]
      */
