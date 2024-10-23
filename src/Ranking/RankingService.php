@@ -17,11 +17,11 @@ use EtoA\Defense\DefenseDataRepository;
 use EtoA\Defense\DefenseRepository;
 use EtoA\Entity\Building;
 use EtoA\Entity\Defense;
+use EtoA\Entity\Ship;
 use EtoA\Entity\Technology;
 use EtoA\Fleet\FleetRepository;
 use EtoA\Fleet\FleetSearchParameters;
 use EtoA\Race\RaceDataRepository;
-use EtoA\Ship\Ship;
 use EtoA\Ship\ShipDataRepository;
 use EtoA\Ship\ShipRepository;
 use EtoA\Support\RuntimeDataStore;
@@ -168,7 +168,7 @@ class RankingService
 
             $shipListItems = $this->shipRepository->findForUser($user->getId());
             foreach ($shipListItems as $shipListItem) {
-                $p = ($shipListItem->bunkered + $shipListItem->count) * $shipPoints[$shipListItem->shipId];
+                $p = ($shipListItem->getBunkered() + $shipListItem->getCount()) * $shipPoints[$shipListItem->getShipId()];
                 $points += $p;
                 $points_ships += $p;
             }
@@ -184,7 +184,7 @@ class RankingService
 
             $defenseListItems = $this->defenseRepository->findForUser($user->getId());
             foreach ($defenseListItems as $defenseListItem) {
-                $p = round($defenseListItem->getCcount() * $defensePoints[$defenseListItem->defenseId]);
+                $p = round($defenseListItem->getCount() * $defensePoints[$defenseListItem->getDefenseId()]);
                 $points += $p;
                 $points_building += $p;
             }
@@ -524,7 +524,7 @@ class RankingService
     {
         $ships = $this->shipDataRepository->getAllShips(true);
         foreach ($ships as $ship) {
-            $this->shipDataRepository->updateShipPoints($ship->id, $this->calculatePointsForShip($ship));
+            $this->shipDataRepository->updateShipPoints($ship->getId(), $this->calculatePointsForShip($ship));
         }
 
         return count($ships);
@@ -532,11 +532,11 @@ class RankingService
 
     private function calculatePointsForShip(Ship $ship): float
     {
-        return ($ship->costsMetal
-            + $ship->costsCrystal
-            + $ship->costsFuel
-            + $ship->costsPlastic
-            + $ship->costsFood)
+        return ($ship->getCostsMetal()
+            + $ship->getCostsCrystal()
+            + $ship->getCostsFuel()
+            + $ship->getCostsPlastic()
+            + $ship->getCostsFood())
             / $this->config->param1Int('points_update');
     }
 
@@ -544,7 +544,7 @@ class RankingService
     {
         $defenses = $this->defenseDataRepository->getAllDefenses();
         foreach ($defenses as $defense) {
-            $this->defenseDataRepository->updateDefensePoints($defense->id, $this->calculatePointsForDefense($defense));
+            $this->defenseDataRepository->updateDefensePoints($defense->getId(), $this->calculatePointsForDefense($defense));
         }
 
         return count($defenses);
@@ -552,11 +552,11 @@ class RankingService
 
     private function calculatePointsForDefense(Defense $defense): float
     {
-        return ($defense->costsMetal
-            + $defense->costsCrystal
-            + $defense->costsFuel
-            + $defense->costsPlastic
-            + $defense->costsFood)
+        return ($defense->getCostsMetal()
+            + $defense->getCostsCrystal()
+            + $defense->getCostsFuel()
+            + $defense->getCostsPlastic()
+            + $defense->getCostsFood())
             / $this->config->param1Int('points_update');
     }
 }

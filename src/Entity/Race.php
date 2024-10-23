@@ -6,6 +6,7 @@ use EtoA\Race\RaceDataRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: RaceDataRepository::class)]
+#[ORM\Table(name: 'races')]
 class Race
 {
     #[ORM\Id]

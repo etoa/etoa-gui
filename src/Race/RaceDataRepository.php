@@ -2,11 +2,17 @@
 
 namespace EtoA\Race;
 
+use Doctrine\Persistence\ManagerRegistry;
 use EtoA\Core\AbstractRepository;
 use EtoA\Entity\Race;
 
 class RaceDataRepository extends AbstractRepository
 {
+    public function __construct(ManagerRegistry $registry)
+    {
+        parent::__construct($registry, Race::class);
+    }
+
     /**
      * Returns an array of race names indexed by the race id.
      *
