@@ -3,8 +3,8 @@
 namespace EtoA\Building;
 
 use Doctrine\Persistence\ManagerRegistry;
-use EtoA\Entity\Buddy;
 use EtoA\Core\AbstractRepository;
+use EtoA\Entity\Building;
 
 class BuildingDataRepository extends AbstractRepository
 {
@@ -34,7 +34,7 @@ class BuildingDataRepository extends AbstractRepository
         $buildings = [];
         foreach ($data as $row) {
             $building = new Building($row);
-            $buildings[$building->id] = $building;
+            $buildings[$building->getId()] = $building;
         }
 
         return $buildings;

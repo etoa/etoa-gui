@@ -2,11 +2,11 @@
 
 namespace EtoA\Components\Admin;
 
-use EtoA\Building\Building;
 use EtoA\Building\BuildingCostCalculator;
 use EtoA\Building\BuildingCostContext;
 use EtoA\Building\BuildingDataRepository;
 use EtoA\Building\BuildingSort;
+use EtoA\Entity\Building;
 use EtoA\Universe\Resources\PreciseResources;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
@@ -35,7 +35,7 @@ class AdminBuildingCostCalculatorComponent extends AbstractController
         $this->totalCosts = new PreciseResources();
         $this->buildingCosts = [];
         foreach ($this->buildings as $building) {
-            $this->buildingCosts[$building->id] = new PreciseResources();
+            $this->buildingCosts[$building->getId()] = new PreciseResources();
         }
     }
 
@@ -47,15 +47,15 @@ class AdminBuildingCostCalculatorComponent extends AbstractController
 
         $context = BuildingCostContext::admin();
         foreach ($this->buildings as $building) {
-            if (($this->levels[$building->id] ?? 0) > 0) {
-                $level = $this->levels[$building->id];
+            if (($this->levels[$building->getId()] ?? 0) > 0) {
+                $level = $this->levels[$building->getId()];
                 while ($level > 0) {
-                    $this->buildingCosts[$building->id] = $this->buildingCosts[$building->id]->add($this->buildingCostCalculator->calculate($building, $level, $context));
+                    $this->buildingCosts[$building->getId()] = $this->buildingCosts[$building->getId()]->add($this->buildingCostCalculator->calculate($building, $level, $context));
                     $level--;
                 }
-                $this->totalCosts = $this->totalCosts->add($this->buildingCosts[$building->id]);
+                $this->totalCosts = $this->totalCosts->add($this->buildingCosts[$building->getId()]);
             } else {
-                $this->buildingCosts[$building->id] = new PreciseResources();
+                $this->buildingCosts[$building->getId()] = new PreciseResources();
             }
         }
     }
@@ -65,7 +65,7 @@ class AdminBuildingCostCalculatorComponent extends AbstractController
         $formBuilder = $this->createFormBuilder($this->levels);
 
         foreach ($this->buildings as $building) {
-            $formBuilder->add((string) $building->id, IntegerType::class, [
+            $formBuilder->add((string) $building->getId(), IntegerType::class, [
                 'label' => false,
             ]);
         }

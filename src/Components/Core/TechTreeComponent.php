@@ -2,12 +2,12 @@
 
 namespace EtoA\Components\Core;
 
-use EtoA\Building\Building;
 use EtoA\Building\BuildingDataRepository;
 use EtoA\Building\BuildingRequirementRepository;
 use EtoA\Defense\Defense;
 use EtoA\Defense\DefenseDataRepository;
 use EtoA\Defense\DefenseRequirementRepository;
+use EtoA\Entity\Building;
 use EtoA\Entity\Technology;
 use EtoA\Form\Type\Core\TechTreeSelectionType;
 use EtoA\Missile\Missile;

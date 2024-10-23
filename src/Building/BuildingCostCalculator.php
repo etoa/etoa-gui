@@ -3,6 +3,7 @@
 namespace EtoA\Building;
 
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Entity\Building;
 use EtoA\Universe\Resources\PreciseResources;
 
 class BuildingCostCalculator
@@ -15,10 +16,10 @@ class BuildingCostCalculator
     public function calculate(Building $building, int $level, BuildingCostContext $context): PreciseResources
     {
         $costs = PreciseResources::createFromBase($building->getCosts())
-            ->multiply($building->buildCostsFactor ** ($level - 1));
+            ->multiply($building->getBuildCostsFactor() ** ($level - 1));
 
         if ($context->specialist !== null) {
-            $costs = $costs->multiply($context->specialist->costsBuildings);
+            $costs = $costs->multiply($context->specialist->getCostsBuildings());
         }
 
         $costs->time = $this->calculateBuildTime($costs, $context);
@@ -32,15 +33,15 @@ class BuildingCostCalculator
 
         $factor = 1;
         if ($context->race !== null) {
-            $factor += $context->race->buildTime - 1;
+            $factor += $context->race->getBuildTime() - 1;
         }
 
         if ($context->specialist !== null) {
-            $factor += $context->specialist->timeBuildings - 1;
+            $factor += $context->specialist->getTimeBuildings() - 1;
         }
 
         if ($context->planetType !== null) {
-            $factor += $context->planetType->buildTime - 1;
+            $factor += $context->planetType->getBuildTime() - 1;
         }
 
         if ($context->solarType !== null) {

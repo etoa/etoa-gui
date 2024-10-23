@@ -9,14 +9,14 @@ use EtoA\Alliance\AllianceRepository;
 use EtoA\Alliance\AllianceStats;
 use EtoA\Alliance\AllianceStatsRepository;
 use EtoA\Alliance\AllianceTechnologyRepository;
-use EtoA\Building\Building;
 use EtoA\Building\BuildingDataRepository;
+use EtoA\Building\BuildingListItemRepository;
 use EtoA\Building\BuildingPointRepository;
-use EtoA\Building\BuildingRepository;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Defense\Defense;
 use EtoA\Defense\DefenseDataRepository;
 use EtoA\Defense\DefenseRepository;
+use EtoA\Entity\Building;
 use EtoA\Entity\Technology;
 use EtoA\Fleet\FleetRepository;
 use EtoA\Fleet\FleetSearchParameters;
@@ -48,7 +48,7 @@ class RankingService
     private AllianceRepository $allianceRepository;
     private AllianceStatsRepository $allianceStatsRepository;
     private PlanetRepository $planetRepository;
-    private BuildingRepository $buildingRepository;
+    private BuildingListItemRepository $buildingRepository;
     private BuildingDataRepository $buildingDataRepository;
     private BuildingPointRepository $buildingPointRepository;
     private TechnologyRepository $technologyRepository;
@@ -67,7 +67,7 @@ class RankingService
     private AllianceTechnologyRepository $allianceTechnologyRepository;
     private UserPointsRepository $userPointsRepository;
 
-    public function __construct(ConfigurationService $config, RuntimeDataStore $runtimeDataStore, AllianceRepository $allianceRepository, AllianceStatsRepository $allianceStatsRepository, PlanetRepository $planetRepository, BuildingRepository $buildingRepository, BuildingDataRepository $buildingDataRepository, BuildingPointRepository $buildingPointRepository, TechnologyRepository $technologyRepository, TechnologyDataRepository $technologyDataRepository, TechnologyPointRepository $technologyPointRepository, ShipRepository $shipRepository, ShipDataRepository $shipDataRepository, FleetRepository $fleetRepository, DefenseRepository $defenseRepository, DefenseDataRepository $defenseDataRepository, RaceDataRepository $raceRepository, UserStatRepository $userStatRepository, UserRepository $userRepository, EntityRepository $entityRepository, AllianceBuildingRepository $allianceBuildingRepository, AllianceTechnologyRepository $allianceTechnologyRepository, UserPointsRepository $userPointsRepository)
+    public function __construct(ConfigurationService $config, RuntimeDataStore $runtimeDataStore, AllianceRepository $allianceRepository, AllianceStatsRepository $allianceStatsRepository, PlanetRepository $planetRepository, BuildingListItemRepository $buildingRepository, BuildingDataRepository $buildingDataRepository, BuildingPointRepository $buildingPointRepository, TechnologyRepository $technologyRepository, TechnologyDataRepository $technologyDataRepository, TechnologyPointRepository $technologyPointRepository, ShipRepository $shipRepository, ShipDataRepository $shipDataRepository, FleetRepository $fleetRepository, DefenseRepository $defenseRepository, DefenseDataRepository $defenseDataRepository, RaceDataRepository $raceRepository, UserStatRepository $userStatRepository, UserRepository $userRepository, EntityRepository $entityRepository, AllianceBuildingRepository $allianceBuildingRepository, AllianceTechnologyRepository $allianceTechnologyRepository, UserPointsRepository $userPointsRepository)
     {
         $this->config = $config;
         $this->runtimeDataStore = $runtimeDataStore;
@@ -458,7 +458,7 @@ class RankingService
         $this->buildingPointRepository->deleteAll();
 
         foreach ($buildings as $building) {
-            $this->buildingPointRepository->add($building->id, $this->calculatePointsForBuilding($building));
+            $this->buildingPointRepository->add($building->getId(), $this->calculatePointsForBuilding($building));
         }
 
         return count($buildings);
@@ -470,14 +470,14 @@ class RankingService
     private function calculatePointsForBuilding(Building $building)
     {
         $points = [];
-        for ($level = 1; $level <= $building->lastLevel; $level++) {
-            $r = $building->costsMetal
-                + $building->costsCrystal
-                + $building->costsFuel
-                + $building->costsPlastic
-                + $building->costsFood;
-            $p = ($r * (1 - $building->buildCostsFactor ** $level)
-                / (1 - $building->buildCostsFactor))
+        for ($level = 1; $level <= $building->getLastLevel(); $level++) {
+            $r = $building->getCostsMetal()
+                + $building->getCostsCrystal()
+                + $building->getCostsFuel()
+                + $building->getCostsPlastic()
+                + $building->getCostsFood();
+            $p = ($r * (1 - $building->getBuildCostsFactor() ** $level)
+                / (1 - $building->getBuildCostsFactor()))
                 / $this->config->param1Int('points_update');
 
             $points[$level] = $p;
