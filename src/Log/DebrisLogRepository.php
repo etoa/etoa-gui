@@ -2,10 +2,18 @@
 
 namespace EtoA\Log;
 
+use Doctrine\Persistence\ManagerRegistry;
 use EtoA\Core\AbstractRepository;
+use EtoA\Entity\DebrisLog;
+use EtoA\Entity\User;
 
 class DebrisLogRepository extends AbstractRepository
 {
+    public function __construct(ManagerRegistry $registry)
+    {
+        parent::__construct($registry, DebrisLog::class);
+    }
+
     /**
      * @return DebrisLog[]
      */
