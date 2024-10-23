@@ -2,12 +2,31 @@
 
 namespace EtoA\DefaultItem;
 
+use EtoA\User\UserRepository;
+use Doctrine\ORM\Mapping as ORM;
+
+#[ORM\Entity(repositoryClass: DefaultItemRepository::class)]
+#[ORM\Table(name: 'default_items')]
 class DefaultItem
 {
-    public int $id;
-    public int $objectId;
-    public int $count;
-    public string $cat;
+    #[ORM\Id]
+    #[ORM\GeneratedValue(strategy: "AUTO")]
+    #[ORM\Column(name: "item_id", type: "integer")]
+    private int $id;
+
+    #[ORM\Column(name: "item_set_id", type: "integer")]
+    private int $setId;
+
+    #[ORM\Column(name: "item_object_id", type: "integer")]
+    private int $objectId;
+
+    #[ORM\Column(name: "item_count", type: "integer")]
+    private int $count;
+
+    #[ORM\Column(name: "item_cat", type: "string")]
+    private string $cat;
+
+
 
     public static function createFromData(array $data): DefaultItem
     {

@@ -2,10 +2,17 @@
 
 namespace EtoA\DefaultItem;
 
+use Doctrine\Persistence\ManagerRegistry;
 use EtoA\Core\AbstractRepository;
+use EtoA\Entity\BuildingListItem;
 
 class DefaultItemRepository extends AbstractRepository
 {
+    public function __construct(ManagerRegistry $registry)
+    {
+        parent::__construct($registry, DefaultItem::class);
+    }
+
     /**
      * @return DefaultItemSet[]
      */
