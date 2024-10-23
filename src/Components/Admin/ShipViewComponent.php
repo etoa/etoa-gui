@@ -3,10 +3,10 @@
 namespace EtoA\Components\Admin;
 
 use EtoA\Components\Helper\AbstractEditComponent;
+use EtoA\Entity\ShipListItem;
 use EtoA\Form\Type\Admin\EditShipListType;
 use EtoA\Form\Type\Admin\EditSpecialShipListType;
 use EtoA\Ship\ShipDataRepository;
-use EtoA\Ship\ShipListItem;
 use EtoA\Ship\ShipRepository;
 use EtoA\Ship\ShipXpCalculator;
 use Symfony\Component\Form\FormInterface;

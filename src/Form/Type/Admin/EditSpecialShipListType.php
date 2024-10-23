@@ -2,7 +2,7 @@
 
 namespace EtoA\Form\Type\Admin;
 
-use EtoA\Ship\Ship;
+use EtoA\Entity\Ship;
 use EtoA\Ship\ShipDataRepository;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -27,7 +27,7 @@ class EditSpecialShipListType extends EditShipListType
                 'attr' => ['size' => 6],
             ]);
 
-        if ($ship->specialBonusWeapon > 0) {
+        if ($ship->getSpecialBonusWeapon() > 0) {
             $builder
                 ->add('specialShipBonusWeapon', IntegerType::class, [
                     'label' => 'Waffen',
@@ -35,91 +35,91 @@ class EditSpecialShipListType extends EditShipListType
                 ]);
         }
 
-        if ($ship->specialBonusStructure > 0) {
+        if ($ship->getSpecialBonusStructure() > 0) {
             $builder
                 ->add('specialShipBonusStructure', IntegerType::class, [
                     'label' => 'Struktur',
                 ]);
         }
 
-        if ($ship->specialBonusShield > 0) {
+        if ($ship->getSpecialBonusShield() > 0) {
             $builder
                 ->add('specialShipBonusShield', IntegerType::class, [
                     'label' => 'Schild',
                 ]);
         }
 
-        if ($ship->specialBonusHeal > 0) {
+        if ($ship->getSpecialBonusHeal() > 0) {
             $builder
                 ->add('specialShipBonusHeal', IntegerType::class, [
                     'label' => 'Heal',
                 ]);
         }
 
-        if ($ship->specialBonusCapacity > 0) {
+        if ($ship->getSpecialBonusCapacity() > 0) {
             $builder
                 ->add('specialShipBonusCapacity', IntegerType::class, [
                     'label' => 'Kapazität',
                 ]);
         }
 
-        if ($ship->specialBonusSpeed > 0) {
+        if ($ship->getSpecialBonusSpeed() > 0) {
             $builder
                 ->add('specialShipBonusSpeed', IntegerType::class, [
                     'label' => 'Speed',
                 ]);
         }
 
-        if ($ship->specialBonusPilots > 0) {
+        if ($ship->getSpecialBonusPilots() > 0) {
             $builder
                 ->add('specialShipBonusPilots', IntegerType::class, [
                     'label' => 'Piloten',
                 ]);
         }
 
-        if ($ship->specialBonusTarn > 0) {
+        if ($ship->getSpecialBonusTarn() > 0) {
             $builder
                 ->add('specialShipBonusTarn', IntegerType::class, [
                     'label' => 'Tarnung',
                 ]);
         }
 
-        if ($ship->specialBonusAntrax > 0) {
+        if ($ship->getSpecialBonusAntrax() > 0) {
             $builder
                 ->add('specialShipBonusAnthrax', IntegerType::class, [
                     'label' => 'Giftgas',
                 ]);
         }
 
-        if ($ship->specialBonusForsteal > 0) {
+        if ($ship->getSpecialBonusForsteal() > 0) {
             $builder
                 ->add('specialShipBonusForSteal', IntegerType::class, [
                     'label' => 'Techklau',
                 ]);
         }
 
-        if ($ship->specialBonusBuildDestroy > 0) {
+        if ($ship->getSpecialBonusBuildDestroy() > 0) {
             $builder
                 ->add('specialShipBonusBuildDestroy', IntegerType::class, [
                     'label' => 'Bombardier',
                 ]);
         }
 
-        if ($ship->specialBonusAntraxFood > 0) {
+        if ($ship->getSpecialBonusAntraxFood() > 0) {
             $builder
                 ->add('specialShipBonusAnthraxFood', IntegerType::class, [
                     'label' => 'Antrax',
                 ]);
         }
 
-        if ($ship->specialBonusDeactivate > 0) {
+        if ($ship->getSpecialBonusDeactivate() > 0) {
             $builder
                 ->add('specialShipBonusDeactivate', IntegerType::class, [
                     'label' => 'Deaktivieren',
                 ]);
         }
 
-        if ($ship->specialBonusReadiness > 0) {
+        if ($ship->getSpecialBonusReadiness() > 0) {
             $builder
                 ->add('specialShipBonusReadiness', IntegerType::class, [
                     'label' => 'Bereitschaft',

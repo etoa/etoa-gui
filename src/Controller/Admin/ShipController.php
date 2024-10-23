@@ -2,6 +2,8 @@
 
 namespace EtoA\Controller\Admin;
 
+use EtoA\Entity\Ship;
+use EtoA\Entity\ShipListItem;
 use EtoA\Form\Type\Admin\AddShipListType;
 use EtoA\Form\Type\Admin\ObjectRequirementListType;
 use EtoA\Form\Type\Admin\ShipSearchType;
@@ -9,9 +11,7 @@ use EtoA\Form\Type\Admin\ShipXpCalculatorType;
 use EtoA\Ranking\RankingService;
 use EtoA\Requirement\ObjectRequirement;
 use EtoA\Requirement\RequirementsUpdater;
-use EtoA\Ship\Ship;
 use EtoA\Ship\ShipDataRepository;
-use EtoA\Ship\ShipListItem;
 use EtoA\Ship\ShipQueueRepository;
 use EtoA\Ship\ShipRepository;
 use EtoA\Ship\ShipRequirementRepository;

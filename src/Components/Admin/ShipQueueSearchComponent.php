@@ -4,10 +4,10 @@ namespace EtoA\Components\Admin;
 
 use EtoA\Components\Helper\SearchComponentTrait;
 use EtoA\Components\Helper\SearchResult;
+use EtoA\Entity\ShipQueueItem;
 use EtoA\Form\Request\Admin\ShipQueueSearchRequest;
 use EtoA\Form\Type\Admin\ShipSearchType;
 use EtoA\Ship\ShipDataRepository;
-use EtoA\Ship\ShipQueueItem;
 use EtoA\Ship\ShipQueueRepository;
 use EtoA\Ship\ShipQueueSearch;
 use EtoA\Universe\Entity\EntityLabel;

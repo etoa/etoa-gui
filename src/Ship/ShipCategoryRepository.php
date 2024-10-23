@@ -2,10 +2,17 @@
 
 namespace EtoA\Ship;
 
+use Doctrine\Persistence\ManagerRegistry;
 use EtoA\Core\AbstractRepository;
+use EtoA\Entity\ShipCategory;
 
 class ShipCategoryRepository extends AbstractRepository
 {
+    public function __construct(ManagerRegistry $registry)
+    {
+        parent::__construct($registry, ShipCategory::class);
+    }
+
     /**
      * @return ShipCategory[]
      */

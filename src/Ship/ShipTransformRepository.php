@@ -3,10 +3,18 @@
 namespace EtoA\Ship;
 
 use Doctrine\DBAL\Query\QueryBuilder;
+use Doctrine\Persistence\ManagerRegistry;
 use EtoA\Core\AbstractRepository;
+use EtoA\Entity\ShipTransform;
+use EtoA\Entity\User;
 
 class ShipTransformRepository extends AbstractRepository
 {
+    public function __construct(ManagerRegistry $registry)
+    {
+        parent::__construct($registry, ShipTransform::class);
+    }
+
     public function hasUserTransformableObjects(int $userId, int $entityId): bool
     {
         $defense = (bool) $this->defenseQueryBuilder($userId, $entityId)

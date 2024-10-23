@@ -2,6 +2,7 @@
 
 namespace EtoA\Ship;
 
+use EtoA\Entity\Ship;
 use EtoA\Support\StringUtils;
 
 class ShipRenderer

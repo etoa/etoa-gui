@@ -3,8 +3,8 @@
 namespace EtoA\Components\Admin;
 
 use EtoA\Components\Helper\AbstractEditComponent;
+use EtoA\Entity\ShipQueueItem;
 use EtoA\Form\Type\Admin\EditShipQueueType;
-use EtoA\Ship\ShipQueueItem;
 use EtoA\Ship\ShipQueueRepository;
 use EtoA\Ship\ShipRepository;
 use Symfony\Component\Form\FormInterface;
@@ -30,7 +30,7 @@ class ShipQueueViewComponent extends AbstractEditComponent
     {
         $this->item = $item;
         if ($item !== null) {
-            $this->itemId = $item->id;
+            $this->itemId = $item->getId();
         }
     }
 
@@ -52,8 +52,8 @@ class ShipQueueViewComponent extends AbstractEditComponent
     {
         $item = $this->getItem();
         if ($item !== null) {
-            $this->shipRepository->addShip($item->shipId, $item->count, $item->userId, $item->entityId);
-            $this->shipQueueRepository->deleteQueueItem($item->id);
+            $this->shipRepository->addShip($item->getShipId(), $item->getCount(), $item->getUserId(), $item->getEntityId());
+            $this->shipQueueRepository->deleteQueueItem($item->getId());
         }
 
         $this->item = null;

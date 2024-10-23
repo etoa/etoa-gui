@@ -5,10 +5,18 @@ declare(strict_types=1);
 namespace EtoA\Ship;
 
 use Doctrine\DBAL\ArrayParameterType;
+use Doctrine\Persistence\ManagerRegistry;
 use EtoA\Core\AbstractRepository;
+use EtoA\Entity\ShipListItem;
+use EtoA\Entity\ShipQueueItem;
 
 class ShipRepository extends AbstractRepository
 {
+    public function __construct(ManagerRegistry $registry)
+    {
+        parent::__construct($registry, ShipListItem::class);
+    }
+
     public function getNumberOfShips(int $shipId): int
     {
         return (int) $this->createQueryBuilder('q')

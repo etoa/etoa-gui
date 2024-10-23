@@ -2,10 +2,18 @@
 
 namespace EtoA\Ship;
 
+use Doctrine\Persistence\ManagerRegistry;
 use EtoA\Core\AbstractRepository;
+use EtoA\Entity\ShipQueueItem;
+use EtoA\Entity\User;
 
 class ShipQueueRepository extends AbstractRepository
 {
+    public function __construct(ManagerRegistry $registry)
+    {
+        parent::__construct($registry, ShipQueueItem::class);
+    }
+
     public function add(int $userId, int $shipId, int $entityId, int $count, int $startTime, int $endTime, int $objectTime): int
     {
         $this->createQueryBuilder('q')

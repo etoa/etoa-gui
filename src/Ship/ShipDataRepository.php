@@ -3,10 +3,17 @@
 namespace EtoA\Ship;
 
 use Doctrine\DBAL\Query\QueryBuilder;
+use Doctrine\Persistence\ManagerRegistry;
 use EtoA\Core\AbstractRepository;
+use EtoA\Entity\Ship;
 
 class ShipDataRepository extends AbstractRepository
 {
+    public function __construct(ManagerRegistry $registry)
+    {
+        parent::__construct($registry, Ship::class);
+    }
+
     /**
      * @return array<int, string>
      */
