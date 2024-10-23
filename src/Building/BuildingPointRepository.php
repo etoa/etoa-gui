@@ -2,10 +2,17 @@
 
 namespace EtoA\Building;
 
+use Doctrine\Persistence\ManagerRegistry;
 use EtoA\Core\AbstractRepository;
+use EtoA\Entity\BuildingPoint;
 
 class BuildingPointRepository extends AbstractRepository
 {
+    public function __construct(ManagerRegistry $registry)
+    {
+        parent::__construct($registry, BuildingPoint::class);
+    }
+
     /**
      * @return array<int, array<int, float>>
      */
@@ -13,9 +20,9 @@ class BuildingPointRepository extends AbstractRepository
     {
         $data = $this->createQueryBuilder('q')
             ->select('*')
-            ->from('building_points')
             ->orderBy('bp_level', 'ASC')
-            ->fetchAllAssociative();
+            ->getQuery()
+            ->execute();
 
         $points = array_map(fn (array $row) => new BuildingPoint($row), $data);
 
