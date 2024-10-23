@@ -7,7 +7,7 @@ namespace EtoA\Fleet;
 use Doctrine\Persistence\ManagerRegistry;
 use EtoA\Core\AbstractRepository;
 use EtoA\Entity\Fleet;
-use EtoA\Ship\ShipListItem;
+use EtoA\Entity\ShipListItem;
 use EtoA\Universe\Resources\BaseResources;
 
 class FleetRepository extends AbstractRepository
