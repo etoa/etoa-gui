@@ -2,10 +2,17 @@
 
 namespace EtoA\Defense;
 
+use Doctrine\Persistence\ManagerRegistry;
 use EtoA\Core\AbstractRepository;
+use EtoA\Entity\Defense;
 
 class DefenseDataRepository extends AbstractRepository
 {
+    public function __construct(ManagerRegistry $registry)
+    {
+        parent::__construct($registry, Defense::class);
+    }
+
     /**
      * @return array<int, string>
      */
@@ -111,19 +118,7 @@ class DefenseDataRepository extends AbstractRepository
      */
     public function getAllDefenses(): array
     {
-        $data = $this->createQueryBuilder('q')
-            ->select('*')
-            ->from('defense')
-            ->orderBy('def_order')
-            ->fetchAllAssociative();
-
-        $result = [];
-        foreach ($data as $row) {
-            $defense = new Defense($row);
-            $result[$defense->id] = $defense;
-        }
-
-        return $result;
+        return $this->findBy(array(), array('username' => 'def_order'));
     }
 
     /**

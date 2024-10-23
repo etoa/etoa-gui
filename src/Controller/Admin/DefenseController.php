@@ -2,12 +2,12 @@
 
 namespace EtoA\Controller\Admin;
 
-use EtoA\Defense\Defense;
 use EtoA\Defense\DefenseDataRepository;
-use EtoA\Defense\DefenseListItem;
 use EtoA\Defense\DefenseQueueRepository;
 use EtoA\Defense\DefenseRepository;
 use EtoA\Defense\DefenseRequirementRepository;
+use EtoA\Entity\Defense;
+use EtoA\Entity\DefenseListItem;
 use EtoA\Form\Type\Admin\AddDefenseListType;
 use EtoA\Form\Type\Admin\DefenseSearchType;
 use EtoA\Form\Type\Admin\ObjectRequirementListType;

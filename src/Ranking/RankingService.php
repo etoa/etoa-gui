@@ -13,10 +13,10 @@ use EtoA\Building\BuildingDataRepository;
 use EtoA\Building\BuildingListItemRepository;
 use EtoA\Building\BuildingPointRepository;
 use EtoA\Core\Configuration\ConfigurationService;
-use EtoA\Defense\Defense;
 use EtoA\Defense\DefenseDataRepository;
 use EtoA\Defense\DefenseRepository;
 use EtoA\Entity\Building;
+use EtoA\Entity\Defense;
 use EtoA\Entity\Technology;
 use EtoA\Fleet\FleetRepository;
 use EtoA\Fleet\FleetSearchParameters;
@@ -184,7 +184,7 @@ class RankingService
 
             $defenseListItems = $this->defenseRepository->findForUser($user->getId());
             foreach ($defenseListItems as $defenseListItem) {
-                $p = round($defenseListItem->count * $defensePoints[$defenseListItem->defenseId]);
+                $p = round($defenseListItem->getCcount() * $defensePoints[$defenseListItem->defenseId]);
                 $points += $p;
                 $points_building += $p;
             }
