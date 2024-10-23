@@ -2,12 +2,19 @@
 
 namespace EtoA\Log;
 
+use Doctrine\Persistence\ManagerRegistry;
 use EtoA\Core\AbstractRepository;
+use EtoA\Entity\FleetLog;
 use EtoA\Fleet\FleetStatus;
 use EtoA\Universe\Resources\BaseResources;
 
 class FleetLogRepository extends AbstractRepository
 {
+    public function __construct(ManagerRegistry $registry)
+    {
+        parent::__construct($registry, FleetLog::class);
+    }
+
     /**
      * @return FleetLog[]
      */
