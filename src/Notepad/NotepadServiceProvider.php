@@ -9,8 +9,8 @@ class NotepadServiceProvider implements ServiceProviderInterface
 {
     public function register(Container $pimple): void
     {
-        $pimple[NotepadRepository::class] = function (Container $pimple): NotepadRepository {
-            return new NotepadRepository($pimple['db']);
+        $pimple[NotepadDataRepository::class] = function (Container $pimple): NotepadDataRepository {
+            return new NotepadDataRepository($pimple['db']);
         };
     }
 }

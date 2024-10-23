@@ -1,108 +1,48 @@
 <?php
 
-declare(strict_types=1);
-
 namespace EtoA\Notepad;
 
-use EtoA\Core\AbstractRepository;
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\Persistence\ManagerRegistry;
+use EtoA\Entity\Notepad;
 
-class NotepadRepository extends AbstractRepository
+/**
+ * @extends ServiceEntityRepository<Notepad>
+ *
+ * @method Notepad|null find($id, $lockMode = null, $lockVersion = null)
+ * @method Notepad|null findOneBy(array $criteria, array $orderBy = null)
+ * @method Notepad[]    findAll()
+ * @method Notepad[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ */
+class NotepadRepository extends ServiceEntityRepository
 {
-    public function add(string $subject, string $text, int $userId): int
+    public function __construct(ManagerRegistry $registry)
     {
-        $this->getConnection()->executeStatement(
-            "INSERT INTO
-                notepad
-            (
-                user_id,
-                timestamp
-            )
-            VALUES
-            (
-                :userId,
-                :timestamp
-            );",
-            [
-                'userId' => $userId,
-                'timestamp' => time(),
-            ]
-        );
-        $id = (int) $this->getConnection()->lastInsertId();
-
-        $this->getConnection()->executeStatement(
-            "INSERT INTO
-                notepad_data
-            (
-                id,
-                subject,
-                text
-            )
-            VALUES
-            (
-                :id, :subject, :text
-            );",
-            [
-                'id' => $id,
-                'subject' => $subject,
-                'text' => $text,
-            ]
-        );
-
-        return $id;
+        parent::__construct($registry, Notepad::class);
     }
 
-    public function update(int $noteId, int $userId, string $subject, string $text): void
-    {
-        $affected = $this->getConnection()->executeStatement(
-            "UPDATE
-                notepad
-            SET
-                timestamp='" . time() . "'
-            WHERE
-                user_id = :userId
-                AND id = :noteId
-            ;",
-            [
-                'userId' => $userId,
-                'noteId' => $noteId,
-            ]
-        );
-        if ($affected > 0) {
-            $this->getConnection()->executeStatement(
-                "UPDATE
-                    notepad_data
-                SET
-                    subject = :subject,
-                    text = :text
-                WHERE
-                    id = :noteId;",
-                [
-                    'subject' => $subject,
-                    'text' => $text,
-                    'noteId' => $noteId,
-                ]
-            );
-        }
-    }
+//    /**
+//     * @return Notepad[] Returns an array of Notepad objects
+//     */
+//    public function findByExampleField($value): array
+//    {
+//        return $this->createQueryBuilder('n')
+//            ->andWhere('n.exampleField = :val')
+//            ->setParameter('val', $value)
+//            ->orderBy('n.id', 'ASC')
+//            ->setMaxResults(10)
+//            ->getQuery()
+//            ->getResult()
+//        ;
+//    }
 
-    public function delete(int $noteId, int $userId): void
-    {
-        $this->getConnection()
-            ->executeStatement(
-                "DELETE FROM notepad
-                WHERE id = :noteId
-                AND user_id = :userId;",
-                [
-                    'noteId' => $noteId,
-                    'userId' => $userId,
-                ]
-            );
-    }
-
-    public function deleteAll(int $userId): void
-    {
-        foreach ($this->findAll($userId) as $note) {
-            $this->delete($note->id, $userId);
-        }
-    }
+//    public function findOneBySomeField($value): ?Notepad
+//    {
+//        return $this->createQueryBuilder('n')
+//            ->andWhere('n.exampleField = :val')
+//            ->setParameter('val', $value)
+//            ->getQuery()
+//            ->getOneOrNullResult()
+//        ;
+//    }
 }

@@ -25,7 +25,7 @@ use EtoA\Market\MarketAuctionRepository;
 use EtoA\Market\MarketResourceRepository;
 use EtoA\Market\MarketShipRepository;
 use EtoA\Missile\MissileRepository;
-use EtoA\Notepad\NotepadRepository;
+use EtoA\Notepad\NotepadDataRepository;
 use EtoA\Security\Player\CurrentPlayer;
 use EtoA\Ship\ShipRepository;
 use EtoA\Support\Mail\MailSenderService;
@@ -59,7 +59,7 @@ class UserService
         private readonly MarketAuctionRepository       $marketAuctionRepository,
         private readonly MarketResourceRepository      $marketResourceRepository,
         private readonly MarketShipRepository          $marketShipRepository,
-        private readonly NotepadRepository             $notepadRepository,
+        private readonly NotepadDataRepository         $notepadRepository,
         private readonly FleetRepository               $fleetRepository,
         private readonly ShipRepository                $shipRepository,
         private readonly DefenseRepository             $defenseRepository,

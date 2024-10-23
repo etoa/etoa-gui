@@ -23,7 +23,7 @@ use EtoA\Market\MarketAuctionRepository;
 use EtoA\Market\MarketResourceRepository;
 use EtoA\Market\MarketShipRepository;
 use EtoA\Missile\MissileRepository;
-use EtoA\Notepad\NotepadRepository;
+use EtoA\Notepad\NotepadDataRepository;
 use EtoA\Race\RaceDataRepository;
 use EtoA\Ship\ShipDataRepository;
 use EtoA\Ship\ShipQueueRepository;
@@ -143,7 +143,7 @@ class UserServiceProvider implements ServiceProviderInterface
                 $pimple[MarketAuctionRepository::class],
                 $pimple[MarketResourceRepository::class],
                 $pimple[MarketShipRepository::class],
-                $pimple[NotepadRepository::class],
+                $pimple[NotepadDataRepository::class],
                 $pimple[FleetRepository::class],
                 $pimple[ShipRepository::class],
                 $pimple[DefenseRepository::class],
