@@ -2,12 +2,12 @@
 
 namespace EtoA\Components\Admin;
 
-use EtoA\Chat\ChatBan;
 use EtoA\Chat\ChatBanRepository;
 use EtoA\Chat\ChatMessage;
 use EtoA\Chat\ChatRepository;
 use EtoA\Chat\ChatUser;
 use EtoA\Chat\ChatUserRepository;
+use EtoA\Entity\ChatBan;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
 use Symfony\UX\LiveComponent\Attribute\LiveAction;
 use Symfony\UX\LiveComponent\DefaultActionTrait;

@@ -2,18 +2,24 @@
 
 namespace EtoA\Chat;
 
+use EtoA\User\UserRepository;
+use Doctrine\ORM\Mapping as ORM;
+
+#[ORM\Entity(repositoryClass: UserRepository::class)]
+#[ORM\Table(name: 'chat_users')]
 class ChatUser
 {
-    public int $id;
-    public string $nick;
-    public int $timestamp;
-    public ?string $kick;
+    #[ORM\Id]
+    #[ORM\GeneratedValue(strategy: "AUTO")]
+    #[ORM\Column(name: "user_id", type: "integer")]
+    private int $id;
 
-    public function __construct(array $data)
-    {
-        $this->id = (int) $data['user_id'];
-        $this->nick = $data['nick'];
-        $this->timestamp = (int) $data['timestamp'];
-        $this->kick = $data['kick'];
-    }
+    #[ORM\Column]
+    private string $nick;
+
+    #[ORM\Column(type: "integer")]
+    private int $timestamp;
+
+    #[ORM\Column]
+    private ?string $kick;
 }

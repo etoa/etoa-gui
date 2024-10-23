@@ -2,10 +2,18 @@
 
 namespace EtoA\Chat;
 
+use Doctrine\Persistence\ManagerRegistry;
+use EtoA\Entity\ChatLog;
 use EtoA\Core\AbstractRepository;
+use EtoA\Entity\ChatBan;
 
 class ChatLogRepository extends AbstractRepository
 {
+    public function __construct(ManagerRegistry $registry)
+    {
+        parent::__construct($registry, ChatLog::class);
+    }
+
     /**
      * @return ChatLog[]
      */

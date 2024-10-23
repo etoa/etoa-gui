@@ -2,10 +2,18 @@
 
 namespace EtoA\Chat;
 
+use Doctrine\Persistence\ManagerRegistry;
 use EtoA\Core\AbstractRepository;
+use EtoA\Entity\BuildingListItem;
+use EtoA\Entity\ChatBan;
 
 class ChatBanRepository extends AbstractRepository
 {
+    public function __construct(ManagerRegistry $registry)
+    {
+        parent::__construct($registry, ChatBan::class);
+    }
+
     public function getUserBan(int $userId): ?ChatBan
     {
         $data = $this->createQueryBuilder('q')
