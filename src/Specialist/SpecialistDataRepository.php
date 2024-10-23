@@ -2,11 +2,17 @@
 
 namespace EtoA\Specialist;
 
+use Doctrine\Persistence\ManagerRegistry;
 use EtoA\Core\AbstractRepository;
 use EtoA\Entity\Specialist;
 
 class SpecialistDataRepository extends AbstractRepository
 {
+    public function __construct(ManagerRegistry $registry)
+    {
+        parent::__construct($registry, Specialist::class);
+    }
+
     /**
      * @return array<int, string>
      */
