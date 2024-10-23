@@ -2,12 +2,20 @@
 
 namespace EtoA\User;
 
-use Doctrine\DBAL\Query\QueryBuilder;
-use EtoA\Core\AbstractRepository;
 use Doctrine\DBAL\ArrayParameterType;
+use Doctrine\DBAL\Query\QueryBuilder;
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\Persistence\ManagerRegistry;
+use EtoA\Core\AbstractRepository;
+use EtoA\Entity\UserSitting;
 
 class UserSittingRepository extends AbstractRepository
 {
+    public function __construct(ManagerRegistry $registry, private readonly EntityManagerInterface $entityManager)
+    {
+        parent::__construct($registry, UserSitting::class);
+    }
+
     public function addEntry(int $userId, int $sitterId, string $password, int $dateFrom, int $dateTo): void
     {
         $this->createQueryBuilder('q')
@@ -44,15 +52,15 @@ class UserSittingRepository extends AbstractRepository
 
     public function getActiveUserEntry(int $userId): ?UserSitting
     {
-        $data = $this->createSitterQueryBuilder()
-            ->where('s.user_id = :userId')
-            ->andWhere('s.date_from < :time')
-            ->andWhere('s.date_to > :time')
+        return $this->createQueryBuilder('q')
+            ->where('q.userId = :userId')
+            ->andWhere('q.dateFrom < :time')
+            ->andWhere('q.dateTo > :time')
             ->setParameter('time', time())
             ->setParameter('userId', $userId)
-            ->fetchAssociative();
-
-        return $data !== false ? new UserSitting($data) : null;
+            ->getQuery()
+            ->setMaxResults(1)
+            ->getOneOrNullResult();
     }
 
     /**
