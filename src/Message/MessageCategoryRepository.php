@@ -4,10 +4,18 @@ declare(strict_types=1);
 
 namespace EtoA\Message;
 
+use Doctrine\Persistence\ManagerRegistry;
 use EtoA\Core\AbstractRepository;
+use EtoA\Entity\MessageCategory;
+use EtoA\Entity\User;
 
 class MessageCategoryRepository extends AbstractRepository
 {
+    public function __construct(ManagerRegistry $registry)
+    {
+        parent::__construct($registry, MessageCategory::class);
+    }
+
     /**
      * @return array<int,string>
      */

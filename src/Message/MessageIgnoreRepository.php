@@ -4,10 +4,17 @@ declare(strict_types=1);
 
 namespace EtoA\Message;
 
+use Doctrine\Persistence\ManagerRegistry;
 use EtoA\Core\AbstractRepository;
+use EtoA\Entity\MessageIgnore;
 
 class MessageIgnoreRepository extends AbstractRepository
 {
+    public function __construct(ManagerRegistry $registry)
+    {
+        parent::__construct($registry, MessageIgnore::class);
+    }
+
     public function isRecipientIgnoringSender(int $senderId, int $recipientId): bool
     {
         $data = (int) $this->createQueryBuilder('q')
