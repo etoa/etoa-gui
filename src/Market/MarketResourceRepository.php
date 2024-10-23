@@ -2,12 +2,19 @@
 
 namespace EtoA\Market;
 
+use Doctrine\Persistence\ManagerRegistry;
 use EtoA\Core\AbstractRepository;
+use EtoA\Entity\MarketResource;
 use EtoA\Universe\Resources\BaseResources;
 use EtoA\Universe\Resources\ResourceNames;
 
 class MarketResourceRepository extends AbstractRepository
 {
+    public function __construct(ManagerRegistry $registry)
+    {
+        parent::__construct($registry, MarketResource::class);
+    }
+
     public function add(int $userId, int $entityId, int $forUserId, int $forAllianceId, string $text, BaseResources $sell, BaseResources $buy): int
     {
         $this->createQueryBuilder('q')

@@ -2,10 +2,18 @@
 
 namespace EtoA\Market;
 
+use Doctrine\Persistence\ManagerRegistry;
 use EtoA\Core\AbstractRepository;
+use EtoA\Entity\MarketRate;
+use EtoA\Entity\User;
 
 class MarketRateRepository extends AbstractRepository
 {
+    public function __construct(ManagerRegistry $registry)
+    {
+        parent::__construct($registry, MarketRate::class);
+    }
+
     /**
      * @return MarketRate[]
      */

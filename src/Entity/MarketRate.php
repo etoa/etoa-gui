@@ -1,17 +1,32 @@
 <?php declare(strict_types=1);
 
-namespace EtoA\Market;
+namespace EtoA\Entity;
 
+use EtoA\Market\MarketRateRepository;
 use EtoA\Universe\Resources\BaseResources;
 use EtoA\Universe\Resources\PreciseResources;
+use Doctrine\ORM\Mapping as ORM;
 
+#[ORM\Entity(repositoryClass: MarketRateRepository::class)]
+#[ORM\Table(name: 'market_rates')]
 class MarketRate
 {
-    public ?int $id = null;
-    public int $timestamp = 0;
-    public BaseResources $supply;
-    public BaseResources $demand;
-    public PreciseResources $rate;
+    #[ORM\Id]
+    #[ORM\GeneratedValue(strategy: "AUTO")]
+    #[ORM\Column(type: "integer")]
+    private ?int $id = null;
+
+    #[ORM\Column(type: "integer")]
+    private int $timestamp = 0;
+
+    #[ORM\Column(type: "json")]
+    private BaseResources $supply;
+
+    #[ORM\Column(type: "json")]
+    private BaseResources $demand;
+
+    #[ORM\Column(type: "json")]
+    private PreciseResources $rate;
 
     public function __construct()
     {
@@ -45,5 +60,58 @@ class MarketRate
         $rate->rate->people = (float) $data['rate_5'];
 
         return $rate;
+    }
+
+    public function getId(): ?int
+    {
+        return $this->id;
+    }
+
+    public function getTimestamp(): ?int
+    {
+        return $this->timestamp;
+    }
+
+    public function setTimestamp(int $timestamp): static
+    {
+        $this->timestamp = $timestamp;
+
+        return $this;
+    }
+
+    public function getSupply(): array
+    {
+        return $this->supply;
+    }
+
+    public function setSupply(array $supply): static
+    {
+        $this->supply = $supply;
+
+        return $this;
+    }
+
+    public function getDemand(): array
+    {
+        return $this->demand;
+    }
+
+    public function setDemand(array $demand): static
+    {
+        $this->demand = $demand;
+
+        return $this;
+    }
+
+    public function getRate(): array
+    {
+        return $this->rate;
+    }
+
+    public function setRate(array $rate): static
+    {
+        $this->rate = $rate;
+
+        return $this;
     }
 }

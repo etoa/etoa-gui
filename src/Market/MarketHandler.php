@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace EtoA\Market;
 
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Entity\MarketRate;
 use EtoA\Fleet\FleetRepository;
 use EtoA\Support\RuntimeDataStore;
 use EtoA\Universe\Planet\PlanetRepository;

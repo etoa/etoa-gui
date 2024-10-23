@@ -7,7 +7,6 @@ namespace EtoA\Universe\Entity;
 use EtoA\Alliance\AllianceRepository;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Entity\Entity;
-use EtoA\Market\MarketRepository;
 use EtoA\Universe\Asteroid\AsteroidRepository;
 use EtoA\Universe\EmptySpace\EmptySpaceRepository;
 use EtoA\Universe\Nebula\NebulaRepository;
@@ -31,7 +30,6 @@ class EntityService
         private readonly NebulaRepository $nebulaRepository,
         private readonly WormholeRepository $wormholeRepository,
         private readonly EmptySpaceRepository $emptySpaceRepository,
-        private readonly MarketRepository $marketRepository,
         private readonly AllianceRepository $allianceRepository,
         private readonly PlanetService $planetService
     ){}
