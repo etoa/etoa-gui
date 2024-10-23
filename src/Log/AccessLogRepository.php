@@ -2,10 +2,17 @@
 
 namespace EtoA\Log;
 
+use Doctrine\Persistence\ManagerRegistry;
 use EtoA\Core\AbstractRepository;
+use EtoA\Entity\AccessLog;
 
 class AccessLogRepository extends AbstractRepository
 {
+    public function __construct(ManagerRegistry $registry)
+    {
+        parent::__construct($registry, AccessLog::class);
+    }
+
     public function add(string $target, string $sessionId, string $sub, string $domain): void
     {
         $this->createQueryBuilder('q')
