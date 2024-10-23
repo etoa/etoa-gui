@@ -22,4 +22,45 @@ class TechnologyPoint
 
     #[ORM\Column(name: "bp_points", type: "integer")]
     private float $points;
+
+    public function getId(): ?int
+    {
+        return $this->id;
+    }
+
+    public function getTechnologyId(): ?int
+    {
+        return $this->technologyId;
+    }
+
+    public function setTechnologyId(int $technologyId): static
+    {
+        $this->technologyId = $technologyId;
+
+        return $this;
+    }
+
+    public function getLevel(): ?int
+    {
+        return $this->level;
+    }
+
+    public function setLevel(int $level): static
+    {
+        $this->level = $level;
+
+        return $this;
+    }
+
+    public function getPoints(): ?int
+    {
+        return $this->points;
+    }
+
+    public function setPoints(int $points): static
+    {
+        $this->points = $points;
+
+        return $this;
+    }
 }
