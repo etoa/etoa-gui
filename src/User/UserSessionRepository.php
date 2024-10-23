@@ -4,10 +4,18 @@ declare(strict_types=1);
 
 namespace EtoA\User;
 
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\Persistence\ManagerRegistry;
 use EtoA\Core\AbstractRepository;
+use EtoA\Entity\UserSession;
 
 class UserSessionRepository extends AbstractRepository
 {
+    public function __construct(ManagerRegistry $registry,private readonly EntityManagerInterface $entityManager)
+    {
+        parent::__construct($registry, UserSession::class);
+    }
+
     /**
      * @return array<string, int>
      */
@@ -78,7 +86,6 @@ class UserSessionRepository extends AbstractRepository
     {
         $data = $this->createQueryBuilder('q')
             ->select("*")
-            ->from('user_sessionlog')
             ->where('session_id = :id')
             ->setParameter('id', $sessionId)
             ->fetchAssociative();
@@ -152,63 +159,40 @@ class UserSessionRepository extends AbstractRepository
         return array_map(fn (array $row) => new UserSession($row), $data);
     }
 
-    public function add(string $id, int $userId, string $ipAddress, string $userAgent, int $timeLogin): void
+    public function add(UserSession $userSession): void
     {
-        $this->createQueryBuilder('q')
-            ->insert('user_sessions')
-            ->values([
-                'id' => ':id',
-                'user_id' => ':userId',
-                'ip_addr' => ':ipAddress',
-                'user_agent' => ':userAgent',
-                'time_login' => ':timeLogin',
-
-            ])
-            ->setParameters([
-                'id' => $id,
-                'userId' => $userId,
-                'ipAddress' => $ipAddress,
-                'userAgent' => $userAgent,
-                'timeLogin' => $timeLogin,
-            ])
-            ->executeQuery();
+        $this->entityManager->persist($userSession);
+        $this->entityManager->flush();
     }
 
     public function update(string $id, int $timeAction, int $botCount, int $lastSpan, string $ipAddress): void
     {
         $this->createQueryBuilder('q')
-            ->update('user_sessions')
-            ->set('time_action', ':timeAction')
-            ->set('bot_count', ':botCount')
-            ->set('last_span', ':lastSpan')
-            ->set('ip_addr', ':ipAddress')
-            ->where('id = :id')
+            ->set('q.time_action', $timeAction)
+            ->set('q.bot_count',  $botCount)
+            ->set('q.last_span',  $lastSpan)
+            ->set('q.ip_addr',  $ipAddress)
+            ->where('q.id = :id')
             ->setParameters([
                 'id' => $id,
-                'timeAction' => $timeAction,
-                'botCount' => $botCount,
-                'lastSpan' => $lastSpan,
-                'ipAddress' => $ipAddress,
             ])
-            ->executeQuery();
+            ->getQuery()
+            ->execute();
     }
 
-    public function remove(string $id): void
+    public function remove(UserSession $userSession): void
     {
-        $this->createQueryBuilder('q')
-            ->delete('user_sessions')
-            ->where('id = :id')
-            ->setParameter('id', $id)
-            ->executeQuery();
+        $this->entityManager->remove($userSession);
+        $this->entityManager->flush();
     }
 
     public function removeForUser(int $userId): void
     {
         $this->createQueryBuilder('q')
-            ->delete('user_sessions')
-            ->where('user_id = :userId')
+            ->where('q.userId = :userId')
             ->setParameter('userId', $userId)
-            ->executeQuery();
+            ->getQuery()
+            ->execute();
     }
 
     public function addSessionLog(UserSession $userSession, ?int $logoutTime): void

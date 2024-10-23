@@ -2,6 +2,7 @@
 
 namespace EtoA\EventSubscriber;
 
+use EtoA\Entity\UserSession;
 use EtoA\User\UserSessionManager;
 use EtoA\User\UserSessionRepository;
 use EtoA\Core\Configuration\ConfigurationService;
@@ -49,19 +50,25 @@ class UserSessionSubscriber implements EventSubscriberInterface
             $session = $event->getRequest()->getSession();
             /** @var CurrentPlayer $user */
             $user = $event->getAuthenticatedToken()->getUser();
-            $this->userSessionRepository->removeForUser($user->getId());
-            $this->userSessionRepository->add(
-                $session->getId(),
-                $user->getId(),
-                $event->getRequest()->getClientIp(),
-                $event->getRequest()->headers->get('User-Agent'),
-                $time,
-            );
+
+            $oldSession = $this->userSessionRepository->findOneBy(['userId'=>$user->getId()]);
+            if($oldSession)
+                $this->userSessionRepository->remove($oldSession);
+
+            $sessionModel = new UserSession();
+            $sessionModel
+                ->setId($session->getId())
+                ->setUserId($user->getId())
+                ->setIpAddr($event->getRequest()->getClientIp())
+                ->setUserAgent($event->getRequest()->headers->get('User-Agent'))
+                ->setTimeLogin($time);
+
+            $this->userSessionRepository->add($sessionModel);
 
             $sittingEntry = $this->userSittingRepository->getActiveUserEntry($user->getId());
             if ($sittingEntry !== null) {
                 $session->set('sittingActive', true);
-                $session->set('sittingUntil', $sittingEntry->dateTo);
+                $session->set('sittingUntil', $sittingEntry->getDateTo());
             }
 
             $session->set('lastAction', $time);
@@ -111,6 +118,7 @@ class UserSessionSubscriber implements EventSubscriberInterface
 
                 if ($allows) {
                     if (!$bot) {
+
                         $this->userSessionRepository->update($session->getId(), $time, $botCount, $lastSpan, $event->getRequest()->getClientIp());
                         $session->set('lastAction', $time);
                         return;
