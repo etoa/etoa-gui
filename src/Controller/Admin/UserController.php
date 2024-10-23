@@ -754,12 +754,12 @@ class UserController extends AbstractAdminController
         return $this->render('admin/user/tickets.html.twig', [
             'user' => $user,
             'tickets' => array_map(fn(Ticket $ticket) => [
-                'id' => $ticket->id,
+                'id' => $ticket->getId(),
                 'idString' => $ticket->getIdString(),
                 'statusName' => $ticket->getStatusName(),
-                'categoryName' => $this->ticketRepo->getCategoryName($ticket->catId),
-                'adminName' => ($ticket->adminId > 0 ? $this->adminUserRepo->getNick($ticket->adminId) : null),
-                'timestamp' => $ticket->timestamp,
+                'categoryName' => $this->ticketRepo->getCategoryName($ticket->getCatId()),
+                'adminName' => ($ticket->getAdminId() > 0 ? $this->adminUserRepo->getNick($ticket->getAdminId()) : null),
+                'timestamp' => $ticket->getTimestamp(),
             ], $tickets),
         ]);
     }
