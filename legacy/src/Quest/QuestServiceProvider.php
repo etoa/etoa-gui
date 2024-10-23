@@ -2,7 +2,7 @@
 
 namespace EtoA\Quest;
 
-use EtoA\Building\BuildingRepository;
+use EtoA\Building\BuildingListItemRepository;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Defense\DefenseDataRepository;
 use EtoA\Defense\DefenseRepository;
@@ -108,7 +108,7 @@ class QuestServiceProvider extends ServiceProvider implements BootableProviderIn
                 new StateFunctionBuilder(),
                 new FunctionBuilder(),
                 new ContainerAwareFunctionBuilder(
-                    $pimple[BuildingRepository::class],
+                    $pimple[BuildingListItemRepository::class],
                     $pimple[TechnologyRepository::class],
                     $pimple[DefenseRepository::class],
                     $pimple[UserRepository::class],

@@ -5,7 +5,7 @@ namespace EtoA\Components\Admin;
 use EtoA\Building\BuildingDataRepository;
 use EtoA\Building\BuildingListItem;
 use EtoA\Building\BuildingListItemSearch;
-use EtoA\Building\BuildingRepository;
+use EtoA\Building\BuildingListItemRepository;
 use EtoA\Components\Helper\SearchComponentTrait;
 use EtoA\Components\Helper\SearchResult;
 use EtoA\Form\Request\Admin\BuildingSearchRequest;
@@ -32,10 +32,10 @@ class BuildingSearchComponent extends AbstractController
     private BuildingSearchRequest $request;
 
     public function __construct(
-        private BuildingRepository $buildingRepository,
-        private BuildingDataRepository $buildingDataRepository,
-        private UserRepository $userRepository,
-        private EntityRepository $entityRepository,
+        private BuildingListItemRepository $buildingRepository,
+        private BuildingDataRepository     $buildingDataRepository,
+        private UserRepository             $userRepository,
+        private EntityRepository           $entityRepository,
     ) {
         $this->request = new BuildingSearchRequest();
     }

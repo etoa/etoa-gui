@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace EtoA\Universe\Planet;
 
-use EtoA\Building\BuildingRepository;
+use EtoA\Building\BuildingListItemRepository;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Defense\DefenseRepository;
 use EtoA\Entity\Planet;
@@ -17,13 +17,13 @@ use EtoA\Ship\ShipRepository;
 class PlanetService
 {
     public function __construct(
-        private readonly PlanetRepository $repository,
-        private readonly BuildingRepository $buildingRepository,
-        private readonly ShipRepository $shipRepository,
-        private readonly DefenseRepository $defenseRepository,
-        private readonly ConfigurationService $config,
-        private readonly LogRepository $logRepository,
-        private readonly PlanetTypeRepository $planetTypeRepository
+        private readonly PlanetRepository           $repository,
+        private readonly BuildingListItemRepository $buildingRepository,
+        private readonly ShipRepository             $shipRepository,
+        private readonly DefenseRepository          $defenseRepository,
+        private readonly ConfigurationService       $config,
+        private readonly LogRepository              $logRepository,
+        private readonly PlanetTypeRepository       $planetTypeRepository
     ) {}
 
     /**

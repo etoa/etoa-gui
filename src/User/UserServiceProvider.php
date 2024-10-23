@@ -10,7 +10,7 @@ use EtoA\Backend\BackendMessageService;
 use EtoA\Bookmark\BookmarkRepository;
 use EtoA\Bookmark\FleetBookmarkRepository;
 use EtoA\BuddyList\BuddyListRepository;
-use EtoA\Building\BuildingRepository;
+use EtoA\Building\BuildingListItemRepository;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Defense\DefenseDataRepository;
 use EtoA\DefaultItem\DefaultItemRepository;
@@ -114,7 +114,7 @@ class UserServiceProvider implements ServiceProviderInterface
             return new UserHolidayService(
                 $pimple[ConfigurationService::class],
                 $pimple[UserRepository::class],
-                $pimple[BuildingRepository::class],
+                $pimple[BuildingListItemRepository::class],
                 $pimple[TechnologyRepository::class],
                 $pimple[ShipQueueRepository::class],
                 $pimple[DefenseQueueRepository::class],
@@ -131,7 +131,7 @@ class UserServiceProvider implements ServiceProviderInterface
                 $pimple[UserRatingRepository::class],
                 $pimple[UserPropertiesRepository::class],
                 $pimple[PlanetRepository::class],
-                $pimple[BuildingRepository::class],
+                $pimple[BuildingListItemRepository::class],
                 $pimple[TechnologyRepository::class],
                 $pimple[MailSenderService::class],
                 $pimple[PlanetService::class],
@@ -168,7 +168,7 @@ class UserServiceProvider implements ServiceProviderInterface
                 $pimple[RaceDataRepository::class],
                 $pimple[PlanetRepository::class],
                 $pimple[PlanetTypeRepository::class],
-                $pimple[BuildingRepository::class],
+                $pimple[BuildingListItemRepository::class],
                 $pimple[TechnologyRepository::class],
                 $pimple[TechnologyDataRepository::class],
                 $pimple[ShipRepository::class],
@@ -198,7 +198,7 @@ class UserServiceProvider implements ServiceProviderInterface
         $pimple[UserSetupService::class] = function (Container $pimple): UserSetupService {
             return new UserSetupService(
                 $pimple[DefaultItemRepository::class],
-                $pimple[BuildingRepository::class],
+                $pimple[BuildingListItemRepository::class],
                 $pimple[TechnologyRepository::class],
                 $pimple[ShipRepository::class],
                 $pimple[DefenseRepository::class],

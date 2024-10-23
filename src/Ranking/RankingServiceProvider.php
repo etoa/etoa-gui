@@ -10,7 +10,7 @@ use EtoA\Alliance\AllianceStatsRepository;
 use EtoA\Alliance\AllianceTechnologyRepository;
 use EtoA\Building\BuildingDataRepository;
 use EtoA\Building\BuildingPointRepository;
-use EtoA\Building\BuildingRepository;
+use EtoA\Building\BuildingListItemRepository;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Defense\DefenseDataRepository;
 use EtoA\Defense\DefenseRepository;
@@ -54,7 +54,7 @@ class RankingServiceProvider implements ServiceProviderInterface
                 $pimple[SolarTypeRepository::class],
                 $pimple[RaceDataRepository::class],
                 $pimple[PlanetRepository::class],
-                $pimple[BuildingRepository::class],
+                $pimple[BuildingListItemRepository::class],
                 $pimple[TechnologyRepository::class],
                 $pimple[ShipRepository::class],
                 $pimple[DefenseRepository::class],
@@ -70,7 +70,7 @@ class RankingServiceProvider implements ServiceProviderInterface
                 $pimple[AllianceRepository::class],
                 $pimple[AllianceStatsRepository::class],
                 $pimple[PlanetRepository::class],
-                $pimple[BuildingRepository::class],
+                $pimple[BuildingListItemRepository::class],
                 $pimple[BuildingDataRepository::class],
                 $pimple[BuildingPointRepository::class],
                 $pimple[TechnologyRepository::class],

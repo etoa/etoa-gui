@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace EtoA\Ranking;
 
-use EtoA\Building\BuildingRepository;
+use EtoA\Building\BuildingListItemRepository;
 use EtoA\Defense\DefenseRepository;
 use EtoA\Race\RaceDataRepository;
 use EtoA\Ship\ShipRepository;
@@ -29,7 +29,7 @@ class GameStatsGenerator
     private SolarTypeRepository $solarTypeRepository;
     private RaceDataRepository $raceDataRepository;
     private PlanetRepository $planetRepository;
-    private BuildingRepository $buildingRepository;
+    private BuildingListItemRepository $buildingRepository;
     private TechnologyRepository $technologyRepository;
     private ShipRepository $shipRepository;
     private DefenseRepository $defenseRepository;
@@ -37,16 +37,16 @@ class GameStatsGenerator
     private string $cacheDir;
 
     public function __construct(
-        PlanetTypeRepository $planetTypeRepository,
-        SolarTypeRepository $solarTypeRepository,
-        RaceDataRepository $raceDataRepository,
-        PlanetRepository $planetRepository,
-        BuildingRepository $buildingRepository,
-        TechnologyRepository $technologyRepository,
-        ShipRepository $shipRepository,
-        DefenseRepository $defenseRepository,
-        UserPropertiesRepository $userPropertiesRepository,
-        string $cacheDir
+        PlanetTypeRepository       $planetTypeRepository,
+        SolarTypeRepository        $solarTypeRepository,
+        RaceDataRepository         $raceDataRepository,
+        PlanetRepository           $planetRepository,
+        BuildingListItemRepository $buildingRepository,
+        TechnologyRepository       $technologyRepository,
+        ShipRepository             $shipRepository,
+        DefenseRepository          $defenseRepository,
+        UserPropertiesRepository   $userPropertiesRepository,
+        string                     $cacheDir
     ) {
         $this->planetTypeRepository = $planetTypeRepository;
         $this->solarTypeRepository = $solarTypeRepository;

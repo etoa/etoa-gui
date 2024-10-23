@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace EtoA\User;
 
-use EtoA\Building\BuildingRepository;
+use EtoA\Building\BuildingListItemRepository;
 use EtoA\DefaultItem\DefaultItemRepository;
 use EtoA\Defense\DefenseRepository;
 use EtoA\Ship\ShipRepository;
@@ -17,7 +17,7 @@ use Symfony\Bundle\SecurityBundle\Security;
 class UserSetupService
 {
     private DefaultItemRepository $defaultItemRepository;
-    private BuildingRepository $buildingRepository;
+    private BuildingListItemRepository $buildingRepository;
     private TechnologyRepository $technologyRepository;
     private ShipRepository $shipRepository;
     private DefenseRepository $defenseRepository;
@@ -28,16 +28,16 @@ class UserSetupService
     private Security $security;
 
     public function __construct(
-        DefaultItemRepository $defaultItemRepository,
-        BuildingRepository $buildingRepository,
-        TechnologyRepository $technologyRepository,
-        ShipRepository $shipRepository,
-        DefenseRepository $defenseRepository,
-        PlanetService $planetService,
-        PlanetRepository $planetRepository,
-        UserService $userService,
-        EntityRepository $entityRepository,
-        Security $security,
+        DefaultItemRepository      $defaultItemRepository,
+        BuildingListItemRepository $buildingRepository,
+        TechnologyRepository       $technologyRepository,
+        ShipRepository             $shipRepository,
+        DefenseRepository          $defenseRepository,
+        PlanetService              $planetService,
+        PlanetRepository           $planetRepository,
+        UserService                $userService,
+        EntityRepository           $entityRepository,
+        Security                   $security,
     ) {
         $this->defaultItemRepository = $defaultItemRepository;
         $this->buildingRepository = $buildingRepository;

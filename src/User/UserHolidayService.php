@@ -3,7 +3,7 @@
 namespace EtoA\User;
 
 use EtoA\Backend\BackendMessageService;
-use EtoA\Building\BuildingRepository;
+use EtoA\Building\BuildingListItemRepository;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Defense\DefenseQueueRepository;
 use EtoA\Entity\User;
@@ -19,7 +19,7 @@ class UserHolidayService
 {
     private ConfigurationService $config;
     private UserRepository $userRepository;
-    private BuildingRepository $buildingRepository;
+    private BuildingListItemRepository $buildingRepository;
     private TechnologyRepository $technologyRepository;
     private ShipQueueRepository $shipQueueRepository;
     private DefenseQueueRepository $defenseQueueRepository;
@@ -27,7 +27,7 @@ class UserHolidayService
     private FleetRepository $fleetRepository;
     private BackendMessageService $backendMessageService;
 
-    public function __construct(ConfigurationService $config, UserRepository $userRepository, BuildingRepository $buildingRepository, TechnologyRepository $technologyRepository, ShipQueueRepository $shipQueueRepository, DefenseQueueRepository $defenseQueueRepository, PlanetRepository $planetRepository, FleetRepository $fleetRepository, BackendMessageService $backendMessageService)
+    public function __construct(ConfigurationService $config, UserRepository $userRepository, BuildingListItemRepository $buildingRepository, TechnologyRepository $technologyRepository, ShipQueueRepository $shipQueueRepository, DefenseQueueRepository $defenseQueueRepository, PlanetRepository $planetRepository, FleetRepository $fleetRepository, BackendMessageService $backendMessageService)
     {
         $this->config = $config;
         $this->userRepository = $userRepository;
@@ -100,8 +100,8 @@ class UserHolidayService
 
         $userPlanets = $this->planetRepository->getUserPlanets($user->getId());
         foreach ($userPlanets as $planet) {
-            $this->planetRepository->setLastUpdated($planet->id, time());
-            $this->backendMessageService->updatePlanet($planet->id);
+            $this->planetRepository->setLastUpdated($planet->getId(), time());
+            $this->backendMessageService->updatePlanet($planet->getId());
         }
 
         return true;

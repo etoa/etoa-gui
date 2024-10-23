@@ -2,7 +2,7 @@
 
 namespace EtoA\Quest\Progress\InitFunctions;
 
-use EtoA\Building\BuildingRepository;
+use EtoA\Building\BuildingListItemRepository;
 use LittleCubicleGames\Quests\Entity\QuestInterface;
 use LittleCubicleGames\Quests\Entity\TaskInterface;
 use LittleCubicleGames\Quests\Progress\Functions\InitProgressHandlerFunctionInterface;
@@ -11,13 +11,13 @@ class HaveBuildingLevel implements InitProgressHandlerFunctionInterface
 {
     public const NAME = 'have-building-level';
 
-    private BuildingRepository $buildingRepository;
+    private BuildingListItemRepository $buildingRepository;
     private int $buildingId;
 
     /**
      * @param array<string, int> $attributes
      */
-    public function __construct(array $attributes, BuildingRepository $buildingRepository)
+    public function __construct(array $attributes, BuildingListItemRepository $buildingRepository)
     {
         $this->buildingRepository = $buildingRepository;
         $this->buildingId = $attributes['building_id'];

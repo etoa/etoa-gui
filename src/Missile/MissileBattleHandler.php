@@ -2,7 +2,7 @@
 
 namespace EtoA\Missile;
 
-use EtoA\Building\BuildingRepository;
+use EtoA\Building\BuildingListItemRepository;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Defense\DefenseDataRepository;
 use EtoA\Defense\DefenseRepository;
@@ -21,9 +21,9 @@ class MissileBattleHandler
     private MissileDataRepository $missileDataRepository;
     private DefenseDataRepository $defenseDataRepository;
     private DefenseRepository $defenseRepository;
-    private BuildingRepository $buildingRepository;
+    private BuildingListItemRepository $buildingRepository;
 
-    public function __construct(ConfigurationService $config, PlanetRepository $planetRepository, MissileRepository $missileRepository, MissileFlightRepository $missileFlightRepository, MessageRepository $messageRepository, MissileDataRepository $missileDataRepository, DefenseDataRepository $defenseDataRepository, DefenseRepository $defenseRepository, BuildingRepository $buildingRepository)
+    public function __construct(ConfigurationService $config, PlanetRepository $planetRepository, MissileRepository $missileRepository, MissileFlightRepository $missileFlightRepository, MessageRepository $messageRepository, MissileDataRepository $missileDataRepository, DefenseDataRepository $defenseDataRepository, DefenseRepository $defenseRepository, BuildingListItemRepository $buildingRepository)
     {
         $this->config = $config;
         $this->planetRepository = $planetRepository;

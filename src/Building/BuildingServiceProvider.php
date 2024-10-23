@@ -9,6 +9,10 @@ class BuildingServiceProvider implements ServiceProviderInterface
 {
     public function register(Container $pimple): void
     {
+        $pimple[BuildingListItemRepository::class] = function (Container $pimple): BuildingListItemRepository {
+            return new BuildingListItemRepository($pimple['db']);
+        };
+
         $pimple[BuildingRepository::class] = function (Container $pimple): BuildingRepository {
             return new BuildingRepository($pimple['db']);
         };

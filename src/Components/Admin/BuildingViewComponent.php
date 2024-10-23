@@ -4,7 +4,7 @@ namespace EtoA\Components\Admin;
 
 use EtoA\Building\BuildingBuildType;
 use EtoA\Building\BuildingListItem;
-use EtoA\Building\BuildingRepository;
+use EtoA\Building\BuildingListItemRepository;
 use EtoA\Components\Helper\AbstractEditComponent;
 use EtoA\Form\Type\Admin\EditBuildingType;
 use Symfony\Component\Form\FormInterface;
@@ -37,7 +37,7 @@ class BuildingViewComponent extends AbstractEditComponent
     }
 
     public function __construct(
-        private BuildingRepository $buildingRepository,
+        private BuildingListItemRepository $buildingRepository,
     ) {
         $this->buildTypes = BuildingBuildType::all();
     }

@@ -5,7 +5,7 @@ namespace EtoA\Controller\Admin;
 use EtoA\Building\BuildingDataRepository;
 use EtoA\Building\BuildingListItem;
 use EtoA\Building\BuildingPointRepository;
-use EtoA\Building\BuildingRepository;
+use EtoA\Building\BuildingListItemRepository;
 use EtoA\Building\BuildingRequirementRepository;
 use EtoA\Form\Type\Admin\AddBuildingItemType;
 use EtoA\Form\Type\Admin\BuildingSearchType;
@@ -27,7 +27,7 @@ class BuildingController extends AbstractAdminController
         private readonly BuildingPointRepository       $buildingPointRepository,
         private readonly RankingService                $rankingService,
         private readonly BuildingRequirementRepository $buildingRequirementRepository,
-        private readonly BuildingRepository            $buildingRepository,
+        private readonly BuildingListItemRepository    $buildingRepository,
         private readonly PlanetRepository              $planetRepository,
     )
     {
@@ -78,8 +78,8 @@ class BuildingController extends AbstractAdminController
         $requirements = [];
         $names = [];
         foreach ($buildings as $building) {
-            $names[$building->id] = $building->name;
-            $requirements[$building->id] = $collection->getAll($building->id);
+            $names[$building->getId()] = $building->getName();
+            $requirements[$building->getId()] = $collection->getAll($building->getId());
         }
 
         $requirementsCopy = deep_copy($requirements);

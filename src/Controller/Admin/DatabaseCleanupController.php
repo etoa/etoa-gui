@@ -4,7 +4,7 @@ namespace EtoA\Controller\Admin;
 
 use EtoA\Admin\AdminSessionManager;
 use EtoA\Alliance\AlliancePointsRepository;
-use EtoA\Building\BuildingRepository;
+use EtoA\Building\BuildingListItemRepository;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Defense\DefenseRepository;
 use EtoA\Log\LogCleanup;
@@ -32,26 +32,26 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 class DatabaseCleanupController extends AbstractAdminController
 {
     public function __construct(
-        private readonly MessageRepository        $messageRepository,
-        private readonly ReportRepository         $reportRepository,
-        private readonly LogRepository            $logRepository,
-        private readonly UserPointsRepository     $userPointsRepository,
-        private readonly AlliancePointsRepository $alliancePointsRepository,
-        private readonly UserService              $userService,
-        private readonly UserRepository           $userRepository,
-        private readonly ShipRepository           $shipRepository,
-        private readonly DefenseRepository        $defenseRepository,
-        private readonly BuildingRepository       $buildingRepository,
-        private readonly TechnologyRepository     $technologyRepository,
-        private readonly MissileRepository        $missileRepository,
-        private readonly ConfigurationService     $config,
-        private readonly UserSessionRepository    $userSessionRepository,
-        private readonly PointsService            $pointsService,
-        private readonly MessageService           $messageService,
-        private readonly UserSessionManager       $userSessionManager,
-        private readonly AdminSessionManager      $adminSessionManager,
-        private readonly LogCleanup               $logCleanup,
-        private readonly ReportCleanup            $reportCleanup,
+        private readonly MessageRepository          $messageRepository,
+        private readonly ReportRepository           $reportRepository,
+        private readonly LogRepository              $logRepository,
+        private readonly UserPointsRepository       $userPointsRepository,
+        private readonly AlliancePointsRepository   $alliancePointsRepository,
+        private readonly UserService                $userService,
+        private readonly UserRepository             $userRepository,
+        private readonly ShipRepository             $shipRepository,
+        private readonly DefenseRepository          $defenseRepository,
+        private readonly BuildingListItemRepository $buildingRepository,
+        private readonly TechnologyRepository       $technologyRepository,
+        private readonly MissileRepository          $missileRepository,
+        private readonly ConfigurationService       $config,
+        private readonly UserSessionRepository      $userSessionRepository,
+        private readonly PointsService              $pointsService,
+        private readonly MessageService             $messageService,
+        private readonly UserSessionManager         $userSessionManager,
+        private readonly AdminSessionManager        $adminSessionManager,
+        private readonly LogCleanup                 $logCleanup,
+        private readonly ReportCleanup              $reportCleanup,
     )
     {
     }

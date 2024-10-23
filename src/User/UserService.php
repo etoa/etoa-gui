@@ -10,7 +10,7 @@ use EtoA\Alliance\AllianceRepository;
 use EtoA\Bookmark\BookmarkRepository;
 use EtoA\Bookmark\FleetBookmarkRepository;
 use EtoA\BuddyList\BuddyListRepository;
-use EtoA\Building\BuildingRepository;
+use EtoA\Building\BuildingListItemRepository;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Defense\DefenseRepository;
 use EtoA\Entity\User;
@@ -47,7 +47,7 @@ class UserService
         private readonly UserRatingRepository          $userRatingRepository,
         private readonly UserPropertiesRepository      $userPropertiesRepository,
         private readonly PlanetRepository              $planetRepository,
-        private readonly BuildingRepository            $buildingRepository,
+        private readonly BuildingListItemRepository    $buildingRepository,
         private readonly TechnologyRepository          $technologyRepository,
         private readonly MailSenderService             $mailSenderService,
         private readonly PlanetService                 $planetService,
@@ -170,17 +170,17 @@ class UserService
 
             // Delete market fleets to planet
             $marketResFleets = $this->fleetRepository->findByParameters((new FleetSearchParameters())
-                ->entityTo($planet->id)
+                ->entityTo($planet->getId())
                 ->action($this->config->get('market_ship_action_ress')));
             $marketShipFleets = $this->fleetRepository->findByParameters((new FleetSearchParameters())
-                ->entityTo($planet->id)
+                ->entityTo($planet->getId())
                 ->action($this->config->get('market_ship_action_ship')));
             foreach (array_merge($marketResFleets, $marketShipFleets) as $fleet) {
                 $this->fleetRepository->removeAllShipsFromFleet($fleet->id);
                 $this->fleetRepository->remove($fleet->id);
             }
 
-            $this->planetService->reset($planet->id);
+            $this->planetService->reset($planet->getId());
         }
 
         //
