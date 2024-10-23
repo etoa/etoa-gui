@@ -2,7 +2,7 @@
 
 namespace EtoA\Fleet\Attack;
 
-use EtoA\Log\BattleLog;
+use EtoA\Entity\BattleLog;
 use EtoA\Support\StringUtils;
 
 class BanFinder
@@ -29,12 +29,12 @@ class BanFinder
         //Alle Daten werden in einem Array gespeichert, da mehr als 1 Angriffer möglich ist funktioniert das alte Tool nicht mehr
         $data = [];
         foreach ($logs as $log) {
-            $attackingUserIds = explode(",", $log->fleetUserIds);
-            $defendingUserIds = explode(",", $log->entityUserIds);
+            $attackingUserIds = explode(",", $log->getFleetUserIds());
+            $defendingUserIds = explode(",", $log->getEntityUserIds());
             $entityUserId = $defendingUserIds[1];
             foreach ($attackingUserIds as $atackingUserId) {
                 if ($atackingUserId != "") {
-                    $data[$atackingUserId][$entityUserId][$log->entityId][] = [$log->landTime, $log->war, $log->action];
+                    $data[$atackingUserId][$entityUserId][$log->getEntityId()][] = [$log->getLandTime(), $log->isWar(), $log->getAction()];
                 }
             }
         }
