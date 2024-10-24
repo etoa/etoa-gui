@@ -38,11 +38,6 @@ class TextRepository extends AbstractRepository
         return array_keys($this->textDef);
     }
 
-    public function save(Text $text): void
-    {
-        $this->entityManager->flush($text);
-    }
-
     public function enableText(string $id): void
     {
         $this->createQueryBuilder('q')

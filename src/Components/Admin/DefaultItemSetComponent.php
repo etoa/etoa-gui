@@ -3,9 +3,9 @@
 namespace EtoA\Components\Admin;
 
 use EtoA\Building\BuildingDataRepository;
-use EtoA\DefaultItem\DefaultItem;
 use EtoA\DefaultItem\DefaultItemRepository;
 use EtoA\Defense\DefenseDataRepository;
+use EtoA\Entity\DefaultItem;
 use EtoA\Form\Type\Admin\NewDefaultItemType;
 use EtoA\Missile\MissileDataRepository;
 use EtoA\Ship\ShipDataRepository;
@@ -80,7 +80,7 @@ class DefaultItemSetComponent extends AbstractController
 
         /** @var DefaultItem $item */
         $item = $this->getFormInstance()->getData();
-        $success = $this->defaultItemRepository->addItemToSet($this->setId, $item->cat, $item->objectId, $item->count);
+        $success = $this->defaultItemRepository->addItemToSet($this->setId, $item->getCat(), $item->getObjectId(), $item->getCount());
         if (!$success) {
             $this->error = 'Existiert bereits';
         }

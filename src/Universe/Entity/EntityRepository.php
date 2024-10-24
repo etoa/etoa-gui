@@ -19,19 +19,38 @@ class EntityRepository extends AbstractRepository
 
     public function countEntitiesOfCodeInSector(int $sx, int $sy, string $code): int
     {
-        return (int) $this->createQueryBuilder('q')
-            ->select('COUNT(e.id)')
-            ->from('entities', 'e')
-            ->innerJoin('e', 'cells', 'c', 'e.cell_id = c.id')
-            ->where('code = :code')
-            ->andWhere('sx = :sx')
-            ->andWhere('sy = :sy')
+
+        return $this->createQueryBuilder('q')
+            ->select('count(distinct(q.id))')
+            ->innerJoin('App:Cell', 'c', 'WITH', 'q.cellId = c.id')
+            ->where('q.code = :code')
+            ->andWhere('c.sx = :sx')
+            ->andWhere('c.sy = :sy')
             ->setParameters([
                 'sx' => $sx,
                 'sy' => $sy,
                 'code' => $code,
             ])
-            ->fetchOne();
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
+
+    public function countWithUserInSector(int $sx, int $sy): int
+    {
+        return (int) $this->createQueryBuilder('q')
+            ->select('COUNT(DISTINCT(q.id))')
+            ->innerJoin('App:Cell', 'c', 'WITH', 'q.cellId = c.id')
+            ->innerJoin('App:Planet', 'p', 'WITH', 'p.id = q.id AND p.userId > 0')
+            ->where('q.code = :code')
+            ->andWhere('c.sx = :sx')
+            ->andWhere('c.sy = :sy')
+            ->setParameters([
+                'sx' => $sx,
+                'sy' => $sy,
+                'code' => EntityType::PLANET,
+            ])
+            ->getQuery()
+            ->getSingleScalarResult();
     }
 
     public function findRandomId(string $code): ?int

@@ -5,8 +5,9 @@ declare(strict_types=1);
 namespace EtoA\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use EtoA\Universe\Cell\CellRepository;
 
-#[ORM\Entity(repositoryClass: Cell::class)]
+#[ORM\Entity(repositoryClass: CellRepository::class)]
 #[ORM\Table(name: 'cells')]
 class Cell
 {

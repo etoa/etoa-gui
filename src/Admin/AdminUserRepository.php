@@ -135,11 +135,6 @@ class AdminUserRepository extends AbstractRepository
             ->executeQuery();
     }
 
-    public function save(AdminUser $adminUser): void
-    {
-        $this->entityManager->flush();
-    }
-
     public function remove(AdminUser $adminUser): bool
     {
         $affected = $this->createQueryBuilder('q')

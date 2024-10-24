@@ -5,6 +5,7 @@ namespace EtoA\Form\Type\Core;
 use EtoA\Race\RaceDataRepository;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints\NotNull;
 
 class RaceType extends AbstractType
 {
@@ -21,7 +22,10 @@ class RaceType extends AbstractType
             'placeholder' => '(Alle)',
             'choices' => $this->raceDataRepository->getRaceNames(),
             'choice_value' => 'id',
-            'choice_label' => 'name'
+            'choice_label' => 'name',
+            'constraints' => [
+                new NotNull(['message'=>'Bitte Rasse auswählen!']),
+            ],
         ]);
     }
 

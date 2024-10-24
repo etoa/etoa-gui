@@ -13,7 +13,7 @@ class RaceSetupType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('raceId', RaceType::class, [
+            ->add('race', RaceType::class, [
                 'placeholder' => 'Bitte wählen...',
                 'label' => false,
                 'required' => true,

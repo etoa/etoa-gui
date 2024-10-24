@@ -161,24 +161,6 @@ class PlanetRepository extends AbstractRepository
             ->fetchOne();
     }
 
-    public function countWithUserInSector(int $sx, int $sy): int
-    {
-        return (int) $this->createQueryBuilder('q')
-            ->select('COUNT(e.id)')
-            ->from('entities', 'e')
-            ->innerJoin('e', 'cells', 'c', 'e.cell_id = c.id')
-            ->innerJoin('e', 'planets', 'p', 'p.id = e.id AND p.planet_user_id > 0')
-            ->where('code = :code')
-            ->andWhere('sx = :sx')
-            ->andWhere('sy = :sy')
-            ->setParameters([
-                'sx' => $sx,
-                'sy' => $sy,
-                'code' => EntityType::PLANET,
-            ])
-            ->fetchOne();
-    }
-
     public function getRandomFreePlanetId(int $sx = 0, int $sy = 0, ?int $minFields = null, ?int $planetType = null, ?int $starType = null): ?int
     {
         $qry = $this->createQueryBuilder('q')

@@ -468,12 +468,6 @@ class BuildingListItemRepository extends AbstractRepository
             ->executeQuery();
     }
 
-    public function save(BuildingListItem $item): void
-    {
-        $this->entityManager->persist($item);
-        $this->entityManager->flush();
-    }
-
     public function getPeopleWorking(int $entityId, bool $onlyWorkingStatus = false): PeopleWorking
     {
         $qb = $this->createQueryBuilder('q')

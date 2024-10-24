@@ -13,6 +13,11 @@ use EtoA\Core\Database\AbstractSort;
 
 abstract class AbstractRepository extends ServiceEntityRepository
 {
+    public function save(): void
+    {
+        $this->getEntityManager()->flush();
+    }
+
     protected function applySearchSortLimit(QueryBuilder $qb, AbstractSearch $search = null, AbstractSort $sorts = null, int $limit = null, int $offset = null): QueryBuilder
     {
         if ($search !== null) {

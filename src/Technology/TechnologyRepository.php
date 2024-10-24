@@ -66,11 +66,6 @@ class TechnologyRepository extends AbstractRepository
             ->getOneOrNullResult();
     }
 
-    public function save(TechnologyListItem $item): void
-    {
-       $this->entityManager->flush();
-    }
-
     /**
      * @return array<int, int>
      */

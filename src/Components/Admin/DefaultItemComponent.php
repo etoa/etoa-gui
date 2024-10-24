@@ -3,8 +3,8 @@
 namespace EtoA\Components\Admin;
 
 use EtoA\Components\Helper\AbstractEditComponent;
-use EtoA\DefaultItem\DefaultItem;
 use EtoA\DefaultItem\DefaultItemRepository;
+use EtoA\Entity\DefaultItem;
 use EtoA\Form\Type\Admin\EditDefaultItemType;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
@@ -30,7 +30,7 @@ class DefaultItemComponent extends AbstractEditComponent
     {
         $this->item = $item;
         if ($item !== null) {
-            $this->itemId = $item->id;
+            $this->itemId = $item->getId();
         }
     }
 
@@ -43,7 +43,7 @@ class DefaultItemComponent extends AbstractEditComponent
 
     protected function storeItem(): void
     {
-        $this->defaultItemRepository->updateItemCount($this->itemId, $this->item->count);
+        $this->defaultItemRepository->updateItemCount($this->itemId, $this->item->getCount());
     }
 
     public function getItem(): ?DefaultItem

@@ -65,4 +65,81 @@ class AllianceTechnologyListItem
     {
         return $this->buildEndTime > time();
     }
+
+    public function getId(): ?int
+    {
+        return $this->id;
+    }
+
+    public function getAllianceId(): ?int
+    {
+        return $this->allianceId;
+    }
+
+    public function setAllianceId(int $allianceId): static
+    {
+        $this->allianceId = $allianceId;
+
+        return $this;
+    }
+
+    public function getTechnologyId(): ?int
+    {
+        return $this->technologyId;
+    }
+
+    public function setTechnologyId(int $technologyId): static
+    {
+        $this->technologyId = $technologyId;
+
+        return $this;
+    }
+
+    public function getLevel(): ?int
+    {
+        return $this->level;
+    }
+
+    public function setLevel(int $level): static
+    {
+        $this->level = $level;
+
+        return $this;
+    }
+
+    public function getBuildStartTime(): ?int
+    {
+        return $this->buildStartTime;
+    }
+
+    public function setBuildStartTime(int $buildStartTime): static
+    {
+        $this->buildStartTime = $buildStartTime;
+
+        return $this;
+    }
+
+    public function getBuildEndTime(): ?int
+    {
+        return $this->buildEndTime;
+    }
+
+    public function setBuildEndTime(int $buildEndTime): static
+    {
+        $this->buildEndTime = $buildEndTime;
+
+        return $this;
+    }
+
+    public function getMemberFor(): ?int
+    {
+        return $this->memberFor;
+    }
+
+    public function setMemberFor(int $memberFor): static
+    {
+        $this->memberFor = $memberFor;
+
+        return $this;
+    }
 }
