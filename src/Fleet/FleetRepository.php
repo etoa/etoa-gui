@@ -41,10 +41,10 @@ class FleetRepository extends AbstractRepository
 
     public function countFleet(FleetSearch $search = null): int
     {
-        return (int) $this->applySearchSortLimit($this->createQueryBuilder('q'), $search)
+        return $this->applySearchSortLimit($this->createQueryBuilder('q'), $search)
             ->select("COUNT(q.id)")
             ->getQuery()
-            ->execute();
+            ->getSingleScalarResult();
     }
 
     public function countLeaderFleets(int $leaderId): int

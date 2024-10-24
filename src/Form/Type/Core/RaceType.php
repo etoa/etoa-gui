@@ -16,11 +16,12 @@ class RaceType extends AbstractType
     public function configureOptions(OptionsResolver $resolver): void
     {
         parent::configureOptions($resolver);
-
         $resolver->setDefaults([
             'required' => false,
             'placeholder' => '(Alle)',
-            'choices' => array_flip($this->raceDataRepository->getRaceNames()),
+            'choices' => $this->raceDataRepository->getRaceNames(),
+            'choice_value' => 'id',
+            'choice_label' => 'name'
         ]);
     }
 

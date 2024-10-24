@@ -13,7 +13,7 @@ class DefenseQueueSearch extends AbstractSearch
 
     public function userId(int $userId): self
     {
-        $this->parts[] = 'queue_user_id = :userId';
+        $this->parts[] = 'q.userId = :userId';
         $this->parameters['userId'] = $userId;
 
         return $this;
@@ -29,7 +29,7 @@ class DefenseQueueSearch extends AbstractSearch
 
     public function entityId(int $entityId): self
     {
-        $this->parts[] = 'queue_entity_id = :entityId';
+        $this->parts[] = 'q.entityId = :entityId';
         $this->parameters['entityId'] = $entityId;
 
         return $this;
@@ -45,7 +45,7 @@ class DefenseQueueSearch extends AbstractSearch
 
     public function defenseId(int $defenseId): self
     {
-        $this->parts[] = 'queue_def_id = :defenseId';
+        $this->parts[] = 'q.defId = :defenseId';
         $this->parameters['defenseId'] = $defenseId;
 
         return $this;
@@ -53,7 +53,7 @@ class DefenseQueueSearch extends AbstractSearch
 
     public function startEqualAfter(int $time): self
     {
-        $this->parts[] = 'queue_endtime >= :startEqualAfter';
+        $this->parts[] = 'q.startTime >= :startEqualAfter';
         $this->parameters['startEqualAfter'] = $time;
 
         return $this;
@@ -61,7 +61,7 @@ class DefenseQueueSearch extends AbstractSearch
 
     public function endAfter(int $time): self
     {
-        $this->parts[] = 'queue_endtime > :endAfter';
+        $this->parts[] = 'q.endTime > :endAfter';
         $this->parameters['endAfter'] = $time;
 
         return $this;

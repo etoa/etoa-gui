@@ -35,7 +35,7 @@ class Race
     #[ORM\Column(name: "race_leadertitle",type: "string")]
     protected string $leaderTitle;
 
-    #[ORM\Column(name: "race_f_reasearchtime",type: "float")]
+    #[ORM\Column(name: "race_f_researchtime",type: "float")]
     protected float $researchTime;
 
     #[ORM\Column(name: "race_f_buildtime",type: "float")]
@@ -65,7 +65,7 @@ class Race
     #[ORM\Column(name: "race_f_population",type: "float")]
     protected float $population;
 
-    #[ORM\Column(name: "race_f_active",type: "boolean")]
+    #[ORM\Column(name: "race_active",type: "boolean")]
     protected bool $active;
 
     public function getId(): ?int

@@ -22,25 +22,25 @@ class DefenseSort extends AbstractSort
 
     public static function id(): DefenseSort
     {
-        return new DefenseSort(['def_id' => null]);
+        return new DefenseSort(['q.id' => null]);
     }
 
     public static function name(): DefenseSort
     {
-        return new DefenseSort(['def_name' => null]);
+        return new DefenseSort(['q.name' => null]);
     }
 
     public static function category(): DefenseSort
     {
-        return new DefenseSort(['def_cat_id' => null, 'def_order' => null, 'def_name' => null]);
+        return new DefenseSort(['q.catId' => null, 'q.order' => null, 'q.name' => null]);
     }
 
     public static function specialWithUserSort(string $userSort, string $order): DefenseSort
     {
         if (isset(self::USER_SORT_VALUES[$userSort])) {
-            return new DefenseSort(['def_' . $userSort => $order]);
+            return new DefenseSort(['q.' . $userSort => $order]);
         }
 
-        return new DefenseSort(['def_order' => null]);
+        return new DefenseSort(['q.order' => null]);
     }
 }

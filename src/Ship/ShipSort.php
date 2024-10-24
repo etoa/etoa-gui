@@ -24,12 +24,12 @@ class ShipSort extends AbstractSort
 
     public static function id(): ShipSort
     {
-        return new ShipSort(['ship_id' => null]);
+        return new ShipSort(['q.id' => null]);
     }
 
     public static function name(): ShipSort
     {
-        return new ShipSort(['ship_name' => null]);
+        return new ShipSort(['q.name' => null]);
     }
 
     public static function category(): ShipSort

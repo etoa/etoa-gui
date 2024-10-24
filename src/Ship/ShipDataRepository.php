@@ -30,11 +30,12 @@ class ShipDataRepository extends AbstractRepository
     public function searchShipNames(ShipSearch $search = null, ShipSort $orderBy = null, int $limit = null): array
     {
         $qb = $this->createQueryBuilder('q')
-            ->select('ship_id', 'ship_name')
-            ->from('ships');
+            ->select('q.id', 'q.name');
+
 
         return $this->applySearchSortLimit($qb, $search, $orderBy ?? ShipSort::name(), $limit)
-            ->fetchAllKeyValue();
+            ->getQuery()
+            ->execute();
     }
 
     /**

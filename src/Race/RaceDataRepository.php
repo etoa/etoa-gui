@@ -20,16 +20,10 @@ class RaceDataRepository extends AbstractRepository
      */
     public function getRaceNames(bool $showAll = false, bool $orderById = false): array
     {
-        $qry = $this->createQueryBuilder('q')
-            ->select('race_id', 'race_name')
-            ->from('races');
+        $constraints = $showAll ? []:['active'=>1];
+        $order = $orderById ? ['id'=>'ASC']:['name'=>'ASC'];
 
-        if (!$showAll) {
-            $qry->andWhere('race_active = 1');
-        }
-
-        return $qry->orderBy($orderById ? 'race_id' : 'race_name')
-            ->fetchAllKeyValue();
+        return $this->findBy($constraints,$order);
     }
 
     /**

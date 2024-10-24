@@ -8,16 +8,16 @@ class BuildingSort extends AbstractSort
 {
     public static function id(): BuildingSort
     {
-        return new BuildingSort(['building_id' => null]);
+        return new BuildingSort(['q.id' => null]);
     }
 
     public static function name(): BuildingSort
     {
-        return new BuildingSort(['building_name' => null]);
+        return new BuildingSort(['q.name' => null]);
     }
 
     public static function type(): BuildingSort
     {
-        return new BuildingSort(['building_type_id' => null, 'building_order' => null, 'building_name' => null]);
+        return new BuildingSort(['q.typeId' => null, 'q.order' => null, 'q.name' => null]);
     }
 }

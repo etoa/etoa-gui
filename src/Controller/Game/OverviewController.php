@@ -2,6 +2,8 @@
 
 namespace EtoA\Controller\Game;
 
+use EtoA\Alliance\AllianceBuildListRepository;
+use EtoA\Alliance\AllianceTechnologyListRepository;
 use EtoA\Fleet\FleetRepository;
 use EtoA\Fleet\FleetSearch;
 use EtoA\Support\StringUtils;
@@ -52,6 +54,8 @@ class OverviewController extends AbstractGameController
         private readonly BuildingListItemRepository   $buildingRepository,
         private readonly ShipQueueRepository          $shipQueueRepository,
         private readonly DefenseQueueRepository       $defenseQueueRepository,
+        private readonly AllianceBuildListRepository $allianceBuildListRepository,
+        private readonly AllianceTechnologyListRepository $allianceTechnologyListRepository
     )
     {
     }
@@ -59,7 +63,6 @@ class OverviewController extends AbstractGameController
     #[Route('/game/overview', name: 'game.overview')]
     public function overview(Request $request): Response
     {
-dd($this->getUser());
         $s = $request->getSession();
 
         $failureCount = $this->userLoginFailureRepository->countLoginFailuresSince($this->getUser()->getId(), $this->getUser()->getData()->getLastOnline());
@@ -70,10 +73,10 @@ dd($this->getUser());
         $newsCounts = $this->allianceNewsRepository->countNewEntriesSince($this->getUser()->getData()->getAllianceId(), $this->getUser()->getData()->getLastOnline());
 
         // Eigene Flotten
-        $ownFleets = $this->fleetRepository->count(FleetSearch::create()->user($this->getUser()->getId()));
+        $ownFleets = $this->fleetRepository->count(['userId'=>$this->getUser()->getId()]);
 
         // Fremde Flotten
-        $result = $this->foreignFleetLoader->getVisibleFleets($this->getUser()->getId());
+        $foreignFleets = $this->foreignFleetLoader->getVisibleFleets($this->getUser()->getId());
 
         // Technologien
         $technologyNames = $this->technologyDataRepository->getTechnologyNames(true);
@@ -90,16 +93,16 @@ dd($this->getUser());
         if ($this->getUser()->getData()->getAllianceId() != 0) {
 
             // Lädt bauende Allianzgebäude
-            $allianceBuildingInProgress = $this->allianceBuildingRepository->getInProgress($this->getUser()->getData()->getAllianceId());
+            $allianceBuildingInProgress = $this->allianceBuildListRepository->getInProgress($this->getUser()->getData()->getAllianceId());
 
             // Supportflotten Flotten
-            $allianceSupportFleetCount = $this->fleetRepository->count(FleetSearch::create()->actionIn([\EtoA\Fleet\FleetAction::SUPPORT])->allianceId($this->getUser()->getData()->getAllianceId()));
+            $allianceSupportFleetCount = $this->fleetRepository->countFleet(FleetSearch::create()->actionIn([\EtoA\Fleet\FleetAction::SUPPORT])->allianceId($this->getUser()->getData()->getAllianceId()));
 
             // Allianzangriffs
-            $allianceAttackFleetCount = $this->fleetRepository->count(FleetSearch::create()->actionIn([FleetAction::ALLIANCE])->nextId($this->getUser()->getData()->getAllianceId())->status(FleetStatus::DEPARTURE)->isLeader());
+            $allianceAttackFleetCount = $this->fleetRepository->countFleet(FleetSearch::create()->actionIn([FleetAction::ALLIANCE])->nextId($this->getUser()->getData()->getAllianceId())->status(FleetStatus::DEPARTURE)->isLeader());
 
             // Lädt forschende Allianztech
-            $allianceTechnologyInProgress = $this->allianceTechnologyRepository->getInProgress($this->getUser()->getData()->getAllianceId());
+            $allianceTechnologyInProgress = $this->allianceTechnologyListRepository->getInProgress($this->getUser()->getData()->getAllianceId());
         }
 
         // Planetkreis
@@ -142,21 +145,21 @@ dd($this->getUser());
                 $entry = $buildingEntries[0];
 
                 //infos über den Bauhof
-                $building_rest_time = $entry->endTime - time();
+                $building_rest_time = $entry->getEndTime() - time();
                 $building_h = floor($building_rest_time / 3600);
                 $building_m = floor(($building_rest_time - $building_h * 3600) / 60);
                 $building_s = $building_rest_time - $building_h * 3600 - $building_m * 60;
                 $building_zeit = "(" . $building_h . "h " . $building_m . "m " . $building_s . "s)";
 
                 $building_time = $building_zeit;
-                $building_name = $buildingNames[$entry->buildingId];
+                $building_name = $buildingNames[$entry->getBuildingId()];
 
                 // Zeigt Ausbaulevel bei Abriss
-                if ($entry->buildType == 4) {
-                    $building_level = $entry->currentLevel - 1;
+                if ($entry->getBuildType() == 4) {
+                    $building_level = $entry->getCurrentLevel() - 1;
                 } // Bei Ausbau
                 else {
-                    $building_level = $entry->currentLevel + 1;
+                    $building_level = $entry->getCurrentLevel() + 1;
                 }
 
                 if ($building_rest_time <= 0) {
@@ -176,9 +179,9 @@ dd($this->getUser());
                 $queueItem = $queueEntries[0];
 
                 //Verbleibende Zeit bis zur fertigstellung des aktuellen Auftrages
-                $shipyard_rest_time[$userPlanet->getId()] = $queueItem->endTime - time();
+                $shipyard_rest_time[$userPlanet->getId()] = $queueItem->getEndTime() - time();
                 //Schiffsname
-                $shipyard_name[$userPlanet->getId()] = $shipNames[$queueItem->shipId];
+                $shipyard_name[$userPlanet->getId()] = $shipNames[$queueItem->getShipId()];
 
                 //infos über den raumschiffswerft
                 $shipyard_h = floor($shipyard_rest_time[$userPlanet->getId()] / 3600);
@@ -201,9 +204,9 @@ dd($this->getUser());
                 $queueItem = $queueEntries[0];
 
                 //Verbleibende Zeit bis zur fertigstellung des aktuellen Auftrages
-                $defense_rest_time[$userPlanet->getId()] = $queueItem->endTime - time();
+                $defense_rest_time[$userPlanet->getId()] = $queueItem->getEndTime() - time();
                 //Defname
-                $defense_name[$userPlanet->getId()] = $defenseNames[$queueItem->defenseId];
+                $defense_name[$userPlanet->getId()] = $defenseNames[$queueItem->getDefenseId()];
 
                 // Infos über die Waffenfabrik
                 $defense_h = floor($defense_rest_time[$userPlanet->getId()] / 3600);
@@ -311,7 +314,7 @@ dd($this->getUser());
             'infotext' => $infoText,
             'newsCounts' => $newsCounts,
             'ownFleets' => $ownFleets,
-            'result' => $result,
+            'foreignFleets' => $foreignFleets,
             'technologyInProgress' => $technologyInProgress,
             'genTechnologyInProgress' => $genTechnologyInProgress,
             'allianceBuildingInProgress' => $allianceBuildingInProgress??null,

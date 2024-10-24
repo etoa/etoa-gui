@@ -8,7 +8,7 @@ use EtoA\Core\ObjectWithImage;
 use EtoA\Universe\Resources\BaseResources;
 
 #[ORM\Entity(repositoryClass: BuildingRepository::class)]
-#[ORM\Table(name: 'users')]
+#[ORM\Table(name: 'buildings')]
 class Building implements ObjectWithImage
 {
     #[ORM\Id]

@@ -30,13 +30,13 @@
             <td>Keine eigenen Flotten</td>
         {% endif %}
 
-        {% if result.visibleFleets|length > 1  %}
+        {% if foreignFleets.visibleFleets|length > 1  %}
             <td>
-                <a href="?page=fleets" style=" {{ result.getAttitude }}"><b>{{ result.visibleFleets|length }}</b> fremde Flotten</a>
+                <a href="?page=fleets" style=" {{ result.getAttitude }}"><b>{{ foreignFleets.visibleFleets|length }}</b> fremde Flotten</a>
             </td>
-        {% elseif result.visibleFleets|length == 1  %}
+        {% elseif foreignFleets.visibleFleets|length == 1  %}
             <td>
-                <a href="?page=fleets" style="{{ result.getAttitude }}"><b>{{ result.visibleFleets|length }}</b> fremde Flotte</a>
+                <a href="?page=fleets" style="{{ result.getAttitude }}"><b>{{ foreignFleets.visibleFleets|length }}</b> fremde Flotte</a>
             </td>
         {% else %}
             <td>Keine fremden Flotten</td>

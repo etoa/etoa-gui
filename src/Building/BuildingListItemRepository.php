@@ -371,25 +371,24 @@ class BuildingListItemRepository extends AbstractRepository
     public function findForUser(int $userId, int $entityId = null, int $endTimeAfter = null): array
     {
         $qb = $this->createQueryBuilder('q')
-            ->select('*')
-            ->from('buildlist')
-            ->where('buildlist_user_id = :userId')
+            ->where('q.userId = :userId')
             ->setParameter('userId', $userId);
 
         if ($entityId !== null) {
             $qb
-                ->andWhere('buildlist_entity_id = :entityId')
+                ->andWhere('q.entityId = :entityId')
                 ->setParameter('entityId', $entityId);
         }
 
         if ($endTimeAfter !== null) {
             $qb
-                ->andWhere('buildlist_build_end_time > :time')
+                ->andWhere('q.endTime > :time')
                 ->setParameter('time', $endTimeAfter);
         }
 
         $data = $qb
-            ->fetchAllAssociative();
+            ->getQuery()
+            ->execute();
 
         return array_map(fn($row) => BuildingListItem::createFromData($row), $data);
     }

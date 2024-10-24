@@ -28,10 +28,10 @@ class ShipQueueItem
     #[ORM\Column(name: "queue_cnt", type: "integer")]
     private int $count;
 
-    #[ORM\Column(name: "queue_start_time", type: "integer")]
+    #[ORM\Column(name: "queue_starttime", type: "integer")]
     private int $startTime;
 
-    #[ORM\Column(name: "queue_end_time", type: "integer")]
+    #[ORM\Column(name: "queue_endtime", type: "integer")]
     private int $endTime;
 
     #[ORM\Column(name: "queue_objtime", type: "integer")]

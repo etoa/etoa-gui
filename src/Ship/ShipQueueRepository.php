@@ -78,10 +78,9 @@ class ShipQueueRepository extends AbstractRepository
     public function searchQueueItems(ShipQueueSearch $search, int $limit = null, int $offset = null): array
     {
         $data = $this->applySearchSortLimit($this->createQueryBuilder('q'), $search, null, $limit, $offset)
-            ->select('*')
-            ->from('ship_queue')
-            ->orderBy('queue_starttime', 'ASC')
-            ->fetchAllAssociative();
+            ->orderBy('q.startTime', 'ASC')
+            ->getQuery()
+            ->execute();
 
         return array_map(fn ($row) => ShipQueueItem::createFromData($row), $data);
     }

@@ -19,22 +19,22 @@ class DefenseQueueItem
     #[ORM\Column(name: "queue_user_id", type: "integer")]
     private int $userId;
 
-    #[ORM\Column(name: "queue_defense_id", type: "integer")]
+    #[ORM\Column(name: "queue_def_id", type: "integer")]
     private int $defenseId;
 
     #[ORM\Column(name: "queue_entity_id", type: "integer")]
     private int $entityId;
 
-    #[ORM\Column(name: "queue_count", type: "integer")]
+    #[ORM\Column(name: "queue_cnt", type: "integer")]
     private int $count;
 
-    #[ORM\Column(name: "queue_start_time", type: "integer")]
+    #[ORM\Column(name: "queue_starttime", type: "integer")]
     private int $startTime;
 
-    #[ORM\Column(name: "queue_end_time", type: "integer")]
+    #[ORM\Column(name: "queue_endtime", type: "integer")]
     private int $endTime;
 
-    #[ORM\Column(name: "queue_object_time", type: "integer")]
+    #[ORM\Column(name: "queue_objtime", type: "integer")]
     private int $objectTime;
 
     #[ORM\Column(name: "queue_build_type", type: "integer")]
