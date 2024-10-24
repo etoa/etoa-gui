@@ -3,7 +3,6 @@
 namespace EtoA\Controller\Admin;
 
 use EtoA\Alliance\AllianceBuildingRepository;
-use EtoA\Alliance\AllianceBuildListItem;
 use EtoA\Alliance\AllianceDiplomacyLevel;
 use EtoA\Alliance\AllianceDiplomacyRepository;
 use EtoA\Alliance\AllianceHistoryRepository;
@@ -11,9 +10,10 @@ use EtoA\Alliance\AllianceImageStorage;
 use EtoA\Alliance\AllianceRankRepository;
 use EtoA\Alliance\AllianceRepository;
 use EtoA\Alliance\AllianceService;
-use EtoA\Alliance\AllianceTechnologyListItem;
 use EtoA\Alliance\AllianceTechnologyRepository;
 use EtoA\Alliance\InvalidAllianceParametersException;
+use EtoA\Entity\AllianceBuildListItem;
+use EtoA\Entity\AllianceTechnologyListItem;
 use EtoA\Form\Type\Admin\AllianceBuildingAddType;
 use EtoA\Form\Type\Admin\AllianceCreateType;
 use EtoA\Form\Type\Admin\AllianceDepositSearchType;

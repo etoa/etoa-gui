@@ -2,10 +2,10 @@
 
 namespace EtoA\Controller\Admin;
 
-use EtoA\Alliance\Alliance;
 use EtoA\Alliance\AllianceImageStorage;
 use EtoA\Alliance\AllianceRepository;
 use EtoA\Alliance\AllianceService;
+use EtoA\Entity\Alliance;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;

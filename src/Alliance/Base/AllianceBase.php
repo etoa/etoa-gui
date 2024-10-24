@@ -2,16 +2,16 @@
 
 namespace EtoA\Alliance\Base;
 
-use EtoA\Alliance\AllianceBuilding;
 use EtoA\Alliance\AllianceBuildingRepository;
-use EtoA\Alliance\AllianceBuildListItem;
 use EtoA\Alliance\AllianceHistoryRepository;
 use EtoA\Alliance\AllianceRepository;
-use EtoA\Alliance\AllianceTechnology;
-use EtoA\Alliance\AllianceTechnologyListItem;
 use EtoA\Alliance\AllianceTechnologyRepository;
 use EtoA\Alliance\AllianceWithMemberCount;
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Entity\AllianceBuilding;
+use EtoA\Entity\AllianceBuildListItem;
+use EtoA\Entity\AllianceTechnology;
+use EtoA\Entity\AllianceTechnologyListItem;
 use EtoA\Entity\User;
 use EtoA\Universe\Resources\BaseResources;
 

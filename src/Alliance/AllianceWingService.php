@@ -2,6 +2,7 @@
 
 namespace EtoA\Alliance;
 
+use EtoA\Entity\Alliance;
 use EtoA\Message\MessageCategoryId;
 use EtoA\Message\MessageRepository;
 

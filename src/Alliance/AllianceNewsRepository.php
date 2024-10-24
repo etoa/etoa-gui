@@ -4,6 +4,7 @@ namespace EtoA\Alliance;
 
 use Doctrine\Persistence\ManagerRegistry;
 use EtoA\Core\AbstractRepository;
+use EtoA\Entity\AllianceNews;
 
 class AllianceNewsRepository extends AbstractRepository
 {
@@ -123,16 +124,16 @@ class AllianceNewsRepository extends AbstractRepository
 
     public function countNewEntriesSince(int $allianceId, int $timestamp): int
     {
-        return (int) $this->createQueryBuilder('q')
-            ->select('COUNT(alliance_news_id)')
-            ->from('alliance_news')
-            ->where('alliance_news_alliance_to_id = :allianceId OR alliance_news_alliance_to_id = 0')
-            ->andWhere('alliance_news_date > :timestamp')
+         return $this->createQueryBuilder('q')
+            ->select('COUNT(q.id)')
+            ->where('q.toAllianceId = :allianceId OR q.toAllianceId = 0')
+            ->andWhere('q.date > :timestamp')
             ->setParameters([
                 'timestamp' => $timestamp,
                 'allianceId' => $allianceId,
             ])
-            ->fetchOne();
+            ->getQuery()
+            ->getSingleScalarResult();
     }
 
     public function deleteAllianceEntries(int $allianceId): void

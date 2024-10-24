@@ -7,6 +7,7 @@ namespace EtoA\Alliance;
 use EtoA\Alliance\Board\AllianceBoardCategoryRepository;
 use EtoA\Alliance\Board\AllianceBoardTopicRepository;
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Entity\Alliance;
 use EtoA\Entity\User;
 use EtoA\Fleet\FleetAction;
 use EtoA\Fleet\FleetRepository;

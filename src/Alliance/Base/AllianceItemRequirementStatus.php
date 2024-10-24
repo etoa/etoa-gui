@@ -2,10 +2,10 @@
 
 namespace EtoA\Alliance\Base;
 
-use EtoA\Alliance\AllianceBuilding;
-use EtoA\Alliance\AllianceBuildListItem;
-use EtoA\Alliance\AllianceTechnology;
-use EtoA\Alliance\AllianceTechnologyListItem;
+use EtoA\Entity\AllianceBuilding;
+use EtoA\Entity\AllianceBuildListItem;
+use EtoA\Entity\AllianceTechnology;
+use EtoA\Entity\AllianceTechnologyListItem;
 
 class AllianceItemRequirementStatus
 {
