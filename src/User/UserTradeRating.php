@@ -2,6 +2,8 @@
 
 namespace EtoA\User;
 
+use EtoA\Entity\UserRating;
+
 class UserTradeRating extends UserRating
 {
     public int $tradesBuy;

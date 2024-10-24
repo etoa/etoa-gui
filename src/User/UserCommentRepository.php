@@ -2,10 +2,17 @@
 
 namespace EtoA\User;
 
+use Doctrine\Persistence\ManagerRegistry;
 use EtoA\Core\AbstractRepository;
+use EtoA\Entity\UserComment;
 
 class UserCommentRepository extends AbstractRepository
 {
+    public function __construct(ManagerRegistry $registry)
+    {
+        parent::__construct($registry, UserComment::class);
+    }
+
     /**
      * @return array{count: int, latest: int}
      */

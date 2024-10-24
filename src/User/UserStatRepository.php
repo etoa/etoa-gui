@@ -2,10 +2,17 @@
 
 namespace EtoA\User;
 
+use Doctrine\Persistence\ManagerRegistry;
 use EtoA\Core\AbstractRepository;
+use EtoA\Entity\UserStat;
 
 class UserStatRepository extends AbstractRepository
 {
+    public function __construct(ManagerRegistry $registry)
+    {
+        parent::__construct($registry, UserStat::class);
+    }
+
     /**
      * @param UserStatistic[] $userStats
      */

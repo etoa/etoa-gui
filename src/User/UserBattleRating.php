@@ -2,6 +2,8 @@
 
 namespace EtoA\User;
 
+use EtoA\Entity\UserRating;
+
 class UserBattleRating extends UserRating
 {
     public int $battlesWon;

@@ -4,10 +4,10 @@ namespace EtoA\Controller\Admin;
 
 use EtoA\Alliance\AllianceStatsRepository;
 use EtoA\Alliance\AllianceStatsSort;
+use EtoA\Entity\UserRating;
+use EtoA\Entity\UserStat;
 use EtoA\Ranking\UserTitlesService;
-use EtoA\User\UserRating;
 use EtoA\User\UserRatingRepository;
-use EtoA\User\UserStat;
 use EtoA\User\UserStatRepository;
 use EtoA\User\UserStatSearch;
 use Symfony\Component\HttpFoundation\Request;
@@ -30,23 +30,23 @@ class StatsController extends AbstractAdminController
     {
         $shipsStats = [];
         foreach ($this->userStatsRepository->searchStats(UserStatSearch::ships()) as $stat) {
-            $shipsStats[$stat->id] = $stat;
+            $shipsStats[$stat->getId()] = $stat;
         }
         $technologyStats = [];
         foreach ($this->userStatsRepository->searchStats(UserStatSearch::technologies()) as $stat) {
-            $technologyStats[$stat->id] = $stat;
+            $technologyStats[$stat->getId()] = $stat;
         }
         $buildingStats = [];
         foreach ($this->userStatsRepository->searchStats(UserStatSearch::buildings()) as $stat) {
-            $buildingStats[$stat->id] = $stat;
+            $buildingStats[$stat->getId()] = $stat;
         }
         $expStats = [];
         foreach ($this->userStatsRepository->searchStats(UserStatSearch::exp()) as $stat) {
-            $expStats[$stat->id] = $stat;
+            $expStats[$stat->getId()] = $stat;
         }
         $pointsStats = [];
         foreach ($this->userStatsRepository->searchStats(UserStatSearch::points()) as $stat) {
-            $pointsStats[$stat->id] = $stat;
+            $pointsStats[$stat->getId()] = $stat;
         }
 
         /** @var UserStat[][] $sorts */
@@ -63,7 +63,7 @@ class StatsController extends AbstractAdminController
 
         $userOrder = [];
         foreach ($sorts[$sort] as $entry) {
-            $userOrder[$entry->id] = $entry->shift;
+            $userOrder[$entry->getId()] = $entry->getShift();
         }
 
         if ($order === 'ASC') {

@@ -3,10 +3,18 @@
 namespace EtoA\User;
 
 use Doctrine\DBAL\ArrayParameterType;
+use Doctrine\Persistence\ManagerRegistry;
 use EtoA\Core\AbstractRepository;
+use EtoA\Entity\User;
+use EtoA\Entity\UserMulti;
 
 class UserMultiRepository extends AbstractRepository
 {
+    public function __construct(ManagerRegistry $registry)
+    {
+        parent::__construct($registry, UserMulti::class);
+    }
+
     public function addOrUpdateEntry(int $userId, int $multiId, string $reason): void
     {
         $exists = (bool) $this

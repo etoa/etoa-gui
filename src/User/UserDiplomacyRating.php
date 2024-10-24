@@ -2,6 +2,8 @@
 
 namespace EtoA\User;
 
+use EtoA\Entity\UserRating;
+
 class UserDiplomacyRating extends UserRating
 {
     public function __construct(array $data)

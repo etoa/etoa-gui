@@ -3,10 +3,17 @@
 namespace EtoA\User;
 
 use Doctrine\DBAL\ArrayParameterType;
+use Doctrine\Persistence\ManagerRegistry;
 use EtoA\Core\AbstractRepository;
+use EtoA\Entity\UserSurveillance;
 
 class UserSurveillanceRepository extends AbstractRepository
 {
+    public function __construct(ManagerRegistry $registry)
+    {
+        parent::__construct($registry, UserSurveillance::class);
+    }
+
     /**
      * @return UserSurveillance[]
      */

@@ -2,10 +2,17 @@
 
 namespace EtoA\User;
 
+use Doctrine\Persistence\ManagerRegistry;
 use EtoA\Core\AbstractRepository;
+use EtoA\Entity\UserOnlineStats;
 
 class UserOnlineStatsRepository extends AbstractRepository
 {
+    public function __construct(ManagerRegistry $registry)
+    {
+        parent::__construct($registry, UserOnlineStats::class);
+    }
+
     public function addEntry(int $userCount, int $sessionCount): void
     {
         $this->createQueryBuilder('q')

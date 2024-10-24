@@ -2,10 +2,18 @@
 
 namespace EtoA\User;
 
+use Doctrine\Persistence\ManagerRegistry;
 use EtoA\Core\AbstractRepository;
+use EtoA\Entity\User;
+use EtoA\Entity\UserLoginFailure;
 
 class UserLoginFailureRepository extends AbstractRepository
 {
+    public function __construct(ManagerRegistry $registry)
+    {
+        parent::__construct($registry, UserLoginFailure::class);
+    }
+
     public function add(int $userId, int $time, string $ip, string $client): void
     {
         $this->createQueryBuilder('q')
@@ -70,15 +78,18 @@ class UserLoginFailureRepository extends AbstractRepository
     public function countLoginFailuresSince(int $userId, int $since): int
     {
         return (int) $this->createQueryBuilder('q')
-            ->select('COUNT(failure_user_id)')
-            ->from('login_failures')
-            ->where('failure_user_id = :userId')
-            ->andWhere('failure_time > :since')
+            ->select('COUNT(q.userId)')
+            ->where('q.userId = :userId')
+            ->andWhere('q.time > :since')
             ->setParameters([
                 'userId' => $userId,
                 'since' => $since,
             ])
-            ->fetchOne();
+            ->getQuery()
+            ->execute();
+
+
+
     }
 
     /**

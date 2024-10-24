@@ -5,10 +5,17 @@ declare(strict_types=1);
 namespace EtoA\User;
 
 use Doctrine\DBAL\Query\QueryBuilder;
+use Doctrine\Persistence\ManagerRegistry;
 use EtoA\Core\AbstractRepository;
+use EtoA\Entity\UserRating;
 
 class UserRatingRepository extends AbstractRepository
 {
+    public function __construct(ManagerRegistry $registry)
+    {
+        parent::__construct($registry, UserRating::class);
+    }
+
     /**
      * @return UserDiplomacyRating[]
      */
