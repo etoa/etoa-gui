@@ -4,10 +4,17 @@ declare(strict_types=1);
 
 namespace EtoA\Universe\Star;
 
+use Doctrine\Persistence\ManagerRegistry;
 use EtoA\Core\AbstractRepository;
+use EtoA\Entity\SolarType;
 
 class SolarTypeRepository extends AbstractRepository
 {
+    public function __construct(ManagerRegistry $registry)
+    {
+        parent::__construct($registry, SolarType::class);
+    }
+
     /**
      * Returns an array of solar types names indexed by their id.
      *

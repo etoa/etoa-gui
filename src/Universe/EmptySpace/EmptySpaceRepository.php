@@ -4,10 +4,18 @@ declare(strict_types=1);
 
 namespace EtoA\Universe\EmptySpace;
 
+use Doctrine\Persistence\ManagerRegistry;
 use EtoA\Core\AbstractRepository;
+use EtoA\Entity\EmptySpace;
+use EtoA\Entity\User;
 
 class EmptySpaceRepository extends AbstractRepository
 {
+    public function __construct(ManagerRegistry $registry)
+    {
+        parent::__construct($registry, EmptySpace::class);
+    }
+
     /**
      * @return int[]
      */

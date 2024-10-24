@@ -4,10 +4,18 @@ declare(strict_types=1);
 
 namespace EtoA\Universe\Asteroid;
 
+use Doctrine\Persistence\ManagerRegistry;
 use EtoA\Core\AbstractRepository;
+use EtoA\Entity\Asteroid;
+use EtoA\Entity\User;
 
 class AsteroidRepository extends AbstractRepository
 {
+    public function __construct(ManagerRegistry $registry)
+    {
+        parent::__construct($registry, Asteroid::class);
+    }
+
     /**
      * @return int[]
      */

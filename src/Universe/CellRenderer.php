@@ -8,6 +8,7 @@ use EtoA\Alliance\AllianceDiplomacyRepository;
 use EtoA\Alliance\AllianceRepository;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Entity\Report;
+use EtoA\Entity\Wormhole;
 use EtoA\Image\ImageUtil;
 use EtoA\Message\ReportRepository;
 use EtoA\Message\ReportSearch;
@@ -20,7 +21,6 @@ use EtoA\Universe\Planet\PlanetTypeRepository;
 use EtoA\Universe\Resources\ResIcons;
 use EtoA\Universe\Resources\ResourceNames;
 use EtoA\Universe\Star\StarRepository;
-use EtoA\Universe\Wormhole\Wormhole;
 use EtoA\User\UserPropertiesRepository;
 use EtoA\User\UserRepository;
 use Symfony\Bundle\SecurityBundle\Security;
@@ -141,26 +141,26 @@ class CellRenderer
                 $tm = "";
                 $tm .= "<b>Felder</b>: " . StringUtils::formatNumber($planet->fields);
                 $tm .= "<br/><b>Bewohnbar</b>: ";
-                if ($planetType->habitable == 1) $tm .= "Ja";
+                if ($planetType->isHabitable() == 1) $tm .= "Ja";
                 else $tm .= "Nein	";
-                if ($planetType->metal != 1)
-                    $tm .= "<br/><b>" . ResourceNames::METAL . ":</b> " . StringUtils::formatPercentString($planetType->metal, true);
-                if ($planetType->crystal != 1)
-                    $tm .= "<br/><b>" . ResourceNames::CRYSTAL . ":</b> " . StringUtils::formatPercentString($planetType->crystal, true);
-                if ($planetType->plastic != 1)
-                    $tm .= "<br/><b>" . ResourceNames::PLASTIC . ":</b> " . StringUtils::formatPercentString($planetType->plastic, true);
-                if ($planetType->fuel != 1)
-                    $tm .= "<br/><b>" . ResourceNames::FUEL . ":</b> " . StringUtils::formatPercentString($planetType->fuel, true);
-                if ($planetType->food != 1)
-                    $tm .= "<br/><b>" . ResourceNames::FOOD . ":</b> " . StringUtils::formatPercentString($planetType->food, true);
-                if ($planetType->power != 1)
-                    $tm .= "<br/><b>Energie:</b> " . StringUtils::formatPercentString($planetType->power, true);
-                if ($planetType->people != 1)
-                    $tm .= "<br/><b>Bewohner:</b> " . StringUtils::formatPercentString($planetType->people, true);
-                if ($planetType->researchTime != 1)
-                    $tm .= "<br/><b>Foschungszeit:</b> " . StringUtils::formatPercentString($planetType->researchTime, true, true);
-                if ($planetType->buildTime != 1)
-                    $tm .= "<br/><b>Bauzeit:</b> " . StringUtils::formatPercentString($planetType->buildTime, true, true);
+                if ($planetType->getMetal() != 1)
+                    $tm .= "<br/><b>" . ResourceNames::METAL . ":</b> " . StringUtils::formatPercentString($planetType->getMetal(), true);
+                if ($planetType->getCrystal() != 1)
+                    $tm .= "<br/><b>" . ResourceNames::CRYSTAL . ":</b> " . StringUtils::formatPercentString($planetType->getCrystal(), true);
+                if ($planetType->getPlastic() != 1)
+                    $tm .= "<br/><b>" . ResourceNames::PLASTIC . ":</b> " . StringUtils::formatPercentString($planetType->getPlastic(), true);
+                if ($planetType->getFuel() != 1)
+                    $tm .= "<br/><b>" . ResourceNames::FUEL . ":</b> " . StringUtils::formatPercentString($planetType->getFuel(), true);
+                if ($planetType->getFood() != 1)
+                    $tm .= "<br/><b>" . ResourceNames::FOOD . ":</b> " . StringUtils::formatPercentString($planetType->getFood(), true);
+                if ($planetType->getPower() != 1)
+                    $tm .= "<br/><b>Energie:</b> " . StringUtils::formatPercentString($planetType->getPower(), true);
+                if ($planetType->getPeople() != 1)
+                    $tm .= "<br/><b>Bewohner:</b> " . StringUtils::formatPercentString($planetType->getPeople(), true);
+                if ($planetType->getResearchTime() != 1)
+                    $tm .= "<br/><b>Foschungszeit:</b> " . StringUtils::formatPercentString($planetType->getResearchTime(), true, true);
+                if ($planetType->getBuildTime() != 1)
+                    $tm .= "<br/><b>Bauzeit:</b> " . StringUtils::formatPercentString($planetType->getBuildTime(), true, true);
                 $tm .= "<br /><br/><b>Wärmebonus</b>: ";
                 $solarProdBonus = $planet->solarPowerBonus();
                 $color = $solarProdBonus >= 0 ? '#0f0' : '#f00';
@@ -182,7 +182,7 @@ class CellRenderer
                     <td $class style=\"text-align:center;vertical-align:middle;background:#000\"><b>" . $ent->pos . "</b></td>
                     <td $class $addstyle >";
             if ($ent->code === EntityType::PLANET)
-                echo "<span " . tm($planetType->name, $tm) . ">" . $planetType->name . "</span>";
+                echo "<span " . tm($planetType->getName(), $tm) . ">" . $planetType->getName() . "</span>";
             else
                 echo $fullEnt->getEntityCodeString();
 
@@ -265,7 +265,7 @@ class CellRenderer
             }
 
             if (in_array("analyze", $fullEnt->getAllowedFleetActions(), true)) {
-                if ($properties->showCellreports) {
+                if ($properties->isShowCellreports()) {
                     $report = $this->reportRepository->searchReport(ReportSearch::create()->userId($cu->id)->type('spy')->entity1Id($ent->id()));
                     if ($report !== null) {
                         $r = Report::createFactory($report);

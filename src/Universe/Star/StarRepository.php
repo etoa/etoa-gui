@@ -4,10 +4,18 @@ declare(strict_types=1);
 
 namespace EtoA\Universe\Star;
 
+use Doctrine\Persistence\ManagerRegistry;
 use EtoA\Core\AbstractRepository;
+use EtoA\Entity\Star;
+use EtoA\Entity\User;
 
 class StarRepository extends AbstractRepository
 {
+    public function __construct(ManagerRegistry $registry)
+    {
+        parent::__construct($registry, Star::class);
+    }
+
     /**
      * @return int[]
      */

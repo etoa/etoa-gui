@@ -4,10 +4,18 @@ declare(strict_types=1);
 
 namespace EtoA\Universe\Nebula;
 
+use Doctrine\Persistence\ManagerRegistry;
 use EtoA\Core\AbstractRepository;
+use EtoA\Entity\Nebula;
+use EtoA\Entity\User;
 
 class NebulaRepository extends AbstractRepository
 {
+    public function __construct(ManagerRegistry $registry)
+    {
+        parent::__construct($registry, Nebula::class);
+    }
+
     /**
      * @return int[]
      */

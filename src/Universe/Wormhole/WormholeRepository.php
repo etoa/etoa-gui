@@ -4,10 +4,17 @@ declare(strict_types=1);
 
 namespace EtoA\Universe\Wormhole;
 
+use Doctrine\Persistence\ManagerRegistry;
 use EtoA\Core\AbstractRepository;
+use EtoA\Entity\Wormhole;
 
 class WormholeRepository extends AbstractRepository
 {
+    public function __construct(ManagerRegistry $registry)
+    {
+        parent::__construct($registry, Wormhole::class);
+    }
+
     /**
      * @return int[]
      */
