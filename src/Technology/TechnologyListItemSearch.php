@@ -13,7 +13,7 @@ class TechnologyListItemSearch extends AbstractSearch
 
     public function userId(int $userId): self
     {
-        $this->parts[] = 'techlist_user_id = :userId';
+        $this->parts[] = 'q.userId = :userId';
         $this->parameters['userId'] = $userId;
 
         return $this;
@@ -45,7 +45,7 @@ class TechnologyListItemSearch extends AbstractSearch
 
     public function technologyId(int $technologyId): self
     {
-        $this->parts[] = 'techlist_tech_id = :technologyId';
+        $this->parts[] = 'q.technologyId = :technologyId';
         $this->parameters['technologyId'] = $technologyId;
 
         return $this;
@@ -53,7 +53,7 @@ class TechnologyListItemSearch extends AbstractSearch
 
     public function notTechnologyId(int $technologyId): self
     {
-        $this->parts[] = 'techlist_tech_id <> :notTechnologyId';
+        $this->parts[] = 'q.technologyId <> :notTechnologyId';
         $this->parameters['notTechnologyId'] = $technologyId;
 
         return $this;
@@ -61,7 +61,7 @@ class TechnologyListItemSearch extends AbstractSearch
 
     public function buildType(int $buildType): self
     {
-        $this->parts[] = 'techlist_build_type = :buildType';
+        $this->parts[] = 'q.buildType = :buildType';
         $this->parameters['buildType'] = $buildType;
 
         return $this;
@@ -69,7 +69,7 @@ class TechnologyListItemSearch extends AbstractSearch
 
     public function underConstruction(): self
     {
-        $this->parts[] = 'techlist_build_type > 0';
+        $this->parts[] = 'q.buildType > 0';
 
         return $this;
     }

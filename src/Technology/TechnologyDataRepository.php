@@ -18,10 +18,10 @@ class TechnologyDataRepository extends AbstractRepository
      */
     public function getTechnologyNames(bool $showAll = false, TechnologySort $orderBy = null): array
     {
-        $qb = $this->createQueryBuilder('q')
-            ->select('t.tech_id', 't.tech_name')
-            ->from('technologies', 't')
-            ->innerJoin('t', 'tech_types', 'tt', 't.tech_type_id = tt.type_id');
+        $qb = $this->getEntityManager()->createQueryBuilder()
+            ->select('t.id', 't.name')
+            ->from('App:Technology', 't')
+            ->innerJoin('App:TechnologyType', 'tt', 'WITH', 't.typeId = tt.id');
 
         if (!$showAll) {
             $qb->where('t.tech_show = 1');
@@ -32,8 +32,8 @@ class TechnologyDataRepository extends AbstractRepository
             $qb->addOrderBy($sort);
         }
 
-        return $qb
-            ->fetchAllKeyValue();
+        return $qb->getQuery()
+            ->execute();
     }
 
     public function getTechnologyName(int $technologyId): string

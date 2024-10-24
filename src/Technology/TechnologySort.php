@@ -27,6 +27,6 @@ class TechnologySort
 
     public static function type(): TechnologySort
     {
-        return new TechnologySort(['tt.type_order', 't.tech_order', 't.tech_name']);
+        return new TechnologySort(['tt.order', 't.order', 't.name']);
     }
 }

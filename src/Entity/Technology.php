@@ -19,8 +19,12 @@ class Technology implements ObjectWithImage
     #[ORM\Column(name: "tech_name", type: "string")]
     private string $name;
 
-    #[ORM\Column(name: "user_last_login", type: "integer")]
+    #[ORM\Column(name: "tech_type_id", type: "integer")]
     private int $typeId;
+
+    #[ORM\JoinColumn(name: 'tech_type_id', referencedColumnName: 'type_id')]
+    #[ORM\ManyToOne(targetEntity: TechnologyType::class)]
+    private TechnologyType $type;
 
     #[ORM\Column(name: "tech_shortcomment", type: "string")]
     private string $shortComment;
@@ -254,6 +258,18 @@ class Technology implements ObjectWithImage
     public function setStealable(bool $stealable): static
     {
         $this->stealable = $stealable;
+
+        return $this;
+    }
+
+    public function getType(): ?TechnologyType
+    {
+        return $this->type;
+    }
+
+    public function setType(?TechnologyType $type): static
+    {
+        $this->type = $type;
 
         return $this;
     }
