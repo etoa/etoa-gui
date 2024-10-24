@@ -4,11 +4,17 @@ declare(strict_types=1);
 
 namespace EtoA\Universe\Planet;
 
+use Doctrine\Persistence\ManagerRegistry;
 use EtoA\Core\AbstractRepository;
 use EtoA\Entity\PlanetType;
 
 class PlanetTypeRepository extends AbstractRepository
 {
+    public function __construct(ManagerRegistry $registry)
+    {
+        parent::__construct($registry, PlanetType::class);
+    }
+
     /**
      * Returns an array of planet types names indexed by their id.
      *

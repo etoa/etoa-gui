@@ -19,6 +19,10 @@ class Fleet
     #[ORM\Column(type: "integer")]
     protected int $userId;
 
+    #[ORM\JoinColumn(name: 'user_id', referencedColumnName: 'user_id')]
+    #[ORM\ManyToOne(targetEntity: User::class)]
+    private User $user;
+
     #[ORM\Column(type: "integer")]
     protected int $leaderId;
 
@@ -31,13 +35,13 @@ class Fleet
     #[ORM\Column(type: "integer")]
     protected int $nextId;
 
-    #[ORM\Column(type: "integer")]
+    #[ORM\Column(name:"launchtime", type: "integer")]
     protected int $launchTime;
 
-    #[ORM\Column(type: "integer")]
+    #[ORM\Column(name:"landtime", type: "integer")]
     protected int $landTime;
 
-    #[ORM\Column(type: "integer")]
+    #[ORM\Column(name:"nextactiontime", type: "integer")]
     protected int $nextActionTime;
 
     #[ORM\Column(type: "string")]
@@ -497,6 +501,18 @@ class Fleet
     public function setFlag(int $flag): static
     {
         $this->flag = $flag;
+
+        return $this;
+    }
+
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
+
+    public function setUser(?User $user): static
+    {
+        $this->user = $user;
 
         return $this;
     }

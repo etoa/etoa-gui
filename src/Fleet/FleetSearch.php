@@ -13,7 +13,7 @@ class FleetSearch extends AbstractSearch
 
     public function id(int $id): self
     {
-        $this->parts[] = 'id = :id';
+        $this->parts[] = 'q.id = :id';
         $this->parameters['id'] = $id;
 
         return $this;
@@ -24,7 +24,7 @@ class FleetSearch extends AbstractSearch
      */
     public function ids(array $ids): self
     {
-        $this->parts[] = 'id IN(:ids)';
+        $this->parts[] = 'q.id IN(:ids)';
         $this->stringArrayParameters['ids'] = $ids;
 
         return $this;
@@ -32,14 +32,14 @@ class FleetSearch extends AbstractSearch
 
     public function isLeader(): self
     {
-        $this->parts[] = 'fleet.id = fleet.leader_id';
+        $this->parts[] = 'q.id = q.leaderId';
 
         return $this;
     }
 
     public function user(int $userId): self
     {
-        $this->parts[] = 'user_id = :fleetUserId';
+        $this->parts[] = 'q.userId = :fleetUserId';
         $this->parameters['fleetUserId'] = $userId;
 
         return $this;
@@ -47,7 +47,7 @@ class FleetSearch extends AbstractSearch
 
     public function notUser(int $userId): self
     {
-        $this->parts[] = 'user_id <> :fleetUserId';
+        $this->parts[] = 'q.userId <> :fleetUserId';
         $this->parameters['fleetUserId'] = $userId;
 
         return $this;
@@ -72,7 +72,7 @@ class FleetSearch extends AbstractSearch
 
     public function allianceId(int $allianceId): self
     {
-        $this->parts[] = 'users.user_alliance_id = :allianceId';
+        $this->parts[] = 'q.user = :allianceId';
         $this->parameters['allianceId'] = $allianceId;
 
         return $this;
@@ -80,7 +80,7 @@ class FleetSearch extends AbstractSearch
 
     public function status(int $status): self
     {
-        $this->parts[] = 'status = :status';
+        $this->parts[] = 'q.status = :status';
         $this->parameters['status'] = $status;
 
         return $this;
@@ -91,7 +91,7 @@ class FleetSearch extends AbstractSearch
      */
     public function statusIn(array $status): self
     {
-        $this->parts[] = 'status IN (:status)';
+        $this->parts[] = 'q.status IN (:status)';
         $this->stringArrayParameters['statusIN'] = $status;
 
         return $this;
@@ -102,7 +102,7 @@ class FleetSearch extends AbstractSearch
      */
     public function actionIn(array $actions): self
     {
-        $this->parts[] = 'action IN (:actions)';
+        $this->parts[] = 'q.action IN (:actions)';
         $this->stringArrayParameters['actions'] = $actions;
 
         return $this;
@@ -113,7 +113,7 @@ class FleetSearch extends AbstractSearch
      */
     public function actionNotIn(array $actions): self
     {
-        $this->parts[] = 'action NOT IN (:notActions)';
+        $this->parts[] = 'q.action NOT IN (:notActions)';
         $this->stringArrayParameters['notActions'] = $actions;
 
         return $this;
@@ -129,7 +129,7 @@ class FleetSearch extends AbstractSearch
 
     public function nextId(int $nextId): self
     {
-        $this->parts[] = 'next_id = :nextId';
+        $this->parts[] = 'q.nextId = :nextId';
         $this->parameters['nextId'] = $nextId;
 
         return $this;
