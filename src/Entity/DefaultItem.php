@@ -1,9 +1,9 @@
 <?php declare(strict_types=1);
 
-namespace EtoA\DefaultItem;
+namespace EtoA\Entity;
 
-use EtoA\User\UserRepository;
 use Doctrine\ORM\Mapping as ORM;
+use EtoA\DefaultItem\DefaultItemRepository;
 
 #[ORM\Entity(repositoryClass: DefaultItemRepository::class)]
 #[ORM\Table(name: 'default_items')]
@@ -16,6 +16,10 @@ class DefaultItem
 
     #[ORM\Column(name: "item_set_id", type: "integer")]
     private int $setId;
+
+    #[ORM\ManyToOne(targetEntity: DefaultItemSet::class, inversedBy: 'defaultItems')]
+    #[ORM\JoinColumn(name: 'item_set_id', referencedColumnName: 'set_id')]
+    private DefaultItemSet|null $defaultItemSet = null;
 
     #[ORM\Column(name: "item_object_id", type: "integer")]
     private int $objectId;
@@ -62,5 +66,70 @@ class DefaultItem
     public function getObject(): string
     {
         return $this->cat . ':' . $this->objectId;
+    }
+
+    public function getId(): ?int
+    {
+        return $this->id;
+    }
+
+    public function getSetId(): ?int
+    {
+        return $this->setId;
+    }
+
+    public function setSetId(int $setId): static
+    {
+        $this->setId = $setId;
+
+        return $this;
+    }
+
+    public function getObjectId(): ?int
+    {
+        return $this->objectId;
+    }
+
+    public function setObjectId(int $objectId): static
+    {
+        $this->objectId = $objectId;
+
+        return $this;
+    }
+
+    public function getCount(): ?int
+    {
+        return $this->count;
+    }
+
+    public function setCount(int $count): static
+    {
+        $this->count = $count;
+
+        return $this;
+    }
+
+    public function getCat(): ?string
+    {
+        return $this->cat;
+    }
+
+    public function setCat(string $cat): static
+    {
+        $this->cat = $cat;
+
+        return $this;
+    }
+
+    public function getDefaultItemSet(): ?DefaultItemSet
+    {
+        return $this->defaultItemSet;
+    }
+
+    public function setDefaultItemSet(?DefaultItemSet $defaultItemSet): static
+    {
+        $this->defaultItemSet = $defaultItemSet;
+
+        return $this;
     }
 }

@@ -5,32 +5,13 @@ namespace EtoA\DefaultItem;
 use Doctrine\Persistence\ManagerRegistry;
 use EtoA\Core\AbstractRepository;
 use EtoA\Entity\BuildingListItem;
+use EtoA\Entity\DefaultItem;
 
 class DefaultItemRepository extends AbstractRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, DefaultItem::class);
-    }
-
-    /**
-     * @return DefaultItemSet[]
-     */
-    public function getSets(bool $activeOnly = true): array
-    {
-        $qb = $this->createQueryBuilder('q')
-            ->select('*')
-            ->from('default_item_sets')
-            ->orderBy('set_name');
-
-        if ($activeOnly) {
-            $qb->where('set_active = true');
-        }
-
-        $data = $qb
-            ->fetchAllAssociative();
-
-        return array_map(fn (array $row) => new DefaultItemSet($row), $data);
     }
 
     public function getItem(int $itemId): ?DefaultItem
@@ -43,40 +24,6 @@ class DefaultItemRepository extends AbstractRepository
            ->fetchAssociative();
 
         return $data !== false ? DefaultItem::createFromData($data) : null;
-    }
-
-    public function getItemNames(): array
-    {
-        $qb = $this->createQueryBuilder('q')
-            ->select('set_id, set_name')
-            ->from('default_item_sets')
-            ->andWhere('set_active = 1');
-
-        return $qb
-            ->orderBy('set_name')
-            ->fetchAllKeyValue();
-    }
-
-    public function createSet(string $name): void
-    {
-        $this->createQueryBuilder('q')
-            ->insert('default_item_sets')
-            ->values([
-                'set_name' => ':name',
-                'set_active' => 0,
-            ])
-            ->setParameter('name', $name)
-            ->executeQuery();
-    }
-
-    public function toggleSetActive(int $setId): void
-    {
-        $this->createQueryBuilder('q')
-            ->update('default_item_sets')
-            ->set('set_active', '!set_active')
-            ->where('set_id = :id')
-            ->setParameter('id', $setId)
-            ->executeQuery();
     }
 
     public function deleteSet(int $setId): void

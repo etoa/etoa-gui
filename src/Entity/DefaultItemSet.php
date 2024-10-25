@@ -21,6 +21,9 @@ class DefaultItemSet
     #[ORM\Column(name: "set_id", type: "integer")]
     private int $id;
 
+    /**
+     * @var Collection<int, DefaultItem>
+     */
     #[ORM\OneToMany(mappedBy: 'defaultItemSet', targetEntity: DefaultItem::class)]
     #[ORM\JoinColumn(name: 'set_id', referencedColumnName: 'item_set_id')]
     private Collection $defaultItems;
