@@ -42,10 +42,10 @@ class PlanetType implements ObjectWithImage
     #[ORM\Column(name:"type_f_power", type: "float")]
     private float $power;
 
-    #[ORM\Column(name:"type_f_people", type: "float")]
+    #[ORM\Column(name:"type_f_population", type: "float")]
     private float $people;
 
-    #[ORM\Column(name:"type_build_time", type: "float")]
+    #[ORM\Column(name:"type_f_buildtime", type: "float")]
     private float $buildTime;
 
     #[ORM\Column(name:"type_comment", type: "string")]

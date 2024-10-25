@@ -161,16 +161,13 @@ class PlanetRepository extends AbstractRepository
             ->fetchOne();
     }
 
-    public function getRandomFreePlanetId(int $sx = 0, int $sy = 0, ?int $minFields = null, ?int $planetType = null, ?int $starType = null): ?int
+    public function getRandomFreePlanet(int $sx = 0, int $sy = 0, ?int $minFields = null, ?int $planetType = null, ?int $starType = null):?Planet
     {
         $qry = $this->createQueryBuilder('q')
-            ->select('p.id')
-            ->from('planets', 'p')
-            ->where('p.planet_user_id = 0')
-            ->innerJoin('p', 'planet_types', 't', 'p.planet_type_id = t.type_id AND t.type_habitable = 1')
-            ->innerJoin('p', 'entities', 'e', 'p.id = e.id')
-            ->innerJoin('e', 'cells', 'c', 'e.cell_id = c.id')
-            ->orderBy('RAND()')
+            ->innerJoin('App:PlanetType', 't', 'WITH', 'q.typeId = t.id AND t.habitable = 1')
+            ->innerJoin('App:Entity', 'e', 'WITH', 'q.id = e.id')
+            ->innerJoin('App:Cell', 'c', 'WITH', 'e.cellId = c.id')
+            ->orderBy('Rand()')
             ->setMaxResults(1);
 
         if ($sx > 0) {
@@ -184,17 +181,17 @@ class PlanetRepository extends AbstractRepository
         }
 
         if ($planetType > 0) {
-            $qry->andWhere('p.planet_type_id = :planetType')
+            $qry->andWhere('q.typeId = :planetType')
                 ->setParameter('planetType', $planetType);
         }
 
         if ($minFields > 0) {
-            $qry->andWhere('p.planet_fields > :minFields')
+            $qry->andWhere('q.fields > :minFields')
                 ->setParameter('minFields', $minFields);
         }
 
         if ($starType > 0) {
-            $qry->andWhere('e.cell_id = any (
+            $qry->andWhere('e.cellId = any (
                     select cell_id FROM entities WHERE id = any (
                         select id from stars where type_id = :starType
                     )
@@ -203,9 +200,10 @@ class PlanetRepository extends AbstractRepository
         }
 
         $data = $qry
-            ->fetchOne();
+            ->getQuery()
+            ->getOneOrNullResult();
 
-        return $data !== false ? (int) $data : null;
+        return $data;
     }
 
     public function add(
