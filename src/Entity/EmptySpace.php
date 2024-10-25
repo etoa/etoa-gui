@@ -20,6 +20,10 @@ class EmptySpace extends AbstractEntity implements ObjectWithImage
     #[ORM\Column(type: "integer")]
     private int $id;
 
+    #[ORM\OneToOne(mappedBy: "emptySpace", targetEntity: Entity::class)]
+    #[ORM\JoinColumn(name: 'id', referencedColumnName: 'id')]
+    private Entity $entity;
+
     #[ORM\Column(type: "integer")]
     private int $lastVisited;
 
@@ -53,6 +57,18 @@ class EmptySpace extends AbstractEntity implements ObjectWithImage
     public function setLastVisited(int $lastVisited): static
     {
         $this->lastVisited = $lastVisited;
+
+        return $this;
+    }
+
+    public function getEntity(): ?Entity
+    {
+        return $this->entity;
+    }
+
+    public function setEntity(?Entity $entity): static
+    {
+        $this->entity = $entity;
 
         return $this;
     }

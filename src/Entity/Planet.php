@@ -20,6 +20,10 @@ class Planet extends AbstractEntity implements ObjectWithImage
     #[ORM\Column(type: "integer")]
     private int $id;
 
+    #[ORM\OneToOne(mappedBy: "planet", targetEntity: Entity::class)]
+    #[ORM\JoinColumn(name: 'id', referencedColumnName: 'id')]
+    private Entity $entity;
+
     #[ORM\Column(name: "planet_user_id", type: "integer")]
     private int $userId;
 
@@ -723,6 +727,18 @@ class Planet extends AbstractEntity implements ObjectWithImage
     public function setPlanetType(?PlanetType $planetType): static
     {
         $this->planetType = $planetType;
+
+        return $this;
+    }
+
+    public function getEntity(): ?Entity
+    {
+        return $this->entity;
+    }
+
+    public function setEntity(?Entity $entity): static
+    {
+        $this->entity = $entity;
 
         return $this;
     }

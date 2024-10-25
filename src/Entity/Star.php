@@ -19,11 +19,19 @@ class Star extends AbstractEntity implements ObjectWithImage
     #[ORM\Column]
     private int $id;
 
+    #[ORM\OneToOne(mappedBy: "star", targetEntity: Entity::class)]
+    #[ORM\JoinColumn(name: 'id', referencedColumnName: 'id')]
+    private Entity $entity;
+
     #[ORM\Column]
     private ?string $name;
 
     #[ORM\Column]
     private int $typeId;
+
+    #[ORM\JoinColumn(name: 'type_id', referencedColumnName: 'sol_type_id')]
+    #[ORM\ManyToOne(targetEntity: SolarType::class)]
+    private SolarType $solarType;
 
     public function getImagePath(string $type = "small"): string
     {
@@ -72,6 +80,30 @@ class Star extends AbstractEntity implements ObjectWithImage
     public function setTypeId(int $typeId): static
     {
         $this->typeId = $typeId;
+
+        return $this;
+    }
+
+    public function getSolarType(): ?SolarType
+    {
+        return $this->solarType;
+    }
+
+    public function setSolarType(?SolarType $solarType): static
+    {
+        $this->solarType = $solarType;
+
+        return $this;
+    }
+
+    public function getEntity(): ?Entity
+    {
+        return $this->entity;
+    }
+
+    public function setEntity(?Entity $entity): static
+    {
+        $this->entity = $entity;
 
         return $this;
     }

@@ -113,16 +113,8 @@ class EntityRepository extends AbstractRepository
 
     public function findByCellAndPosition(int $cellId, int $position): ?Entity
     {
-        $data = $this->getEntityCoordinatesQueryBuilder()
-            ->where('e.cell_id = :cellId')
-            ->andWhere('e.pos = :position')
-            ->setParameters([
-                'cellId' => $cellId,
-                'position' => $position,
-            ])
-            ->fetchAssociative();
-
-        return $data !== false ? new Entity($data) : null;
+        $entity = $this->findBy(['cellId'=>$cellId,'pos'=>$position]);
+        return $entity ? $entity[0]: null;
     }
 
     public function findByCoordinates(EntityCoordinates $coordinates): ?Entity

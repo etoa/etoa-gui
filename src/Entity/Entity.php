@@ -8,6 +8,10 @@ use Doctrine\ORM\Mapping as ORM;
 use EtoA\Universe\Entity\EntityCoordinates;
 use EtoA\Universe\Entity\EntityRepository;
 use EtoA\Universe\Entity\EntityType;
+use EtoA\Universe\Others\AllianceMarket;
+use EtoA\Universe\Others\Market;
+use EtoA\Universe\Others\Unexplored;
+use EtoA\Universe\Others\UnknownEntity;
 
 #[ORM\Entity(repositoryClass: EntityRepository::class)]
 #[ORM\Table(name: 'entities')]
@@ -17,6 +21,30 @@ class Entity
     #[ORM\GeneratedValue(strategy: "AUTO")]
     #[ORM\Column(type: "integer")]
     private int $id;
+
+    #[ORM\OneToOne(inversedBy: 'entity', targetEntity: Star::class)]
+    #[ORM\JoinColumn(name: 'id', referencedColumnName: 'id')]
+    private Star $star;
+
+    #[ORM\OneToOne(inversedBy: 'entity', targetEntity: Planet::class)]
+    #[ORM\JoinColumn(name: 'id', referencedColumnName: 'id')]
+    private Planet $planet;
+
+    #[ORM\OneToOne(inversedBy: 'entity', targetEntity: Asteroid::class)]
+    #[ORM\JoinColumn(name: 'id', referencedColumnName: 'id')]
+    private Asteroid $asteroid;
+
+    #[ORM\OneToOne(inversedBy: 'entity', targetEntity: Nebula::class)]
+    #[ORM\JoinColumn(name: 'id', referencedColumnName: 'id')]
+    private Nebula $nebula;
+
+    #[ORM\OneToOne(inversedBy: 'entity', targetEntity: Wormhole::class)]
+    #[ORM\JoinColumn(name: 'id', referencedColumnName: 'id')]
+    private Wormhole $wormhole;
+
+    #[ORM\OneToOne(inversedBy: 'entity', targetEntity: EmptySpace::class)]
+    #[ORM\JoinColumn(name: 'id', referencedColumnName: 'id')]
+    private EmptySpace $emptySpace;
 
     #[ORM\Column(type: "integer")]
     private int $cellId;
@@ -119,5 +147,93 @@ class Entity
         $this->cell = $cell;
 
         return $this;
+    }
+
+    public function getStar(): ?Star
+    {
+        return $this->star;
+    }
+
+    public function setStar(?Star $star): static
+    {
+        $this->star = $star;
+
+        return $this;
+    }
+
+    public function getPlanet(): ?Planet
+    {
+        return $this->planet;
+    }
+
+    public function setPlanet(?Planet $planet): static
+    {
+        $this->planet = $planet;
+
+        return $this;
+    }
+
+    public function getAsteroid(): ?Asteroid
+    {
+        return $this->asteroid;
+    }
+
+    public function setAsteroid(?Asteroid $asteroid): static
+    {
+        $this->asteroid = $asteroid;
+
+        return $this;
+    }
+
+    public function getNebula(): ?Nebula
+    {
+        return $this->nebula;
+    }
+
+    public function setNebula(?Nebula $nebula): static
+    {
+        $this->nebula = $nebula;
+
+        return $this;
+    }
+
+    public function getWormhole(): ?Wormhole
+    {
+        return $this->wormhole;
+    }
+
+    public function setWormhole(?Wormhole $wormhole): static
+    {
+        $this->wormhole = $wormhole;
+
+        return $this;
+    }
+
+    public function getEmptySpace(): ?EmptySpace
+    {
+        return $this->emptySpace;
+    }
+
+    public function setEmptySpace(?EmptySpace $emptySpace): static
+    {
+        $this->emptySpace = $emptySpace;
+
+        return $this;
+    }
+
+    public function getType():EmptySpace|Asteroid|Star|Wormhole|Planet|Nebula|UnknownEntity|AllianceMarket|Market|Unexplored
+    {
+        return match ($this->code) {
+            EntityType::STAR => $this->star,
+            EntityType::PLANET => $this->planet,
+            EntityType::ASTEROID => $this->asteroid,
+            EntityType::NEBULA => $this->nebula,
+            EntityType::WORMHOLE => $this->wormhole,
+            EntityType::EMPTY_SPACE => $this->emptySpace,
+            EntityType::MARKET => new Market(),
+            EntityType::UNEXPLORED => new Unexplored(),
+            EntityType::ALLIANCE_MARKET => new AllianceMarket(),
+            default => new UnknownEntity(),
+        };
     }
 }

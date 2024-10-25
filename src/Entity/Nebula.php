@@ -19,6 +19,10 @@ class Nebula extends AbstractEntity implements ObjectWithImage
     #[ORM\Column(type: "integer")]
     private int $id;
 
+    #[ORM\OneToOne(mappedBy: "nebula", targetEntity: Entity::class)]
+    #[ORM\JoinColumn(name: 'id', referencedColumnName: 'id')]
+    private Entity $entity;
+
     #[ORM\Column]
     private int $resMetal;
 
@@ -127,6 +131,18 @@ class Nebula extends AbstractEntity implements ObjectWithImage
     public function setResPower(int $resPower): static
     {
         $this->resPower = $resPower;
+
+        return $this;
+    }
+
+    public function getEntity(): ?Entity
+    {
+        return $this->entity;
+    }
+
+    public function setEntity(?Entity $entity): static
+    {
+        $this->entity = $entity;
 
         return $this;
     }
