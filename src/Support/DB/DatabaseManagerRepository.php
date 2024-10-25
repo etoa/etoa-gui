@@ -4,13 +4,14 @@ declare(strict_types=1);
 
 namespace EtoA\Support\DB;
 
+use EtoA\Core\AbstractDbalRepository;
 use EtoA\Core\AbstractRepository;
 
-class DatabaseManagerRepository extends AbstractRepository
+class DatabaseManagerRepository extends AbstractDbalRepository
 {
     public function getDatabaseSize(): int
     {
-        return (int) $this->createQueryBuilder('q')
+        return (int) $this->createQueryBuilder()
             ->select('round(sum( data_length + index_length ) / 1024 / 1024,2)')
             ->from('information_schema.TABLES')
             ->where('table_schema = :database')

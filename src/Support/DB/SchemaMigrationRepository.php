@@ -4,15 +4,15 @@ declare(strict_types=1);
 
 namespace EtoA\Support\DB;
 
-use EtoA\Core\AbstractRepository;
+use EtoA\Core\AbstractDbalRepository;
 
-class SchemaMigrationRepository extends AbstractRepository
+class SchemaMigrationRepository extends AbstractDbalRepository
 {
     const SCHEMA_MIGRATIONS_TABLE = "schema_migrations";
 
     public function hasMigrationTable(): bool
     {
-        $data = $this->createQueryBuilder('q')
+        $data = $this->createQueryBuilder()
             ->select("*")
             ->from('information_schema.TABLES')
             ->where('table_schema = :db')
