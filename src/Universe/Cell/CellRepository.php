@@ -135,17 +135,17 @@ class CellRepository extends AbstractRepository
     {
         $data = $this->createQueryBuilder('q')
             ->select(
-                'c.sx',
-                'c.cx',
-                'c.sy',
-                'c.cy',
-                'COUNT(p.id) AS cnt'
+                'q.sx',
+                'q.cx',
+                'q.sy',
+                'q.cy',
+                'COUNT(DISTINCT(p.id)) AS cnt'
             )
-            ->from('cells', 'c')
-            ->innerJoin('c', 'entities', 'e', 'e.cell_id = c.id')
-            ->innerJoin('e', 'planets', 'p', 'p.id = e.id AND p.planet_user_id > 0')
-            ->groupBy('e.cell_id')
-            ->fetchAllAssociative();
+            ->innerJoin('App:Entity', 'e', 'WITH', 'e.cellId = q.id')
+            ->innerJoin('App:Planet', 'p', 'WITH', 'p.id = e.id AND p.userId > 0')
+            ->groupBy('e.cellId')
+            ->getQuery()
+            ->getArrayResult();
 
         return array_map(fn (array $arr) => new CellPopulation($arr), $data);
     }

@@ -3,9 +3,9 @@
 namespace EtoA\Image;
 
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Entity\User;
 use EtoA\Universe\Cell\CellRepository;
 use EtoA\Universe\Entity\EntityRepository;
-use EtoA\Universe\Entity\EntitySearch;
 use EtoA\Universe\Entity\EntityType;
 use EtoA\Universe\GalaxyMap;
 use EtoA\Universe\Star\StarRepository;
@@ -74,7 +74,7 @@ class GalaxyMapImageGenerator
 
     private function drawGalaxyMap(GalaxyMapImage $mim, bool $showAll, ?User $user): void
     {
-        $entities = $this->entityRepo->searchEntities(EntitySearch::create()->pos(0));
+        $entities = $this->entityRepo->findBy(['pos'=>0]);
         if (empty($entities)) {
             imagestring($mim->image, 3, 20, 20, "Universum existiert noch nicht!", $mim->colorWhite);
             return;
@@ -121,42 +121,42 @@ class GalaxyMapImageGenerator
         }
 
         foreach ($entities as $entity) {
-            $x = ((($entity->sx - 1) * $mim->numCellsX + $entity->cx) * $mim->galaxyImageScale) - ($mim->galaxyImageScale / 2);
-            $y = $mim->height - $mim->legendHeight + $mim->galaxyImageScale - ((($entity->sy - 1) * $mim->numCellsY + $entity->cy) * $mim->galaxyImageScale) - ($mim->galaxyImageScale / 2);
+            $x = ((($entity->getCell()->getSx() - 1) * $mim->numCellsX + $entity->getCell()->getCx()) * $mim->galaxyImageScale) - ($mim->galaxyImageScale / 2);
+            $y = $mim->height - $mim->legendHeight + $mim->galaxyImageScale - ((($entity->getCell()->getSy() - 1) * $mim->numCellsY + $entity->getCell()->getCy()) * $mim->galaxyImageScale) - ($mim->galaxyImageScale / 2);
             $xe = $x - ($mim->galaxyImageScale / 2);
             $ye = $y - ($mim->galaxyImageScale / 2);
 
-            $sx = $entity->sx;
-            $sy = $entity->sy;
-            if (($showAll && $user === null) || $user !== null && $this->userUniverseDiscoveryService->discovered($user, (($entity->sx - 1) * $mim->numCellsX) + $entity->cx, (($entity->sy - 1) * $mim->numCellsY) + $entity->cy)) {
-                if ($entity->code == EntityType::STAR) {
-                    $star = $this->starRepo->find($entity->id);
-                    $starImageSrc = imagecreatefrompng($imgDir . "/stars/star" . $star->typeId . "_small.png");
+            $sx = $entity->getCell()->getSx();
+            $sy = $entity->getCell()->getSy();
+            if (($showAll && $user === null) || $user !== null && $this->userUniverseDiscoveryService->discovered($user, (($entity->getCell()->getSx() - 1) * $mim->numCellsX) + $entity->getCell()->getCx(), (($entity->getCell()->getSy() - 1) * $mim->numCellsY) + $entity->getCell()->getCy())) {
+                if ($entity->getCode() == EntityType::STAR) {
+                    $star = $this->starRepo->find($entity->getId());
+                    $starImageSrc = imagecreatefrompng($imgDir . "/stars/star" . $star->getTypeId() . "_small.png");
                     imagecopyresampled($mim->image, $starImageSrc, $xe, $ye, 0, 0, $mim->galaxyImageScale, $mim->galaxyImageScale, imagesx($starImageSrc), imagesy($starImageSrc));
-                } elseif ($entity->code == EntityType::WORMHOLE) {
-                    $wh = $this->whRepo->find($entity->id);
+                } elseif ($entity->getCode() == EntityType::WORMHOLE) {
+                    $wh = $this->whRepo->find($entity->getId());
                     if ($wh->persistent) {
                         imagecopyresampled($mim->image, $persistentWormholeImage, $xe, $ye, 0, 0, $mim->galaxyImageScale, $mim->galaxyImageScale, $mim->galaxyImageScale, $mim->galaxyImageScale);
                     } else {
                         imagecopyresampled($mim->image, $wormholeImage, $xe, $ye, 0, 0, $mim->galaxyImageScale, $mim->galaxyImageScale, $mim->galaxyImageScale, $mim->galaxyImageScale);
                     }
-                } elseif ($entity->code == EntityType::ASTEROID) {
+                } elseif ($entity->getCode() == EntityType::ASTEROID) {
                     imagecopyresampled($mim->image, $asteroidImage, $xe, $ye, 0, 0, $mim->galaxyImageScale, $mim->galaxyImageScale, $mim->galaxyImageScale, $mim->galaxyImageScale);
-                } elseif ($entity->code == EntityType::NEBULA) {
+                } elseif ($entity->getCode() == EntityType::NEBULA) {
                     imagecopyresampled($mim->image, $nebulaImage, $xe, $ye, 0, 0, $mim->galaxyImageScale, $mim->galaxyImageScale, $mim->galaxyImageScale, $mim->galaxyImageScale);
-                } elseif ($entity->code == EntityType::EMPTY_SPACE || $entity->code == EntityType::MARKET) {
+                } elseif ($entity->getCode() == EntityType::EMPTY_SPACE || $entity->getCode() == EntityType::MARKET) {
                     imagecopyresampled($mim->image, $spaceImage, $xe, $ye, 0, 0, $mim->galaxyImageScale, $mim->galaxyImageScale, $mim->galaxyImageScale, $mim->galaxyImageScale);
                 }
             } elseif ($user !== null) {
                 $fogCode = 0;
                 // Bottom
-                $fogCode += $entity->cy > 1 && $this->userUniverseDiscoveryService->discovered($user, (($sx - 1) * $mim->numCellsX) + $entity->cx, (($sy - 1) * $mim->numCellsY) + $entity->cy - 1) ? 1 : 0;
+                $fogCode += $entity->getCell()->getCy() > 1 && $this->userUniverseDiscoveryService->discovered($user, (($sx - 1) * $mim->numCellsX) + $entity->getCell()->getCx(), (($sy - 1) * $mim->numCellsY) + $entity->getCell()->getCy() - 1) ? 1 : 0;
                 // Left
-                $fogCode += $entity->cx > 1 && $this->userUniverseDiscoveryService->discovered($user, (($sx - 1) * $mim->numCellsX) + $entity->cx - 1, (($sy - 1) * $mim->numCellsY) + $entity->cy) ? 2 : 0;
+                $fogCode += $entity->getCell()->getCx() > 1 && $this->userUniverseDiscoveryService->discovered($user, (($sx - 1) * $mim->numCellsX) + $entity->getCell()->getCx() - 1, (($sy - 1) * $mim->numCellsY) + $entity->getCell()->getCy()) ? 2 : 0;
                 // Right
-                $fogCode += $entity->cx < $mim->numCellsX && $this->userUniverseDiscoveryService->discovered($user, (($sx - 1) * $mim->numCellsX) + $entity->cx + 1, (($sy - 1) * $mim->numCellsY) + $entity->cy) ? 4 : 0;
+                $fogCode += $entity->getCell()->getCx() < $mim->numCellsX && $this->userUniverseDiscoveryService->discovered($user, (($sx - 1) * $mim->numCellsX) + $entity->getCell()->getCx() + 1, (($sy - 1) * $mim->numCellsY) + $entity->getCell()->getCy()) ? 4 : 0;
                 // Top
-                $fogCode += $entity->cy < $mim->numCellsY && $this->userUniverseDiscoveryService->discovered($user, (($sx - 1) * $mim->numCellsX) + $entity->cx, (($sy - 1) * $mim->numCellsY) + $entity->cy + 1) ? 8 : 0;
+                $fogCode += $entity->getCell()->getCy() < $mim->numCellsY && $this->userUniverseDiscoveryService->discovered($user, (($sx - 1) * $mim->numCellsX) + $entity->getCell()->getCx(), (($sy - 1) * $mim->numCellsY) + $entity->getCell()->getCy() + 1) ? 8 : 0;
                 if ($fogCode > 0) {
                     imagecopyresampled($mim->image, $fogBorderImages[$fogCode], $xe, $ye, 0, 0, $mim->galaxyImageScale, $mim->galaxyImageScale, $mim->galaxyImageScale, $mim->galaxyImageScale);
                 } else {
