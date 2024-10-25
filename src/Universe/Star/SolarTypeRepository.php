@@ -22,17 +22,15 @@ class SolarTypeRepository extends AbstractRepository
      */
     public function getSolarTypeNames(bool $showAll = false, bool $orderById = false): array
     {
-        $qb = $this->createQueryBuilder('q')
-            ->select('sol_type_id', 'sol_type_name')
-            ->from('sol_types');
+        $constraints = [];
 
         if (!$showAll) {
-            $qb->andWhere('sol_type_consider = 1');
+            $constraints=['consider'=>1];
         }
 
-        return $qb
-            ->orderBy($orderById ? 'sol_type_id' : 'sol_type_name')
-            ->fetchAllKeyValue();
+        $order = $orderById ? ['id'=>'ASC']:['name'=>'ASC'];
+
+        return $this->findBy($constraints,$order);
     }
 
     /**

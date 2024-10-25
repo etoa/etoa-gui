@@ -24,9 +24,11 @@ class SolarTypeType extends AbstractType
             'required' => false,
             'placeholder' => false,
             'show_all' => false,
+            'choice_value' => 'id',
+            'choice_label' => 'name',
             'choice_loader' => function (Options $options): ChoiceLoader {
                 return ChoiceList::lazy($this, function () use ($options): array {
-                    return array_flip($this->solarTypeRepository->getSolarTypeNames((bool) $options['show_all']));
+                    return $this->solarTypeRepository->getSolarTypeNames((bool) $options['show_all']);
                 });
             },
         ]);
