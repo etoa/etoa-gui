@@ -22,19 +22,13 @@ class PlanetTypeRepository extends AbstractRepository
      */
     public function getPlanetTypeNames(bool $showAll = false): array
     {
-        $qb = $this->createQueryBuilder('q')
-            ->select('p.type_id, p.type_name')
-            ->from('planet_types', 'p');
+        $constraints = [];
 
         if (!$showAll) {
-            $qb
-                ->andWhere('p.type_consider = 1')
-                ->andWhere('p.type_habitable = 1');
+            $constraints=['consider'=>1,'habitable'=>1];
         }
 
-        return $qb
-            ->orderBy('p.type_name')
-            ->fetchAllKeyValue();
+        return $this->findBy($constraints,['name'=>'ASC']);
     }
 
     /**
