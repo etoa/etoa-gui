@@ -5,17 +5,18 @@ declare(strict_types=1);
 namespace EtoA\Universe\Planet;
 
 use Doctrine\ORM\QueryBuilder;
-use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use EtoA\Core\AbstractRepository;
 use EtoA\Entity\Planet;
-use EtoA\Universe\Entity\EntityType;
+use EtoA\Universe\Entity\EntityRepository;
+use EtoA\Universe\Entity\EntitySearch;
 use EtoA\Universe\Resources\BaseResources;
 use EtoA\Universe\Resources\PreciseResources;
+use EtoA\Universe\Star\StarRepository;
 
 class PlanetRepository extends AbstractRepository
 {
-    public function __construct(ManagerRegistry $registry,private readonly EntityManagerInterface $entityManager)
+    public function __construct(ManagerRegistry $registry, private readonly StarRepository $starRepository, private readonly EntityRepository $entityRepository)
     {
         parent::__construct($registry, Planet::class);
     }
@@ -191,19 +192,20 @@ class PlanetRepository extends AbstractRepository
         }
 
         if ($starType > 0) {
-            $qry->andWhere('e.cellId = any (
-                    select cell_id FROM entities WHERE id = any (
-                        select id from stars where type_id = :starType
-                    )
-                )')
-                ->setParameter('starType', $starType);
+            //TODO: simplify
+            $stars = $this->starRepository->findBy(['typeId'=>$starType]);
+            $starIds = array_map(fn ($row) => (int) $row->getId(), $stars);
+            $entity = $this->entityRepository->searchEntities(EntitySearch::create()->ids($starIds));
+            $cellIds = array_map(fn ($row) => (int) $row['cid'], $entity);
+
+            $qry->andWhere(
+                'e.cellId in (:cellIds)')
+                ->setParameter('cellIds', $cellIds);
         }
 
-        $data = $qry
+        return $qry
             ->getQuery()
             ->getOneOrNullResult();
-
-        return $data;
     }
 
     public function add(
@@ -235,43 +237,22 @@ class PlanetRepository extends AbstractRepository
             ->executeQuery();
     }
 
-    public function update(Planet $planet): void
-    {
-        $this->entityManager->persist($planet);
-        $this->entityManager->flush();
-    }
-
     public function setResources(
-        int $id,
+        Planet $planet,
         int $resMetal,
         int $resCrystal,
         int $resPlastic,
         int $resFuel,
         int $resFood,
         int $people
-    ): bool {
-        $affected = $this->createQueryBuilder('q')
-            ->update('planets')
-            ->set('planet_res_metal', ':res_metal')
-            ->set('planet_res_crystal', ':res_crystal')
-            ->set('planet_res_plastic', ':res_plastic')
-            ->set('planet_res_fuel', ':res_fuel')
-            ->set('planet_res_food', ':res_food')
-            ->set('planet_people', ':people')
-            ->where('id = :id')
-            ->setParameters([
-                'id' => $id,
-                'res_metal' => $resMetal,
-                'res_crystal' => $resCrystal,
-                'res_plastic' => $resPlastic,
-                'res_fuel' => $resFuel,
-                'res_food' => $resFood,
-                'people' => $people,
-            ])
-            ->executeQuery()
-            ->rowCount();
-
-        return $affected > 0;
+    ): void {
+        $planet->setResMetal($resMetal);
+        $planet->setResCrystal($resCrystal);
+        $planet->setResPlastic($resPlastic);
+        $planet->setResFuel($resFuel);
+        $planet->setResFood($resFood);
+        $planet->setPeople($people);
+        $this->save();
     }
 
     public function addResources(
@@ -386,19 +367,11 @@ class PlanetRepository extends AbstractRepository
             ->executeQuery();
     }
 
-    public function assignToUser(int $id, int $userId, bool $main = false): void
+    public function assignToUser(Planet $planet, int $userId, bool $main = false): void
     {
-        $this->createQueryBuilder('q')
-            ->update('planets')
-            ->set('planet_user_id', ':userId')
-            ->set('planet_user_main', ':main')
-            ->where('id = :id')
-            ->setParameters([
-                'id' => $id,
-                'userId' => $userId,
-                'main' => (int) $main,
-            ])
-            ->executeQuery();
+        $planet->setUserId($userId);
+        $planet->setMainPlanet($main);
+        $this->save();
     }
 
     public function changeUser(int $id, int $userId, ?string $name = null): bool
@@ -466,46 +439,39 @@ class PlanetRepository extends AbstractRepository
             ->executeQuery();
     }
 
-    public function reset(int $id): void
+    public function reset(Planet $planet): void
     {
-        $this->createQueryBuilder('q')
-            ->update('planets')
-            ->set('planet_user_id', (string) 0)
-            ->set('planet_name', '""')
-            ->set('planet_user_main', (string) 0)
-            ->set('planet_fields_used', (string) 0)
-            ->set('planet_fields_extra', (string) 0)
-            ->set('planet_res_metal', (string) 0)
-            ->set('planet_res_crystal', (string) 0)
-            ->set('planet_res_fuel', (string) 0)
-            ->set('planet_res_plastic', (string) 0)
-            ->set('planet_res_food', (string) 0)
-            ->set('planet_use_power', (string) 0)
-            ->set('planet_last_updated', (string) 0)
-            ->set('planet_prod_metal', (string) 0)
-            ->set('planet_prod_crystal', (string) 0)
-            ->set('planet_prod_plastic', (string) 0)
-            ->set('planet_prod_fuel', (string) 0)
-            ->set('planet_prod_food', (string) 0)
-            ->set('planet_prod_power', (string) 0)
-            ->set('planet_bunker_metal', (string) 0)
-            ->set('planet_bunker_crystal', (string) 0)
-            ->set('planet_bunker_plastic', (string) 0)
-            ->set('planet_bunker_fuel', (string) 0)
-            ->set('planet_bunker_food', (string) 0)
-            ->set('planet_store_metal', (string) 0)
-            ->set('planet_store_crystal', (string) 0)
-            ->set('planet_store_plastic', (string) 0)
-            ->set('planet_store_fuel', (string) 0)
-            ->set('planet_store_food', (string) 0)
-            ->set('planet_people', (string) 1)
-            ->set('planet_people_place', (string) 0)
-            ->set('planet_desc', '""')
-            ->where('id = :id')
-            ->setParameters([
-                'id' => $id,
-            ])
-            ->executeQuery();
+        $planet->setUserId(0);
+        $planet->setName('');
+        $planet->setMainPlanet(false);
+        $planet->setFieldsUsed(0);
+        $planet->setFieldsExtra(0);
+        $planet->setResMetal(0);
+        $planet->setResCrystal(0);
+        $planet->setResPlastic(0);
+        $planet->setResFuel(0);
+        $planet->setResFood(0);
+        $planet->setUsePower(0);
+        $planet->setLastUpdated(0);
+        $planet->setProdMetal(0);
+        $planet->setProdCrystal(0);
+        $planet->setProdPlastic(0);
+        $planet->setProdFuel(0);
+        $planet->setProdFood(0);
+        $planet->setBunkerMetal(0);
+        $planet->setBunkerCrystal(0);
+        $planet->setBunkerPlastic(0);
+        $planet->setBunkerFuel(0);
+        $planet->setBunkerFood(0);
+        $planet->setStoreMetal(0);
+        $planet->setStoreCrystal(0);
+        $planet->setStorePlastic(0);
+        $planet->setStoreFuel(0);
+        $planet->setStoreFood(0);
+        $planet->setPeople(0);
+        $planet->setPeoplePlace(0);
+        $planet->setDescription('');
+        $this->save();
     }
 
     public function resetUserChanged(int $id): void

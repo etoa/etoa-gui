@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace EtoA\Universe\Entity;
 
-use Doctrine\DBAL\Query\QueryBuilder;
+use \Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 use EtoA\Core\AbstractRepository;
 use EtoA\Core\Database\AbstractSort;
@@ -143,9 +143,10 @@ class EntityRepository extends AbstractRepository
     public function searchEntities(EntitySearch $search, EntitySort $sort = null): array
     {
         $data = $this->getEntityCoordinatesQueryBuilder($search, $sort)
-            ->fetchAllAssociative();
+            ->getQuery()
+            ->getArrayResult();
 
-        return array_map(fn (array $row) => new Entity($row), $data);
+        return $data;
     }
 
     public function getAllianceMarketId(): int
@@ -261,16 +262,15 @@ class EntityRepository extends AbstractRepository
     {
         return $this->applySearchSortLimit($this->createQueryBuilder('q'), $search, $sort, $limit, $offset)
             ->select(
-                'e.id',
+                'q.id',
                 'c.id as cid',
-                'code',
-                'pos',
-                'sx',
-                'sy',
-                'cx',
-                'cy'
+                'q.code',
+                'q.pos',
+                'c.sx',
+                'c.sy',
+                'c.cx',
+                'c.cy'
             )
-            ->from('entities', 'e')
-            ->innerJoin('e', 'cells', 'c', 'e.cell_id = c.id');
+            ->innerJoin('App:Cell', 'c', 'WITH', 'q.cellId = c.id');
     }
 }

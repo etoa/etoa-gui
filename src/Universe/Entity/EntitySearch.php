@@ -13,7 +13,7 @@ class EntitySearch extends AbstractSearch
 
     public function id(int $id): static
     {
-        $this->parts[] = 'e.id = :id';
+        $this->parts[] = 'q.id = :id';
         $this->parameters['id'] = $id;
 
         return $this;
@@ -24,7 +24,7 @@ class EntitySearch extends AbstractSearch
      */
     public function ids(array $ids): static
     {
-        $this->parts[] = 'e.id IN (:ids)';
+        $this->parts[] = 'q.id IN (:ids)';
         $this->stringArrayParameters['ids'] = $ids;
 
         return $this;
@@ -72,7 +72,7 @@ class EntitySearch extends AbstractSearch
 
     public function pos(int $pos): static
     {
-        $this->parts[] = 'e.pos = :pos';
+        $this->parts[] = 'q.pos = :pos';
         $this->parameters['pos'] = $pos;
 
         return $this;
@@ -83,11 +83,13 @@ class EntitySearch extends AbstractSearch
      */
     public function codeIn(array $codes): static
     {
-        $this->parts[] = 'e.code IN (:codes)';
+        $this->parts[] = 'q.code IN (:codes)';
         $this->stringArrayParameters['codes'] = $codes;
 
         return $this;
     }
+
+
 
     public function coordinates(EntityCoordinates $coordinates): static
     {

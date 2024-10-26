@@ -57,10 +57,10 @@ class PlanetService
         $this->defenseRepository->removeForEntity($id);
     }
 
-    public function setDefaultResources(int $id): void
+    public function setDefaultResources(Planet $planet): void
     {
         $this->repository->setResources(
-            $id,
+            $planet,
             $this->config->getInt('user_start_metal'),
             $this->config->getInt('user_start_crystal'),
             $this->config->getInt('user_start_plastic'),

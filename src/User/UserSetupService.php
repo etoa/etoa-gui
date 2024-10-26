@@ -7,6 +7,7 @@ namespace EtoA\User;
 use EtoA\Building\BuildingListItemRepository;
 use EtoA\DefaultItem\DefaultItemRepository;
 use EtoA\Defense\DefenseRepository;
+use EtoA\Entity\Planet;
 use EtoA\Ship\ShipRepository;
 use EtoA\Technology\TechnologyRepository;
 use EtoA\Universe\Entity\EntityRepository;
@@ -61,42 +62,39 @@ class UserSetupService
         // Add buildings
         if (isset($defaultItems['b'])) {
             foreach ($defaultItems['b'] as $defaultItem) {
-                $this->buildingRepository->addBuilding($defaultItem->objectId, $defaultItem->count, $userId, $planetId);
+                $this->buildingRepository->addBuilding($defaultItem->getObjectId(), $defaultItem->getCount(), $userId, $planetId);
             }
         }
 
         // Add technologies
         if (isset($defaultItems['t'])) {
             foreach ($defaultItems['t'] as $defaultItem) {
-                $this->technologyRepository->addTechnology($defaultItem->objectId, $defaultItem->count, $userId, $planetId);
+                $this->technologyRepository->addTechnology($defaultItem->getObjectId(), $defaultItem->getCount(), $userId, $planetId);
             }
         }
 
         // Add ships
         if (isset($defaultItems['s'])) {
             foreach ($defaultItems['s'] as $defaultItem) {
-                $this->shipRepository->addShip($defaultItem->objectId, $defaultItem->count, $userId, $planetId);
+                $this->shipRepository->addShip($defaultItem->getObjectId(), $defaultItem->getCount(), $userId, $planetId);
             }
         }
 
         // Add defense
         if (isset($defaultItems['d'])) {
             foreach ($defaultItems['d'] as $defaultItem) {
-                $this->defenseRepository->addDefense($defaultItem->objectId, $defaultItem->count, $userId, $planetId);
+                $this->defenseRepository->addDefense($defaultItem->getObjectId(), $defaultItem->getCount(), $userId, $planetId);
             }
         }
     }
 
-    public function coloniseMainPlanet(int $planetId):void
+    public function coloniseMainPlanet(Planet $planet):void
     {
         $cu = $this->security->getUser();
 
-        $this->planetRepository->reset($planetId);
-        $this->planetRepository->assignToUser($planetId, $cu->getId(), true);
-        $this->planetService->setDefaultResources($planetId);
-
-        $entity = $this->entityRepository->findIncludeCell($planetId);
-
-        $this->userService->addToUserLog($cu->getId(), "planets", "{nick} wählt [b]" . $entity->toString() . "[/b] als Hauptplanet aus.");
+        $this->planetRepository->reset($planet);
+        $this->planetRepository->assignToUser($planet, $cu->getId(), true);
+        $this->planetService->setDefaultResources($planet);
+        $this->userService->addToUserLog($cu->getId(), "planets", "{nick} wählt [b]" . $planet->getEntity()->toString() . "[/b] als Hauptplanet aus.");
     }
 }

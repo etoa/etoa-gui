@@ -4,6 +4,8 @@ namespace EtoA\Controller\Game;
 
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\DefaultItem\DefaultItemRepository;
+use EtoA\DefaultItem\DefaultItemSetRepository;
+use EtoA\Entity\Planet;
 use EtoA\Form\Type\Core\ChooseSectorSetupType;
 use EtoA\Form\Type\Core\ItemSetupType;
 use EtoA\Form\Type\Core\PlanetSetupType;
@@ -39,14 +41,13 @@ class SetupController extends AbstractGameController
         private readonly EntityRepository         $entityRepository,
         private readonly Checker                  $checker,
         private readonly StarRepository           $starRepository,
-        private readonly PlanetTypeRepository     $planetTypeRepository,
-        private readonly SolarTypeRepository      $solarTypeRepository,
-        private readonly RaceDataRepository       $raceRepository,
         private readonly TextRepository           $textRepository,
         private readonly UserRepository           $userRepository,
         private readonly ConfigurationService     $configurationService,
         private readonly UserSetupService         $userSetupService,
         private readonly DefaultItemRepository    $defaultItemRepository,
+        private readonly DefaultItemSetRepository $defaultItemSetRepository
+
     )
     {
     }
@@ -58,16 +59,12 @@ class SetupController extends AbstractGameController
             $addForm->handleRequest($request);
 
             if($addForm->isSubmitted() && $addForm->isValid()) {
-                if($request->request->has('race_setup') &&
-                    intval($request->request->all('race_setup')['raceId']) > 0 && $this->checker->checker_verify()) {
-                        $this->getUser()->getData()->setRaceId(intval($request->request->all('race_setup')['raceId']));
-                        $this->userRepository->save($this->getUser()->getData());
-                        return $this->redirectToRoute('game.setup.sector');
-                }
-                return $this->redirect($request->getUri());
+                $this->getUser()->getData()->setRaceId($addForm->getData()['race']->getId());
+                $this->userRepository->save();
+                return $this->redirectToRoute('game.setup.sector');
             }
 
-            $addForm->get('checker')->setData($this->checker->checker_init());
+            #$addForm->get('checker')->setData($this->checker->checker_init());
 
             return $this->render("game/setup/setup_race.html.twig", [
                 'addForm' => $addForm->createView(),
@@ -77,7 +74,7 @@ class SetupController extends AbstractGameController
     }
 
     #[Route('/game/setup/sector', name: 'game.setup.sector')]
-    public function setupSector(): Response
+    public function setupSector(Request $request): Response
     {
         if($this->getUser()->getData()->isSetup()) {
             return $this->redirectToRoute('game.setup.finished');
@@ -90,7 +87,6 @@ class SetupController extends AbstractGameController
             $sec_x_size = GalaxyMap::WIDTH / $sx_num;
             $sec_y_size = GalaxyMap::WIDTH / $sy_num;
             $xcnt = 1;
-            $ycnt = 1;
             $map=[];
 
             for ($x = 0; $x < GalaxyMap::WIDTH; $x += $sec_x_size) {
@@ -98,7 +94,13 @@ class SetupController extends AbstractGameController
                 for ($y = 0; $y < GalaxyMap::WIDTH; $y += $sec_y_size) {
                     $countStars = $this->entityRepository->countEntitiesOfCodeInSector($xcnt, $ycnt, EntityType::STAR);
                     $countPlanets = $this->entityRepository->countEntitiesOfCodeInSector($xcnt, $ycnt, EntityType::PLANET);
-                    $countInhabitedPlanets = $this->planetRepository->countWithUserInSector($xcnt, $ycnt);
+                    $countInhabitedPlanets = $this->entityRepository->countWithUserInSector($xcnt, $ycnt);
+
+                    $planet = $this->planetRepository->getRandomFreePlanet(
+                        $xcnt,
+                        $ycnt,
+                        $this->configurationService->getInt('user_min_fields')
+                    );
 
                     $tt = new Tooltip();
                     $tt->addTitle("Sektor $xcnt/$ycnt");
@@ -107,7 +109,7 @@ class SetupController extends AbstractGameController
                     $tt->addGoodCond("Bewohnte Planeten: " . $countInhabitedPlanets);
                     $tt->addComment("Klickt hier um euren Heimatplaneten in Sektor <b>" . $xcnt . "/" . $ycnt . "</b> anzusiedeln!");
 
-                    $map[$y][$x] = "<area shape=\"rect\" coords=\"$x," . (GalaxyMap::WIDTH - $y) . "," . ($x + $sec_x_size) . "," . (GalaxyMap::WIDTH - $y - $sec_y_size) . "\" href=\"".$this->generateUrl('game.setup.planet', array('setup_sx' => $xcnt,'setup_sy'=>$ycnt)) . "\" alt=\"Sektor $xcnt / $ycnt\" " . $tt->toString() . ">\n";
+                    $map[$y][$x] = "<area shape=\"rect\" coords=\"$x," . (GalaxyMap::WIDTH - $y) . "," . ($x + $sec_x_size) . "," . (GalaxyMap::WIDTH - $y - $sec_y_size) . "\" href=\"".$this->generateUrl('game.setup.planet', ['id'=>$planet?->getId()]) . "\" alt=\"Sektor $xcnt / $ycnt\" " . $tt->toString() . ">\n";
                     $ycnt++;
                 }
                 $xcnt++;
@@ -122,167 +124,153 @@ class SetupController extends AbstractGameController
         return $this->redirectToRoute('game.setup.race');
     }
 
-    #[Route('/game/setup/planet', name: 'game.setup.planet')]
-    public function setupPlanet(Request $request): Response
+    #[Route('/game/setup/planet/{id?}', name: 'game.setup.planet')]
+    public function setupPlanet(?Planet $planet, Request $request): Response
     {
         if($this->getUser()->getData()->getRaceId() === 0) {
             return $this->redirectToRoute('game.setup.race');
         }
 
-        $sets = $this->defaultItemRepository->getSets();
-        if($this->planetRepository->getUserMainId($this->getUser()->getId())) {
+        $sets = $this->defaultItemSetRepository->getSets();
+
+        if($this->planetRepository->findBy(['mainPlanet'=>true,'userId'=>$this->getUser()->getId()]))  {
             if (count($sets) > 1) {
                 return $this->redirectToRoute('game.setup.itemset');
             }
             return $this->redirectToRoute('game.setup.finished');
         }
 
-        $sx_num = $this->configurationService->param1Int('num_of_sectors');
-        $sy_num = $this->configurationService->param2Int('num_of_sectors');
+        $addForm = $this->createForm(PlanetSetupType::class,['checker'=>$this->checker->checker_init()]);
 
-        if($request->query->has('setup_sx')
-            && $request->query->getInt('setup_sx') > 0
-            && $request->query->has('setup_sy')
-            && $request->query->getInt('setup_sy') > 0
-            && $request->query->getInt('setup_sx') <= $sx_num
-            && $request->query->getInt('setup_sy') <= $sy_num) {
-
-            $planetId = $this->planetRepository->getRandomFreePlanetId(
-                $request->query->getInt('setup_sx'),
-                $request->query->getInt('setup_sy'),
-                $this->configurationService->getInt('user_min_fields'),
-                $request->query->has('filter_p') ? $request->query->getInt('filter_p') : null,
-                $request->query->has('filter_s') ? $request->query->getInt('filter_s') : null
+        if(!$planet) {
+            $flashes = $request->getSession()->getFlashBag();
+            $flashes->add(
+                'warning',
+                'Leider konnte kein geeigneter Planet in diesem Sektor gefunden werden.
+                          Bitte wähle einen anderen Sektor!'
             );
-
-            if(!$planetId) {
-                $flashes = $request->getSession()->getFlashBag();
-                $flashes->add(
-                    'warning',
-                    'Leider konnte kein geeigneter Planet in diesem Sektor gefunden werden.
-                              Bitte wähle einen anderen Sektor!'
-                );
-                return $this->redirectToRoute('game.setup.sector');
-            }
-
-            $planet = $this->planetRepository->find($planetId);
-            $planetType = $this->planetTypeRepository->find($planet->typeId);
-            $entity = $this->entityRepository->findIncludeCell($planet->id);
-            $starEntity = $this->entityRepository->findByCellAndPosition($entity->cellId, 0);
-            $star = $this->starRepository->find($starEntity->id);
-            $starType = $this->solarTypeRepository->find($star->typeId);
-            $race = $this->raceRepository->getRace($this->getUser()->getData()->getRaceId());
-
-            $stats =
-            "<tr><td class=\"tbldata\">" . ResIcons::METAL . "Produktion " . ResourceNames::METAL . "</td>".
-            "<td class=\"tbldata\">" . StringUtils::formatPercentString($planetType->metal, true) . "</td>".
-            "<td class=\"tbldata\">" . StringUtils::formatPercentString($race->metal, true) . "</td>".
-            "<td class=\"tbldata\">" . StringUtils::formatPercentString($starType->metal, true) . "</td>".
-            "<td class=\"tbldata\">" . StringUtils::formatPercentString([$planetType->metal, $race->metal, $starType->metal], true) . "</td></tr>".
-
-            "<tr><td class=\"tbldata\">" . ResIcons::CRYSTAL . "Produktion " . ResourceNames::CRYSTAL . "</td>".
-            "<td class=\"tbldata\">" . StringUtils::formatPercentString($planetType->crystal, true) . "</td>".
-            "<td class=\"tbldata\">" . StringUtils::formatPercentString($race->crystal, true) . "</td>".
-            "<td class=\"tbldata\">" . StringUtils::formatPercentString($starType->crystal, true) . "</td>".
-            "<td class=\"tbldata\">" . StringUtils::formatPercentString([$planetType->crystal, $race->crystal, $starType->crystal], true) . "</td></tr>".
-
-            "<tr><td class=\"tbldata\">" . ResIcons::PLASTIC . "Produktion " . ResourceNames::PLASTIC . "</td>".
-            "<td class=\"tbldata\">" . StringUtils::formatPercentString($planetType->plastic, true) . "</td>".
-            "<td class=\"tbldata\">" . StringUtils::formatPercentString($race->plastic, true) . "</td>".
-            "<td class=\"tbldata\">" . StringUtils::formatPercentString($starType->plastic, true) . "</td>".
-            "<td class=\"tbldata\">" . StringUtils::formatPercentString([$planetType->plastic, $race->plastic, $starType->plastic], true) . "</td></tr>".
-
-            "<tr><td class=\"tbldata\">" . ResIcons::FUEL . "Produktion " . ResourceNames::FUEL . "</td>".
-            "<td class=\"tbldata\">" . StringUtils::formatPercentString($planetType->fuel, true) . "</td>".
-            "<td class=\"tbldata\">" . StringUtils::formatPercentString($race->fuel, true) . "</td>".
-            "<td class=\"tbldata\">" . StringUtils::formatPercentString($starType->fuel, true) . "</td>".
-            "<td class=\"tbldata\">" . StringUtils::formatPercentString([$planetType->fuel, $race->fuel, $starType->fuel], true) . "</td></tr>".
-
-            "<tr><td class=\"tbldata\">" . ResIcons::FOOD . "Produktion " . ResourceNames::FOOD . "</td>".
-            "<td class=\"tbldata\">" . StringUtils::formatPercentString($planetType->food, true) . "</td>".
-            "<td class=\"tbldata\">" . StringUtils::formatPercentString($race->food, true) . "</td>".
-            "<td class=\"tbldata\">" . StringUtils::formatPercentString($starType->food, true) . "</td>".
-            "<td class=\"tbldata\">" . StringUtils::formatPercentString([$planetType->food, $race->food, $starType->food], true) . "</td></tr>".
-
-            "<tr><td class=\"tbldata\">" . ResIcons::POWER . "Produktion Energie</td>".
-            "<td class=\"tbldata\">" . StringUtils::formatPercentString($planetType->power, true) . "</td>".
-            "<td class=\"tbldata\">" . StringUtils::formatPercentString($race->power, true) . "</td>".
-            "<td class=\"tbldata\">" . StringUtils::formatPercentString($starType->power, true) . "</td>".
-            "<td class=\"tbldata\">" . StringUtils::formatPercentString([$planetType->power, $race->power, $starType->power], true) . "</td></tr>".
-
-            "<tr><td class=\"tbldata\">" . ResIcons::PEOPLE . "Bevölkerungswachstum</td>".
-            "<td class=\"tbldata\">" . StringUtils::formatPercentString($planetType->people, true) . "</td>".
-            "<td class=\"tbldata\">" . StringUtils::formatPercentString($race->population, true) . "</td>".
-            "<td class=\"tbldata\">" . StringUtils::formatPercentString($starType->people, true) . "</td>".
-            "<td class=\"tbldata\">" . StringUtils::formatPercentString([$planetType->people, $race->population, $starType->people], true) . "</td></tr>".
-
-            "<tr><td class=\"tbldata\">" . ResIcons::TIME . "Forschungszeit</td>".
-            "<td class=\"tbldata\">" . StringUtils::formatPercentString($planetType->researchTime, true, true) . "</td>".
-            "<td class=\"tbldata\">" . StringUtils::formatPercentString($race->researchTime, true, true) . "</td>".
-            "<td class=\"tbldata\">" . StringUtils::formatPercentString($starType->researchTime, true, true) . "</td>".
-            "<td class=\"tbldata\">" . StringUtils::formatPercentString([$planetType->researchTime, $race->researchTime, $starType->researchTime], true, true) . "</td></tr>".
-
-            "<tr><td class=\"tbldata\">" . ResIcons::TIME . "Bauzeit (Geb&aumlude)</td>".
-            "<td class=\"tbldata\">" . StringUtils::formatPercentString($planetType->buildTime, true, true) . "</td>".
-            "<td class=\"tbldata\">" . StringUtils::formatPercentString($race->buildTime, true, true) . "</td>".
-            "<td class=\"tbldata\">" . StringUtils::formatPercentString($starType->buildTime, true, true) . "</td>".
-            "<td class=\"tbldata\">" . StringUtils::formatPercentString([$planetType->buildTime, $race->buildTime, $starType->buildTime], true, true) . "</td></tr>".
-
-            "<tr><td class=\"tbldata\">" . ResIcons::TIME . "Fluggeschwindigkeit</td>".
-            "<td class=\"tbldata\">-</td>".
-            "<td class=\"tbldata\">" . StringUtils::formatPercentString($race->fleetTime, true) . "</td>".
-            "<td class=\"tbldata\">-</td>".
-            "<td class=\"tbldata\">" . StringUtils::formatPercentString($race->fleetTime, true) . "</td></tr>";
-
-            $addForm = $this->createForm(PlanetSetupType::class,['planet_id'=>$planetId,'checker'=>$this->checker->checker_init()]);
-            $data = $request->request->all('planet_setup')??[];
-            $data['planet_id'] = $planetId;
-            $data['checker'] =  $this->checker->checker_init();
-            $request->request->set('planet_setup',$data);
-            $addForm->handleRequest($request);
-
-            if($addForm->get('redo')->isClicked()) {
-                return $this->redirect('game.setup.sector');
-            }
-
-            if($addForm->get('submit_chooseplanet')->isClicked() && $addForm->isValid()) {
-                $planet = $this->planetRepository->find($request->request->all('planet_setup')['planet_id']);
-
-                if ($planet !== null &&
-                    $this->planetTypeRepository->isHabitable($planet->typeId) &&
-                    $planet->userId == 0 &&
-                    $planet->fields > $this->configurationService->getInt('user_min_fields') &&
-                    $this->checker->checker_verify()
-                ) {
-                    $this->userSetupService->coloniseMainPlanet($request->request->all('planet_setup')['planet_id']);
-
-                    if (count($sets) > 1) {
-                        return $this->redirectToRoute('game.setup.itemset');
-                    } elseif (count($sets) === 1) {
-                        $this->userSetupService->addItemSetListToPlanet($planetId, $this->getUser()->getId(), $sets[0]->id);
-                        $this->userRepository->setSetupFinished($this->getUser()->getId());
-                        return $this->redirectToRoute('game.setup.finished');
-                    } else {
-                        $this->userRepository->setSetupFinished($this->getUser()->getId());
-                        return $this->redirectToRoute('game.setup.finished');
-                    }
-                }
-                return $this->redirect($request->getUri());
-            }
-
-            return $this->render('game/setup/setup_planet.html.twig', [
-                'checker' => $this->checker->checker_init(),
-                'planet_id' => $planetId,
-                'addForm' => $addForm->createView(),
-                'entity' => $entity,
-                'starType' =>$starType,
-                'planetType' =>$planetType,
-                'planet' => $planet,
-                'stats' => $stats,
-                'race' => $race
-            ]);
+            return $this->redirectToRoute('game.setup.sector');
         }
-        return $this->redirectToRoute('game.setup.sector');
+
+        $planetType = $planet->getPlanetType();
+        $entity = $planet->getEntity();
+        $star = $this->starRepository->find($this->entityRepository->findByCellAndPosition($entity->getCellId(), 0)->getId());
+        $starType = $star->getSolarType();
+        $race = $this->getUser()->getData()->getRace();
+
+        $stats =
+        "<tr><td class=\"tbldata\">" . ResIcons::METAL . "Produktion " . ResourceNames::METAL . "</td>".
+        "<td class=\"tbldata\">" . StringUtils::formatPercentString($planetType->getMetal(), true) . "</td>".
+        "<td class=\"tbldata\">" . StringUtils::formatPercentString($race->getMetal(), true) . "</td>".
+        "<td class=\"tbldata\">" . StringUtils::formatPercentString($starType->getMetal(), true) . "</td>".
+        "<td class=\"tbldata\">" . StringUtils::formatPercentString([$planetType->getMetal(), $race->getMetal(), $starType->getMetal()], true) . "</td></tr>".
+
+        "<tr><td class=\"tbldata\">" . ResIcons::CRYSTAL . "Produktion " . ResourceNames::CRYSTAL . "</td>".
+        "<td class=\"tbldata\">" . StringUtils::formatPercentString($planetType->getCrystal(), true) . "</td>".
+        "<td class=\"tbldata\">" . StringUtils::formatPercentString($race->getCrystal(), true) . "</td>".
+        "<td class=\"tbldata\">" . StringUtils::formatPercentString($starType->getCrystal(), true) . "</td>".
+        "<td class=\"tbldata\">" . StringUtils::formatPercentString([$planetType->getCrystal(), $race->getCrystal(), $starType->getCrystal()], true) . "</td></tr>".
+
+        "<tr><td class=\"tbldata\">" . ResIcons::PLASTIC . "Produktion " . ResourceNames::PLASTIC . "</td>".
+        "<td class=\"tbldata\">" . StringUtils::formatPercentString($planetType->getPlastic(), true) . "</td>".
+        "<td class=\"tbldata\">" . StringUtils::formatPercentString($race->getPlastic(), true) . "</td>".
+        "<td class=\"tbldata\">" . StringUtils::formatPercentString($starType->getPlastic(), true) . "</td>".
+        "<td class=\"tbldata\">" . StringUtils::formatPercentString([$planetType->getPlastic(), $race->getPlastic(), $starType->getPlastic()], true) . "</td></tr>".
+
+        "<tr><td class=\"tbldata\">" . ResIcons::FUEL . "Produktion " . ResourceNames::FUEL . "</td>".
+        "<td class=\"tbldata\">" . StringUtils::formatPercentString($planetType->getFuel(), true) . "</td>".
+        "<td class=\"tbldata\">" . StringUtils::formatPercentString($race->getFuel(), true) . "</td>".
+        "<td class=\"tbldata\">" . StringUtils::formatPercentString($starType->getFuel(), true) . "</td>".
+        "<td class=\"tbldata\">" . StringUtils::formatPercentString([$planetType->getFuel(), $race->getFuel(), $starType->getFuel()], true) . "</td></tr>".
+
+        "<tr><td class=\"tbldata\">" . ResIcons::FOOD . "Produktion " . ResourceNames::FOOD . "</td>".
+        "<td class=\"tbldata\">" . StringUtils::formatPercentString($planetType->getFood(), true) . "</td>".
+        "<td class=\"tbldata\">" . StringUtils::formatPercentString($race->getFood(), true) . "</td>".
+        "<td class=\"tbldata\">" . StringUtils::formatPercentString($starType->getFood(), true) . "</td>".
+        "<td class=\"tbldata\">" . StringUtils::formatPercentString([$planetType->getFood(), $race->getFood(), $starType->getFood()], true) . "</td></tr>".
+
+        "<tr><td class=\"tbldata\">" . ResIcons::POWER . "Produktion Energie</td>".
+        "<td class=\"tbldata\">" . StringUtils::formatPercentString($planetType->getPower(), true) . "</td>".
+        "<td class=\"tbldata\">" . StringUtils::formatPercentString($race->getPower(), true) . "</td>".
+        "<td class=\"tbldata\">" . StringUtils::formatPercentString($starType->getPower(), true) . "</td>".
+        "<td class=\"tbldata\">" . StringUtils::formatPercentString([$planetType->getPower(), $race->getPower(), $starType->getPower()], true) . "</td></tr>".
+
+        "<tr><td class=\"tbldata\">" . ResIcons::PEOPLE . "Bevölkerungswachstum</td>".
+        "<td class=\"tbldata\">" . StringUtils::formatPercentString($planetType->getPeople(), true) . "</td>".
+        "<td class=\"tbldata\">" . StringUtils::formatPercentString($race->getPopulation(), true) . "</td>".
+        "<td class=\"tbldata\">" . StringUtils::formatPercentString($starType->getPeople(), true) . "</td>".
+        "<td class=\"tbldata\">" . StringUtils::formatPercentString([$planetType->getPeople(), $race->getPopulation(), $starType->getPeople()], true) . "</td></tr>".
+
+        "<tr><td class=\"tbldata\">" . ResIcons::TIME . "Forschungszeit</td>".
+        "<td class=\"tbldata\">" . StringUtils::formatPercentString($planetType->getResearchTime(), true, true) . "</td>".
+        "<td class=\"tbldata\">" . StringUtils::formatPercentString($race->getResearchTime(), true, true) . "</td>".
+        "<td class=\"tbldata\">" . StringUtils::formatPercentString($starType->getResearchTime(), true, true) . "</td>".
+        "<td class=\"tbldata\">" . StringUtils::formatPercentString([$planetType->getResearchTime(), $race->getResearchTime(), $starType->getResearchTime()], true, true) . "</td></tr>".
+
+        "<tr><td class=\"tbldata\">" . ResIcons::TIME . "Bauzeit (Geb&aumlude)</td>".
+        "<td class=\"tbldata\">" . StringUtils::formatPercentString($planetType->getBuildTime(), true, true) . "</td>".
+        "<td class=\"tbldata\">" . StringUtils::formatPercentString($race->getBuildTime(), true, true) . "</td>".
+        "<td class=\"tbldata\">" . StringUtils::formatPercentString($starType->getBuildTime(), true, true) . "</td>".
+        "<td class=\"tbldata\">" . StringUtils::formatPercentString([$planetType->getBuildTime(), $race->getBuildTime(), $starType->getBuildTime()], true, true) . "</td></tr>".
+
+        "<tr><td class=\"tbldata\">" . ResIcons::TIME . "Fluggeschwindigkeit</td>".
+        "<td class=\"tbldata\">-</td>".
+        "<td class=\"tbldata\">" . StringUtils::formatPercentString($race->getFleetTime(), true) . "</td>".
+        "<td class=\"tbldata\">-</td>".
+        "<td class=\"tbldata\">" . StringUtils::formatPercentString($race->getFleetTime(), true) . "</td></tr>";
+
+        $addForm->handleRequest($request);
+
+        if($addForm->get('redo')->isClicked()) {
+            return $this->redirect('game.setup.sector');
+        }
+
+        if($addForm->get('new_planet')->isClicked()) {
+            $planet = $this->planetRepository->getRandomFreePlanet(
+                $planet->getEntity()->getCell()->getSx(),
+                $planet->getEntity()->getCell()->getSy(),
+                $this->configurationService->getInt('user_min_fields'),
+                $addForm->get('filter_planet_id')->getData()?->getId(),
+                $addForm->get('filter_sol_id')->getData()?->getId()
+            );
+            $session = $request->getSession();
+            $session->set('filter_sol_id',$addForm->get('filter_sol_id')->getData());
+            $session->set('filter_planet_id',$addForm->get('filter_planet_id')->getData());
+            return $this->redirectToRoute('game.setup.planet',['id'=> $planet?->getId()]);
+        }
+
+        if($addForm->get('submit_chooseplanet')->isClicked() && $addForm->isValid()) {
+            if ($planet->getPlanetType()->isHabitable() &&
+                $planet->getUserId() == 0 &&
+                $planet->getFields() > $this->configurationService->getInt('user_min_fields') &&
+                $this->checker->checker_verify()
+            ) {
+                $this->userSetupService->coloniseMainPlanet($planet);
+
+                if (count($sets) > 1) {
+                    return $this->redirectToRoute('game.setup.itemset');
+                } elseif (count($sets) === 1) {
+                    $this->userSetupService->addItemSetListToPlanet($planet->getId(), $this->getUser()->getId(), $sets[0]->getId());
+                    $this->userRepository->setSetupFinished($this->getUser()->getId());
+                    return $this->redirectToRoute('game.setup.finished');
+                } else {
+                    $this->userRepository->setSetupFinished($this->getUser()->getId());
+                    return $this->redirectToRoute('game.setup.finished');
+                }
+            }
+            return $this->redirect($request->getUri());
+        }
+
+        return $this->render('game/setup/setup_planet.html.twig', [
+            'checker' => $this->checker->checker_init(),
+            'addForm' => $addForm->createView(),
+            'entity' => $entity,
+            'starType' =>$starType,
+            'planetType' =>$planetType,
+            'planet' => $planet,
+            'stats' => $stats,
+            'race' => $race
+        ]);
     }
 
     #[Route('/game/setup/itemset', name: 'game.setup.itemset')]
