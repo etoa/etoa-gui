@@ -1,0 +1,100 @@
+<?php
+
+namespace EtoA\User;
+
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\Persistence\ManagerRegistry;
+use EtoA\Entity\UserSession;
+use EtoA\Entity\UserSessionLog;
+
+class UserSessionLogRepository extends ServiceEntityRepository
+{
+    public function __construct(ManagerRegistry $registry)
+    {
+        parent::__construct($registry, UserSessionLog::class);
+    }
+
+    public function addSessionLog(UserSession $userSession, ?int $logoutTime): void
+    {
+        $log = new UserSessionLog();
+        $log->setSessionId($userSession->getId());
+        $log->setUserId($userSession->getUserId());
+        $log->setIpAddr($userSession->getIpAddr());
+        $log->setUserAgent($userSession->getUserAgent());
+        $log->setTimeLogin($userSession->getTimeLogin());
+        $log->setTimeAction($userSession->getTimeAction());
+        $log->setTimeLogout($logoutTime??time());
+
+        $this->getEntityManager()->persist($log);
+        $this->getEntityManager()->flush();
+    }
+
+    public function removeSessionLogs(int $timestamp): int
+    {
+        return $this->createQueryBuilder('q')
+            ->delete('user_sessionlog')
+            ->where('time_action < :timestamp')
+            ->setParameter('timestamp', $timestamp)
+            ->executeQuery()
+            ->rowCount();
+    }
+
+    public function countLogs(UserSessionSearch $search = null): int
+    {
+        return (int) $this->applySearchSortLimit($this->createQueryBuilder('q'), $search)
+            ->select('COUNT(*)')
+            ->from('user_sessionlog', 's')
+            ->fetchOne();
+    }
+
+    /**
+     * @return UserSessionLog[]
+     */
+    public function getSessionLogs(UserSessionSearch $search, int $limit = null, int $offset = null): array
+    {
+        $rows = $this->applySearchSortLimit($this->createQueryBuilder('q'), $search, null, $limit, $offset)
+            ->select('*')
+            ->from('user_sessionlog', 's')
+            ->orderBy('s.time_action', 'DESC')
+            ->fetchAllAssociative();
+
+        return array_map(fn (array $row) => new UserSessionLog($row), $rows);
+    }
+
+    /**
+     * @return string[]
+     */
+    public function getLatestUserIps(): array
+    {
+        $data = $this->getConnection()->fetchAllAssociative('
+            SELECT
+                user_sessionlog.ip_addr AS log_ip,
+                user_sessions.ip_addr
+            FROM
+                user_sessionlog
+            INNER JOIN (
+                SELECT
+                    user_id,
+                    MAX( time_action ) AS last_action
+                FROM
+                    user_sessionlog
+                GROUP BY
+                    user_id
+            ) AS log
+            ON
+                user_sessionlog.user_id = log.user_id
+                AND user_sessionlog.time_action = log.last_action
+            LEFT JOIN
+                user_sessions
+            ON
+                user_sessionlog.user_id = user_sessions.user_id
+        ');
+
+        $ips = [];
+        foreach ($data as $row) {
+            $ips[] = $row['ip_addr'] == null ? $row['log_ip'] : $row['ip_addr'];
+        }
+
+        return $ips;
+    }
+}

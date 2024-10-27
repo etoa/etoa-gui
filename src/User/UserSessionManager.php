@@ -11,22 +11,13 @@ use EtoA\Log\LogSeverity;
 
 class UserSessionManager
 {
-    private UserSessionRepository $repository;
-    private ConfigurationService $config;
-    private UserRepository $userRepository;
-    private LogRepository $logRepository;
-
     public function __construct(
-        UserSessionRepository $repository,
-        ConfigurationService $config,
-        UserRepository $userRepository,
-        LogRepository $logRepository
-    ) {
-        $this->repository = $repository;
-        $this->config = $config;
-        $this->userRepository = $userRepository;
-        $this->logRepository = $logRepository;
-    }
+        private readonly UserSessionRepository $repository,
+        private readonly ConfigurationService $config,
+        private readonly UserRepository $userRepository,
+        private readonly LogRepository $logRepository,
+        private readonly UserSessionLogRepository $userSessionLogRepository
+    ) {}
 
     public function unregisterSession(string $sessionId = null, bool $logoutPressed = true): void
     {
@@ -36,13 +27,9 @@ class UserSessionManager
 
         $userSession = $this->repository->find($sessionId);
         if ($userSession != null) {
-            $this->repository->addSessionLog($userSession, $logoutPressed ? time() : 0);
-            $this->repository->remove($sessionId);
-            $this->userRepository->setLogoutTime($userSession->userId);
-        }
-        if ($logoutPressed) {
-            session_regenerate_id(true);
-            session_destroy();
+            $this->userSessionLogRepository->addSessionLog($userSession, $logoutPressed ? time() : 0);
+            $this->repository->remove($userSession);
+            $this->userRepository->setLogoutTime($userSession->getUserId());
         }
     }
 
@@ -50,7 +37,7 @@ class UserSessionManager
     {
         $sessions = $this->repository->findByTimeout($this->config->getInt('user_timeout'));
         foreach ($sessions as $session) {
-            $this->unregisterSession($session->id, false);
+            $this->unregisterSession($session->getId(), false);
         }
     }
 
