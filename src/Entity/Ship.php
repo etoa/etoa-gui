@@ -46,7 +46,7 @@ class Ship implements ObjectWithImage
     #[ORM\Column(name: "ship_costs_power", type: "integer")]
     private int $costsPower;
 
-    #[ORM\Column(name: "ship_power_base", type: "integer")]
+    #[ORM\Column(name: "ship_power_use", type: "integer")]
     private int $powerUse;
 
     #[ORM\Column(name: "ship_fuel_use", type: "integer")]
@@ -58,7 +58,7 @@ class Ship implements ObjectWithImage
     #[ORM\Column(name: "ship_fuel_use_landing", type: "integer")]
     private int $fuelUseLanding;
 
-    #[ORM\Column(name: "ship_power_production", type: "integer")]
+    #[ORM\Column(name: "ship_prod_power", type: "integer")]
     private int $powerProduction;
 
     #[ORM\Column(name: "ship_capacity", type: "integer")]
@@ -73,10 +73,10 @@ class Ship implements ObjectWithImage
     #[ORM\Column(name: "ship_speed", type: "integer")]
     private int $speed;
 
-    #[ORM\Column(name: "ship_time_to_start", type: "integer")]
+    #[ORM\Column(name: "ship_time2start", type: "integer")]
     private int $timeToStart;
 
-    #[ORM\Column(name: "ship_time_to_land", type: "integer")]
+    #[ORM\Column(name: "ship_time2land", type: "integer")]
     private int $timeToLand;
 
     #[ORM\Column(name: "ship_show", type: "boolean")]
@@ -112,7 +112,7 @@ class Ship implements ObjectWithImage
     #[ORM\Column(name: "ship_launchable", type: "boolean")]
     private bool $launchable;
 
-    #[ORM\Column(name: "ship_fields_provided", type: "integer")]
+    #[ORM\Column(name: "ship_fieldsprovide", type: "integer")]
     private int $fieldsProvided;
 
     #[ORM\Column(name: "ship_cat_id", type: "integer")]
@@ -121,61 +121,61 @@ class Ship implements ObjectWithImage
     #[ORM\Column(name: "ship_fakeable", type: "boolean")]
     private bool $fakeable;
 
-    #[ORM\Column(name: "ship_special", type: "boolean")]
+    #[ORM\Column(name: "special_ship", type: "boolean")]
     private bool $special;
 
     #[ORM\Column(name: "ship_max_count", type: "integer")]
     private int $maxCount;
 
-    #[ORM\Column(name: "ship_special_max_level", type: "integer")]
+    #[ORM\Column(name: "special_ship_max_level", type: "integer")]
     private int $specialMaxLevel;
 
-    #[ORM\Column(name: "ship_special_need_exp", type: "integer")]
+    #[ORM\Column(name: "special_ship_need_exp", type: "integer")]
     private int $specialNeedExp;
 
-    #[ORM\Column(name: "ship_special_exp_factor", type: "float")]
+    #[ORM\Column(name: "special_ship_exp_factor", type: "float")]
     private float $specialExpFactor;
 
-    #[ORM\Column(name: "ship_special_bonus_weapon", type: "float")]
+    #[ORM\Column(name: "special_ship_bonus_weapon", type: "float")]
     private float $specialBonusWeapon;
 
-    #[ORM\Column(name: "ship_special_bonus_strcuture", type: "float")]
+    #[ORM\Column(name: "special_ship_bonus_structure", type: "float")]
     private float $specialBonusStructure;
 
-    #[ORM\Column(name: "ship_special_bonus_shield", type: "float")]
+    #[ORM\Column(name: "special_ship_bonus_shield", type: "float")]
     private float $specialBonusShield;
 
-    #[ORM\Column(name: "ship_special_bonus_heal", type: "float")]
+    #[ORM\Column(name: "special_ship_bonus_heal", type: "float")]
     private float $specialBonusHeal;
 
-    #[ORM\Column(name: "ship_special_bonus_capacity", type: "float")]
+    #[ORM\Column(name: "special_ship_bonus_capacity", type: "float")]
     private float $specialBonusCapacity;
 
-    #[ORM\Column(name: "ship_special_bonus_speed", type: "float")]
+    #[ORM\Column(name: "special_ship_bonus_speed", type: "float")]
     private float $specialBonusSpeed;
 
-    #[ORM\Column(name: "ship_special_bonus_pilots", type: "float")]
+    #[ORM\Column(name: "special_ship_bonus_pilots", type: "float")]
     private float $specialBonusPilots;
 
-    #[ORM\Column(name: "ship_special_bonus_tarn", type: "float")]
+    #[ORM\Column(name: "special_ship_bonus_tarn", type: "float")]
     private float $specialBonusTarn;
 
-    #[ORM\Column(name: "ship_special_bonus_antrax", type: "float")]
+    #[ORM\Column(name: "special_ship_bonus_antrax", type: "float")]
     private float $specialBonusAntrax;
 
-    #[ORM\Column(name: "ship_special_bonus_forsteal", type: "float")]
+    #[ORM\Column(name: "special_ship_bonus_forsteal", type: "float")]
     private float $specialBonusForsteal;
 
-    #[ORM\Column(name: "ship_special_bonus_build_destory", type: "float")]
+    #[ORM\Column(name: "special_ship_bonus_build_destroy", type: "float")]
     private float $specialBonusBuildDestroy;
 
-    #[ORM\Column(name: "ship_special_bonus_antrax_food", type: "float")]
+    #[ORM\Column(name: "special_ship_bonus_antrax_food", type: "float")]
     private float $specialBonusAntraxFood;
 
-    #[ORM\Column(name: "ship_special_bonus_deactivate", type: "float")]
+    #[ORM\Column(name: "special_ship_bonus_deactivade", type: "float")]
     private float $specialBonusDeactivate;
 
-    #[ORM\Column(name: "ship_special_bonus_readiness", type: "float")]
+    #[ORM\Column(name: "special_ship_bonus_readiness", type: "float")]
     private float $specialBonusReadiness;
 
     #[ORM\Column(name: "ship_points", type: "float")]
@@ -187,7 +187,7 @@ class Ship implements ObjectWithImage
     #[ORM\Column(name: "ship_alliance_costs", type: "integer")]
     private int $allianceCosts;
 
-    #[ORM\Column(name: "ship_ship_tradeable", type: "boolean")]
+    #[ORM\Column(name: "ship_tradable", type: "boolean")]
     private bool $shipTradeable;
 
     public function getImagePath(string $type = "small"): string

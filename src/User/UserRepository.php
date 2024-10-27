@@ -112,15 +112,10 @@ class UserRepository extends AbstractRepository
 
     public function setLogoutTime(int $userId, ?int $time = null): void
     {
-        $this->createQueryBuilder('q')
-            ->update('users')
-            ->set('user_logouttime', ':time')
-            ->where('user_id = :id')
-            ->setParameters([
-                'id' => $userId,
-                'time' => $time ?? time(),
-            ])
-            ->executeQuery();
+        $user = $this->find($userId);
+        $user->setLogoutTime($time??time());
+
+        $this->getEntityManager()->flush();
     }
 
     public function addSpecialistTime(int $userId, int $time): void

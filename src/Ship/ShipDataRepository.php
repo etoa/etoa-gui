@@ -2,7 +2,7 @@
 
 namespace EtoA\Ship;
 
-use Doctrine\DBAL\Query\QueryBuilder;
+use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 use EtoA\Core\AbstractRepository;
 use EtoA\Entity\Ship;
@@ -129,11 +129,9 @@ class ShipDataRepository extends AbstractRepository
      */
     public function getShipsWithAction(string $action): array
     {
-        $data = $this->shipActionQueryBuilder($action)
-            ->select('*')
-            ->fetchAllAssociative();
-
-        return array_map(fn ($row) => new Ship($row), $data);
+        return $this->shipActionQueryBuilder($action)
+            ->getQuery()
+            ->execute();
     }
 
     /**
@@ -142,24 +140,24 @@ class ShipDataRepository extends AbstractRepository
     public function getShipNamesWithAction(string $action): array
     {
         return $this->shipActionQueryBuilder($action)
-            ->select('ship_id, ship_name')
-            ->fetchAllKeyValue();
+            ->select('q.id, q.name')
+            ->getQuery()
+            ->getResult();
     }
 
     private function shipActionQueryBuilder(string $action): QueryBuilder
     {
         return $this->createQueryBuilder('q')
-            ->from('ships')
-            ->where('ship_buildable=1')
-            ->andWhere('special_ship=0')
-            ->andWhere('ship_actions LIKE :end OR ship_actions LIKE :begin OR ship_actions LIKE :middle OR ship_actions LIKE :only')
+            ->where('q.buildable=1')
+            ->andWhere('q.special=0')
+            ->andWhere('q.actions LIKE :end OR q.actions LIKE :begin OR q.actions LIKE :middle OR q.actions LIKE :only')
             ->setParameters([
                 'begin' => '%,' . $action,
                 'end' => $action . ',%',
                 'middle' => '%,' . $action . ',%',
                 'only' => $action,
             ])
-            ->orderBy('ship_name');
+            ->orderBy('q.name');
     }
 
     /**

@@ -18,83 +18,95 @@ class UserProperties
     #[ORM\Column(type: "string")]
     private ?string $cssStyle;
 
-    #[ORM\Column(type: "integer")]
-    private int $planetCircleWidth;
+    #[ORM\Column(type: "smallint")]
+    private int $planetCircleWidth = 450;
 
     #[ORM\Column(type: "string")]
-    private string $itemShow;
+    private string $itemShow = 'full';
 
     #[ORM\Column(type: "string")]
-    private string $itemOrderShip;
+    private string $itemOrderShip = 'name';
 
     #[ORM\Column(type: "string")]
-    private string $itemOrderDef;
+    private string $itemOrderDef = 'name';
 
     #[ORM\Column(type: "string")]
-    private string $itemOrderBookmark;
+    private string $itemOrderBookmark = 'bookmarks.id';
 
     #[ORM\Column(type: "string")]
-    private string $itemOrderWay;
+    private string $itemOrderWay = 'ASC';
 
     #[ORM\Column(type: "boolean")]
-    private bool $imageFilter;
+    private bool $imageFilter = true;
 
     #[ORM\Column(name:"msgsignature", type: "string")]
     private ?string $msgSignature;
 
     #[ORM\Column(name:"msgcreation_preview", type: "boolean")]
-    private bool $msgCreationPreview;
+    private bool $msgCreationPreview = true;
 
     #[ORM\Column(type: "boolean")]
-    private bool $msgPreview;
+    private bool $msgPreview = true;
 
     #[ORM\Column(type: "boolean")]
-    private bool $msgCopy;
+    private bool $msgCopy = true;
 
     #[ORM\Column(type: "boolean")]
-    private bool $msgBlink;
+    private bool $msgBlink = true;
 
     #[ORM\Column(name:"spyship_id", type: "integer")]
-    private int $spyShipId;
+    private int $spyShipId = 0;
+
+    #[ORM\JoinColumn(name: 'spyship_id', referencedColumnName: 'ship_id')]
+    #[ORM\ManyToOne(targetEntity: Ship::class)]
+    protected Ship|null $spyShip = null;
 
     #[ORM\Column(name:"spyship_count", type: "integer")]
-    private int $spyShipCount;
+    private int $spyShipCount = 0;
 
     #[ORM\Column(name:"analyzeship_id", type: "integer")]
-    private int $analyzeShipId;
+    private int $analyzeShipId = 1;
+
+    #[ORM\JoinColumn(name: 'analyzeship_id', referencedColumnName: 'ship_id')]
+    #[ORM\ManyToOne(targetEntity: Ship::class)]
+    protected Ship|null $analyzeShip = null;
 
     #[ORM\Column(name:"analyzeship_count", type: "integer")]
-    private int $analyzeShipCount;
+    private int $analyzeShipCount = 1;
 
     #[ORM\Column(name:"exploreship_id", type: "integer")]
-    private int $exploreShipId;
+    private ?int $exploreShipId = 0;
+
+    #[ORM\JoinColumn(name: 'exploreship_id', referencedColumnName: 'ship_id')]
+    #[ORM\ManyToOne(targetEntity: Ship::class)]
+    protected Ship|null $exploreShip = null;
 
     #[ORM\Column(name:"exploreship_count", type: "integer")]
-    private int $exploreShipCount;
+    private int $exploreShipCount = 1;
 
     #[ORM\Column(type: "boolean")]
-    private bool $showCellreports;
+    private bool $showCellreports = true;
 
     #[ORM\Column(name:"havenships_buttons",type: "boolean")]
-    private bool $havenShipsButtons;
+    private bool $havenShipsButtons = true;
 
     #[ORM\Column(type: "boolean")]
-    private bool $showAdds;
+    private bool $showAdds = true;
 
     #[ORM\Column(type: "boolean")]
-    private bool $fleetRtnMsg;
+    private bool $fleetRtnMsg = false;
 
     #[ORM\Column(type: "boolean")]
-    private bool $smallResBox;
+    private bool $smallResBox = false;
 
     #[ORM\Column(name:"startup_chat",type: "boolean")]
-    private bool $startUpChat;
+    private bool $startUpChat = false;
 
     #[ORM\Column(type: "string")]
-    private string $chatColor;
+    private string $chatColor = 'ffffff';
 
     #[ORM\Column(name:"keybinds_enable",type: "boolean")]
-    private bool $enableKeybinds;
+    private bool $enableKeybinds = true;
 
     public function getCssStyle(): ?string
     {
@@ -423,5 +435,41 @@ class UserProperties
     public function getId(): ?int
     {
         return $this->id;
+    }
+
+    public function getSpyShip(): ?Ship
+    {
+        return $this->spyShip;
+    }
+
+    public function setSpyShip(?Ship $spyShip): static
+    {
+        $this->spyShip = $spyShip;
+
+        return $this;
+    }
+
+    public function getAnalyzeShip(): ?Ship
+    {
+        return $this->analyzeShip;
+    }
+
+    public function setAnalyzeShip(?Ship $analyzeShip): static
+    {
+        $this->analyzeShip = $analyzeShip;
+
+        return $this;
+    }
+
+    public function getExploreShip(): ?Ship
+    {
+        return $this->exploreShip;
+    }
+
+    public function setExploreShip(?Ship $exploreShip): static
+    {
+        $this->exploreShip = $exploreShip;
+
+        return $this;
     }
 }
