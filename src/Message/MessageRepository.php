@@ -7,6 +7,7 @@ namespace EtoA\Message;
 use Doctrine\Persistence\ManagerRegistry;
 use EtoA\Core\AbstractRepository;
 use EtoA\Entity\Message;
+use EtoA\Entity\MessageData;
 
 class MessageRepository extends AbstractRepository
 {
@@ -132,53 +133,30 @@ class MessageRepository extends AbstractRepository
     /**
      * Sends a message from the system to ghe given user
      *
-     * @todo This should eventually replace send_msg() defined in functions.inc.php
-     * @todo In the future, return a Message object (to be defined) instead of the message ID
-     *
      * @param integer $userId the recipient user ID
      * @param integer $catId the message category ID
      * @param string $subject the subject
      * @param string $text the text
-     * @return integer the ID of the newly created message
+     * @return Message the newly created message
      */
-    public function createSystemMessage(int $userId, int $catId, string $subject, string $text): int
+    public function createSystemMessage(int $userId, int $catId, string $subject, string $text): Message
     {
-        try {
-            $this->createQueryBuilder('q')
-                ->values([
-                    'message_user_from' => 0,
-                    'message_user_to' => ':userId',
-                    'message_cat_id' => ':catId',
-                    'message_timestamp' => time(),
-                ])
-                ->setParameters([
-                    'userId' => $userId,
-                    'catId' => $catId,
-                ])
-                ->executeQuery();
+        $msg = new Message();
+        $msg->setUserFrom(0);
+        $msg->setUserTo($userId);
+        $msg->setCatId($catId);
+        $msg->setTimestamp(time());
+        $this->getEntityManager()->persist($msg);
 
-            $id = (int) $this->getConnection()->lastInsertId();
+        $msgData = new MessageData();
+        $msgData->setId($msg->getId());
+        $msgData->setSubject($subject);
+        $msgData->setText($text);
+        $this->getEntityManager()->persist($msgData);
 
-            $this->createQueryBuilder('q')
-                ->insert('message_data')
-                ->values([
-                    'id' => $id,
-                    'subject' => ':subject',
-                    'text' => ':text',
-                ])
-                ->setParameters([
-                    'subject' => $subject,
-                    'text' => $text,
-                ])
-                ->executeQuery();
-            $this->getConnection()->commit();
+        $this->getEntityManager()->flush();
 
-            return $id;
-        } catch (\Exception $ex) {
-            $this->getConnection()->rollBack();
-
-            throw $ex;
-        }
+        return $msg;
     }
 
     public function sendFromUserToUser(

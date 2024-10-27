@@ -130,16 +130,9 @@ class PlanetRepository extends AbstractRepository
         return array_map(fn (array $row) => new PlanetNameWithUserNick($row), $data);
     }
 
-    public function getUserMainId(int $userId): int
+    public function getUserMainId(int $userId): ?int
     {
-        return (int) $this->createQueryBuilder('q')
-            ->select('p.id')
-            ->from('planets', 'p')
-            ->where('p.planet_user_main = 1')
-            ->andWhere('p.planet_user_id = :userId')
-            ->setParameters([
-                'userId' => $userId,
-            ])->fetchOne();
+       return $this->findOneBy(['mainPlanet'=>1,'userId'=>$userId])?->getId();
     }
 
     public function getPlanetCount(int $userId): int

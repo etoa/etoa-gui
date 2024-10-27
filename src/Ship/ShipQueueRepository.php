@@ -14,6 +14,38 @@ class ShipQueueRepository extends AbstractRepository
         parent::__construct($registry, ShipQueueItem::class);
     }
 
+    public function countBuildInProgress(int $userId, int $entityId): int
+    {
+        return (int) $this->createQueryBuilder('q')
+            ->select('COUNT(queue_id)')
+            ->from('ship_queue')
+            ->where('queue_entity_id = :entityId')
+            ->andWhere('queue_user_id = :userId')
+            ->andWhere('queue_starttime > 0')
+            ->andWhere('queue_endtime > 0')
+            ->setParameters([
+                'userId' => $userId,
+                'entityId' => $entityId,
+            ])
+            ->fetchOne();
+    }
+
+    /**
+     * @return ShipQueueItem[]
+     */
+    public function findQueueItemsForUser(int $userId): array
+    {
+        $data = $this->createQueryBuilder('q')
+            ->select('*')
+            ->from('ship_queue')
+            ->where('queue_user_id = :userId')
+            ->setParameter('userId', $userId)
+            ->orderBy('queue_starttime', 'ASC')
+            ->fetchAllAssociative();
+
+        return array_map(fn ($row) => ShipQueueItem::createFromData($row), $data);
+    }
+
     public function add(int $userId, int $shipId, int $entityId, int $count, int $startTime, int $endTime, int $objectTime): int
     {
         $this->createQueryBuilder('q')

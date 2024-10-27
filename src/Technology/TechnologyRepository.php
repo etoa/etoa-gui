@@ -8,10 +8,11 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use EtoA\Core\AbstractRepository;
 use EtoA\Entity\TechnologyListItem;
+use EtoA\Universe\Entity\EntityRepository;
 
 class TechnologyRepository extends AbstractRepository
 {
-    public function __construct(ManagerRegistry $registry, private readonly EntityManagerInterface $entityManager)
+    public function __construct(ManagerRegistry $registry, private readonly EntityRepository $entityRepository)
     {
         parent::__construct($registry, TechnologyListItem::class);
     }
@@ -97,24 +98,20 @@ class TechnologyRepository extends AbstractRepository
 
     public function addTechnology(int $technologyId, int $level, int $userId, int $entityId): void
     {
-        $this->getConnection()->executeQuery('INSERT INTO techlist (
-                techlist_user_id,
-                techlist_entity_id,
-                techlist_tech_id,
-                techlist_current_level
-            ) VALUES (
-                :userId,
-                :entityId,
-                :technologyId,
-                :level
-            ) ON DUPLICATE KEY
-            UPDATE techlist_current_level = :level;
-        ', [
-            'userId' => $userId,
-            'level' => max(0, $level),
-            'entityId' => $entityId,
-            'technologyId' => $technologyId,
-        ]);
+        $item = $this->findOneBy(['userId'=>$userId,'technologyId'=>$technologyId,'entityId'=>$entityId]);
+
+        if(!$item) {
+            $item = new TechnologyListItem();
+            $item->setUserId($userId);
+            $item->setEntityId($entityId);
+            $item->setEntity($this->entityRepository->findOneBy(['id'=>$entityId]));
+            $item->setTechnologyId($technologyId);
+        }
+
+        $item->setCurrentLevel(max(0, $level));
+
+        $this->getEntityManager()->persist($item);
+        $this->getEntityManager()->flush();
     }
 
     public function updateBuildStatus(int $userId, int $entityId, int $technologyId, int $status, int $startTime, int $endTime): bool

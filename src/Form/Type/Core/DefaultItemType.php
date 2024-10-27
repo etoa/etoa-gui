@@ -2,19 +2,17 @@
 
 namespace EtoA\Form\Type\Core;
 
-use EtoA\Universe\Planet\PlanetTypeRepository;
-
+use EtoA\DefaultItem\DefaultItemSetRepository;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\ChoiceList\ChoiceList;
 use Symfony\Component\Form\ChoiceList\Factory\Cache\ChoiceLoader;
 use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use EtoA\DefaultItem\DefaultItemRepository;
 
 class DefaultItemType extends AbstractType
 {
     public function __construct(
-        private DefaultItemRepository $defaultItemRepository,
+        private readonly DefaultItemSetRepository $defaultItemSetRepository,
     ) {
     }
 
@@ -26,9 +24,11 @@ class DefaultItemType extends AbstractType
             'required' => false,
             'placeholder' => false,
             'show_all' => false,
+            'choice_value' => 'id',
+            'choice_label' => 'name',
             'choice_loader' => function (Options $options): ChoiceLoader {
                 return ChoiceList::lazy($this, function () use ($options): array {
-                    return array_flip($this->defaultItemRepository->getItemNames());
+                    return $this->defaultItemSetRepository->getItemNames();
                 });
             },
         ]);

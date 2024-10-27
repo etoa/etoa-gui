@@ -25,65 +25,69 @@ class ShipListItem
     #[ORM\Column(name: "shiplist_entity_id", type: "integer")]
     private int $entityId;
 
+    #[ORM\ManyToOne(targetEntity: Entity::class)]
+    #[ORM\JoinColumn(name: 'shiplist_entity_id', referencedColumnName: 'id')]
+    private Entity $entity;
+
     #[ORM\Column(name: "shiplist_bot_id", type: "integer")]
-    private int $botId;
+    private int $botId = 0;
 
     #[ORM\Column(name: "shiplist_count", type: "integer")]
-    private int $count;
+    private int $count = 0;
 
     #[ORM\Column(name: "shiplist_bunkered", type: "integer")]
-    private int $bunkered;
+    private int $bunkered = 0;
 
-    #[ORM\Column(name: "shiplist_special_ship", type: "integer")]
-    private bool $specialShip;
+    #[ORM\Column(name: "shiplist_special_ship", type: "boolean")]
+    private bool $specialShip = false;
 
     #[ORM\Column(name: "shiplist_special_ship_level", type: "integer")]
-    private int $specialShipLevel;
+    private int $specialShipLevel = 0;
 
-    #[ORM\Column(name: "shiplist_special_ship_exp", type: "integer")]
-    private int $specialShipExp;
+    #[ORM\Column(name: "shiplist_special_ship_exp", type: "smallint")]
+    private int $specialShipExp = 0;
 
-    #[ORM\Column(name: "shiplist_special_ship_bonus_weapon", type: "integer")]
-    private int $specialShipBonusWeapon;
+    #[ORM\Column(name: "shiplist_special_ship_bonus_weapon", type: "smallint")]
+    private int $specialShipBonusWeapon = 0;
 
-    #[ORM\Column(name: "shiplist_special_ship_bonus_structure", type: "integer")]
-    private int $specialShipBonusStructure;
+    #[ORM\Column(name: "shiplist_special_ship_bonus_structure", type: "smallint")]
+    private int $specialShipBonusStructure = 0;
 
-    #[ORM\Column(name: "shiplist_special_ship_bonus_shield", type: "integer")]
-    private int $specialShipBonusShield;
+    #[ORM\Column(name: "shiplist_special_ship_bonus_shield", type: "smallint")]
+    private int $specialShipBonusShield = 0;
 
-    #[ORM\Column(name: "shiplist_special_ship_bonus_heal", type: "integer")]
-    private int $specialShipBonusHeal;
+    #[ORM\Column(name: "shiplist_special_ship_bonus_heal", type: "smallint")]
+    private int $specialShipBonusHeal = 0;
 
-    #[ORM\Column(name: "shiplist_special_ship_bonus_capacity", type: "integer")]
-    private int $specialShipBonusCapacity;
+    #[ORM\Column(name: "shiplist_special_ship_bonus_capacity", type: "smallint")]
+    private int $specialShipBonusCapacity = 0;
 
-    #[ORM\Column(name: "shiplist_special_ship_bonus_speed", type: "integer")]
-    private int $specialShipBonusSpeed;
+    #[ORM\Column(name: "shiplist_special_ship_bonus_speed", type: "smallint")]
+    private int $specialShipBonusSpeed = 0;
 
-    #[ORM\Column(name: "shiplist_special_ship_bonus_pilots", type: "integer")]
-    private int $specialShipBonusPilots;
+    #[ORM\Column(name: "shiplist_special_ship_bonus_pilots", type: "smallint")]
+    private int $specialShipBonusPilots = 0;
 
-    #[ORM\Column(name: "shiplist_special_ship_bonus_tarn", type: "integer")]
-    private int $specialShipBonusTarn;
+    #[ORM\Column(name: "shiplist_special_ship_bonus_tarn", type: "smallint")]
+    private int $specialShipBonusTarn = 0;
 
-    #[ORM\Column(name: "shiplist_special_ship_bonus_anthrax", type: "integer")]
-    private int $specialShipBonusAnthrax;
+    #[ORM\Column(name: "shiplist_special_ship_bonus_antrax", type: "smallint")]
+    private int $specialShipBonusAnthrax = 0;
 
-    #[ORM\Column(name: "shiplist_special_ship_bonus_for_steal", type: "integer")]
-    private int $specialShipBonusForSteal;
+    #[ORM\Column(name: "shiplist_special_ship_bonus_forsteal", type: "smallint")]
+    private int $specialShipBonusForSteal = 0;
 
-    #[ORM\Column(name: "shiplist_special_ship_bonus_build_destroy", type: "integer")]
-    private int $specialShipBonusBuildDestroy;
+    #[ORM\Column(name: "shiplist_special_ship_bonus_build_destroy", type: "smallint")]
+    private int $specialShipBonusBuildDestroy = 0;
 
-    #[ORM\Column(name: "shiplist_special_ship_bonus_anthrax_food", type: "integer")]
-    private int $specialShipBonusAnthraxFood;
+    #[ORM\Column(name: "shiplist_special_ship_bonus_antrax_food", type: "smallint")]
+    private int $specialShipBonusAnthraxFood = 0;
 
-    #[ORM\Column(name: "shiplist_special_ship_bonus_deactivate", type: "integer")]
-    private int $specialShipBonusDeactivate;
+    #[ORM\Column(name: "shiplist_special_ship_bonus_deactivade", type: "smallint")]
+    private int $specialShipBonusDeactivate = 0;
 
-    #[ORM\Column(name: "shiplist_special_ship_bonus_readiness", type: "integer")]
-    private int $specialShipBonusReadiness;
+    #[ORM\Column(name: "shiplist_special_ship_bonus_readiness", type: "smallint")]
+    private int $specialShipBonusReadiness = 0;
 
     public static function createFromData(array $data): ShipListItem
     {
@@ -208,12 +212,7 @@ class ShipListItem
         return $this;
     }
 
-    public function getSpecialShip(): ?int
-    {
-        return $this->specialShip;
-    }
-
-    public function setSpecialShip(int $specialShip): static
+    public function setSpecialShip(bool $specialShip): static
     {
         $this->specialShip = $specialShip;
 
@@ -410,5 +409,22 @@ class ShipListItem
         $this->specialShipBonusReadiness = $specialShipBonusReadiness;
 
         return $this;
+    }
+
+    public function getEntity(): ?Entity
+    {
+        return $this->entity;
+    }
+
+    public function setEntity(?Entity $entity): static
+    {
+        $this->entity = $entity;
+
+        return $this;
+    }
+
+    public function isSpecialShip(): ?bool
+    {
+        return $this->specialShip;
     }
 }

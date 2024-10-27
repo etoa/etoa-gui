@@ -7,11 +7,11 @@ namespace EtoA\Defense;
 use Doctrine\Persistence\ManagerRegistry;
 use EtoA\Core\AbstractRepository;
 use EtoA\Entity\DefenseListItem;
-use EtoA\Entity\User;
+use EtoA\Universe\Entity\EntityRepository;
 
 class DefenseRepository extends AbstractRepository
 {
-    public function __construct(ManagerRegistry $registry)
+    public function __construct(ManagerRegistry $registry,private readonly EntityRepository $entityRepository)
     {
         parent::__construct($registry, DefenseListItem::class);
     }
@@ -124,30 +124,21 @@ class DefenseRepository extends AbstractRepository
 
     private function addDefenseCount(int $defenseId, int $amount, int $userId, int $entityId): void
     {
-        $this->getConnection()
-            ->executeQuery(
-                'INSERT INTO deflist (
-                    deflist_user_id,
-                    deflist_entity_id,
-                    deflist_def_id,
-                    deflist_count
-                ) VALUES (
-                    :userId,
-                    :entityId,
-                    :defenseId,
-                    :amount
-                ) ON DUPLICATE KEY
-                UPDATE deflist_count = deflist_count + VALUES(deflist_count);
-            ',
-                [
-                    'userId' => $userId,
-                    'amount' => max(0, $amount),
-                    'entityId' => $entityId,
-                    'defenseId' => $defenseId,
-                ]
-            );
-    }
+        $item = $this->findOneBy(['userId'=>$userId,'defenseId'=>$defenseId,'entityId'=>$entityId]);
 
+        if(!$item) {
+            $item = new DefenseListItem();
+            $item->setUserId($userId);
+            $item->setEntityId($entityId);
+            $item->setEntity($this->entityRepository->findOneBy(['id'=>$entityId]));
+            $item->setDefenseId($defenseId);
+        }
+
+        $item->setCount($item->getCount()+max(0, $amount));
+
+        $this->getEntityManager()->persist($item);
+        $this->getEntityManager()->flush();
+    }
 
     /**
      * @return array<int, int>

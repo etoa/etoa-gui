@@ -256,16 +256,10 @@ class UserRepository extends AbstractRepository
             ->executeQuery();
     }
 
-    public function setSetupFinished(int $userId): void
+    public function setSetupFinished(User $user): void
     {
-        $this->createQueryBuilder('q')
-            ->update('users')
-            ->set('user_setup', (string)1)
-            ->where('user_id = :userId')
-            ->setParameters([
-                'userId' => $userId,
-            ])
-            ->executeQuery();
+        $user->setSetup(true);
+        $this->save();
     }
 
     /**

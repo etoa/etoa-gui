@@ -8,7 +8,7 @@ use EtoA\Building\BuildingListItemRepository;
 use EtoA\DefaultItem\DefaultItemRepository;
 use EtoA\Defense\DefenseRepository;
 use EtoA\Entity\Planet;
-use EtoA\Ship\ShipRepository;
+use EtoA\Ship\ShipListRepository;
 use EtoA\Technology\TechnologyRepository;
 use EtoA\Universe\Entity\EntityRepository;
 use EtoA\Universe\Planet\PlanetRepository;
@@ -20,35 +20,33 @@ class UserSetupService
     private DefaultItemRepository $defaultItemRepository;
     private BuildingListItemRepository $buildingRepository;
     private TechnologyRepository $technologyRepository;
-    private ShipRepository $shipRepository;
+    private ShipListRepository $shipListRepository;
     private DefenseRepository $defenseRepository;
     private PlanetService $planetService;
     private PlanetRepository $planetRepository;
     private UserService $userService;
-    private EntityRepository $entityRepository;
     private Security $security;
 
     public function __construct(
         DefaultItemRepository      $defaultItemRepository,
         BuildingListItemRepository $buildingRepository,
         TechnologyRepository       $technologyRepository,
-        ShipRepository             $shipRepository,
         DefenseRepository          $defenseRepository,
         PlanetService              $planetService,
         PlanetRepository           $planetRepository,
         UserService                $userService,
         EntityRepository           $entityRepository,
         Security                   $security,
+        ShipListRepository         $shipListRepository
     ) {
         $this->defaultItemRepository = $defaultItemRepository;
         $this->buildingRepository = $buildingRepository;
         $this->technologyRepository = $technologyRepository;
-        $this->shipRepository = $shipRepository;
+        $this->shipListRepository = $shipListRepository;
         $this->defenseRepository = $defenseRepository;
         $this->planetRepository = $planetRepository;
         $this->planetService = $planetService;
         $this->userService = $userService;
-        $this->entityRepository = $entityRepository;
         $this->security = $security;
     }
 
@@ -76,7 +74,7 @@ class UserSetupService
         // Add ships
         if (isset($defaultItems['s'])) {
             foreach ($defaultItems['s'] as $defaultItem) {
-                $this->shipRepository->addShip($defaultItem->getObjectId(), $defaultItem->getCount(), $userId, $planetId);
+                $this->shipListRepository->addShip($defaultItem->getObjectId(), $defaultItem->getCount(), $userId, $planetId);
             }
         }
 

@@ -25,20 +25,24 @@ class TechnologyListItem
     #[ORM\Column(name: "techlist_entity_id", type: "integer")]
     private int $entityId;
 
-    #[ORM\Column(name: "techlist_current_level", type: "integer")]
+    #[ORM\ManyToOne(targetEntity: Entity::class)]
+    #[ORM\JoinColumn(name: 'techlist_entity_id', referencedColumnName: 'id')]
+    private Entity $entity;
+
+    #[ORM\Column(name: "techlist_current_level", type: "smallint")]
     private int $currentLevel;
 
-    #[ORM\Column(name: "techlist_build_type", type: "integer")]
-    private int $buildType;
+    #[ORM\Column(name: "techlist_build_type", type: "smallint")]
+    private int $buildType = 0;
 
     #[ORM\Column(name: "techlist_build_start_time", type: "integer")]
-    private int $startTime;
+    private int $startTime = 0;
 
     #[ORM\Column(name: "techlist_build_end_time", type: "integer")]
-    private int $endTime;
+    private int $endTime = 0;
 
     #[ORM\Column(name: "techlist_prod_percent", type: "integer")]
-    private int $prodPercent;
+    private int $prodPercent = 100;
 
     public static function createFromData(array $data): TechnologyListItem
     {
@@ -158,6 +162,18 @@ class TechnologyListItem
     public function setProdPercent(int $prodPercent): static
     {
         $this->prodPercent = $prodPercent;
+
+        return $this;
+    }
+
+    public function getEntity(): ?Entity
+    {
+        return $this->entity;
+    }
+
+    public function setEntity(?Entity $entity): static
+    {
+        $this->entity = $entity;
 
         return $this;
     }

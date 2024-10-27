@@ -25,8 +25,12 @@ class DefenseListItem
     #[ORM\Column(name: "deflist_entity_id", type: "integer")]
     private int $entityId;
 
+    #[ORM\ManyToOne(targetEntity: Entity::class)]
+    #[ORM\JoinColumn(name: 'deflist_entity_id', referencedColumnName: 'id')]
+    private Entity $entity;
+
     #[ORM\Column(name: "deflist_count", type: "integer")]
-    private int $count;
+    private int $count = 0;
 
     public static function createFromData(array $data): DefenseListItem
     {
@@ -101,6 +105,18 @@ class DefenseListItem
     public function setCount(int $count): static
     {
         $this->count = $count;
+
+        return $this;
+    }
+
+    public function getEntity(): ?Entity
+    {
+        return $this->entity;
+    }
+
+    public function setEntity(?Entity $entity): static
+    {
+        $this->entity = $entity;
 
         return $this;
     }

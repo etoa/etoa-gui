@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace EtoA\Entity;
 
+use Doctrine\DBAL\Types\Types;
 use EtoA\Building\BuildingListItemRepository;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -29,32 +30,32 @@ class BuildingListItem
     #[ORM\Column(name: "buildlist_entity_id", type: "integer")]
     private int $entityId;
 
-    #[ORM\Column(name: "buildlist_current_level", type: "integer")]
-    private int $currentLevel;
+    #[ORM\Column(name: "buildlist_current_level", type: "smallint")]
+    private int $currentLevel = 0;
 
     #[ORM\Column(name: "buildlist_build_start_time", type: "integer")]
-    private int $startTime;
+    private int $startTime = 0;
 
     #[ORM\Column(name: "buildlist_build_end_time", type: "integer")]
-    private int $endTime;
+    private int $endTime = 0;
 
-    #[ORM\Column(name: "buildlist_build_type", type: "integer")]
+    #[ORM\Column(name: "buildlist_build_type", type: "smallint")]
     private int $buildType;
 
-    #[ORM\Column(name: "buildlist_prod_percent", type: "integer")]
-    private int $prodPercent;
+    #[ORM\Column(name: "buildlist_prod_percent", type: "decimal")]
+    private int $prodPercent = 1;
 
     #[ORM\Column(name: "buildlist_people_working", type: "integer")]
-    private int $peopleWorking;
+    private int $peopleWorking = 0;
 
-    #[ORM\Column(name: "buildlist_people_working_status", type: "integer")]
-    private int $peopleWorkingStatus;
+    #[ORM\Column(name: "buildlist_people_working_status", type: "smallint")]
+    private int $peopleWorkingStatus = 0;
 
     #[ORM\Column(name: "buildlist_deactivated", type: "integer")]
-    private int $deactivated;
+    private int $deactivated = 0;
 
     #[ORM\Column(name: "buildlist_cooldown", type: "integer")]
-    private int $cooldown;
+    private int $cooldown = 0;
 
     public static function createFromData(array $data): BuildingListItem
     {

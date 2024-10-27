@@ -16,25 +16,16 @@ class UserLogRepository extends AbstractRepository
 
     public function add(int $userId, string $zone, string $message, string $host, bool $public): void
     {
-        $this->createQueryBuilder('q')
-            ->insert('user_log')
-            ->values([
-                'user_id' => ':userId',
-                'timestamp' => ':now',
-                'zone' => ':zone',
-                'message' => ':message',
-                'host' => ':host',
-                'public' => ':public',
-            ])
-            ->setParameters([
-                'userId' => $userId,
-                'now' => time(),
-                'zone' => $zone,
-                'message' => $message,
-                'host' => $host,
-                'public' => (int) $public,
-            ])
-            ->executeQuery();
+
+        $userLog = new UserLog();
+        $userLog->setUserId($userId);
+        $userLog->setTimestamp(time());
+        $userLog->setZone($zone);
+        $userLog->setMessage($message);
+        $userLog->setHost($host);
+        $userLog->setPublic($public);
+        $this->getEntityManager()->persist($userLog);
+        $this->save();
     }
 
     /**

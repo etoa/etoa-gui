@@ -45,7 +45,6 @@ class SetupController extends AbstractGameController
         private readonly UserRepository           $userRepository,
         private readonly ConfigurationService     $configurationService,
         private readonly UserSetupService         $userSetupService,
-        private readonly DefaultItemRepository    $defaultItemRepository,
         private readonly DefaultItemSetRepository $defaultItemSetRepository
 
     )
@@ -242,8 +241,8 @@ class SetupController extends AbstractGameController
         if($addForm->get('submit_chooseplanet')->isClicked() && $addForm->isValid()) {
             if ($planet->getPlanetType()->isHabitable() &&
                 $planet->getUserId() == 0 &&
-                $planet->getFields() > $this->configurationService->getInt('user_min_fields') &&
-                $this->checker->checker_verify()
+                $planet->getFields() > $this->configurationService->getInt('user_min_fields')
+                #&& $this->checker->checker_verify()
             ) {
                 $this->userSetupService->coloniseMainPlanet($planet);
 
@@ -251,10 +250,10 @@ class SetupController extends AbstractGameController
                     return $this->redirectToRoute('game.setup.itemset');
                 } elseif (count($sets) === 1) {
                     $this->userSetupService->addItemSetListToPlanet($planet->getId(), $this->getUser()->getId(), $sets[0]->getId());
-                    $this->userRepository->setSetupFinished($this->getUser()->getId());
+                    $this->userRepository->setSetupFinished($this->getUser()->getData());
                     return $this->redirectToRoute('game.setup.finished');
                 } else {
-                    $this->userRepository->setSetupFinished($this->getUser()->getId());
+                    $this->userRepository->setSetupFinished($this->getUser()->getData());
                     return $this->redirectToRoute('game.setup.finished');
                 }
             }
@@ -286,8 +285,8 @@ class SetupController extends AbstractGameController
             $addForm->handleRequest($request);
 
             if($addForm->isSubmitted() && $addForm->isValid()) {
-                $this->userSetupService->addItemSetListToPlanet($planetId, $this->getUser()->getId(), $addForm->getData()['itemset_id']);
-                $this->userRepository->setSetupFinished($this->getUser()->getId());
+                $this->userSetupService->addItemSetListToPlanet($planetId, $this->getUser()->getId(), $addForm->getData()['itemset_id']->getId());
+                $this->userRepository->setSetupFinished($this->getUser()->getData());
                 return $this->redirectToRoute('game.setup.finished');
             }
 
@@ -299,12 +298,12 @@ class SetupController extends AbstractGameController
     }
 
     #[Route('/game/setup/finished', name: 'game.setup.finished')]
-    public function setupFinished(Request $request): Response
+    public function setupFinished(): Response
     {
         $welcomeText = $this->textRepository->find('welcome_message');
         $text = '';
 
-        if ($welcomeText->isEnabled()) {
+        if ($welcomeText?->isEnabled()) {
             $text = BBCodeUtils::toHTML($welcomeText->content);
             $this->messageRepository->createSystemMessage($this->getUser()->getId(), MessageCategoryId::USER, 'Willkommen', $welcomeText->content);
         }

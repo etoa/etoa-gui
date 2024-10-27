@@ -6,14 +6,14 @@ namespace EtoA\Building;
 
 use Doctrine\DBAL\ArrayParameterType;
 use Doctrine\DBAL\Query\QueryBuilder;
-use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use EtoA\Core\AbstractRepository;
 use EtoA\Entity\BuildingListItem;
+use EtoA\Universe\Entity\EntityRepository;
 
 class BuildingListItemRepository extends AbstractRepository
 {
-    public function __construct(ManagerRegistry $registry, private readonly EntityManagerInterface $entityManager)
+    public function __construct(ManagerRegistry $registry, private readonly EntityRepository $entityRepository)
     {
         parent::__construct($registry, BuildingListItem::class);
     }
@@ -346,10 +346,25 @@ class BuildingListItemRepository extends AbstractRepository
         return $qry;
     }
 
-    public function addBuilding(BuildingListItem $buildingListItem): void
+    public function addBuilding(int $buildingId, int $level, int $userId, int $entityId, int $buildType = 0, int $startTime = 0, int $endTime = 0): void
     {
-        $this->entityManager->persist($buildingListItem);
-        $this->entityManager->flush();
+        $item = $this->findOneBy(['userId'=>$userId,'buildingId'=>$buildingId,'entityId'=>$entityId]);
+
+        if(!$item) {
+            $item = new BuildingListItem();
+            $item->setBuildingId($buildingId);
+            $item->setUserId($userId);
+            $item->setEntityId($entityId);
+            $item->setEntity($this->entityRepository->findOneBy(['id'=>$entityId]));
+        }
+
+        $item->setCurrentLevel(max(0, $level));
+        $item->setBuildType($buildType);
+        $item->setStartTime($startTime);
+        $item->setEndTime($endTime);
+
+        $this->getEntityManager()->persist($item);
+        $this->getEntityManager()->flush();
     }
 
     /**

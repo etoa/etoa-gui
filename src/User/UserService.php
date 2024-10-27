@@ -341,7 +341,7 @@ die Spielleitung";
 
     public function addToUserLog(int $userId, string $zone, string $message, bool $public = true): void
     {
-        $user = $this->userRepository->getUser($userId);
+        $user = $this->userRepository->find($userId);
 
         $search = array("{user}", "{nick}");
         $replace = array($user->getNick(), $user->getNick());

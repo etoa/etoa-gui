@@ -17,14 +17,7 @@ class DefaultItemSetRepository extends AbstractRepository
 
     public function getItemNames(): array
     {
-        $qb = $this->createQueryBuilder('q')
-            ->select('set_id, set_name')
-            ->from('default_item_sets')
-            ->andWhere('set_active = 1');
-
-        return $qb
-            ->orderBy('set_name')
-            ->fetchAllKeyValue();
+        return $this->findBy(['active'=>1],['name'=>'ASC']);
     }
 
     /**

@@ -46,18 +46,11 @@ class DefaultItemRepository extends AbstractRepository
      */
     public function getItemsGroupedByCategory(int $setId): array
     {
-        $data = $this->createQueryBuilder('q')
-            ->select('*')
-            ->from('default_items')
-            ->where('item_set_id = :id')
-            ->setParameters([
-                'id' => $setId,
-            ])
-            ->fetchAllAssociative();
+        $data = $this->findBy(['setId'=>$setId]);
 
         $result = [];
         foreach ($data as $row) {
-            $result[$row['item_cat']][] = DefaultItem::createFromData($row);
+            $result[$row->getCat()][] = $row;
         }
 
         return $result;
