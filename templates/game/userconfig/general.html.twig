@@ -13,6 +13,12 @@
         {{ macros.errorMessage(msg.error) }}
     {% endif %}
 
+    {% if not form.email.vars.valid %}
+        {% for error in form.email.vars.errors %}
+            {{ macros.errorMessage(error.message) }}
+        {% endfor %}
+    {% endif %}
+
     {{ form_start(form) }}
         <twig:Table title="Benutzeroptionen">
             {% block table_content %}

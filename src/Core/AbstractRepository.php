@@ -18,6 +18,13 @@ abstract class AbstractRepository extends ServiceEntityRepository
         $this->getEntityManager()->flush();
     }
 
+    public function getChangeset(Object $model): array
+    {
+        $uow = $this->getEntityManager()->getUnitOfWork();
+        $uow->computeChangeSets();
+        return $uow->getEntityChangeSet($model);
+    }
+
     protected function applySearchSortLimit(QueryBuilder $qb, AbstractSearch $search = null, AbstractSort $sorts = null, int $limit = null, int $offset = null): QueryBuilder
     {
         if ($search !== null) {

@@ -14,21 +14,21 @@
                     <th><b>Spionagesonden für Direktscan:</b></th>
                     <td>
                         {{ form_widget(form.spyShipCount) }}
-                        {{ form_widget(form.spyShipId) }}
+                        {{ form_widget(form.spyShip) }}
                     </td>
                 </tr>
                 <tr>
                     <th><b>Erkundungsschiffe für Quickanalyse:</b></th>
                     <td>
                         {{ form_widget(form.analyzeShipCount) }}
-                        {{ form_widget(form.analyzeShipId) }}
+                        {{ form_widget(form.analyzeShip) }}
                     </td>
                 </tr>
                 <tr>
                     <th><b>Erkundungsschiffe für Direkterkundung:</b></th>
                     <td>
                         {{ form_widget(form.exploreShipCount) }}
-                        {{ form_widget(form.exploreShipId) }}
+                        {{ form_widget(form.exploreShip) }}
                     </td>
                 </tr>
                 <tr>
@@ -53,7 +53,7 @@
                     <th>Chat Schriftfarbe:</th>
                     <td>
                         {{ form_widget(form.chatColor) }}
-                        <div id="chatPreview" style="color:#{{ chatColor }}"> &lt;{{ app.user.data.nick}} |
+                        <div id="chatPreview" style="color:{{ chatColor }}"> &lt;{{ app.user.data.nick}} |
                             {{ "now"|date("H:i") }} &gt; Chatvorschau </div>
                     </td>
                 </tr>
