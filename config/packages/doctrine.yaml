@@ -22,6 +22,7 @@ doctrine:
         dql:
             string_functions:
                 RAND: EtoA\Doctrine\RandFunction
+                ceil: DoctrineExtensions\Query\Mysql\Ceil
 
 when@test:
     doctrine:
