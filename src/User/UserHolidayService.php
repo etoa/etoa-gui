@@ -71,7 +71,7 @@ class UserHolidayService
         $user->setHmodTo($holidayTo);
         $user->setLogoutTime($holidayFrom);
 
-        $this->userRepository->save($user);
+        $this->userRepository->save();
 
         return true;
     }
@@ -96,7 +96,7 @@ class UserHolidayService
         $user->setHmodTo(0);
         $user->setLogoutTime(time());
 
-        $this->userRepository->save($user);
+        $this->userRepository->save();
 
         $userPlanets = $this->planetRepository->getUserPlanets($user->getId());
         foreach ($userPlanets as $planet) {

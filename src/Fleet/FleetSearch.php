@@ -55,7 +55,7 @@ class FleetSearch extends AbstractSearch
 
     public function controlledByEntity(int $entityId): self
     {
-        $this->parts[] = '(entity_from = :controlledByEntity AND status = :departureState) OR (entity_to = :controlledByEntity AND status <> :departureState)';
+        $this->parts[] = '(q.entityFrom = :controlledByEntity AND q.status = :departureState) OR (q.entityTo = :controlledByEntity AND q.status <> :departureState)';
         $this->parameters['controlledByEntity'] = $entityId;
         $this->parameters['departureState'] = FleetStatus::DEPARTURE;
 
@@ -64,7 +64,7 @@ class FleetSearch extends AbstractSearch
 
     public function planetUser(int $userId): self
     {
-        $this->parts[] = 'planets.planet_user_id = :planetUserId';
+        $this->parts[] = 'q.entityTo = :planetUserId';
         $this->parameters['planetUserId'] = $userId;
 
         return $this;

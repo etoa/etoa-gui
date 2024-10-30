@@ -646,30 +646,29 @@ class BuildingListItemRepository extends AbstractRepository
     public function freezeConstruction(int $userId): void
     {
         $this->createQueryBuilder('q')
-            ->update('buildlist')
-            ->set('buildlist_build_type', 'buildlist_build_type - 2')
-            ->where('buildlist_user_id = :userId')
-            ->andWhere('buildlist_build_start_time > 0')
+            ->set('q.buildType', 'q.buildType - 2')
+            ->where('q.userId = :userId')
+            ->andWhere('q.startTime > 0')
             ->setParameters([
-                'userId' => $userId,
+                'userId' => $userId
             ])
-            ->executeQuery();
+            ->getQuery()
+            ->execute();
     }
 
     public function unfreezeConstruction(int $userId, int $duration): void
     {
         $this->createQueryBuilder('q')
-            ->update('buildlist')
-            ->set('buildlist_build_type', 'buildlist_build_type + 2')
-            ->set('buildlist_build_start_time', 'buildlist_build_start_time + :duration')
-            ->set('buildlist_build_end_time', 'buildlist_build_end_time + :duration')
-            ->where('buildlist_user_id = :userId')
-            ->andWhere('buildlist_build_start_time > 0')
+            ->set('q.buildType', 'q.build_type + 2')
+            ->set('q.startTime', 'q.startTime +'. $duration)
+            ->set('q.endTime', 'q.endTime +'. $duration)
+            ->where('q.userId = :userId')
+            ->andWhere('q.startTime > 0')
             ->setParameters([
                 'userId' => $userId,
-                'duration' => $duration,
             ])
-            ->executeQuery();
+            ->getQuery()
+            ->execute();
     }
 
     public function findUnderConstruction(int $userId, int $entityId) : ?array {

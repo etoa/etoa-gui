@@ -156,29 +156,26 @@ class ShipQueueRepository extends AbstractRepository
     public function freezeConstruction(int $userId): void
     {
         $this->createQueryBuilder('q')
-            ->update('ship_queue')
-            ->set('queue_build_type', ':type')
-            ->where('queue_user_id = :userId')
+            ->set('q.buildType', 1)
+            ->where('q.userId = :userId')
             ->setParameters([
-                'userId' => $userId,
-                'type' => 1,
+                'userId' => $userId
             ])
-            ->executeQuery();
+            ->getQuery()
+            ->execute();
     }
 
     public function unfreezeConstruction(int $userId, int $duration): void
     {
         $this->createQueryBuilder('q')
-            ->update('ship_queue')
-            ->set('queue_build_type', ':type')
-            ->set('queue_starttime', 'queue_starttime + :duration')
-            ->set('queue_endtime', 'queue_endtime + :duration')
-            ->where('queue_user_id = :userId')
+            ->set('q.buildType', 0)
+            ->set('q.startTime', 'q.startTime +'.$duration)
+            ->set('q.endTime', 'q.endTime +'. $duration)
+            ->where('q.userId = :userId')
             ->setParameters([
                 'userId' => $userId,
-                'type' => 0,
-                'duration' => $duration,
             ])
-            ->executeQuery();
+            ->getQuery()
+            ->execute();
     }
 }

@@ -30,6 +30,7 @@ use EtoA\User\UserMultiRepository;
 use EtoA\User\UserPropertiesRepository;
 use EtoA\User\UserRepository;
 use EtoA\User\UserService;
+use EtoA\User\UserSessionLogRepository;
 use EtoA\User\UserSessionRepository;
 use EtoA\User\UserSessionSearch;
 use EtoA\User\UserSittingRepository;
@@ -236,8 +237,7 @@ class UserConfigController extends AbstractGameController
     #[Route('/game/config/messages', name: 'game.config.messages')]
     public function messages(Request $request): Response
     {
-        $properties = $this->userPropertiesRepository->getOrCreateProperties($this->getUser()->getId());
-
+        $properties = $this->userPropertiesRepository->find($this->getUser()->getId());
         $form = $this->createFormBuilder($properties)
             ->add('msgSignature', TextareaType::class, [
                 'attr' => ['cols' => 50, 'rows' => 4]
@@ -283,7 +283,7 @@ class UserConfigController extends AbstractGameController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->userPropertiesRepository->storeProperties($properties);
+            $this->userPropertiesRepository->save();
             $msg['success'] = 'Nachrichten-Einstellungen wurden geändert!';
         }
 
@@ -342,7 +342,7 @@ class UserConfigController extends AbstractGameController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->userPropertiesRepository->storeProperties($properties);
+            $this->userPropertiesRepository->save();
             $msg['success'] = 'Design-Daten wurden geändert!';
         }
 
@@ -356,7 +356,6 @@ class UserConfigController extends AbstractGameController
     public function sitting(Request $request, UserMultiRepository $userMultiRepository, UserSittingRepository $userSittingRepository): Response
     {
         $multiEntries = $userMultiRepository->getUserEntries($this->getUser()->getId(), true);
-
         if ($multiEntries) {
             $form = $this->createFormBuilder(['userMultis' => $multiEntries])
                 ->add('save', SubmitType::class, ['label' => 'Übernehmen'])
@@ -433,16 +432,8 @@ class UserConfigController extends AbstractGameController
             $sittingLeft[$x] = $x;
         }
 
-        $userSitting = new UserSitting([
-            'id' => 0,
-            'user_id' => 0,
-            'user_nick' => '',
-            'sitter_id' => 0,
-            'sitter_nick' => '',
-            'password' => '',
-            'date_from' => 0,
-            'date_to' => 0,
-        ]);
+        $userSitting = new UserSitting();
+        $userSitting->setUserId($this->getUser()->getId());
 
         $form = $this->createFormBuilder($userSitting)
             ->add('save', SubmitType::class, ['label' => 'Speichern'])
@@ -452,6 +443,7 @@ class UserConfigController extends AbstractGameController
                     'maxlength' => "20",
                     'size' => "20",
                 ],
+                'mapped' => false,
                 'constraints' => [
                     new ValidUserConstraint(),
                     new NotBlank(['message' => 'Kein Name angegeben!']),
@@ -484,8 +476,8 @@ class UserConfigController extends AbstractGameController
             ->add('dateFrom', DateTimeType::class, [
                 'widget' => 'single_text',
                 'attr' => ['min' => now()->format("Y-m-d H:i")],
-                'data' => now(),
-                'mapped' => false
+                'data' => now()->getTimestamp(),
+                'input' => 'timestamp'
             ])
             ->add('dateToDays', ChoiceType::class, [
                 'choices' => $sittingLeft,
@@ -496,13 +488,15 @@ class UserConfigController extends AbstractGameController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $tm_from = $form->get('dateFrom')->getData()->getTimestamp();
+            $tm_from = $form->getData()->getDateFrom();
             $tm_to = $tm_from + $form->get('dateToDays')->getData() * 86400;
 
             if ($tm_from > time() - 600 && $tm_from < $tm_to && $form->get('dateToDays')->getData() <= $sittingDays) {
                 if (!$userSittingRepository->hasSittingEntryForTimeSpan($this->getUser()->getId(), $tm_from, $tm_to)) {
-                    $sitterUser = $this->userRepository->getUserByNick($userSitting->sitterNick);
-                    $userSittingRepository->addEntry($this->getUser()->getId(), $sitterUser->getId(), $userSitting->getPassword(), $tm_from, $tm_to);
+                    $sitterUser = $this->userRepository->getUserByNick($form->get('sitterNick')->getData());
+                    $userSitting->setSitter($sitterUser);
+                    $userSitting->setDateTo($tm_to);
+                    $userSittingRepository->addEntry($userSitting);
                     $msg['success'] = "Sitting eingerichtet!";
 
                     return $this->render('game/userconfig/sitting_add.html.twig', [
@@ -552,7 +546,7 @@ class UserConfigController extends AbstractGameController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->userRepository->save($user);
+            $this->userRepository->save();
         }
 
         return $this->render('game/userconfig/dual.html.twig', [
@@ -601,7 +595,7 @@ class UserConfigController extends AbstractGameController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->userRepository->save($user);
+            $this->userRepository->save();
             $logRepository->add(LogFacility::USER, LogSeverity::INFO, "Der Spieler [b]" . $user->getNick() . "[/b] ändert sein Passwort!");
 
             $this->mailSenderService->send(
@@ -625,12 +619,13 @@ class UserConfigController extends AbstractGameController
     public function logins(
         UserSessionRepository      $userSessionRepository,
         UserLoginFailureRepository $userLoginFailureRepository,
-        NetworkNameService         $networkNameService
+        NetworkNameService         $networkNameService,
+        UserSessionLogRepository   $userSessionLogRepository
     ): Response
     {
 
         $activeSessions = $userSessionRepository->getActiveUserSessions($this->getUser()->getId());
-        $sessionLogs = $userSessionRepository->getSessionLogs(UserSessionSearch::create()->userId($this->getUser()->getId()), 10);
+        $sessionLogs = $userSessionLogRepository->getSessionLogs(UserSessionSearch::create()->userId($this->getUser()->getId()), 10);
         $failures = $userLoginFailureRepository->getUserLoginFailures($this->getUser()->getId(), 10);
 
         return $this->render('game/userconfig/logins.html.twig', [

@@ -572,10 +572,9 @@ class FleetRepository extends AbstractRepository
     public function exists(FleetSearch $search): bool
     {
         return (bool) $this->applySearchSortLimit($this->createQueryBuilder('q'), $search)
-            ->select('1')
-            ->from('fleet')
             ->setMaxResults(1)
-            ->fetchOne();
+            ->getQuery()
+            ->getResult();
     }
 
     /**

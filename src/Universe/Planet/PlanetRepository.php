@@ -482,14 +482,13 @@ class PlanetRepository extends AbstractRepository
     public function setLastUpdated(int $id, int $timestamp): void
     {
         $this->createQueryBuilder('q')
-            ->update('planets')
-            ->set('planet_last_updated', ':timestamp')
+            ->set('planet_last_updated', $timestamp)
             ->where('id = :id')
             ->setParameters([
-                'id' => $id,
-                'timestamp' => $timestamp,
+                'id' => $id
             ])
-            ->executeQuery();
+            ->getQuery()
+            ->execute();
     }
 
     public function setMain(int $id, int $userId): bool
@@ -549,19 +548,19 @@ class PlanetRepository extends AbstractRepository
     public function freezeProduction(int $userId): void
     {
         $this->createQueryBuilder('q')
-            ->update('planets')
-            ->set('planet_last_updated', (string) 0)
-            ->set('planet_prod_metal', (string) 0)
-            ->set('planet_prod_crystal', (string) 0)
-            ->set('planet_prod_plastic', (string) 0)
-            ->set('planet_prod_fuel', (string) 0)
-            ->set('planet_prod_food', (string) 0)
-            ->set('planet_prod_power', (string) 0)
-            ->where('planet_user_id = :userId')
+            ->set('q.lastUpdated', "0")
+            ->set('q.prodMetal', "0")
+            ->set('q.prodCrystal', "0")
+            ->set('q.prodPlastic', "0")
+            ->set('q.prodFuel', "0")
+            ->set('q.prodFood', "0")
+            ->set('q.prodPower', "0")
+            ->where('q.userId = :userId')
             ->setParameters([
                 'userId' => $userId,
             ])
-            ->executeQuery();
+            ->getQuery()
+            ->execute();
     }
 
     public function getGlobalResources(): BaseResources
