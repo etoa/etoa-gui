@@ -26,9 +26,9 @@ class UserLoginFailure
     #[ORM\Column(name: "failure_user_id")]
     private int $userId;
 
-    #[ORM\Column(name: "failure_user_nick")]
-    private ?string $userNick;
-
+    #[ORM\ManyToOne(targetEntity: User::class)]
+    #[ORM\JoinColumn(name: 'failure_user_id', referencedColumnName: 'user_id')]
+    protected User $user;
     #[ORM\Column(name: "failure_client")]
     private string $client;
 
@@ -105,6 +105,18 @@ class UserLoginFailure
     public function setClient(string $client): static
     {
         $this->client = $client;
+
+        return $this;
+    }
+
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
+
+    public function setUser(?User $user): static
+    {
+        $this->user = $user;
 
         return $this;
     }

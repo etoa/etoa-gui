@@ -32,33 +32,31 @@ class HostCacheRepository extends AbstractRepository
 
     public function getHost(string $ip): ?string
     {
-        $data = $this->createQueryBuilder('q')
-            ->select('host')
-            ->from('hostname_cache')
-            ->where('addr = :ip')
-            ->andWhere('timestamp > :time')
+        $result = $this->createQueryBuilder('q')
+            ->select('q.host')
+            ->where('q.addr = :ip')
+            ->andWhere('q.timestamp > :time')
             ->setParameters([
                 'ip' => $ip,
                 'time' => time() - 86400,
             ])
             ->setMaxResults(1)
-            ->fetchOne();
+            ->getQuery()
+            ->getOneOrNullResult();
 
-        return $data !== false ? $data : null;
+        return $result?$result['host']:$result;
     }
 
     public function store(string $host, string $ip): void
     {
-        $this->getConnection()
-            ->executeQuery('
-                REPLACE INTO hostname_cache
-                (addr, host, timestamp)
-                VALUES (:addr, :host, :time)
-            ', [
-                'addr' => $ip,
-                'host' => $host,
-                'time' => time(),
-            ]);
+        $hostModel = $this->findOneBy(['addr'=>$ip])??new HostnameCache();
+
+        $hostModel->setAddr($ip);
+        $hostModel->setTimestamp(time());
+        $hostModel->setHost($host);
+
+        $this->getEntityManager()->persist($hostModel);
+        $this->save();
     }
 
     public function clear(): void

@@ -134,15 +134,7 @@ class UserSessionRepository extends AbstractRepository
      */
     public function getActiveUserSessions(int $userId): array
     {
-        $data = $this->createQueryBuilder('q')
-            ->select('*')
-            ->from('user_sessions')
-            ->where('user_id = :userId')
-            ->setParameter('userId', $userId)
-            ->orderBy('time_action', 'DESC')
-            ->fetchAllAssociative();
-
-        return array_map(fn (array $row) => new UserSession($row), $data);
+        return $this->findBy(['userId'=>$userId],['timeAction'=>'DESC']);
     }
 
     /**

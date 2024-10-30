@@ -4,10 +4,11 @@ namespace EtoA\User;
 
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use EtoA\Core\AbstractRepository;
 use EtoA\Entity\UserSession;
 use EtoA\Entity\UserSessionLog;
 
-class UserSessionLogRepository extends ServiceEntityRepository
+class UserSessionLogRepository extends AbstractRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
@@ -52,13 +53,10 @@ class UserSessionLogRepository extends ServiceEntityRepository
      */
     public function getSessionLogs(UserSessionSearch $search, int $limit = null, int $offset = null): array
     {
-        $rows = $this->applySearchSortLimit($this->createQueryBuilder('q'), $search, null, $limit, $offset)
-            ->select('*')
-            ->from('user_sessionlog', 's')
-            ->orderBy('s.time_action', 'DESC')
-            ->fetchAllAssociative();
-
-        return array_map(fn (array $row) => new UserSessionLog($row), $rows);
+        return $this->applySearchSortLimit($this->createQueryBuilder('q'), $search, null, $limit, $offset)
+            ->orderBy('q.timeAction', 'DESC')
+            ->getQuery()
+            ->execute();
     }
 
     /**

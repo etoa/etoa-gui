@@ -4,16 +4,11 @@ namespace EtoA\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use EtoA\HostCache\HostCacheRepository;
-use EtoA\Repository\HostnameCacheRepository;
 
 #[ORM\Entity(repositoryClass: HostCacheRepository::class)]
 class HostnameCache
 {
     #[ORM\Id]
-    #[ORM\GeneratedValue]
-    #[ORM\Column]
-    private ?int $id = null;
-
     #[ORM\Column(length: 39)]
     private ?string $addr = null;
 
@@ -22,11 +17,6 @@ class HostnameCache
 
     #[ORM\Column]
     private ?int $timestamp = null;
-
-    public function getId(): ?int
-    {
-        return $this->id;
-    }
 
     public function getAddr(): ?string
     {

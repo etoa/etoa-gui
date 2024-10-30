@@ -38,23 +38,7 @@ class UserLoginFailureRepository extends AbstractRepository
      */
     public function getUserLoginFailures(int $userId, int $limit = null): array
     {
-        $qb = $this->createQueryBuilder('q')
-            ->select('l.*')
-            ->addSelect('u.user_nick')
-            ->from('login_failures', 'l')
-            ->leftJoin('l', 'users', 'u', 'u.user_id = l.failure_user_id')
-            ->where('l.failure_user_id = :userId')
-            ->setParameter('userId', $userId)
-            ->orderBy('l.failure_time', 'DESC');
-
-        if ($limit > 0) {
-            $qb->setMaxResults($limit);
-        }
-
-        $data = $qb
-            ->fetchAllAssociative();
-
-        return array_map(fn (array $row) => new UserLoginFailure($row), $data);
+        return $this->findBy(['userId'=>$userId],['time'=>'DESC'],$limit);
     }
 
     /**
