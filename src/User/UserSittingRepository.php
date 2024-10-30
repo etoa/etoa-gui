@@ -8,32 +8,19 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use EtoA\Core\AbstractRepository;
 use EtoA\Entity\UserSitting;
+use function Symfony\Component\Clock\now;
 
 class UserSittingRepository extends AbstractRepository
 {
-    public function __construct(ManagerRegistry $registry, private readonly EntityManagerInterface $entityManager)
+    public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, UserSitting::class);
     }
 
-    public function addEntry(int $userId, int $sitterId, string $password, int $dateFrom, int $dateTo): void
+    public function addEntry(UserSitting $userSitting): void
     {
-        $this->createQueryBuilder('q')
-            ->insert('user_sitting')
-            ->values([
-                'user_id' => ':userId',
-                'sitter_id' => ':sitterId',
-                'password' => ':password',
-                'date_from' => ':dateFrom',
-                'date_to' => ':dateTo',
-            ])
-            ->setParameters([
-                'userId' => $userId,
-                'sitterId' => $sitterId,
-                'password' => $password,
-                'dateFrom' => $dateFrom,
-                'dateTo' => $dateTo,
-            ])->executeQuery();
+        $this->getEntityManager()->persist($userSitting);
+        $this->getEntityManager()->flush();
     }
 
     /**
@@ -90,12 +77,7 @@ class UserSittingRepository extends AbstractRepository
      */
     public function getWhereUser(int $userId): array
     {
-        $data = $this->createSitterQueryBuilder()
-            ->where('s.user_id = :userId')
-            ->setParameter('userId', $userId)
-            ->fetchAllAssociative();
-
-        return array_map(fn(array $row) => new UserSitting($row), $data);
+        return $this->findBy(['userId'=>$userId]);
     }
 
     /**
@@ -129,27 +111,28 @@ class UserSittingRepository extends AbstractRepository
     {
         return (bool)$this->createQueryBuilder('q')
             ->select('1')
-            ->from('user_sitting')
-            ->where('user_id = :userId')
-            ->andWhere('(date_from < :from AND :from < date_to) OR (date_from < :to AND :to < date_to)')
+            ->where('q.userId = :userId')
+            ->andWhere('(q.dateFrom < :from AND :from < q.dateTo) OR (q.dateFrom < :to AND :to < q.dateTo)')
             ->setParameters([
                 'userId' => $userId,
                 'from' => $from,
                 'to' => $to,
             ])
-            ->fetchOne();
+            ->setMaxResults(1)
+            ->getQuery()
+            ->getOneOrNullResult();
     }
 
     public function getUsedSittingTime(int $userId): int
     {
         return (int)$this->createQueryBuilder('q')
-            ->select('SUM(CEIL((date_to - date_from) / 86400))')
-            ->from('user_sitting')
-            ->where('user_id = :userId')
+            ->select('SUM(CEIL((q.dateTo - q.dateFrom) / 86400))')
+            ->where('q.userId = :userId')
             ->setParameters([
                 'userId' => $userId,
             ])
-            ->fetchOne();
+            ->getQuery()
+            ->getSingleScalarResult();
     }
 
     private function createSitterQueryBuilder(): QueryBuilder
@@ -174,36 +157,50 @@ class UserSittingRepository extends AbstractRepository
 
     public function cancelUserEntry(int $id, int $userId): bool
     {
-        return (bool)$this->createQueryBuilder('q')
-            ->update('user_sitting')
+
+        $sitting = $this->createQueryBuilder('q')
             ->set('date_to', 'UNIX_TIMESTAMP()')
-            ->where('id = :id')
-            ->andWhere('user_id = :userId')
-            ->andWhere('date_from < :time')
-            ->andWhere('date_to > :time')
+            ->where('q.id = :id')
+            ->andWhere('q.userId = :userId')
+            ->andWhere('q.dateFrom < :time')
+            ->andWhere('q.dateTo > :time')
             ->setParameters([
                 'id' => $id,
                 'userId' => $userId,
                 'time' => time(),
             ])
-            ->executeQuery()
-            ->rowCount();
+            ->getQuery()
+            ->getOneOrNullResult();
+
+        if($sitting) {
+            $sitting->setDateTo(now()->getTimestamp());
+            $this->save();
+            return true;
+        }
+        return false;
     }
 
     public function deleteFutureUserEntry(int $id, int $userId): bool
     {
-        return (bool)$this->createQueryBuilder('q')
-            ->delete('user_sitting')
-            ->where('id = :id')
-            ->andWhere('user_id = :userId')
-            ->andWhere('date_from > :time')
-            ->setParameters([
-                'id' => $id,
-                'userId' => $userId,
-                'time' => time(),
-            ])
-            ->executeQuery()
-            ->rowCount();
+        $sitting = $this->createQueryBuilder('q')
+        ->where('q.id = :id')
+        ->andWhere('q.userId = :userId')
+        ->andWhere('q.dateFrom > :time')
+        ->setParameters([
+            'id' => $id,
+            'userId' => $userId,
+            'time' => time(),
+        ])
+        ->getQuery()
+        ->getOneOrNullResult();
+
+        if($sitting) {
+            $this->getEntityManager()->remove($sitting);
+            $this->save();
+            return true;
+        }
+
+        return false;
     }
 
     public function deleteAllUserEntries(int $userId): void

@@ -13,19 +13,18 @@ class UserMulti
     #[ORM\Column]
     private int $id;
 
-    #[ORM\Column]
-    private int $userId;
+    #[ORM\JoinColumn(name: 'user_id', referencedColumnName: 'user_id')]
+    #[ORM\OneToOne(targetEntity: User::class)]
+    private User $user;
 
-    #[ORM\Column]
-    private int $multiUserId;
+    #[ORM\JoinColumn(name: 'multi_id', referencedColumnName: 'user_id')]
+    #[ORM\OneToOne(targetEntity: User::class)]
+    private User $multiUser;
 
-    #[ORM\Column]
-    private ?string $multiUserNick;
-
-    #[ORM\Column]
+    #[ORM\Column(name: 'connection')]
     private string $reason;
 
-    #[ORM\Column]
+    #[ORM\Column(name: 'activ')]
     private bool $active;
 
     #[ORM\Column]
@@ -104,6 +103,30 @@ class UserMulti
     public function setTimestamp(int $timestamp): static
     {
         $this->timestamp = $timestamp;
+
+        return $this;
+    }
+
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
+
+    public function setUser(?User $user): static
+    {
+        $this->user = $user;
+
+        return $this;
+    }
+
+    public function getMultiUser(): ?User
+    {
+        return $this->multiUser;
+    }
+
+    public function setMultiUser(?User $multiUser): static
+    {
+        $this->multiUser = $multiUser;
 
         return $this;
     }

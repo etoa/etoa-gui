@@ -272,7 +272,7 @@ class UserRepository extends AbstractRepository
             ->getQuery();
 
 
-        return $query->execute();
+        return $query->getOneOrNullResult();
     }
 
     public function getUser(int $userId): ?User

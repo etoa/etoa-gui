@@ -18,7 +18,7 @@
                 {% if form.userMultis is defined %}
                     {% for userMulti in form.userMultis %}
                         <tr>
-                            <td>{{ form_widget(userMulti.multiUserNick) }}</td>
+                            <td>{{ form_widget(userMulti.multiUser) }}</td>
                             <td>{{ form_widget(userMulti.reason) }}</td>
                             <td>{{ form_widget(userMulti.delMulti) }}</td>
                         </tr>
@@ -51,7 +51,7 @@
                 </tr>
                 {% for entry in sittingEntries %}
                     <tr>
-                        <td>{{ entry.sitterNick }}</td>
+                        <td>{{ entry.sitter }}</td>
                         <td>{{ formatTimestamp(entry.dateFrom) }}</td>
                         <td>{{ formatTimestamp(entry.dateTo) }}</td>
                         <td>{{ ((entry.dateTo - entry.dateFrom) / 86400)|round(0, 'ceil') }}</td>

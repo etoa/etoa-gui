@@ -229,6 +229,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(type: "boolean")]
     protected bool $userChangedMainPlanet;
 
+    public function __toString() {
+        return $this->nick;
+    }
+
     public function getPassword(): ?string
     {
         return $this->password;

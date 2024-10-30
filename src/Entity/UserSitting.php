@@ -17,21 +17,18 @@ class UserSitting implements PasswordAuthenticatedUserInterface
     #[ORM\Column(type: "integer")]
     private int $userId;
 
-    #[ORM\JoinColumn(name: 'user_id', referencedColumnName: 'user_id')]
+    #[ORM\JoinColumn(name: 'sitter_id', referencedColumnName: 'user_id')]
     #[ORM\ManyToOne(targetEntity: User::class)]
     private User $sitter;
-
-    #[ORM\Column(type: "integer")]
-    private int $sitterId;
 
     #[ORM\Column]
     private string $password;
 
     #[ORM\Column(type: "integer")]
-    private int $dateFrom;
+    private int $dateFrom = 0;
 
     #[ORM\Column(type: "integer")]
-    private int $dateTo;
+    private int $dateTo = 0;
 
     public function getPassword(): string
     {
@@ -96,18 +93,6 @@ class UserSitting implements PasswordAuthenticatedUserInterface
     public function getId(): ?int
     {
         return $this->id;
-    }
-
-    public function getSitterNick(): ?string
-    {
-        return $this->sitterNick;
-    }
-
-    public function setSitterNick(string $sitterNick): static
-    {
-        $this->sitterNick = $sitterNick;
-
-        return $this;
     }
 
     public function getSitter(): ?User

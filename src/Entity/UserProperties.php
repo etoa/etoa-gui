@@ -54,30 +54,21 @@ class UserProperties
     #[ORM\Column(type: "boolean")]
     private bool $msgBlink = true;
 
-    #[ORM\Column(name:"spyship_id", type: "integer")]
-    private int $spyShipId = 0;
-
-    #[ORM\JoinColumn(name: 'spyship_id', referencedColumnName: 'ship_id')]
+    #[ORM\JoinColumn(name: 'spyship_id', referencedColumnName: 'ship_id', nullable: true)]
     #[ORM\ManyToOne(targetEntity: Ship::class)]
     protected Ship|null $spyShip = null;
 
     #[ORM\Column(name:"spyship_count", type: "integer")]
     private int $spyShipCount = 0;
 
-    #[ORM\Column(name:"analyzeship_id", type: "integer")]
-    private int $analyzeShipId = 1;
-
-    #[ORM\JoinColumn(name: 'analyzeship_id', referencedColumnName: 'ship_id')]
+    #[ORM\JoinColumn(name: 'analyzeship_id', referencedColumnName: 'ship_id', nullable: true)]
     #[ORM\ManyToOne(targetEntity: Ship::class)]
     protected Ship|null $analyzeShip = null;
 
     #[ORM\Column(name:"analyzeship_count", type: "integer")]
     private int $analyzeShipCount = 1;
 
-    #[ORM\Column(name:"exploreship_id", type: "integer")]
-    private ?int $exploreShipId = 0;
-
-    #[ORM\JoinColumn(name: 'exploreship_id', referencedColumnName: 'ship_id')]
+    #[ORM\JoinColumn(name: 'exploreship_id', referencedColumnName: 'ship_id', nullable: true)]
     #[ORM\ManyToOne(targetEntity: Ship::class)]
     protected Ship|null $exploreShip = null;
 

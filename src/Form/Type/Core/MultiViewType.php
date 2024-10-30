@@ -14,7 +14,7 @@ class MultiViewType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('multiUserNick', TextType::class, [
+            ->add('multiUser', TextType::class, [
                 'attr'=>[
                     'maxlength'=>"20",
                     'size'=>"20",

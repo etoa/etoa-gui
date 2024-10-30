@@ -135,24 +135,13 @@ class UserMultiRepository extends AbstractRepository
      */
     public function getUserEntries(int $userId, bool $active = null): array
     {
-        $qb = $this->createQueryBuilder('q')
-            ->select('m.*, u.user_nick as multi_nick')
-            ->from('user_multi', 'm')
-            ->leftJoin('m', 'users', 'u', 'u.user_id = m.multi_id')
-            ->where('m.user_id = :userId');
+        $constraints = [];
 
-        if ($active !== null) {
-            $qb
-                ->andWhere('m.activ = :active')
-                ->setParameter('active', (int) $active);
-        }
+        if ($active)
+            $constraints = ['active'=>true];
 
-        $data = $qb
-            ->setParameter('userId', $userId, )
-            ->orderBy('m.id', 'DESC')
-            ->fetchAllAssociative();
+        return $this->findBy($constraints,['id'=>'DESC']);
 
-        return array_map(fn (array $row) => new UserMulti($row), $data);
     }
 
     /**
