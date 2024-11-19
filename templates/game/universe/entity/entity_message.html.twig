@@ -1,0 +1,8 @@
+{% extends 'layout/game.html.twig' %}
+{% import 'macros.html.twig' as macros %}
+
+{% block content %}
+    <h1>{{ headline }}</h1>
+
+    {{ macros.message(title, BBCodeToHTML(message)) }}
+{% endblock %}

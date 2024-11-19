@@ -23,8 +23,9 @@ class Wormhole extends AbstractEntity implements ObjectWithImage
     #[ORM\JoinColumn(name: 'id', referencedColumnName: 'id')]
     private Entity $entity;
 
-    #[ORM\Column]
-    private int $targetId;
+    #[ORM\OneToOne(mappedBy: "wormhole", targetEntity: Entity::class)]
+    #[ORM\JoinColumn(name: 'target_id', referencedColumnName: 'id')]
+    private Entity $target;
 
     #[ORM\Column]
     private int $changed;
@@ -51,18 +52,6 @@ class Wormhole extends AbstractEntity implements ObjectWithImage
     public function getId(): ?int
     {
         return $this->id;
-    }
-
-    public function getTargetId(): ?int
-    {
-        return $this->targetId;
-    }
-
-    public function setTargetId(int $targetId): static
-    {
-        $this->targetId = $targetId;
-
-        return $this;
     }
 
     public function getChanged(): ?int
@@ -97,6 +86,18 @@ class Wormhole extends AbstractEntity implements ObjectWithImage
     public function setEntity(?Entity $entity): static
     {
         $this->entity = $entity;
+
+        return $this;
+    }
+
+    public function getTarget(): ?Entity
+    {
+        return $this->target;
+    }
+
+    public function setTarget(?Entity $target): static
+    {
+        $this->target = $target;
 
         return $this;
     }

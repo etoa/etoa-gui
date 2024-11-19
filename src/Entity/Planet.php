@@ -24,12 +24,9 @@ class Planet extends AbstractEntity implements ObjectWithImage
     #[ORM\JoinColumn(name: 'id', referencedColumnName: 'id')]
     private Entity $entity;
 
-    #[ORM\Column(name: "planet_user_id", type: "integer")]
-    private int $userId;
-
     #[ORM\JoinColumn(name: 'planet_user_id', referencedColumnName: 'user_id')]
     #[ORM\ManyToOne(targetEntity: User::class)]
-    private User $user;
+    private User|null $user;
 
     #[ORM\Column(name: "planet_user_main", type: "boolean")]
     private bool $mainPlanet;
@@ -41,7 +38,7 @@ class Planet extends AbstractEntity implements ObjectWithImage
     private int $lastUserId;
 
     #[ORM\Column(name: "planet_name", type: "string")]
-    private ?string $name;
+    private ?string $name = 'Unbenannt';
 
     #[ORM\JoinColumn(name: 'planet_type_id', referencedColumnName: 'type_id')]
     #[ORM\ManyToOne(targetEntity: PlanetType::class)]
@@ -169,7 +166,7 @@ class Planet extends AbstractEntity implements ObjectWithImage
 
     #[ORM\Column(name: "invadedby", type: "integer")]
     private int $invadedBy;
-    private array $allowedFleetActions;
+    private array $allowedFleetActions = [];
 
     public function displayName(): string
     {

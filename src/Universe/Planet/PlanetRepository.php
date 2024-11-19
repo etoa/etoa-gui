@@ -39,7 +39,7 @@ class PlanetRepository extends AbstractRepository
      */
     public function getUserPlanets(int $userId): array
     {
-        return $this->findBy(['userId'=>$userId]);
+        return $this->findBy(['user'=>$userId]);
     }
 
     /**

@@ -6,6 +6,7 @@ namespace EtoA\User;
 
 use EtoA\Admin\AllianceBoardAvatar;
 use EtoA\Alliance\AllianceApplicationRepository;
+use EtoA\Alliance\AllianceDiplomacyRepository;
 use EtoA\Alliance\AllianceRepository;
 use EtoA\Bookmark\BookmarkRepository;
 use EtoA\Bookmark\FleetBookmarkRepository;
@@ -13,6 +14,7 @@ use EtoA\BuddyList\BuddyListRepository;
 use EtoA\Building\BuildingListItemRepository;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Defense\DefenseRepository;
+use EtoA\Entity\Planet;
 use EtoA\Entity\User;
 use EtoA\Exceptions\RecordNotFoundException;
 use EtoA\Fleet\FleetRepository;
@@ -33,6 +35,7 @@ use EtoA\Technology\TechnologyRepository;
 use EtoA\Universe\Planet\PlanetRepository;
 use EtoA\Universe\Planet\PlanetService;
 use Exception;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Twig\Environment;
 use Twig\Error\LoaderError;
@@ -76,6 +79,8 @@ class UserService
         private readonly LogRepository                 $logRepository,
         private readonly Environment                   $twig,
         private readonly UserPasswordHasherInterface   $passwordHasher,
+        private readonly AllianceDiplomacyRepository   $allianceDiplomacyRepository,
+        private readonly Security                      $security,
     )
     {
     }
@@ -186,16 +191,16 @@ class UserService
         //
         // Allianz löschen (falls alleine) oder einen Nachfolger bestimmen
         //
-        if ($user->getAllianceId() > 0) {
+        if ($user->getAlliance()->getId() > 0) {
             $alliance = $this->allianceRepository->getAlliance($user->getAllianceId());
             if ($alliance !== null) {
-                $members = $this->allianceRepository->findUsers($alliance->id);
+                $members = $this->allianceRepository->findUsers($alliance->getId());
                 if (count($members) == 1) {
-                    $this->allianceRepository->remove($alliance->id);
-                } elseif ($alliance->founderId == $user->getId()) {
+                    $this->allianceRepository->remove($alliance->getId());
+                } elseif ($alliance->getFounderId() == $user->getId()) {
                     foreach ($members as $member) {
-                        if ($member['user_id'] != $alliance->founderId) {
-                            $this->allianceRepository->setFounderId($alliance->id, (int)$member['user_id']);
+                        if ($member['user_id'] != $alliance->getFounderId()) {
+                            $this->allianceRepository->setFounderId($alliance->getId(), (int)$member['user_id']);
 
                             break;
                         }
@@ -435,5 +440,49 @@ die Spielleitung";
         }
 
         return AllianceBoardAvatar::IMAGE_PATH . $avatar;
+    }
+
+    public function canAttackUser(User $u):bool
+    {
+        $cu = $this->security->getUser()->getData();
+        // att allowed if war is active
+        // or att allowed if target user is not noob protected
+        // or att allowed if target user is inactive
+        // or att allowed if target user is locked
+        if ($cu->getAllianceId() > 0 && $u->getAllianceId() > 0) {
+
+            return $this->allianceDiplomacyRepository->isAtWar($cu->getAllianceId(), $u->getAllianceId())
+                || !$this->isUserNoobProtected($u)
+                || $this->isInactiv($u)
+                || ($u->getBlockedFrom() < time() && $u->getBlockedTo() > time())
+                || $u->getNpc();
+        } else {
+            return !$this->isUserNoobProtected($u)
+                || $this->isInactiv($u)
+                || ($u->getBlockedFrom() < time() && $u->getBlockedTo() > time())
+                || $u->getNpc();
+        }
+    }
+
+    public function isUserNoobProtected(User $u):bool
+    {
+        $cu = $this->security->getUser()->getData();
+        // check whether user points are outside limits
+        // or this user or opponent is below minimum attack threshold
+        return ($u->getPoints() * USER_ATTACK_PERCENTAGE > $cu->getPoints() || $u->getPoints() / USER_ATTACK_PERCENTAGE < $cu->getPoints())
+            || ($cu->getPoints() <= USER_ATTACK_MIN_POINTS)
+            || ($u->getPoints() <= USER_ATTACK_MIN_POINTS);
+    }
+
+    public function isInactiv(User $u):bool
+    {
+        if (!$u->getAdmin()) {
+            if (!$u->getHmodFrom() != 0 && $u->getHmodTo() != 0) {
+                if ($u->getLastOnline() < time() - USER_INACTIVE_SHOW * 86400) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 }

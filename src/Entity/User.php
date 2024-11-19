@@ -95,8 +95,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\ManyToOne(targetEntity: Race::class)]
     protected Race|null $race;
 
-    #[ORM\Column(name: "user_alliance_id", type: "integer")]
-    protected int $allianceId;
+    #[ORM\JoinColumn(name: 'user_alliance_id', referencedColumnName: 'alliance_id')]
+    #[ORM\ManyToOne(targetEntity: Alliance::class)]
+    protected Alliance|null $alliance;
 
     #[ORM\Column(name: "user_alliance_shippoints", type: "integer")]
     protected int $allianceShipPoints;
@@ -498,18 +499,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setRaceId(int $raceId): static
     {
         $this->raceId = $raceId;
-
-        return $this;
-    }
-
-    public function getAllianceId(): ?int
-    {
-        return $this->allianceId;
-    }
-
-    public function setAllianceId(int $allianceId): static
-    {
-        $this->allianceId = $allianceId;
 
         return $this;
     }
@@ -1050,6 +1039,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setUserProperties(?UserProperties $userProperties): static
     {
         $this->userProperties = $userProperties;
+
+        return $this;
+    }
+
+    public function getAlliance(): ?Alliance
+    {
+        return $this->alliance;
+    }
+
+    public function setAlliance(?Alliance $alliance): static
+    {
+        $this->alliance = $alliance;
 
         return $this;
     }

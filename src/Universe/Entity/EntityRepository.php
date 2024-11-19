@@ -142,11 +142,9 @@ class EntityRepository extends AbstractRepository
      */
     public function searchEntities(EntitySearch $search, EntitySort $sort = null): array
     {
-        $data = $this->getEntityCoordinatesQueryBuilder($search, $sort)
+        return $this->getEntityCoordinatesQueryBuilder($search, $sort)
             ->getQuery()
             ->getArrayResult();
-
-        return $data;
     }
 
     public function getAllianceMarketId(): int

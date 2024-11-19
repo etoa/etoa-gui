@@ -8,6 +8,7 @@ use EtoA\Entity\User;
 use EtoA\UI\Tooltip;
 use EtoA\Universe\Entity\EntityRepository;
 use EtoA\Universe\Entity\EntitySearch;
+use EtoA\Universe\Entity\EntityType;
 use EtoA\User\UserUniverseDiscoveryService;
 
 /**
@@ -26,18 +27,18 @@ class SectorMapRenderer
     /** @var int[] */
     protected array $userCellsIDs = array();
 
-    protected $numberOfCellsX;
-    protected $numberOfCellsY;
+    protected int $numberOfCellsX;
+    protected int $numberOfCellsY;
 
     protected ?Cell $selectedCell = null;
     protected ?User $impersonatedUser = null;
 
-    protected $rulerEnabled = false;
-    protected $tooltipsEnabled = false;
+    protected bool $rulerEnabled = false;
+    protected bool $tooltipsEnabled = false;
 
-    protected $cellUrl;
-    protected $undiscoveredCellUrl;
-    protected $undiscoveredCellJavaScript;
+    protected string $cellUrl;
+    protected string $undiscoveredCellUrl;
+    protected string $undiscoveredCellJavaScript;
 
     /**
      * Constructor
@@ -127,7 +128,6 @@ class SectorMapRenderer
             /** @var EntityRepository $entityRepository */
             $entityRepository = $app[EntityRepository::class];
         }
-
         $entities = $entityRepository->searchEntities(EntitySearch::create()->sx($sx)->sy($sy)->pos(0));
         if (count($entities) === 0) {
             throw new \RuntimeException('Das Universum wurde noch nicht erstellt');
@@ -137,10 +137,9 @@ class SectorMapRenderer
 
         echo '<table class="galaxyTableSector">';
 
-        /** @var array<int, array<int, \EtoA\Entity\Entity>> $cells */
         $cells = [];
         foreach ($entities as $entity) {
-            $cells[$entity->getCell()->getCx()][$entity->getCell()->getCy()] = $entity;
+            $cells[$entity['cx']][$entity['cy']] = $entity;
         }
 
         for ($y = 0; $y < $this->numberOfCellsX; $y++) {
@@ -173,7 +172,7 @@ class SectorMapRenderer
                 $overlayClasses = array();
                 if ($this->selectedCell != null && $this->selectedCell->getSx() == $sx && $this->selectedCell->getSy() == $sy && $this->selectedCell->getCx() == $xcoords && $this->selectedCell->getCy() == $ycoords) {
                     $overlayClasses[] = 'selected';
-                } elseif (in_array($cells[$xcoords][$ycoords]->getCellId(), $this->userCellsIDs, true)) {
+                } elseif (in_array($cells[$xcoords][$ycoords]['cid'], $this->userCellsIDs, true)) {
                     $overlayClasses[] = 'owned';
                 }
 
@@ -181,22 +180,22 @@ class SectorMapRenderer
 
                 // Discovered cell or no user specified
                 if ($this->impersonatedUser == null || $userUniverseDiscoveryService->discovered($this->impersonatedUser, (($sx - 1) * $this->numberOfCellsX) + $xcoords, (($sy - 1) * $this->numberOfCellsY) + $ycoords)) {
-                    $entity = $entityRepository->searchEntityLabel(EntitySearch::create()->id($cells[$xcoords][$ycoords]->getId()));
+                    $entity = $entityRepository->find($cells[$xcoords][$ycoords]['id']);
 
                     if ($this->tooltipsEnabled) {
                         $tt = new Tooltip();
                         $tt->addTitle($entity->codeString());
                         $tt->addText("Position: $sx/$sy : $xcoords/$ycoords");
-                        if ($entity->getCode() === \EtoA\Universe\Entity\EntityType::WORMHOLE && $entity->wormholeTarget !== null) {
-                            $tent = $entityRepository->searchEntityLabel(EntitySearch::create()->id($entity->wormholeTarget));
-                            $tt->addComment("Ziel: " . $tent->toString() . "</a>");
+                        if ($entity->getCode() === EntityType::WORMHOLE) {
+                            $tt->addComment("Ziel: " . $entity->getWormhole()->getTarget()->toString() . "</a>");
                         } else {
-                            $tt->addComment((string)$entity->displayName());
+                            if($entity->displayName())
+                                $tt->addComment($entity->displayName());
                         }
                     }
 
-                    $url = isset($this->cellUrl) ? $this->cellUrl . $cells[$xcoords][$ycoords]->getCellId() : '#';
-                    $img = $entity->getImagePath();
+                    $url = isset($this->cellUrl) ? $this->cellUrl . $cells[$xcoords][$ycoords]['cid'] : '#';
+                    $img = $entity->getType()->getImagePath();
                     unset($entity);
                 } // Undiscovered cell
                 else {
@@ -223,9 +222,9 @@ class SectorMapRenderer
                         $tt->addComment("Expedition senden um Zelle sichtbar zu machen.");
                     }
 
-                    $url = isset($this->undiscoveredCellUrl) ? $this->undiscoveredCellUrl . $cells[$xcoords][$ycoords]->getCellId() : '#';
+                    $url = isset($this->undiscoveredCellUrl) ? $this->undiscoveredCellUrl . $cells[$xcoords][$ycoords]['cid'] : '#';
                     if (isset($this->undiscoveredCellJavaScript)) {
-                        $js = preg_replace('/##ID##/', (string)$cells[$xcoords][$ycoords]->getCellId(), $this->undiscoveredCellJavaScript);
+                        $js = preg_replace('/##ID##/', (string)$cells[$xcoords][$ycoords]['cid'], $this->undiscoveredCellJavaScript);
                     }
                     $img = ObjectWithImage::BASE_PATH . "/unexplored/" . $fogImg . ".png";
                 }
@@ -249,7 +248,7 @@ class SectorMapRenderer
                     echo "<a href=\"" . $url . "\" ";
                 }
                 echo " style=\"background-image:url('" . $img . "');\"$class$mouseOver>";
-                echo "<img src=\"/build/images/blank.gif\" alt=\"Raumzelle\" " . $title . " data-id=\"" . $cells[$xcoords][$ycoords]->getCellId() . "\" $overlayClass/></a>";
+                echo "<img src=\"/build/images/blank.gif\" alt=\"Raumzelle\" " . $title . " data-id=\"" . $cells[$xcoords][$ycoords]['cid'] . "\" $overlayClass/></a>";
                 echo "</td>";
             }
 

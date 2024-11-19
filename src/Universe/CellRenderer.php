@@ -14,16 +14,15 @@ use EtoA\Message\ReportRepository;
 use EtoA\Message\ReportSearch;
 use EtoA\Support\BBCodeUtils;
 use EtoA\Support\StringUtils;
-use EtoA\Universe\Entity\EntityService;
 use EtoA\Universe\Entity\EntityType;
 use EtoA\Universe\Planet\PlanetRepository;
-use EtoA\Universe\Planet\PlanetTypeRepository;
 use EtoA\Universe\Resources\ResIcons;
 use EtoA\Universe\Resources\ResourceNames;
 use EtoA\Universe\Star\StarRepository;
 use EtoA\User\UserPropertiesRepository;
-use EtoA\User\UserRepository;
+use EtoA\User\UserService;
 use Symfony\Bundle\SecurityBundle\Security;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class CellRenderer
 {
@@ -37,91 +36,94 @@ class CellRenderer
         private readonly Security                 $security,
         private readonly UserPropertiesRepository $userPropertiesRepository,
         private readonly ReportRepository $reportRepository,
-        private readonly UserRepository $userRepository,
         private readonly StarRepository $starRepository,
-        private readonly PlanetTypeRepository $planetTypeRepository,
-        private readonly EntityService $entityService
+        private readonly UserService $userService,
+        private readonly UrlGeneratorInterface $router
     )
     {
     }
 
-    public function render($entities):string {
+    public function render(array $entities):string {
         ob_start();
-        $admins = $this->adminUserRepository->getAdminPlayerIds();
         $hasPlanetInSystem = false;
         $starNameEmpty = false;
         $cu = $this->security->getUser()->getData();
         $properties = $this->userPropertiesRepository->getOrCreateProperties($cu->getId());
 
         foreach ($entities as $ent) {
-            $fullEnt = $this->entityService->getEntity($ent);
-            if ($ent->pos == 1) {
+            if ($ent->getPos() == 1) {
                 echo "<tr>
                         <td style=\"height:3px;background:#000;\" colspan=\"6\"></td>
                     </tr>";
             }
             $addstyle = " style=\"vertical-align:middle;";
-            if (isset($_GET['hl']) && $_GET['hl'] == $ent->id()) {
+            if (isset($_GET['hl']) && $_GET['hl'] == $ent->getId()) {
                 $addstyle .= "background:#003D6F;";
             }
             $addstyle .= "\" ";
 
             $class = " class=\"";
-            $ownerId = $this->planetRepo->getPlanetUserId($ent->id);
 
-            if ($ownerId) {
+            $owner = null;
+
+            if ($ent->getCode() === EntityType::PLANET) {
+                $owner = $ent->getPlanet()?->getUser();
+            }
+
+
+            if ($owner) {
                 //Admin
-                if (in_array((int) $ownerId, $admins, true)) {
+                if ($this->adminUserRepository->find($owner->getId())) {
                     $class .= "adminColor";
                     $tm_info = "Admin/Entwickler";
                 }
                 // Krieg
-                elseif ($this->allianceDiplomacyRepository->existsDiplomacyBetween($cu->getAllianceId(), $this->userRepository->getUser($ownerId)->getAllianceId(), AllianceDiplomacyLevel::WAR)) {
+                elseif ($this->allianceDiplomacyRepository->existsDiplomacyBetween($cu->getAlliance()->getId(), $owner->getAlliance()->getId(), AllianceDiplomacyLevel::WAR)) {
                     $class .= "enemyColor";
                     $tm_info = "Krieg";
                 }
                 // Bündniss
-                elseif ($this->allianceDiplomacyRepository->existsDiplomacyBetween($cu->getAllianceId(), $this->userRepository->getUser($ownerId)->getAllianceId(), AllianceDiplomacyLevel::BND_CONFIRMED)) {
+                elseif ($this->allianceDiplomacyRepository->existsDiplomacyBetween($cu->getAllianceId(), $owner->getAllianceId(), AllianceDiplomacyLevel::BND_CONFIRMED)) {
                     $class .= "friendColor";
                     $tm_info = "B&uuml;ndnis";
                 }
                 // Gesperrt
-                elseif ($this->userRepository->getUser($ownerId)->getBlockedTo() > time() ) {
+                elseif ($owner->getBlockedTo() > time() ) {
                     $class .= "userLockedColor";
                     $tm_info = "Gesperrt";
                 }
                 // Urlaub
-                elseif ($this->userRepository->getUser($ownerId)->getHmodFrom()) {
+                elseif ($owner->getHmodFrom()) {
                     $class .= "userHolidayColor";
                     $tm_info = "Urlaubsmodus";
                 }
                 // Lange Inaktiv
-                elseif ($this->userRepository->getUser($ownerId)->getLastOnline() < time() - $this->config->param2Int('user_inactive_days') * 86400) {
+                elseif ($owner->getLastOnline() < time() - $this->config->param2Int('user_inactive_days') * 86400) {
                     $class .= "userLongInactiveColor";
                     $tm_info = "Lange Inaktiv";
                 }
                 // Inaktiv
-                elseif ($this->userRepository->getUser($ownerId)->getLastOnline() < time() - $this->config->getInt('user_inactive_days') * 86400) {
+                elseif ($owner->getLastOnline() < time() - $this->config->getInt('user_inactive_days') * 86400) {
                     $class .= "userInactiveColor";
                     $tm_info = "Inaktiv";
                 }
                 // Eigener Planet
-                elseif ($cu->id == $ownerId) {
+                elseif ($cu === $owner) {
                     $class .= "userSelfColor";
                     $tm_info = "";
                 }
                 // Allianzmitglied
-                elseif ($cu->allianceId() == $this->userRepository->getUser($ownerId)->getAllianceId() && $cu->allianceId()) {
+                elseif ($cu->getAllianceId() == $owner->getAllianceId() && $cu->allianceId()) {
                     $class .= "userAllianceMemberColor";
                     $tm_info = "Allianzmitglied";
                 }
                 // Alien/NPC
-                elseif ($this->userRepository->getUser($ownerId)->getNpc() > 0) {
+                elseif ($owner->getNpc() > 0) {
                     $class .= "alien";
                     $tm_info = "Alien";
                 }
                 // Noob
-                elseif (!$cu->canAttackPlanet($ent)) {
+                elseif (!$this->userService->canAttackUser($ent)) {
                     $class .= "noobColor";
                     $tm_info = "Anf&auml;ngerschutz";
                 } else {
@@ -134,12 +136,12 @@ class CellRenderer
             }
             $class .= "\" ";
 
-            if ($ent->code === EntityType::PLANET) {
-                $planet = $this->planetRepo->find($ent->id);
-                $planetType = $this->planetTypeRepository->get($planet->typeId);
+            if ($ent->getCode() === EntityType::PLANET) {
+                $planet = $ent->getPlanet();
+                $planetType = $planet->getPlanetType();
 
                 $tm = "";
-                $tm .= "<b>Felder</b>: " . StringUtils::formatNumber($planet->fields);
+                $tm .= "<b>Felder</b>: " . StringUtils::formatNumber($planet->getFields());
                 $tm .= "<br/><b>Bewohnbar</b>: ";
                 if ($planetType->isHabitable() == 1) $tm .= "Ja";
                 else $tm .= "Nein	";
@@ -175,27 +177,27 @@ class CellRenderer
 
             echo "<tr>
                     <td $class style=\"width:40px;background:#000;\">
-                        <a href=\"?page=entity&amp;id=" . $ent->id . "\">
-                            <img src=\"" . $fullEnt->getImagePath() . "\" alt=\"icon\" />
+                        <a href=\"?page=entity&amp;id=" . $ent->getId() . "\">
+                            <img src=\"" . $ent->getType()->getImagePath() . "\" alt=\"icon\" />
                         </a>
                     </td>
-                    <td $class style=\"text-align:center;vertical-align:middle;background:#000\"><b>" . $ent->pos . "</b></td>
+                    <td $class style=\"text-align:center;vertical-align:middle;background:#000\"><b>" . $ent->getPos() . "</b></td>
                     <td $class $addstyle >";
-            if ($ent->code === EntityType::PLANET)
+            if ($ent->getCode() === EntityType::PLANET)
                 echo "<span " . tm($planetType->getName(), $tm) . ">" . $planetType->getName() . "</span>";
             else
-                echo $fullEnt->getEntityCodeString();
+                echo $ent->getType()->getEntityCodeString();
 
-            if ($ent->code == EntityType::WORMHOLE) {
+            if ($ent->getCode() == EntityType::WORMHOLE) {
                 if ($ent->isPersistent()) {
                     echo " [stabil]";
                 } else {
                     echo " [veränderlich]";
                 }
-                $tent = new Wormhole($ent->targetId());
-                echo "<br/>Ziel: <a href=\"?page=cell&amp;id=" . $tent->cellId() . "\">" . $tent . "</a>";
-            } elseif ($ent->code == EntityType::PLANET) {
-                $planet = $this->planetRepo->find($ent->id);
+                $tent = $ent->getWormhole();
+                echo "<br/>Ziel: <a href=\"?page=cell&amp;id=" . $tent->getCellId() . "\">" . $tent . "</a>";
+            } elseif ($ent->getCode() == EntityType::PLANET) {
+                $planet = $this->planetRepo->find($ent->getId());
                 if ($planet->hasDebrisField()) {
                     echo "<br/><span style=\"color:#817339;font-weight:bold\" " . tm(
                             "Trümmerfeld",
@@ -209,71 +211,71 @@ class CellRenderer
                 }
             }
             echo "</td>
-                    <td $addstyle><a $class href=\"?page=entity&amp;id=" . $ent->id . "\">" . BBCodeUtils::toHTML($ent->toString()) . "</a></td>
+                    <td $addstyle><a $class href=\"" . $this->router->generate('game.entity',['id'=>$ent->getId()]) . "\">" . BBCodeUtils::toHTML($ent->displayName()) . "</a></td>
                     <td $addstyle>";
-            if ($ownerId) {
-                $header = $this->userRepository->getUser($ownerId)->getNick();
-                $tm = "Punkte: " . StringUtils::formatNumber($this->userRepository->getUser($ownerId)->getPoints()) . "<br style=\"clear:both\" />";
-                if ($this->userRepository->getUser($ownerId)->getAllianceId() > 0) {
-                    $ownerAlliance = $this->allianceRepository->getAlliance($this->userRepository->getUser($ownerId)->getAllianceId());
-                    $tm .= "Allianz: " . $ownerAlliance->nameWithTag . "<br style=\"clear:both\" />";
+            if ($owner) {
+                $header = $owner->getNick();
+                $tm = "Punkte: " . StringUtils::formatNumber($owner->getPoints()) . "<br style=\"clear:both\" />";
+                if ($owner->getAllianceId() > 0) {
+                    $ownerAlliance = $this->allianceRepository->getAlliance($owner->getAllianceId());
+                    $tm .= "Allianz: " . $ownerAlliance->toString() . "<br style=\"clear:both\" />";
                 }
 
                 if ($tm_info != "")
                     $header .= " (<span $class>" . $tm_info . "</span>)";
-                echo "<span style=\"color:#817339;font-weight:bold\" " . tm($header, $tm) . "><a $class href=\"?page=userinfo&amp;id=" . $this->userRepository->getUser($ownerId)->getId() . "\">" . $this->userRepository->getUser($ownerId)->getNick() . "</a></span> ";
+                echo "<span style=\"color:#817339;font-weight:bold\" " . tm($header, $tm) . "><a $class href=\"?page=userinfo&amp;id=" . $owner->getId() . "\">" . $owner->getNick() . "</a></span> ";
             } else
-                echo $this->userRepository->getUser($ownerId)?$this->userRepository->getUser($ownerId)->getNick():'Niemand';
+                echo 'Niemand';
             echo "</td>
                     <td $addstyle>";
 
             // Favorit
-            if ($cu->getId() != $ownerId) {
-                echo "<a href=\"?page=bookmarks&amp;add=" . $ent->id . "\" title=\"Zu den Favoriten hinzuf&uuml;gen\">" . ImageUtil::icon("favorite") . "</a> ";
+            if ($cu != $owner) {
+                echo "<a href=\"?page=bookmarks&amp;add=" . $ent->getId() . "\" title=\"Zu den Favoriten hinzuf&uuml;gen\">" . ImageUtil::icon("favorite") . "</a> ";
             }
 
             // Flotte
-            if ($ent->code == EntityType::PLANET || $ent->code == EntityType::ASTEROID || $ent->code == EntityType::WORMHOLE || $ent->code == EntityType::NEBULA || $ent->code == EntityType::EMPTY_SPACE) {
-                echo "<a href=\"?page=haven&amp;target=" . $ent->id . "\" title=\"Flotte hinschicken\">" . ImageUtil::icon('fleet') . "</a> ";
+            if ($ent->getCode() == EntityType::PLANET || $ent->getCode() == EntityType::ASTEROID || $ent->getCode() == EntityType::WORMHOLE || $ent->getCode() == EntityType::NEBULA || $ent->getCode() == EntityType::EMPTY_SPACE) {
+                echo "<a href=\"?page=haven&amp;target=" . $ent->getId() . "\" title=\"Flotte hinschicken\">" . ImageUtil::icon('fleet') . "</a> ";
             }
 
 
-            if ($ent->code == EntityType::STAR) {
-                if ($this->starRepository->find($ent->id)->name) {
+            if ($ent->getCode() == EntityType::STAR) {
+                if ($this->starRepository->find($ent->getId())->name) {
                     $starNameEmpty = true;
                     $starToBeNamed = $ent->id();
                 }
-            } elseif ($ent->code == EntityType::PLANET) {
-                if ($ownerId > 0 && $cu->getId() == $ownerId) {
+            } elseif ($ent->getCode() == EntityType::PLANET) {
+                if ($owner && $cu == $owner) {
                     $hasPlanetInSystem = true;
                 }
 
                 // Nachrichten-Link
-                if ($ownerId > 0 && $cu->getId() != $ownerId) {
-                    echo "<a href=\"?page=messages&amp;mode=new&amp;message_user_to=" . $ownerId . "\" title=\"Nachricht senden\">" . ImageUtil::icon("mail") . "</a> ";
+                if ($owner  && $cu != $owner) {
+                    echo "<a href=\"?page=messages&amp;mode=new&amp;message_user_to=" . $owner->getId() . "\" title=\"Nachricht senden\">" . ImageUtil::icon("mail") . "</a> ";
                 }
 
                 // Diverse Links
-                if ($cu->getId() != $ownerId) {
+                if ($cu != $owner) {
                     // Besiedelte Planete
-                    if ($ownerId > 0) {
-                        echo "<a href=\"javascript:;\" onclick=\"xajax_launchSypProbe(" . $ent->id . ");\" title=\"Ausspionieren\">" . ImageUtil::icon("spy") . "</a>";
-                        echo "<a href=\"?page=missiles&amp;target=" . $ent->id . "\" title=\"Raketenangriff starten\">" . ImageUtil::icon("missile") . "</a> ";
-                        echo "<a href=\"?page=crypto&amp;target=" . $ent->id . "\" title=\"Flottenbewegungen analysieren\">" . ImageUtil::icon("crypto") . "</a> ";
+                    if ($owner) {
+                        echo "<a href=\"javascript:;\" onclick=\"xajax_launchSypProbe(" . $ent->getId() . ");\" title=\"Ausspionieren\">" . ImageUtil::icon("spy") . "</a>";
+                        echo "<a href=\"?page=missiles&amp;target=" . $ent->getId() . "\" title=\"Raketenangriff starten\">" . ImageUtil::icon("missile") . "</a> ";
+                        echo "<a href=\"?page=crypto&amp;target=" . $ent->getId() . "\" title=\"Flottenbewegungen analysieren\">" . ImageUtil::icon("crypto") . "</a> ";
                     }
                 }
             }
 
-            if (in_array("analyze", $fullEnt->getAllowedFleetActions(), true)) {
+            if (in_array("analyze", $ent->getType()->getAllowedFleetActions(), true)) {
                 if ($properties->isShowCellreports()) {
                     $report = $this->reportRepository->searchReport(ReportSearch::create()->userId($cu->id)->type('spy')->entity1Id($ent->id()));
                     if ($report !== null) {
                         $r = Report::createFactory($report);
                         echo "<span " . tm($r->subject, $r . "<br style=\"clear:both\" />") . "><a href=\"javascript:;\" onclick=\"xajax_launchAnalyzeProbe(" . $ent->id() . ");\" title=\"Analysieren\">" . ImageUtil::icon("spy") . "</a></span>";
                     } else
-                        echo "<a href=\"javascript:;\" onclick=\"xajax_launchAnalyzeProbe(" . $ent->id .");\" title=\"Analysieren\">" . ImageUtil::icon("spy") . "</a> ";
+                        echo "<a href=\"javascript:;\" onclick=\"xajax_launchAnalyzeProbe(" . $ent->getId() .");\" title=\"Analysieren\">" . ImageUtil::icon("spy") . "</a> ";
                 } else
-                    echo "<a href=\"javascript:;\" onclick=\"xajax_launchAnalyzeProbe(" . $ent->id . ");\" title=\"Analysieren\">" . ImageUtil::icon("spy") . "</a> ";
+                    echo "<a href=\"javascript:;\" onclick=\"xajax_launchAnalyzeProbe(" . $ent->getId() . ");\" title=\"Analysieren\">" . ImageUtil::icon("spy") . "</a> ";
             }
 
 

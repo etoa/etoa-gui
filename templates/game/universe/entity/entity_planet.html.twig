@@ -1,0 +1,82 @@
+{% extends 'layout/game.html.twig' %}
+{% import 'macros.html.twig' as macros %}
+
+{% block content %}
+    {% include 'game/universe/entity/entity_overview.html.twig' with {'data': planet.entity} only %}
+
+    <twig:Table title="Planetendaten">
+        {% block table_content %}
+            <tr>
+                <td style="background:#000;vertical-align:middle" rowspan="{{ rowSpan }}">
+                    <img src="{{ planet.getImagePath('b') }}" alt="planet" width="310" height="310"/>
+                </td>
+                <th>Besitzer:</th>
+                <td>
+                    {% if planet.user %}
+                        <a href=\"?page=userinfo&amp;id=">{{ planet.user.nick }}</a>
+                    {% else %}
+                        Niemand
+                    {%  endif %}
+                </td>
+            </tr>
+
+            {% if planet.name %}
+                <tr>
+                    <th>Name:</th>
+                    <td>{{ planet.name }}</td></tr>
+            {% endif %}
+            <tr>
+                <th>Sonnentyp:</th>
+                <td>{{ star.solarType.name }}</td>
+            </tr>
+            <tr>
+                <th>Planettyp:</th>
+                <td>{{ planet.planetType.name }}</td>
+            </tr>
+            <tr>
+                <th>Felder:</th>
+                <td>{{ planet.fields }} total</td>
+            </tr>
+            <tr>
+                <th>Grösse:</th>
+                <td> {{ formatNumber(configValue('field_squarekm') * planet.fields) }} km&sup2;</td>
+            </tr>
+            <tr>
+            <th>Temperatur:</th>
+            <td>{{ planet.tempFrom }} &deg;C bis {{ planet.tempTo }} &deg;C <br/><br/>
+                <img src="{{ asset('build/images/heat_small.png') }}" alt="Heat" style="width:16px;float:left;"/>
+                Wärmebonus: helpLink("tempbonus")<br/>
+                {% if planet.solarPowerBonus > 0 %}
+                    <span style="color:#0f0"> + {{ planet.solarPowerBonus }}</span>
+                {% else %}
+                    <span style="color:#f00">{{ planet.solarPowerBonus }}</span>
+                {% endif %}
+                Energie pro Solarsatellit <br style="clear:both;"/><br/>
+                <img src="{{ asset('build/images/ice_small.png') }}" alt="Cold" style="width:16px;float:left;" />
+                Kältebonus: helpLink("tempbonus")<br/>
+                {% if planet.fuelProductionBonus > 0 %}
+                    <span style="color:#0f0"> + {{planet.fuelProductionBonus}}%</span>
+                {% else %}
+                    <span style="color:#f00">{{planet.fuelProductionBonus}}%</span>
+                {% endif %}
+                {{ constant('EtoA\\Universe\\Resources\\ResourceNames::FUEL') }}-Produktion </td></tr>
+                {% if planet.description %}
+                    <tr>
+                        <th>Beschreibung:</th>
+                        <td>{{ planet.description }}</td>
+                    </tr>
+                {% endif %}
+                {% if planet.hasDebrisField %}
+                    <tr>
+                        <th class="tbltitle">Trümmerfeld:</th>
+                        <td>
+                            {{ constant('EtoA\\Universe\\Resources\\ResourceNames::METAL') }} {{ formatNumber(planet.wfMetal)}}<br style="clear:both;" />
+                            {{ constant('EtoA\\Universe\\Resources\\ResourceNames::CRYSTAL') }} {{ formatNumber(planet.wfCrystal)}}<br style="clear:both;" />
+                            {{ constant('EtoA\\Universe\\Resources\\ResourceNames::PLASTIC') }} {{ formatNumber(planet.wfPlastic)}}<br style="clear:both;" />
+                        </td>
+                    </tr>
+                {% endif %}
+        {% endblock %}
+    </twig:Table>
+    {% include 'game/universe/entity/entity_search.html.twig' with {'search': search} only %}
+{% endblock %}

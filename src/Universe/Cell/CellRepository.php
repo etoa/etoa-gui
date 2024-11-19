@@ -142,7 +142,7 @@ class CellRepository extends AbstractRepository
                 'COUNT(DISTINCT(p.id)) AS cnt'
             )
             ->innerJoin('App:Entity', 'e', 'WITH', 'e.cellId = q.id')
-            ->innerJoin('App:Planet', 'p', 'WITH', 'p.id = e.id AND p.userId > 0')
+            ->innerJoin('App:Planet', 'p', 'WITH', 'p.id = e.id AND p.user > 0')
             ->groupBy('e.cellId')
             ->getQuery()
             ->getArrayResult();
@@ -156,14 +156,14 @@ class CellRepository extends AbstractRepository
     public function getUserCellIds(int $userId): array
     {
         $data = $this->createQueryBuilder('q')
-            ->select('DISTINCT c.id')
-            ->from('cells', 'c')
-            ->innerJoin('c', 'entities', 'e', 'e.cell_id = c.id')
-            ->innerJoin('e', 'planets', 'p', 'p.id = e.id AND p.planet_user_id = :user')
+            ->select('DISTINCT q.id')
+            ->innerJoin('App:Entity', 'e', 'WITH', 'q.id = e.id')
+            ->innerJoin('App:Planet', 'p', 'WITH', 'p.id = e.id AND p.user = :user')
             ->setParameter('user', $userId)
-            ->fetchAllAssociative();
+            ->getQuery()
+            ->execute();
 
-        return array_map(fn (array $row) => (int) $row['id'], $data);
+        return $data;
     }
 
     /**
@@ -230,21 +230,6 @@ class CellRepository extends AbstractRepository
 
     public function getCellIdByCoordinates(int $sx, int $sy, int $cx, int $cy): ?Cell
     {
-        $data = $this->createQueryBuilder('q')
-            ->select('*')
-            ->from('cells')
-            ->where('sx = :sx')
-            ->andWhere('sy = :sy')
-            ->andWhere('cx = :cx')
-            ->andWhere('cy = :cy')
-            ->setParameters([
-                'sx' => $sx,
-                'sy' => $sy,
-                'cx' => $cx,
-                'cy' => $cy,
-            ])
-            ->fetchAssociative();
-
-        return $data !== false ? new Cell($data) : null;
+        return $this->findOneBy(['sy'=>$sy,'sx'=>$sx,'cx'=>$cx,'cy'=>$cy]);
     }
 }

@@ -236,4 +236,13 @@ class Entity
             default => new UnknownEntity(),
         };
     }
+
+    public function displayName(): ?string
+    {
+        return match ($this->getCode()) {
+            EntityType::PLANET => $this->getPlanet()->getName()??'Unbenannt',
+            EntityType::STAR => $this->getStar()->getName()??'Unbenannt',
+            default => null,
+        };
+    }
 }

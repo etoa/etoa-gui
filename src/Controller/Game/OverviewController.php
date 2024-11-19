@@ -46,8 +46,6 @@ class OverviewController extends AbstractGameController
         private readonly ForeignFleetLoader           $foreignFleetLoader,
         private readonly TechnologyDataRepository     $technologyDataRepository,
         private readonly TechnologyRepository         $technologyRepository,
-        private readonly AllianceBuildingRepository   $allianceBuildingRepository,
-        private readonly AllianceTechnologyRepository $allianceTechnologyRepository,
         private readonly BuildingDataRepository       $buildingDataRepository,
         private readonly ShipDataRepository           $shipDataRepository,
         private readonly DefenseDataRepository        $defenseDataRepository,
@@ -70,7 +68,7 @@ class OverviewController extends AbstractGameController
         // Admin-Infos
         $infoText = $this->textRepo->find('info');
         // Rathaus
-        $newsCounts = $this->allianceNewsRepository->countNewEntriesSince($this->getUser()->getData()->getAllianceId(), $this->getUser()->getData()->getLastOnline());
+        $newsCounts = $this->allianceNewsRepository->countNewEntriesSince($this->getUser()->getData()->getAlliance()->getId(), $this->getUser()->getData()->getLastOnline());
 
         // Eigene Flotten
         $ownFleets = $this->fleetRepository->count(['userId'=>$this->getUser()->getId()]);
@@ -90,19 +88,19 @@ class OverviewController extends AbstractGameController
         $genTechnologyInProgress = $this->technologyRepository->searchEntry(TechnologyListItemSearch::create()->userId($this->getUser()->getId())->technologyId(TechnologyId::GEN)->underConstruction());
 
         // Allianzegebäude
-        if ($this->getUser()->getData()->getAllianceId() != 0) {
+        if ($this->getUser()->getData()->getAlliance()->getId() != 0) {
 
             // Lädt bauende Allianzgebäude
-            $allianceBuildingInProgress = $this->allianceBuildListRepository->getInProgress($this->getUser()->getData()->getAllianceId());
+            $allianceBuildingInProgress = $this->allianceBuildListRepository->getInProgress($this->getUser()->getData()->getAlliance()->getId());
 
             // Supportflotten Flotten
-            $allianceSupportFleetCount = $this->fleetRepository->countFleet(FleetSearch::create()->actionIn([\EtoA\Fleet\FleetAction::SUPPORT])->allianceId($this->getUser()->getData()->getAllianceId()));
+            $allianceSupportFleetCount = $this->fleetRepository->countFleet(FleetSearch::create()->actionIn([\EtoA\Fleet\FleetAction::SUPPORT])->allianceId($this->getUser()->getData()->getAlliance()->getId()));
 
             // Allianzangriffs
-            $allianceAttackFleetCount = $this->fleetRepository->countFleet(FleetSearch::create()->actionIn([FleetAction::ALLIANCE])->nextId($this->getUser()->getData()->getAllianceId())->status(FleetStatus::DEPARTURE)->isLeader());
+            $allianceAttackFleetCount = $this->fleetRepository->countFleet(FleetSearch::create()->actionIn([FleetAction::ALLIANCE])->nextId($this->getUser()->getData()->getAlliance()->getId())->status(FleetStatus::DEPARTURE)->isLeader());
 
             // Lädt forschende Allianztech
-            $allianceTechnologyInProgress = $this->allianceTechnologyListRepository->getInProgress($this->getUser()->getData()->getAllianceId());
+            $allianceTechnologyInProgress = $this->allianceTechnologyListRepository->getInProgress($this->getUser()->getData()->getAlliance()->getId());
         }
 
         // Planetkreis

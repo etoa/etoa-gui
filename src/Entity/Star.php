@@ -24,7 +24,7 @@ class Star extends AbstractEntity implements ObjectWithImage
     private Entity $entity;
 
     #[ORM\Column]
-    private ?string $name;
+    private ?string $name = 'Unbenannt';
 
     #[ORM\Column]
     private int $typeId;

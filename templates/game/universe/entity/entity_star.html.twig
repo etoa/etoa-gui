@@ -1,0 +1,22 @@
+{% extends 'layout/game.html.twig' %}
+{% import 'macros.html.twig' as macros %}
+
+{% block content %}
+    {% include 'game/universe/entity/entity_overview.html.twig' with {'data': star.entity} only %}
+
+    <twig:Table title="Sterndaten">
+        {% block table_content %}
+            <tr>
+                <td style="background:#000;vertical-align:middle" rowspan="2">
+                    <img src="{{ star.getImagePath('b') }}" alt="star" width="220" height="220">
+                </td>
+                <th style="height:20px;">Typ:</th>
+                <td>{{ star.solarType.name }} helpLink("stars")</td>
+            </tr>
+            <tr>
+                <th>Beschreibung:</th><td> {{ star.solarType.comment|raw }} </td>
+            </tr>
+        {% endblock %}
+    </twig:Table>
+    {% include 'game/universe/entity/entity_search.html.twig' with {'search': search} only %}
+{% endblock %}

@@ -45,7 +45,7 @@ class AdminUser
     #[ORM\Column(type: "string")]
     private string $userTheme = "";
 
-    #[ORM\Column(name: "ticketemail", type: "boolean")]
+    #[ORM\Column(name: "ticketmail", type: "boolean")]
     private bool $ticketEmail = false;
 
     #[ORM\Column(name: "user_locked", type: "boolean")]
@@ -54,9 +54,8 @@ class AdminUser
     #[ORM\Column(type: "boolean")]
     private bool $isContact = true;
 
-    /** @var string[] */
-    #[ORM\Column(type: "json")]
-    private array $roles = [];
+    #[ORM\Column(type: "string")]
+    private string $roles = '';
 
     public static function createFromArray(array $data): AdminUser
     {
@@ -228,12 +227,12 @@ class AdminUser
         return $this;
     }
 
-    public function getRoles(): array
+    public function getRoles(): string
     {
         return $this->roles;
     }
 
-    public function setRoles(array $roles): static
+    public function setRoles(string $roles): static
     {
         $this->roles = $roles;
 
