@@ -4,12 +4,13 @@ namespace EtoA\Alliance\Board;
 
 use Doctrine\Persistence\ManagerRegistry;
 use EtoA\Core\AbstractRepository;
+use EtoA\Entity\AllianceBoardPost;
 
 class AllianceBoardPostRepository extends AbstractRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, Post::class);
+        parent::__construct($registry, AllianceBoardPost::class);
     }
     public function getUserAlliancePostCounts(int $allianceId, int $userId): int
     {
@@ -88,7 +89,7 @@ class AllianceBoardPostRepository extends AbstractRepository
         $qb->executeQuery();
     }
     /**
-     * @return Post[]
+     * @return AllianceBoardPost[]
      */
     public function getPosts(int $topicId, int $limit = null): array
     {
@@ -106,10 +107,10 @@ class AllianceBoardPostRepository extends AbstractRepository
         $data = $qb
             ->fetchAllAssociative();
 
-        return array_map(fn (array $row) => new Post($row), $data);
+        return array_map(fn (array $row) => new AllianceBoardPost($row), $data);
     }
 
-    public function getPost(int $postId): ?Post
+    public function getPost(int $postId): ?AllianceBoardPost
     {
         $data = $this->createQueryBuilder('q')
             ->select('*')
@@ -118,7 +119,7 @@ class AllianceBoardPostRepository extends AbstractRepository
             ->setParameter('postId', $postId)
             ->fetchAssociative();
 
-        return $data !== false ? new Post($data) : null;
+        return $data !== false ? new AllianceBoardPost($data) : null;
     }
 
     public function deletePost(int $postId, int $authorId = null): void
@@ -135,5 +136,29 @@ class AllianceBoardPostRepository extends AbstractRepository
         }
 
         $qb->executeQuery();
+    }
+
+    public function getLatestAlliancePost(int $allianceId, int $myRankId = null): ?AllianceBoardPost
+    {
+        $qb = $this->createQueryBuilder('q')
+            ->innerJoin('App:AllianceBoardTopic', 't', 'WITH', 't.id = q.topic')
+            ->innerJoin('App:AllianceBoardCategory', 'c', 'WITH', 'c.id = t.category')
+            ->where('c.alliance = :allianceId')
+            ->orderBy('q.timestamp', 'DESC')
+            ->setMaxResults(1)
+            ->setParameter('allianceId', $allianceId);
+
+        if ($myRankId !== null) {
+            $qb
+                ->innerJoin('App:AllianceBoardCategoryRank', 'r', 'WITH', 'r.catId = c.id')
+                ->andWhere('r.rankId = :rank')
+                ->setParameter('rank', $myRankId);
+        }
+
+        $data = $qb
+            ->getQuery()
+            ->getOneOrNullResult();
+
+        return $data;
     }
 }

@@ -3,7 +3,6 @@
 namespace EtoA\Controller\Game;
 
 use EtoA\Admin\AllianceBoardAvatar;
-use EtoA\Alliance\AllianceDiplomacy;
 use EtoA\Alliance\AllianceDiplomacyLevel;
 use EtoA\Alliance\AllianceDiplomacyRepository;
 use EtoA\Alliance\AllianceRankRepository;
@@ -14,21 +13,22 @@ use EtoA\Alliance\Board\AllianceBoardCategoryRankRepository;
 use EtoA\Alliance\Board\AllianceBoardCategoryRepository;
 use EtoA\Alliance\Board\AllianceBoardPostRepository;
 use EtoA\Alliance\Board\AllianceBoardTopicRepository;
-use EtoA\Alliance\Board\Category;
+use EtoA\Entity\AllianceBoardCategory;
+use EtoA\Entity\AllianceDiplomacy;
 use EtoA\Image\ImageUtil;
 use EtoA\Support\BBCodeUtils;
 use EtoA\Support\StringUtils;
 use EtoA\User\UserRepository;
 use EtoA\User\UserSearch;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
-use Symfony\Component\Form\FormInterface;
-use Symfony\Component\HttpFoundation\RedirectResponse;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Validator\Constraints\NotBlank;
@@ -52,7 +52,7 @@ class AllianceBoardController extends AbstractGameController
 
     #[Route('/game/allianceboard', name: 'game.alliance.allianceboard.overview')]
     public function allianceBoard(): Response {
-        if(!$this->getUser()->getData()->getAllianceId()) {
+        if(!$this->getUser()->getData()->getAlliance()->getId()) {
             return $this->redirectToRoute('game.alliance');
         }
 
@@ -60,23 +60,23 @@ class AllianceBoardController extends AbstractGameController
 
         $boardBulletDir = '/build/images/boardbullets';
 
-        $alliance = $this->allianceRepository->getAlliance($this->getUser()->getData()->getAllianceId());
+        $alliance = $this->getUser()->getData()->getAlliance();
         $userAlliancePermission = $this->service->getUserAlliancePermissions($alliance, $this->getUser()->getData());
         $isAdmin = $userAlliancePermission->hasRights(AllianceRights::ALLIANCE_BOARD);
 
-        $ranks = $this->allianceRankRepository->getRanks($alliance->id);
+        $ranks = $this->allianceRankRepository->findBy(['alliance'=>$alliance->getId()]);
         $rank = array();
         foreach ($ranks as $r) {
-            $rank[$r->id] = $r->name;
+            $rank[$r->getId()] = $r->getName();
         }
 
         $page = '';
 
-        $categories = $this->allianceBoardCategoryRepository->getCategories($alliance->id);
+        $categories = $this->allianceBoardCategoryRepository->findBy(['alliance'=>$alliance->getId()],['order'=>'DESC','name'=>'DESC']);
         if ($categories) {
-            $categoryIds = array_map(fn (Category $category) => $category->id, $categories);
-            $postCounts = $this->allianceBoardCategoryRepository->getCategoryPostCounts($categoryIds);
-            $topicCounts = $this->allianceBoardCategoryRepository->getCategoryTopicCounts($categoryIds);
+            $categoryIds = array_map(fn (AllianceBoardCategory $category) => $category->getId(), $categories);
+            $postCounts = $this->allianceBoardTopicRepository->getTopicPostCountsByCategory($categoryIds);
+            $topicCounts = $this->allianceBoardTopicRepository->getCategoryTopicCounts($categoryIds);
 
             echo '<table class="tb">';
             echo "<tr><th colspan=\"2\">Kategorie</th><th>Posts</th><th>Topics</th><th>Letzter Beitrag</th>";
@@ -86,24 +86,27 @@ class AllianceBoardController extends AbstractGameController
             echo "</tr>";
             $accessCnt = 0;
             foreach ($categories as $category) {
-                if ($isAdmin || isset($myCat[$category->id])) {
+                if ($isAdmin || isset($myCat[$category->getId()])) {
                     $accessCnt++;
-                    $topic = $this->allianceBoardTopicRepository->getTopicWithLatestPost($category->id);
+
+                    $post = $this->allianceBoardTopicRepository->getTopicWithLatestPost($category->getId());
+                    $topic = $post?->getTopic();
+
                     if ($topic !== null) {
-                        $ps = "<a href=\"?page=$page&amp;topic=" . $topic->id . "#" . $topic->post->id . "\" " . tm($topic->subject . ", " . StringUtils::formatDate($topic->timestamp), "Geschrieben von: <b>" . $topic->post->userNick . "</b>") . ">" . $topic->subject . "<br/>" . StringUtils::formatDate($topic->timestamp) . "</a>";
+                        $ps = "<a href=\"?page=$page&amp;topic=" . $topic->getId() . "#" . $post->getId() . "\" " . tm($topic->getSubject() . ", " . StringUtils::formatDate($topic->getTimestamp()), "Geschrieben von: <b>" . $post->getUserNick() . "</b>") . ">" . $topic->getSubject() . "<br/>" . StringUtils::formatDate($topic->getTimestamp()) . "</a>";
                     } else
                         $ps = "-";
                     echo "<tr>";
-                    if (!$category->bullet|| !is_file($this->getParameter('kernel.project_dir').'/public'.$boardBulletDir . "/" . $category->bullet)) $category->bullet = AllianceBoardAvatar::DEFAULT_IMAGE;
+                    if (!$category->getBullet()|| !is_file($this->getParameter('kernel.project_dir').'/public'.$boardBulletDir . "/" . $category->getBullet())) $category->setBullet(AllianceBoardAvatar::DEFAULT_IMAGE);
                     echo "<td style=\"width:40px;vertical-align:middle;\">
-                                    <a href=\"?page=$page&amp;bnd=0&cat=" . $category->id . "\">
-                                        <img src=\"" . $boardBulletDir . "/" . $category->bullet . "\" style=\"width:40px;height:40px;\" />
+                                    <a href=\"?page=$page&amp;bnd=0&cat=" . $category->getId() . "\">
+                                        <img src=\"" . $boardBulletDir . "/" . $category->getBullet() . "\" style=\"width:40px;height:40px;\" />
                                     </a>
                                 </td>";
                     echo "<td style=\"width:300px;\"";
                     if ($isAdmin) {
                         $rstr = "";
-                        $categoryRankIds = $this->allianceBoardCategoryRankRepository->getRanksForCategories($category->id);
+                        $categoryRankIds = $this->allianceBoardCategoryRankRepository->getRanksForCategories($category->getId());
                         foreach ($rank as $k => $v) {
                             if (in_array($k, $categoryRankIds, true)) {
                                 $rstr .= $v . ", ";
@@ -111,18 +114,18 @@ class AllianceBoardController extends AbstractGameController
                         }
 
                         if ($rstr != "") $rstr = substr($rstr, 0, strlen($rstr) - 2);
-                        echo " " . tm("Admin-Info: " . $category->name, "<b>Position:</b> " . $category->order . "<br/><b>Zugriff:</b> " . $rstr) . "";
+                        echo " " . tm("Admin-Info: " . $category->getName(), "<b>Position:</b> " . $category->getOrder() . "<br/><b>Zugriff:</b> " . $rstr) . "";
                     }
                     echo ">
-                                <b><a href=\"" . $this->generateUrl('game.alliance.allianceboard.showtopics',['id'=>$category->id]) . "\">" . ($category->name != "" ? $category->name : "Unbenannt") . "</a></b>
-                                <br/>" . BBCodeUtils::toHTML($category->description) . "</td>";
-                    echo "<td>" . $postCounts[$category->id] . "</td>";
-                    echo "<td>" . $topicCounts[$category->id] . "</td>";
+                                <b><a href=\"" . $this->generateUrl('game.alliance.allianceboard.showtopics',['id'=>$category->getId()]) . "\">" . ($category->getName() != "" ? $category->getName() : "Unbenannt") . "</a></b>
+                                <br/>" . BBCodeUtils::toHTML($category->getDescription()) . "</td>";
+                    echo "<td>" . $postCounts[$category->getId()] . "</td>";
+                    echo "<td>" . $topicCounts[$category->getId()] . "</td>";
                     echo "<td>$ps</td>";
                     if ($isAdmin) {
                         echo "<td style=\"vertical-align:middle;text-align:center;\">
-                                        <a href=\"" . $this->generateUrl('game.alliance.allianceboard.editcategory',['id'=>$category->id]) . "\">" . ImageUtil::icon('edit') . "</a>
-                                        <a href=\"" . $this->generateUrl('game.alliance.allianceboard.deletecategory',['id'=>$category->id]) . "\">" . ImageUtil::icon('delete') . "</a>
+                                        <a href=\"" . $this->generateUrl('game.alliance.allianceboard.editcategory',['id'=>$category->getId()]) . "\">" . ImageUtil::icon('edit') . "</a>
+                                        <a href=\"" . $this->generateUrl('game.alliance.allianceboard.deletecategory',['id'=>$category->getId()]) . "\">" . ImageUtil::icon('delete') . "</a>
                                     </td>";
                     }
                     echo "</tr>";
@@ -142,9 +145,9 @@ class AllianceBoardController extends AbstractGameController
         echo "<a href='".$this->generateUrl('game.alliance.overview') ."'><input type=\"button\" value=\"Zur Allianzseite\"/></a><br/><br/>";
 
         //shows Bnd forums
-        $diplomacies = $this->allianceDiplomacyRepository->getDiplomacies($alliance->id, AllianceDiplomacyLevel::BND_CONFIRMED);
+        $diplomacies = $this->allianceDiplomacyRepository->getDiplomacies($alliance->getId(), AllianceDiplomacyLevel::BND_CONFIRMED);
         if (count($diplomacies) > 0) {
-            $allianceBndIds = array_map(fn (AllianceDiplomacy $diplomacy) => $diplomacy->id, $diplomacies);
+            $allianceBndIds = array_map(fn (AllianceDiplomacy $diplomacy) => $diplomacy->getId(), $diplomacies);
             $topicCounts = $this->allianceBoardTopicRepository->getBndTopicCounts($allianceBndIds);
             $postCounts = $this->allianceBoardTopicRepository->getBndPostCounts($allianceBndIds);
 
@@ -156,11 +159,11 @@ class AllianceBoardController extends AbstractGameController
             echo "</tr>";
             $accessCnt = 0;
             foreach ($diplomacies as $diplomacy) {
-                if ($isAdmin || isset($myCat[$diplomacy->id])) {// @ todo
+                if ($isAdmin || isset($myCat[$diplomacy->getId()])) {// @ todo
                     $accessCnt++;
-                    $topic = $this->allianceBoardTopicRepository->getTopicWithLatestPost(0, $diplomacy->id);
+                    $topic = $this->allianceBoardTopicRepository->getTopicWithLatestPost(0, $diplomacy->getId());
                     if ($topic !== null) {
-                        $ps = "<a href=\"?page=$page&amp;topic=" . $topic->id . "#" . $topic->post->id . "\" " . tm($topic->subject . ", " . StringUtils::formatDate($topic->timestamp), "Geschrieben von: <b>" . $topic->post->userNick . "</b>") . ">" . $topic->subject . "<br/>" . StringUtils::formatDate($topic->timestamp) . "</a>"; //ToDo User auch von anderen Allianzen
+                        $ps = "<a href=\"?page=$page&amp;topic=" . $topic->getId() . "#" . $topic->post->getId() . "\" " . tm($topic->getSubject() . ", " . StringUtils::formatDate($topic->getTimestamp()), "Geschrieben von: <b>" . $topic->post->getUserNick() . "</b>") . ">" . $topic->getSubject() . "<br/>" . StringUtils::formatDate($topic->getTimestamp()) . "</a>"; //ToDo User auch von anderen Allianzen
                     } else
                         $ps = "-";
                     echo "<tr>";
@@ -168,7 +171,7 @@ class AllianceBoardController extends AbstractGameController
                     echo "<td style=\"width:300px;\"";
                     if ($isAdmin) {
                         $rstr = "";
-                        $bndRankIds = $this->allianceBoardCategoryRankRepository->getRanksForBnd($diplomacy->id);
+                        $bndRankIds = $this->allianceBoardCategoryRankRepository->getRanksForBnd($diplomacy->getId());
                         foreach ($rank as $k => $v) {
                             if (in_array($k, $bndRankIds, true)) {
                                 $rstr .= $v . ", ";
@@ -176,15 +179,15 @@ class AllianceBoardController extends AbstractGameController
                         }
 
                         if ($rstr != "") $rstr = substr($rstr, 0, strlen($rstr) - 2);
-                        echo " " . tm("Admin-Info: " . stripslashes($diplomacy->otherAllianceName),/*"<b>Position:</b> ".$arr['cat_order']."<br/>*/ "<b>Zugriff:</b> " . $rstr) . "";
+                        echo " " . tm("Admin-Info: " . stripslashes($diplomacy->getAlliance2()->toString()),/*"<b>Position:</b> ".$arr['cat_order']."<br/>*/ "<b>Zugriff:</b> " . $rstr) . "";
                     }
-                    echo "><b><a href=\"?page=$page&amp;cat=0&bnd=" . $diplomacy->id . "\"";
-                    echo ">" . stripslashes($diplomacy->otherAllianceName) . "</a></b><br/>" . BBCodeUtils::toHTML($diplomacy->text) . "</td>";
-                    echo "<td>" . $postCounts[$diplomacy->id] . "</td>";
-                    echo "<td>" . $topicCounts[$diplomacy->id] . "</td>";
+                    echo "><b><a href=\"?page=$page&amp;cat=0&bnd=" . $diplomacy->getId() . "\"";
+                    echo ">" . stripslashes($diplomacy->getAlliance2()->toString()) . "</a></b><br/>" . BBCodeUtils::toHTML($diplomacy->getText()) . "</td>";
+                    echo "<td>" . $postCounts[$diplomacy->getId()] . "</td>";
+                    echo "<td>" . $topicCounts[$diplomacy->getId()] . "</td>";
                     echo "<td>$ps</td>";
                     if ($isAdmin) {
-                        echo "<td style=\"width:90px;\"><input type=\"button\" value=\"Bearbeiten\" onclick=\"document.location='?page=$page&editbnd=" . $diplomacy->id . "'\" /><br/>
+                        echo "<td style=\"width:90px;\"><input type=\"button\" value=\"Bearbeiten\" onclick=\"document.location='?page=$page&editbnd=" . $diplomacy->getId() . "'\" /><br/>
                                     </td>";
                     }
                     echo "</tr>";
@@ -206,7 +209,7 @@ class AllianceBoardController extends AbstractGameController
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            $cid = $this->allianceBoardCategoryRepository->addCategory($form->getData()['catName'], $form->getData()['catDesc'], $form->getData()['catOrder'], $form->getData()['catBullet'], $this->getUser()->getData()->getAllianceId());
+            $cid = $this->allianceBoardCategoryRepository->addCategory($form->getData()['catName'], $form->getData()['catDesc'], $form->getData()['catOrder'], $form->getData()['catBullet'], $this->getUser()->getData()->getAlliance()->getId());
             $newRanks = array_map(fn ($value) => (int) $value, $form->getData()['rank'] ?? []);
             $this->allianceBoardCategoryRankRepository->replaceRanks($cid, 0, $newRanks);
             $msg['success'] = "Neue Kategorie gespeichert!";
@@ -223,13 +226,13 @@ class AllianceBoardController extends AbstractGameController
     #[Route('/game/allianceboard/deletecategory/{id}', name: 'game.alliance.allianceboard.deletecategory')]
     public function deleteCategory(Request $request, int $id): Response {
         if($this->isAdmin()) {
-            $category = $this->allianceBoardCategoryRepository->getCategory($id, $this->getUser()->getData()->getAllianceId());
+            $category = $this->allianceBoardCategoryRepository->getCategory($id, $this->getUser()->getData()->getAlliance()->getId());
             if($category) {
                 $form = $this->createFormBuilder()
                     ->add('catDelete', SubmitType::class, [
                         'label' => 'Löschen',
                         'attr' => [
-                            'onclick' => "return confirm('Willst du die Kategorie " . $category->name . " wirklich löschen?')"
+                            'onclick' => "return confirm('Willst du die Kategorie " . $category->getName() . " wirklich löschen?')"
                         ]
                     ])
                     ->getForm();
@@ -237,7 +240,7 @@ class AllianceBoardController extends AbstractGameController
                 $form->handleRequest($request);
 
                 if ($form->isSubmitted() && $form->isValid()) {
-                    $this->allianceBoardCategoryRepository->deleteCategory($id, $this->getUser()->getData()->getAllianceId());
+                    $this->allianceBoardCategoryRepository->deleteCategory($id, $this->getUser()->getData()->getAlliance()->getId());
                     $msg['success'] = "Kategorie gelöscht!";
                 }
 
@@ -250,7 +253,7 @@ class AllianceBoardController extends AbstractGameController
             return $this->render('game/alliance/allianceboard/allianceboard_deletecategory.html.twig',[
                 'form' => $form,
                 'msg' => $msg??null,
-                'categoryName' => $category?->name
+                'categoryName' => $category?->getName()
             ]);
         }
         return $this->redirectToRoute('game.alliance.allianceboard.overview');
@@ -264,14 +267,14 @@ class AllianceBoardController extends AbstractGameController
             return $this->redirectToRoute('game.alliance.allianceboard.overview');
         }
 
-        $category = $this->allianceBoardCategoryRepository->getCategory($id, $this->getUser()->getData()->getAllianceId());
+        $category = $this->allianceBoardCategoryRepository->getCategory($id, $this->getUser()->getData()->getAlliance()->getId());
 
         if($category) {
             $form = $this->buildCategoryForm($category);
 
             $form->handleRequest($request);
             if ($form->isSubmitted() && $form->isValid()) {
-                $this->allianceBoardCategoryRepository->updateCategory($id, $category->getCatName(), $category->getCatDesc(), $category->getCatOrder(), $category->getCatBullet(),$this->getUser()->getData()->getAllianceId());
+                $this->allianceBoardCategoryRepository->updateCategory($id, $category->getName(), $category->getDescription(), $category->getOrder(), $category->getBullet(),$this->getUser()->getData()->getAlliance()->getId());
                 $newRanks = array_map(fn ($value) => (int) $value, $form->get('rank')->getData() ?? []);
                 $this->allianceBoardCategoryRankRepository->replaceRanks($id, 0, $newRanks);
                 $msg['success'] = "Änderungen gespeichert!";
@@ -295,17 +298,17 @@ class AllianceBoardController extends AbstractGameController
         $myCat = [];
 
         $cu = $this->getUser()->getData();
-        $allianceCategories = $this->allianceBoardCategoryRepository->getCategories($cu->getAllianceId());
-        $availableCategories = $this->allianceBoardCategoryRankRepository->getCategoriesForRank($cu->getAllianceId(), $cu->getAllianceRankId());
+        $allianceCategories = $this->allianceBoardCategoryRepository->getCategories($cu->getAlliance()->getId());
+        $availableCategories = $this->allianceBoardCategoryRankRepository->getCategoriesForRank($cu->getAlliance()->getId(), $cu->getAllianceRankId());
         if (count($allianceCategories) > 0) {
             foreach ($allianceCategories as $category) {
-                $myCat[$category->id] = in_array($category->id, $availableCategories, true);
+                $myCat[$category->getId()] = in_array($category->getId(), $availableCategories, true);
             }
         }
-        $allianceUsers = $this->userRepository->searchUsers(UserSearch::create()->allianceId($cu->getAllianceId()));
+        $allianceUsers = $this->userRepository->searchUsers(UserSearch::create()->allianceId($cu->getAlliance()->getId()));
 
         if ($this->isAdmin() || (isset($myCat[$id]) && $myCat[$id])) {
-            $category = $this->allianceBoardCategoryRepository->getCategory($id, $cu->getAllianceId());
+            $category = $this->allianceBoardCategoryRepository->getCategory($id, $cu->getAlliance()->getId());
             if (!$category) {
                 return $this->render('game/alliance/allianceboard/allianceboard_notfound.html.twig',[
                     'message' => 'Kategorie existiert nicht!'
@@ -329,7 +332,7 @@ class AllianceBoardController extends AbstractGameController
     //TODO: use entity
     #[Route('/game/allianceboard/newtopic/{id}', name: 'game.alliance.allianceboard.newtopic')]
     public function newTopic(int $id, Request $request): Response {
-        $category = $this->allianceBoardCategoryRepository->getCategory($id, $this->getUser()->getData()->getAllianceId());
+        $category = $this->allianceBoardCategoryRepository->getCategory($id, $this->getUser()->getData()->getAlliance()->getId());
 
         if(!$category)
             return $this->render('game/alliance/allianceboard/allianceboard_notfound.html.twig',[
@@ -360,7 +363,7 @@ class AllianceBoardController extends AbstractGameController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $cu = $this->getUser()->getData();
-            $mid = $this->allianceBoardTopicRepository->addTopic($form->getData()['topicSubject'], 0, $category->id, $cu->getId(), $cu->getNick());
+            $mid = $this->allianceBoardTopicRepository->addTopic($form->getData()['topicSubject'], 0, $category->getId(), $cu->getId(), $cu->getNick());
             $this->allianceBoardPostRepository->addPost($mid, $form->getData()['postText'], $cu->getId(), $cu->getNick());
             return new RedirectResponse($this->generateUrl('game.alliance.allianceboard.showtopics',['id'=>$id]));
         }
@@ -383,7 +386,7 @@ class AllianceBoardController extends AbstractGameController
             ]);
         }
 
-        if ($this->getUser()->getId() == $topic->userId || $this->isAdmin()) {
+        if ($this->getUser()->getId() == $topic->getUserId() || $this->isAdmin()) {
             $form = $this->createFormBuilder($topic)
                 ->add('topicSubject', TextType::class,
                     [
@@ -400,10 +403,10 @@ class AllianceBoardController extends AbstractGameController
                     'required' => false
                 ])
                 ->add('topicCatId', ChoiceType::class, [
-                    'choices'=>$this->allianceBoardCategoryRepository->getCategories($this->getUser()->getData()->getAllianceId()),
+                    'choices'=>$this->allianceBoardCategoryRepository->getCategories($this->getUser()->getData()->getAlliance()->getId()),
                     'choice_value' => 'id',
-                    'choice_label' => function (?Category $category): string {
-                        return $category ? strtoupper($category->name) : '';
+                    'choice_label' => function (?AllianceBoardCategory $category): string {
+                        return $category ? strtoupper($category->getName()) : '';
                     },
                     'mapped' => false
                 ])
@@ -412,7 +415,7 @@ class AllianceBoardController extends AbstractGameController
 
             $form->handleRequest($request);
             if ($form->isSubmitted() && $form->isValid()) {
-                $this->allianceBoardTopicRepository->updateTopic($id, $topic->getTopicSubject(), 0, $form->get('topicCatId')->getData()->id, $topic->top, $topic->closed);
+                $this->allianceBoardTopicRepository->updateTopic($id, $topic->getTopicSubject(), 0, $form->get('topicCatId')->getData()->id, $topic->isTop(), $topic->isClosed());
                 $msg = "Änderungen gespeichert!";
             }
 
@@ -457,7 +460,7 @@ class AllianceBoardController extends AbstractGameController
         }
 
         return $this->render('game/alliance/allianceboard/allianceboard_deletetopic.html.twig',[
-            'topicName' => $topic->subject,
+            'topicName' => $topic->getSubject(),
             'msg' => $msg??null,
             'form' => $form
         ]);
@@ -475,9 +478,9 @@ class AllianceBoardController extends AbstractGameController
                 'posts' => $posts,
                 'userRepository' => $this->userRepository,
                 'topic' => $topic,
-                'cpost' => $this->allianceBoardPostRepository->getUserAlliancePostCounts($this->getUser()->getData()->getAllianceId(), $this->getUser()->getId()),
+                'cpost' => $this->allianceBoardPostRepository->getUserAlliancePostCounts($this->getUser()->getData()->getAlliance()->getId(), $this->getUser()->getId()),
                 'isAdmin' => $this->isAdmin(),
-                'category' => $this->allianceBoardCategoryRepository->getCategory($topic->categoryId , $this->getUser()->getData()->getAllianceId())
+                'category' => $this->allianceBoardCategoryRepository->getCategory($topic->getCategory()->getId() , $this->getUser()->getData()->getAlliance()->getId())
             ]);
         } else {
             if ($topic) {
@@ -498,7 +501,7 @@ class AllianceBoardController extends AbstractGameController
                 'message' => 'Dieses Thema existiert nicht!'
             ]);
 
-        if($topic->closed)
+        if($topic->isClosed())
             return $this->render('game/alliance/allianceboard/allianceboard_notfound.html.twig',[
                 'message' => 'Dieses Thema ist geschlossen!'
             ]);
@@ -523,13 +526,13 @@ class AllianceBoardController extends AbstractGameController
         if ($form->isSubmitted() && $form->isValid()) {
             $this->allianceBoardPostRepository->addPost($id, $form->getData()['postText'], $this->getUser()->getId(), $this->getUser()->getUserIdentifier());
             $this->allianceBoardTopicRepository->updateTopicTimestamp($id);
-            return new RedirectResponse($this->generateUrl('game.alliance.allianceboard.showposts',['id'=>$topic->id]));
+            return new RedirectResponse($this->generateUrl('game.alliance.allianceboard.showposts',['id'=>$topic->getId()]));
         }
 
         return $this->render('game/alliance/allianceboard/allianceboard_newpost.html.twig',[
             'msg' => $msg??null,
             'form' => $form,
-            'id' => $topic->categoryId
+            'id' => $topic->getCategory()->getId()
         ]);
     }
 
@@ -544,7 +547,7 @@ class AllianceBoardController extends AbstractGameController
                 'message' => 'Datensatz nicht gefunden!'
             ]);
 
-        if($this->getUser()->getId() == $post->userId || $this->isAdmin()) {
+        if($this->getUser()->getId() == $post->getUserId() || $this->isAdmin()) {
             $form = $this->createFormBuilder($post)
                 ->add('postEdit', SubmitType::class, ['label' => 'Speichern'])
                 ->add('postText', TextareaType::class,
@@ -563,9 +566,9 @@ class AllianceBoardController extends AbstractGameController
             $form->handleRequest($request);
             if ($form->isSubmitted() && $form->isValid()) {
                 if ($this->isAdmin())
-                    $this->allianceBoardPostRepository->updatePost($id, $post->text);
+                    $this->allianceBoardPostRepository->updatePost($id, $post->getText());
                 else
-                    $this->allianceBoardPostRepository->updatePost($id, $post->text, $this->getUser()->getId());
+                    $this->allianceBoardPostRepository->updatePost($id, $post->getText(), $this->getUser()->getId());
                 $msg['success'] = "Änderungen gespeichert!";
             }
 
@@ -593,7 +596,7 @@ class AllianceBoardController extends AbstractGameController
             ]);
         }
 
-        if($this->getUser()->getId() == $post->userId || $this->isAdmin()) {
+        if($this->getUser()->getId() == $post->getUserId() || $this->isAdmin()) {
             $form = $this->createFormBuilder()
                 ->add('postDelete', SubmitType::class, ['label' => 'Löschen'])
                 ->getForm();
@@ -618,17 +621,17 @@ class AllianceBoardController extends AbstractGameController
     }
 
     private function isAdmin():bool {
-        $userAlliancePermission = $this->service->getUserAlliancePermissions($this->allianceRepository->getAlliance($this->getUser()->getData()->getAllianceId()), $this->getUser()->getData());
+        $userAlliancePermission = $this->service->getUserAlliancePermissions($this->getUser()->getData()->getAlliance(),$this->getUser()->getData());
         return $userAlliancePermission->hasRights(AllianceRights::ALLIANCE_BOARD);
     }
 
     private function buildCategoryForm(mixed $data = null):FormInterface
     {
-        $alliance = $this->allianceRepository->getAlliance($this->getUser()->getData()->getAllianceId());
-        $ranks = $this->allianceRankRepository->getRanks($alliance->id);
+        $alliance = $this->allianceRepository->getAlliance($this->getUser()->getData()->getAlliance()->getId());
+        $ranks = $this->allianceRankRepository->getRanks($alliance->getId());
         $rank = array();
         foreach ($ranks as $r) {
-            $rank[$r->id] = $r->name;
+            $rank[$r->getId()] = $r->getName();
         }
 
         $boardBulletDir = 'build/images/boardbullets';

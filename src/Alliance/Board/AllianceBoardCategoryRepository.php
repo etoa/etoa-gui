@@ -5,35 +5,13 @@ namespace EtoA\Alliance\Board;
 use Doctrine\DBAL\ArrayParameterType;
 use Doctrine\Persistence\ManagerRegistry;
 use EtoA\Core\AbstractRepository;
+use EtoA\Entity\AllianceBoardCategory;
 
 class AllianceBoardCategoryRepository extends AbstractRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, Category::class);
-    }
-
-    /**
-     * @param int[] $categoryIds
-     * @return array<int, int>
-     */
-    public function getCategoryPostCounts(array $categoryIds): array
-    {
-        $data = $this->createQueryBuilder('q')
-            ->select('t.topic_cat_id, COUNT(p.post_id)')
-            ->from('allianceboard_topics', 't')
-            ->innerJoin('t', 'allianceboard_posts', 'p', 'p.post_topic_id = t.topic_id')
-            ->where('t.topic_cat_id IN (:categoryIds)')
-            ->groupBy('t.topic_cat_id')
-            ->setParameter('categoryIds', $categoryIds, ArrayParameterType::INTEGER)
-            ->fetchAllKeyValue();
-
-        $counts = [];
-        foreach ($categoryIds as $categoryId) {
-            $counts[$categoryId] = (int) ($data[$categoryId] ?? 0);
-        }
-
-        return $counts;
+        parent::__construct($registry, AllianceBoardCategory::class);
     }
 
     /**
@@ -59,7 +37,7 @@ class AllianceBoardCategoryRepository extends AbstractRepository
     }
 
     /**
-     * @return Category[]
+     * @return AllianceBoardCategory[]
      */
     public function getCategories(int $allianceId): array
     {
@@ -72,7 +50,7 @@ class AllianceBoardCategoryRepository extends AbstractRepository
             ->addOrderBy('cat_name')
             ->fetchAllAssociative();
 
-        return array_map(fn (array $row) => new Category($row), $data);
+        return array_map(fn (array $row) => new AllianceBoardCategory($row), $data);
     }
 
     /**
@@ -90,7 +68,7 @@ class AllianceBoardCategoryRepository extends AbstractRepository
         return array_map(fn (array $row) => (int) $row['cat_id'], $data);
     }
 
-    public function getCategory(int $categoryId, int $allianceId): ?Category
+    public function getCategory(int $categoryId, int $allianceId): ?AllianceBoardCategory
     {
         $data = $this->createQueryBuilder('q')
             ->select('*')
@@ -103,7 +81,7 @@ class AllianceBoardCategoryRepository extends AbstractRepository
             ])
             ->fetchAssociative();
 
-        return $data !== false ? new Category($data) : null;
+        return $data !== false ? new AllianceBoardCategory($data) : null;
     }
 
     public function addCategory(string $name, string $description, int $order, string $bullet, int $allianceId): int

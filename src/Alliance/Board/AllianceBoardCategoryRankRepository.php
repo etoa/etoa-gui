@@ -4,13 +4,13 @@ namespace EtoA\Alliance\Board;
 
 use Doctrine\Persistence\ManagerRegistry;
 use EtoA\Core\AbstractRepository;
+use EtoA\Entity\AllianceBoardCategoryRank;
 
 class AllianceBoardCategoryRankRepository extends AbstractRepository
 {
-    //TODO: add correct entity
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, Category::class);
+        parent::__construct($registry, AllianceBoardCategoryRank::class);
     }
 
     /**
@@ -39,13 +39,13 @@ class AllianceBoardCategoryRankRepository extends AbstractRepository
     public function getRanksForCategories(int $categoryId): array
     {
         $data = $this->createQueryBuilder('q')
-            ->select('cr_rank_id')
-            ->from('allianceboard_catranks')
-            ->where('cr_cat_id = :categoryId')
+            ->select('q.rankId')
+            ->where('q.catId = :categoryId')
             ->setParameter('categoryId', $categoryId)
-            ->fetchAllAssociative();
+            ->getQuery()
+            ->getArrayResult();
 
-        return array_map(fn (array $row) => (int) $row['cr_rank_id'], $data);
+        return array_map(fn (array $row) => (int) $row['rankId'], $data);
     }
 
     /**

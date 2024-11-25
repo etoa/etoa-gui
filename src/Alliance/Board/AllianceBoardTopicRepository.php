@@ -5,12 +5,14 @@ namespace EtoA\Alliance\Board;
 use Doctrine\DBAL\ArrayParameterType;
 use Doctrine\Persistence\ManagerRegistry;
 use EtoA\Core\AbstractRepository;
+use EtoA\Entity\AllianceBoardPost;
+use EtoA\Entity\AllianceBoardTopic;
 
 class AllianceBoardTopicRepository extends AbstractRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, Topic::class);
+        parent::__construct($registry, AllianceBoardTopic::class);
     }
 
     /**
@@ -78,7 +80,7 @@ class AllianceBoardTopicRepository extends AbstractRepository
         return $counts;
     }
     /**
-     * @return Topic[]
+     * @return AllianceBoardTopic[]
      */
     public function getTopics(int $categoryId): array
     {
@@ -92,11 +94,11 @@ class AllianceBoardTopicRepository extends AbstractRepository
             ->addOrderBy('topic_subject', 'ASC')
             ->fetchAllAssociative();
 
-        return array_map(fn (array $row) => new Topic($row), $data);
+        return array_map(fn (array $row) => new AllianceBoardTopic($row), $data);
     }
 
     /**
-     * @return Topic[]
+     * @return AllianceBoardTopic[]
      */
     public function getBndTopics(int $bndId): array
     {
@@ -110,10 +112,53 @@ class AllianceBoardTopicRepository extends AbstractRepository
             ->addOrderBy('topic_subject', 'ASC')
             ->fetchAllAssociative();
 
-        return array_map(fn (array $row) => new Topic($row), $data);
+        return array_map(fn (array $row) => new AllianceBoardTopic($row), $data);
     }
 
-    public function getTopic(int $topicId, int $bndId = null): ?Topic
+    /**
+     * @param int[] $categoryIds
+     * @return array<int, int>
+     */
+    public function getTopicPostCountsByCategory(array $categoryIds): array
+    {
+        $data = $this->createQueryBuilder('q')
+            ->select('IDENTITY(q.category)')
+            ->addSelect('COUNT(q.id)')
+            ->innerJoin('App:AllianceBoardPost', 'p', 'WITH', 'p.topic = q.id')
+            ->where('q.category IN (:categoryIds)')
+            ->groupBy('q.category')
+            ->setParameter('categoryIds', $categoryIds, ArrayParameterType::INTEGER)
+            ->getQuery()
+            ->execute();
+
+        $counts = [];
+        foreach ($categoryIds as $categoryId) {
+            $counts[$categoryId] = (int) ($data[$categoryId] ?? 0);
+        }
+
+        return $counts;
+    }
+
+    public function getCategoryTopicCounts(array $categoryIds): array
+    {
+        $data = $this->createQueryBuilder('q')
+            ->select('IDENTITY(q.category)')
+            ->addSelect('COUNT(q.id)')
+            ->where('q.category IN (:categoryIds)')
+            ->groupBy('q.category')
+            ->setParameter('categoryIds', $categoryIds, ArrayParameterType::INTEGER)
+            ->getQuery()
+            ->execute();
+
+        $counts = [];
+        foreach ($categoryIds as $categoryId) {
+            $counts[$categoryId] = (int) ($data[$categoryId] ?? 0);
+        }
+
+        return $counts;
+    }
+
+    public function getTopic(int $topicId, int $bndId = null): ?AllianceBoardTopic
     {
         $qb = $this->createQueryBuilder('q')
             ->select('*')
@@ -131,57 +176,32 @@ class AllianceBoardTopicRepository extends AbstractRepository
         $data = $qb
             ->fetchAssociative();
 
-        return $data !== false ? new Topic($data) : null;
+        return $data !== false ? new AllianceBoardTopic($data) : null;
     }
 
-    public function getAllianceTopicWithLatestPost(int $allianceId, int $myRankId = null): ?TopicWithLatestPost
+
+
+    public function getTopicWithLatestPost(int $categoryId, int $bndId = null): ?AllianceBoardPost
     {
         $qb = $this->createQueryBuilder('q')
-            ->select('t.*', 'p.*')
-            ->from('allianceboard_cat', 'c')
-            ->innerJoin('c', 'allianceboard_topics', 't', 't.topic_cat_id = c.cat_id')
-            ->innerJoin('t', 'allianceboard_posts', 'p', 'p.post_topic_id = t.topic_id')
-            ->where('c.cat_alliance_id = :allianceId')
-            ->orderBy('p.post_timestamp', 'DESC')
-            ->setMaxResults(1)
-            ->setParameter('allianceId', $allianceId);
-
-        if ($myRankId !== null) {
-            $qb
-                ->innerJoin('c', 'allianceboard_catranks', 'r', 'r.cr_cat_id = c.cat_id')
-                ->andWhere('r.cr_rank_id = :rank')
-                ->setParameter('rank', $myRankId);
-        }
-
-        $data = $qb
-            ->fetchAssociative();
-
-        return $data !== false ? new TopicWithLatestPost($data) : null;
-    }
-
-    public function getTopicWithLatestPost(int $categoryId, int $bndId = null): ?TopicWithLatestPost
-    {
-        $qb = $this->createQueryBuilder('q')
-            ->select('*')
-            ->from('allianceboard_topics', 't')
-            ->innerJoin('t', 'allianceboard_posts', 'p', 'p.post_topic_id = t.topic_id')
-            ->orderBy('p.post_timestamp', 'DESC')
+            ->select('p')
+            ->innerJoin('App:AllianceboardPost', 'p', 'WITH', 'p.topic = q.id')
+            ->orderBy('p.timestamp', 'DESC')
             ->setMaxResults(1);
 
         if ($bndId !== null) {
             $qb
-                ->andWhere('t.topic_bnd_id = :bndId')
+                ->andWhere('q.bndId = :bndId')
                 ->setParameter('bndId', $bndId);
         } else {
             $qb
-                ->andWhere('t.topic_cat_id = :categoryId')
+                ->andWhere('q.category = :categoryId')
                 ->setParameter('categoryId', $categoryId);
         }
 
-        $data = $qb
-            ->fetchAssociative();
-
-        return $data !== false ? new TopicWithLatestPost($data) : null;
+        return $qb
+            ->getQuery()
+            ->getOneOrNullResult();
     }
 
     public function addTopic(string $subject, ?int $bndId, int $categoryId, int $userId, string $userNick): int
