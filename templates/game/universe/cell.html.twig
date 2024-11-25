@@ -2,31 +2,69 @@
 {% import 'macros.html.twig' as macros %}
 
 {% block content %}
-    <h1>System {{ cell.toString }}</h1>
-    <twig:Table title="Systemkarte">
-        {% block table_content %}
-            <tr>
-                <td colspan="6" style="text-align:center;vertical-align:middle;">
-                    <a href="{{ path('game.galaxy') }}">Galaxie</a>&nbsp;&raquo;&nbsp;
-                    <a href="{{ path('game.sector', { sx: cell.sx,sy: cell.sy }) }}">Sektor {{ cell.sx }}/{{ cell.sy }}</a>&nbsp;&raquo;&nbsp;
-                    <select name="cell" onchange="document.location=this.value">
-                        {% for x in 1..param1('num_of_cells') %}
-                            {% for y in 1..param2('num_of_cells') %}
-                                {% set cellAtCoordinates = cellRepository.getCellIdByCoordinates(cell.sx, cell.sy, x, y) %}
-                                <option value="{{ cellAtCoordinates.id }}" >System{{ x }}/{{ y }} </option>
+    {% if msg %}
+        {{ macros.errorMessage(msg.error) }}
+        <a href="{{ path('game.sector') }}">
+            <button>Zurück zur Raumkarte</button>
+        </a>
+    {% else %}
+        <h1>System {{ cell.toString }}</h1>
+        <twig:Table title="Systemkarte">
+            {% block table_content %}
+                <tr>
+                    <td colspan="6" style="text-align:center;vertical-align:middle;">
+                        <a href="{{ path('game.galaxy') }}">Galaxie</a>&nbsp;&raquo;&nbsp;
+                        <a href="{{ path('game.sector', { sx: cell.sx,sy: cell.sy }) }}">Sektor {{ cell.sx }}/{{ cell.sy }}</a>&nbsp;&raquo;&nbsp;
+                        <select name="cell" onchange="document.location=this.value">
+                            {% for x in 1..param1('num_of_cells') %}
+                                {% for y in 1..param2('num_of_cells') %}
+                                    {% set cellAtCoordinates = cellRepository.getCellIdByCoordinates(cell.sx, cell.sy, x, y) %}
+                                    <option value="{{ cellAtCoordinates.id }}" >System{{ x }}/{{ y }} </option>
+                                {% endfor %}
                             {% endfor %}
-                        {% endfor %}
-                    </select>
-                </td>
-            </tr>
-            <tr>
-                <th colspan="2" style="width:60px;">Position</th>
-                <th>Typ</th>
-                <th>Name</th>
-                <th>Besitzer</th>
-                <th style="width:150px;">Aktionen</th>
-            </tr>
-            {{ renderedCells|raw }}
-        {% endblock %}
-    </twig:Table>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    {% if renderedCells %}
+                        <th colspan="2" style="width:60px;">Position</th>
+                        <th>Typ</th>
+                        <th>Name</th>
+                        <th>Besitzer</th>
+                        <th style="width:150px;">Aktionen</th>
+                    {% else %}
+                        <td colspan="6">System noch nicht erkundet. Erforsche das System mit einer Erkundungsflotte um es sichtbar zu machen!</td>
+                    {% endif %}
+                </tr>
+                {{ renderedCells|raw }}
+            {% endblock %}
+        </twig:Table>
+        {% if form %}
+            {{ form_start(form) }}
+                Du darfst diesen Stern benennen:
+                {{ form_widget(form.name) }}
+                {{ form_widget(form.save) }}<br/><br/>
+            {{ form_end(form) }}
+        {% endif %}
+
+        <div class="boxLayout ">
+            <div class="infoboxtitle">
+                <span>Legende</span>
+            </div>
+            <div class="infoboxcontent">
+                <span class="userSelfColor">Eigener Planet</span>,
+                <span class="userLockedColor">Gesperrt</span>,
+                <span class="userHolidayColor">Urlaubsmodus</span>,
+                <span class="userInactiveColor">Inaktiv (7 Tage)</span>,
+                <span class="userLongInactiveColor">Inaktiv (8 Tage)</span><br>
+                <span class="noobColor">Anfängerschutz</span>,
+                <span class="friendColor">Bündnis</span>,
+                <span class="enemyColor">Krieg</span>,
+                <span class="userAllianceMemberColor">Allianzmitglied</span>,
+                <span class="adminColor" onmouseover="showTT('Admin/Entwickler','Gemäss §14.2 ist es strengstens untersagt einen Adminaccount anzugreifen oder auszuspionieren. Wer dies tut ist selber schuld und kann mit einer Sperre von 24h bestraft werden!<br/>',1,event,this);" onmouseout="hideTT();">
+                    Admin/Entwickler
+                </span>
+            </div>
+        </div>
+    {% endif %}
 {% endblock %}

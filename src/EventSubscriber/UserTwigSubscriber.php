@@ -243,7 +243,7 @@ class UserTwigSubscriber implements EventSubscriberInterface
         }
 
         //block allianceboard if not in alliance
-        if($controller[0] == AllianceBoardController::class && !$cu->getData()->getAllianceId())
+        if($controller[0] == AllianceBoardController::class && !$cu->getData()->getAlliance()->getId())
             $event->setController(fn() => new RedirectResponse(($this->router->generate('game.alliance'))));
     }
 

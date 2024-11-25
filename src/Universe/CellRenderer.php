@@ -31,12 +31,10 @@ class CellRenderer
         private readonly AllianceDiplomacyRepository $allianceDiplomacyRepository,
         private readonly ConfigurationService $config,
         private readonly PlanetRepository $planetRepo,
-        private readonly AllianceRepository $allianceRepository,
         private readonly AdminUserRepository $adminUserRepository,
         private readonly Security                 $security,
         private readonly UserPropertiesRepository $userPropertiesRepository,
         private readonly ReportRepository $reportRepository,
-        private readonly StarRepository $starRepository,
         private readonly UserService $userService,
         private readonly UrlGeneratorInterface $router
     )
@@ -45,8 +43,6 @@ class CellRenderer
 
     public function render(array $entities):string {
         ob_start();
-        $hasPlanetInSystem = false;
-        $starNameEmpty = false;
         $cu = $this->security->getUser()->getData();
         $properties = $this->userPropertiesRepository->getOrCreateProperties($cu->getId());
 
@@ -83,7 +79,7 @@ class CellRenderer
                     $tm_info = "Krieg";
                 }
                 // Bündniss
-                elseif ($this->allianceDiplomacyRepository->existsDiplomacyBetween($cu->getAllianceId(), $owner->getAllianceId(), AllianceDiplomacyLevel::BND_CONFIRMED)) {
+                elseif ($this->allianceDiplomacyRepository->existsDiplomacyBetween($cu->getAlliance()->getId(), $owner->getAlliance()->getId(), AllianceDiplomacyLevel::BND_CONFIRMED)) {
                     $class .= "friendColor";
                     $tm_info = "B&uuml;ndnis";
                 }
@@ -177,7 +173,7 @@ class CellRenderer
 
             echo "<tr>
                     <td $class style=\"width:40px;background:#000;\">
-                        <a href=\"?page=entity&amp;id=" . $ent->getId() . "\">
+                        <a href=\"" . $this->router->generate('game.entity',['id'=>$ent->getId()]) . "\">
                             <img src=\"" . $ent->getType()->getImagePath() . "\" alt=\"icon\" />
                         </a>
                     </td>
@@ -216,9 +212,8 @@ class CellRenderer
             if ($owner) {
                 $header = $owner->getNick();
                 $tm = "Punkte: " . StringUtils::formatNumber($owner->getPoints()) . "<br style=\"clear:both\" />";
-                if ($owner->getAllianceId() > 0) {
-                    $ownerAlliance = $this->allianceRepository->getAlliance($owner->getAllianceId());
-                    $tm .= "Allianz: " . $ownerAlliance->toString() . "<br style=\"clear:both\" />";
+                if ($owner->getAlliance()->getId() > 0) {
+                    $tm .= "Allianz: " . $owner->getAlliance()->toString() . "<br style=\"clear:both\" />";
                 }
 
                 if ($tm_info != "")
@@ -240,16 +235,7 @@ class CellRenderer
             }
 
 
-            if ($ent->getCode() == EntityType::STAR) {
-                if ($this->starRepository->find($ent->getId())->name) {
-                    $starNameEmpty = true;
-                    $starToBeNamed = $ent->id();
-                }
-            } elseif ($ent->getCode() == EntityType::PLANET) {
-                if ($owner && $cu == $owner) {
-                    $hasPlanetInSystem = true;
-                }
-
+            if ($ent->getCode() == EntityType::PLANET) {
                 // Nachrichten-Link
                 if ($owner  && $cu != $owner) {
                     echo "<a href=\"?page=messages&amp;mode=new&amp;message_user_to=" . $owner->getId() . "\" title=\"Nachricht senden\">" . ImageUtil::icon("mail") . "</a> ";

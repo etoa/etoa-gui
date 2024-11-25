@@ -1,0 +1,28 @@
+{{ form_start(form) }}
+    <twig:Table title="Objektsuche">
+        {% block table_content %}
+        <tr>
+            {% if idprev %}
+                <td>
+                    <a href="{{ path('game.entity',{'id':idprev}) }}">
+                        {{ form_widget(form.prev) }}
+                    </a>
+                </td>
+            {% endif %}
+            <th>Kennung:</th>
+            <td>
+                {{ form_widget(form.id) }}
+                {{ form_widget(form.search) }}
+            </td>
+            {% if idnext %}
+                <td>
+                    <a href="{{ path('game.entity',{'id':idnext}) }}">
+                        {{ form_widget(form.next) }}
+                    </a>
+                </td>
+            {% endif %}
+        <tr>
+        {% endblock %}
+    </twig:Table>
+    {{ form_widget(form._token) }}
+{{ form_end(form,{render_rest: false}) }}

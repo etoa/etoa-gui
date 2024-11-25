@@ -16,6 +16,7 @@ use EtoA\Universe\GalaxyMap;
 use EtoA\Universe\Planet\PlanetRepository;
 use EtoA\User\UserRepository;
 use EtoA\User\UserUniverseDiscoveryService;
+use Symfony\Component\Form\Extension\Core\Type\ButtonType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\HttpFoundation\Request;
@@ -89,31 +90,56 @@ class UniverseController extends Game\AbstractGameController
     public function cell(
         CellRepository $cellRepository,
         CellRenderer $cellRenderer,
+        Request $request,
         ?Cell $cell = null
     ): Response {
+        $starNamed = true;
+
         if ($cell) {
-
             $entities = $this->entityRepository->findBy(['cellId'=>$cell->getId()],['pos'=>'ASC']);
-            $sx_num = $this->config->param1Int('num_of_sectors');
-            $sy_num = $this->config->param2Int('num_of_sectors');
-            $cx_num = $this->config->param1Int('num_of_cells');
-            $cy_num = $this->config->param2Int('num_of_cells');
-
+            $star = $this->entityRepository->findOneBy(['code'=>'s','cellId'=>$cell->getId()])?->getType();
             $abs = $cell->getAbsoluteCoordinates( $this->config->param1Int('num_of_cells'), $this->config->param2Int('num_of_cells'));
 
             if ($this->userUniverseDiscoveryService->discovered($this->getUser()->getData(), $abs[0], $abs[1])) {
+                $form = $this->createFormBuilder($star)
+                    ->add('name', TextType::class, [
+                        'required' => false,
+                        'attr' => [
+                            'maxlength' => 30
+                        ]
+                    ])
+                    ->add('save', SubmitType::class, ['label' => 'Speichern'])
+                    ->getForm();
+
+                $form->handleRequest($request);
+                if ($form->isSubmitted() && $form->isValid()) {
+                    $this->entityRepository->save();
+                }
+
                 $renderedCells = $cellRenderer->render($entities);
+
+                foreach ($entities as $entity) {
+                    if($entity->getCode() == 'p') {
+                        //check if user has planet in system
+                        if ($this->getUser()->getId() === $entity->getType()->getUser()?->getId()) {
+                            //check if star is already named
+                            if(!$star->getName()) {
+                              $starNamed = false;
+                            }
+                        }
+                    }
+                }
             }
         } else {
             $msg['error'] = "System nicht gefunden!";
-            echo "<input type=\"button\" value=\"Zur&uuml;ck zur Raumkarte\" onclick=\"document.location='?page=sector'\" />";
         }
 
         return $this->render('game/universe/cell.html.twig',[
             'msg' => $msg??null,
             'cell' =>$cell,
             'cellRepository' => $cellRepository,
-            'renderedCells' => $renderedCells??null
+            'renderedCells' => $renderedCells??null,
+            'form' => !$starNamed?$form:null
         ]);
     }
 
@@ -131,12 +157,14 @@ class UniverseController extends Game\AbstractGameController
                     'maxlength' => 7
                 ]
             ])
+            ->add('prev', ButtonType::class, ['label' => '<'])
+            ->add('next', ButtonType::class, ['label' => '>'])
             ->add('search', SubmitType::class, ['label' => 'Objekt anzeigen'])
             ->getForm();
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->redirectToRoute('game.entity',['id'=>$form->get('id')->getData()]);
+            return $this->redirectToRoute('game.entity',['id'=>$form->get('id')->getData()]);
         }
 
         if($ent) {
@@ -164,31 +192,26 @@ class UniverseController extends Game\AbstractGameController
                         'rowSpan' => $rowSpan,
                         'planet' => $ent->getType(),
                         'star' => $this->entityRepository->findOneBy(['code'=>'s','cellId'=>$ent->getCell()->getId()])->getType(),
-                        'search'=>[
-                            'form' =>$form,
-                            'idnext' => $idnext,
-                            'idprev' =>$idprev
-                        ]
+                        'form' =>$form,
+                        'idnext' => $idnext,
+                        'idprev' =>$idprev
+
                     ]);
                 } elseif ($ent->getCode() == 's') {
                     return $this->render('game/universe/entity/entity_star.html.twig',[
                         'star' => $ent->getType(),
-                        'search'=>[
-                            'form' =>$form,
-                            'idnext' => $idnext,
-                            'idprev' =>$idprev
-                        ]
+                        'form' =>$form,
+                        'idnext' => $idnext,
+                        'idprev' =>$idprev
                     ]);
                 } else {
                     return $this->render('game/universe/entity/entity_message.html.twig',[
                         'headline' => $ent->coordinatesString(). ' ('.$ent->codeString().')',
                         'title' => 'Objektdaten',
                         'message' => "Über dieses Objekt sind keine weiteren Daten verfügbar!",
-                        'search'=>[
-                            'form' =>$form,
-                            'idnext' => $idnext,
-                            'idprev' =>$idprev
-                        ]
+                        'form' =>$form,
+                        'idnext' => $idnext,
+                        'idprev' =>$idprev
                     ]);
                 }
             } else {
@@ -196,11 +219,9 @@ class UniverseController extends Game\AbstractGameController
                     'headline' => 'Raumobjekt-Datenbank',
                     'title' => 'Fehler',
                     'message' => "Das Objekt mit der Kennung [b]" . $ent->getId() . "[/b] wurde noch nicht entdeckt!",
-                    'search'=>[
-                        'form' =>$form,
-                        'idnext' => $idnext,
-                        'idprev' =>$idprev
-                    ]
+                    'form' =>$form,
+                    'idnext' => $idnext,
+                    'idprev' =>$idprev
                 ]);
             }
         }
@@ -209,11 +230,9 @@ class UniverseController extends Game\AbstractGameController
             'headline' => 'Raumobjekt-Datenbank',
             'title' => 'Fehler',
             'message' => "Das Objekt mit der Kennung [b]" . $request->attributes->get('id') . "[/b] existiert nicht!",
-            'search'=>[
-                'form' =>$form,
-                'idnext' => $idnext,
-                'idprev' =>$idprev
-            ]
+            'form' =>$form,
+            'idnext' => $idnext,
+            'idprev' =>$idprev
         ]);
     }
 }

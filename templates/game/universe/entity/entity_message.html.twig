@@ -5,4 +5,6 @@
     <h1>{{ headline }}</h1>
 
     {{ macros.message(title, BBCodeToHTML(message)) }}
+
+    {% include 'game/universe/entity/entity_search.html.twig' %}
 {% endblock %}
