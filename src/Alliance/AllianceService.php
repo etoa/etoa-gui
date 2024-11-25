@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace EtoA\Alliance;
 
 use EtoA\Alliance\Board\AllianceBoardCategoryRepository;
+use EtoA\Alliance\Board\AllianceBoardPostRepository;
 use EtoA\Alliance\Board\AllianceBoardTopicRepository;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Entity\Alliance;
@@ -32,6 +33,7 @@ class AllianceService
     private UserService $userService;
     private AllianceDiplomacyRepository $allianceDiplomacyRepository;
     private AllianceBoardCategoryRepository $allianceBoardCategoryRepository;
+    private AllianceBoardPostRepository $allianceBoardPostRepository;
     private AllianceApplicationRepository $allianceApplicationRepository;
     private AllianceBoardTopicRepository $allianceBoardTopicRepository;
     private AllianceBuildingRepository $allianceBuildingRepository;
@@ -58,6 +60,7 @@ class AllianceService
         AllianceBoardCategoryRepository $allianceBoardCategoryRepository,
         AllianceApplicationRepository $allianceApplicationRepository,
         AllianceBoardTopicRepository $allianceBoardTopicRepository,
+        AllianceBoardPostRepository $allianceBoardPostRepository,
         AllianceBuildingRepository $allianceBuildingRepository,
         AlliancePointsRepository $alliancePointsRepository,
         AllianceNewsRepository $allianceNewsRepository,
@@ -81,6 +84,7 @@ class AllianceService
         $this->userService = $userService;
         $this->allianceDiplomacyRepository = $allianceDiplomacyRepository;
         $this->allianceBoardCategoryRepository = $allianceBoardCategoryRepository;
+        $this->allianceBoardPostRepository = $allianceBoardPostRepository;
         $this->allianceApplicationRepository = $allianceApplicationRepository;
         $this->allianceBoardTopicRepository = $allianceBoardTopicRepository;
         $this->allianceBuildingRepository = $allianceBuildingRepository;
@@ -108,11 +112,11 @@ class AllianceService
         $name = trim($name);
         $tag = trim($tag);
 
-        if (!preg_match('/^[^\'\"\?\<\>\$\!\=\;\&\\\\[\]]{1,6}$/i', $tag) > 0) {
+        if (!preg_match('/^[^\'\"?<>$!=;&\\\\[\]]{1,6}$/i', $tag) > 0) {
             throw new InvalidAllianceParametersException("Ungültiger Tag! Die Länge muss zwischen 3 und 6 Zeichen liegen und darf folgende Zeichen nicht enthalten: ^'\"?<>$!=;&[]\\\\");
         }
 
-        if (!preg_match('/([^\'\"\?\<\>\$\!\=\;\&\\\\[\]]{4,25})$/', $name) > 0) {
+        if (!preg_match('/([^\'\"?<>$!=;&\\\\[\]]{4,25})$/', $name) > 0) {
             throw new InvalidAllianceParametersException("Ungültiger Name! Die Länge muss zwischen 4 und 25 Zeichen liegen und darf folgende Zeichen nicht enthalten: ^'\"?<>$!=;&[]\\\\");
         }
 
@@ -141,7 +145,7 @@ class AllianceService
 
     public function addMember(AllianceWithMemberCount $alliance, User $user): bool
     {
-        if ($alliance->id === $user->getAllianceId()) {
+        if ($alliance->getId() === $user->getAlliance()->getId()) {
             return false;
         }
 
@@ -151,13 +155,13 @@ class AllianceService
             return false;
         }
 
-        $this->messageRepository->createSystemMessage($user->getId(), MessageCategoryId::ALLIANCE, "Allianzaufnahme", "Du wurdest in die Allianz [b]" . $alliance->nameWithTag . "[/b] aufgenommen!");
-        $this->allianceHistoryRepository->addEntry($alliance->id, "[b]" . $user->getNick() . "[/b] wurde als neues Mitglied aufgenommen");
-        $this->allianceMemberCosts->increase($alliance->id, $alliance->memberCount, $newMemberCount);
-        $this->userRepository->setAllianceId($user->getId(), $alliance->id);
-        if ($user->getAllianceId() > 0) {
-            $previousAlliance = $this->repository->getAlliance($user->getAllianceId());
-            $this->userService->addToUserLog($user->getId(), "alliance", "{nick} ist nun kein Mitglied mehr der Allianz [b]" . $previousAlliance->nameWithTag . "[/b].");
+        $this->messageRepository->createSystemMessage($user->getId(), MessageCategoryId::ALLIANCE, "Allianzaufnahme", "Du wurdest in die Allianz [b]" . $alliance->toString() . "[/b] aufgenommen!");
+        $this->allianceHistoryRepository->addEntry($alliance->getId(), "[b]" . $user->getNick() . "[/b] wurde als neues Mitglied aufgenommen");
+        $this->allianceMemberCosts->increase($alliance->getId(), $alliance->memberCount, $newMemberCount);
+        $this->userRepository->setAllianceId($user->getId(), $alliance->getId());
+        if ($user->getAlliance()->getId() > 0) {
+            $previousAlliance = $this->repository->getAlliance($user->getAlliance()->getId());
+            $this->userService->addToUserLog($user->getId(), "alliance", "{nick} ist nun kein Mitglied mehr der Allianz [b]" . $previousAlliance->toString() . "[/b].");
         }
 
         $alliance->memberCount++;
@@ -167,11 +171,11 @@ class AllianceService
 
     public function kickMember(AllianceWithMemberCount $alliance, User $user, bool $kick = true): bool
     {
-        if ($alliance->id !== $user->getAllianceId()) {
+        if ($alliance->getId() !== $user->getAlliance()->getId()) {
             return false;
         }
 
-        if ($this->allianceDiplomacyRepository->isAtWar($alliance->id)) {
+        if ($this->allianceDiplomacyRepository->isAtWar($alliance->getId())) {
             return false;
         }
 
@@ -180,14 +184,14 @@ class AllianceService
         }
 
         if ($kick) {
-            $this->messageRepository->createSystemMessage($user->getId(), MessageCategoryId::ALLIANCE, "Allianzausschluss", "Du wurdest aus der Allianz [b]" . $alliance->nameWithTag . "[/b] ausgeschlossen!");
+            $this->messageRepository->createSystemMessage($user->getId(), MessageCategoryId::ALLIANCE, "Allianzausschluss", "Du wurdest aus der Allianz [b]" . $alliance->toString() . "[/b] ausgeschlossen!");
         } else {
-            $this->messageRepository->createSystemMessage($alliance->founderId, MessageCategoryId::ALLIANCE, "Allianzaustritt", "Der Spieler " . $user->getNick() . " trat aus der Allianz aus!");
+            $this->messageRepository->createSystemMessage($alliance->getFounderId(), MessageCategoryId::ALLIANCE, "Allianzaustritt", "Der Spieler " . $user->getNick() . " trat aus der Allianz aus!");
         }
 
-        $this->allianceHistoryRepository->addEntry($alliance->id, "[b]" . $user->getNick() . "[/b] ist nun kein Mitglied mehr von uns.");
-        $this->userRepository->setAllianceId($user->getId(), $alliance->id, 0, time());
-        $this->userService->addToUserLog($user->getId(), "alliance", "{nick} ist nun kein Mitglied mehr der Allianz " . $alliance->nameWithTag . ".");
+        $this->allianceHistoryRepository->addEntry($alliance->getId(), "[b]" . $user->getNick() . "[/b] ist nun kein Mitglied mehr von uns.");
+        $this->userRepository->setAllianceId($user->getId(), $alliance->getId(), 0, time());
+        $this->userService->addToUserLog($user->getId(), "alliance", "{nick} ist nun kein Mitglied mehr der Allianz " . $alliance->toString() . ".");
 
         $alliance->memberCount--;
 
@@ -196,52 +200,52 @@ class AllianceService
 
     public function changeFounder(Alliance $alliance, User $founder): bool
     {
-        if ($alliance->id !== $founder->getAllianceId()) {
+        if ($alliance->getId() !== $founder->getAlliance()->getId()) {
             return false;
         }
 
-        $this->allianceHistoryRepository->addEntry($alliance->id, "Der Spieler [b]" . $founder->getNick() . "[/b] wird zum Gründer befördert.");
+        $this->allianceHistoryRepository->addEntry($alliance->getId(), "Der Spieler [b]" . $founder->getNick() . "[/b] wird zum Gründer befördert.");
         $this->messageRepository->createSystemMessage($founder->getId(), MessageCategoryId::ALLIANCE, "Gründer", "Du hast nun die Gründerrechte deiner Allianz!");
-        $this->userService->addToUserLog($founder->getId(), "alliance", "{nick} ist nun Gründer der Allianz " . $alliance->nameWithTag);
+        $this->userService->addToUserLog($founder->getId(), "alliance", "{nick} ist nun Gründer der Allianz " . $alliance->toString());
 
         return true;
     }
 
     public function delete(Alliance $alliance, User $user = null): bool
     {
-        if (!$this->allianceDiplomacyRepository->isAtWar($alliance->id)) {
-            $this->allianceBoardCategoryRepository->deleteAllCategories($alliance->id);
-            $this->allianceApplicationRepository->deleteAllianceApplication($alliance->id);
-            $diplomacies = $this->allianceDiplomacyRepository->getDiplomacies($alliance->id);
+        if (!$this->allianceDiplomacyRepository->isAtWar($alliance->getId())) {
+            $this->allianceBoardCategoryRepository->deleteAllCategories($alliance->getId());
+            $this->allianceApplicationRepository->deleteAllianceApplication($alliance->getId());
+            $diplomacies = $this->allianceDiplomacyRepository->getDiplomacies($alliance->getId());
             foreach ($diplomacies as $diplomacy) {
-                $this->allianceBoardTopicRepository->deleteBndTopic($diplomacy->id);
+                $this->allianceBoardTopicRepository->deleteBndTopic($diplomacy->getId());
             }
 
-            $this->allianceDiplomacyRepository->deleteAllianceDiplomacies($alliance->id);
+            $this->allianceDiplomacyRepository->deleteAllianceDiplomacies($alliance->getId());
 
-            $this->allianceBuildingRepository->removeForAlliance($alliance->id);
-            $this->allianceHistoryRepository->removeForAlliance($alliance->id);
-            $this->alliancePointsRepository->removeForAlliance($alliance->id);
-            $this->allianceNewsRepository->deleteAllianceEntries($alliance->id);
-            $this->alliancePollRepository->deleteAllianceEntries($alliance->id);
-            $this->allianceRankRepository->deleteAllianceRanks($alliance->id);
-            $this->allianceSpendRepository->deleteAllianceEntries($alliance->id);
-            $this->allianceTechnologyRepository->removeForAlliance($alliance->id);
+            $this->allianceBuildingRepository->removeForAlliance($alliance->getId());
+            $this->allianceHistoryRepository->removeForAlliance($alliance->getId());
+            $this->alliancePointsRepository->removeForAlliance($alliance->getId());
+            $this->allianceNewsRepository->deleteAllianceEntries($alliance->getId());
+            $this->alliancePollRepository->deleteAllianceEntries($alliance->getId());
+            $this->allianceRankRepository->deleteAllianceRanks($alliance->getId());
+            $this->allianceSpendRepository->deleteAllianceEntries($alliance->getId());
+            $this->allianceTechnologyRepository->removeForAlliance($alliance->getId());
 
-            $this->repository->resetMother($alliance->id);
+            $this->repository->resetMother($alliance->getId());
 
             // Set user alliance link to null
-            $this->userRepository->resetAllianceId($alliance->id);
+            $this->userRepository->resetAllianceId($alliance->getId());
 
             // Daten löschen
-            $this->repository->remove($alliance->id);
+            $this->repository->remove($alliance->getId());
 
             //Log schreiben
             if ($user !== null) {
-                $this->userService->addToUserLog($user->getId(), "alliance", "{nick} löst die Allianz [b]" . $alliance->nameWithTag . "[/b] auf.");
-                $this->logRepository->add(LogFacility::ALLIANCE, LogSeverity::INFO, "Die Allianz [b]" . $alliance->nameWithTag . "[/b] wurde von " . $user->getNick() . " aufgelöst!");
+                $this->userService->addToUserLog($user->getId(), "alliance", "{nick} löst die Allianz [b]" . $alliance->toString() . "[/b] auf.");
+                $this->logRepository->add(LogFacility::ALLIANCE, LogSeverity::INFO, "Die Allianz [b]" . $alliance->toString() . "[/b] wurde von " . $user->getNick() . " aufgelöst!");
             } else {
-                $this->logRepository->add(LogFacility::ALLIANCE, LogSeverity::INFO, "Die Allianz [b]" . $alliance->nameWithTag . "[/b] wurde gelöscht!");
+                $this->logRepository->add(LogFacility::ALLIANCE, LogSeverity::INFO, "Die Allianz [b]" . $alliance->toString() . "[/b] wurde gelöscht!");
             }
 
             return true;
@@ -252,21 +256,31 @@ class AllianceService
 
     public function getUserAlliancePermissions(Alliance $alliance, User $user): UserAlliancePermission
     {
-        if ($alliance->founderId === $user->getId()) {
+        if ($alliance->getFounderId() === $user->getId()) {
             return new UserAlliancePermission(true, []);
         }
 
         $userRights = [];
-        $allianceRights = $this->allianceRightRepository->getRights();
+        $allianceRights = $this->allianceRightRepository->findBy([],['id'=>'ASC']);
         if (count($allianceRights) > 0) {
-            $rightIds = $this->allianceRankRepository->getAvailableRightIds($alliance->id, $user->getAllianceRankId());
+            $rightIds = $this->allianceRankRepository->getAvailableRightIds($alliance->getId(), $user->getAllianceRankId());
 
             foreach ($allianceRights as $right) {
-                $userRights[$right->key] = in_array($right->id, $rightIds, true);
+                $userRights[$right->getKey()] = in_array($right->getId(), $rightIds, true);
             }
         }
 
         return new UserAlliancePermission(false, array_keys(array_unique($userRights)));
+    }
+
+    public function getAveragePoints(Alliance $alliance):float
+    {
+        $memberCount = $this->userRepository->count(['alliance'=>$alliance->getId()]);
+        if ($memberCount > 0) {
+            return floor($alliance->getPoints() / $memberCount);
+        }
+
+        return 0;
     }
 
     //TODO: migrate to twig
@@ -278,10 +292,10 @@ class AllianceService
         $userAlliancePermission = $this->getUserAlliancePermissions($alliance, $cu);
         $myRankId = $cu->getAllianceRankId();
         $page = '';
-        $isFounder = $alliance->founderId == $cu->getId();
+        $isFounder = $alliance->getFounderId() == $cu->getId();
 
-        echo '<table class="tb"><caption>'.'[' . stripslashes($alliance->tag) . '] ' . stripslashes($alliance->name).'</caption>';
-        if ($alliance->image != "") {
+        echo '<table class="tb"><caption>'.$alliance->toString().'</caption>';
+        if ($alliance->getImage() != "") {
             $im = $alliance->getImageUrl();
             if (file_exists($im)) {
                 $ims = getimagesize($im);
@@ -292,23 +306,23 @@ class AllianceService
 
         // Internes Forum verlinken
         if ($userAlliancePermission->hasRights(AllianceRights::ALLIANCE_BOARD)) {
-            $topic = $this->allianceBoardTopicRepository->getAllianceTopicWithLatestPost($alliance->id);
+            $post = $this->allianceBoardPostRepository->getLatestAlliancePost($alliance->getId());
         } else {
-            $topic = $this->allianceBoardTopicRepository->getAllianceTopicWithLatestPost($alliance->id, $myRankId);
+            $post = $this->allianceBoardPostRepository->getLatestAlliancePost($alliance->getId(), $myRankId);
         }
 
-        if ($topic !== null) {
-            $ps = "Neuster Post: <a href=".$this->router->generate('game.alliance.allianceboard.showposts',['id'=>$topic->id,'_fragment' =>$topic->post->id])."><b>" . $topic->subject . "</b>, geschrieben von: <b>" . $topic->post->userNick . "</b>, <b>" . StringUtils::formatDate($topic->timestamp) . "</b></a>";
+        if ($post) {
+            $ps = "Neuster Post: <a href=".$this->router->generate('game.alliance.allianceboard.showposts',['id'=>$post->getTopic()->getId(),'_fragment' =>$post->getId()])."><b>" . $post->getTopic()->getSubject() . "</b>, geschrieben von: <b>" . $post->getUserNick() . "</b>, <b>" . StringUtils::formatDate($post->getTopic()->getTimestamp()) . "</b></a>";
         } else
             $ps = "<i>Noch keine Beitr&auml;ge vorhanden";
         echo "<tr><th>Internes Forum</th><td colspan=\"2\"><b><a href=".$this->router->generate('game.alliance.allianceboard.overview').">Forum&uuml;bersicht</a></b> &nbsp; $ps</td></tr>";
 
         // Umfrage verlinken
-        $polls = $this->alliancePollRepository->getPolls($alliance->id, 2);
+        $polls = $this->alliancePollRepository->getPolls($alliance->getId(), 2);
         $pcnt = count($polls);
         if ($pcnt > 0) {
             echo "<tr><th>Umfrage:</th>
-                <td colspan=\"2\"><a href=\"?page=$page&amp;action=viewpoll\"><b>" . stripslashes($polls[0]->title) . ":</b> " . stripslashes($polls[0]->question) . "</a>";
+                <td colspan=\"2\"><a href=\"?page=$page&amp;action=viewpoll\"><b>" . stripslashes($polls[0]->getTitle()) . ":</b> " . stripslashes($polls[0]->getQuestion()) . "</a>";
             if ($pcnt > 1)
                 echo " &nbsp; (<a href=\"?page=$page&amp;action=viewpoll\">mehr Umfragen</a>)";
             echo "</td></tr>";
@@ -316,7 +330,7 @@ class AllianceService
 
         // Bewerbungen anzeigen
         if ($userAlliancePermission->hasRights(AllianceRights::APPLICATIONS)) {
-            $applications = $this->allianceApplicationRepository->countApplications($cu->getAllianceId());
+            $applications = $this->allianceApplicationRepository->countApplications($cu->getAlliance()->getId());
             if ($applications > 0) {
                 echo "<tr><th colspan=\"3\">
                     <div><b><a href=\"?page=$page&action=applications\">Es sind Bewerbungen vorhanden!</a></b></div>
@@ -325,17 +339,17 @@ class AllianceService
         }
 
         // Wing-Anfrage
-        if ($this->config->getBoolean('allow_wings') && ($userAlliancePermission->hasRights(AllianceRights::WINGS)) && $alliance->motherRequest > 0) {
+        if ($this->config->getBoolean('allow_wings') && ($userAlliancePermission->hasRights(AllianceRights::WINGS)) && $alliance->getMotherRequest() > 0) {
             echo "<tr><th colspan=\"3\">
                 <div><b><a href=\"?page=$page&action=wings\">Es ist eine Wing-Anfrage vorhanden!</a></b></div>
                 </th></tr>";
         }
 
-        if ($this->config->getBoolean('allow_wings') && $alliance->motherId !== 0) {
-            $motherAlliance = $this->repository->getAlliance($alliance->motherId);
+        if ($this->config->getBoolean('allow_wings') && $alliance->getMotherId() !== 0) {
+            $motherAlliance = $this->repository->getAlliance($alliance->getMotherId());
             echo "<tr>
                                 <th colspan=\"3\" style=\"text-align:center;\">
-                                    Diese Allianz ist ein Wing von <b><a href=\"?page=$page&amp;action=info&amp;id=" . $alliance->motherId . "\">" . $motherAlliance->nameWithTag . "</a></b>
+                                    Diese Allianz ist ein Wing von <b><a href=\"?page=$page&amp;action=info&amp;id=" . $alliance->getMotherId() . "\">" . $motherAlliance->toString() . "</a></b>
                                 </th>
                             </tr>";
         }
@@ -343,7 +357,7 @@ class AllianceService
 
         // Bündnissanfragen anzeigen
         if ($userAlliancePermission->hasRights(AllianceRights::RELATIONS)) {
-            if ($this->allianceDiplomacyRepository->hasPendingBndRequests($cu->getAllianceId()))
+            if ($this->allianceDiplomacyRepository->hasPendingBndRequests($cu->getAlliance()->getId()))
                 echo "<tr>
                         <th colspan=\"3\" style=\"text-align:center;color:#0f0\">
                             <a  style=\"color:#0f0\" href=\"?page=$page&action=relations\">Es sind B&uuml;ndnisanfragen vorhanden!</a>
@@ -352,7 +366,7 @@ class AllianceService
 
         // Kriegserklärung anzeigen
         $time = time() - 192600;
-        if ($this->allianceDiplomacyRepository->wasWarDeclaredAgainstSince($cu->getAllianceId(), $time)) {
+        if ($this->allianceDiplomacyRepository->wasWarDeclaredAgainstSince($cu->getAlliance()->getId(), $time)) {
             if ($userAlliancePermission->hasRights(AllianceRights::RELATIONS))
                 echo "<tr>
                     <th colspan=\"3\"><b>
@@ -398,7 +412,7 @@ class AllianceService
         if ($userAlliancePermission->hasRights(AllianceRights::APPLICATION_TEMPLATE)) {
             $adminBox["Bewerbungsvorlage"] = "?page=$page&action=applicationtemplate";
         }
-        if ($isFounder && !$this->allianceDiplomacyRepository->isAtWar($cu->getAllianceId())) {
+        if ($isFounder && !$this->allianceDiplomacyRepository->isAtWar($cu->getAlliance()->getId())) {
             $adminBox["Allianz aufl&ouml;sen"] = "?page=$page&action=liquidate";
             $adminBox["Allianz verlassen"] = "?page=$page&action=leave";
             //array_push($adminBox,"<a href=\"\" onclick=\"return confirm('Allianz wirklich verlassen?');\"></a>");
@@ -420,22 +434,22 @@ class AllianceService
                     <th>Letzte Ereignisse:</th>
                     <td colspan=\"2\">";
 
-            $entries = $this->allianceHistoryRepository->findForAlliance($cu->getAllianceId(), 5);
+            $entries = $this->allianceHistoryRepository->findForAlliance($cu->getAlliance()->getId(), 5);
             if (count($entries) > 0) {
                 foreach ($entries as $entry) {
-                    echo "<div class=\"infoLog\">" . BBCodeUtils::toHTML($entry->text) . " <span>" . StringUtils::formatDate($entry->timestamp, false) . "</span></div>";
+                    echo "<div class=\"infoLog\">" . BBCodeUtils::toHTML($entry->getText()) . " <span>" . StringUtils::formatDate($entry->getTimestamp(), false) . "</span></div>";
                 }
             }
             echo "</td></tr>";
         }
 
         // Text anzeigen
-        if ($alliance->text != "") {
-            echo "<tr><td colspan=\"3\" style=\"text-align:center\">" . BBCodeUtils::toHTML($alliance->text) . "</td></tr>\n";
+        if ($alliance->getText() != "") {
+            echo "<tr><td colspan=\"3\" style=\"text-align:center\">" . BBCodeUtils::toHTML($alliance->getText()) . "</td></tr>\n";
         }
 
         // Kriege
-        $wars = $this->allianceDiplomacyRepository->getDiplomacies($alliance->id, AllianceDiplomacyLevel::WAR);
+        $wars = $this->allianceDiplomacyRepository->getDiplomacies($alliance->getId(), AllianceDiplomacyLevel::WAR);
         if (count($wars) > 0) {
             echo "<tr>
                                 <th>Kriege:</th>
@@ -447,13 +461,13 @@ class AllianceService
                                             <th>Zeitraum</th>
                                         </tr>";
             foreach ($wars as $diplomacy) {
-                $opAlliance = $this->repository->getAlliance($diplomacy->otherAllianceId);
+                $opAlliance = $this->repository->getAlliance($diplomacy->getAlliance2()->getId());
                 echo "<tr>
                                             <td>
-                                                <a href=\"?page=$page&amp;id=" . $diplomacy->otherAllianceId . "\">" . $opAlliance->nameWithTag . "</a>
+                                                <a href=\"?page=$page&amp;id=" . $diplomacy->getAlliance2()->getId() . "\">" . $opAlliance->toString() . "</a>
                                             </td>
-                                            <td>" . StringUtils::formatNumber($opAlliance->points) . " / " . StringUtils::formatNumber($opAlliance->averagePoints) . "</td>
-                                            <td>" . StringUtils::formatDate($diplomacy->date, false) . " bis " . StringUtils::formatDate($diplomacy->date + WAR_DURATION, false) . "</td>
+                                            <td>" . StringUtils::formatNumber($opAlliance->getPoints()) . " / " . StringUtils::formatNumber($opAlliance->averagePoints) . "</td>
+                                            <td>" . StringUtils::formatDate($diplomacy->getDate(), false) . " bis " . StringUtils::formatDate($diplomacy->getDate() + WAR_DURATION, false) . "</td>
                                         </tr>";
             }
             echo "</table>
@@ -463,7 +477,7 @@ class AllianceService
 
 
         // Friedensabkommen
-        $peace = $this->allianceDiplomacyRepository->getDiplomacies($alliance->id, AllianceDiplomacyLevel::PEACE);
+        $peace = $this->allianceDiplomacyRepository->getDiplomacies($alliance->getId(), AllianceDiplomacyLevel::PEACE);
         if (count($peace) > 0) {
             echo "<tr>
                                 <th>Friedensabkommen:</th>
@@ -475,13 +489,13 @@ class AllianceService
                                             <th>Zeitraum</th>
                                         </tr>";
             foreach ($peace as $diplomacy) {
-                $opAlliance = $this->repository->getAlliance($diplomacy->otherAllianceId);
+                $opAlliance = $this->repository->getAlliance($diplomacy->getAlliance2()->getId());
                 echo "<tr>
                                             <td>
-                                                <a href=\"?page=$page&amp;id=" . $diplomacy->otherAllianceId . "\">" . $opAlliance->nameWithTag . "</a>
+                                                <a href=\"?page=$page&amp;id=" . $diplomacy->getAlliance2()->getId() . "\">" . $opAlliance->toString() . "</a>
                                             </td>
-                                            <td>" . StringUtils::formatNumber($opAlliance->points) . " / " . StringUtils::formatNumber($opAlliance->averagePoints) . "</td>
-                                            <td>" . StringUtils::formatDate($diplomacy->date, false) . " bis " . StringUtils::formatDate($diplomacy->date + PEACE_DURATION, false) . "</td>
+                                            <td>" . StringUtils::formatNumber($opAlliance->getPoints()) . " / " . StringUtils::formatNumber($opAlliance->averagePoints) . "</td>
+                                            <td>" . StringUtils::formatDate($diplomacy->getDate(), false) . " bis " . StringUtils::formatDate($diplomacy->getDate() + PEACE_DURATION, false) . "</td>
                                         </tr>";
             }
             echo "</table>
@@ -490,7 +504,7 @@ class AllianceService
         }
 
         // Bündnisse
-        $bnds = $this->allianceDiplomacyRepository->getDiplomacies($alliance->id, AllianceDiplomacyLevel::BND_CONFIRMED);
+        $bnds = $this->allianceDiplomacyRepository->getDiplomacies($alliance->getId(), AllianceDiplomacyLevel::BND_CONFIRMED);
         if (count($bnds) > 0) {
             echo "<tr>
                                 <th>Bündnisse:</th>
@@ -504,12 +518,12 @@ class AllianceService
                                         </tr>";
 
             foreach ($bnds as $diplomacy) {
-                $opAlliance = $this->repository->getAlliance($diplomacy->otherAllianceId);
+                $opAlliance = $this->repository->getAlliance($diplomacy->getAlliance2()->getId());
                 echo "<tr>
-                                            <td>" . stripslashes($diplomacy->name) . "</td>
-                                            <td><a href=\"?page=$page&amp;id=" . $diplomacy->otherAllianceId . "\">" . $opAlliance->nameWithTag . "</a></td>
-                                            <td>" . StringUtils::formatNumber($opAlliance->points) . " / " . StringUtils::formatNumber($opAlliance->averagePoints) . "</td>
-                                            <td>" . StringUtils::formatDate($diplomacy->date) . "</td>
+                                            <td>" . stripslashes($diplomacy->getName()) . "</td>
+                                            <td><a href=\"?page=$page&amp;id=" . $diplomacy->getAlliance2()->getId() . "\">" . $opAlliance->toString() . "</a></td>
+                                            <td>" . StringUtils::formatNumber($opAlliance->getPoints()) . " / " . StringUtils::formatNumber($opAlliance->averagePoints) . "</td>
+                                            <td>" . StringUtils::formatDate($diplomacy->getDate()) . "</td>
                                         </tr>";
             }
             echo "</table>
@@ -519,11 +533,11 @@ class AllianceService
 
         // Besucher
         echo "<tr><th>Besucherzähler:</th>
-            <td colspan=\"2\">" . StringUtils::formatNumber($alliance->visits) . " intern / " . StringUtils::formatNumber($alliance->visitsExternal) . " extern</td></tr>\n";
+            <td colspan=\"2\">" . StringUtils::formatNumber($alliance->getVisits()) . " intern / " . StringUtils::formatNumber($alliance->getVisitsExternal()) . " extern</td></tr>\n";
 
         // Wings
         if ($this->config->getBoolean('allow_wings')) {
-            $wings = $this->repository->searchAlliances(AllianceSearch::create()->motherId($alliance->id));
+            $wings = $this->repository->searchAlliances(AllianceSearch::create()->motherId($alliance->getId()));
             if (count($wings) > 0) {
                 echo "<tr><th>Wings:</th><td colspan=\"2\">";
                 echo "<table class=\"tb\">";
@@ -535,8 +549,8 @@ class AllianceService
                 </tr>";
                 foreach ($wings as $wing) {
                     echo "<tr>
-                    <td><a href=\"?page=alliance&amp;id=" . $wing->id . "\">" . $wing->nameWithTag . "</a></td>
-                    <td>" . StringUtils::formatNumber($wing->points) . "</td>
+                    <td><a href=\"?page=alliance&amp;id=" . $wing->getId() . "\">" . $wing->toString() . "</a></td>
+                    <td>" . StringUtils::formatNumber($wing->getPoints()) . "</td>
                     <td>" . $wing->memberCount . "</td>
                     <td>" . StringUtils::formatNumber($wing->averagePoints) . "</td>
                     </tr>";
@@ -549,31 +563,31 @@ class AllianceService
 
 
         // Website
-        if ($alliance->url != "") {
+        if ($alliance->getUrl() != "") {
             echo "<tr><th>Website/Forum:</th><td colspan=\"2\"><b>" .
-                StringUtils::formatLink($alliance->url) . "</a></b></td></tr>\n";
+                StringUtils::formatLink($alliance->getUrl()) . "</a></b></td></tr>\n";
         }
 
-        $founderNick = $this->userRepository->getNick($alliance->founderId);
+        $founderNick = $this->userRepository->findOneBy(['id'=>$alliance->getFounderId()])->getNick();
 
         // Diverses
         echo "<tr><th>Mitglieder:</th>
-            <td colspan=\"2\">" . $alliance->memberCount . "</td></tr>\n";
+            <td colspan=\"2\">" . $this->userRepository->count(['alliance'=>$alliance->getId()]) . "</td></tr>\n";
         // Punkte
         echo "<tr>
                             <th>Punkte / Schnitt:</th>
                             <td colspan=\"2\">";
-        echo StringUtils::formatNumber($alliance->points) . " / " . StringUtils::formatNumber($alliance->averagePoints) . "";
+        echo StringUtils::formatNumber($alliance->getPoints()) . " / " . StringUtils::formatNumber($this->getAveragePoints($alliance)) . "";
         echo "</td>
                         </tr>";
-        echo "<tr><th width=\"120\">Gr&uuml;nder:</th>
+        echo "<tr><th>Gr&uuml;nder:</th>
             <td colspan=\"2\">
-                <a href=\"?page=userinfo&amp;id=" . $alliance->founderId . "\">" . $founderNick . "</a></td></tr>";
+                <a href=\"?page=userinfo&amp;id=" . $alliance->getFounderId() . "\">" . $founderNick . "</a></td></tr>";
         // Gründung
         echo "<tr>
                             <th>Gründungsdatum:</th>
                             <td colspan=\"2\">
-                                " . StringUtils::formatDate($alliance->foundationTimestamp) . " (vor " . StringUtils::formatTimespan(time() - $alliance->foundationTimestamp) . ")
+                                " . StringUtils::formatDate($alliance->getFoundationTimestamp()) . " (vor " . StringUtils::formatTimespan(time() - $alliance->getFoundationTimestamp()) . ")
                             </td>
                         </tr>";
         echo "\n</table><br/>";

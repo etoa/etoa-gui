@@ -4,6 +4,7 @@ namespace EtoA\Alliance;
 
 use Doctrine\Persistence\ManagerRegistry;
 use EtoA\Core\AbstractRepository;
+use EtoA\Entity\AlliancePoll;
 
 class AlliancePollRepository extends AbstractRepository
 {
@@ -56,22 +57,19 @@ class AlliancePollRepository extends AbstractRepository
     public function getPolls(int $allianceId, int $limit = null): array
     {
         $qb = $this->createQueryBuilder('q')
-            ->select('*')
-            ->from('alliance_polls')
-            ->where('poll_alliance_id = :allianceId')
+            ->where('q.alliance = :allianceId')
             ->setParameters([
                 'allianceId' => $allianceId,
             ])
-            ->orderBy('poll_timestamp', 'DESC');
+            ->orderBy('q.timestamp', 'DESC');
 
         if ($limit > 0) {
             $qb->setMaxResults($limit);
         }
 
-        $data = $qb
-            ->fetchAllAssociative();
-
-        return array_map(fn (array $row) => new AlliancePoll($row), $data);
+        return $qb
+            ->getQuery()
+            ->execute();
     }
 
     public function getPoll(int $pollId, int $allianceId): ?AlliancePoll

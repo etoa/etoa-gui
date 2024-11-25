@@ -4,6 +4,7 @@ namespace EtoA\Alliance;
 
 use Doctrine\Persistence\ManagerRegistry;
 use EtoA\Core\AbstractRepository;
+use EtoA\Entity\AllianceApplication;
 
 class AllianceApplicationRepository extends AbstractRepository
 {
@@ -15,11 +16,12 @@ class AllianceApplicationRepository extends AbstractRepository
     public function countApplications(int $allianceId): int
     {
         return (int) $this->createQueryBuilder('q')
-            ->select('COUNT(user_id)')
-            ->from('alliance_applications')
-            ->where('alliance_id = :allianceId')
+            ->select('COUNT(q.userId)')
+            ->where('q.alliance = :allianceId')
             ->setParameter('allianceId', $allianceId)
-            ->fetchOne();
+            ->getQuery()
+            ->execute();
+
     }
 
     public function getUserApplication(int $userId): ?UserAllianceApplication

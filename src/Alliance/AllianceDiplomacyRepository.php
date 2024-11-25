@@ -4,6 +4,7 @@ namespace EtoA\Alliance;
 
 use Doctrine\Persistence\ManagerRegistry;
 use EtoA\Core\AbstractRepository;
+use EtoA\Entity\AllianceDiplomacy;
 
 class AllianceDiplomacyRepository extends AbstractRepository
 {
@@ -67,27 +68,20 @@ class AllianceDiplomacyRepository extends AbstractRepository
     public function getDiplomacies(int $allianceId, int $level = null): array
     {
         $qb = $this->createQueryBuilder('q')
-            ->select('b.*')
-            ->addSelect('a1.alliance_name as alliance1Name, a1.alliance_tag as alliance1Tag')
-            ->addSelect('a2.alliance_name as alliance2Name, a2.alliance_tag as alliance2Tag')
-            ->from('alliance_bnd', 'b')
-            ->leftJoin('b', 'alliances', 'a1', 'alliance_bnd_alliance_id1 = a1.alliance_id')
-            ->leftJoin('b', 'alliances', 'a2', 'alliance_bnd_alliance_id2 = a2.alliance_id')
-            ->where('b.alliance_bnd_alliance_id1 = :allianceId OR b.alliance_bnd_alliance_id2 = :allianceId')
-            ->orderBy('b.alliance_bnd_level', 'DESC')
-            ->addOrderBy('b.alliance_bnd_id', 'DESC')
+            ->where('q.alliance1 = :allianceId OR q.alliance2 = :allianceId')
+            ->orderBy('q.level', 'DESC')
+            ->addOrderBy('q.id', 'DESC')
             ->setParameter('allianceId', $allianceId);
 
         if ($level !== null) {
             $qb
-                ->andWhere('b.alliance_bnd_level = :level')
+                ->andWhere('q.level = :level')
                 ->setParameter('level', $level);
         }
 
-        $data = $qb
-            ->fetchAllAssociative();
-
-        return array_map(fn (array $row) => new AllianceDiplomacy($row, $allianceId), $data);
+        return $qb
+            ->getQuery()
+            ->execute();
     }
 
     public function getDiplomacy(int $id, int $allianceId, int $level = null): ?AllianceDiplomacy
@@ -209,26 +203,23 @@ class AllianceDiplomacyRepository extends AbstractRepository
     public function wasWarDeclaredAgainstSince(int $allianceId, int $since): bool
     {
         return (bool) $this->createQueryBuilder('q')
-            ->select('1')
-            ->from('alliance_bnd')
-            ->where('alliance_bnd_alliance_id2 = :allianceId')
-            ->andWhere('alliance_bnd_level = :war')
-            ->andWhere('alliance_bnd_date > :since')
+            ->where('q.alliance2 = :allianceId')
+            ->andWhere('q.level = :war')
+            ->andWhere('q.date > :since')
             ->setParameters([
                 'allianceId' => $allianceId,
                 'war' => AllianceDiplomacyLevel::WAR,
                 'since' => $since,
             ])
-            ->fetchOne();
+            ->getQuery()
+            ->execute();
     }
 
     public function isAtWar(int $allianceId, int $atWarWithAllianceId = null): bool
     {
         $qb = $this->createQueryBuilder('q')
-            ->select('1')
-            ->from('alliance_bnd')
-            ->where('alliance_bnd_alliance_id1 = :allianceId OR alliance_bnd_alliance_id2 = :allianceId')
-            ->andWhere('alliance_bnd_level = :war')
+            ->where('q.alliance1= :allianceId OR q.alliance2 = :allianceId')
+            ->andWhere('q.level = :war')
             ->setParameters([
                 'allianceId' => $allianceId,
                 'war' => AllianceDiplomacyLevel::WAR,
@@ -236,26 +227,26 @@ class AllianceDiplomacyRepository extends AbstractRepository
 
         if ($atWarWithAllianceId !== null) {
             $qb
-                ->andWhere('alliance_bnd_alliance_id1 = :otherAllianceId OR alliance_bnd_alliance_id2 = :otherAllianceId')
+                ->andWhere('q.alliance1 = :otherAllianceId OR q.alliance2 = :otherAllianceId')
                 ->setParameter('otherAllianceId', $atWarWithAllianceId);
         }
 
         return (bool) $qb
-            ->fetchOne();
+            ->getQuery()
+            ->execute();
     }
 
     public function hasPendingBndRequests(int $allianceId): bool
     {
         return (bool) $this->createQueryBuilder('q')
-            ->select('1')
-            ->from('alliance_bnd')
-            ->where('alliance_bnd_alliance_id2 = :allianceId')
-            ->andWhere('alliance_bnd_level = :level')
+            ->where('q.alliance2 = :allianceId')
+            ->andWhere('q.level = :level')
             ->setParameters([
                 'allianceId' => $allianceId,
                 'level' => AllianceDiplomacyLevel::BND_REQUEST,
             ])
-            ->fetchOne();
+            ->getQuery()
+            ->execute();
     }
 
     public function deleteDiplomacy(int $id): void

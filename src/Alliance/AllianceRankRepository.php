@@ -5,6 +5,7 @@ namespace EtoA\Alliance;
 use Doctrine\DBAL\ArrayParameterType;
 use Doctrine\Persistence\ManagerRegistry;
 use EtoA\Core\AbstractRepository;
+use EtoA\Entity\AllianceRank;
 
 class AllianceRankRepository extends AbstractRepository
 {
@@ -120,8 +121,8 @@ class AllianceRankRepository extends AbstractRepository
         $data = $this->createQueryBuilder('q')
             ->select('rr.rr_right_id')
             ->from('alliance_ranks', 'ra')
-            ->innerJoin('ra', 'alliance_rankrights', 'rr', 'ra.rank_id = rr.rr_rank_id')
-            ->where('ra.rank_alliance_id = :allianceId')
+            ->innerJoin('ra', 'alliance_rankrights', 'rr', 'q.id.rank_id = rr.rr_rank_id')
+            ->where('q.alliance = :allianceId')
             ->andWhere('rr.rr_rank_id = :rankId')
             ->setParameters([
                 'allianceId' => $allianceId,

@@ -68,13 +68,13 @@ class Alliance
     #[ORM\Column(name: "alliance_architect_id")]
     private int $architectId;
 
-    #[ORM\Column(name: "alliance_technician_id")]
+    #[ORM\Column(name: "alliance_technican_id")]
     private int $technicianId;
 
     #[ORM\Column(name: "alliance_diplomat_id")]
     private int $diplomatId;
 
-    #[ORM\Column(name: "alliance_visists")]
+    #[ORM\Column(name: "alliance_visits")]
     private int $visits;
 
     #[ORM\Column(name: "alliance_visits_ext")]
