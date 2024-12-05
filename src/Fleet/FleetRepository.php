@@ -350,15 +350,6 @@ class FleetRepository extends AbstractRepository
             ->executeQuery();
     }
 
-    public function remove(int $id): void
-    {
-        $this->createQueryBuilder('q')
-            ->delete('fleet')
-            ->where('id = :id')
-            ->setParameter('id', $id)
-            ->executeQuery();
-    }
-
     /**
      * @return array<FleetShip>
      */

@@ -312,18 +312,6 @@ class AllianceRepository extends AbstractRepository
         return $affected > 0;
     }
 
-    public function remove(int $id): bool
-    {
-        $affected = $this->createQueryBuilder('q')
-            ->delete('alliances')
-            ->where('alliance_id = :id')
-            ->setParameter('id', $id)
-            ->executeQuery()
-            ->rowCount();
-
-        return $affected > 0;
-    }
-
     public function getPicture(int $allianceId): ?string
     {
         return $this->createQueryBuilder('q')

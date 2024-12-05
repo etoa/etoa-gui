@@ -83,13 +83,4 @@ abstract class AbstractRequirementRepository extends AbstractRepository
             'buildingId' => $buildingId === 0 ? null : $buildingId,
         ]);
     }
-
-    public function remove(int $id): void
-    {
-        $this->createQueryBuilder('q')
-            ->delete($this->table)
-            ->where('id = :id')
-            ->setParameter('id', $id)
-            ->executeQuery();
-    }
 }

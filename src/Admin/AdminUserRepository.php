@@ -135,18 +135,6 @@ class AdminUserRepository extends AbstractRepository
             ->executeQuery();
     }
 
-    public function remove(AdminUser $adminUser): bool
-    {
-        $affected = $this->createQueryBuilder('q')
-            ->delete('admin_users')
-            ->where('user_id = :id')
-            ->setParameter('id', $adminUser->id)
-            ->executeQuery();
-        $adminUser->id = null;
-
-        return $affected->rowCount() > 0;
-    }
-
     public function getNick(int $userId): ?string
     {
         return $this->getUserProperty($userId, 'user_nick');

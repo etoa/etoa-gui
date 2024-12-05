@@ -79,17 +79,4 @@ class MessageIgnoreRepository extends AbstractRepository
             ])
             ->executeQuery();
     }
-
-    public function remove(int $ownerId, int $targetId): void
-    {
-        $this->createQueryBuilder('q')
-            ->delete('message_ignore')
-            ->where('ignore_owner_id = :ownerId')
-            ->andWhere('ignore_target_id = :targetId')
-            ->setParameters([
-                'ownerId' => $ownerId,
-                'targetId' => $targetId,
-            ])
-            ->executeQuery();
-    }
 }

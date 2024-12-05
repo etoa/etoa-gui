@@ -4,10 +4,7 @@ namespace EtoA\Core;
 
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\DBAL\ArrayParameterType;
-use Doctrine\DBAL\Connection;
-use Doctrine\DBAL\Exception;
 use Doctrine\ORM\QueryBuilder;
-use Doctrine\Persistence\ManagerRegistry;
 use EtoA\Core\Database\AbstractSearch;
 use EtoA\Core\Database\AbstractSort;
 
@@ -16,6 +13,16 @@ abstract class AbstractRepository extends ServiceEntityRepository
     public function save(): void
     {
         $this->getEntityManager()->flush();
+    }
+
+    public function remove(Object $entity):void
+    {
+        $this->getEntityManager()->remove($entity);
+    }
+
+    public function persist(Object $entity):void
+    {
+        $this->getEntityManager()->persist($entity);
     }
 
     public function getChangeset(Object $model): array

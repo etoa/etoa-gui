@@ -113,13 +113,4 @@ class AsteroidRepository extends AbstractRepository
 
         return $affected > 0;
     }
-
-    public function remove(int $id): void
-    {
-        $this->createQueryBuilder('q')
-            ->delete('asteroids')
-            ->where('id = :id')
-            ->setParameter('id', $id)
-            ->executeQuery();
-    }
 }

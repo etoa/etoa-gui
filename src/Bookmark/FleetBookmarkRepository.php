@@ -105,20 +105,6 @@ class FleetBookmarkRepository extends AbstractRepository
             ->executeQuery();
     }
 
-    public function remove(int $id, int $userId): bool
-    {
-        return (bool) $this->createQueryBuilder('q')
-            ->delete('fleet_bookmarks')
-            ->where('user_id = :userId')
-            ->andWhere('id = :id')
-            ->setParameters([
-                'userId' => $userId,
-                'id' => $id,
-            ])
-            ->executeQuery()
-            ->rowCount();
-    }
-
     public function removeForUser(int $userId) : void
     {
         $this->createQueryBuilder('q')

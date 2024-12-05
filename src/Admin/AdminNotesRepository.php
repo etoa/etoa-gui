@@ -91,14 +91,4 @@ class AdminNotesRepository extends AbstractRepository
             ->executeQuery()
             ->rowCount();
     }
-
-    public function remove(int $id): bool
-    {
-        return (bool) $this->createQueryBuilder('q')
-            ->delete('admin_notes')
-            ->where('notes_id = :id')
-            ->setParameter('id', $id)
-            ->executeQuery()
-            ->rowCount();
-    }
 }

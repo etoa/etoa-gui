@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace EtoA\Entity;
 
+use Doctrine\DBAL\Types\Types;
 use EtoA\User\UserPropertiesRepository;
 use Doctrine\ORM\Mapping as ORM;
 

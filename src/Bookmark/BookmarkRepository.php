@@ -151,20 +151,6 @@ class BookmarkRepository extends AbstractRepository
             ->rowCount();
     }
 
-    public function remove(int $id, int $userId): bool
-    {
-        return (bool) $this->createQueryBuilder('q')
-            ->delete('bookmarks')
-            ->where('user_id = :userId')
-            ->andWhere('id = :id')
-            ->setParameters([
-                'userId' => $userId,
-                'id' => $id,
-            ])
-            ->executeQuery()
-            ->rowCount();
-    }
-
     public function removeForUser(int $userId) : void
     {
         $this->createQueryBuilder('q')

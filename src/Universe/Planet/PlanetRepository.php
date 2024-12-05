@@ -536,15 +536,6 @@ class PlanetRepository extends AbstractRepository
         return $affected > 0;
     }
 
-    public function remove(int $id): void
-    {
-        $this->createQueryBuilder('q')
-            ->delete('planets')
-            ->where('id = :id')
-            ->setParameter('id', $id)
-            ->executeQuery();
-    }
-
     public function freezeProduction(int $userId): void
     {
         $this->createQueryBuilder('q')

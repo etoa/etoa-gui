@@ -575,18 +575,6 @@ class UserRepository extends AbstractRepository
             ->executeQuery();
     }
 
-    public function remove(int $id): bool
-    {
-        $affected = $this->createQueryBuilder('q')
-            ->delete('users')
-            ->where('user_id = :id')
-            ->setParameter('id', $id)
-            ->executeQuery()
-            ->rowCount();
-
-        return $affected > 0;
-    }
-
     public function exists(UserSearch $search): bool
     {
         return (bool)$this->applySearchSortLimit($this->createQueryBuilder('q'), $search)

@@ -332,21 +332,6 @@ class MessageRepository extends AbstractRepository
         return $affected > 0;
     }
 
-    public function remove(int $id): void
-    {
-        $this->createQueryBuilder('q')
-            ->delete('messages')
-            ->where('message_id = :id')
-            ->setParameter('id', $id)
-            ->executeQuery();
-
-        $this->createQueryBuilder('q')
-            ->delete('message_data')
-            ->where('id = :id')
-            ->setParameter('id', $id)
-            ->executeQuery();
-    }
-
     /**
      * @param array<int> $ids
      */

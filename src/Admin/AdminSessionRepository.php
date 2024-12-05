@@ -106,15 +106,6 @@ class AdminSessionRepository extends AbstractRepository
             ->executeQuery();
     }
 
-    public function remove(string $id): void
-    {
-        $this->createQueryBuilder('q')
-            ->delete('admin_user_sessions')
-            ->where('id = :id')
-            ->setParameter('id', $id)
-            ->executeQuery();
-    }
-
     public function removeByUserOrId(string $id, int $userId): void
     {
         $this->createQueryBuilder('q')

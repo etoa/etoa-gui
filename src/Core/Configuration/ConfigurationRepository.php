@@ -28,15 +28,6 @@ class ConfigurationRepository extends AbstractRepository
         ), $data);
     }
 
-    public function remove(string $name): void
-    {
-        $this->createQueryBuilder('q')
-            ->delete('config')
-            ->where('config_name = :name')
-            ->setParameter('name', $name)
-            ->executeQuery();
-    }
-
     public function truncate(): void
     {
         $this->getConnection()

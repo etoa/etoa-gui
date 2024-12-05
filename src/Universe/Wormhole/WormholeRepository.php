@@ -116,13 +116,4 @@ class WormholeRepository extends AbstractRepository
             ])
             ->executeQuery();
     }
-
-    public function remove(int $id): void
-    {
-        $this->createQueryBuilder('q')
-            ->delete('wormholes')
-            ->where('id = :id')
-            ->setParameter('id', $id)
-            ->executeQuery();
-    }
 }

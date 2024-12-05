@@ -173,9 +173,9 @@ class UserSessionRepository extends AbstractRepository
             ->execute();
     }
 
-    public function remove(UserSession $userSession): void
+    public function remove(Object $entity): void
     {
-        $this->entityManager->remove($userSession);
+        $this->entityManager->remove($entity);
         $this->entityManager->flush();
     }
 

@@ -42,14 +42,12 @@ class TicketRepository extends AbstractRepository
             ->fetchOne();
     }
 
-    public function persist(Ticket $ticket): bool
+    public function persist(Object $entity): void
     {
-        $ticket->setTimestamp(time());
+        $entity->setTimestamp(time());
 
-        $this->entityManager->persist($ticket);
-        $this->entityManager->flush();
-
-        return true;
+        $this->persist($entity);
+        $this->save();
     }
 
     /**

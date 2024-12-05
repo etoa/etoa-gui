@@ -81,13 +81,4 @@ class StarRepository extends AbstractRepository
             ->executeQuery()
             ->rowCount();
     }
-
-    public function remove(int $id): void
-    {
-        $this->createQueryBuilder('q')
-            ->delete('stars')
-            ->where('id = :id')
-            ->setParameter('id', $id)
-            ->executeQuery();
-    }
 }
