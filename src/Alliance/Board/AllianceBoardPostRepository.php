@@ -15,30 +15,30 @@ class AllianceBoardPostRepository extends AbstractRepository
     public function getUserAlliancePostCounts(int $allianceId, int $userId): int
     {
         $posts = (int) $this->createQueryBuilder('q')
-            ->select('COUNT(p.post_id)')
-            ->from('allianceboard_cat', 'c')
-            ->innerJoin('c', 'allianceboard_topics', 't', 't.topic_cat_id = c.cat_id')
-            ->innerJoin('t', 'allianceboard_posts', 'p', 'p.post_topic_id = t.topic_id')
-            ->where('c.cat_alliance_id = :allianceId')
-            ->andWhere('p.post_user_id = :userId')
+            ->select('COUNT(q.id)')
+            ->innerJoin('App:AllianceBoardTopic', 't', 'WITH', 't.id = q.topic')
+            ->innerJoin('App:AllianceBoardCategory', 'c', 'WITH', 'c.id = t.category')
+            ->where('c.alliance = :allianceId')
+            ->andWhere('q.userId = :userId')
             ->setParameters([
                 'userId' => $userId,
                 'allianceId' => $allianceId,
             ])
-            ->fetchOne();
+            ->getQuery()
+            ->getSingleResult();
 
         $bndPosts = (int) $this->createQueryBuilder('q')
-            ->select('COUNT(p.post_id)')
-            ->from('alliance_bnd', 'b')
-            ->innerJoin('b', 'allianceboard_topics', 't', 't.topic_bnd_id = b.alliance_bnd_id')
-            ->innerJoin('t', 'allianceboard_posts', 'p', 'p.post_topic_id = t.topic_id')
-            ->where('b.alliance_bnd_alliance_id1 = :allianceId OR b.alliance_bnd_alliance_id2 = :allianceId')
-            ->andWhere('p.post_user_id = :userId')
+            ->select('COUNT(q.id)')
+            ->innerJoin('App:AllianceBoardTopic', 't', 'WITH', 't.id = q.topic')
+            ->innerJoin('App:AllianceDiplomacy', 'b', 'WITH', 'b.id = t.bndId')
+            ->where('b.alliance1 = :allianceId OR b.alliance2 = :allianceId')
+            ->andWhere('q.userId = :userId')
             ->setParameters([
                 'userId' => $userId,
                 'allianceId' => $allianceId,
             ])
-            ->fetchOne();
+            ->getQuery()
+            ->getSingleResult();
 
         return $posts + $bndPosts;
     }
@@ -93,21 +93,7 @@ class AllianceBoardPostRepository extends AbstractRepository
      */
     public function getPosts(int $topicId, int $limit = null): array
     {
-        $qb = $this->createQueryBuilder('q')
-            ->select('*')
-            ->from('allianceboard_posts')
-            ->where('post_topic_id = :topicId')
-            ->setParameter('topicId', $topicId)
-            ->orderBy('post_timestamp', 'ASC');
-
-        if ($limit > 0) {
-            $qb->setMaxResults($limit);
-        }
-
-        $data = $qb
-            ->fetchAllAssociative();
-
-        return array_map(fn (array $row) => new AllianceBoardPost($row), $data);
+      return $this->findBy(['topic'=>$topicId],['timestamp'=>'ASC'],$limit);
     }
 
     public function getPost(int $postId): ?AllianceBoardPost

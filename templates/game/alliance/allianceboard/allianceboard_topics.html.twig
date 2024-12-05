@@ -1,6 +1,5 @@
 {% extends 'game/alliance/allianceboard/allianceboard.html.twig' %}
 {% import 'macros.html.twig' as macros %}
-{% set topics = allianceBoardTopicRepository.getTopics(category.id) %}
 
 {% block allianceboard %}
     <h2>
@@ -34,9 +33,9 @@
                     <td style="width:250px;">
                         <a href="{{ path('game.alliance.allianceboard.showposts',{id:topic.id}) }}">{{ topic.subject }}</a>
                     </td>
-                    <td>{{ allianceBoardPostRepository.getPosts(topic.id)|length }}</td>
+                    <td>{{ topic.posts|length }}</td>
                     <td>{{ topic.count }}</td>
-                    <td>{{ allianceUsers[topic.userId].getNick }}</td>
+                    <td>{{ topic.user.nick }}</td>
                     <td>
                         {% if  allianceBoardPostRepository.getPosts(topic.id, 1) %}
                             {{ formatTimestamp(allianceBoardPostRepository.getPosts(topic.id, 1)[0].timestamp) }}<br/>{{ allianceBoardPostRepository.getPosts(topic.id, 1)[0].userNick }}

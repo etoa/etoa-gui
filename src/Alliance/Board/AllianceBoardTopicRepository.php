@@ -132,8 +132,8 @@ class AllianceBoardTopicRepository extends AbstractRepository
             ->execute();
 
         $counts = [];
-        foreach ($categoryIds as $categoryId) {
-            $counts[$categoryId] = (int) ($data[$categoryId] ?? 0);
+        foreach ($data as $ele) {
+            $counts[$ele[1]] = $ele[2];
         }
 
         return $counts;

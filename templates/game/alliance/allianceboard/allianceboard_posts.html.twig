@@ -3,12 +3,12 @@
 
 {% block allianceboard %}
     <h2>
-        <a href="{{ path('game.alliance.allianceboard.overview') }}">Übersicht</a> > <a href="{{ path('game.alliance.allianceboard.showtopics',{'id':topic.categoryId})}}">
-        {{ category.name }}</a> >
+        <a href="{{ path('game.alliance.allianceboard.overview') }}">Übersicht</a> > <a href="{{ path('game.alliance.allianceboard.showtopics',{'id':topic.category.id})}}">
+        {{ topic.category.name }}</a> >
         {{ topic.subject }}</h2>
     <twig:Table title="{{ topic.subject }}">
     {% block table_content %}
-        {% for post in posts %}
+        {% for post in topic.posts %}
             <tr>
                 <th style="width:150px;">
                     <a href="?page=userinfo&amp;id=">{{ post.userNick }}</a><br/>
@@ -45,7 +45,7 @@
             <input type="button" value="Neues Thema"/>&nbsp;
         </a>
     {% endif %}
-    <a href="{{ path('game.alliance.allianceboard.showtopics',{id:topic.categoryId}) }}">
+    <a href="{{ path('game.alliance.allianceboard.showtopics',{id:topic.category.id}) }}">
         <input type="button" value="Zur Übersicht"/>
     </a>
 {% endblock %}

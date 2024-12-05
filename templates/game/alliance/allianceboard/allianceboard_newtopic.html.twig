@@ -14,13 +14,13 @@
             <tr>
                 <th>Titel:</th>
                 <td>
-                    {{ form_widget(form.topicSubject) }}
+                    {{ form_widget(form.subject) }}
                 </td>
             </tr>
             <tr>
                 <th>Text:</th>
                 <td>
-                    {{ form_widget(form.postText) }}
+                    {{ form_widget(form.posts.vars.prototype.children.text) }}
                 </td>
             </tr>
         {% endblock %}

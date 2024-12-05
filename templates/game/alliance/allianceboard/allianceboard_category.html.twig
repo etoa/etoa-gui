@@ -4,19 +4,19 @@
         <tr>
             <th>Name:</th>
             <td>
-                {{form_widget(form.catName)}}
+                {{form_widget(form.name)}}
             </td>
         </tr>
         <tr>
             <th>Beschreibung:</th>
             <td>
-                {{form_widget(form.catDesc)}}
+                {{form_widget(form.description)}}
             </td>
         </tr>
         <tr>
             <th>Reihenfolge/Position:</th>
             <td>
-                {{ form_widget(form.catOrder) }}
+                {{ form_widget(form.order) }}
             </td>
         </tr>
         <tr>
@@ -28,7 +28,7 @@
         <tr>
             <th style="width:110px;">Symbol:</th>
             <td>
-                {{ component('AllianceboardCategoryIcons',{dropdown:form_widget(form.catBullet), image:form.catBullet.vars.value}) }}
+                {{ component('AllianceboardCategoryIcons',{dropdown:form_widget(form.bullet), image:form.bullet.vars.value}) }}
             </td>
         </tr>
     {% endblock %}

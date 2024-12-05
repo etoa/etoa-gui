@@ -13,25 +13,25 @@
             <tr>
                 <th>Titel:</th>
                 <td>
-                    {{ form_widget(form.topicSubject) }}
+                    {{ form_widget(form.subject) }}
                 </td>
             </tr>
             {% if isAdmin %}
                 <tr>
                     <th>Top-Thema:</th>
                     <td>
-                        {{ form_widget(form.topicTop) }}
+                        {{ form_widget(form.top) }}
                     </td>
                 </tr>
                 <tr>
                     <th>Geschlossen:</th>
                     <td>
-                        {{ form_widget(form.topicClosed) }}
+                        {{ form_widget(form.closed) }}
                     </td>
                 </tr>
                 <tr>
                     <th>Kategorie:</th>
-                    <td>{{ form_widget(form.topicCatId) }}</td>
+                    <td>{{ form_widget(form.category) }}</td>
                 </tr>
             {% endif %}
         {% endblock %}

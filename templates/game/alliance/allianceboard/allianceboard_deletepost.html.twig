@@ -5,7 +5,7 @@
     <h2>Beitrag löschen</h2>
     {% if msg.success is defined %}
         {{ macros.successMessage(msg.success) }}
-        <a href="{{ path('game.alliance.allianceboard.showposts',{id:post.topicId })}}">
+        <a href="{{ path('game.alliance.allianceboard.showposts',{id:post.topic.id })}}">
             <input type="button" value="Zurück"/>
         </a>
     {% else %}

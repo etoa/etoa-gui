@@ -6,20 +6,19 @@
     {% if msg.success is defined %}
         {{ macros.successMessage(msg.success) }}
     {% endif %}
-
     {{ form_start(form) }}
         <twig:Table>
         {% block table_content %}
             <tr>
                 <th>Text:</th>
                 <td>
-                    {{ form_widget(form.postText) }}
+                    {{ form_widget(form.text) }}
                 </td>
             </tr>
         {% endblock %}
         </twig:Table>
         {{ form_widget(form.postEdit) }}
-        <a href="{{ path('game.alliance.allianceboard.showposts',{id:app.request.attributes.get('_route_params').id}) }}">
+        <a href="{{ path('game.alliance.allianceboard.showposts',{id:form.vars.value.topic.id}) }}">
             <input type="button" value="Abbrechen"/>
         </a>
     {{ form_end(form) }}
