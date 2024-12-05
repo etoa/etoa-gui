@@ -6,7 +6,6 @@ use EtoA\Admin\AllianceBoardAvatar;
 use EtoA\Alliance\AllianceDiplomacyLevel;
 use EtoA\Alliance\AllianceDiplomacyRepository;
 use EtoA\Alliance\AllianceRankRepository;
-use EtoA\Alliance\AllianceRepository;
 use EtoA\Alliance\AllianceRights;
 use EtoA\Alliance\AllianceService;
 use EtoA\Alliance\Board\AllianceBoardCategoryRankRepository;
@@ -22,7 +21,6 @@ use EtoA\Image\ImageUtil;
 use EtoA\Support\BBCodeUtils;
 use EtoA\Support\StringUtils;
 use EtoA\User\UserRepository;
-use EtoA\User\UserSearch;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
@@ -41,7 +39,6 @@ use Symfony\Component\Validator\Constraints\Type;
 class AllianceBoardController extends AbstractGameController
 {
     public function __construct(
-        private readonly AllianceRepository $allianceRepository,
         private readonly AllianceDiplomacyRepository $allianceDiplomacyRepository,
         private readonly UserRepository $userRepository,
         private readonly AllianceService $service,
@@ -227,7 +224,6 @@ class AllianceBoardController extends AbstractGameController
     }
 
     // Delete a forum category and all it's content
-    //TODO: use cascade
     #[Route('/game/allianceboard/deletecategory/{id}', name: 'game.alliance.allianceboard.deletecategory')]
     public function deleteCategory(Request $request, ?AllianceBoardCategory $category = null): Response {
         if($this->isAdmin()) {
@@ -244,7 +240,8 @@ class AllianceBoardController extends AbstractGameController
                 $form->handleRequest($request);
 
                 if ($form->isSubmitted() && $form->isValid()) {
-                    $this->allianceBoardCategoryRepository->deleteCategory($category->getId(), $this->getUser()->getData()->getAlliance()->getId());
+                    $this->allianceBoardCategoryRepository->remove($category);
+                    $this->allianceBoardCategoryRepository->save();
                     $msg['success'] = "Kategorie gelöscht!";
                 }
 
