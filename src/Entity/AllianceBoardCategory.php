@@ -2,6 +2,8 @@
 
 namespace EtoA\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use EtoA\Alliance\Board\AllianceBoardCategoryRepository;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -26,12 +28,21 @@ class AllianceBoardCategory
     #[ORM\Column(name: "cat_order")]
     private int $order;
 
+    #[ORM\OneToMany(mappedBy: 'category', targetEntity: AllianceBoardTopic::class, cascade: ['persist', 'remove'])]
+    #[ORM\JoinColumn(name: 'cat_id', referencedColumnName: 'topic_cat_id')]
+    private Collection $topics;
+
     #[ORM\JoinColumn(name: 'cat_alliance_id', referencedColumnName: 'alliance_id')]
     #[ORM\ManyToOne(targetEntity: Alliance::class)]
     private Alliance|null $alliance;
 
     #[ORM\Column(name: "cat_alliance_id")]
     private string $allianceId;
+
+    public function __construct()
+    {
+        $this->topics = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -109,4 +120,36 @@ class AllianceBoardCategory
 
         return $this;
     }
+
+    /**
+     * @return Collection<int, AllianceBoardTopic>
+     */
+    public function getTopics(): Collection
+    {
+        return $this->topics;
+    }
+
+    public function addTopic(AllianceBoardTopic $topic): static
+    {
+        if (!$this->topics->contains($topic)) {
+            $this->topics->add($topic);
+            $topic->setCategory($this);
+        }
+
+        return $this;
+    }
+
+    public function removeTopic(AllianceBoardTopic $topic): static
+    {
+        if ($this->topics->removeElement($topic)) {
+            // set the owning side to null (unless already changed)
+            if ($topic->getCategory() === $this) {
+                $topic->setCategory(null);
+            }
+        }
+
+        return $this;
+    }
+
+
 }
