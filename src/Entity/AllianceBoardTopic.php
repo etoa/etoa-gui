@@ -2,6 +2,8 @@
 
 namespace EtoA\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use EtoA\Alliance\Board\AllianceBoardTopicRepository;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -9,6 +11,10 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Table(name: 'allianceboard_topics')]
 class AllianceBoardTopic
 {
+    public function __construct() {
+        $this->posts = new ArrayCollection();
+    }
+
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: "AUTO")]
     #[ORM\Column(name: "topic_id")]
@@ -19,25 +25,33 @@ class AllianceBoardTopic
     private AllianceBoardCategory|null $category;
 
     #[ORM\Column(name: "topic_bnd_id")]
-    private int $bndId;
+    private int $bndId = 0;
 
-    #[ORM\Column(name: "topic_user_id")]
-    private int $userId;
+    #[ORM\JoinColumn(name: 'topic_user_id', referencedColumnName: 'user_id')]
+    #[ORM\ManyToOne(targetEntity: User::class)]
+    private User|null $user;
+
+    #[ORM\OneToMany(mappedBy: 'topic', targetEntity: AllianceBoardPost::class, cascade: ['persist', 'remove'])]
+    #[ORM\JoinColumn(name: 'topic_id', referencedColumnName: 'post_topic_id')]
+    private Collection $posts;
 
     #[ORM\Column(name: "topic_subject")]
-    private string $subject;
+    private string $subject = '';
+
+    #[ORM\Column(name: "topic_user_nick")]
+    private string $userNick;
 
     #[ORM\Column(name: "topic_count")]
-    private int $count;
+    private int $count = 0;
 
     #[ORM\Column(name: "topic_timestamp")]
-    private int $timestamp;
+    private int $timestamp = 0;
 
     #[ORM\Column(name: "topic_top")]
-    private bool $top;
+    private bool $top = false;
 
     #[ORM\Column(name: "topic_closed")]
-    private bool $closed;
+    private bool $closed = false;
 
     public function getId(): ?int
     {
@@ -52,18 +66,6 @@ class AllianceBoardTopic
     public function setBndId(int $bndId): static
     {
         $this->bndId = $bndId;
-
-        return $this;
-    }
-
-    public function getUserId(): ?int
-    {
-        return $this->userId;
-    }
-
-    public function setUserId(int $userId): static
-    {
-        $this->userId = $userId;
 
         return $this;
     }
@@ -136,6 +138,60 @@ class AllianceBoardTopic
     public function setCategory(?AllianceBoardCategory $category): static
     {
         $this->category = $category;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, AllianceBoardPost>
+     */
+    public function getPosts(): Collection
+    {
+        return $this->posts;
+    }
+
+    public function addPost(AllianceBoardPost $post): static
+    {
+        if (!$this->posts->contains($post)) {
+            $this->posts->add($post);
+            $post->setTopic($this);
+        }
+
+        return $this;
+    }
+
+    public function removePost(AllianceBoardPost $post): static
+    {
+        if ($this->posts->removeElement($post)) {
+            // set the owning side to null (unless already changed)
+            if ($post->getTopic() === $this) {
+                $post->setTopic(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
+
+    public function setUser(?User $user): static
+    {
+        $this->user = $user;
+
+        return $this;
+    }
+
+    public function getUserNick(): ?string
+    {
+        return $this->userNick;
+    }
+
+    public function setUserNick(string $userNick): static
+    {
+        $this->userNick = $userNick;
 
         return $this;
     }
