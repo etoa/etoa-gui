@@ -11,6 +11,10 @@ class AllianceWithMemberCount extends Alliance
 
     public function __construct(array $data)
     {
+        foreach($data[0] as $key => $value) {
+            $this->{$key} = $value;
+        }
+
         $this->memberCount = (int) $data['member_count'];
         if ($this->memberCount > 0) {
             $this->averagePoints = (int) floor($this->getPoints() / $this->memberCount);

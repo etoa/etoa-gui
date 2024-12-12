@@ -15,91 +15,92 @@ class Alliance
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: "AUTO")]
     #[ORM\Column(name: "alliance_id")]
-    private int $id;
+    protected int $id;
 
     #[ORM\Column(name: "alliance_tag")]
-    private string $tag;
+    protected string $tag;
 
     #[ORM\Column(name: "alliance_name")]
-    private string $name;
+    protected string $name;
 
     #[ORM\Column(name: "alliance_text")]
-    private ?string $text;
+    protected ?string $text;
 
     #[ORM\Column(name: "alliance_img")]
-    private ?string $image;
+    protected ?string $image;
 
     #[ORM\Column(name: "alliance_img_check")]
-    private bool $imageCheck;
+    protected bool $imageCheck = false;
 
     #[ORM\Column(name: "alliance_url")]
-    private ?string $url;
+    protected ?string $url;
 
     #[ORM\Column(name: "alliance_mother")]
-    private int $motherId;
+    protected int $motherId;
 
     #[ORM\Column(name: "alliance_mother_request")]
-    private int $motherRequest;
+    protected int $motherRequest = 0;
 
     #[ORM\Column(name: "alliance_accept_applications")]
-    private bool $acceptApplications;
+    protected bool $acceptApplications = true;
 
     #[ORM\Column(name: "alliance_accept_bnd")]
-    private bool $acceptBnd;
+    protected bool $acceptBnd = true;
 
     #[ORM\Column(name: "alliance_public_memberlist")]
-    private bool $privateMemberList;
+    protected bool $publicMemberList = false;
 
     #[ORM\Column(name: "alliance_points")]
-    private int $points;
+    protected int $points = 0;
 
     #[ORM\Column(name: "alliance_rank_current")]
-    private int $currentRank;
+    protected int $currentRank = 0;
 
     #[ORM\Column(name: "alliance_rank_last")]
-    private int $lastRank;
+    protected int $lastRank = 0;
 
-    #[ORM\Column(name: "alliance_founder_id")]
-    private int $founderId;
+    #[ORM\JoinColumn(name: 'alliance_founder_id', referencedColumnName: 'user_id')]
+    #[ORM\ManyToOne(targetEntity: User::class)]
+    protected ?User $founder = null;
 
     #[ORM\Column(name: "alliance_foundation_date")]
-    private int $foundationTimestamp;
+    protected int $foundationTimestamp = 0;
 
     #[ORM\Column(name: "alliance_architect_id")]
-    private int $architectId;
+    protected int $architectId = 0;
 
     #[ORM\Column(name: "alliance_technican_id")]
-    private int $technicianId;
+    protected int $technicianId = 0;
 
     #[ORM\Column(name: "alliance_diplomat_id")]
-    private int $diplomatId;
+    protected int $diplomatId = 0;
 
     #[ORM\Column(name: "alliance_visits")]
-    private int $visits;
+    protected ?int $visits = 0;
 
     #[ORM\Column(name: "alliance_visits_ext")]
-    private int $visitsExternal;
+    protected ?int $visitsExternal = 0;
 
     #[ORM\Column(name: "alliance_application_template")]
-    private ?string $applicationTemplate;
+    protected ?string $applicationTemplate;
 
     #[ORM\Column(name: "alliance_res_metal")]
-    private int $resMetal;
+    protected int $resMetal = 0;
 
     #[ORM\Column(name: "alliance_res_crystal")]
-    private int $resCrystal;
+    protected int $resCrystal = 0;
 
     #[ORM\Column(name: "alliance_res_plastic")]
-    private int $resPlastic;
+    protected int $resPlastic = 0;
 
     #[ORM\Column(name: "alliance_res_fuel")]
-    private int $resFuel;
+    protected int $resFuel = 0;
 
     #[ORM\Column(name: "alliance_res_food")]
-    private int $resFood;
+    protected int $resFood = 0;
 
     #[ORM\Column(name: "alliance_objects_for_members")]
-    private int $objectsForMembers;
+    protected int $objectsForMembers = 1;
 
     public function toString(): string
     {
@@ -252,18 +253,6 @@ class Alliance
         return $this;
     }
 
-    public function isPrivateMemberList(): ?bool
-    {
-        return $this->privateMemberList;
-    }
-
-    public function setPrivateMemberList(bool $privateMemberList): static
-    {
-        $this->privateMemberList = $privateMemberList;
-
-        return $this;
-    }
-
     public function getPoints(): ?int
     {
         return $this->points;
@@ -296,18 +285,6 @@ class Alliance
     public function setLastRank(int $lastRank): static
     {
         $this->lastRank = $lastRank;
-
-        return $this;
-    }
-
-    public function getFounderId(): ?int
-    {
-        return $this->founderId;
-    }
-
-    public function setFounderId(int $founderId): static
-    {
-        $this->founderId = $founderId;
 
         return $this;
     }
@@ -464,6 +441,30 @@ class Alliance
     public function setObjectsForMembers(int $objectsForMembers): static
     {
         $this->objectsForMembers = $objectsForMembers;
+
+        return $this;
+    }
+
+    public function isPublicMemberList(): ?bool
+    {
+        return $this->publicMemberList;
+    }
+
+    public function setPublicMemberList(bool $publicMemberList): static
+    {
+        $this->publicMemberList = $publicMemberList;
+
+        return $this;
+    }
+
+    public function getFounder(): ?User
+    {
+        return $this->founder;
+    }
+
+    public function setFounder(?User $founder): static
+    {
+        $this->founder = $founder;
 
         return $this;
     }
