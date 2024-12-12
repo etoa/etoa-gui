@@ -5,6 +5,7 @@ namespace EtoA\Alliance;
 use Doctrine\DBAL\ArrayParameterType;
 use Doctrine\Persistence\ManagerRegistry;
 use EtoA\Core\AbstractRepository;
+use EtoA\Entity\Alliance;
 use EtoA\Entity\AllianceRank;
 
 class AllianceRankRepository extends AbstractRepository
@@ -116,21 +117,21 @@ class AllianceRankRepository extends AbstractRepository
     /**
      * @return int[]
      */
-    public function getAvailableRightIds(int $allianceId, int $rankId): array
+    public function getAvailableRightIds(Alliance $alliance, AllianceRank $rank): array
     {
         $data = $this->createQueryBuilder('q')
-            ->select('rr.rr_right_id')
-            ->from('alliance_ranks', 'ra')
-            ->innerJoin('ra', 'alliance_rankrights', 'rr', 'q.id.rank_id = rr.rr_rank_id')
+            ->select('rr.rightId')
+            ->innerJoin('App:AllianceRankRight', 'rr', 'WITH', 'q.id = rr.rankId')
             ->where('q.alliance = :allianceId')
-            ->andWhere('rr.rr_rank_id = :rankId')
+            ->andWhere('rr.rankId = :rankId')
             ->setParameters([
-                'allianceId' => $allianceId,
-                'rankId' => $rankId,
+                'alliance' => $alliance,
+                'rank' => $rank,
             ])
-            ->fetchAllAssociative();
+            ->getQuery()
+            ->execute();
 
-        return array_map(fn (array $row) => (int) $row['rr_right_id'], $data);
+        return array_map(fn (array $row) => (int) $row['rightId'], $data);
     }
 
     public function updateRank(int $id, string $name, int $level): void

@@ -10,17 +10,11 @@ use Doctrine\ORM\Mapping as ORM;
 class AllianceApplication
 {
     #[ORM\Id]
-    #[ORM\Column]
-    private int $userId;
-
     #[ORM\JoinColumn(name: 'user_id', referencedColumnName: 'user_id')]
     #[ORM\ManyToOne(targetEntity: User::class)]
     private User|null $user;
 
     #[ORM\Id]
-    #[ORM\Column]
-    private int $allianceId;
-
     #[ORM\JoinColumn(name: 'alliance_id', referencedColumnName: 'alliance_id')]
     #[ORM\ManyToOne(targetEntity: Alliance::class)]
     private Alliance|null $alliance;
@@ -30,16 +24,6 @@ class AllianceApplication
 
     #[ORM\Column]
     private string $text;
-
-    public function getUserId(): ?int
-    {
-        return $this->userId;
-    }
-
-    public function getAllianceId(): ?int
-    {
-        return $this->allianceId;
-    }
 
     public function getTimestamp(): ?int
     {

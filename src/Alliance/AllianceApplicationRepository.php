@@ -15,13 +15,7 @@ class AllianceApplicationRepository extends AbstractRepository
 
     public function countApplications(int $allianceId): int
     {
-        return (int) $this->createQueryBuilder('q')
-            ->select('COUNT(q.userId)')
-            ->where('q.alliance = :allianceId')
-            ->setParameter('allianceId', $allianceId)
-            ->getQuery()
-            ->execute();
-
+        return $this->count(['alliance'=>$allianceId]);
     }
 
     public function getUserApplication(int $userId): ?UserAllianceApplication

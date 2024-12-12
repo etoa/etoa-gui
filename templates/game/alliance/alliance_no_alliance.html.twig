@@ -7,7 +7,7 @@
             <h2>Bewerbungsstatus</h2>
             {% if alliance %}
                 {{ macros.successMessage(
-                    'Du hast dich am '~formatTimestamp(application.timestamp)~' bei der Allianz '~alliance.nameWithTag~' beworben
+                    'Du hast dich am '~formatTimestamp(application.timestamp)~' bei der Allianz '~alliance.toString~' beworben
                     und musst nun darauf warten, dass deine Bewerbung akzeptiert wird!'
                 ) }}
                 {{ form_start(form) }}

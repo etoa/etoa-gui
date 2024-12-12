@@ -6,6 +6,7 @@ namespace EtoA\Alliance;
 
 use Doctrine\Persistence\ManagerRegistry;
 use EtoA\Core\AbstractRepository;
+use EtoA\Entity\Alliance;
 use EtoA\Entity\AllianceHistory;
 
 class AllianceHistoryRepository extends AbstractRepository
@@ -15,23 +16,15 @@ class AllianceHistoryRepository extends AbstractRepository
         parent::__construct($registry, AllianceHistory::class);
     }
 
-    public function addEntry(int $allianceId, string $text): int
+    public function addEntry(Alliance $alliance, string $text): void
     {
-        $this->createQueryBuilder('q')
-            ->insert('alliance_history')
-            ->values([
-                'history_alliance_id' => ':allianceId',
-                'history_text' => ':text',
-                'history_timestamp' => ':timestamp',
-            ])
-            ->setParameters([
-                'allianceId' => $allianceId,
-                'text' => $text,
-                'timestamp' => time(),
-            ])
-            ->executeQuery();
+        $entry = new AllianceHistory();
+        $entry->setAlliance($alliance);
+        $entry->setText($text);
+        $entry->setTimestamp(time());
 
-        return (int) $this->getConnection()->lastInsertId();
+        $this->persist($entry);
+        $this->save();
     }
 
     /**

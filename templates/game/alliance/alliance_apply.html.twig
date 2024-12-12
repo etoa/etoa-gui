@@ -2,14 +2,14 @@
 {% import 'macros.html.twig' as macros %}
 
 {% block alliance %}
-    {% if not form.userAllianceApplication.vars.valid %}
-        {% for error in form.userAllianceApplication.vars.errors %}
+    {% if not form.text.vars.valid %}
+        {% for error in form.text.vars.errors %}
             {{ macros.errorMessage(error.message) }}
         {% endfor %}
     {% endif %}
 
     {% if alliance %}
-        <h2>Bewerbung bei der Allianz {{ alliance.nameWithTag }}</h2>
+        <h2>Bewerbung bei der Allianz {{ alliance.toString }}</h2>
         {% if alliance.acceptApplications %}
             {{ form_start(form) }}
                 <twig:Table title="Bewerbungstext">
@@ -17,9 +17,10 @@
                         <tr>
                             <th>Nachricht:</th>
                             <td>
-                                {{ form_widget(form.userAllianceApplication) }}
+                                {{ form_widget(form.text) }}
                                 <br/> <a href="?page=help&amp;site=">Hilfe zur Formatierung</a>
                             </td>
+                        </tr>
                     {% endblock %}
                 </twig:Table>
                 {{ form_widget(form.submitApplication) }}&nbsp;

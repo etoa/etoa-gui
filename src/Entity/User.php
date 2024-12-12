@@ -93,11 +93,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\JoinColumn(name: 'user_race_id', referencedColumnName: 'race_id')]
     #[ORM\ManyToOne(targetEntity: Race::class)]
-    protected Race|null $race;
+    protected ?Race $race = null;
 
     #[ORM\JoinColumn(name: 'user_alliance_id', referencedColumnName: 'alliance_id')]
     #[ORM\ManyToOne(targetEntity: Alliance::class)]
-    protected Alliance|null $alliance;
+    protected ?Alliance $alliance = null;
 
     #[ORM\Column(name: "user_alliance_shippoints", type: "integer")]
     protected int $allianceShipPoints;
@@ -127,8 +127,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(name: "user_rank_highest", type: "integer")]
     protected int $rankHighest;
 
-    #[ORM\Column(name: "user_alliance_rank_id", type: "integer")]
-    protected int $allianceRankId;
+    #[ORM\JoinColumn(name: 'user_alliance_rank_id', referencedColumnName: 'rank_id')]
+    #[ORM\ManyToOne(targetEntity: AllianceRank::class)]
+    protected ?AllianceRank $allianceRank = null;
 
     #[ORM\Column(name: "user_registered", type: "integer")]
     protected int $registered;
@@ -611,18 +612,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function getAllianceRankId(): ?int
-    {
-        return $this->allianceRankId;
-    }
-
-    public function setAllianceRankId(int $allianceRankId): static
-    {
-        $this->allianceRankId = $allianceRankId;
-
-        return $this;
-    }
-
     public function getRegistered(): ?int
     {
         return $this->registered;
@@ -1051,6 +1040,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setAlliance(?Alliance $alliance): static
     {
         $this->alliance = $alliance;
+
+        return $this;
+    }
+
+    public function getAllianceRank(): ?AllianceRank
+    {
+        return $this->allianceRank;
+    }
+
+    public function setAllianceRank(?AllianceRank $allianceRank): static
+    {
+        $this->allianceRank = $allianceRank;
 
         return $this;
     }

@@ -15,11 +15,13 @@ class AllianceTechnologyListItem
     #[ORM\Column(name: "alliance_techlist_id", type: "integer")]
     private int $id;
 
-    #[ORM\Column(name: "alliance_techlist_alliance_id", type: "integer")]
-    private int $allianceId;
+    #[ORM\JoinColumn(name: 'alliance_techlist_alliance_id', referencedColumnName: 'alliance_id')]
+    #[ORM\ManyToOne(targetEntity: Alliance::class)]
+    private Alliance|null $alliance;
 
-    #[ORM\Column(name: "alliance_techlist_tech_id", type: "integer")]
-    private int $technologyId;
+    #[ORM\JoinColumn(name: 'alliance_techlist_tech_id', referencedColumnName: 'alliance_tech_id')]
+    #[ORM\ManyToOne(targetEntity: AllianceTechnology::class)]
+    private AllianceTechnology|null $technology;
 
     #[ORM\Column(name: "alliance_techlist_current_level", type: "integer")]
     private int $level;
@@ -71,30 +73,6 @@ class AllianceTechnologyListItem
         return $this->id;
     }
 
-    public function getAllianceId(): ?int
-    {
-        return $this->allianceId;
-    }
-
-    public function setAllianceId(int $allianceId): static
-    {
-        $this->allianceId = $allianceId;
-
-        return $this;
-    }
-
-    public function getTechnologyId(): ?int
-    {
-        return $this->technologyId;
-    }
-
-    public function setTechnologyId(int $technologyId): static
-    {
-        $this->technologyId = $technologyId;
-
-        return $this;
-    }
-
     public function getLevel(): ?int
     {
         return $this->level;
@@ -139,6 +117,30 @@ class AllianceTechnologyListItem
     public function setMemberFor(int $memberFor): static
     {
         $this->memberFor = $memberFor;
+
+        return $this;
+    }
+
+    public function getAlliance(): ?Alliance
+    {
+        return $this->alliance;
+    }
+
+    public function setAlliance(?Alliance $alliance): static
+    {
+        $this->alliance = $alliance;
+
+        return $this;
+    }
+
+    public function getTechnology(): ?Alliance
+    {
+        return $this->technology;
+    }
+
+    public function setTechnology(?Alliance $technology): static
+    {
+        $this->technology = $technology;
 
         return $this;
     }

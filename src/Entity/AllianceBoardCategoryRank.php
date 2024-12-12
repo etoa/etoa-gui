@@ -3,7 +3,7 @@
 namespace EtoA\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use EtoA\Repository\AllianceBoardCategoryRankRepository;
+use EtoA\Alliance\Board\AllianceBoardCategoryRankRepository;
 
 #[ORM\Entity(repositoryClass: AllianceBoardCategoryRankRepository::class)]
 #[ORM\Table(name: 'allianceboard_catranks')]

@@ -9,6 +9,8 @@ use EtoA\Alliance\Board\AllianceBoardPostRepository;
 use EtoA\Alliance\Board\AllianceBoardTopicRepository;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Entity\Alliance;
+use EtoA\Entity\AllianceBuilding;
+use EtoA\Entity\AllianceTechnology;
 use EtoA\Entity\User;
 use EtoA\Fleet\FleetAction;
 use EtoA\Fleet\FleetRepository;
@@ -20,6 +22,7 @@ use EtoA\Message\MessageCategoryId;
 use EtoA\Message\MessageRepository;
 use EtoA\Support\BBCodeUtils;
 use EtoA\Support\StringUtils;
+use EtoA\Universe\Resources\BaseResources;
 use EtoA\User\UserRepository;
 use EtoA\User\UserService;
 use Symfony\Bundle\SecurityBundle\Security;
@@ -27,84 +30,35 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class AllianceService
 {
-    private AllianceRepository $repository;
-    private UserRepository $userRepository;
-    private AllianceHistoryRepository $allianceHistoryRepository;
-    private UserService $userService;
-    private AllianceDiplomacyRepository $allianceDiplomacyRepository;
-    private AllianceBoardCategoryRepository $allianceBoardCategoryRepository;
-    private AllianceBoardPostRepository $allianceBoardPostRepository;
-    private AllianceApplicationRepository $allianceApplicationRepository;
-    private AllianceBoardTopicRepository $allianceBoardTopicRepository;
-    private AllianceBuildingRepository $allianceBuildingRepository;
-    private AlliancePointsRepository $alliancePointsRepository;
-    private AllianceNewsRepository $allianceNewsRepository;
-    private AlliancePollRepository $alliancePollRepository;
-    private AllianceRankRepository $allianceRankRepository;
-    private AllianceSpendRepository $allianceSpendRepository;
-    private AllianceTechnologyRepository $allianceTechnologyRepository;
-    private LogRepository $logRepository;
-    private MessageRepository $messageRepository;
-    private ConfigurationService $config;
-    private AllianceMemberCosts $allianceMemberCosts;
-    private FleetRepository $fleetRepository;
-    private AllianceRightRepository $allianceRightRepository;
-    private Security $security;
-    private UrlGeneratorInterface $router;
     public function __construct(
-        AllianceRepository $repository,
-        UserRepository $userRepository,
-        AllianceHistoryRepository $allianceHistoryRepository,
-        UserService $userService,
-        AllianceDiplomacyRepository $allianceDiplomacyRepository,
-        AllianceBoardCategoryRepository $allianceBoardCategoryRepository,
-        AllianceApplicationRepository $allianceApplicationRepository,
-        AllianceBoardTopicRepository $allianceBoardTopicRepository,
-        AllianceBoardPostRepository $allianceBoardPostRepository,
-        AllianceBuildingRepository $allianceBuildingRepository,
-        AlliancePointsRepository $alliancePointsRepository,
-        AllianceNewsRepository $allianceNewsRepository,
-        AlliancePollRepository $alliancePollRepository,
-        AllianceRankRepository $allianceRankRepository,
-        AllianceSpendRepository $allianceSpendRepository,
-        AllianceTechnologyRepository $allianceTechnologyRepository,
-        LogRepository $logRepository,
-        MessageRepository $messageRepository,
-        ConfigurationService $config,
-        AllianceMemberCosts $allianceMemberCosts,
-        FleetRepository $fleetRepository,
-        AllianceRightRepository $allianceRightRepository,
-        Security $security,
-        UrlGeneratorInterface $router,
+        private readonly AllianceRepository $repository,
+        private readonly UserRepository $userRepository,
+        private readonly AllianceHistoryRepository $allianceHistoryRepository,
+        private readonly UserService $userService,
+        private readonly AllianceDiplomacyRepository $allianceDiplomacyRepository,
+        private readonly AllianceBoardCategoryRepository $allianceBoardCategoryRepository,
+        private readonly AllianceApplicationRepository $allianceApplicationRepository,
+        private readonly AllianceBoardTopicRepository $allianceBoardTopicRepository,
+        private readonly AllianceBoardPostRepository $allianceBoardPostRepository,
+        private readonly AllianceBuildingRepository $allianceBuildingRepository,
+        private readonly AlliancePointsRepository $alliancePointsRepository,
+        private readonly AllianceNewsRepository $allianceNewsRepository,
+        private readonly AlliancePollRepository $alliancePollRepository,
+        private readonly AllianceRankRepository $allianceRankRepository,
+        private readonly AllianceSpendRepository $allianceSpendRepository,
+        private readonly AllianceTechnologyRepository $allianceTechnologyRepository,
+        private readonly LogRepository $logRepository,
+        private readonly MessageRepository $messageRepository,
+        private readonly ConfigurationService $config,
+        private readonly FleetRepository $fleetRepository,
+        private readonly AllianceRightRepository $allianceRightRepository,
+        private readonly Security $security,
+        private readonly UrlGeneratorInterface $router,
+        private readonly AllianceRankRightRepository    $allianceRankRightRepository,
     )
-    {
-        $this->repository = $repository;
-        $this->userRepository = $userRepository;
-        $this->allianceHistoryRepository = $allianceHistoryRepository;
-        $this->userService = $userService;
-        $this->allianceDiplomacyRepository = $allianceDiplomacyRepository;
-        $this->allianceBoardCategoryRepository = $allianceBoardCategoryRepository;
-        $this->allianceBoardPostRepository = $allianceBoardPostRepository;
-        $this->allianceApplicationRepository = $allianceApplicationRepository;
-        $this->allianceBoardTopicRepository = $allianceBoardTopicRepository;
-        $this->allianceBuildingRepository = $allianceBuildingRepository;
-        $this->alliancePointsRepository = $alliancePointsRepository;
-        $this->allianceNewsRepository = $allianceNewsRepository;
-        $this->alliancePollRepository = $alliancePollRepository;
-        $this->allianceRankRepository = $allianceRankRepository;
-        $this->allianceSpendRepository = $allianceSpendRepository;
-        $this->allianceTechnologyRepository = $allianceTechnologyRepository;
-        $this->logRepository = $logRepository;
-        $this->messageRepository = $messageRepository;
-        $this->config = $config;
-        $this->allianceMemberCosts = $allianceMemberCosts;
-        $this->fleetRepository = $fleetRepository;
-        $this->allianceRightRepository = $allianceRightRepository;
-        $this->security =$security;
-        $this->router = $router;
-    }
+    {}
 
-    public function create(string $tag, string $name, ?int $founderId): AllianceWithMemberCount
+    public function create(string $tag, string $name, ?User $founder): Alliance
     {
         if (!filled($name) || !filled($tag)) {
             throw new InvalidAllianceParametersException("Name/Tag fehlt!");
@@ -120,10 +74,6 @@ class AllianceService
             throw new InvalidAllianceParametersException("Ungültiger Name! Die Länge muss zwischen 4 und 25 Zeichen liegen und darf folgende Zeichen nicht enthalten: ^'\"?<>$!=;&[]\\\\");
         }
 
-        if ($founderId === null || $founderId <= 0) {
-            throw new InvalidAllianceParametersException("Allianzgründer-ID fehlt!");
-        }
-        $founder = $this->userRepository->getUser($founderId);
         if ($founder === null) {
             throw new InvalidAllianceParametersException("Allianzgründer fehlt!");
         }
@@ -132,17 +82,14 @@ class AllianceService
             throw new InvalidAllianceParametersException("Eine Allianz mit diesem Tag oder Namen existiert bereits!");
         }
 
-        $id = $this->repository->create($tag, $name, $founderId);
-        $alliance = $this->repository->getAlliance($id);
-
-        $this->userRepository->setAllianceId($founderId, $id);
-
-        $this->userService->addToUserLog($founderId, "alliance", "{nick} hat die Allianz [b]" . $alliance->toString() . "[/b] gegründet.");
-        $this->allianceHistoryRepository->addEntry($id, "Die Allianz [b]" . $alliance->toString() . "[/b] wurde von [b]" . $founder->getNick() . "[/b] gegründet!");
+        $alliance = $this->repository->create($tag, $name, $founder);
+        $this->userRepository->setAlliance($founder, $alliance);
+        $this->userService->addToUserLog($founder, "alliance", "{nick} hat die Allianz [b]" . $alliance->toString() . "[/b] gegründet.");
+        $this->allianceHistoryRepository->addEntry($alliance, "Die Allianz [b]" . $alliance->toString() . "[/b] wurde von [b]" . $founder->getNick() . "[/b] gegründet!");
 
         return $alliance;
     }
-
+/*
     public function addMember(AllianceWithMemberCount $alliance, User $user): bool
     {
         if ($alliance->getId() === $user->getAlliance()->getId()) {
@@ -168,7 +115,7 @@ class AllianceService
 
         return true;
     }
-
+*/
     public function kickMember(AllianceWithMemberCount $alliance, User $user, bool $kick = true): bool
     {
         if ($alliance->getId() !== $user->getAlliance()->getId()) {
@@ -256,21 +203,20 @@ class AllianceService
 
     public function getUserAlliancePermissions(Alliance $alliance, User $user): UserAlliancePermission
     {
-        if ($alliance->getFounderId() === $user->getId()) {
+        if ($alliance->getFounder() === $user) {
             return new UserAlliancePermission(true, []);
         }
 
         $userRights = [];
-        $allianceRights = $this->allianceRightRepository->findBy([],['id'=>'ASC']);
-        if (count($allianceRights) > 0) {
-            $rightIds = $this->allianceRankRepository->getAvailableRightIds($alliance->getId(), $user->getAllianceRankId());
+        if ($this->allianceRightRepository->findAll()) {
+            $rankRights = $this->allianceRankRightRepository->findBy(['rankId'=>$user->getAllianceRank()->getId()]);
 
-            foreach ($allianceRights as $right) {
-                $userRights[$right->getKey()] = in_array($right->getId(), $rightIds, true);
+            foreach ($rankRights as $rankRight) {
+                $userRights[] = $rankRight->getRight()->getKey();
             }
         }
 
-        return new UserAlliancePermission(false, array_keys(array_unique($userRights)));
+        return new UserAlliancePermission(false, $userRights);
     }
 
     public function getAveragePoints(Alliance $alliance):float
@@ -290,9 +236,9 @@ class AllianceService
 
         $cu = $this->security->getUser()->getData();
         $userAlliancePermission = $this->getUserAlliancePermissions($alliance, $cu);
-        $myRankId = $cu->getAllianceRankId();
+        $myRankId = $cu->getAllianceRank()->getId();
         $page = '';
-        $isFounder = $alliance->getFounderId() == $cu->getId();
+        $isFounder = $alliance->getFounder() == $cu;
 
         echo '<table class="tb"><caption>'.$alliance->toString().'</caption>';
         if ($alliance->getImage() != "") {
@@ -333,7 +279,7 @@ class AllianceService
             $applications = $this->allianceApplicationRepository->countApplications($cu->getAlliance()->getId());
             if ($applications > 0) {
                 echo "<tr><th colspan=\"3\">
-                    <div><b><a href=\"?page=$page&action=applications\">Es sind Bewerbungen vorhanden!</a></b></div>
+                    <div><b><a href=\"".$this->router->generate('game.alliance.applications')."\">Es sind Bewerbungen vorhanden!</a></b></div>
                     </th></tr>";
             }
         }
@@ -568,7 +514,7 @@ class AllianceService
                 StringUtils::formatLink($alliance->getUrl()) . "</a></b></td></tr>\n";
         }
 
-        $founderNick = $this->userRepository->findOneBy(['id'=>$alliance->getFounderId()])->getNick();
+        $founderNick = $alliance->getFounder()->getNick();
 
         // Diverses
         echo "<tr><th>Mitglieder:</th>
@@ -577,12 +523,12 @@ class AllianceService
         echo "<tr>
                             <th>Punkte / Schnitt:</th>
                             <td colspan=\"2\">";
-        echo StringUtils::formatNumber($alliance->getPoints()) . " / " . StringUtils::formatNumber($this->getAveragePoints($alliance)) . "";
+        echo StringUtils::formatNumber($alliance->getPoints()) . " / " . StringUtils::formatNumber($this->getAveragePoints($alliance));
         echo "</td>
                         </tr>";
         echo "<tr><th>Gr&uuml;nder:</th>
             <td colspan=\"2\">
-                <a href=\"?page=userinfo&amp;id=" . $alliance->getFounderId() . "\">" . $founderNick . "</a></td></tr>";
+                <a href=\"?page=userinfo&amp;id=" . $alliance->getFounder()->getId() . "\">" . $founderNick . "</a></td></tr>";
         // Gründung
         echo "<tr>
                             <th>Gründungsdatum:</th>
@@ -593,5 +539,23 @@ class AllianceService
         echo "\n</table><br/>";
 
         return ob_get_clean();
+    }
+
+    public function calculateCosts(AllianceBuilding|AllianceTechnology $entity, int $level, int $members, float $memberCostsFactor): BaseResources
+    {
+        $level = max(1, $level);
+        $members = max(1, $members);
+
+        $factor = $entity->getBuildFactor() ** ($level - 1);
+        $memberLevelFactor = $factor * (1 + ($members - 1) * $memberCostsFactor);
+
+        $costs = new BaseResources();
+        $costs->metal = (int) ceil($entity->getCostsMetal() * $memberLevelFactor);
+        $costs->crystal = (int) ceil($entity->getCostsCrystal() * $memberLevelFactor);
+        $costs->plastic = (int) ceil($entity->getCostsPlastic() * $memberLevelFactor);
+        $costs->fuel = (int) ceil($entity->getCostsFuel() * $memberLevelFactor);
+        $costs->food = (int) ceil($entity->getCostsFood() * $memberLevelFactor);
+
+        return $costs;
     }
 }

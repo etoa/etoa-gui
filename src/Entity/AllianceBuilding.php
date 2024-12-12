@@ -75,24 +75,6 @@ class AllianceBuilding implements ObjectWithImage
         return $costs;
     }
 
-    public function calculateCosts(int $level, int $members, float $memberCostsFactor): BaseResources
-    {
-        $level = max(1, $level);
-        $members = max(1, $members);
-
-        $factor = $this->buildFactor ** ($level - 1);
-        $memberLevelFactor = $factor * (1 + ($members - 1) * $memberCostsFactor);
-
-        $costs = new BaseResources();
-        $costs->metal = (int) ceil($this->costsMetal * $memberLevelFactor);
-        $costs->crystal = (int) ceil($this->costsCrystal * $memberLevelFactor);
-        $costs->plastic = (int) ceil($this->costsPlastic * $memberLevelFactor);
-        $costs->fuel = (int) ceil($this->costsFuel * $memberLevelFactor);
-        $costs->food = (int) ceil($this->costsFood * $memberLevelFactor);
-
-        return $costs;
-    }
-
     public function calculateBuildTime(int $level): int
     {
         return $this->buildTime * $level;

@@ -15,11 +15,9 @@ class AllianceBuildListItem
     #[ORM\Column(name: "alliance_buildlist_id", type: "integer")]
     public int $id;
 
-    #[ORM\Column(name: "alliance_buildlist_alliance_id", type: "integer")]
-    private int $allianceId;
-
-    #[ORM\Column(name: "alliance_buildlist_building_id", type: "integer")]
-    private int $buildingId;
+    #[ORM\JoinColumn(name: 'alliance_buildlist_alliance_id', referencedColumnName: 'alliance_id')]
+    #[ORM\ManyToOne(targetEntity: Alliance::class)]
+    private Alliance|null $alliance;
 
     #[ORM\JoinColumn(name: 'alliance_buildlist_building_id', referencedColumnName: 'alliance_building_id')]
     #[ORM\ManyToOne(targetEntity: AllianceBuilding::class)]
@@ -78,18 +76,6 @@ class AllianceBuildListItem
     public function getId(): ?int
     {
         return $this->id;
-    }
-
-    public function getAllianceId(): ?int
-    {
-        return $this->allianceId;
-    }
-
-    public function setAllianceId(int $allianceId): static
-    {
-        $this->allianceId = $allianceId;
-
-        return $this;
     }
 
     public function getBuildingId(): ?int
@@ -172,6 +158,18 @@ class AllianceBuildListItem
     public function setAllianceBuilding(?AllianceBuilding $allianceBuilding): static
     {
         $this->allianceBuilding = $allianceBuilding;
+
+        return $this;
+    }
+
+    public function getAlliance(): ?Alliance
+    {
+        return $this->alliance;
+    }
+
+    public function setAlliance(?Alliance $alliance): static
+    {
+        $this->alliance = $alliance;
 
         return $this;
     }

@@ -6,6 +6,7 @@ namespace EtoA\Alliance;
 
 use Doctrine\Persistence\ManagerRegistry;
 use EtoA\Core\AbstractRepository;
+use EtoA\Entity\Alliance;
 use EtoA\Entity\AllianceBuildListItem;
 
 class AllianceBuildListRepository extends AbstractRepository
@@ -102,7 +103,7 @@ class AllianceBuildListRepository extends AbstractRepository
     public function getInProgress(int $allianceId): ?array
     {
         $data = $this->createQueryBuilder('q')
-            ->where('q.allianceId = :allianceId')
+            ->where('q.alliance = :allianceId')
             ->andWhere('q.buildEndTime > 0')
             ->setParameter('allianceId', $allianceId)
             ->getQuery()
@@ -135,18 +136,18 @@ class AllianceBuildListRepository extends AbstractRepository
             ->executeQuery();
     }
 
-    public function updateMembersForAlliance(int $allianceId, int $amount): void
+    public function updateMembersForAlliance(Alliance $alliance, int $amount): void
     {
         $this->createQueryBuilder('q')
-            ->update('alliance_buildlist')
-            ->set('alliance_buildlist_member_for', ':amount')
-            ->where('alliance_buildlist_alliance_id = :alliance')
-            ->andWhere('alliance_buildlist_member_for < :amount')
+            ->set('q.memberFor', ':amount')
+            ->where('q.alliance = :alliance')
+            ->andWhere('q.memberFor < :amount')
             ->setParameters([
                 'amount' => $amount,
-                'alliance' => $allianceId,
+                'alliance' => $alliance,
             ])
-            ->executeQuery();
+            ->getQuery()
+            ->execute();
     }
 
     public function updateForAlliance(int $allianceId, int $buildingId, int $level, int $amount, int $startTime = 0, int $endTime = 0): void
