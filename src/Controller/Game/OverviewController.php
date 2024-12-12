@@ -68,7 +68,7 @@ class OverviewController extends AbstractGameController
         // Admin-Infos
         $infoText = $this->textRepo->find('info');
         // Rathaus
-        $newsCounts = $this->allianceNewsRepository->countNewEntriesSince($this->getUser()->getData()->getAlliance()->getId(), $this->getUser()->getData()->getLastOnline());
+        $newsCounts = $this->getUser()->getData()->getAlliance() ? $this->allianceNewsRepository->countNewEntriesSince($this->getUser()->getData()->getAlliance()->getId(), $this->getUser()->getData()->getLastOnline()):0;
 
         // Eigene Flotten
         $ownFleets = $this->fleetRepository->count(['userId'=>$this->getUser()->getId()]);
@@ -88,7 +88,7 @@ class OverviewController extends AbstractGameController
         $genTechnologyInProgress = $this->technologyRepository->searchEntry(TechnologyListItemSearch::create()->userId($this->getUser()->getId())->technologyId(TechnologyId::GEN)->underConstruction());
 
         // Allianzegebäude
-        if ($this->getUser()->getData()->getAlliance()->getId() != 0) {
+        if ($this->getUser()->getData()->getAlliance()?->getId() != 0) {
 
             // Lädt bauende Allianzgebäude
             $allianceBuildingInProgress = $this->allianceBuildListRepository->getInProgress($this->getUser()->getData()->getAlliance()->getId());

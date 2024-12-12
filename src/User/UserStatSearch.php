@@ -19,27 +19,27 @@ class UserStatSearch extends AbstractSearch
 
     public static function ships(): UserStatSearch
     {
-        return new UserStatSearch('points_ships', 'rank_ships', 'rankshift_ships');
+        return new UserStatSearch('q.shipPoints', 'q.rankShips', 'q.shiftShips');
     }
 
     public static function technologies(): UserStatSearch
     {
-        return new UserStatSearch('points_tech', 'rank_tech', 'rankshift_tech');
+        return new UserStatSearch('q.techPoints', 'q.rankTech', 'q.shiftTechs');
     }
 
     public static function buildings(): UserStatSearch
     {
-        return new UserStatSearch('points_buildings', 'rank_buildings', 'rankshift_buildings');
+        return new UserStatSearch('q.buildingPoints', 'q.rankBuildings', 'q.shiftBuildings');
     }
 
     public static function exp(): UserStatSearch
     {
-        return new UserStatSearch('points_exp', 'rank_exp', 'rankshift_exp');
+        return new UserStatSearch('q.expPoints', 'q.rankExp', 'q.shiftExp');
     }
 
     public static function points(): UserStatSearch
     {
-        return new UserStatSearch('points', 'rank', 'rankshift');
+        return new UserStatSearch('q.points', 'q.rank', 'q.shift');
     }
 
     public function nick(string $userNick): self
@@ -52,7 +52,7 @@ class UserStatSearch extends AbstractSearch
 
     public function allianceId(int $allianceId): self
     {
-        $this->parts[] = 'users.user_alliance_id = :allianceId';
+        $this->parts[] = 'users.alliance = :allianceId';
         $this->parameters['allianceId'] = $allianceId;
 
         return $this;

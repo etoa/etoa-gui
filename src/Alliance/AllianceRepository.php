@@ -7,6 +7,7 @@ namespace EtoA\Alliance;
 use Doctrine\Persistence\ManagerRegistry;
 use EtoA\Core\AbstractRepository;
 use EtoA\Entity\Alliance;
+use EtoA\Entity\User;
 
 class AllianceRepository extends AbstractRepository
 {
@@ -127,16 +128,15 @@ class AllianceRepository extends AbstractRepository
     public function getAlliancesAcceptingApplications(): array
     {
         $data = $this->createQueryBuilder('q')
-            ->select("a.*")
-            ->addSelect('COUNT(u.user_id) as member_count')
-            ->from('alliances', 'a')
-            ->leftJoin('a', 'users', 'u', 'u.user_alliance_id=a.alliance_id')
-            ->where('a.alliance_accept_applications = 1')
-            ->groupBy('a.alliance_id')
-            ->orderBy('a.alliance_name')
-            ->addOrderBy('a.alliance_tag')
-            ->fetchAllAssociative();
-
+            ->select("q")
+            ->addSelect('COUNT(u.id) as member_count')
+            ->leftJoin('App:User', 'u', 'WITH', 'u.alliance=q.id')
+            ->where('q.acceptApplications = 1')
+            ->groupBy('q.id')
+            ->orderBy('q.name')
+            ->addOrderBy('q.tag')
+            ->getQuery()
+            ->execute();
         return array_map(fn (array $row) => new AllianceWithMemberCount($row), $data);
     }
 
@@ -147,14 +147,14 @@ class AllianceRepository extends AbstractRepository
         }
 
         $data = $this->createQueryBuilder('q')
-            ->select("a.*")
-            ->addSelect('COUNT(u.user_id) as member_count')
-            ->from('alliances', 'a')
-            ->leftJoin('a', 'users', 'u', 'u.user_alliance_id=a.alliance_id')
-            ->where('a.alliance_id = :id')
+            ->select("q")
+            ->addSelect('COUNT(u.id) as member_count')
+            ->leftJoin('App:User', 'u', 'WITH', 'u.alliance=q.id')
+            ->where('q.id = :id')
             ->setParameter('id', $allianceId)
-            ->groupBy('a.alliance_id')
-            ->fetchAssociative();
+            ->groupBy('q.id')
+            ->getQuery()
+            ->getOneOrNullResult();
 
         return $data !== false ? new AllianceWithMemberCount($data) : null;
     }
@@ -205,44 +205,41 @@ class AllianceRepository extends AbstractRepository
     }
     public function exists(string $tag, string $name, int $ignoreAllianceId = null): bool
     {
+
+
         $qb = $this->createQueryBuilder('q')
-            ->select('alliance_id')
-            ->from('alliances')
-            ->where('alliance_tag = :tag OR alliance_name = :name')
+            ->select('q.id')
+            ->where('q.tag = :tag OR q.name = :name')
             ->setParameters([
                 'name' => $name,
                 'tag' => $tag,
             ]);
 
-        if ($ignoreAllianceId !== null) {
+        if ($ignoreAllianceId) {
             $qb
-                ->andWhere('alliance_id <> :allianceId')
+                ->andWhere('q.id <> :allianceId')
                 ->setParameter('allianceId', $ignoreAllianceId);
         }
 
         return (bool) $qb
             ->setMaxResults(1)
-            ->fetchOne();
+            ->getQuery()
+            ->getOneOrNullResult();
     }
 
-    public function create(string $tag, string $name, int $founderId): int
+    public function create(string $tag, string $name, User $founder): Alliance
     {
-        $this->createQueryBuilder('q')
-            ->insert('alliances')
-            ->values([
-                'alliance_tag' => ':tag',
-                'alliance_name' => ':name',
-                'alliance_founder_id' => ':founder',
-                'alliance_foundation_date' => time(),
-                'alliance_public_memberlist' => 1,
-            ])
-            ->setParameters([
-                'name' => $name,
-                'tag' => $tag,
-                'founder' => $founderId,
-            ])->executeQuery();
+        $alliance = new Alliance();
+        $alliance->setTag($tag);
+        $alliance->setName($name);
+        $alliance->setFounder($founder);
+        $alliance->setFoundationTimestamp(time());
+        $alliance->setPublicMemberList(true);
 
-        return (int) $this->getConnection()->lastInsertId();
+        $this->persist($alliance);
+        $this->save();
+
+        return $alliance;
     }
 
     public function updateApplicationText(int $allianceId, string $template): void
@@ -555,7 +552,7 @@ class AllianceRepository extends AbstractRepository
     }
 
     public function addResources(
-        int $allianceId,
+        Alliance $alliance,
         int $addMetal,
         int $addCrystal,
         int $addPlastic,
@@ -564,15 +561,14 @@ class AllianceRepository extends AbstractRepository
         int $newMemberCount = null
     ): void {
         $qb = $this->createQueryBuilder('q')
-            ->update('alliances')
-            ->set('alliance_res_metal', 'alliance_res_metal + :addMetal')
-            ->set('alliance_res_crystal', 'alliance_res_crystal + :addCrystal')
-            ->set('alliance_res_plastic', 'alliance_res_plastic + :addPlastic')
-            ->set('alliance_res_fuel', 'alliance_res_fuel + :addFuel')
-            ->set('alliance_res_food', 'alliance_res_food + :addFood')
-            ->where('alliance_id = :id')
+            ->set('q.resMetal', 'q.resMetal + :addMetal')
+            ->set('q.resCrystal', 'q.resCrystal + :addCrystal')
+            ->set('q.resPlastic', 'q.resPlastic + :addPlastic')
+            ->set('q.resFuel', 'q.resFuel + :addFuel')
+            ->set('q.resFood', 'q.resFood + :addFood')
+            ->where('q.alliance = :id')
             ->setParameters([
-                'id' => $allianceId,
+                'id' => $alliance,
                 'addMetal' => $addMetal,
                 'addCrystal' => $addCrystal,
                 'addPlastic' => $addPlastic,
@@ -582,12 +578,13 @@ class AllianceRepository extends AbstractRepository
 
         if ($newMemberCount !== null) {
             $qb
-                ->set('alliance_objects_for_members', ':memberCount')
+                ->set('q.objectsForMembers', ':memberCount')
                 ->setParameter('memberCount', $newMemberCount);
         }
 
         $qb
-            ->executeQuery();
+            ->getQuery()
+            ->execute();
     }
 
     /**

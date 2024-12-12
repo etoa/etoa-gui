@@ -106,28 +106,25 @@ class UserStatRepository extends AbstractRepository
      */
     public function searchStats(UserStatSearch $search, UserRatingSort $sort = null, int $limit = null, int $offset = null): array
     {
-        //TODO use https://www.doctrine-project.org/projects/doctrine-orm/en/latest/reference/basic-mapping.html#quoting-reserved-words instead
         $qb = $this->createQueryBuilder('q')
-            ->select('id', 'nick', 'blocked', 'hmod', 'inactive', 'race_name', 'alliance_tag', 'sx', 'sy', 'points_ships', 'points_tech', 'points_buildings', 'points_exp')
-            ->addSelect('`' . $search->order . '`' . ' AS ranking')
-            ->addSelect('`' . $search->field . '`' . ' AS points')
-            ->addSelect('`' . $search->shift . '`' . ' AS shift')
-            ->from('user_stats');
+            ->select('q.id', 'q.nick', 'q.blocked', 'q.hmod', 'q.inactive', 'q.raceName', 'q.allianceTag', 'q.sx', 'q.sy', 'q.shipPoints', 'q.techPoints', 'q.buildingPoints', 'q.expPoints')
+            ->addSelect($search->order . ' AS ranking')
+            ->addSelect($search->field . ' AS points')
+            ->addSelect($search->shift . ' AS shift');
 
         if (isset($search->parameters['allianceId'])) {
-            $qb->innerJoin('user_stats', 'users', 'users', 'users.user_id = user_stats.id');
+            $qb->innerJoin('App:User', 'users', 'WITH', 'users.id = q.id');
         }
 
         if ($sort == null || count($sort->sorts) === 0) {
             $qb
-                ->orderBy('`' . $search->order . '`', 'ASC')
-                ->addOrderBy('`' . 'nick' . '`', 'ASC');
+                ->orderBy($search->order, 'ASC')
+                ->addOrderBy('q.nick', 'ASC');
         }
 
-        $data = $this->applySearchSortLimit($qb, $search, $sort, $limit, $offset)
-            ->fetchAllAssociative();
-
-        return array_map(fn (array $row) => new UserStat($row), $data);
+        return $this->applySearchSortLimit($qb, $search, $sort, $limit, $offset)
+            ->getQuery()
+            ->execute();
     }
 
     public function truncate(): void

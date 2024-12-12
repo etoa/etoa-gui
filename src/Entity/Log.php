@@ -82,12 +82,12 @@ class Log
         return $this;
     }
 
-    public function getIp(): ?int
+    public function getIp(): ?string
     {
         return $this->ip;
     }
 
-    public function setIp(int $ip): static
+    public function setIp(string $ip): static
     {
         $this->ip = $ip;
 

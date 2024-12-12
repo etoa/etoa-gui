@@ -26,9 +26,6 @@ class UserAlliancePermission
             return true;
         }
 
-        error_msg("Keine Berechtigung!");
-        echo "<input type=\"button\" onclick=\"document.location='?page=$page';\" value=\"Zur&uuml;ck\" />";
-
         return false;
     }
 
