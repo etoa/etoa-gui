@@ -9,30 +9,24 @@ use EtoA\Entity\Planet;
 use EtoA\Support\StringUtils;
 use EtoA\Universe\Resources\ResourceNames;
 use EtoA\User\UserPropertiesRepository;
+use Symfony\Bundle\SecurityBundle\Security;
 
 /**
  * Displays a box with resources, power and population
  */
 class ResourceBoxDrawer
 {
-    private ConfigurationService $config;
-    private UserPropertiesRepository $userPropertiesRepository;
-
     public function __construct(
-        ConfigurationService     $config,
-        UserPropertiesRepository $userPropertiesRepository
+        private readonly Security                 $security,
     )
-    {
-        $this->config = $config;
-        $this->userPropertiesRepository = $userPropertiesRepository;
-    }
+    {}
 
+    //TODO: migrate to resourceBox component
     public function getHTML(Planet $planet): string
     {
-        $userId = (int)\EtoA\Legacy\UserSession::getInstance($this->config)->user_id;
-        $properties = $this->userPropertiesRepository->getOrCreateProperties($userId);
+        $cu = $this->security->getUser()->getData();
 
-        return $properties->isSmallResBox() ? $this->getHTMLSmall($planet) : $this->getHTMLNormal($planet);
+        return $cu->getUserProperties()->isSmallResBox() ? $this->getHTMLSmall($planet) : $this->getHTMLNormal($planet);
     }
 
     private function getHTMLNormal(Planet $planet): string
@@ -53,7 +47,7 @@ class ResourceBoxDrawer
         if ($planet->getStorePlastic() <= floor($planet->getResPlastic()) && floor($planet->getResPlastic()) > 0) {
             $style2 = "resfullcolor";
         }
-        if ($planet->getStoreFuel() <= floor($planet->getResFuel()) && floor($planet->getResFuel()()) > 0) {
+        if ($planet->getStoreFuel() <= floor($planet->getResFuel()) && floor($planet->getResFuel()) > 0) {
             $style3 = "resfullcolor";
         }
         if ($planet->getStoreFood() <= floor($planet->getResFood()) && floor($planet->getResFood()) > 0) {
@@ -70,7 +64,7 @@ class ResourceBoxDrawer
             $power_rest = floor($planet->getProdPower()) - floor($planet->getUsePower());
         }
 
-        $rtn = tableStart("Ressourcen") . "<tr>
+        $rtn = "<table class='tb resBoxTable'><caption>Resourcen</caption><tr>
         <th class=\"resBoxTitleCell\"><div class=\"resmetal\">" . ResourceNames::METAL . "</div></th>
         <th class=\"resBoxTitleCell\"><div class=\"rescrystal\">" . ResourceNames::CRYSTAL . "</div></th>
         <th class=\"resBoxTitleCell\"><div class=\"resplastic\">" . ResourceNames::PLASTIC . "</div></th>
@@ -80,14 +74,14 @@ class ResourceBoxDrawer
         <th class=\"resBoxTitleCell\"><div class=\"respower\">Energie</div></th>
         </tr><tr>"
 
-            . $this->getResourceRow($style0, ResourceNames::METAL, "images/resources/metal.png", $planet->getResMetal(), $planet->getStoreMetal(), $planet->getProdMetal())
-            . $this->getResourceRow($style1, ResourceNames::CRYSTAL, "images/resources/crystal.png", $planet->getResCrystal(), $planet->getStoreCrystal(), $planet->getProdCrystal())
-            . $this->getResourceRow($style2, ResourceNames::PLASTIC, "images/resources/plastic.png", $planet->getResPlastic(), $planet->getStorePlastic(), $planet->getProdPlastic())
-            . $this->getResourceRow($style3, ResourceNames::FUEL, "images/resources/fuel.png", $planet->getResFuel(), $planet->getStoreFuel(), $planet->getProdFuel())
-            . $this->getResourceRow($style4, ResourceNames::FOOD, "images/resources/food.png", $planet->getResFood(), $planet->getStoreFood(), $planet->getProdFood())
-            . $this->getResourceRow($style5, "Bevölkerung", "images/resources/people.png", $planet->getPeople(), $planet->getPeoplePlace(), $planet->getProdPeople())
+            . $this->getResourceRow($style0, ResourceNames::METAL, "/build/images/resources/metal.png", $planet->getResMetal(), $planet->getStoreMetal(), $planet->getProdMetal())
+            . $this->getResourceRow($style1, ResourceNames::CRYSTAL, "/build/images/resources/crystal.png", $planet->getResCrystal(), $planet->getStoreCrystal(), $planet->getProdCrystal())
+            . $this->getResourceRow($style2, ResourceNames::PLASTIC, "/build/images/resources/plastic.png", $planet->getResPlastic(), $planet->getStorePlastic(), $planet->getProdPlastic())
+            . $this->getResourceRow($style3, ResourceNames::FUEL, "/build/images/resources/fuel.png", $planet->getResFuel(), $planet->getStoreFuel(), $planet->getProdFuel())
+            . $this->getResourceRow($style4, ResourceNames::FOOD, "/build/images/resources/food.png", $planet->getResFood(), $planet->getStoreFood(), $planet->getProdFood())
+            . $this->getResourceRow($style5, "Bevölkerung", "/build/images/resources/people.png", $planet->getPeople(), $planet->getPeoplePlace(), $planet->getProdPeople())
 
-            . "<td class=\"$style6\" " . mTT(ResourceNames::POWER, "<img width=\"40px\" height=\"40px\" src=\"images/resources/power.png\" style=\"float:left;margin-right:5px;\"/> <b>Produktion:</b> " . StringUtils::formatNumber($planet->getProdPower()) . "<br/><b>Verfügbar:</b> " . StringUtils::formatNumber($power_rest) . "<br/><b>Verbrauch:</b> " . StringUtils::formatNumber($planet->getUsePower()) . "<br style=\"clear:both;\"/>") . ">" . StringUtils::formatNumber($power_rest) . "</td>
+            . "<td class=\"$style6\" " . mTT(ResourceNames::POWER, "<img width=\"40px\" height=\"40px\" src=\"build/images/resources/power.png\" style=\"float:left;margin-right:5px;\"/> <b>Produktion:</b> " . StringUtils::formatNumber($planet->getProdPower()) . "<br/><b>Verfügbar:</b> " . StringUtils::formatNumber($power_rest) . "<br/><b>Verbrauch:</b> " . StringUtils::formatNumber($planet->getUsePower()) . "<br style=\"clear:both;\"/>") . ">" . StringUtils::formatNumber($power_rest) . "</td>
         </tr></table>";
 
         return $rtn;
