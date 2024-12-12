@@ -1,0 +1,57 @@
+{% extends 'game/alliance/alliance.html.twig' %}
+
+{% block alliance %}
+    <h2>Allianzmitglieder</h2>
+
+    <twig:Table>
+        {% block table_content %}
+            <tr>
+                <th>Nick</th>
+                <th>Heimatplanet</th>
+                <th>Punkte</th>
+                <th>Rasse</th>
+                <th>Rang</th>
+                <th>Attack</th>
+                <th>Online</th>
+                <th>Aktionen</th>
+            </tr>
+            {% for member in members %}
+                <tr>
+                    <td>{{ member.nick }}</td>
+                    <td>{{ member.planet }}</td>
+                    <td>{{ formatNumber(member.points) }}</td>
+                    <td>{{ member.race }}</td>
+                    <td>
+                        {% if app.user.getData.alliance.id is same as member.id %}
+                            Gründer
+                        {% elseif member.rank %}
+                            {{ member.rank }}
+                        {% else %}
+                            -
+                        {% endif  %}
+                    </td>
+                    <td>
+                        {% if member.attacks %}
+                            {{ member.attacks }}
+                        {% else %}
+                            -
+                        {% endif  %}
+                    </td>
+                    {% if member.online %}
+                        <td style="color:#0f0;">online</td>
+                    {% elseif member.lastLog %}
+                        <td>{{ member.lastLog }}</td>
+                    {% else %}
+                        <td>Noch nicht eingeloggt!</td>
+                    {% endif  %}
+                    <td class="tbldata">
+                        {% if not app.user.id is same as member.id %}
+                            <a href="?page=messages&amp;mode=new&amp;message_user_to=">Nachricht</a>
+                        {% endif  %}
+                        <a href="?page=userinfo&amp;id=">Profil</a>
+                    </td>
+                </tr>
+            {% endfor %}
+        {% endblock %}
+    </twig:Table>
+{% endblock %}
