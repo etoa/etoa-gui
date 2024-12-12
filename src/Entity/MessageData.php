@@ -14,17 +14,21 @@ class MessageData
     #[ORM\Column]
     private ?int $id = null;
 
+    #[ORM\OneToOne(inversedBy: 'messageData', targetEntity: Message::class)]
+    #[ORM\JoinColumn(name: 'id', referencedColumnName: 'message_id')]
+    private Message $message;
+
     #[ORM\Column(length: 200)]
     private ?string $subject = null;
 
     #[ORM\Column(type: Types::TEXT)]
-    private ?string $text = null;
+    private string $text;
 
     #[ORM\Column]
-    private ?int $entityId = null;
+    private int $entityId = 0;
 
     #[ORM\Column]
-    private ?int $fleetId = null;
+    private int $fleetId = 0;
 
     public function getId(): ?int
     {
@@ -82,6 +86,18 @@ class MessageData
     public function setFleetId(int $fleetId): static
     {
         $this->fleetId = $fleetId;
+
+        return $this;
+    }
+
+    public function getMessage(): ?Message
+    {
+        return $this->message;
+    }
+
+    public function setMessage(?Message $message): static
+    {
+        $this->message = $message;
 
         return $this;
     }

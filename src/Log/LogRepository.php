@@ -5,10 +5,11 @@ namespace EtoA\Log;
 use Doctrine\Persistence\ManagerRegistry;
 use EtoA\Core\AbstractRepository;
 use EtoA\Entity\Log;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 class LogRepository extends AbstractRepository
 {
-    public function __construct(ManagerRegistry $registry)
+    public function __construct(ManagerRegistry $registry,private readonly RequestStack $requestStack,)
     {
         parent::__construct($registry, Log::class);
     }
@@ -29,25 +30,17 @@ class LogRepository extends AbstractRepository
 
     public function add(int $facility, int $severity, string $message): void
     {
-        $this->getConnection()->executeQuery('INSERT DELAYED INTO logs (
-				facility,
-				severity,
-				timestamp,
-				ip,
-				message
-			) VALUES (
-				:facility,
-				:severity,
-				:timestamp,
-				:ip,
-				:message
-			)', [
-            'facility' => $facility,
-            'severity' => $severity,
-            'timestamp' => time(),
-            'ip' => (string) ($_SERVER['REMOTE_ADDR'] ?? ''),
-            'message' => $message,
-        ]);
+        $request = $this->requestStack->getCurrentRequest();
+
+        $log = new Log();
+        $log->setFacility($facility);
+        $log->setSeverity($severity);
+        $log->setTimestamp(time());
+        $log->setIp($request->server->get('REMOTE_ADDR'));
+        $log->setMessage($message);
+
+        $this->persist($log);
+        $this->save();
     }
 
     public function cleanup(int $threshold): int

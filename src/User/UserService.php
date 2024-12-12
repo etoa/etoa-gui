@@ -344,15 +344,13 @@ die Spielleitung";
         return count($deletedUsers);
     }
 
-    public function addToUserLog(int $userId, string $zone, string $message, bool $public = true): void
+    public function addToUserLog(User $user, string $zone, string $message, bool $public = true): void
     {
-        $user = $this->userRepository->find($userId);
-
         $search = array("{user}", "{nick}");
         $replace = array($user->getNick(), $user->getNick());
         $message = str_replace($search, $replace, $message);
 
-        $this->userLogRepository->add($userId, $zone, $message, gethostbyname($_SERVER['REMOTE_ADDR']), $public);
+        $this->userLogRepository->add($user->getId(), $zone, $message, gethostbyname($_SERVER['REMOTE_ADDR']), $public);
     }
 
     /**

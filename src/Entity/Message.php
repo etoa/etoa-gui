@@ -16,6 +16,10 @@ class Message
     #[ORM\Column(name:"message_id", type: "integer")]
     private int $id;
 
+    #[ORM\OneToOne(inversedBy: 'message', targetEntity: MessageData::class)]
+    #[ORM\JoinColumn(name: 'message_id', referencedColumnName: 'id')]
+    private MessageData $messageData;
+
     #[ORM\Column(name:"message_cat_id", type: "integer")]
     private int $catId;
 
@@ -28,32 +32,26 @@ class Message
     #[ORM\Column(name:"message_timestamp", type: "integer")]
     private int $timestamp;
 
-    #[ORM\Column(name:"message_subject", type: "string")]
-    private string $subject;
-
-    #[ORM\Column(name:"message_text", type: "string")]
-    private string $text;
-
     #[ORM\Column(name:"message_read", type: "boolean")]
-    private bool $read;
+    private bool $read = false;
 
     #[ORM\Column(name:"message_deleted", type: "boolean")]
-    private bool $deleted;
+    private bool $deleted = false;
 
     #[ORM\Column(name:"message_massmail", type: "boolean")]
-    private bool $massMail;
+    private bool $massMail = false;
 
     #[ORM\Column(name:"message_archived", type: "boolean")]
-    private bool $archived;
+    private bool $archived = false;
 
     #[ORM\Column(name:"message_forwarded", type: "boolean")]
-    private bool $forwarded;
+    private bool $forwarded = false;
 
     #[ORM\Column(name:"message_replied", type: "boolean")]
-    private bool $replied;
+    private bool $replied = false;
 
     #[ORM\Column(name:"message_mailed", type: "boolean")]
-    private bool $mailed;
+    private bool $mailed = false;
 
     public function getId(): ?int
     {
@@ -212,6 +210,18 @@ class Message
     public function setMailed(bool $mailed): static
     {
         $this->mailed = $mailed;
+
+        return $this;
+    }
+
+    public function getMessageData(): ?MessageData
+    {
+        return $this->messageData;
+    }
+
+    public function setMessageData(?MessageData $messageData): static
+    {
+        $this->messageData = $messageData;
 
         return $this;
     }

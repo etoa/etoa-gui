@@ -6,6 +6,8 @@ namespace EtoA\User;
 
 use Doctrine\Persistence\ManagerRegistry;
 use EtoA\Core\AbstractRepository;
+use EtoA\Entity\Alliance;
+use EtoA\Entity\AllianceRank;
 use EtoA\Entity\User;
 
 class UserRepository extends AbstractRepository
@@ -52,31 +54,19 @@ class UserRepository extends AbstractRepository
         return $data !== false ? $data : null;
     }
 
-    public function setAllianceId(int $userId, int $allianceId, int $rankId = null, int $leaveTimestamp = null): void
+    public function setAlliance(User $user, Alliance $alliance, AllianceRank $rank = null, int $leaveTimestamp = null): void
     {
-        $qb = $this->createQueryBuilder('q')
-            ->update('users')
-            ->set('user_alliance_id', ':allianceId')
-            ->where('user_id = :id')
-            ->setParameters([
-                'id' => $userId,
-                'allianceId' => $allianceId,
-            ]);
+        $user->setAlliance($alliance);
 
-        if ($rankId !== null) {
-            $qb
-                ->set('user_alliance_rank_id', ':rank')
-                ->setParameter('rank', $rankId);
+        if ($rank) {
+            $user->setAllianceRank($rank);
         }
 
-        if ($leaveTimestamp !== null) {
-            $qb
-                ->set('user_alliance_leave', ':leave')
-                ->setParameter('leave', $leaveTimestamp);
+        if ($leaveTimestamp) {
+            $user->setAllianceLeave($leaveTimestamp);
         }
 
-        $qb
-            ->executeQuery();
+        $this->save();
     }
 
     public function resetAllianceId(int $allianceId): void

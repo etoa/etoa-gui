@@ -146,15 +146,15 @@ class MessageRepository extends AbstractRepository
         $msg->setUserTo($userId);
         $msg->setCatId($catId);
         $msg->setTimestamp(time());
-        $this->getEntityManager()->persist($msg);
+        $this->persist($msg);
 
         $msgData = new MessageData();
-        $msgData->setId($msg->getId());
+        $msgData->setMessage($msg);
         $msgData->setSubject($subject);
         $msgData->setText($text);
-        $this->getEntityManager()->persist($msgData);
+        $this->persist($msgData);
 
-        $this->getEntityManager()->flush();
+        $this->save();
 
         return $msg;
     }

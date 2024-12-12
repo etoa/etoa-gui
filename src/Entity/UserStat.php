@@ -38,6 +38,18 @@ class UserStat
     #[ORM\Column(name:"rankshift")]
     private int $shift;
 
+    #[ORM\Column(name:"rankshift_ships")]
+    private int $shiftShips;
+
+    #[ORM\Column(name:"rankshift_tech")]
+    private int $shifTechs;
+
+    #[ORM\Column(name:"rankshift_buildings")]
+    private int $shiftBuildings;
+
+    #[ORM\Column(name:"rankshift_exp")]
+    private int $shiftExp;
+
     #[ORM\Column]
     private string $raceName;
 
@@ -50,16 +62,16 @@ class UserStat
     #[ORM\Column]
     private int $sy;
 
-    #[ORM\Column]
+    #[ORM\Column(name:"points_ships")]
     private int $shipPoints;
 
-    #[ORM\Column]
+    #[ORM\Column(name:"points_tech")]
     private int $techPoints;
 
-    #[ORM\Column]
+    #[ORM\Column(name:"points_buildings")]
     private int $buildingPoints;
 
-    #[ORM\Column]
+    #[ORM\Column(name:"points_exp")]
     private int $expPoints;
 
     public function getId(): ?int
@@ -243,6 +255,54 @@ class UserStat
     public function setExpPoints(int $expPoints): static
     {
         $this->expPoints = $expPoints;
+
+        return $this;
+    }
+
+    public function getShiftShips(): ?int
+    {
+        return $this->shiftShips;
+    }
+
+    public function setShiftShips(int $shiftShips): static
+    {
+        $this->shiftShips = $shiftShips;
+
+        return $this;
+    }
+
+    public function getShifTechs(): ?int
+    {
+        return $this->shifTechs;
+    }
+
+    public function setShifTechs(int $shifTechs): static
+    {
+        $this->shifTechs = $shifTechs;
+
+        return $this;
+    }
+
+    public function getShiftBuildings(): ?int
+    {
+        return $this->shiftBuildings;
+    }
+
+    public function setShiftBuildings(int $shiftBuildings): static
+    {
+        $this->shiftBuildings = $shiftBuildings;
+
+        return $this;
+    }
+
+    public function getShiftExp(): ?int
+    {
+        return $this->shiftExp;
+    }
+
+    public function setShiftExp(int $shiftExp): static
+    {
+        $this->shiftExp = $shiftExp;
 
         return $this;
     }
