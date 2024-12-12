@@ -236,7 +236,7 @@ class AllianceService
 
         $cu = $this->security->getUser()->getData();
         $userAlliancePermission = $this->getUserAlliancePermissions($alliance, $cu);
-        $myRankId = $cu->getAllianceRank()->getId();
+        $myRankId = $cu->getAllianceRank()?->getId();
         $page = '';
         $isFounder = $alliance->getFounder() == $cu;
 
@@ -325,7 +325,7 @@ class AllianceService
         $adminBox = array();
 
         if ($userAlliancePermission->hasRights(AllianceRights::VIEW_MEMBERS)) {
-            $adminBox["Mitglieder anzeigen"] = "?page=$page&amp;action=viewmembers";
+            $adminBox["Mitglieder anzeigen"] = $this->router->generate('game.alliance.members');
         }
         $adminBox["Allianzbasis"] = "?page=$page&action=base";
         if ($this->config->getBoolean('allow_wings') && $userAlliancePermission->hasRights(AllianceRights::WINGS)) {
