@@ -328,7 +328,6 @@ class AllianceController extends AbstractGameController
                             $this->messageRepository->createSystemMessage($applicationUser->getId(), MessageCategoryId::ALLIANCE, "Bewerbung abgelehnt", "Deine Allianzbewerbung wurde abgelehnt!\n\n[b]Antwort:[/b]\n" . addslashes($application->get('answer')->getData()));
 
                             // Log schreiben
-                            /** @var AllianceHistoryRepository $allianceHistoryRepository */
                             $this->allianceHistoryRepository->addEntry($cu->getAlliance(), "Die Bewerbung von [b]" . $nick . "[/b] wurde abgelehnt!");
 
                             // Anfrage löschen

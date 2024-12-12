@@ -1,0 +1,42 @@
+{% extends 'game/alliance/alliance.html.twig' %}
+{% import 'macros.html.twig' as macros %}
+
+{% block alliance %}
+    <twig:ResourceBox/>
+    <h2>Allianzbasis</h2>
+    {% set tabs = {
+        "game.alliance.base.buildings" : "Gebäude",
+        "game.alliance.base.research" : "Technologien",
+        "game.alliance.base.storage" : "Speicher",
+    } %}
+
+    {% if warnings %}
+        {% set tabs = tabs|merge({ "game.alliance.base.shipyard" : "Schiffswerft"}) %}
+    {% endif %}
+    <twig:tabmenu data="{{ tabs }}" active="{{ app.request.attributes.get('_route') }}"/><br>
+
+    <twig:Table title="Allianz Ressourcen">
+        {% block table_content %}
+            <tr>
+                <th style="width:20%;vertical-align:middle;"> {{ constant('EtoA\\Universe\\Resources\\ResIcons::METAL')|raw }}
+                    {{ constant('EtoA\\Universe\\Resources\\ResourceNames::METAL') }}</th>
+                <th style="width:20%;vertical-align:middle;"> {{ constant('EtoA\\Universe\\Resources\\ResIcons::CRYSTAL')|raw }}
+                    {{ constant('EtoA\\Universe\\Resources\\ResourceNames::CRYSTAL') }}</th>
+                <th style="width:20%;vertical-align:middle;"> {{ constant('EtoA\\Universe\\Resources\\ResIcons::PLASTIC')|raw }}
+                    {{ constant('EtoA\\Universe\\Resources\\ResourceNames::PLASTIC') }}</th>
+                <th style="width:20%;vertical-align:middle;"> {{ constant('EtoA\\Universe\\Resources\\ResIcons::FUEL')|raw }}
+                    {{ constant('EtoA\\Universe\\Resources\\ResourceNames::FUEL') }}</th>
+                <th style="width:20%;vertical-align:middle;"> {{ constant('EtoA\\Universe\\Resources\\ResIcons::FOOD')|raw }}
+                    {{ constant('EtoA\\Universe\\Resources\\ResourceNames::FOOD') }}</th>
+            </tr>
+            <tr>
+                <td {% if app.user.data.alliance.resMetal < 0 %} style="color:red;" {% endif %} id="resBoxMetal"> {{ formatNumber(app.user.data.alliance.resMetal) }} t</td>
+                <td  {% if app.user.data.alliance.resCrystal < 0 %} style="color:red;" {% endif %} id="resBoxCrystal"> {{ formatNumber(app.user.data.alliance.resCrystal) }} t</td>
+                <td  {% if app.user.data.alliance.resPlastic < 0 %} style="color:red;" {% endif %} id="resBoxPlastic"> {{ formatNumber(app.user.data.alliance.resPlastic) }} t</td>
+                <td  {% if app.user.data.alliance.resFuel < 0 %} style="color:red;" {% endif %} id="resBoxFuel"> {{ formatNumber(app.user.data.alliance.resFuel) }} t</td>
+                <td  {% if app.user.data.alliance.resFood < 0 %} style="color:red;" {% endif %} id="resBoxFood"> {{ formatNumber(app.user.data.alliance.resFood) }} t</td>
+            </tr>
+        {% endblock %}
+    </twig:Table>
+
+{% endblock %}
