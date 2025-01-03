@@ -1,0 +1,138 @@
+{% extends 'game/alliance/base/alliance_base.html.twig' %}
+{% import 'macros.html.twig' as macros %}
+
+{% block base %}
+    {% if msg.success is defined %}
+        {{ macros.successMessage(msg.success) }}
+    {% endif %}
+
+    {% if msg.error is defined %}
+        {{ macros.errorMessage(msg.error) }}
+    {% endif %}
+
+    <div id="tabStorage">
+        {{ form_start(form_storage) }}
+            <twig:Table title="Rohstoffe einzahlen">
+                {% block table_content %}
+                    <tr>
+                        <th style="width:100px;">{{ constant('EtoA\\Universe\\Resources\\ResourceNames::METAL') }}</th>
+                        <td style="width:150px;">
+                            {{ form_widget(form_storage.metal) }}
+                            <a href="javascript:" onclick="document.getElementById('form_metal').value= '{{ formatNumber(cp.resMetal) }}'">alles</a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th style="width:100px;">{{ constant('EtoA\\Universe\\Resources\\ResourceNames::CRYSTAL') }}</th>
+                        <td style="width:150px;">
+                            {{ form_widget(form_storage.crystal) }}
+                            <a href="javascript:" onclick="document.getElementById('form_storage_crystal').value= '{{ formatNumber(cp.resCrystal) }}'">alles</a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th style="width:100px;">{{ constant('EtoA\\Universe\\Resources\\ResourceNames::PLASTIC') }}</th>
+                        <td style="width:150px;">
+                            {{ form_widget(form_storage.plastic) }}
+                            <a href="javascript:" onclick="document.getElementById('form_plastic').value= '{{ formatNumber(cp.resPlastic) }}'">alles</a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th style="width:100px;">{{ constant('EtoA\\Universe\\Resources\\ResourceNames::FUEL') }}</th>
+                        <td style="width:150px;">
+                            {{ form_widget(form_storage.fuel) }}
+                            <a href="javascript:" onclick="document.getElementById('form_fuel').value= '{{ formatNumber(cp.resFuel) }}'">alles</a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th style="width:100px;">{{ constant('EtoA\\Universe\\Resources\\ResourceNames::FOOD') }}</th>
+                        <td style="width:150px;">
+                            {{ form_widget(form_storage.food) }}
+                            <a href="javascript:" onclick="document.getElementById('form_storage_food').value= '{{ formatNumber(cp.resFood) }}'">alles</a>
+                        </td>
+                    </tr>
+                {% endblock %}
+            </twig:Table>
+            {{ form_widget(form_storage.save) }}
+        {{ form_end(form_storage) }}
+        <br><br><br><br>
+        <h1>Einzahlungen / Statistik</h1>
+        {{ form_start(form_filter) }}
+            <twig:Table title="Filter">
+                {% block table_content %}
+                    <tr>
+                        <th>Ausgabe:</th>
+                        <td>
+                            {{ form_widget(form_filter.sum) }}
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>Einzahlungen:</th>
+                        <td>
+                            {{ form_widget(form_filter.limit) }}
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>Von User:</th>
+                        <td>
+                            {{ form_widget(form_filter.user) }}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="text-align:center;" colspan="2">
+                            {{ form_widget(form_filter.save) }}
+                        </td>
+                    </tr>
+                {% endblock %}
+            </twig:Table>
+        {{ form_end(form_filter) }}
+        {{ info }}<br><br>
+        {% if sum %}
+            {% if result.getSum > 0 %}
+                <twig:Table title="Total eingezahlte Rohstoffe {{ user_message }}">
+                    {% block table_content %}
+                        <tr>
+                            <th style="width:20%"> {{ constant('EtoA\\Universe\\Resources\\ResourceNames::METAL') }} </th>
+                            <th style="width:20%"> {{ constant('EtoA\\Universe\\Resources\\ResourceNames::CRYSTAL') }} </th>
+                            <th style="width:20%"> {{ constant('EtoA\\Universe\\Resources\\ResourceNames::PLASTIC') }} </th>
+                            <th style="width:20%"> {{ constant('EtoA\\Universe\\Resources\\ResourceNames::FUEL') }} </th>
+                            <th style="width:20%"> {{ constant('EtoA\\Universe\\Resources\\ResourceNames::FOOD') }} </th>
+                        </tr>
+                        <tr>
+                        <td> {{ formatNumber(result.metal) }} </td>
+                        <td> {{ formatNumber(result.crystal) }} </td>
+                        <td> {{ formatNumber(result.plastic) }} </td>
+                        <td> {{ formatNumber(result.fuel) }} </td>
+                        <td> {{ formatNumber(result.food) }} </td>
+                    </tr>
+                    {% endblock %}
+                </twig:Table>
+            {% else %}
+                {{ macros.message('Einzahlungen','Es wurden noch keine Rohstoffe eingezahlt!') }}
+            {% endif %}
+        {% else %}
+            {% if result %}
+                {% for entry in result %}
+                    <twig:Table title="{{ entry.user.nick }} - {{ formatTimestamp(entry.time) }}">
+                        {% block table_content %}
+                            <tr>
+                                <th style="width:20%"> {{ constant('EtoA\\Universe\\Resources\\ResourceNames::METAL') }} </th>
+                                <th style="width:20%"> {{ constant('EtoA\\Universe\\Resources\\ResourceNames::CRYSTAL') }} </th>
+                                <th style="width:20%"> {{ constant('EtoA\\Universe\\Resources\\ResourceNames::PLASTIC') }} </th>
+                                <th style="width:20%"> {{ constant('EtoA\\Universe\\Resources\\ResourceNames::FUEL') }} </th>
+                                <th style="width:20%"> {{ constant('EtoA\\Universe\\Resources\\ResourceNames::FOOD') }} </th>
+                            </tr>
+                            <tr>
+                                <td>{{ formatNumber(entry.metal) }}</td>
+                                <td>{{ formatNumber(entry.crystal) }}</td>
+                                <td>{{ formatNumber(entry.plastic) }}</td>
+                                <td>{{ formatNumber(entry.fuel) }}</td>
+                                <td>{{ formatNumber(entry.food) }}</td>
+                            </tr>
+                        {% endblock %}
+                    </twig:Table>
+                {% endfor %}
+            {% else %}
+                {{ macros.message('Einzahlungen','Es wurden noch keine Rohstoffe eingezahlt!') }}
+            {% endif %}
+        {% endif %}
+    </div>
+{% endblock %}
