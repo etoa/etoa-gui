@@ -7,6 +7,7 @@ namespace EtoA\Alliance;
 use Doctrine\Persistence\ManagerRegistry;
 use EtoA\Core\AbstractRepository;
 use EtoA\Entity\Alliance;
+use EtoA\Entity\AllianceBuilding;
 use EtoA\Entity\AllianceBuildListItem;
 
 class AllianceBuildListRepository extends AbstractRepository
@@ -32,18 +33,9 @@ class AllianceBuildListRepository extends AbstractRepository
         return count($test) > 0;
     }
 
-    public function getLevel(int $allianceId, int $buildingId): int
+    public function getLevel(Alliance $alliance, AllianceBuilding $building): ?int
     {
-        return (int) $this->createQueryBuilder('q')
-            ->select('alliance_buildlist_current_level')
-            ->from('alliance_buildlist')
-            ->where('alliance_buildlist_alliance_id = :alliance')
-            ->andWhere('alliance_buildlist_building_id = :buildingId')
-            ->setParameters([
-                'alliance' => $allianceId,
-                'buildingId' => $buildingId,
-            ])
-            ->fetchOne();
+        return $this->findOneBy(['alliance'=>$alliance,'building'=>$building])?->getLevel();
     }
 
     /**

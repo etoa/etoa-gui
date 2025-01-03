@@ -24,25 +24,6 @@ class AllianceBuildingRepository extends AbstractRepository
         return $this->fetchIdsWithNames('alliance_buildings', 'alliance_building_id', 'alliance_building_name', $orderById);
     }
 
-    /**
-     * @return AllianceBuilding[]
-     */
-    public function findAll(): array
-    {
-        $data = $this->createQueryBuilder('q')
-            ->select("*")
-            ->from('alliance_buildings')
-            ->fetchAllAssociative();
-
-        $result = [];
-        foreach ($data as $row) {
-            $building = new AllianceBuilding($row);
-            $result[$building->id] = $building;
-        }
-
-        return $result;
-    }
-
     public function getUserCooldown(int $userId, int $buildingId): int
     {
         return (int) $this->createQueryBuilder('q')

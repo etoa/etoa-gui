@@ -287,9 +287,9 @@ class PlanetRepository extends AbstractRepository
     /**
      * @param BaseResources|PreciseResources $resources
      */
-    public function removeResources(int $id, $resources): bool
+    public function removeResources(Planet $planet, BaseResources|PreciseResources $resources): bool
     {
-        $planetResources = $this->getPlanetResources($id);
+        $planetResources = $this->getPlanetResources($planet);
         if ($planetResources === null) {
             return false;
         }
@@ -299,17 +299,18 @@ class PlanetRepository extends AbstractRepository
             return false;
         }
 
+
         $affected = $this->createQueryBuilder('q')
-            ->update('planets')
-            ->set('planet_res_metal', 'planet_res_metal - :res_metal')
-            ->set('planet_res_crystal', 'planet_res_crystal - :res_crystal')
-            ->set('planet_res_plastic', 'planet_res_plastic - :res_plastic')
-            ->set('planet_res_fuel', 'planet_res_fuel - :res_fuel')
-            ->set('planet_res_food', 'planet_res_food - :res_food')
-            ->set('planet_people', 'planet_people - :people')
-            ->where('id = :id')
+            ->update()
+            ->set('q.resMetal', 'q.resMetal - :res_metal')
+            ->set('q.resCrystal', 'q.resCrystal - :res_crystal')
+            ->set('q.resPlastic', 'q.resPlastic - :res_plastic')
+            ->set('q.resFuel', 'q.resFuel - :res_fuel')
+            ->set('q.resFood', 'q.resFood - :res_food')
+            ->set('q.people', 'q.people - :people')
+            ->where('q.id = :id')
             ->setParameters([
-                'id' => $id,
+                'id' => $planet->getId(),
                 'res_metal' => $resources->metal,
                 'res_crystal' => $resources->crystal,
                 'res_plastic' => $resources->plastic,
@@ -317,32 +318,21 @@ class PlanetRepository extends AbstractRepository
                 'res_food' => $resources->food,
                 'people' => $resources->people,
             ])
-            ->executeQuery()
-            ->rowCount();
+            ->getQuery()
+            ->execute();
 
         return $affected > 0;
     }
 
-    public function getPlanetResources(int $id): ?PreciseResources
+    public function getPlanetResources(Planet $planet): ?PreciseResources
     {
-        $data = $this->createQueryBuilder('q')
-            ->select('planet_res_metal', 'planet_res_crystal', 'planet_res_plastic, planet_res_fuel, planet_res_food, planet_people')
-            ->from('planets')
-            ->where('id = :id')
-            ->setParameter('id', $id)
-            ->fetchAssociative();
-
-        if ($data === false) {
-            return null;
-        }
-
         $resources = new PreciseResources();
-        $resources->metal = (float) $data['planet_res_metal'];
-        $resources->crystal = (float) $data['planet_res_crystal'];
-        $resources->plastic = (float) $data['planet_res_plastic'];
-        $resources->fuel = (float) $data['planet_res_fuel'];
-        $resources->food = (float) $data['planet_res_food'];
-        $resources->people = (float) $data['planet_people'];
+        $resources->metal = $planet->getResMetal();
+        $resources->crystal = $planet->getResCrystal();
+        $resources->plastic = $planet->getResPlastic();
+        $resources->fuel = $planet->getResFuel();
+        $resources->food = $planet->getResFood();
+        $resources->people = $planet->getPeople();
 
         return $resources;
     }

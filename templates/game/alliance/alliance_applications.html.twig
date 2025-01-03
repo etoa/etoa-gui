@@ -4,12 +4,12 @@
 {% block alliance %}
     {% if applications %}
         <h2>Bewerbungen</h2>
-        {% if msg.error is defined%}
+        {% if msg.error is defined %}
             {% for error in msg.error %}
                 {{ macros.errorMessage(error.message) }}
             {% endfor %}
         {% endif %}
-        {% if msg.success is defined%}
+        {% if msg.success is defined %}
             {% for success in msg.success %}
                 {{ macros.successMessage(success.message) }}
             {% endfor %}

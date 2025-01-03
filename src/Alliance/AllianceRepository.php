@@ -561,12 +561,13 @@ class AllianceRepository extends AbstractRepository
         int $newMemberCount = null
     ): void {
         $qb = $this->createQueryBuilder('q')
+            ->update()
             ->set('q.resMetal', 'q.resMetal + :addMetal')
             ->set('q.resCrystal', 'q.resCrystal + :addCrystal')
             ->set('q.resPlastic', 'q.resPlastic + :addPlastic')
             ->set('q.resFuel', 'q.resFuel + :addFuel')
             ->set('q.resFood', 'q.resFood + :addFood')
-            ->where('q.alliance = :id')
+            ->where('q.id = :id')
             ->setParameters([
                 'id' => $alliance,
                 'addMetal' => $addMetal,

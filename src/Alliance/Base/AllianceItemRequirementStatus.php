@@ -34,13 +34,13 @@ class AllianceItemRequirementStatus
     {
         $levelList = [];
         foreach ($technologyList as $item) {
-            $levelList[$item->technologyId] = $item->level;
+            $levelList[$item->getTechnology()->getId()] = $item->getLevel();
         }
 
         $requirementList = [];
         foreach ($technologies as $technology) {
-            if ($technology->neededLevel > 0) {
-                $requirementList[$technology->id][$technology->neededId] = $technology->neededLevel;
+            if ($technology->getNeededLevel() > 0) {
+                $requirementList[$technology->getId()][$technology->getNeededId()] = $technology->getNeededLevel();
             }
         }
 
@@ -55,13 +55,13 @@ class AllianceItemRequirementStatus
     {
         $levelList = [];
         foreach ($buildingList as $item) {
-            $levelList[$item->buildingId] = $item->level;
+            $levelList[$item->getId()] = $item->getLevel();
         }
 
         $requirementList = [];
         foreach ($buildings as $bui) {
-            if ($bui->neededLevel > 0) {
-                $requirementList[$bui->id][$bui->neededId] = $bui->neededLevel;
+            if ($bui->getNeededLevel() > 0) {
+                $requirementList[$bui->getId()][$bui->getNeededId()] = $bui->getNeededLevel();
             }
         }
 

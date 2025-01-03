@@ -43,7 +43,7 @@ class AllianceBuilding implements ObjectWithImage
     #[ORM\Column(name: "alliance_building_build_time")]
     private int $buildTime;
 
-    #[ORM\Column(name: "alliance_building_build_factor")]
+    #[ORM\Column(name: "alliance_building_costs_factor")]
     private float $buildFactor;
 
     #[ORM\Column(name: "alliance_building_last_level")]

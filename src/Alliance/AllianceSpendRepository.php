@@ -4,6 +4,9 @@ namespace EtoA\Alliance;
 
 use Doctrine\Persistence\ManagerRegistry;
 use EtoA\Core\AbstractRepository;
+use EtoA\Entity\Alliance;
+use EtoA\Entity\AllianceSpend;
+use EtoA\Entity\User;
 use EtoA\Universe\Resources\BaseResources;
 
 class AllianceSpendRepository extends AbstractRepository
@@ -13,52 +16,41 @@ class AllianceSpendRepository extends AbstractRepository
         parent::__construct($registry, AllianceSpend::class);
     }
 
-    public function addEntry(int $allianceId, int $userId, BaseResources $resources): void
+    public function addEntry(Alliance $alliance, User $user, BaseResources $resources): void
     {
-        $this->createQueryBuilder('q')
-            ->insert('alliance_spends')
-            ->values([
-                'alliance_spend_alliance_id' => ':allianceId',
-                'alliance_spend_user_id' => ':userId',
-                'alliance_spend_metal' => ':metal',
-                'alliance_spend_crystal' => ':crystal',
-                'alliance_spend_plastic' => ':plastic',
-                'alliance_spend_fuel' => ':fuel',
-                'alliance_spend_food' => ':food',
-                'alliance_spend_time' => ':now',
-            ])
-            ->setParameters([
-                'allianceId' => $allianceId,
-                'userId' => $userId,
-                'now' => time(),
-                'metal' => $resources->metal,
-                'crystal' => $resources->crystal,
-                'plastic' => $resources->plastic,
-                'fuel' => $resources->fuel,
-                'food' => $resources->food,
-            ])
-            ->executeQuery();
+        $entry = new AllianceSpend();
+        $entry->setAlliance($alliance);
+        $entry->setUser($user);
+        $entry->setMetal($resources->metal);
+        $entry->setCrystal($resources->crystal);
+        $entry->setPlastic($resources->plastic);
+        $entry->setFuel($resources->fuel);
+        $entry->setFood($resources->food);
+        $entry->setTime(time());
+
+        $this->persist($entry);
+        $this->save();
     }
 
-    public function getTotalSpent(int $allianceId, int $userId = null): BaseResources
+    public function getTotalSpent(Alliance $alliance, User $user = null): BaseResources
     {
         $qb = $this->createQueryBuilder('q')
-            ->select('SUM(alliance_spend_metal) AS metal, SUM(alliance_spend_crystal) AS crystal, SUM(alliance_spend_plastic) AS plastic, SUM(alliance_spend_fuel) AS fuel, SUM(alliance_spend_food) AS food')
-            ->from('alliance_spends')
-            ->where('alliance_spend_alliance_id = :allianceId')
-            ->setParameter('allianceId', $allianceId);
+            ->select('SUM(q.metal) AS metal, SUM(q.crystal) AS crystal, SUM(q.plastic) AS plastic, SUM(q.fuel) AS fuel, SUM(q.food) AS food')
+            ->where('q.alliance = :alliance')
+            ->setParameter('alliance', $alliance);
 
-        if ($userId > 0) {
+        if ($user) {
             $qb
-                ->andWhere('alliance_spend_user_id = :userId')
-                ->setParameter('userId', $userId);
+                ->andWhere('q.user = :user')
+                ->setParameter('user', $user);
         }
 
         $data = $qb
-            ->fetchAssociative();
+            ->getQuery()
+            ->getOneOrNullResult();
 
         $resources = new BaseResources();
-        if ($data !== false) {
+        if ($data) {
             $resources->metal = (int) $data['metal'];
             $resources->crystal = (int) $data['crystal'];
             $resources->plastic = (int) $data['plastic'];
@@ -72,7 +64,7 @@ class AllianceSpendRepository extends AbstractRepository
     /**
      * @return AllianceSpend[]
      */
-    public function getSpent(int $allianceId, ?int $userId, int $limit): array
+    public function getSpent(int $alliance, ?int $userId, int $limit): array
     {
         $qb = $this->createQueryBuilder('q')
             ->select('*')
