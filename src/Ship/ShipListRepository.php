@@ -5,6 +5,7 @@ namespace EtoA\Ship;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use EtoA\Entity\ShipListItem;
+use EtoA\Entity\User;
 use EtoA\Universe\Entity\EntityRepository;
 
 /**
@@ -99,15 +100,15 @@ class ShipListRepository extends ServiceEntityRepository
     /**
      * @return array<int, ShipListItemCount>
      */
-    public function getUserShipCounts(int $userId): array
+    public function getUserShipCounts(User $user): array
     {
         $data = $this->createQueryBuilder('q')
-            ->select('shiplist_ship_id, SUM(shiplist_count) as count, SUM(shiplist_bunkered) as bunkered, SUM(shiplist_special_ship_exp) as shiplist_special_ship_exp')
-            ->from('shiplist')
-            ->where('shiplist_user_id = :userId')
-            ->setParameter('userId', $userId)
-            ->groupBy('shiplist_ship_id')
-            ->fetchAllAssociative();
+            ->select('IDENTITY(q.ship) as shiplist_ship_id, SUM(q.count) as count, SUM(q.bunkered) as bunkered, SUM(q.specialShipExp) as shiplist_special_ship_exp')
+            ->where('q.user = :user')
+            ->setParameter('user', $user)
+            ->groupBy('q.ship')
+            ->getQuery()
+            ->execute();
 
         $result = [];
         foreach ($data as $row) {

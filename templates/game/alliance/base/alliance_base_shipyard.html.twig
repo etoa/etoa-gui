@@ -1,0 +1,88 @@
+{% extends 'game/alliance/base/alliance_base.html.twig' %}
+{% import 'macros.html.twig' as macros %}
+
+{% block base %}
+    {% if msg.success is defined %}
+        {{ macros.successMessage(msg.success) }}
+    {% endif %}
+
+    {% if msg.error is defined %}
+        {{ macros.errorMessage(msg.error) }}
+    {% endif %}
+
+    <div id="tabShipyard">
+        <h1>Schiffswerft</h1>
+        <twig:Table title="Guthaben Übersicht">
+            {% block table_content %}
+                <tr>
+                    {% if stopped %}
+                        <td style="text-align:center;">
+                            <span {{ tm("Produktionsstop", "Die Produktion wurde unterbrochen, da negative Rohstoffe vorhanden
+                            sind.")|raw }}>
+                                Schiffsteile pro Stunde: 0
+                            </span>
+                        </td>
+                    {% else%}
+                        <td style="text-align:center;">
+                            Schiffsteile pro Stunde:  {{ production }}
+                        </td>
+                    {% endif %}
+                </tr>
+                <tr>
+                    <td style="text-align:center;">Vorhandene Teile: {{ points }}</td>
+                </tr>
+            {% endblock %}
+        </twig:Table>
+        {{ form_start(form) }}
+            {% if ships %}
+                {% for ship in ships %}
+                    <twig:Table title="{{ship.name}}">
+                        {% block table_content %}
+                            <tr>
+                            <td style="width:120px;background:#000;vertical-align:middle;padding:0;">
+                                <img src="{{ ship.getImagePath('medium') }}" style="width:120px;height:120px;border:none;margin:0;" alt="{{ ship.name }}"/>
+                            </td>
+                            <td style="vertical-align:top;height:100px;" colspan="7">
+                                {{ ship.longComment }}
+                            </td>
+                        </tr>
+                            <tr>
+                                <th style="width:13%">Waffen</th>
+                                <th style="width:13%">Struktur</th>
+                                <th style="width:13%">Schild</th>
+                                <th style="width:13%">Speed</th>
+                                <th style="width:13%">Startzeit</th>
+                                <th style="width:13%">Landezeit</th>
+                                <th style="width:12%">Kosten</th>
+                                <th style="width:10%">Anzahl</th>
+                            </tr>
+                            <tr>
+                                <td>{{ formatNumber(ship.weapon) }}</td>
+                                <td>{{ formatNumber(ship.structure) }}</td>
+                                <td>{{ formatNumber(ship.shield) }}</td>
+                                <td>{{ formatNumber(ship.speed) }} AE/h</td>
+                                <td>{{ formatTimespan(ship.timeToStart / configValue('flight_start_time')) }}</td>
+                                <td>{{ formatTimespan(ship.timeToLand / configValue('flight_land_time')) }} </td>
+                                <td>{{ formatNumber(ship.allianceCosts) }}</td>
+                                <td>
+                                    {{ form_widget(form.children[ship.id]) }}
+                                </td>
+                            </tr>
+                        {% endblock %}
+                    </twig:Table>
+                {% endfor %}
+            {% else %}
+                {{ macros.message("Schiffe","Es sind keine Allianzschiffe vorhanden!") }}
+            {% endif %}
+             <twig:Table title="Fertigung">
+                    {% block table_content %}
+                        <tr>
+                            <td style="text-align:center;">
+                                {{ form_widget(form.buy) }}
+                            </td>
+                        </tr>
+                    {% endblock %}
+             </twig:Table>
+        {{ form_end(form) }}
+    </div>
+{% endblock %}

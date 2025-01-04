@@ -33,9 +33,9 @@ class AllianceBuildListRepository extends AbstractRepository
         return count($test) > 0;
     }
 
-    public function getLevel(Alliance $alliance, AllianceBuilding $building): ?int
+    public function getLevel(Alliance $alliance, int $building): ?int
     {
-        return $this->findOneBy(['alliance'=>$alliance,'building'=>$building])?->getLevel();
+        return $this->findOneBy(['alliance'=>$alliance,'allianceBuilding'=>$building])?->getLevel();
     }
 
     /**

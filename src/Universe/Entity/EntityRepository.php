@@ -149,12 +149,7 @@ class EntityRepository extends AbstractRepository
 
     public function getAllianceMarketId(): int
     {
-        return (int) $this->createQueryBuilder('q')
-            ->select('id')
-            ->from('entities')
-            ->where('code = :code')
-            ->setParameter('code', EntityType::ALLIANCE_MARKET)
-            ->fetchOne();
+        return $this->findOneBy(['code'=>EntityType::ALLIANCE_MARKET])->getId();
     }
 
     public function add(int $cellId, string $code, int $pos = 0): int

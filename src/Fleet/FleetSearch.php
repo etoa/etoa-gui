@@ -32,7 +32,7 @@ class FleetSearch extends AbstractSearch
 
     public function isLeader(): self
     {
-        $this->parts[] = 'q.id = q.leaderId';
+        $this->parts[] = 'q.id = q.leader';
 
         return $this;
     }
@@ -153,7 +153,7 @@ class FleetSearch extends AbstractSearch
 
     public function leader(int $leader): self
     {
-        $this->parts[] = 'leader_id = :leader';
+        $this->parts[] = 'leader = :leader';
         $this->parameters['leader'] = $leader;
 
         return $this;

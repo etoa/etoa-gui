@@ -2,21 +2,35 @@
 
 namespace EtoA\Controller\Game;
 
+use _PHPStan_70b6e53dc\Nette\Neon\Entity;
+use EtoA\Alliance\AllianceBuildingId;
 use EtoA\Alliance\AllianceBuildingRepository;
 use EtoA\Alliance\AllianceBuildListRepository;
+use EtoA\Alliance\AllianceHistoryRepository;
 use EtoA\Alliance\AllianceRepository;
 use EtoA\Alliance\AllianceSpendRepository;
 use EtoA\Alliance\Base\AllianceBase;
 use EtoA\Alliance\Base\AllianceItemBuildStatus;
 use EtoA\Alliance\Base\AllianceItemRequirementStatus;
+use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Entity\AllianceSpend;
+use EtoA\Fleet\FleetRepository;
+use EtoA\Fleet\FleetShipRepository;
+use EtoA\Fleet\FleetStatus;
+use EtoA\Ship\ShipDataRepository;
+use EtoA\Ship\ShipListItemCount;
+use EtoA\Ship\ShipListRepository;
+use EtoA\Ship\ShipQueueRepository;
+use EtoA\Ship\ShipRepository;
 use EtoA\Support\StringUtils;
+use EtoA\Universe\Entity\EntityRepository;
 use EtoA\Universe\Planet\PlanetRepository;
 use EtoA\Universe\Resources\BaseResources;
 use EtoA\Universe\Resources\ResourceNames;
 use EtoA\User\UserRepository;
 use phpDocumentor\Reflection\Types\This;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -34,7 +48,16 @@ class AllianceBaseController extends AbstractGameController
         private readonly PlanetRepository $planetRepository,
         private readonly UserRepository $userRepository,
         private readonly AllianceSpendRepository $allianceSpendRepository,
-        private readonly AllianceRepository $allianceRepository
+        private readonly AllianceRepository $allianceRepository,
+        private readonly ConfigurationService $config,
+        private readonly ShipDataRepository $shipDataRepository,
+        private readonly ShipListRepository $shipListRepository,
+        private readonly ShipQueueRepository $shipQueueRepository,
+        private readonly FleetRepository $fleetRepository,
+        private readonly EntityRepository $entityRepository,
+        private readonly FleetShipRepository $fleetShipRepository,
+        private readonly ShipRepository $shipRepository,
+        private readonly AllianceHistoryRepository $allianceHistoryRepository
     )
     {
     }
@@ -109,39 +132,9 @@ class AllianceBaseController extends AbstractGameController
                 'data' => 0
             ])
             ->add('save', SubmitType::class, ['label' => 'Einzahlen'])
-            ->getForm();
+            ->getForm()
+            ->handleRequest($request);
 
-        $form_filter = $this->createFormBuilder()
-            ->add('sum', ChoiceType::class, [
-                'expanded' => true,
-                'choices' => [
-                    'Einzeln /' => 0,
-                    'Summiert' => 1
-                ],
-                'data' => 0
-            ])
-            ->add('limit', ChoiceType::class, [
-                'choices' => [
-                    'alle' => 10,
-                    'die letzte' => 1,
-                    'die letzten 5' => 5,
-                    'die letzten 20' => 20,
-                ],
-                'data' => 0
-            ])
-            ->add('user', ChoiceType::class, [
-                'choices' => $this->userRepository->findBy(['alliance'=>$this->getUser()->getData()->getAlliance()]),
-                'choice_value' => 'id',
-                'choice_label' => 'nick',
-                'placeholder' => 'alle',
-                'required' => false
-            ])
-
-
-            ->add('save', SubmitType::class, ['label' => 'Anzeigen'])
-            ->getForm();
-
-        $form_storage->handleRequest($request);
         if ($form_storage->isSubmitted() && $form_storage->isValid()) {
             $data = $form_storage->getData();
 
@@ -177,7 +170,36 @@ class AllianceBaseController extends AbstractGameController
                 $msg['error'] = "Du hast keine Rohstoffe angegeben!";
         }
 
-        $form_filter->handleRequest($request);
+        $form_filter = $this->createFormBuilder()
+            ->add('sum', ChoiceType::class, [
+                'expanded' => true,
+                'choices' => [
+                    'Einzeln /' => 0,
+                    'Summiert' => 1
+                ],
+                'data' => 0
+            ])
+            ->add('limit', ChoiceType::class, [
+                'choices' => [
+                    'alle' => 10,
+                    'die letzte' => 1,
+                    'die letzten 5' => 5,
+                    'die letzten 20' => 20,
+                ],
+                'data' => 0
+            ])
+            ->add('user', ChoiceType::class, [
+                'choices' => $this->userRepository->findBy(['alliance'=>$this->getUser()->getData()->getAlliance()]),
+                'choice_value' => 'id',
+                'choice_label' => 'nick',
+                'placeholder' => 'alle',
+                'required' => false
+            ])
+
+
+            ->add('save', SubmitType::class, ['label' => 'Anzeigen'])
+            ->getForm()->handleRequest($request);
+
         if ($form_filter->isSubmitted() && $form_filter->isValid()) {
             $sum = $form_filter->get('sum')->getData();
             $user = $form_filter->get('user')->getData();
@@ -221,119 +243,181 @@ class AllianceBaseController extends AbstractGameController
 
     #[Route('/game/alliance/base/shipyard', name: 'game.alliance.base.shipyard')]
     public function shipyard(Request $request): Response {
-        $allianceShipyardLevel = $this->allianceBuildListRepository->getLevel($cu->allianceId(), AllianceBuildingId::SHIPYARD);
+        $alliance = $this->getUser()->getData()->getAlliance();
+        $allianceShipyardLevel = $this->allianceBuildListRepository->getLevel($alliance, AllianceBuildingId::SHIPYARD);
+        $ships = [];
+        $cu = $this->getUser()->getData();
+        $form = $this->createFormBuilder();
 
         if ($allianceShipyardLevel) {
-            echo "<h1>Schiffswerft</h1>";
+            $allianceShips = $this->shipDataRepository->getAllianceShips();
 
-            echo "<form action=\"?page=" . $page . "&amp;action=" . $_GET['action'] . "&amp;action2=shipyard\" method=\"post\" id=\"alliance_shipyard\">\n";
-            echo $cstr;
-
-            tableStart("Guthaben Übersicht");
-
-            echo "<tr>";
-            if ($alliance->resMetal < 0 || $alliance->resCrystal < 0 || $alliance->resPlastic < 0 || $alliance->resFuel < 0 || $alliance->resFood < 0) {
-                echo "<td style=\"text-align:center;\"><span " . tm("Produktionsstop", "Die Produktion wurde unterbrochen, da negative Rohstoffe vorhanden sind.") . ">Schiffsteile pro Stunde: 0</span></td>";
-            } else {
-                // if changed, also change classes/alliance.class.php
-                echo "<td style=\"text-align:center;\">Schiffsteile pro Stunde: " . ceil($config->getInt('alliance_shippoints_per_hour') * pow($config->getFloat('alliance_shippoints_base'), ($allianceShipyardLevel - 1))) . "</td>";
+            foreach ($allianceShips as $ship) {
+                if ($ship->getAllianceShipyardLevel() <= $allianceShipyardLevel) {
+                    $ships[$ship->getId()] = $ship;
+                    $form->add($ship->getId(), NumberType::class, [
+                        'attr' => [
+                            'size'=>4,
+                            'maxlength'=>6,
+                            'onkeyup'=> "FormatNumber(this.id,this.value, '', '', '')"
+                        ],
+                        'required' => false,
+                        'data' => 0,
+                        'scale' => 0
+                    ]);
+                }
             }
-            echo "</tr>
-    <tr>
-        <td style=\"text-align:center;\">Vorhandene Teile: " . ($cu->allianceShippoints - $ship_costed) . "</td>
-    </tr>";
 
-            tableEnd();
+            $form = $form->add('buy', SubmitType::class, [
+                    'label' => 'Schiffe herstellen',
+                    'attr' => [
+                        'onmouseover' => "showTT('" . StringUtils::encodeDBStringToJS('Schiffe herstellen') . "','" . StringUtils::replaceBR(StringUtils::encodeDBStringToJS('Stellt aus den vorhandenen Teilen die gewünschten Schiffe für den ausgewählten User her.'))."',1,event,this)",
+                        'onmouseout' => 'hideTT()'
+                    ]
+                ])
+                ->getForm()
+                ->handleRequest($request);
 
+            // Userschiffe laden (wenn Schiffswerft gebaut)
+            // Gebaute Schiffe laden
+            $shiplist = array_map(fn (ShipListItemCount $count) => $count->sum(), $this->shipListRepository->getUserShipCounts($cu));
 
-            // Listet Schiffe auf
+            // Bauliste von allen Planeten laden und nach Schiffe zusammenfassen
+            $queue_total = $this->shipQueueRepository->getUserQueuedShipCounts($cu);
+
+            // Flotten laden und nach Schiffe zusammenfassen
+            $fleet = $this->fleetRepository->getUserFleetShipCounts($cu);
+
             if (count($ships) > 0) {
                 foreach ($ships as $ship) {
                     // Zählt die Anzahl Schiffe dieses Typs im ganzen Account...
                     $ship_count = 0;
                     // ... auf den Planeten
-                    if (isset($shiplist[$ship->id])) {
-                        $ship_count += $shiplist[$ship->id];
+                    if (isset($shiplist[$ship->getId()])) {
+                        $ship_count += $shiplist[$ship->getId()];
                     }
                     // ... in der Bauliste
-                    if (isset($queue_total[$ship->id])) {
-                        $ship_count += $queue_total[$ship->id];
+                    if (isset($queue_total[$ship->getId()])) {
+                        $ship_count += $queue_total[$ship->getId()];
                     }
                     // ... in der Luft
-                    if (isset($fleet[$ship->id])) {
-                        $ship_count += $fleet[$ship->id];
+                    if (isset($fleet[$ship->getId()])) {
+                        $ship_count += $fleet[$ship->getId()];
                     }
-
 
                     //Kostenfaktor Schiffe
-                    $cost_factor = pow($config->getFloat("alliance_shipcosts_factor"), $ship_count);
-
-                    $path = $ship->getImagePath('medium');
-                    tableStart($ship->name);
-                    echo "<tr>
-                <td style=\"width:120px;background:#000;vertical-align:middle;padding:0px;\">
-                <img src=\"" . $path . "\" style=\"width:120px;height:120px;border:none;margin:0px;\" alt=\"" . $ship->name . "\"/>
-                    <input type=\"hidden\" value=\"" . $ship->name . "\" id=\"ship_name_" . $ship->id . "\" name=\"ship_name_" . $ship->id . "\" />
-                </td>
-                <td style=\"vertical-align:top;height:100px;\" colspan=\"7\">
-                    " . $ship->longComment . "
-                </td>
-                    </tr>
-                    <tr>
-                            <th style=\"width:13%\">Waffen</th>
-                            <th style=\"width:13%\">Struktur</th>
-                            <th style=\"width:13%\">Schild</th>
-                            <th style=\"width:13%\">Speed</th>
-                            <th style=\"width:13%\">Startzeit</th>
-                            <th style=\"width:13%\">Landezeit</th>
-                            <th style=\"width:12%\">Kosten</th>
-                            <th style=\"width:10%\">Anzahl</th>
-                        </tr>
-                        <tr>
-                            <td>" . StringUtils::formatNumber($ship->weapon) . "</td>
-                            <td>" . StringUtils::formatNumber($ship->structure) . "</td>
-                            <td>" . StringUtils::formatNumber($ship->shield) . "</td>
-                            <td>" . StringUtils::formatNumber($ship->speed) . " AE/h</td>
-                            <td>" . StringUtils::formatTimespan($ship->timeToStart / FLEET_FACTOR_S) . "</td>
-                            <td>" . StringUtils::formatTimespan($ship->timeToLand / FLEET_FACTOR_S) . "</td>";
-                    if ($ship->maxCount !== 0 && $ship->maxCount <= $ship_count) {
-                        echo "<td colspan=\"2\"><i>Maximalanzahl erreicht</i></td>";
-                    } else {
-                        echo "<td>" . StringUtils::formatNumber($ship->allianceCosts * $cost_factor) . " <input type=\"hidden\" value=\"" . $ship->allianceCosts * $cost_factor . "\" id=\"ship_costs_" . $ship->id . "\" name=\"ship_costs_" . $ship->id . "\" /></td>
-                            <td>
-                                <input type=\"text\" value=\"0\" name=\"buy_ship[" . $ship->id . "]\" id=\"buy_ship_" . $ship->id . "\" size=\"4\" maxlength=\"6\" onkeyup=\"FormatNumber(this.id,this.value, '', '', '');\"/>";
-                    }
-                    echo "<input type=\"hidden\" value=\"" . $ship->maxCount . "\" id=\"ship_max_count_" . $ship->id . "\" name=\"ship_max_count_" . $ship->id . "\" />
-                                </td>
-                        </tr>";
-
-
-                    tableEnd();
+                    $cost_factor = pow($this->config->getFloat("alliance_shipcosts_factor"), $ship_count);
+                    $ship->setAllianceCosts($ship->getAllianceCosts() * $cost_factor);
                 }
-            } else {
-                iBoxStart("Schiffe");
-                echo "Es sind keine Allianzschiffe vorhanden!";
-                iBoxEnd();
             }
-
-
-
-            tableStart("Fertigung");
-
-            echo "<tr>
-                    <td style=\"text-align:center;\">
-                        <select id=\"user_buy_ship\" name=\"user_buy_ship\">
-                            <option value=\"" . $cu->id . "\">" . $cu . " (" . StringUtils::formatNumber($cu->allianceShippoints - $ship_costed) . ")</option>
-                        </select><br/><br/>
-                    <input type=\"submit\" class=\"button\" name=\"ship_submit\" id=\"ship_submit\" value=\"Schiffe herstellen\" " . tm("Schiffe herstellen", "Stellt aus den vorhandenen Teilen die gewünschten Schiffe für den ausgewählten User her.") . ">
-                    </td>
-                </tr>";
-
-            tableEnd();
-
-            echo "</form>";
         }
 
-        return $this->render('game/alliance/base/alliance_base.html.twig');
+        if ($form->isSubmitted() && $form->isValid()) {
+            // Gebaute Schiffe laden
+            $ship_costs = 0;
+            $total_build_cnt = 0;
+            $to_much = false;
+            foreach ($form->getData() as $ship_id => $build_cnt) {
+                // Formatiert die eingegebene Zahl (entfernt z.B. die Trennzeichen)
+                $build_cnt = StringUtils::parseFormattedNumber($build_cnt);
+
+                if ($build_cnt > 0) {
+                    // Zählt die Anzahl Schiffe dieses Typs im ganzen Account...
+                    $ship_count = 0;
+                    // ... auf den Planeten
+                    if (isset($shiplist[$ship_id])) {
+                        $ship_count += $shiplist[$ship_id];
+                    }
+                    // ... in der Bauliste
+                    if (isset($queue_total[$ship_id])) {
+                        $ship_count += $queue_total[$ship_id];
+                    }
+                    // ... in der Luft
+                    if (isset($fleet[$ship_id])) {
+                        $ship_count += $fleet[$ship_id];
+                    }
+
+                    // Total Schiffe mit den zu bauenden
+                    $total_count = $build_cnt + $ship_count;
+
+                    // Prüft ob Anzahl grösser ist als Schiffsmaximum
+                    if ($ships[$ship_id]->getMaxCount() >= $total_count || $ships[$ship_id]->getMaxCount() === 0) {
+                        for ($i = $build_cnt - 1; $i >= 0; $i--) {
+                            //Kostenfaktor Schiffe
+                            $cost_factor = pow($this->config->getFloat("alliance_shipcosts_factor"), $ship_count + $i);
+                            // Berechnet die Kosten
+                            $ship_costs += $cost_factor * $ships[$ship_id]->getAllianceCosts();
+                        }
+                    }
+                    // Die Anzahl übersteigt die Max. Anzahl -> Nachricht wird ausgegeben
+                    else {
+                        $to_much = true;
+                    }
+                    $total_build_cnt += $build_cnt;
+                }
+            }
+
+            // Prüft, ob die Maximalanzahl nicht überschritten wird
+            if (!$to_much) {
+                if ($total_build_cnt > 0) {
+                    // Prüft ob Schiffspunkte noch ausreichend sind
+                    if ($cu->getAllianceShipPoints() >= $ship_costs) {
+                        // Zieht Punkte vom Konto ab
+                        $this->userRepository->markAllianceShipPointsAsUsed($cu, $ship_costs);
+                        $ship_costed = $ship_costs;
+
+                        // Lädt das Allianzentity
+                        $allianceMarketId = $this->entityRepository->getAllianceMarketId();
+
+                        // Speichert Flotte
+                        $launchtime = time(); // Startzeit
+                        $duration = 3600; // Dauer 1h
+                        $landtime = $launchtime + $duration; // Landezeit
+                        $fleet = $this->fleetRepository->add($cu, $launchtime, $landtime, $this->entityRepository->find($allianceMarketId), $this->entityRepository->find($request->getSession()->get('cpid')), \EtoA\Fleet\FleetAction::DELIVERY, FleetStatus::DEPARTURE, new BaseResources());
+
+                        // Speichert Schiffe in der Flotte
+                        $log = "";
+                        $cnt = 0;
+                        foreach ($form->getData() as $ship_id => $build_cnt) {
+                            // Formatiert die eingegebene Zahl (entfernt z.B. die Trennzeichen)
+                            $build_cnt = StringUtils::parseFormattedNumber($build_cnt);
+
+                            if ($build_cnt > 0) {
+                                $ship = $this->shipRepository->find($ship_id);
+                                $this->fleetShipRepository->addShipsToFleet($fleet, $ship, $build_cnt);
+                                if ($cnt == 0) {
+                                    $fleet[$ship_id] = ($fleet[$ship_id] ?? 0) + $build_cnt;
+                                    // Gibt einmalig eine OK-Medlung aus
+                                    $msg['success'] = "Schiffe wurden erfolgreich hergestellt!";
+                                }
+
+                                // Listet gewählte Schiffe für Log auf
+                                $log .= "[b]" . $ship->getName() . ":[/b] " . StringUtils::formatNumber($build_cnt) . "\n";
+
+                                $cnt++;
+                            }
+                        }
+
+                        // Zur Allianzgeschichte hinzufügen
+                        $this->allianceHistoryRepository->addEntry($cu->getAlliance(), "Folgende Schiffe wurden für [b]" . $cu->getNick() . "[/b] hergestellt:\n" . $log . "\n" . StringUtils::formatNumber($ship_costs) . " Teile wurden dafür benötigt.");
+                    } else {
+                        $msg['error']="Du hast nicht genügend Teile übrig!";
+                    }
+                } else {
+                    $msg['error'] = "Keine Schiffe ausgewählt!";
+                }
+            } else {
+                $msg['error'] = "Die Maximalanzahl der Schiffe würde mit der eingegebenen Menge überschritten werden!";
+            }
+        }
+
+        return $this->render('game/alliance/base/alliance_base_shipyard.html.twig', [
+            'stopped' => $alliance->getResMetal() < 0 || $alliance->getResCrystal() < 0 || $alliance->getResPlastic() < 0 || $alliance->getResFuel() < 0 || $alliance->getResFood() < 0,
+            'production' => ceil($this->config->getInt('alliance_shippoints_per_hour') * pow($this->config->getFloat('alliance_shippoints_base'), ($allianceShipyardLevel - 1))),
+            'points' => $this->getUser()->getData()->getAllianceShipPoints(),
+            'ships' =>$ships,
+            'form' => $form,
+            'msg' => $msg??null
+        ]);
     }
 }

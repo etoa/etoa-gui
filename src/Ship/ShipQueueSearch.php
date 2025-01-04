@@ -3,6 +3,7 @@
 namespace EtoA\Ship;
 
 use EtoA\Core\Database\AbstractSearch;
+use EtoA\Entity\Planet;
 
 class ShipQueueSearch extends AbstractSearch
 {
@@ -27,10 +28,10 @@ class ShipQueueSearch extends AbstractSearch
         return $this;
     }
 
-    public function entityId(int $entityId): self
+    public function entityId(Planet $entity): self
     {
-        $this->parts[] = 'q.entityId = :entityId';
-        $this->parameters['entityId'] = $entityId;
+        $this->parts[] = 'q.entity = :entity';
+        $this->parameters['entity'] = $entity;
 
         return $this;
     }

@@ -16,102 +16,102 @@ class Fleet
     #[ORM\Column(type: "integer")]
     protected int $id;
 
-    #[ORM\Column(type: "integer")]
-    protected int $userId;
-
     #[ORM\JoinColumn(name: 'user_id', referencedColumnName: 'user_id')]
     #[ORM\ManyToOne(targetEntity: User::class)]
-    private User $user;
+    protected User $user;
+
+    #[ORM\JoinColumn(name: 'leader_id', referencedColumnName: 'user_id')]
+    #[ORM\ManyToOne(targetEntity: User::class)]
+    protected ?User $leader = null;
+
+    #[ORM\JoinColumn(name: 'entity_from', referencedColumnName: 'id')]
+    #[ORM\ManyToOne(targetEntity: Entity::class)]
+    protected Entity $entityFrom;
+
+    #[ORM\JoinColumn(name: 'entity_to', referencedColumnName: 'id')]
+    #[ORM\ManyToOne(targetEntity: Entity::class)]
+    protected Entity $entityTo;
 
     #[ORM\Column(type: "integer")]
-    protected int $leaderId;
-
-    #[ORM\Column(type: "integer")]
-    protected int $entityFrom;
-
-    #[ORM\Column(type: "integer")]
-    protected int $entityTo;
-
-    #[ORM\Column(type: "integer")]
-    protected int $nextId;
+    protected int $nextId = 0;
 
     #[ORM\Column(name:"launchtime", type: "integer")]
-    protected int $launchTime;
+    protected int $launchTime = 0;
 
     #[ORM\Column(name:"landtime", type: "integer")]
-    protected int $landTime;
+    protected int $landTime = 0;
 
     #[ORM\Column(name:"nextactiontime", type: "integer")]
-    protected int $nextActionTime;
+    protected int $nextActionTime = 0;
 
     #[ORM\Column(type: "string")]
-    protected string $action;
+    protected string $action = '';
 
     #[ORM\Column(type: "integer")]
-    protected int $status;
+    protected int $status = 0;
 
     #[ORM\Column(type: "integer")]
-    protected int $pilots;
+    protected int $pilots = 0;
 
     #[ORM\Column(type: "integer")]
-    protected int $usageFuel;
+    protected int $usageFuel = 0;
 
     #[ORM\Column(type: "integer")]
-    protected int $usageFood;
+    protected int $usageFood = 0;
 
     #[ORM\Column(type: "integer")]
-    protected int $usagePower;
+    protected int $usagePower = 0;
 
     #[ORM\Column(type: "integer")]
-    protected int $supportUsageFuel;
+    protected int $supportUsageFuel = 0;
 
     #[ORM\Column(type: "integer")]
-    protected int $supportUsageFood;
+    protected int $supportUsageFood = 0;
 
     #[ORM\Column(type: "integer")]
-    protected int $resMetal;
+    protected int $resMetal = 0;
 
     #[ORM\Column(type: "integer")]
-    protected int $resCrystal;
+    protected int $resCrystal = 0;
 
     #[ORM\Column(type: "integer")]
-    protected int $resPlastic;
+    protected int $resPlastic = 0;
 
     #[ORM\Column(type: "integer")]
-    protected int $resFuel;
+    protected int $resFuel = 0;
 
     #[ORM\Column(type: "integer")]
-    protected int $resFood;
+    protected int $resFood = 0;
 
     #[ORM\Column(type: "integer")]
-    protected int $resPower;
+    protected int $resPower = 0;
 
     #[ORM\Column(type: "integer")]
-    protected int $resPeople;
+    protected int $resPeople = 0;
 
     #[ORM\Column(type: "integer")]
-    protected int $fetchMetal;
+    protected int $fetchMetal = 0;
 
     #[ORM\Column(type: "integer")]
-    protected int $fetchCrystal;
+    protected int $fetchCrystal = 0;
 
     #[ORM\Column(type: "integer")]
-    protected int $fetchPlastic;
+    protected int $fetchPlastic = 0;
 
     #[ORM\Column(type: "integer")]
-    protected int $fetchFuel;
+    protected int $fetchFuel = 0;
 
     #[ORM\Column(type: "integer")]
-    protected int $fetchFood;
+    protected int $fetchFood = 0;
 
     #[ORM\Column(type: "integer")]
-    protected int $fetchPower;
+    protected int $fetchPower = 0;
 
     #[ORM\Column(type: "integer")]
-    protected int $fetchPeople;
+    protected int $fetchPeople = 0;
 
     #[ORM\Column(type: "integer")]
-    protected int $flag;
+    protected int $flag = 0;
 
     public function getRemainingTime(): int
     {
@@ -133,48 +133,24 @@ class Fleet
         return $this->id;
     }
 
-    public function getUserId(): ?int
-    {
-        return $this->userId;
-    }
-
-    public function setUserId(int $userId): static
-    {
-        $this->userId = $userId;
-
-        return $this;
-    }
-
-    public function getLeaderId(): ?int
-    {
-        return $this->leaderId;
-    }
-
-    public function setLeaderId(int $leaderId): static
-    {
-        $this->leaderId = $leaderId;
-
-        return $this;
-    }
-
-    public function getEntityFrom(): ?int
+    public function getEntityFrom(): ?Entity
     {
         return $this->entityFrom;
     }
 
-    public function setEntityFrom(int $entityFrom): static
+    public function setEntityFrom(Entity $entityFrom): static
     {
         $this->entityFrom = $entityFrom;
 
         return $this;
     }
 
-    public function getEntityTo(): ?int
+    public function getEntityTo(): ?Entity
     {
         return $this->entityTo;
     }
 
-    public function setEntityTo(int $entityTo): static
+    public function setEntityTo(Entity $entityTo): static
     {
         $this->entityTo = $entityTo;
 
@@ -513,6 +489,18 @@ class Fleet
     public function setUser(?User $user): static
     {
         $this->user = $user;
+
+        return $this;
+    }
+
+    public function getLeader(): ?User
+    {
+        return $this->leader;
+    }
+
+    public function setLeader(?User $leader): static
+    {
+        $this->leader = $leader;
 
         return $this;
     }

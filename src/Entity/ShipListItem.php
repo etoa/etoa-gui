@@ -16,18 +16,17 @@ class ShipListItem
     #[ORM\Column(name: "shiplist_id", type: "integer")]
     private int $id;
 
-    #[ORM\Column(name: "shiplist_user_id", type: "integer")]
-    private int $userId;
+    #[ORM\JoinColumn(name: 'shiplist_user_id', referencedColumnName: 'user_id')]
+    #[ORM\ManyToOne(targetEntity: User::class)]
+    private ?User $user = null;
 
-    #[ORM\Column(name: "shiplist_ship_id", type: "integer")]
-    private int $shipId;
+    #[ORM\JoinColumn(name: 'shiplist_ship_id', referencedColumnName: 'ship_id')]
+    #[ORM\ManyToOne(targetEntity: Ship::class)]
+    private ?Ship $ship = null;
 
-    #[ORM\Column(name: "shiplist_entity_id", type: "integer")]
-    private int $entityId;
-
-    #[ORM\ManyToOne(targetEntity: Entity::class)]
+    #[ORM\ManyToOne(targetEntity: Planet::class)]
     #[ORM\JoinColumn(name: 'shiplist_entity_id', referencedColumnName: 'id')]
-    private Entity $entity;
+    private Planet $entity;
 
     #[ORM\Column(name: "shiplist_bot_id", type: "integer")]
     private int $botId = 0;
@@ -138,42 +137,6 @@ class ShipListItem
     public function getId(): ?int
     {
         return $this->id;
-    }
-
-    public function getUserId(): ?int
-    {
-        return $this->userId;
-    }
-
-    public function setUserId(int $userId): static
-    {
-        $this->userId = $userId;
-
-        return $this;
-    }
-
-    public function getShipId(): ?int
-    {
-        return $this->shipId;
-    }
-
-    public function setShipId(int $shipId): static
-    {
-        $this->shipId = $shipId;
-
-        return $this;
-    }
-
-    public function getEntityId(): ?int
-    {
-        return $this->entityId;
-    }
-
-    public function setEntityId(int $entityId): static
-    {
-        $this->entityId = $entityId;
-
-        return $this;
     }
 
     public function getBotId(): ?int
@@ -411,12 +374,12 @@ class ShipListItem
         return $this;
     }
 
-    public function getEntity(): ?Entity
+    public function getEntity(): ?Planet
     {
         return $this->entity;
     }
 
-    public function setEntity(?Entity $entity): static
+    public function setEntity(?Planet $entity): static
     {
         $this->entity = $entity;
 
@@ -426,5 +389,29 @@ class ShipListItem
     public function isSpecialShip(): ?bool
     {
         return $this->specialShip;
+    }
+
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
+
+    public function setUser(?User $user): static
+    {
+        $this->user = $user;
+
+        return $this;
+    }
+
+    public function getShip(): ?Ship
+    {
+        return $this->ship;
+    }
+
+    public function setShip(?Ship $ship): static
+    {
+        $this->ship = $ship;
+
+        return $this;
     }
 }

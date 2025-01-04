@@ -4,17 +4,15 @@ declare(strict_types=1);
 
 namespace EtoA\Ship;
 
-use Doctrine\DBAL\ArrayParameterType;
 use Doctrine\Persistence\ManagerRegistry;
 use EtoA\Core\AbstractRepository;
-use EtoA\Entity\ShipListItem;
-use EtoA\Entity\ShipQueueItem;
+use EtoA\Entity\Ship;
 
 class ShipRepository extends AbstractRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, ShipListItem::class);
+        parent::__construct($registry, Ship::class);
     }
 
     public function removeForEntity(int $entityId): void

@@ -538,18 +538,19 @@ class UserRepository extends AbstractRepository
             ->fetchAllKeyValue();
     }
 
-    public function markAllianceShipPointsAsUsed(int $userId, int $shipCost): void
+    public function markAllianceShipPointsAsUsed(User $user, int $shipCost): void
     {
         $this->createQueryBuilder('q')
-            ->update('users')
-            ->set('user_alliace_shippoints', 'user_alliace_shippoints - :costs')
-            ->set('user_alliace_shippoints_used', 'user_alliace_shippoints_used + :costs')
-            ->where('user_id = :userId')
+            ->update()
+            ->set('q.allianceShipPoints', 'q.allianceShipPoints - :costs')
+            ->set('q.allianceShipPointsUsed', 'q.allianceShipPointsUsed + :costs')
+            ->where('q.id = :user')
             ->setParameters([
-                'userId' => $userId,
+                'user' => $user->getId(),
                 'costs' => $shipCost,
             ])
-            ->executeQuery();
+            ->getQuery()
+            ->execute();
     }
 
     public function addAllianceShipPoints(int $allianceId, int $points): void

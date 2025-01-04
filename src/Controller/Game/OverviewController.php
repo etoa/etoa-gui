@@ -71,7 +71,7 @@ class OverviewController extends AbstractGameController
         $newsCounts = $this->getUser()->getData()->getAlliance() ? $this->allianceNewsRepository->countNewEntriesSince($this->getUser()->getData()->getAlliance()->getId(), $this->getUser()->getData()->getLastOnline()):0;
 
         // Eigene Flotten
-        $ownFleets = $this->fleetRepository->count(['userId'=>$this->getUser()->getId()]);
+        $ownFleets = $this->fleetRepository->count(['user'=>$this->getUser()->getData()]);
 
         // Fremde Flotten
         $foreignFleets = $this->foreignFleetLoader->getVisibleFleets($this->getUser()->getId());
@@ -172,14 +172,14 @@ class OverviewController extends AbstractGameController
 
 
             // Schiffswerft infos
-            $queueEntries = $this->shipQueueRepository->searchQueueItems(ShipQueueSearch::create()->entityId($userPlanet->getId())->endAfter(time()), 1);
+            $queueEntries = $this->shipQueueRepository->searchQueueItems(ShipQueueSearch::create()->entityId($userPlanet)->endAfter(time()), 1);
             if (count($queueEntries) > 0) {
                 $queueItem = $queueEntries[0];
 
                 //Verbleibende Zeit bis zur fertigstellung des aktuellen Auftrages
                 $shipyard_rest_time[$userPlanet->getId()] = $queueItem->getEndTime() - time();
                 //Schiffsname
-                $shipyard_name[$userPlanet->getId()] = $shipNames[$queueItem->getShipId()];
+                $shipyard_name[$userPlanet->getId()] = $shipNames[$queueItem->getShip()->getId()];
 
                 //infos über den raumschiffswerft
                 $shipyard_h = floor($shipyard_rest_time[$userPlanet->getId()] / 3600);
