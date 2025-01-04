@@ -1,0 +1,21 @@
+{% extends 'game/alliance/alliance.html.twig' %}
+{% import 'macros.html.twig' as macros %}
+
+{% block alliance %}
+    <h2>Allianzgeschichte</h2>
+    <twig:Table title="Geschichtsdaten">
+        {% block table_content %}
+            <tr>
+                <th style="width:120px;">Datum / Zeit</th>
+                <th>Ereignis</th>
+            </tr>
+            {% for entry in entries %}
+                <tr>
+                    <td>{{ formatTimestamp(entry.timestamp) }}</td>
+                    <td>{{ BBCodeToHTML(entry.text)|raw }}</td>
+                </tr>
+            {% endfor %}
+        {% endblock %}
+    </twig:Table>
+    <input type="button" value="Zurück" onclick="document.location='{{ path('game.alliance.overview') }}'" />
+{% endblock %}

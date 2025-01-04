@@ -366,6 +366,15 @@ class AllianceController extends AbstractGameController
         return $this->render('game/alliance/alliance_no_permission.html.twig');
     }
 
+    #[Route('/game/alliance/history', name: 'game.alliance.history')]
+    public function history(Request $request): Response {
+        $entries = $this->allianceHistoryRepository->findForAlliance($this->getUser()->getData()->getAlliance());
+
+        return $this->render('game/alliance/alliance_history.html.twig',[
+            'entries' =>$entries
+        ]);
+    }
+
     private function onCooldown():bool
     {
         return time() < ($this->getUser()->getData()->getAllianceLeave() + $this->config->getInt("alliance_leave_cooldown"));

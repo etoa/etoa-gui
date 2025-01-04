@@ -327,12 +327,12 @@ class AllianceService
         if ($userAlliancePermission->hasRights(AllianceRights::VIEW_MEMBERS)) {
             $adminBox["Mitglieder anzeigen"] = $this->router->generate('game.alliance.members');
         }
-        $adminBox["Allianzbasis"] = "?page=$page&action=base";
+        $adminBox["Allianzbasis"] = $this->router->generate('game.alliance.base.buildings');
         if ($this->config->getBoolean('allow_wings') && $userAlliancePermission->hasRights(AllianceRights::WINGS)) {
             $adminBox["Wings verwalten"] = "?page=$page&action=wings";
         }
         if ($userAlliancePermission->hasRights(AllianceRights::HISTORY)) {
-            $adminBox["Geschichte"] = "?page=$page&action=history";
+            $adminBox["Geschichte"] = $this->router->generate('game.alliance.history');
         }
         if ($userAlliancePermission->hasRights(AllianceRights::ALLIANCE_NEWS)) {
             $adminBox["Allianznews (Rathaus)"] = "?page=$page&action=alliancenews";
@@ -380,7 +380,7 @@ class AllianceService
                     <th>Letzte Ereignisse:</th>
                     <td colspan=\"2\">";
 
-            $entries = $this->allianceHistoryRepository->findForAlliance($cu->getAlliance()->getId(), 5);
+            $entries = $this->allianceHistoryRepository->findForAlliance($cu->getAlliance(), 5);
             if (count($entries) > 0) {
                 foreach ($entries as $entry) {
                     echo "<div class=\"infoLog\">" . BBCodeUtils::toHTML($entry->getText()) . " <span>" . StringUtils::formatDate($entry->getTimestamp(), false) . "</span></div>";

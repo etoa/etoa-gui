@@ -30,15 +30,9 @@ class AllianceHistoryRepository extends AbstractRepository
     /**
      * @return array<AllianceHistory>
      */
-    public function findForAlliance(int $allianceId, ?int $limit = null): array
+    public function findForAlliance(Alliance $alliance, ?int $limit = null): array
     {
-        return $this->createQueryBuilder('q')
-            ->where('q.alliance = :allianceId')
-            ->orderBy('q.timestamp', 'DESC')
-            ->setParameter('allianceId', $allianceId)
-            ->setMaxResults($limit)
-            ->getQuery()
-            ->execute();
+        return $this->findBy(['alliance'=>$alliance],['timestamp'=>'DESC'],$limit);
     }
 
     public function removeForAlliance(int $allianceId): void
