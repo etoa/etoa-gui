@@ -7,7 +7,9 @@ namespace EtoA\Message;
 use Doctrine\Persistence\ManagerRegistry;
 use EtoA\Core\AbstractRepository;
 use EtoA\Entity\Message;
+use EtoA\Entity\MessageCategory;
 use EtoA\Entity\MessageData;
+use EtoA\Entity\User;
 
 class MessageRepository extends AbstractRepository
 {
@@ -139,12 +141,12 @@ class MessageRepository extends AbstractRepository
      * @param string $text the text
      * @return Message the newly created message
      */
-    public function createSystemMessage(int $userId, int $catId, string $subject, string $text): Message
+    public function createSystemMessage(User $user, MessageCategory $cat, string $subject, string $text): Message
     {
         $msg = new Message();
-        $msg->setUserFrom(0);
-        $msg->setUserTo($userId);
-        $msg->setCatId($catId);
+        $msg->setUserFrom(null);
+        $msg->setUserTo($user);
+        $msg->setCat($cat);
         $msg->setTimestamp(time());
         $this->persist($msg);
 
