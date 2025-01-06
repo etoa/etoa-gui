@@ -20,14 +20,17 @@ class Message
     #[ORM\JoinColumn(name: 'message_id', referencedColumnName: 'id')]
     private MessageData $messageData;
 
-    #[ORM\Column(name:"message_cat_id", type: "integer")]
-    private int $catId;
+    #[ORM\JoinColumn(name: 'message_cat_id', referencedColumnName: 'cat_id')]
+    #[ORM\ManyToOne(targetEntity: MessageCategory::class)]
+    private ?MessageCategory $cat = null;
 
-    #[ORM\Column(name:"message_user_from", type: "integer")]
-    private int $userFrom;
+    #[ORM\JoinColumn(name: 'message_user_from', referencedColumnName: 'user_id')]
+    #[ORM\ManyToOne(targetEntity: User::class)]
+    private ?User $userFrom = null;
 
-    #[ORM\Column(name:"message_user_to", type: "integer")]
-    private int $userTo;
+    #[ORM\JoinColumn(name: 'message_user_to', referencedColumnName: 'user_id')]
+    #[ORM\ManyToOne(targetEntity: User::class)]
+    private ?User $userTo = null;
 
     #[ORM\Column(name:"message_timestamp", type: "integer")]
     private int $timestamp;
@@ -58,42 +61,6 @@ class Message
         return $this->id;
     }
 
-    public function getCatId(): ?int
-    {
-        return $this->catId;
-    }
-
-    public function setCatId(int $catId): static
-    {
-        $this->catId = $catId;
-
-        return $this;
-    }
-
-    public function getUserFrom(): ?int
-    {
-        return $this->userFrom;
-    }
-
-    public function setUserFrom(int $userFrom): static
-    {
-        $this->userFrom = $userFrom;
-
-        return $this;
-    }
-
-    public function getUserTo(): ?int
-    {
-        return $this->userTo;
-    }
-
-    public function setUserTo(int $userTo): static
-    {
-        $this->userTo = $userTo;
-
-        return $this;
-    }
-
     public function getTimestamp(): ?int
     {
         return $this->timestamp;
@@ -102,30 +69,6 @@ class Message
     public function setTimestamp(int $timestamp): static
     {
         $this->timestamp = $timestamp;
-
-        return $this;
-    }
-
-    public function getSubject(): ?string
-    {
-        return $this->subject;
-    }
-
-    public function setSubject(string $subject): static
-    {
-        $this->subject = $subject;
-
-        return $this;
-    }
-
-    public function getText(): ?string
-    {
-        return $this->text;
-    }
-
-    public function setText(string $text): static
-    {
-        $this->text = $text;
 
         return $this;
     }
@@ -222,6 +165,42 @@ class Message
     public function setMessageData(?MessageData $messageData): static
     {
         $this->messageData = $messageData;
+
+        return $this;
+    }
+
+    public function getCat(): ?MessageCategory
+    {
+        return $this->cat;
+    }
+
+    public function setCat(?MessageCategory $cat): static
+    {
+        $this->cat = $cat;
+
+        return $this;
+    }
+
+    public function getUserFrom(): ?User
+    {
+        return $this->userFrom;
+    }
+
+    public function setUserFrom(?User $userFrom): static
+    {
+        $this->userFrom = $userFrom;
+
+        return $this;
+    }
+
+    public function getUserTo(): ?User
+    {
+        return $this->userTo;
+    }
+
+    public function setUserTo(?User $userTo): static
+    {
+        $this->userTo = $userTo;
 
         return $this;
     }

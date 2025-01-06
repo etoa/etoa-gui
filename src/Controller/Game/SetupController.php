@@ -10,6 +10,7 @@ use EtoA\Form\Type\Core\ChooseSectorSetupType;
 use EtoA\Form\Type\Core\ItemSetupType;
 use EtoA\Form\Type\Core\PlanetSetupType;
 use EtoA\Form\Type\Core\RaceSetupType;
+use EtoA\Message\MessageCategoryRepository;
 use EtoA\Message\MessageRepository;
 use EtoA\Support\Checker;
 use EtoA\Text\TextRepository;
@@ -45,7 +46,8 @@ class SetupController extends AbstractGameController
         private readonly UserRepository           $userRepository,
         private readonly ConfigurationService     $configurationService,
         private readonly UserSetupService         $userSetupService,
-        private readonly DefaultItemSetRepository $defaultItemSetRepository
+        private readonly DefaultItemSetRepository $defaultItemSetRepository,
+        private readonly MessageCategoryRepository $messageCategoryRepository
 
     )
     {
@@ -305,7 +307,7 @@ class SetupController extends AbstractGameController
 
         if ($welcomeText?->isEnabled()) {
             $text = BBCodeUtils::toHTML($welcomeText->content);
-            $this->messageRepository->createSystemMessage($this->getUser()->getId(), MessageCategoryId::USER, 'Willkommen', $welcomeText->content);
+            $this->messageRepository->createSystemMessage($this->getUser()->getData(),  $this->messageCategoryRepository->find(MessageCategoryId::USER), 'Willkommen', $welcomeText->content);
         }
 
         return $this->render('game/setup/setup_finished.html.twig', [

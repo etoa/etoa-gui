@@ -8,7 +8,7 @@ use EtoA\Message\MessageCategoryRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: MessageCategoryRepository::class)]
-#[ORM\Table(name: 'users')]
+#[ORM\Table(name: 'message_cat')]
 class MessageCategory
 {
     #[ORM\Id]

@@ -68,7 +68,7 @@ class OverviewController extends AbstractGameController
         // Admin-Infos
         $infoText = $this->textRepo->find('info');
         // Rathaus
-        $newsCounts = $this->getUser()->getData()->getAlliance() ? $this->allianceNewsRepository->countNewEntriesSince($this->getUser()->getData()->getAlliance()->getId(), $this->getUser()->getData()->getLastOnline()):0;
+        $newsCounts = $this->getUser()->getData()->getAlliance() ? $this->allianceNewsRepository->countNewEntriesSince($this->getUser()->getData()->getAlliance(), $this->getUser()->getData()->getLastOnline()):0;
 
         // Eigene Flotten
         $ownFleets = $this->fleetRepository->count(['user'=>$this->getUser()->getData()]);

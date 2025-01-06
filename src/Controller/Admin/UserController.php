@@ -25,6 +25,7 @@ use EtoA\Log\LogFacility;
 use EtoA\Log\LogRepository;
 use EtoA\Log\LogSeverity;
 use EtoA\Message\MessageCategoryId;
+use EtoA\Message\MessageCategoryRepository;
 use EtoA\Message\MessageRepository;
 use EtoA\Race\RaceDataRepository;
 use EtoA\Ranking\UserBannerService;
@@ -48,6 +49,7 @@ use EtoA\User\UserService;
 use EtoA\User\UserSittingRepository;
 use EtoA\User\UserWarningRepository;
 use Exception;
+use phpDocumentor\Reflection\Types\This;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -90,6 +92,7 @@ class UserController extends AbstractAdminController
         private readonly UserLogRepository          $userLogRepository,
         private readonly UserPointsRepository       $userPointsRepository,
         private readonly string                     $projectDir,
+        private readonly MessageCategoryRepository $messageCategoryRepository
     )
     {
     }
@@ -206,7 +209,7 @@ class UserController extends AbstractAdminController
         $user = $this->userRepository->getUser($id);
 
         if ($user->getNick() !== $request->get('user_nick')) {
-            $this->userService->addToUserLog($id, "settings", "{nick} hat seinen Namen zu " . $request->get('user_nick') . " geändert.");
+            $this->userService->addToUserLog($user, "settings", "{nick} hat seinen Namen zu " . $request->get('user_nick') . " geändert.");
         }
 
         $user->setName($request->request->get('user_name'));
@@ -234,7 +237,7 @@ class UserController extends AbstractAdminController
         if ($request->request->has('user_alliance_rank_id')) {
             $user->setAllianceRankId($request->request->getInt('user_alliance_rank_id'));
         } else {
-            $user->setAllianceRankId(0);
+            $user->setAllianceRank(null);
         }
         if ($request->request->has('user_profile_img_check')) {
             $user->setProfileImageCheck(false);
@@ -288,7 +291,7 @@ class UserController extends AbstractAdminController
 
             $adminUserNicks = $this->adminUserRepo->findAllAsList();
             $adminUserNick = $adminUserNicks[$request->request->getInt('user_ban_admin_id')] ?? '';
-            $this->userService->addToUserLog($id, "account", "{nick} wird von [b]" . date("d.m.Y H:i", $ban_from) . "[/b] bis [b]" . date("d.m.Y H:i", $ban_to) . "[/b] gesperrt.\n[b]Grund:[/b] " . addslashes($request->request->get('user_ban_reason')) . "\n[b]Verantwortlich: [/b] " . $adminUserNick);
+            $this->userService->addToUserLog($user, "account", "{nick} wird von [b]" . date("d.m.Y H:i", $ban_from) . "[/b] bis [b]" . date("d.m.Y H:i", $ban_to) . "[/b] gesperrt.\n[b]Grund:[/b] " . addslashes($request->request->get('user_ban_reason')) . "\n[b]Verantwortlich: [/b] " . $adminUserNick);
         } else {
             $user->setBlockedFrom(0);
             $user->setBlockedTo(0);
@@ -558,14 +561,14 @@ class UserController extends AbstractAdminController
             'min_prod' => $min_prod ?? [],
             'tot_prod' => $tot_prod ?? [],
             'buildLogs' => array_map(fn($log) => [
-                'id' => $log->id,
-                'timestamp' => $log->timestamp,
-                'message' => $log->message,
-                'severity' => LogSeverity::SEVERITIES[$log->severity],
-                'ip' => $log->ip,
+                'id' => $log->getId(),
+                'timestamp' => $log->getTimestamp(),
+                'message' => $log->getMessage(),
+                'severity' => LogSeverity::SEVERITIES[$log->getSeverity()],
+                'ip' => $log->getIp(),
                 'te' => ($log->entityId > 0) ? Entity::createFactoryById($log->entityId) : "-",
-                'ob' => $buildingNames[$log->objectId] . " " . ($log->level > 0 ? $log->level : ''),
-                'obStatus' => match ($log->status) {
+                'ob' => $buildingNames[$log->objectId] . " " . ($log->getLevel() > 0 ? $log->getLevel() : ''),
+                'obStatus' => match ($log->getStatus()) {
                     1 => "Ausbau abgebrochen",
                     2 => "Abriss abgebrochen",
                     3 => "Ausbau",
@@ -574,42 +577,42 @@ class UserController extends AbstractAdminController
                 },
             ], $buildLogs),
             'techLogs' => array_map(fn($log) => [
-                'id' => $log->id,
-                'timestamp' => $log->timestamp,
-                'message' => $log->message,
-                'severity' => LogSeverity::SEVERITIES[$log->severity],
-                'ip' => $log->ip,
+                'id' => $log->getId(),
+                'timestamp' => $log->getTimestamp(),
+                'message' => $log->getMessage(),
+                'severity' => LogSeverity::SEVERITIES[$log->getSeverity()],
+                'ip' => $log->getIp(),
                 'te' => ($log->entityId > 0) ? Entity::createFactoryById($log->entityId) : "-",
-                'ob' => $technologyNames[$log->objectId] . " " . ($log->level > 0 ? $log->level : ''),
-                'obStatus' => match ($log->status) {
+                'ob' => $technologyNames[$log->objectId] . " " . ($log->getLevel() > 0 ? $log->getLevel() : ''),
+                'obStatus' => match ($log->getStatus()) {
                     3 => "Erforschung",
                     0 => "Erforschung abgebrochen",
                     default => '-',
                 },
             ], $techLogs),
             'shipLogs' => array_map(fn($log) => [
-                'id' => $log->id,
-                'timestamp' => $log->timestamp,
-                'message' => $log->message,
-                'severity' => LogSeverity::SEVERITIES[$log->severity],
-                'ip' => $log->ip,
+                'id' => $log->getId(),
+                'timestamp' => $log->getTimestamp(),
+                'message' => $log->getMessage(),
+                'severity' => LogSeverity::SEVERITIES[$log->getSeverity()],
+                'ip' => $log->getIp(),
                 'te' => ($log->entityId > 0) ? Entity::createFactoryById($log->entityId) : "-",
-                'ob' => $shipNames[$log->objectId] . " " . ($log->level > 0 ? $log->level : ''),
-                'obStatus' => match ($log->status) {
+                'ob' => $shipNames[$log->objectId] . " " . ($log->getLevel() > 0 ? $log->getLevel() : ''),
+                'obStatus' => match ($log->getStatus()) {
                     1 => "Bau",
                     0 => "Bau abgebrochen",
                     default => '-',
                 },
             ], $shipLogs),
             'defLogs' => array_map(fn($log) => [
-                'id' => $log->id,
-                'timestamp' => $log->timestamp,
-                'message' => $log->message,
-                'severity' => LogSeverity::SEVERITIES[$log->severity],
-                'ip' => $log->ip,
+                'id' => $log->getId(),
+                'timestamp' => $log->getTimestamp(),
+                'message' => $log->getMessage(),
+                'severity' => LogSeverity::SEVERITIES[$log->getSeverity()],
+                'ip' => $log->getIp(),
                 'te' => ($log->entityId > 0) ? Entity::createFactoryById($log->entityId) : "-",
-                'ob' => $defenseNames[$log->objectId] . " " . ($log->level > 0 ? $log->level : ''),
-                'obStatus' => match ($log->status) {
+                'ob' => $defenseNames[$log->objectId] . " " . ($log->getLevel() > 0 ? $log->getLevel() : ''),
+                'obStatus' => match ($log->getStatus()) {
                     1 => "Bau",
                     0 => "Bau abgebrochen",
                     default => '-',
@@ -652,7 +655,7 @@ class UserController extends AbstractAdminController
             return $this->redirectToRoute('admin.users.messages', ['id' => $id]);
         }
 
-        $this->messageRepository->createSystemMessage($id, MessageCategoryId::USER, $request->get('subject'), $request->get('message'));
+        $this->messageRepository->createSystemMessage($user,  $this->messageCategoryRepository->find(MessageCategoryId::USER), $request->get('subject'), $request->get('message'));
 
         $this->addFlash('success', 'Nachricht gesendet');
         return $this->redirectToRoute('admin.users.messages', ['id' => $id]);
@@ -725,7 +728,7 @@ class UserController extends AbstractAdminController
         $form = $this->createForm(ManualUserLogEntryType::class, $userLogEntryRequest);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->userService->addToUserLog($id, "settings", $userLogEntryRequest->message);
+            $this->userService->addToUserLog($user, "settings", $userLogEntryRequest->message);
             $this->addFlash('success', 'Log hinzugefügt');
             return $this->redirectToRoute('admin.users.logs', ['id' => $id]);
         }
@@ -808,7 +811,7 @@ class UserController extends AbstractAdminController
         return $this->render('admin/user/user_login_failures.html.twig', [
             'user' => $user,
             'failures' => $userLoginFailures,
-            'failureHosts' => array_map(fn($failure) => $this->networkNameService->getHost($failure->ip), $userLoginFailures),
+            'failureHosts' => array_map(fn($failure) => $this->networkNameService->getHost($failure->getIp()), $userLoginFailures),
         ]);
     }
 
