@@ -1,0 +1,98 @@
+{% extends 'game/alliance/alliance.html.twig' %}
+{% import 'macros.html.twig' as macros %}
+
+{% block alliance %}
+    {% if alliances %}
+        <twig:Table title="Übersicht">
+        {% block table_content %}
+            <tr>
+                <th colspan=\"2\">Allianz</th>
+                <th>Status</th>
+                <th>Start</th>
+                <th>Ende / Name</th>
+                <th>Aktionen</th>
+            </tr>
+            {% for alliance in alliances %}
+                {% if alliance is not same as app.user.data.alliance %}
+                    <tr>
+                        <td>
+                            <a href="{{ path('game.alliance.info',{'id':alliance.id}) }}">
+                                [{{ alliance.tag }}]
+                            </a>
+                        </td>
+                        <td>
+                            {{ BBCodeToHTML(alliance.name) }}
+                        </td>
+                        {% if relations[alliance.id] is defined %}
+                            {% if relations[alliance.id].level == constant('EtoA\\Alliance\\AllianceDiplomacyLevel::BND_CONFIRMED') %}
+                                <td style="color:#0f0;">Bündnis</td>
+                                <td>{{ formatTimestamp(relation.date) }}</td>
+                                <td>{{ relation.name }}</td>
+                            {% elseif relations[alliance.id].level == constant('EtoA\\Alliance\\AllianceDiplomacyLevel::WAR') %}
+                                <td style="color:#f00;">Krieg</td>
+                                <td>{{ formatTimestamp(relation.date) }}</td>
+                                <td>{{ formatTimestamp(relation.date + 3600 *
+                                        configValue('alliance_war_time')) }}</td>
+                            {% elseif relations[alliance.id].level == constant('EtoA\\Alliance\\AllianceDiplomacyLevel::PEACE') %}
+                                <td style="color:#3f9;">Frieden</td>
+                                <td>{{ formatTimestamp(relation.date) }}</td>
+                                <td>{{ formatTimestamp(relation.date + 3600 *
+                                    param1('alliance_war_time')) }}</td>
+                            {% elseif relations[alliance.id].level == constant('EtoA\\Alliance\\AllianceDiplomacyLevel::BND_REQUEST') %}
+                                {% if relation.alliance2 == alliance %}
+                                    <td style="color:#ff0;">Anfrage</td>
+                                {% else %}
+                                    <td style="color:#f90;">Anfrage an uns</td>
+                                {% endif %}
+                                <td>{{ formatTimestamp(relation.date) }}</td>
+                                <td>-</td>
+                            {% else %}
+                                <td>-</td>
+                                <td>-</td>
+                                <td>-</td>
+                            {% endif %}
+                        {% else %}
+                            <td>-</td>
+                            <td>-</td>
+                            <td>-</td>
+                        {% endif %}
+                        <td>
+                            {% if relations[alliance.id] is defined %}
+                                {% if relations[alliance.id].level == constant('EtoA\\Alliance\\AllianceDiplomacyLevel::BND_CONFIRMED') %}
+                                    <a href="?page=$page&action=relations&amp;view=">Details</a> &nbsp;
+                                    <a href="?page=$page&action=relations&amp;end_pact=">Auflösen</a>
+                                {% elseif relations[alliance.id].level == constant('EtoA\\Alliance\\AllianceDiplomacyLevel::WAR') %}
+                                    <a href="?page=$page&action=relations&view=">Kriegserklärung</a>
+                                {% elseif relations[alliance.id].level == constant('EtoA\\Alliance\\AllianceDiplomacyLevel::PEACE') %}
+                                    -
+                                {% elseif relations[alliance.id].level == constant('EtoA\\Alliance\\AllianceDiplomacyLevel::BND_REQUEST') %}
+                                    {% if relation.alliance2 == alliance %}
+                                        <a href="?page=$page&action=relations&view=">Anschauen / Löschen</a>
+                                    {% else %}
+                                        <a href="?page=$page&action=relations&view=">Beantworten</a>
+                                    {% endif %}
+                                {% else %}
+                                    {% if alliance.acceptBnd %}
+                                        <a href="?page=$page&action=relations&amp;begin_bnd=">Bündnis</a> &nbsp;
+                                    {% endif %}
+                                {% endif %}
+                                <a href="?page=$page&action=relations&amp;begin_war=">Krieg</a>
+                            {% else %}
+                                {% if alliance.acceptBnd %}
+                                    <a href="{{ path('game.alliance.diplomacy.begin_bnd',{id:alliance.id}) }}">Bündnis</a> &nbsp;
+                                {% endif %}
+                                <a href="?page=$page&action=relations&amp;begin_war=">Krieg</a>
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endif %}
+            {% endfor %}
+        {% endblock %}
+        </twig:Table>
+    {% else %}
+        {{ macros.errorMessage('Es gibt noch keine Allianzen, welcher du den Krieg erklären kannst.') }}
+    {% endif %}
+    <a href="{{ path('game.alliance.overview') }}">
+        <input type="button" value="Zurück zur Hauptseite"/>
+    </a>
+{% endblock %}

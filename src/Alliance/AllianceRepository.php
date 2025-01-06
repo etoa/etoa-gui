@@ -112,14 +112,7 @@ class AllianceRepository extends AbstractRepository
      */
     public function getAlliances(): array
     {
-        $data = $this->createQueryBuilder('q')
-            ->select("*")
-            ->from('alliances')
-            ->orderBy('alliance_name')
-            ->addOrderBy('alliance_tag')
-            ->fetchAllAssociative();
-
-        return array_map(fn (array $row) => new Alliance($row), $data);
+        return $this->findBy([],['name'=>'DESC','tag'=>'DESC']);
     }
 
     /**

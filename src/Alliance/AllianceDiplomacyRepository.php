@@ -4,6 +4,7 @@ namespace EtoA\Alliance;
 
 use Doctrine\Persistence\ManagerRegistry;
 use EtoA\Core\AbstractRepository;
+use EtoA\Entity\Alliance;
 use EtoA\Entity\AllianceDiplomacy;
 
 class AllianceDiplomacyRepository extends AbstractRepository
@@ -65,13 +66,13 @@ class AllianceDiplomacyRepository extends AbstractRepository
     /**
      * @return AllianceDiplomacy[]
      */
-    public function getDiplomacies(int $allianceId, int $level = null): array
+    public function getDiplomacies(Alliance $alliance, int $level = null): array
     {
         $qb = $this->createQueryBuilder('q')
-            ->where('q.alliance1 = :allianceId OR q.alliance2 = :allianceId')
+            ->where('q.alliance1 = :alliance OR q.alliance2 = :alliance')
             ->orderBy('q.level', 'DESC')
             ->addOrderBy('q.id', 'DESC')
-            ->setParameter('allianceId', $allianceId);
+            ->setParameter('alliance', $alliance);
 
         if ($level !== null) {
             $qb
@@ -112,31 +113,32 @@ class AllianceDiplomacyRepository extends AbstractRepository
         return $data !== false ? new AllianceDiplomacy($data, $id) : null;
     }
 
-    public function existsDiplomacyBetween(int $allianceId, int $otherAllianceId, int $level = null): bool
+    public function existsDiplomacyBetween(Alliance $alliance, Alliance $otherAlliance, int $level = null): bool
     {
-        if ($allianceId === 0 || $otherAllianceId === 0 || $allianceId === $otherAllianceId) {
+        if ($alliance === $otherAlliance) {
             return false;
         }
 
         $qb = $this->createQueryBuilder('q')
             ->select('1')
-            ->from('alliance_bnd')
-            ->where('(alliance_bnd_alliance_id1 = :allianceId AND alliance_bnd_alliance_id2 = :otherAllianceId) OR (alliance_bnd_alliance_id2 = :allianceId AND alliance_bnd_alliance_id1 = :otherAllianceId)')
+            ->where('(q.alliance1 = :alliance AND q.alliance2 = :otherAlliance) OR (q.alliance2 = :alliance AND q.alliance1 = :otherAlliance)')
             ->setParameters([
-                'allianceId' => $allianceId,
-                'otherAllianceId' => $otherAllianceId,
+                'alliance' => $alliance,
+                'otherAlliance' => $otherAlliance,
             ]);
 
         if ($level !== null) {
             $qb
-                ->andWhere('alliance_bnd_level = :level')
+                ->andWhere('q.level = :level')
                 ->setParameter('level', $level);
         } else {
-            $qb->andWhere('alliance_bnd_level > 0');
+            $qb->andWhere('q.level >= 0');
         }
 
         return (bool) $qb
-            ->fetchOne();
+            ->setMaxResults(1)
+            ->getQuery()
+            ->getOneOrNullResult();
     }
 
     public function updateDiplomacy(int $id, int $level, string $name, int $points = null, int $date = null): void

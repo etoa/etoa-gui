@@ -29,19 +29,20 @@ class AllianceDiplomacy
     private int $level;
 
     #[ORM\Column(name: "alliance_bnd_text_pub")]
-    private string $text;
+    private string $publicText = '';
 
     #[ORM\Column(name: "alliance_bnd_date")]
     private int $date;
 
     #[ORM\Column(name: "alliance_bnd_text")]
-    private string $privateText;
+    private string $text;
 
     #[ORM\Column(name: "alliance_bnd_points")]
-    private int $points;
+    private int $points = 0;
 
-    #[ORM\Column(name: "alliance_bnd_diplomat_id")]
-    private int $diplomatId;
+    #[ORM\JoinColumn(name: 'alliance_bnd_diplomat_id', referencedColumnName: 'user_id')]
+    #[ORM\ManyToOne(targetEntity: User::class)]
+    private ?User $diplomat = null;
 
     public function getId(): ?int
     {
@@ -96,14 +97,14 @@ class AllianceDiplomacy
         return $this;
     }
 
-    public function getPrivateText(): ?string
+    public function getPublicText(): ?string
     {
-        return $this->privateText;
+        return $this->publicText;
     }
 
-    public function setPrivateText(string $privateText): static
+    public function setPublicText(string $publicText): static
     {
-        $this->privateText = $privateText;
+        $this->publicText = $publicText;
 
         return $this;
     }
@@ -116,18 +117,6 @@ class AllianceDiplomacy
     public function setPoints(int $points): static
     {
         $this->points = $points;
-
-        return $this;
-    }
-
-    public function getDiplomatId(): ?int
-    {
-        return $this->diplomatId;
-    }
-
-    public function setDiplomatId(int $diplomatId): static
-    {
-        $this->diplomatId = $diplomatId;
 
         return $this;
     }
@@ -152,6 +141,18 @@ class AllianceDiplomacy
     public function setAlliance2(?Alliance $alliance2): static
     {
         $this->alliance2 = $alliance2;
+
+        return $this;
+    }
+
+    public function getDiplomat(): ?User
+    {
+        return $this->diplomat;
+    }
+
+    public function setDiplomat(?User $diplomat): static
+    {
+        $this->diplomat = $diplomat;
 
         return $this;
     }
