@@ -19,6 +19,7 @@ use EtoA\Log\LogFacility;
 use EtoA\Log\LogRepository;
 use EtoA\Log\LogSeverity;
 use EtoA\Message\MessageCategoryId;
+use EtoA\Message\MessageCategoryRepository;
 use EtoA\Message\MessageRepository;
 use EtoA\Support\BBCodeUtils;
 use EtoA\Support\StringUtils;
@@ -55,6 +56,7 @@ class AllianceService
         private readonly Security $security,
         private readonly UrlGeneratorInterface $router,
         private readonly AllianceRankRightRepository    $allianceRankRightRepository,
+        private readonly MessageCategoryRepository $messageCategoryRepository
     )
     {}
 
@@ -131,14 +133,14 @@ class AllianceService
         }
 
         if ($kick) {
-            $this->messageRepository->createSystemMessage($user->getId(), MessageCategoryId::ALLIANCE, "Allianzausschluss", "Du wurdest aus der Allianz [b]" . $alliance->toString() . "[/b] ausgeschlossen!");
+            $this->messageRepository->createSystemMessage($user, $this->messageCategoryRepository->find(MessageCategoryId::ALLIANCE), "Allianzausschluss", "Du wurdest aus der Allianz [b]" . $alliance->toString() . "[/b] ausgeschlossen!");
         } else {
-            $this->messageRepository->createSystemMessage($alliance->getFounderId(), MessageCategoryId::ALLIANCE, "Allianzaustritt", "Der Spieler " . $user->getNick() . " trat aus der Allianz aus!");
+            $this->messageRepository->createSystemMessage($alliance->getFounder(), $this->messageCategoryRepository->find(MessageCategoryId::ALLIANCE), "Allianzaustritt", "Der Spieler " . $user->getNick() . " trat aus der Allianz aus!");
         }
 
-        $this->allianceHistoryRepository->addEntry($alliance->getId(), "[b]" . $user->getNick() . "[/b] ist nun kein Mitglied mehr von uns.");
+        $this->allianceHistoryRepository->addEntry($alliance, "[b]" . $user->getNick() . "[/b] ist nun kein Mitglied mehr von uns.");
         $this->userRepository->setAllianceId($user->getId(), $alliance->getId(), 0, time());
-        $this->userService->addToUserLog($user->getId(), "alliance", "{nick} ist nun kein Mitglied mehr der Allianz " . $alliance->toString() . ".");
+        $this->userService->addToUserLog($user, "alliance", "{nick} ist nun kein Mitglied mehr der Allianz " . $alliance->toString() . ".");
 
         $alliance->memberCount--;
 
@@ -151,9 +153,9 @@ class AllianceService
             return false;
         }
 
-        $this->allianceHistoryRepository->addEntry($alliance->getId(), "Der Spieler [b]" . $founder->getNick() . "[/b] wird zum Gründer befördert.");
-        $this->messageRepository->createSystemMessage($founder->getId(), MessageCategoryId::ALLIANCE, "Gründer", "Du hast nun die Gründerrechte deiner Allianz!");
-        $this->userService->addToUserLog($founder->getId(), "alliance", "{nick} ist nun Gründer der Allianz " . $alliance->toString());
+        $this->allianceHistoryRepository->addEntry($alliance, "Der Spieler [b]" . $founder->getNick() . "[/b] wird zum Gründer befördert.");
+        $this->messageRepository->createSystemMessage($founder, $this->messageCategoryRepository->find(MessageCategoryId::ALLIANCE), "Gründer", "Du hast nun die Gründerrechte deiner Allianz!");
+        $this->userService->addToUserLog($founder, "alliance", "{nick} ist nun Gründer der Allianz " . $alliance->toString());
 
         return true;
     }
@@ -163,7 +165,7 @@ class AllianceService
         if (!$this->allianceDiplomacyRepository->isAtWar($alliance->getId())) {
             $this->allianceBoardCategoryRepository->deleteAllCategories($alliance->getId());
             $this->allianceApplicationRepository->deleteAllianceApplication($alliance->getId());
-            $diplomacies = $this->allianceDiplomacyRepository->getDiplomacies($alliance->getId());
+            $diplomacies = $this->allianceDiplomacyRepository->getDiplomacies($alliance);
             foreach ($diplomacies as $diplomacy) {
                 $this->allianceBoardTopicRepository->deleteBndTopic($diplomacy->getId());
             }
@@ -185,11 +187,11 @@ class AllianceService
             $this->userRepository->resetAllianceId($alliance->getId());
 
             // Daten löschen
-            $this->repository->remove($alliance->getId());
+            $this->repository->remove($alliance);
 
             //Log schreiben
             if ($user !== null) {
-                $this->userService->addToUserLog($user->getId(), "alliance", "{nick} löst die Allianz [b]" . $alliance->toString() . "[/b] auf.");
+                $this->userService->addToUserLog($user, "alliance", "{nick} löst die Allianz [b]" . $alliance->toString() . "[/b] auf.");
                 $this->logRepository->add(LogFacility::ALLIANCE, LogSeverity::INFO, "Die Allianz [b]" . $alliance->toString() . "[/b] wurde von " . $user->getNick() . " aufgelöst!");
             } else {
                 $this->logRepository->add(LogFacility::ALLIANCE, LogSeverity::INFO, "Die Allianz [b]" . $alliance->toString() . "[/b] wurde gelöscht!");
@@ -335,7 +337,7 @@ class AllianceService
             $adminBox["Geschichte"] = $this->router->generate('game.alliance.history');
         }
         if ($userAlliancePermission->hasRights(AllianceRights::ALLIANCE_NEWS)) {
-            $adminBox["Allianznews (Rathaus)"] = "?page=$page&action=alliancenews";
+            $adminBox["Allianznews (Rathaus)"] = $this->router->generate('game.alliance.news');
         }
         if ($userAlliancePermission->hasRights(AllianceRights::RELATIONS)) {
             $adminBox["Diplomatie"] = "?page=$page&action=relations";
@@ -395,7 +397,7 @@ class AllianceService
         }
 
         // Kriege
-        $wars = $this->allianceDiplomacyRepository->getDiplomacies($alliance->getId(), AllianceDiplomacyLevel::WAR);
+        $wars = $this->allianceDiplomacyRepository->getDiplomacies($alliance, AllianceDiplomacyLevel::WAR);
         if (count($wars) > 0) {
             echo "<tr>
                                 <th>Kriege:</th>
@@ -423,7 +425,7 @@ class AllianceService
 
 
         // Friedensabkommen
-        $peace = $this->allianceDiplomacyRepository->getDiplomacies($alliance->getId(), AllianceDiplomacyLevel::PEACE);
+        $peace = $this->allianceDiplomacyRepository->getDiplomacies($alliance, AllianceDiplomacyLevel::PEACE);
         if (count($peace) > 0) {
             echo "<tr>
                                 <th>Friedensabkommen:</th>
@@ -450,7 +452,7 @@ class AllianceService
         }
 
         // Bündnisse
-        $bnds = $this->allianceDiplomacyRepository->getDiplomacies($alliance->getId(), AllianceDiplomacyLevel::BND_CONFIRMED);
+        $bnds = $this->allianceDiplomacyRepository->getDiplomacies($alliance, AllianceDiplomacyLevel::BND_CONFIRMED);
         if (count($bnds) > 0) {
             echo "<tr>
                                 <th>Bündnisse:</th>

@@ -4,7 +4,9 @@ namespace EtoA\Alliance;
 
 use Doctrine\Persistence\ManagerRegistry;
 use EtoA\Core\AbstractRepository;
+use EtoA\Entity\Alliance;
 use EtoA\Entity\AllianceNews;
+use EtoA\Entity\User;
 
 class AllianceNewsRepository extends AbstractRepository
 {
@@ -13,29 +15,20 @@ class AllianceNewsRepository extends AbstractRepository
         parent::__construct($registry, AllianceNews::class);
     }
 
-    public function add(int $userId, int $allianceId, string $title, string $text, int $toAllianceId): int
+    public function add(User $user, Alliance $alliance, string $title, string $text, ?Alliance $toAlliance = null): AllianceNews
     {
-        $this->createQueryBuilder('q')
-            ->insert('alliance_news')
-            ->values([
-                'alliance_news_alliance_id' => ':allianceId',
-                'alliance_news_user_id' => ':userId',
-                'alliance_news_title' => ':title',
-                'alliance_news_text' => ':text',
-                'alliance_news_date' => ':now',
-                'alliance_news_alliance_to_id' => ':toAllianceId',
-            ])
-            ->setParameters([
-                'allianceId' => $allianceId,
-                'userId' => $userId,
-                'title' => $title,
-                'text' => $text,
-                'now' => time(),
-                'toAllianceId' => $toAllianceId,
-            ])
-            ->executeQuery();
+        $allianceNews = new AllianceNews();
+        $allianceNews->setAlliance($alliance);
+        $allianceNews->setAuthor($user);
+        $allianceNews->setTitle($title);
+        $allianceNews->setText($text);
+        $allianceNews->setDate(time());
+        $allianceNews->setToAlliance($toAlliance);
 
-        return (int) $this->getConnection()->lastInsertId();
+        $this->persist($allianceNews);
+        $this->save();
+
+        return $allianceNews;
     }
 
     public function update(AllianceNews $news): void
@@ -62,33 +55,15 @@ class AllianceNewsRepository extends AbstractRepository
     /**
      * @return AllianceNews[]
      */
-    public function getNewsEntries(?int $allianceId, int $limit = null): array
+    public function getNewsEntries(?Alliance $alliance = null, int $limit = null): array
     {
-        $qb = $this->createQueryBuilder('q')
-            ->select('n.*')
-            ->addSelect('a.alliance_name, a.alliance_tag')
-            ->addSelect('u.user_id, u.user_nick')
-            ->addSelect('ta.alliance_name AS to_alliance_name, ta.alliance_tag AS to_alliance_tag')
-            ->from('alliance_news', 'n')
-            ->leftJoin('n', 'alliances', 'a', 'n.alliance_news_alliance_id=a.alliance_id')
-            ->leftJoin('n', 'users', 'u', 'u.user_id = n.alliance_news_user_id')
-            ->leftJoin('n', 'alliances', 'ta', 'n.alliance_news_alliance_id=ta.alliance_id')
-            ->orderBy('n.alliance_news_date', 'DESC');
+        $filter = [];
 
-        if ($allianceId !== null) {
-            $qb
-                ->where('n.alliance_news_alliance_to_id = :allianceId')
-                ->setParameter('allianceId', $allianceId);
+        if ($alliance) {
+            $filter = ['alliance'=>$alliance];
         }
 
-        if ($limit > 0) {
-            $qb->setMaxResults($limit);
-        }
-
-        $data = $qb
-            ->fetchAllAssociative();
-
-        return array_map(fn (array $row) => new AllianceNews($row), $data);
+        return $this->findBy($filter,['date'=>'DESC'],$limit);
     }
 
     /**
@@ -122,15 +97,15 @@ class AllianceNewsRepository extends AbstractRepository
         return $data !== false ? new AllianceNews($data) : null;
     }
 
-    public function countNewEntriesSince(int $allianceId, int $timestamp): int
+    public function countNewEntriesSince(Alliance $alliance, int $timestamp): int
     {
          return $this->createQueryBuilder('q')
             ->select('COUNT(q.id)')
-            ->where('q.toAllianceId = :allianceId OR q.toAllianceId = 0')
+            ->where('q.toAlliance= :alliance OR q.toAlliance is null')
             ->andWhere('q.date > :timestamp')
             ->setParameters([
                 'timestamp' => $timestamp,
-                'allianceId' => $allianceId,
+                'alliance' => $alliance,
             ])
             ->getQuery()
             ->getSingleScalarResult();

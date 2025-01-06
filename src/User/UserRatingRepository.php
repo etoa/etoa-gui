@@ -7,6 +7,7 @@ namespace EtoA\User;
 use Doctrine\DBAL\Query\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 use EtoA\Core\AbstractRepository;
+use EtoA\Entity\User;
 use EtoA\Entity\UserRating;
 
 class UserRatingRepository extends AbstractRepository
@@ -83,17 +84,18 @@ class UserRatingRepository extends AbstractRepository
         $qry->executeQuery();
     }
 
-    public function addDiplomacyRating(int $userId, int $rating): void
+    public function addDiplomacyRating(User $user, int $rating): void
     {
         $this->createQueryBuilder('q')
-            ->update('user_ratings')
-            ->set('diplomacy_rating', 'diplomacy_rating + :rating')
-            ->where('id = :userId')
+            ->update()
+            ->set('q.diplomacyRating', 'q.diplomacyRating + :rating')
+            ->where('q.userId = :userId')
             ->setParameters([
                 'rating' => $rating,
-                'userId' => $userId,
+                'userId' => $user->getId(),
             ])
-            ->executeQuery();
+            ->getQuery()
+            ->execute();
     }
 
     public function addBlank(int $id): void

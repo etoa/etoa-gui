@@ -4,14 +4,17 @@ namespace EtoA\Controller\Game;
 
 use EtoA\Alliance\AllianceApplicationRepository;
 use EtoA\Alliance\AllianceDiplomacyLevel;
+use EtoA\Alliance\AllianceDiplomacyPoints;
 use EtoA\Alliance\AllianceDiplomacyRepository;
 use EtoA\Alliance\AllianceHistoryRepository;
 use EtoA\Alliance\AllianceMemberCosts;
+use EtoA\Alliance\AllianceNewsRepository;
 use EtoA\Alliance\AllianceRepository;
 use EtoA\Alliance\AllianceRights;
 use EtoA\Alliance\AllianceService;
 use EtoA\Alliance\Event\AllianceCreate;
 use EtoA\Alliance\InvalidAllianceParametersException;
+use EtoA\Alliance\TownhallService;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Entity\Alliance;
 use EtoA\Entity\AllianceApplication;
@@ -24,13 +27,17 @@ use EtoA\Log\LogFacility;
 use EtoA\Log\LogRepository;
 use EtoA\Log\LogSeverity;
 use EtoA\Message\MessageCategoryId;
+use EtoA\Message\MessageCategoryRepository;
 use EtoA\Message\MessageRepository;
 use EtoA\Support\BBCodeUtils;
 use EtoA\Support\StringUtils;
 use EtoA\Universe\Entity\EntityRepository;
 use EtoA\Universe\Planet\PlanetRepository;
+use EtoA\User\UserRatingService;
 use EtoA\User\UserRepository;
 use EtoA\User\UserService;
+use phpDocumentor\Reflection\Types\This;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Form\Extension\Core\Type\ButtonType;
@@ -43,6 +50,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
+use function Symfony\Component\Translation\t;
 
 class AllianceController extends AbstractGameController
 {
@@ -61,7 +69,11 @@ class AllianceController extends AbstractGameController
         private readonly AllianceMemberCosts $allianceMemberCosts,
         private readonly PlanetRepository $planetRepository,
         private readonly ForeignFleetLoader       $foreignFleetLoader,
-        private readonly EntityRepository $entityRepository
+        private readonly EntityRepository $entityRepository,
+        private readonly AllianceNewsRepository $allianceNewsRepository,
+        private readonly UserRatingService $userRatingService,
+        private readonly TownhallService $townhallService,
+        private readonly MessageCategoryRepository $messageCategoryRepository
     )
     {
     }
@@ -99,7 +111,7 @@ class AllianceController extends AbstractGameController
             $form->handleRequest($request);
             if ($form->isSubmitted() && $form->isValid()) {
                 if($form->get('cancel')->isClicked()) {
-                    $this->messageRepository->createSystemMessage($application->getAlliance()->getFounderId(), MessageCategoryId::ALLIANCE, "Bewerbung zurückgezogen", "Der Spieler " . $cu->getNick() . " hat die Bewerbung bei deiner Allianz zurückgezogen!");
+                    $this->messageRepository->createSystemMessage($application->getAlliance()->getFounder(), $this->messageCategoryRepository->find(MessageCategoryId::ALLIANCE), "Bewerbung zurückgezogen", "Der Spieler " . $cu->getNick() . " hat die Bewerbung bei deiner Allianz zurückgezogen!");
                     $this->allianceHistoryRepository->addEntry($application->getAlliance(), "Der Spieler [b]" . $cu->getNick() . "[/b] zieht seine Bewerbung zurück.");
                     $this->allianceApplicationRepository->remove($application);
                     $this->allianceApplicationRepository->save();
@@ -201,7 +213,7 @@ class AllianceController extends AbstractGameController
 
             $form->handleRequest($request);
             if ($form->isSubmitted() && $form->isValid()) {
-                $this->messageRepository->createSystemMessage($alliance->getFounder()->getId(), MessageCategoryId::ALLIANCE, "Bewerbung", "Der Spieler " . $this->getUser()->getUserIdentifier() . " hat sich bei deiner Allianz beworben. Gehe auf die [".$this->generateUrl('game.alliance.applications')."]Allianzseite[/page] für Details!");
+                $this->messageRepository->createSystemMessage($alliance->getFounder(), $this->messageCategoryRepository->find(MessageCategoryId::ALLIANCE), "Bewerbung", "Der Spieler " . $this->getUser()->getUserIdentifier() . " hat sich bei deiner Allianz beworben. Gehe auf die [".$this->generateUrl('game.alliance.applications')."]Allianzseite[/page] für Details!");
                 $this->allianceHistoryRepository->addEntry($alliance, "Der Spieler [b]" . $this->getUser()->getUserIdentifier() . "[/b] bewirbt sich sich bei der Allianz.");
 
                 $application->setAlliance($alliance);
@@ -307,7 +319,7 @@ class AllianceController extends AbstractGameController
                             $msg['success'][] = $nick. " wurde angenommen.";
 
                             // Nachricht an den Bewerber schicken
-                            $this->messageRepository->createSystemMessage($applicationUser->getId(), MessageCategoryId::ALLIANCE, "Bewerbung angenommen", "Deine Allianzbewerbung wurde angenommen!\n\n[b]Antwort:[/b]\n" . addslashes($application->get('answer')->getData()));
+                            $this->messageRepository->createSystemMessage($applicationUser, $this->messageCategoryRepository->find(MessageCategoryId::ALLIANCE), "Bewerbung angenommen", "Deine Allianzbewerbung wurde angenommen!\n\n[b]Antwort:[/b]\n" . addslashes($application->get('answer')->getData()));
 
                             // Log schreiben
                             $this->allianceHistoryRepository->addEntry($alliance, "Die Bewerbung von [b]" . $nick . "[/b] wurde akzeptiert!");
@@ -325,7 +337,7 @@ class AllianceController extends AbstractGameController
                             $msg['success'][] = $nick . " wurde abgelehnt.";
 
                             // Nachricht an den Bewerber schicken
-                            $this->messageRepository->createSystemMessage($applicationUser->getId(), MessageCategoryId::ALLIANCE, "Bewerbung abgelehnt", "Deine Allianzbewerbung wurde abgelehnt!\n\n[b]Antwort:[/b]\n" . addslashes($application->get('answer')->getData()));
+                            $this->messageRepository->createSystemMessage($applicationUser, $this->messageCategoryRepository->find(MessageCategoryId::ALLIANCE), "Bewerbung abgelehnt", "Deine Allianzbewerbung wurde abgelehnt!\n\n[b]Antwort:[/b]\n" . addslashes($application->get('answer')->getData()));
 
                             // Log schreiben
                             $this->allianceHistoryRepository->addEntry($cu->getAlliance(), "Die Bewerbung von [b]" . $nick . "[/b] wurde abgelehnt!");
@@ -340,7 +352,7 @@ class AllianceController extends AbstractGameController
                             $text = str_replace(' ', '', $application->get('answer')->getData());
                             if ($text != '') {
                                 // Nachricht an den Bewerber schicken
-                                $this->messageRepository->createSystemMessage($applicationUser->getId(), MessageCategoryId::ALLIANCE, "Bewerbung: Nachricht", "Antwort auf die Bewerbung an die Allianz [b]" . $alliance->toString() . "[/b]:\n" . $application->get('answer')->getData());
+                                $this->messageRepository->createSystemMessage($applicationUser, $this->messageCategoryRepository->find(MessageCategoryId::ALLIANCE), "Bewerbung: Nachricht", "Antwort auf die Bewerbung an die Allianz [b]" . $alliance->toString() . "[/b]:\n" . $application->get('answer')->getData());
 
                                 $msg['success'][] = $nick . ": Nachricht gesendet";
                             }
@@ -367,13 +379,86 @@ class AllianceController extends AbstractGameController
     }
 
     #[Route('/game/alliance/history', name: 'game.alliance.history')]
-    public function history(Request $request): Response {
+    public function history(): Response {
         $entries = $this->allianceHistoryRepository->findForAlliance($this->getUser()->getData()->getAlliance());
 
         return $this->render('game/alliance/alliance_history.html.twig',[
             'entries' =>$entries
         ]);
     }
+
+    #[Route('/game/alliance/news', name: 'game.alliance.news')]
+    public function news(Request $request): Response
+    {
+        $preview = false;
+
+        $form = $this->createFormBuilder()
+            ->add('title', TextType::class, [
+                'attr' => [
+                    'size'=>'62',
+                    'maxlength => 255'
+                ],
+                'constraints' => new NotBlank(
+                    ['message' => 'Nicht alle Felder ausgefüllt!']
+                ),
+            ])
+            ->add('text', TextareaType::class, [
+                'attr' => [
+                    'rows'=>'18',
+                    'cols' => '60'
+                ],
+                'constraints' => new NotBlank(
+                    ['message' => 'Nicht alle Felder ausgefüllt!']
+                ),
+            ])
+            ->add('target', ChoiceType::class, [
+                'choices' => $this->allianceRepository->findAll(),
+                'choice_label' => function (?Alliance $alliance): string {
+                    return $alliance ? $alliance->toString() : '';
+                },
+                'choice_value' =>'id',
+                'data' => $this->getUser()->getData()->getAlliance(),
+                'placeholder' => 'Öffentliches Rathaus',
+                'placeholder_attr' => [
+                    'style' => 'font-weight:bold;color:#0f0;'
+                ],
+                'required' => false
+            ])
+            ->add('preview', SubmitType::class, ['label' => 'Vorschau'])
+            ->add('send', SubmitType::class, ['label' => 'Senden'])
+            ->getForm()
+            ->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $preview = true;
+            if($form->get('send')->isClicked()) {
+                $cu = $this->getUser()->getData();
+                $news = $this->allianceNewsRepository->add($cu, $cu->getAlliance(), $form->get('title')->getData(), $form->get('text')->getData(), $form->get('target')->getData());
+
+                $msg['success'] = "News wurde gesendet!";
+
+                // Gebe nur Punkte falls Nachricht öffentlich oder an andere Allianz
+                if ($cu->getAlliance() !== $form->get('target')->getData()) {
+                    $this->userRatingService->addDiplomacyRating(
+                        $cu,
+                        AllianceDiplomacyPoints::POINTS_PER_NEWS,
+                        "Rathausnews verfasst (ID:" . $news->getId() . ", " . $form->get('text')->getData() . ")"
+                    );
+                }
+
+                // Update rss file
+                $this->townhallService->genRss();
+            }
+        }
+
+        return $this->render('game/alliance/alliance_news.html.twig',[
+            'form' =>$form,
+            'preview' => $preview,
+            'msg' => $msg??null
+        ]);
+    }
+
+
 
     private function onCooldown():bool
     {

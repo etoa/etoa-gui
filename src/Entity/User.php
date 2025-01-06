@@ -231,6 +231,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(type: "boolean")]
     protected bool $userChangedMainPlanet;
 
+    #[ORM\OneToOne(mappedBy: "id", targetEntity: UserRating::class)]
+    #[ORM\JoinColumn(name: 'user_id', referencedColumnName: 'id')]
+    protected UserRating $userRating;
+
     public function __toString() {
         return $this->nick;
     }
@@ -1052,6 +1056,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setAllianceRank(?AllianceRank $allianceRank): static
     {
         $this->allianceRank = $allianceRank;
+
+        return $this;
+    }
+
+    public function getUserRating(): ?UserRating
+    {
+        return $this->userRating;
+    }
+
+    public function setUserRating(?UserRating $userRating): static
+    {
+        $this->userRating = $userRating;
 
         return $this;
     }

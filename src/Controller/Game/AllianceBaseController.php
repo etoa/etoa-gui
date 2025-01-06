@@ -198,7 +198,8 @@ class AllianceBaseController extends AbstractGameController
 
 
             ->add('save', SubmitType::class, ['label' => 'Anzeigen'])
-            ->getForm()->handleRequest($request);
+            ->getForm()
+            ->handleRequest($request);
 
         if ($form_filter->isSubmitted() && $form_filter->isValid()) {
             $sum = $form_filter->get('sum')->getData();

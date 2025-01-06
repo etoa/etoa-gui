@@ -13,8 +13,9 @@ class UserPoints
     #[ORM\Column(name: "point_id", type: "integer")]
     private int $id;
 
-    #[ORM\Column(name: "point_user_id", type: "integer")]
-    private int $userId;
+    #[ORM\JoinColumn(name: 'point_user_id', referencedColumnName: 'user_id')]
+    #[ORM\ManyToOne(targetEntity: User::class)]
+    private User $user;
 
     #[ORM\Column(name: "point_timestamp", type: "integer")]
     private int $timestamp;
@@ -34,18 +35,6 @@ class UserPoints
     public function getId(): ?int
     {
         return $this->id;
-    }
-
-    public function getUserId(): ?int
-    {
-        return $this->userId;
-    }
-
-    public function setUserId(int $userId): static
-    {
-        $this->userId = $userId;
-
-        return $this;
     }
 
     public function getTimestamp(): ?int
@@ -104,6 +93,18 @@ class UserPoints
     public function setBuildingPoints(int $buildingPoints): static
     {
         $this->buildingPoints = $buildingPoints;
+
+        return $this;
+    }
+
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
+
+    public function setUser(?User $user): static
+    {
+        $this->user = $user;
 
         return $this;
     }

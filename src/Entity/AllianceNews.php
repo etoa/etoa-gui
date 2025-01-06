@@ -29,19 +29,13 @@ class AllianceNews
     #[ORM\JoinColumn(name: 'alliance_news_alliance_id', referencedColumnName: 'alliance_id')]
     private Alliance $alliance;
 
-    #[ORM\Column(name: "alliance_news_user_id")]
-    private ?int $authorUserId;
-
     #[ORM\ManyToOne(targetEntity: User::class)]
     #[ORM\JoinColumn(name: 'alliance_news_user_id', referencedColumnName: 'user_id')]
     private User $author;
 
-    #[ORM\Column(name: "alliance_news_alliance_to_id")]
-    private ?int $toAllianceId;
-
     #[ORM\ManyToOne(targetEntity: Alliance::class)]
     #[ORM\JoinColumn(name: 'alliance_news_alliance_to_id', referencedColumnName: 'alliance_id')]
-    private Alliance $toAlliance;
+    private ?Alliance $toAlliance = null;
 
     public function getId(): ?int
     {
@@ -92,30 +86,6 @@ class AllianceNews
     public function setAuthorAllianceId(int $authorAllianceId): static
     {
         $this->authorAllianceId = $authorAllianceId;
-
-        return $this;
-    }
-
-    public function getAuthorUserId(): ?int
-    {
-        return $this->authorUserId;
-    }
-
-    public function setAuthorUserId(int $authorUserId): static
-    {
-        $this->authorUserId = $authorUserId;
-
-        return $this;
-    }
-
-    public function getToAllianceId(): ?int
-    {
-        return $this->toAllianceId;
-    }
-
-    public function setToAllianceId(int $toAllianceId): static
-    {
-        $this->toAllianceId = $toAllianceId;
 
         return $this;
     }

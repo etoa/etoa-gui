@@ -2,6 +2,7 @@
 
 namespace EtoA\User;
 
+use EtoA\Entity\User;
 use EtoA\Log\LogFacility;
 use EtoA\Log\LogRepository;
 use EtoA\Log\LogSeverity;
@@ -26,11 +27,11 @@ class UserRatingService
         }
     }
 
-    public function addDiplomacyRating(int $userId, int $rating, string $reason = ""): void
+    public function addDiplomacyRating(User $user, int $rating, string $reason = ""): void
     {
-        $this->userRatingRepository->addDiplomacyRating($userId, $rating);
+        $this->userRatingRepository->addDiplomacyRating($user, $rating);
         if ($reason != "") {
-            $this->logRepository->add(LogFacility::RANKING, LogSeverity::INFO, "DP: Der Spieler " . $userId . " erhält " . $rating . " Diplomatiepunkte. Grund: " . $reason);
+            $this->logRepository->add(LogFacility::RANKING, LogSeverity::INFO, "DP: Der Spieler " . $user->getNick() . " erhält " . $rating . " Diplomatiepunkte. Grund: " . $reason);
         }
     }
 }

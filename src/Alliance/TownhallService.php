@@ -47,12 +47,12 @@ class TownhallService
         $rssValue .= "			<link>http://www.etoa.ch</link>\r\n";
         $rssValue .= "		</image>\r\n";
 
-        $publicNews = $this->allianceNewsRepository->getNewsEntries(0);
+        $publicNews = $this->allianceNewsRepository->getNewsEntries();
         // The records were retrieved OK, let's start building the item tags
         foreach ($publicNews as $news) {
             $rssValue .= "		<item>\r\n";
-            $rssValue .= "			<title>" . BBCodeUtils::toHTML($news->title) . "</title>\r\n";
-            $rssValue .= "			<description>" . BBCodeUtils::toHTML(substr($news->text, 0, 100)) . "</description>\r\n";
+            $rssValue .= "			<title>" . BBCodeUtils::toHTML($news->getTitle()) . "</title>\r\n";
+            $rssValue .= "			<description>" . BBCodeUtils::toHTML(substr($news->getText(), 0, 100)) . "</description>\r\n";
             $rssValue .= "			<link>http://www.etoa.ch</link>\r\n";
             $rssValue .= "		</item>\r\n";
         }
