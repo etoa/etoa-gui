@@ -4,12 +4,16 @@ namespace EtoA\Alliance;
 
 use Doctrine\Persistence\ManagerRegistry;
 use EtoA\Core\AbstractRepository;
+use EtoA\Entity\Alliance;
 use EtoA\Entity\AlliancePoll;
 
 class AlliancePollRepository extends AbstractRepository
 {
 
-    public function __construct(ManagerRegistry $registry)
+    public function __construct(
+        ManagerRegistry $registry,
+        private readonly AlliancePollVotesRepository $alliancePollVotesRepository
+    )
     {
         parent::__construct($registry, AlliancePoll::class);
     }
@@ -54,22 +58,9 @@ class AlliancePollRepository extends AbstractRepository
     /**
      * @return AlliancePoll[]
      */
-    public function getPolls(int $allianceId, int $limit = null): array
+    public function getPolls(Alliance $alliance, int $limit = null): array
     {
-        $qb = $this->createQueryBuilder('q')
-            ->where('q.alliance = :allianceId')
-            ->setParameters([
-                'allianceId' => $allianceId,
-            ])
-            ->orderBy('q.timestamp', 'DESC');
-
-        if ($limit > 0) {
-            $qb->setMaxResults($limit);
-        }
-
-        return $qb
-            ->getQuery()
-            ->execute();
+        return $this->findBy(['alliance'=>$alliance],['timestamp'=>'DESC'],$limit);
     }
 
     public function getPoll(int $pollId, int $allianceId): ?AlliancePoll
@@ -107,20 +98,10 @@ class AlliancePollRepository extends AbstractRepository
         return array_map(fn ($value) => (int) $value, $rows);
     }
 
-    public function updateActive(int $pollId, int $allianceId, bool $active): int
+    public function updateActive(AlliancePoll $poll, bool $active): void
     {
-        return $this->createQueryBuilder('q')
-            ->update('alliance_polls')
-            ->set('poll_active', ':active')
-            ->where('poll_id = :id')
-            ->andWhere('poll_alliance_id = :allianceId')
-            ->setParameters([
-                'id' => $pollId,
-                'allianceId' => $allianceId,
-                'active' => (int) $active,
-            ])
-            ->executeQuery()
-            ->rowCount();
+        $poll->setActive($active);
+        $this->save();
     }
 
     public function updatePoll(int $pollId, int $allianceId, string $title, string $question, string $answer1, string $answer2, string $answer3, string $answer4, string $answer5, string $answer6, string $answer7, string $answer8): int
@@ -198,32 +179,18 @@ class AlliancePollRepository extends AbstractRepository
         return $voted;
     }
 
-    public function deletePoll(int $pollId, int $allianceId): bool
+    public function deletePoll(AlliancePoll $poll): void
     {
-        $deleted = (bool) $this->createQueryBuilder('q')
-            ->delete('alliance_polls')
-            ->where('poll_id = :id')
-            ->andWhere('poll_alliance_id = :allianceId')
-            ->setParameters([
-                'id' => $pollId,
-                'allianceId' => $allianceId,
-            ])
-            ->executeQuery()
-            ->rowCount();
+        $pollVotes = $this->alliancePollVotesRepository->findBy(['poll'=>$poll]);
 
-        if ($deleted) {
-            $this->createQueryBuilder('q')
-                ->delete('alliance_poll_votes')
-                ->where('vote_poll_id = :id')
-                ->andWhere('vote_alliance_id = :allianceId')
-                ->setParameters([
-                    'id' => $pollId,
-                    'allianceId' => $allianceId,
-                ])
-                ->executeQuery();
+        if($pollVotes) {
+            foreach ($pollVotes as $pollVote)
+                $this->alliancePollVotesRepository->remove($pollVote);
+            $this->alliancePollVotesRepository->save();
         }
 
-        return $deleted;
+        $this->remove($poll);
+        $this->save();
     }
 
     public function deleteAllianceEntries(int $allianceId): void

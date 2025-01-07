@@ -34,49 +34,49 @@ class AlliancePoll
     private ?string $answer2;
 
     #[ORM\Column(name: "poll_a3_text")]
-    private ?string $answer3;
+    private ?string $answer3 = '';
 
     #[ORM\Column(name: "poll_a4_text")]
-    private ?string $answer4;
+    private ?string $answer4 = '';
 
     #[ORM\Column(name: "poll_a5_text")]
-    private ?string $answer5;
+    private ?string $answer5 = '';
 
     #[ORM\Column(name: "poll_a6_text")]
-    private ?string $answer6;
+    private ?string $answer6 = '';
 
     #[ORM\Column(name: "poll_a7_text")]
-    private ?string $answer7;
+    private ?string $answer7 = '';
 
     #[ORM\Column(name: "poll_a8_text")]
-    private ?string $answer8;
+    private ?string $answer8 = '';
 
     #[ORM\Column(name: "poll_a1_count")]
-    private int $answer1Count;
+    private ?int $answer1Count = 0;
 
     #[ORM\Column(name: "poll_a2_count")]
-    private int $answer2Count;
+    private ?int $answer2Count = 0;
 
     #[ORM\Column(name: "poll_a3_count")]
-    private int $answer3Count;
+    private ?int $answer3Count = 0;
 
     #[ORM\Column(name: "poll_a4_count")]
-    private int $answer4Count;
+    private ?int $answer4Count = 0;
 
     #[ORM\Column(name: "poll_a5_count")]
-    private int $answer5Count;
+    private ?int $answer5Count = 0;
 
     #[ORM\Column(name: "poll_a6_count")]
-    private int $answer6Count;
+    private ?int $answer6Count = 0;
 
     #[ORM\Column(name: "poll_a7_count")]
-    private int $answer7Count;
+    private ?int $answer7Count = 0;
 
     #[ORM\Column(name: "poll_a8_count")]
-    private int $answer8Count;
+    private ?int $answer8Count = 0;
 
     #[ORM\Column(name: "poll_active")]
-    private bool $active;
+    private ?bool $active = false;
 
     public function getId(): ?int
     {
@@ -148,7 +148,7 @@ class AlliancePoll
         return $this->answer3;
     }
 
-    public function setAnswer3(string $answer3): static
+    public function setAnswer3(?string $answer3): static
     {
         $this->answer3 = $answer3;
 
@@ -160,7 +160,7 @@ class AlliancePoll
         return $this->answer4;
     }
 
-    public function setAnswer4(string $answer4): static
+    public function setAnswer4(?string $answer4): static
     {
         $this->answer4 = $answer4;
 
@@ -172,7 +172,7 @@ class AlliancePoll
         return $this->answer5;
     }
 
-    public function setAnswer5(string $answer5): static
+    public function setAnswer5(?string $answer5): static
     {
         $this->answer5 = $answer5;
 
@@ -184,7 +184,7 @@ class AlliancePoll
         return $this->answer6;
     }
 
-    public function setAnswer6(string $answer6): static
+    public function setAnswer6(?string $answer6): static
     {
         $this->answer6 = $answer6;
 
@@ -196,7 +196,7 @@ class AlliancePoll
         return $this->answer7;
     }
 
-    public function setAnswer7(string $answer7): static
+    public function setAnswer7(?string $answer7): static
     {
         $this->answer7 = $answer7;
 
@@ -208,7 +208,7 @@ class AlliancePoll
         return $this->answer8;
     }
 
-    public function setAnswer8(string $answer8): static
+    public function setAnswer8(?string $answer8): static
     {
         $this->answer8 = $answer8;
 
@@ -220,7 +220,7 @@ class AlliancePoll
         return $this->answer1Count;
     }
 
-    public function setAnswer1Count(int $answer1Count): static
+    public function setAnswer1Count(?int $answer1Count): static
     {
         $this->answer1Count = $answer1Count;
 
@@ -232,7 +232,7 @@ class AlliancePoll
         return $this->answer2Count;
     }
 
-    public function setAnswer2Count(int $answer2Count): static
+    public function setAnswer2Count(?int $answer2Count): static
     {
         $this->answer2Count = $answer2Count;
 
@@ -244,7 +244,7 @@ class AlliancePoll
         return $this->answer3Count;
     }
 
-    public function setAnswer3Count(int $answer3Count): static
+    public function setAnswer3Count(?int $answer3Count): static
     {
         $this->answer3Count = $answer3Count;
 
@@ -256,7 +256,7 @@ class AlliancePoll
         return $this->answer4Count;
     }
 
-    public function setAnswer4Count(int $answer4Count): static
+    public function setAnswer4Count(?int $answer4Count): static
     {
         $this->answer4Count = $answer4Count;
 
@@ -268,7 +268,7 @@ class AlliancePoll
         return $this->answer5Count;
     }
 
-    public function setAnswer5Count(int $answer5Count): static
+    public function setAnswer5Count(?int $answer5Count): static
     {
         $this->answer5Count = $answer5Count;
 
@@ -280,7 +280,7 @@ class AlliancePoll
         return $this->answer6Count;
     }
 
-    public function setAnswer6Count(int $answer6Count): static
+    public function setAnswer6Count(?int $answer6Count): static
     {
         $this->answer6Count = $answer6Count;
 
@@ -292,7 +292,7 @@ class AlliancePoll
         return $this->answer7Count;
     }
 
-    public function setAnswer7Count(int $answer7Count): static
+    public function setAnswer7Count(?int $answer7Count): static
     {
         $this->answer7Count = $answer7Count;
 
@@ -304,7 +304,7 @@ class AlliancePoll
         return $this->answer8Count;
     }
 
-    public function setAnswer8Count(int $answer8Count): static
+    public function setAnswer8Count(?int $answer8Count): static
     {
         $this->answer8Count = $answer8Count;
 
@@ -316,7 +316,7 @@ class AlliancePoll
         return $this->active;
     }
 
-    public function setActive(bool $active): static
+    public function setActive(?bool $active): static
     {
         $this->active = $active;
 

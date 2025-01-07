@@ -266,7 +266,7 @@ class AllianceService
         echo "<tr><th>Internes Forum</th><td colspan=\"2\"><b><a href=".$this->router->generate('game.alliance.allianceboard.overview').">Forum&uuml;bersicht</a></b> &nbsp; $ps</td></tr>";
 
         // Umfrage verlinken
-        $polls = $this->alliancePollRepository->getPolls($alliance->getId(), 2);
+        $polls = $this->alliancePollRepository->getPolls($alliance, 2);
         $pcnt = count($polls);
         if ($pcnt > 0) {
             echo "<tr><th>Umfrage:</th>
@@ -398,6 +398,8 @@ class AllianceService
 
         // Kriege
         $wars = $this->allianceDiplomacyRepository->getDiplomacies($alliance, AllianceDiplomacyLevel::WAR);
+        $warDuration = 3600 * $this->config->getInt('alliance_war_time');
+
         if (count($wars) > 0) {
             echo "<tr>
                                 <th>Kriege:</th>
@@ -415,7 +417,7 @@ class AllianceService
                                                 <a href=\"?page=$page&amp;id=" . $diplomacy->getAlliance2()->getId() . "\">" . $opAlliance->toString() . "</a>
                                             </td>
                                             <td>" . StringUtils::formatNumber($opAlliance->getPoints()) . " / " . StringUtils::formatNumber($opAlliance->averagePoints) . "</td>
-                                            <td>" . StringUtils::formatDate($diplomacy->getDate(), false) . " bis " . StringUtils::formatDate($diplomacy->getDate() + WAR_DURATION, false) . "</td>
+                                            <td>" . StringUtils::formatDate($diplomacy->getDate(), false) . " bis " . StringUtils::formatDate($diplomacy->getDate() + $warDuration, false) . "</td>
                                         </tr>";
             }
             echo "</table>

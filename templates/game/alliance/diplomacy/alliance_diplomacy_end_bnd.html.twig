@@ -1,0 +1,39 @@
+{% extends 'game/alliance/alliance.html.twig' %}
+{% import 'macros.html.twig' as macros %}
+
+{% block alliance %}
+    {% if msg.success is defined %}
+        {{ macros.successMessage(msg.success) }}
+    {% endif %}
+
+    {% if msg.error is defined %}
+        {{ macros.errorMessage(msg.error) }}
+    {% endif %}
+
+    {{ form_start(form) }}
+        <twig:Table title='Bündnis "{{ diplomacy.name }}" beenden'>
+        {% block table_content %}
+            <tr>
+                <th style="width:200px;">Allianz</th>
+                <td>
+                    {% if app.user.data.alliance == diplomacy.alliance2 %}
+                        {{ diplomacy.alliance1.name }}
+                    {% else %}
+                        {{ diplomacy.alliance2.name }}
+                    {% endif %}
+                </td>
+            </tr>
+            <tr>
+                <th style="width:200px;">Begründung</th>
+                <td>
+                    {{ form_widget(form.endText) }}
+                </td>
+            </tr>
+        {% endblock %}
+        </twig:Table>
+        {{ form_widget(form.send) }}&nbsp;
+        <a href="{{ path('game.alliance.diplomacy.relations') }}">
+            <input type="button" value="Zurück"/>
+        </a>
+    {{ form_end(form) }}
+{% endblock %}

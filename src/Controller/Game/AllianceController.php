@@ -18,6 +18,7 @@ use EtoA\Alliance\TownhallService;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Entity\Alliance;
 use EtoA\Entity\AllianceApplication;
+use EtoA\Entity\MessageData;
 use EtoA\Fleet\ForeignFleetLoader;
 use EtoA\Form\Type\Core\AllianceApplicationType;
 use EtoA\Form\Type\Core\AvatarUploadType;
@@ -375,7 +376,11 @@ class AllianceController extends AbstractGameController
             ]);
         }
 
-        return $this->render('game/alliance/alliance_no_permission.html.twig');
+        return $this->render('game/error.html.twig',[
+            'msg' => 'Fehlende Berechtigung!',
+            'path' => $this->generateUrl('game.alliance.overview'),
+            'headline' => 'Allianz'
+        ]);
     }
 
     #[Route('/game/alliance/history', name: 'game.alliance.history')]
@@ -458,7 +463,122 @@ class AllianceController extends AbstractGameController
         ]);
     }
 
+    #[Route('/game/alliance/massmail', name: 'game.alliance.massmail')]
+    public function massmail(Request $request): Response
+    {
 
+        $cu = $this->getUser()->getData();
+        $userAlliancePermission = $this->service->getUserAlliancePermissions($cu->getAlliance(), $cu);
+
+        if ($userAlliancePermission->checkHasRights(AllianceRights::MASS_MAIL, 'alliance')) {
+
+            $messageData = new MessageData();
+            $form = $this->createFormBuilder($messageData)
+                ->add('subject', TextType::class, [
+                    'attr' => [
+                        'size'=>'30',
+                        'maxlength => 255'
+                    ],
+                    'constraints' => new NotBlank(
+                        ['message' => 'Nicht alle Felder ausgefüllt!']
+                    ),
+                ])
+                ->add('text', TextareaType::class, [
+                    'attr' => [
+                        'rows'=>'5',
+                        'cols' => '50'
+                    ],
+                    'constraints' => new NotBlank(
+                        ['message' => 'Nicht alle Felder ausgefüllt!']
+                    ),
+                ])
+                ->add('send', SubmitType::class, ['label' => 'Senden'])
+                ->getForm()
+                ->handleRequest($request);
+
+            if ($form->isSubmitted() && $form->isValid()) {
+                $allianceUsers = $this->userRepository->findBy(['alliance'=>$cu->getAlliance()]);
+                if ($allianceUsers) {
+                    foreach ($allianceUsers as $allianceUser) {
+                        $this->messageRepository->sendFromUserToUser(
+                            $cu,
+                            $allianceUser,
+                            $messageData,
+                             $this->messageCategoryRepository->find(MessageCategoryId::ALLIANCE)
+                        );
+                    }
+
+                    return $this->render('game/success.html.twig',[
+                        'msg' => 'Nachricht wurde gesendet!',
+                        'path' => $this->generateUrl('game.alliance.overview'),
+                        'headline' => 'Allianz'
+                    ]);
+                } else {
+                    return $this->render('game/error.html.twig',[
+                        'msg' => 'Nachricht wurde nicht gesendet, keine Mitglieder vorhanden!',
+                        'path' => $this->generateUrl('game.alliance.overview'),
+                        'headline' => 'Allianz'
+                    ]);
+                }
+            }
+
+            return $this->render('game/alliance/alliance_massmail.html.twig',[
+                'form' => $form
+            ]);
+        }
+
+        return $this->render('game/error.html.twig',[
+            'msg' => 'Fehlende Berechtigung!',
+            'path' => $this->generateUrl('game.alliance.overview'),
+            'headline' => 'Allianz'
+        ]);
+    }
+
+    #[Route('/game/alliance/editmembers', name: 'game.alliance.editmembers')]
+    public function editMembers(Request $request): Response
+    {
+        $cu = $this->getUser()->getData();
+        $userAlliancePermission = $this->service->getUserAlliancePermissions($cu->getAlliance(), $cu);
+
+        if ($userAlliancePermission->checkHasRights(AllianceRights::EDIT_MEMBERS, 'alliance')) {
+            $form = $this->createFormBuilder()
+                ->add('subject', TextType::class, [
+                    'attr' => [
+                        'size'=>'30',
+                        'maxlength => 255'
+                    ],
+                    'constraints' => new NotBlank(
+                        ['message' => 'Nicht alle Felder ausgefüllt!']
+                    ),
+                ])
+                ->add('text', TextareaType::class, [
+                    'attr' => [
+                        'rows'=>'5',
+                        'cols' => '50'
+                    ],
+                    'constraints' => new NotBlank(
+                        ['message' => 'Nicht alle Felder ausgefüllt!']
+                    ),
+                ])
+                ->add('send', SubmitType::class, ['label' => 'Senden'])
+                ->getForm()
+                ->handleRequest($request);
+
+            if ($form->isSubmitted() && $form->isValid()) {
+
+            }
+
+            return $this->render('game/alliance/alliance_massmail.html.twig',[
+                'form' => $form
+            ]);
+        }
+
+        return $this->render('game/error.html.twig',[
+            'msg' => 'Fehlende Berechtigung!',
+            'path' => $this->generateUrl('game.alliance.overview'),
+            'headline' => 'Allianz'
+        ]);
+    }
 
     private function onCooldown():bool
     {

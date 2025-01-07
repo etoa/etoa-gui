@@ -1,0 +1,12 @@
+{% extends 'layout/game.html.twig' %}
+{% import 'macros.html.twig' as macros %}
+
+{% block content %}
+    <h1>{{ headline }}</h1>
+
+    {{ macros.successMessage(msg)|raw }}
+
+    <a href="{{ path }}">
+        <input type="button" value="Zurück" />
+    </a>
+{% endblock %}
