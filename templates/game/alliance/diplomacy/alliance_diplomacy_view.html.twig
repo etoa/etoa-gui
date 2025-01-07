@@ -1,0 +1,119 @@
+{% extends 'game/alliance/alliance.html.twig' %}
+{% import 'macros.html.twig' as macros %}
+
+{% block alliance %}
+    {% if msg.success is defined %}
+        {{ macros.successMessage(msg.success) }}
+    {% endif %}
+
+    {% if msg.error is defined %}
+        {{ macros.errorMessage(msg.error) }}
+    {% endif %}
+
+    {{ form_start(form) }}
+        {% if diplomacy.level == constant('EtoA\\Alliance\\AllianceDiplomacyLevel::BND_REQUEST') %}
+            <twig:Table title="Status der Bündnissanfrage">
+                {% block table_content %}
+                    <tr>
+                        <th style="width:200px;">Allianz</th>
+                        <td>
+                            {% if app.user.data.alliance == diplomacy.alliance2 %}
+                                {{ diplomacy.alliance1.name }}
+                            {% else %}
+                                {{ diplomacy.alliance2.name }}
+                            {% endif %}
+                        </td>
+                    </tr>
+                    <tr>
+                        <th style="width:200px;">Bündnissname</th>
+                        <td>{{ BBCodeToHTML(diplomacy.name) }}</td>
+                    </tr>
+                    <tr>
+                        <th style="width:200px;">Text</th>
+                        <td>{{ BBCodeToHTML(diplomacy.text) }}</td>
+                    </tr>
+                    {% if app.user.data.alliance == diplomacy.alliance1 %}
+                        <tr>
+                            <th style="width:200px;">Status</th>
+                            <td>Die Anfrage wurde noch nicht angenommen.</td>
+                        </tr>
+                    {% else %}
+                        <tr>
+                            <th style="width:200px;">Antwort</th>
+                            <td>
+                                {{ form_widget(form.answer) }}
+                            </td>
+                        </tr>
+                    {% endif %}
+                {% endblock %}
+            </twig:Table>
+            {% if app.user.data.alliance == diplomacy.alliance1 %}
+                {{ form_widget(form.submitWithdrawPact) }}&nbsp;
+            {% else %}
+                {{ form_widget(form.pactAccept) }}&nbsp;
+                {{ form_widget(form.pactReject) }}&nbsp;
+            {% endif %}
+        {% elseif diplomacy.level == constant('EtoA\\Alliance\\AllianceDiplomacyLevel::BND_CONFIRMED') %}
+            <twig:Table title="Bündnis {{ diplomacy.name }}">
+                {% block table_content %}
+                <tr>
+                    <th style="width:200px;">Allianz</th>
+                    <td>
+                        {% if app.user.data.alliance == diplomacy.alliance2 %}
+                            {{ diplomacy.alliance1.name }}
+                            {% else %}
+                            {{ diplomacy.alliance2.name }}
+                        {% endif %}
+                    </td>
+                </tr>
+                <tr>
+                    <th style="width:200px;">Anfragetext</th>
+                    <td>{{ BBCodeToHTML(diplomacy.text) }}</td>
+                </tr>
+                <tr>
+                    <th style="width:200px;">Öffentlicher Text</th>
+                    <td>
+                        {{ form_widget(form.publicText) }}
+                    </td>
+                </tr>
+                {% endblock %}
+            </twig:Table>
+            {{ form_widget(form.submitPublicText) }}&nbsp;
+        {% elseif diplomacy.level == constant('EtoA\\Alliance\\AllianceDiplomacyLevel::WAR') %}
+            <twig:Table title="Krieg">
+                {% block table_content %}
+                    <tr>
+                        <th style="width:200px;">Allianz</th>
+                        <td>
+                            {% if app.user.data.alliance == diplomacy.alliance2 %}
+                                {{ diplomacy.alliance1.name }}
+                            {% else %}
+                                {{ diplomacy.alliance2.name }}
+                            {% endif %}
+                        </td>
+                    </tr>
+                     <tr>
+                        <th style="width:200px;">Kriegserklärung</th>
+                        <td>{{ BBCodeToHTML(diplomacy.text) }}</td>
+                    </tr>
+                        {% if app.user.data.alliance == diplomacy.alliance1 %}
+                            <tr>
+                                <th style="width:200px;">Öffentlicher Text</th>
+                                <td>
+                                    {{ form_widget(form.publicText) }}
+                                </td>
+                            </tr>
+                        {% else %}
+                            <tr>
+                                <th style="width:200px;">Öffentlicher Text</th>
+                                <td>BBCodeToHTML(diplomacy.publicText)</td>
+                            </tr>
+                        {% endif %}
+                {% endblock %}
+            </twig:Table>
+            {% if app.user.data.alliance == diplomacy.alliance1 %}
+                {{ form_widget(form.submitPublicText) }}
+            {% endif %}
+        {% endif %}
+    {{ form_end(form) }}
+{% endblock %}

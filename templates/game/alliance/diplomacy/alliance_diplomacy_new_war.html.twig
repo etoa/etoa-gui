@@ -1,0 +1,35 @@
+{% extends 'game/alliance/alliance.html.twig' %}
+{% import 'macros.html.twig' as macros %}
+
+{% block alliance %}
+    {% if msg.success is defined %}
+        {{ macros.successMessage(msg.success) }}
+    {% endif %}
+
+    {% if msg.error is defined %}
+        {{ macros.errorMessage(msg.error) }}
+    {% endif %}
+
+    {{ form_start(form) }}
+        <twig:Table title="Kriegserklärung an die Allianz {{ otherAlliance.toString }}">
+        {% block table_content %}
+            <tr>
+                <th>Nachricht:</th>
+                <td>
+                    {{form_widget(form.text)}}
+                </td>
+            </tr>
+            <tr>
+                <th>Öffentlicher Text:</th>
+                <td>
+                    {{form_widget(form.publicText)}}
+                </td>
+            </tr>
+        {% endblock %}
+        </twig:Table>
+        {{ form_widget(form.send) }}
+        <a href="{{ path('game.alliance.diplomacy.relations') }}">
+            <input type="button" value="Zurück"/>
+        </a>
+    {{ form_end(form) }}
+{% endblock %}

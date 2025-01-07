@@ -170,19 +170,12 @@ class AllianceDiplomacyRepository extends AbstractRepository
             ->executeQuery();
     }
 
-    public function acceptBnd(int $id, int $points): void
+    public function acceptBnd(AllianceDiplomacy $diplomacy, int $points): void
     {
-        $this->createQueryBuilder('q')
-            ->update('alliance_bnd')
-            ->set('alliance_bnd_level', ':level')
-            ->set('alliance_bnd_points', ':points')
-            ->where('alliance_bnd_id = :id')
-            ->setParameters([
-                'id' => $id,
-                'points' => $points,
-                'level' => AllianceDiplomacyLevel::BND_CONFIRMED,
-            ])
-            ->executeQuery();
+        $diplomacy->setLevel(AllianceDiplomacyLevel::BND_CONFIRMED);
+        $diplomacy->setPoints($points);
+
+        $this->save();
     }
 
     public function updatePublicText(int $id, int $allianceId, int $level, string $publicText): void
