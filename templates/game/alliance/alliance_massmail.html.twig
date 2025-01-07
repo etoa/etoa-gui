@@ -1,0 +1,28 @@
+{% extends 'game/alliance/alliance.html.twig' %}
+{% import 'macros.html.twig' as macros %}
+
+{% block alliance %}
+    <h2>Rundmail</h2>
+    {{ form_start(form) }}
+        <twig:Table title="Nachricht verfassen">
+        {% block table_content %}
+            <tr>
+                <th style="width:50px;">Betreff:</th>
+                <td>
+                    {{ form_widget(form.subject) }}
+                </td>
+            </tr>
+            <tr>
+                <th>Text:</th>
+                <td>
+                    {{ form_widget(form.text) }}
+                </td>
+            </tr>
+        {% endblock %}
+        </twig:Table>
+        {{ form_widget(form.send) }} &nbsp;
+        <a href="{{ path('game.alliance.overview') }}">
+            <input type="button" value="Zurück"/>
+        </a>
+    {{ form_end(form) }}
+{% endblock %}
