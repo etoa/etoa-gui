@@ -6,6 +6,7 @@ namespace EtoA\Message;
 
 use Doctrine\Persistence\ManagerRegistry;
 use EtoA\Core\AbstractRepository;
+use EtoA\Entity\Fleet;
 use EtoA\Entity\Message;
 use EtoA\Entity\MessageCategory;
 use EtoA\Entity\MessageData;
@@ -13,7 +14,11 @@ use EtoA\Entity\User;
 
 class MessageRepository extends AbstractRepository
 {
-    public function __construct(ManagerRegistry $registry)
+    public function __construct(
+        ManagerRegistry $registry,
+        private readonly MessageDataRepository $messageDataRepository,
+        private readonly MessageCategoryRepository $messageCategoryRepository
+    )
     {
         parent::__construct($registry, Message::class);
     }
@@ -154,6 +159,7 @@ class MessageRepository extends AbstractRepository
         $msgData->setMessage($msg);
         $msgData->setSubject($subject);
         $msgData->setText($text);
+        $msgData->setId($msg->getId());
         $this->persist($msgData);
 
         $this->save();
@@ -162,54 +168,26 @@ class MessageRepository extends AbstractRepository
     }
 
     public function sendFromUserToUser(
-        int $senderId,
-        int $receiverId,
-        string $subject,
-        string $text,
-        int $catId = 0,
-        int $fleetId = 0
+        User $sender,
+        User $receiver,
+        MessageData $messageData,
+        MessageCategory $cat = null,
+        Fleet $fleet = null
     ): void {
-        try {
-            $this->getConnection()->beginTransaction();
+        $message = new Message();
+        $message->setUserFrom($sender);
+        $message->setUserTo($receiver);
+        $message->setCat($cat??$this->messageCategoryRepository->find(MessageCategoryId::USER));
+        $message->setTimestamp(time());
 
-            $this->createQueryBuilder('q')
-                ->insert('messages')
-                ->values([
-                    'message_user_from' => ':senderId',
-                    'message_user_to' => ':receiverId',
-                    'message_cat_id' => ':catId',
-                    'message_timestamp' => time(),
-                ])
-                ->setParameters([
-                    'senderId' => $senderId,
-                    'receiverId' => $receiverId,
-                    'catId' => $catId != 0 ? $catId : MessageCategoryId::USER,
-                ])
-                ->executeQuery();
+        $this->persist($message);
+        $this->save();
 
-            $id = (int) $this->getConnection()->lastInsertId();
+        $messageData->setFleet($fleet);
+        $messageData->setId($message->getId());
 
-            $this->createQueryBuilder('q')
-                ->insert('message_data')
-                ->values([
-                    'id' => $id,
-                    'subject' => ':subject',
-                    'text' => ':text',
-                    'fleet_id' => ':fleet_id',
-                ])
-                ->setParameters([
-                    'subject' => $subject,
-                    'text' => $text,
-                    'fleet_id' => $fleetId,
-                ])
-                ->executeQuery();
-
-            $this->getConnection()->commit();
-        } catch (\Exception $ex) {
-            $this->getConnection()->rollBack();
-
-            throw $ex;
-        }
+        $this->messageDataRepository->persist($messageData);
+        $this->messageDataRepository->save();
     }
 
     /**

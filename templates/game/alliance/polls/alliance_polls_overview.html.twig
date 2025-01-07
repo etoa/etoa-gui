@@ -1,0 +1,41 @@
+{% extends 'game/alliance/alliance.html.twig' %}
+{% import 'macros.html.twig' as macros %}
+
+{% block alliance %}
+    {% if polls %}
+        <twig:Table title="Bewerbungstext">
+            {% block table_content %}
+                <tr>
+                    <th>Titel</th>
+                    <th>Frage</th>
+                    <th>Erstellt</th>
+                    <th style="width:200px;">Aktionen</th>
+                </tr>
+                {% for poll in polls %}
+                    <tr>
+                        <td>{{ poll.title }}</td>
+                        <td>{{ poll.question }}</td>
+                        <td>{{ formatTimestamp(poll.timestamp) }}</td>
+                        <td>
+                            <a href="{{ path('game.alliance.polls.edit',{id:poll.id}) }}">Bearbeiten</a>
+                            {% if poll.active %}
+                                <a href="{{ path('game.alliance.polls.deactivate',{id:poll.id}) }}">Deaktivieren</a>
+                            {% else %}
+                                <a href="{{ path('game.alliance.polls.activate',{id:poll.id}) }}">Aktivieren</a>
+                                <a href="{{ path('game.alliance.polls.delete',{id:poll.id}) }}" onclick="return confirm('Umfrage wirklich löschen?')">Löschen</a>
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
+            {% endblock %}
+        </twig:Table>
+    {% else %}
+        {{ macros.errorMessage('Keine Umfragen vorhanden!') }}
+    {% endif %}
+    <a href="{{ path('game.alliance.polls.create') }}">
+        <input type="button" value="Neue Umfrage erstellen" />
+    </a>&nbsp;
+    <a href="{{ path('game.alliance.overview') }}">
+        <input type="button" value="Zurück" />
+    </a>
+{% endblock %}

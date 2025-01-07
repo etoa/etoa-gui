@@ -10,13 +10,8 @@ use EtoA\Message\MessageDataRepository;
 class MessageData
 {
     #[ORM\Id]
-    #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $id = null;
-
-    #[ORM\OneToOne(inversedBy: 'messageData', targetEntity: Message::class)]
-    #[ORM\JoinColumn(name: 'id', referencedColumnName: 'message_id')]
-    private Message $message;
 
     #[ORM\Column(length: 200)]
     private ?string $subject = null;
@@ -24,11 +19,13 @@ class MessageData
     #[ORM\Column(type: Types::TEXT)]
     private string $text;
 
-    #[ORM\Column]
-    private int $entityId = 0;
+    #[ORM\JoinColumn(name: 'entity_id', referencedColumnName: 'id')]
+    #[ORM\ManyToOne(targetEntity: Entity::class)]
+    private ?Entity $entity = null;
 
-    #[ORM\Column]
-    private int $fleetId = 0;
+    #[ORM\JoinColumn(name: 'fleet_id', referencedColumnName: 'id')]
+    #[ORM\ManyToOne(targetEntity: Fleet::class)]
+    private ?Fleet $fleet = null;
 
     public function getId(): ?int
     {
@@ -66,30 +63,6 @@ class MessageData
         return $this;
     }
 
-    public function getEntityId(): ?int
-    {
-        return $this->entityId;
-    }
-
-    public function setEntityId(int $entityId): static
-    {
-        $this->entityId = $entityId;
-
-        return $this;
-    }
-
-    public function getFleetId(): ?int
-    {
-        return $this->fleetId;
-    }
-
-    public function setFleetId(int $fleetId): static
-    {
-        $this->fleetId = $fleetId;
-
-        return $this;
-    }
-
     public function getMessage(): ?Message
     {
         return $this->message;
@@ -98,6 +71,30 @@ class MessageData
     public function setMessage(?Message $message): static
     {
         $this->message = $message;
+
+        return $this;
+    }
+
+    public function getEntity(): ?Entity
+    {
+        return $this->entity;
+    }
+
+    public function setEntity(?Entity $entity): static
+    {
+        $this->entity = $entity;
+
+        return $this;
+    }
+
+    public function getFleet(): ?Fleet
+    {
+        return $this->fleet;
+    }
+
+    public function setFleet(?Fleet $fleet): static
+    {
+        $this->fleet = $fleet;
 
         return $this;
     }

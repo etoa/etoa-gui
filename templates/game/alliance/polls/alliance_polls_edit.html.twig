@@ -1,0 +1,75 @@
+{% extends 'game/alliance/alliance.html.twig' %}
+{% import 'macros.html.twig' as macros %}
+
+{% block alliance %}
+    {{ form_start(form) }}
+        <twig:Table title="Umfrage bearbeiten">
+            {% block table_content %}
+                <tr>
+                    <th>Titel:</th>
+                    <td>
+                        {{ form_widget(form.title) }}
+                    </td>
+                </tr>
+                <tr>
+                    <th>Frage:</th>
+                    <td>
+                        {{ form_widget(form.question) }}
+                    </td>
+                </tr>
+                <tr>
+                    <th>Antwort 1:</th>
+                    <td>
+                        {{ form_widget(form.answer1) }}
+                    </td>
+                </tr>
+                <tr>
+                    <th>Antwort 2:</th>
+                    <td>
+                        {{ form_widget(form.answer2) }}
+                    </td>
+                </tr>
+                <tr>
+                    <th>Antwort 3:</th>
+                    <td>
+                        {{ form_widget(form.answer3) }}
+                    </td>
+                </tr>
+                <tr>
+                    <th>Antwort 4:</th>
+                    <td>
+                        {{ form_widget(form.answer4) }}
+                    </td>
+                </tr>
+                <tr>
+                    <th>Antwort 5:</th>
+                    <td>
+                        {{ form_widget(form.answer5) }}
+                    </td>
+                </tr>
+                <tr>
+                    <th>Antwort 6:</th>
+                    <td>
+                        {{ form_widget(form.answer6) }}
+                    </td>
+                </tr>
+                <tr>
+                    <th>Antwort 7:</th>
+                    <td>
+                        {{ form_widget(form.answer7) }}
+                    </td>
+                </tr>
+                <tr>
+                    <th>Antwort 8:</th>
+                    <td>
+                        {{ form_widget(form.answer8) }}
+                    </td>
+                </tr>
+            {% endblock %}
+        </twig:Table>
+        {{ form_widget(form.send) }}&nbsp;
+        <a href="{{ path('game.alliance.polls.overview') }}">
+            <input type="button" value="Zurück" />
+        </a>
+    {{ form_end(form) }}
+{% endblock %}

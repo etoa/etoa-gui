@@ -4,6 +4,7 @@ namespace EtoA\Message;
 
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use EtoA\Core\AbstractRepository;
 use EtoA\Entity\MessageData;
 
 /**
@@ -14,7 +15,7 @@ use EtoA\Entity\MessageData;
  * @method MessageData[]    findAll()
  * @method MessageData[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class MessageDataRepository extends ServiceEntityRepository
+class MessageDataRepository extends AbstractRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
