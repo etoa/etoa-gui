@@ -1,0 +1,87 @@
+{% extends 'game/alliance/alliance.html.twig' %}
+{% import 'macros.html.twig' as macros %}
+
+{% block alliance %}
+    <h2>Allianznews</h2>
+
+    {% if msg.success is defined %}
+        {{ macros.successMessage(msg.success) }}
+    {% endif %}
+
+    {{ form_start(form) }}
+        <twig:Table>
+            {% block table_content %}
+                <tr>
+                    <th>Nick:</th>
+                    <th>Punkte:</th>
+                    <th>Online:</th>
+                    <th>Rang:</th>
+                    {% if wings %}
+                        <th>Umteilen</th>
+                    {% endif %}
+                    <th>Aktionen</th>
+                </tr>
+                {% for allianceMember in form.children.members.children %}
+                    <tr>
+                        {# Nick, Planet, Punkte #}
+                        <td>{{ allianceMember.vars.data.nick }}</td>
+                        <td>{{ formatNumber(allianceMember.vars.data.points) }}</td>
+                        {# Zuletzt online #}
+                        {% if ((date().timestamp - configValue('online_threshold') * 60) < allianceMember.vars.data.actionTime) %}
+                            <td style="color:#0f0;">online</td>
+                        {% else %}
+                            <td>{{ formatTimestamp(allianceMember.vars.data.actionTime) }}</td>
+                        {% endif %}
+                        {# Rang #}
+                        {% if allianceMember.vars.data == app.user.data.alliance.founder %}
+                            <td>Gründer</td>
+                        {% else %}
+                            <td>
+                                {{ form_widget(allianceMember.children.allianceRank) }}
+                            </td>
+                        {% endif %}
+                        {#
+                        TODO:Wings
+                        {% if wings %}
+                            <td>
+                                if ($currentAlliance->founderId !== $allianceMember.vars.data->id && !$allianceDiplomacyRepository->isAtWar($currentAlliance->id)) {
+                                <select name=\"moveuser[$currentAlliance->id][$allianceMember.vars.data->id]\">
+                                    <option value=\"\">Keine Änderung</option>
+                                    foreach ($wings as $wing) {
+                                    <option value=\"$wing->id\">Wing $wing->nameWithTag</option>
+                                    }
+                                    </select>
+                                } elseif ($currentAlliance->founderId === $allianceMember.vars.data->id) {
+                                Gründer
+                                } else {
+
+                                }
+                                </td>
+                        {% endif %}
+                        #}
+                        {# Aktionen #}
+                        <td>
+                            {% if app.user.data != allianceMember.vars.data %}
+                                <a href="?page=messages&amp;mode=new&amp;message_user_to=$allianceMember->id">Nachricht</a><br/>
+                            {% endif %}
+                            <a href="?page=userinfo&amp;id=$allianceMember->id">Profil</a><br/>
+                            {% if app.user.data == app.user.data.alliance.founder and app.user.data != allianceMember.vars.data %}
+                                <a href="{{path('game.alliance.editmembers.leader',{id:allianceMember.vars.data.id})}}" onclick="return confirm('Soll der Spieler \'{{ allianceMember.vars.data.nick }}\' wirklich zum Gründer befördert werden? Dir werden dabei die Gründerrechte entzogen!');">Gründer</a><br/>
+                            {% endif %}
+                            {% if app.user != allianceMember.vars.data and allianceMember.vars.data != app.user.data.alliance.founder and not atWar %}
+                                <a href="{{path('game.alliance.editmembers.kick',{id:allianceMember.vars.data.id})}}" onclick="return confirm('Soll {{ allianceMember.vars.data.nick }} wirklich aus der Allianz ausgeschlossen werden?')">Kicken</a>
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
+            {% endblock %}
+        </twig:Table>
+        {# TODO:Wing #}
+        <br/><br/>
+        {{(form_widget(form.save))}}&nbsp;&nbsp;&nbsp;
+        <a href="{{ path('game.alliance.overview') }}">
+            <input type="button" value="Zurück" />
+        </a>
+    {{ form_widget(form._token) }}
+    {{ form_end(form,{render_rest:false}) }}
+{% endblock %}

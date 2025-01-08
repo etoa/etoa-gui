@@ -210,20 +210,20 @@ class AllianceDiplomacyRepository extends AbstractRepository
             ->execute();
     }
 
-    public function isAtWar(int $allianceId, int $atWarWithAllianceId = null): bool
+    public function isAtWar(Alliance $alliance, Alliance $atWarWithAlliance = null): bool
     {
         $qb = $this->createQueryBuilder('q')
-            ->where('q.alliance1= :allianceId OR q.alliance2 = :allianceId')
+            ->where('q.alliance1= :alliance OR q.alliance2 = :alliance')
             ->andWhere('q.level = :war')
             ->setParameters([
-                'allianceId' => $allianceId,
+                'alliance' => $alliance,
                 'war' => AllianceDiplomacyLevel::WAR,
             ]);
 
-        if ($atWarWithAllianceId !== null) {
+        if ($atWarWithAlliance) {
             $qb
-                ->andWhere('q.alliance1 = :otherAllianceId OR q.alliance2 = :otherAllianceId')
-                ->setParameter('otherAllianceId', $atWarWithAllianceId);
+                ->andWhere('q.alliance1 = :otherAlliance OR q.alliance2 = :otherAlliance')
+                ->setParameter('otherAlliance', $atWarWithAlliance);
         }
 
         return (bool) $qb

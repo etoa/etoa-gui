@@ -154,15 +154,16 @@ class MessageRepository extends AbstractRepository
         $msg->setCat($cat);
         $msg->setTimestamp(time());
         $this->persist($msg);
+        $this->save();
 
         $msgData = new MessageData();
         $msgData->setMessage($msg);
         $msgData->setSubject($subject);
         $msgData->setText($text);
         $msgData->setId($msg->getId());
-        $this->persist($msgData);
+        $this->messageDataRepository->persist($msgData);
 
-        $this->save();
+        $this->messageDataRepository->save();
 
         return $msg;
     }

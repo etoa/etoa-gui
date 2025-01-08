@@ -9,6 +9,7 @@ use EtoA\Alliance\AllianceDiplomacyRepository;
 use EtoA\Alliance\AllianceHistoryRepository;
 use EtoA\Alliance\AllianceMemberCosts;
 use EtoA\Alliance\AllianceNewsRepository;
+use EtoA\Alliance\AllianceRankRepository;
 use EtoA\Alliance\AllianceRepository;
 use EtoA\Alliance\AllianceRights;
 use EtoA\Alliance\AllianceService;
@@ -19,9 +20,11 @@ use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Entity\Alliance;
 use EtoA\Entity\AllianceApplication;
 use EtoA\Entity\MessageData;
+use EtoA\Entity\User;
 use EtoA\Fleet\ForeignFleetLoader;
 use EtoA\Form\Type\Core\AllianceApplicationType;
 use EtoA\Form\Type\Core\AvatarUploadType;
+use EtoA\Form\Type\Core\EditAllianceMemberType;
 use EtoA\Form\Type\Core\MultiViewType;
 use EtoA\Form\Type\Core\ProfileUploadType;
 use EtoA\Log\LogFacility;
@@ -74,7 +77,8 @@ class AllianceController extends AbstractGameController
         private readonly AllianceNewsRepository $allianceNewsRepository,
         private readonly UserRatingService $userRatingService,
         private readonly TownhallService $townhallService,
-        private readonly MessageCategoryRepository $messageCategoryRepository
+        private readonly MessageCategoryRepository $messageCategoryRepository,
+        private readonly AllianceRankRepository $allianceRankRepository
     )
     {
     }
@@ -539,43 +543,108 @@ class AllianceController extends AbstractGameController
     {
         $cu = $this->getUser()->getData();
         $userAlliancePermission = $this->service->getUserAlliancePermissions($cu->getAlliance(), $cu);
+        $members = $this->userRepository->findBy(['alliance'=>$cu->getAlliance()]);
 
         if ($userAlliancePermission->checkHasRights(AllianceRights::EDIT_MEMBERS, 'alliance')) {
-            $form = $this->createFormBuilder()
-                ->add('subject', TextType::class, [
-                    'attr' => [
-                        'size'=>'30',
-                        'maxlength => 255'
-                    ],
-                    'constraints' => new NotBlank(
-                        ['message' => 'Nicht alle Felder ausgefüllt!']
-                    ),
+            $form = $this->createFormBuilder(['members'=>$members])
+                ->add('members', CollectionType::class, [
+                    'entry_type'   => EditAllianceMemberType::class,
+                    'entry_options' => ['label' => false],
                 ])
-                ->add('text', TextareaType::class, [
-                    'attr' => [
-                        'rows'=>'5',
-                        'cols' => '50'
-                    ],
-                    'constraints' => new NotBlank(
-                        ['message' => 'Nicht alle Felder ausgefüllt!']
-                    ),
-                ])
-                ->add('send', SubmitType::class, ['label' => 'Senden'])
+                ->add('save', SubmitType::class, ['label' => 'Übernehmen'])
                 ->getForm()
                 ->handleRequest($request);
 
-            if ($form->isSubmitted() && $form->isValid()) {
-
+            $wings = [];
+            if ($this->config->getBoolean('allow_wings')) {
+                $wings = $this->allianceRepository->findBy(['mother'=>$cu->getAlliance()]);
             }
 
-            return $this->render('game/alliance/alliance_massmail.html.twig',[
-                'form' => $form
+            if ($form->isSubmitted() && $form->isValid()) {
+                foreach ($form->get('members')->getData() as $member) {
+                    if($this->userRepository->getChangeset($member)) {
+                        $this->userRepository->save();
+                        $this->allianceHistoryRepository->addEntry($cu->getAlliance(), "Der Spieler [b]" . $member->getNick() . "[/b] erhält den Rang [b]" . $member->getAllianceRank()->getName() . "[/b].");
+                    }
+                }
+                return $this->render('game/success.html.twig',[
+                    'msg' => "Änderungen wurden übernommen!",
+                    'path' => $this->generateUrl('game.alliance.editmembers'),
+                    'headline' => 'Allianz'
+                ]);
+            }
+
+            return $this->render('game/alliance/alliance_edit_members.html.twig',[
+                'form' => $form,
+                'allianceMembers' => $members,
+                'atWar' => $this->allianceDiplomacyRepository->isAtWar($cu->getAlliance()),
+                'wings' => $wings
             ]);
         }
 
         return $this->render('game/error.html.twig',[
             'msg' => 'Fehlende Berechtigung!',
             'path' => $this->generateUrl('game.alliance.overview'),
+            'headline' => 'Allianz'
+        ]);
+    }
+
+    // Mitglied kicken
+    #[Route('/game/alliance/editmembers/kick/{id}', name: 'game.alliance.editmembers.kick')]
+    public function editMembersKick(?User $toBeKickedUser = null): Response
+    {
+        $currentAlliance = $this->getUser()->getData()->getAlliance();
+        if (!$this->allianceDiplomacyRepository->isAtWar($currentAlliance)) {
+            if ($toBeKickedUser && $toBeKickedUser->getAlliance() === $currentAlliance) {
+                if ($this->service->kickMember($currentAlliance, $toBeKickedUser)) {
+                    $this->logRepository->add(LogFacility::ALLIANCE, LogSeverity::INFO, "Der Spieler [b]" . $toBeKickedUser->getNick() . "[/b] wurde von [b]" . $this->getUser()->getData()->getNick() . "[/b] aus der Allianz [b]" . $currentAlliance->toString() . "[/b] ausgeschlossen!");
+                    return $this->render('game/success.html.twig',[
+                        'msg' => "Der Spieler [b]" . $toBeKickedUser->getNick() . "[/b] wurde aus der Allianz ausgeschlossen!",
+                        'path' => $this->generateUrl('game.alliance.editmembers'),
+                        'headline' => 'Allianz'
+                    ]);
+                } else {
+                    return $this->render('game/error.html.twig',[
+                        'msg' => 'Der Spieler konnte nicht aus der Allianz ausgeschlossen werden, da er in einem Allianzangriff unterwegs ist!',
+                        'path' => $this->generateUrl('game.alliance.editmembers'),
+                        'headline' => 'Allianz'
+                    ]);
+                }
+            } else {
+                return $this->render('game/error.html.twig',[
+                    'msg' => 'Der Spieler konnte nicht aus der Allianz ausgeschlossen werden, da er kein Mitglieder dieser Allianz ist!',
+                    'path' => $this->generateUrl('game.alliance.editmembers'),
+                    'headline' => 'Allianz'
+                ]);
+            }
+        }
+    }
+
+    // Mitglied kicken
+    #[Route('/game/alliance/editmembers/leader/{id}', name: 'game.alliance.editmembers.leader')]
+    public function editMembersLeader(?User $newFounder = null): Response
+    {
+        $currentAlliance = $this->getUser()->getData()->getAlliance();
+
+        if(
+            $newFounder &&
+            $newFounder->getAlliance() === $currentAlliance &&
+            $this->service->isFounder() &&
+            $this->getUser()->getData() !== $newFounder
+        ) {
+            $this->service->changeFounder($currentAlliance, $newFounder);
+            $this->logRepository->add(LogFacility::ALLIANCE, LogSeverity::INFO, "Der Spieler [b]" . $newFounder->getNick() . "[/b] wird vom Spieler [b]" . $this->getUser()->getData()->getNick() . "[/b] zum Gründer befördert.");
+
+            return $this->render('game/success.html.twig',[
+                'msg' => 'Gründer geändert!',
+                'path' => $this->generateUrl('game.alliance.editmembers'),
+                'headline' => 'Allianz'
+            ]);
+        }
+
+        return $this->render('game/error.html.twig',[
+            'msg' => 'User nicht gefunden!',
+            'path' => $this->generateUrl('game.alliance.editmembers'),
             'headline' => 'Allianz'
         ]);
     }

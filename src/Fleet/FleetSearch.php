@@ -3,6 +3,7 @@
 namespace EtoA\Fleet;
 
 use EtoA\Core\Database\AbstractSearch;
+use EtoA\Entity\User;
 
 class FleetSearch extends AbstractSearch
 {
@@ -37,10 +38,10 @@ class FleetSearch extends AbstractSearch
         return $this;
     }
 
-    public function user(int $userId): self
+    public function user(User $user): self
     {
-        $this->parts[] = 'q.userId = :fleetUserId';
-        $this->parameters['fleetUserId'] = $userId;
+        $this->parts[] = 'q.user = :fleetUser';
+        $this->parameters['fleetUser'] = $user;
 
         return $this;
     }

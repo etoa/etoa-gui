@@ -6,11 +6,12 @@ use Doctrine\ORM\Mapping as ORM;
 use EtoA\Alliance\AllianceRankRightRepository;
 
 #[ORM\Entity(repositoryClass: AllianceRankRightRepository::class)]
+#[ORM\Table(name: 'alliance_rankrights')]
 class AllianceRankRight
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
-    #[ORM\Column]
+    #[ORM\Column(name:'rr_id')]
     private ?int $id = null;
 
     #[ORM\JoinColumn(name: 'rr_rank_id', referencedColumnName: 'rank_id')]

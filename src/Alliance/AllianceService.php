@@ -118,17 +118,21 @@ class AllianceService
         return true;
     }
 */
-    public function kickMember(AllianceWithMemberCount $alliance, User $user, bool $kick = true): bool
+    public function kickMember(Alliance $alliance, User $user, bool $kick = true): bool
     {
-        if ($alliance->getId() !== $user->getAlliance()->getId()) {
+        if ($alliance !== $user->getAlliance()) {
             return false;
         }
 
-        if ($this->allianceDiplomacyRepository->isAtWar($alliance->getId())) {
+        if($this->security->getUser()->getData() !== $alliance->getFounder()) {
             return false;
         }
 
-        if ($this->fleetRepository->exists(FleetSearch::create()->user($user->getId())->actionIn([FleetAction::ALLIANCE, FleetAction::SUPPORT]))) {
+        if ($this->allianceDiplomacyRepository->isAtWar($alliance)) {
+            return false;
+        }
+
+        if ($this->fleetRepository->exists(FleetSearch::create()->user($user)->actionIn([FleetAction::ALLIANCE, FleetAction::SUPPORT]))) {
             return false;
         }
 
@@ -139,19 +143,25 @@ class AllianceService
         }
 
         $this->allianceHistoryRepository->addEntry($alliance, "[b]" . $user->getNick() . "[/b] ist nun kein Mitglied mehr von uns.");
-        $this->userRepository->setAllianceId($user->getId(), $alliance->getId(), 0, time());
-        $this->userService->addToUserLog($user, "alliance", "{nick} ist nun kein Mitglied mehr der Allianz " . $alliance->toString() . ".");
 
-        $alliance->memberCount--;
+        $user->setAlliance(null);
+        $user->setAllianceRank(null);
+        $user->setAllianceLeave(time());
+
+        $this->userRepository->save();
+
+        $this->userService->addToUserLog($user, "alliance", "{nick} ist nun kein Mitglied mehr der Allianz " . $alliance->toString() . ".");
 
         return true;
     }
 
     public function changeFounder(Alliance $alliance, User $founder): bool
     {
-        if ($alliance->getId() !== $founder->getAlliance()->getId()) {
+        if ($alliance !== $founder->getAlliance()) {
             return false;
         }
+
+        $alliance->setFounder($founder);
 
         $this->allianceHistoryRepository->addEntry($alliance, "Der Spieler [b]" . $founder->getNick() . "[/b] wird zum Gründer befördert.");
         $this->messageRepository->createSystemMessage($founder, $this->messageCategoryRepository->find(MessageCategoryId::ALLIANCE), "Gründer", "Du hast nun die Gründerrechte deiner Allianz!");
@@ -211,7 +221,7 @@ class AllianceService
 
         $userRights = [];
         if ($this->allianceRightRepository->findAll()) {
-            $rankRights = $this->allianceRankRightRepository->findBy(['rankId'=>$user->getAllianceRank()->getId()]);
+            $rankRights = $this->allianceRankRightRepository->findBy(['rank'=>$user->getAllianceRank()]);
 
             foreach ($rankRights as $rankRight) {
                 $userRights[] = $rankRight->getRight()->getKey();
@@ -360,7 +370,7 @@ class AllianceService
         if ($userAlliancePermission->hasRights(AllianceRights::APPLICATION_TEMPLATE)) {
             $adminBox["Bewerbungsvorlage"] = "?page=$page&action=applicationtemplate";
         }
-        if ($isFounder && !$this->allianceDiplomacyRepository->isAtWar($cu->getAlliance()->getId())) {
+        if ($isFounder && !$this->allianceDiplomacyRepository->isAtWar($cu->getAlliance())) {
             $adminBox["Allianz aufl&ouml;sen"] = "?page=$page&action=liquidate";
             $adminBox["Allianz verlassen"] = "?page=$page&action=leave";
             //array_push($adminBox,"<a href=\"\" onclick=\"return confirm('Allianz wirklich verlassen?');\"></a>");
@@ -561,5 +571,10 @@ class AllianceService
         $costs->food = (int) ceil($entity->getCostsFood() * $memberLevelFactor);
 
         return $costs;
+    }
+
+    public function isFounder():bool
+    {
+        return $this->security->getUser()->getData() === $this->security->getUser()->getData()->getAlliance()->getFounder();
     }
 }
