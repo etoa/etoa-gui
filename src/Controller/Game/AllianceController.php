@@ -3,7 +3,6 @@
 namespace EtoA\Controller\Game;
 
 use EtoA\Alliance\AllianceApplicationRepository;
-use EtoA\Alliance\AllianceDiplomacyLevel;
 use EtoA\Alliance\AllianceDiplomacyPoints;
 use EtoA\Alliance\AllianceDiplomacyRepository;
 use EtoA\Alliance\AllianceHistoryRepository;
@@ -19,34 +18,27 @@ use EtoA\Alliance\TownhallService;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Entity\Alliance;
 use EtoA\Entity\AllianceApplication;
+use EtoA\Entity\AllianceRank;
 use EtoA\Entity\MessageData;
 use EtoA\Entity\User;
 use EtoA\Fleet\ForeignFleetLoader;
 use EtoA\Form\Type\Core\AllianceApplicationType;
-use EtoA\Form\Type\Core\AvatarUploadType;
+use EtoA\Form\Type\Core\AllianceRankType;
 use EtoA\Form\Type\Core\EditAllianceMemberType;
-use EtoA\Form\Type\Core\MultiViewType;
-use EtoA\Form\Type\Core\ProfileUploadType;
 use EtoA\Log\LogFacility;
 use EtoA\Log\LogRepository;
 use EtoA\Log\LogSeverity;
 use EtoA\Message\MessageCategoryId;
 use EtoA\Message\MessageCategoryRepository;
 use EtoA\Message\MessageRepository;
-use EtoA\Support\BBCodeUtils;
-use EtoA\Support\StringUtils;
 use EtoA\Universe\Entity\EntityRepository;
 use EtoA\Universe\Planet\PlanetRepository;
 use EtoA\User\UserRatingService;
 use EtoA\User\UserRepository;
 use EtoA\User\UserService;
-use phpDocumentor\Reflection\Types\This;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Form\Extension\Core\Type\ButtonType;
-use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
-use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -54,7 +46,6 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
-use function Symfony\Component\Translation\t;
 
 class AllianceController extends AbstractGameController
 {
@@ -618,6 +609,12 @@ class AllianceController extends AbstractGameController
                 ]);
             }
         }
+
+        return $this->render('game/error.html.twig',[
+            'msg' => 'Der Spieler konnte nicht aus der Allianz ausgeschlossen werden, da sie sich im Krieg befindet!',
+            'path' => $this->generateUrl('game.alliance.editmembers'),
+            'headline' => 'Allianz'
+        ]);
     }
 
     // Mitglied kicken
@@ -646,6 +643,53 @@ class AllianceController extends AbstractGameController
             'msg' => 'User nicht gefunden!',
             'path' => $this->generateUrl('game.alliance.editmembers'),
             'headline' => 'Allianz'
+        ]);
+    }
+
+    // Mitglied kicken
+    #[Route('/game/alliance/ranks', name: 'game.alliance.ranks')]
+    public function ranks(Request $request): Response
+    {
+        $ranks = $this->allianceRankRepository->findBy(['alliance'=>$this->getUser()->getData()->getAlliance()],['level'=>'DESC']);
+        $form = $this->createFormBuilder(['ranks'=>$ranks])
+            ->add('ranks', CollectionType::class, [
+                'entry_type'   => AllianceRankType::class,
+                'entry_options' => ['label' => false],
+            ])
+            ->add('save', SubmitType::class, ['label' => 'Übernehmen'])
+            ->add('new', SubmitType::class, ['label' => 'Neuer Rang'])
+            ->getForm()
+            ->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            if($form->get('new')->isClicked()) {
+                $newRank = new AllianceRank();
+                $newRank->setAlliance($this->getUser()->getData()->getAlliance());
+                $this->allianceRankRepository->persist($newRank);
+                $this->allianceRankRepository->save();
+
+                return $this->redirectToRoute('game.alliance.ranks');
+            }
+
+            if($form->get('save')->isClicked()) {
+                foreach ($form->get('ranks')->all() as $element) {
+                    if($element->get('delete')->getData()) {
+                        $this->allianceRankRepository->remove($element->getData());
+                    }
+
+                    $this->allianceRankRepository->save();
+
+                    return $this->render('game/success.html.twig',[
+                        'msg' => 'Gründer geändert!',
+                        'path' => $this->generateUrl('game.alliance.ranks'),
+                        'headline' => 'Allianz'
+                    ]);
+                }
+            }
+        }
+
+        return $this->render('game/alliance/alliance_ranks.html.twig',[
+            'form' => $form
         ]);
     }
 

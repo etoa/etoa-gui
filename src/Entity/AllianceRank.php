@@ -2,6 +2,8 @@
 
 namespace EtoA\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use EtoA\Alliance\AllianceRankRepository;
 
@@ -9,6 +11,11 @@ use EtoA\Alliance\AllianceRankRepository;
 #[ORM\Table(name: 'alliance_ranks')]
 class AllianceRank
 {
+
+    public function __construct() {
+        $this->rights = new ArrayCollection();
+    }
+
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: "AUTO")]
     #[ORM\Column(name: "rank_id")]
@@ -16,13 +23,23 @@ class AllianceRank
 
     #[ORM\JoinColumn(name: 'rank_alliance_id', referencedColumnName: 'alliance_id')]
     #[ORM\ManyToOne(targetEntity: Alliance::class)]
-    protected Alliance|null $alliance;
+    private ?Alliance $alliance = null;
 
     #[ORM\Column(name: "rank_level")]
-    private int $level;
+    private int $level = 0;
 
     #[ORM\Column(name: "rank_name")]
-    private ?string $name;
+    private ?string $name = null;
+
+    /**
+     * Many Ranks have Many Rights.
+     * @var Collection<int, AllianceRight>
+     */
+    #[ORM\JoinTable(name: 'alliance_rankrights')]
+    #[ORM\JoinColumn(name: 'rr_rank_id', referencedColumnName: 'rank_id')]
+    #[ORM\InverseJoinColumn(name: 'rr_right_id', referencedColumnName: 'right_id')]
+    #[ORM\ManyToMany(targetEntity: AllianceRight::class)]
+    private Collection $rights;
 
     public function getId(): ?int
     {
@@ -61,6 +78,30 @@ class AllianceRank
     public function setAlliance(?Alliance $alliance): static
     {
         $this->alliance = $alliance;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, AllianceRight>
+     */
+    public function getRights(): Collection
+    {
+        return $this->rights;
+    }
+
+    public function addRight(AllianceRight $right): static
+    {
+        if (!$this->rights->contains($right)) {
+            $this->rights->add($right);
+        }
+
+        return $this;
+    }
+
+    public function removeRight(AllianceRight $right): static
+    {
+        $this->rights->removeElement($right);
 
         return $this;
     }

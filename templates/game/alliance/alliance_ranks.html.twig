@@ -1,0 +1,44 @@
+{% extends 'game/alliance/alliance.html.twig' %}
+{% import 'macros.html.twig' as macros %}
+
+{% block alliance %}
+    <h2>Ränge</h2>
+    {{ form_start(form) }}
+        <twig:Table title="Verfügbare Ränge">
+        {% block table_content %}
+            <tr>
+                <th>Rangname:</th>
+                <th>Rechte:</th>
+                <th>Löschen:</th>
+            </tr>
+            {% for rank in form.children.ranks.children %}
+                <tr>
+                    <td>
+                        {{ form_widget(rank.children.name) }}<br/>
+                        Level: {{ form_widget(rank.children.level) }}
+                    </td>
+                    <td>
+                        {% for right in rank.children.rights.children %}
+                            {{ form_widget(right)}}
+                            {% if right.vars.checked %}
+                                <span style="color:#0f0;">{{ right.vars.label }}</span>
+                            {% else %}
+                                <span style="color:#f50;">{{ right.vars.label }}</span>
+                            {% endif %}
+                            <br/>
+                        {% endfor %}
+                    </td>
+                    <td>
+                        {{ form_widget(rank.children.delete) }}
+                    </td>
+                </tr>
+            {% endfor %}
+        {% endblock %}
+        </twig:Table>
+        {{ form_widget(form.save) }}&nbsp;
+        <a href="{{ path('game.alliance.overview') }}">
+            <input type="button" value="Zurück"/>
+        </a>&nbsp;
+        {{ form_widget(form.new) }}
+    {{ form_end(form) }}
+{% endblock %}
