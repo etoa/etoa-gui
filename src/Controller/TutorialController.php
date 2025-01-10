@@ -3,6 +3,7 @@
 namespace EtoA\Controller;
 
 use EtoA\Core\TokenContext;
+use EtoA\Entity\Tutorial;
 use EtoA\Support\BBCodeUtils;
 use EtoA\Tutorial\TutorialManager;
 use EtoA\Tutorial\TutorialUserProgressRepository;
@@ -23,24 +24,25 @@ class TutorialController extends AbstractController
 
 
     #[Route("/api/tutorials/{tutorialId}", name:"api.tutorial.show", methods:['GET'])]
-    public function showAction(Request $request, TokenContext $context, int $tutorialId): JsonResponse
+    public function showAction(Request $request, TokenContext $context, ?Tutorial $tutorial = null): JsonResponse
     {
-        if ($request->query->has('step')) {
-            $currentStep = $request->query->getInt('step');
-        } else {
-            $currentStep = $this->tutorialManager->getUserProgress($context->getCurrentUser()->getId(), $tutorialId);
-        }
-
-        $tutorialText = $this->tutorialManager->getText($tutorialId, $currentStep);
-
         $data = [];
-        if ($tutorialText !== null) {
-            $data['title'] = $tutorialText->title;
-            $data['content'] = BBCodeUtils::toHTML($tutorialText->content);
-            $data['prev'] = $tutorialText->prev;
-            $data['next'] = $tutorialText->next;
 
-            $this->tutorialManager->setUserProgress($context->getCurrentUser()->getId(), $tutorialId, $tutorialText->step);
+        if($tutorial ){
+            if ($request->query->has('step')) {
+                $currentStep = $request->query->getInt('step');
+            } else {
+                $currentStep = $this->tutorialUserProgressRepository->getUserProgress($context->getCurrentUser()->getData(), $tutorial);
+            }
+
+            $tutorialText = $this->tutorialManager->getText($tutorial, $currentStep);
+
+            if ($tutorialText) {
+                $data['title'] = $tutorialText->getTitle();
+                $data['content'] = BBCodeUtils::toHTML($tutorialText->getContent());
+                $data['prev'] = $tutorialText->prev;
+                $data['next'] = $tutorialText->next;
+            }
         }
 
         return new JsonResponse($data);
@@ -48,9 +50,9 @@ class TutorialController extends AbstractController
 
 
     #[Route("/api/tutorials/{tutorialId}/close", name:"api.tutorial.close",methods:["PUT"])]
-    public function closeAction(TokenContext $context, int $tutorialId): JsonResponse
+    public function closeAction(TokenContext $context, ?Tutorial $tutorial = null) : JsonResponse
     {
-        $this->tutorialUserProgressRepository->closeTutorial($context->getCurrentUser()->getId(), $tutorialId);
+        $this->tutorialUserProgressRepository->closeTutorial($context->getCurrentUser()->getData(), $tutorial);
 
         return new JsonResponse();
     }

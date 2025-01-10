@@ -4,7 +4,9 @@ namespace EtoA\Tutorial;
 
 use Doctrine\Persistence\ManagerRegistry;
 use EtoA\Core\AbstractRepository;
+use EtoA\Entity\Tutorial;
 use EtoA\Entity\TutorialUserProgress;
+use EtoA\Entity\User;
 
 class TutorialUserProgressRepository extends AbstractRepository
 {
@@ -31,19 +33,12 @@ class TutorialUserProgressRepository extends AbstractRepository
             ->getFirstResult();
     }
 
-    public function closeTutorial(int $userId, int $tutorial): void
+    public function closeTutorial(User $user, Tutorial $tutorial): void
     {
-        $this->createQueryBuilder('q')
-            ->update('tutorial_user_progress')
-            ->set('tup_closed', ':closed')
-            ->where('tup_user_id = :userId')
-            ->andWhere('tup_tutorial_id = :tutorialId')
-            ->setParameters([
-                'closed' => 1,
-                'userId' => $userId,
-                'tutorialId' => $tutorial,
-            ])
-            ->executeQuery();
+        $progress = $this->findOneBy(['user'=>$user,'tutorial'=>$tutorial]);
+        $progress?->setClosed(true);
+
+        $this->save();
     }
 
     public function setUserProgress(int $userId, int $tutorialId, int $textStep): void
@@ -68,24 +63,11 @@ class TutorialUserProgressRepository extends AbstractRepository
         );
     }
 
-    public function getUserProgress(int $userId, int $tutorialId): int
+    public function getUserProgress(User $user, Tutorial $tutorial): int
     {
-        $data = $this->createQueryBuilder('q')
-            ->select('tup_text_step')
-            ->from('tutorial_user_progress')
-            ->where('tup_user_id = :userId')
-            ->andWhere('tup_tutorial_id = :tutorialId')
-            ->setParameters([
-                'userId' => $userId,
-                'tutorialId' => $tutorialId,
-            ])
-            ->fetchOne();
+        $progress = $this->findOneBy(['user'=>$user,'tutorial'=>$tutorial]);
 
-        if ($data !== null) {
-            return (int) $data;
-        }
-
-        return 0;
+        return $progress?$progress->getTextStep():0;
     }
 
     public function reopenTutorial(int $userId, int $tutorialId): void

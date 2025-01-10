@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace EtoA\Tutorial;
 
-use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use EtoA\Core\AbstractRepository;
+use EtoA\Entity\Tutorial;
 use EtoA\Entity\TutorialText;
 
 class TutorialManager extends AbstractRepository
@@ -68,23 +68,17 @@ class TutorialManager extends AbstractRepository
         return null;
     }
 
-    public function getText(int $tutorialId, int $step = 0): ?TutorialText
+    public function getText(Tutorial $tutorial, int $step = 0): ?TutorialText
     {
-        $id = $this->createQueryBuilder('q')
-            ->select('text_id')
-            ->where('text_tutorial_id = :tutorialId')
-            ->andWhere('text_step <= :step')
-            ->orderBy('text_step', 'DESC')
+        return $this->createQueryBuilder('q')
+            ->where('q.tutorial = :tutorial')
+            ->andWhere('q.step <= :step')
+            ->orderBy('q.step', 'DESC')
             ->setParameters([
-                'tutorialId' => $tutorialId,
+                'tutorial' => $tutorial,
                 'step' => $step,
             ])
-            ->getFirstResult();
-
-        if ($id !== false) {
-            return $this->getTextById((int) $id);
-        }
-
-        return null;
+            ->getQuery()
+            ->getOneOrNullResult();
     }
 }
