@@ -3,6 +3,7 @@
 namespace EtoA\Controller;
 
 use EtoA\Core\TokenContext;
+use EtoA\Fleet\FleetAction;
 use EtoA\Ship\ShipDataRepository;
 use EtoA\Ship\ShipSearch;
 use EtoA\Support\BBCodeUtils;
@@ -56,19 +57,19 @@ class ShipController extends AbstractController
         $ships = array_values($this->shipDataRepository->searchShips($search, null, 1));
         if (count($ships) > 0) {
             $ship = $ships[0];
-            if (!in_array($ship->id, $_SESSION['bookmarks']['added'] ?? [], true)) {
-                $data['id'] = $ship->id;
-                $data['name'] = $ship->name;
+            if (!in_array($ship->getId(), $_SESSION['bookmarks']['added'] ?? [], true)) {
+                $data['id'] = $ship->getId();
+                $data['name'] = $ship->getName();
                 $data['image'] = $ship->getImagePath();
 
-                $actions = array_filter(explode(",", $ship->actions));
+                $actions = array_filter(explode(",", $ship->getActions()));
                 $accnt = count($actions);
                 $acstr = '';
                 if ($accnt > 0) {
                     $acstr = "<br/><b>Fägkeiten:</b> ";
                     $x = 0;
                     foreach ($actions as $i) {
-                        if ($ac = \FleetAction::createFactory($i)) {
+                        if ($ac = FleetAction::createFactory($i)) {
                             $acstr .= $ac;
                             if ($x < $accnt - 1) {
                                 $acstr .= ", ";
@@ -79,9 +80,9 @@ class ShipController extends AbstractController
                     $acstr .= "";
                 }
 
-                $data['tooltip'] = "<img src=\"" . $ship->getImagePath('medium') . "\" style=\"float:left;margin-right:5px;\">" . BBCodeUtils::toHTML($ship->shortComment) . "<br/>" . $acstr . "<br style=\"clear:both;\"/>";
+                $data['tooltip'] = "<img src=\"" . $ship->getImagePath('medium') . "\" style=\"float:left;margin-right:5px;\">" . BBCodeUtils::toHTML($ship->getShortComment()) . "<br/>" . $acstr . "<br style=\"clear:both;\"/>";
 
-                $data['launchable'] = $ship->launchable;
+                $data['launchable'] = $ship->isLaunchable();
             }
         } else {
             $data['error'] = "Schiff nicht gefunden!";
