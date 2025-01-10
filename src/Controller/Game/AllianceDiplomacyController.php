@@ -9,6 +9,7 @@ use EtoA\Alliance\AllianceHistoryRepository;
 use EtoA\Alliance\AllianceRepository;
 use EtoA\Alliance\AllianceRights;
 use EtoA\Alliance\AllianceService;
+use EtoA\Alliance\Board\AllianceBoardTopicRepository;
 use EtoA\Entity\Alliance;
 use EtoA\Entity\AllianceDiplomacy;
 use EtoA\Message\MessageCategoryId;
@@ -30,7 +31,8 @@ class AllianceDiplomacyController extends AbstractGameController
         private readonly MessageRepository $messageRepository,
         private readonly MessageCategoryRepository $messageCategoryRepository,
         private readonly AllianceHistoryRepository $allianceHistoryRepository,
-        private readonly AllianceService $service
+        private readonly AllianceService $service,
+        private readonly AllianceBoardTopicRepository $allianceBoardTopicRepository
     )
     {}
 
@@ -398,6 +400,7 @@ class AllianceDiplomacyController extends AbstractGameController
 
         if ($userAlliancePermission->checkHasRights(AllianceRights::RELATIONS, 'alliance')) {
             $currentAlliance = $this->getUser()->getData()->getAlliance();
+            $otherAlliance = $diplomacy->getAlliance1() === $currentAlliance?$diplomacy->getAlliance2():$diplomacy->getAlliance1();
 
             if (
                 $diplomacy &&
@@ -415,16 +418,31 @@ class AllianceDiplomacyController extends AbstractGameController
                         ],
                     ])
                     ->add('send', SubmitType::class, [
-                        'attr' => [
-                            'onclick' => 'return checkEndPact()',
-                            'onsubmit' => "return checkEndPact()"
-                        ],
                         'label' => 'Senden'
                     ])
                     ->getForm()
                     ->handleRequest($request);
 
                 if ($form->isSubmitted() && $form->isValid()) {
+                    $this->allianceBoardTopicRepository->deleteBndTopic($diplomacy);
+
+                    // Add log
+                    $this->allianceHistoryRepository->addEntry($currentAlliance, "Das Bündnis [b]" . $diplomacy->getName() . "[/b] mit der Allianz [b][" . $otherAlliance->getTag() . "] " . $otherAlliance->getName() . "[/b] wird aufgelöst!");
+                    $this->allianceHistoryRepository->addEntry($otherAlliance, "Die Allianz [b][" . $currentAlliance->getTag() . "] " . $currentAlliance->getName() . "[/b] löst das Bündnis [b]" . $diplomacy->getName() . "[/b] auf!");
+
+                    // Send message to leader
+                    $this->messageRepository->createSystemMessage($otherAlliance->getFounder(), $this->messageCategoryRepository->find(MessageCategoryId::ALLIANCE)  , "Bündnis " . $diplomacy->getName() . " beendet", "Die Allianz [b][" . $currentAlliance->getTag() . "] " . $currentAlliance->getName() . "[/b] beendet ihr Bündnis [b]" . $diplomacy->getName() . "[/b] mit eurer Allianz!\n
+                        Ausgelöst von [b]" . $cu->getNick() . "[/b].\nBegründung: " . $form->get('endText')->getData());
+
+                    // Delete entity
+                    $this->allianceDiplomacyRepository->remove($diplomacy);
+                    $this->allianceDiplomacyRepository->save();
+
+                    return $this->render('game/success.html.twig', [
+                        'msg' => "Das Bündnis <b>" . $diplomacy->getName() . "</b> mit der Allianz <b>" . $otherAlliance->getName() . "</b> wurde aufgelöst!",
+                        'path' => $this->generateUrl('game.alliance.diplomacy.relations'),
+                        'headline' => 'Allianz'
+                    ]);
                 }
 
                 return $this->render('game/alliance/diplomacy/alliance_diplomacy_end_bnd.html.twig', [
