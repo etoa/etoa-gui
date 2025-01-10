@@ -24,8 +24,9 @@ class AllianceBoardTopic
     #[ORM\ManyToOne(targetEntity: AllianceBoardCategory::class)]
     private AllianceBoardCategory|null $category;
 
-    #[ORM\Column(name: "topic_bnd_id")]
-    private int $bndId = 0;
+    #[ORM\JoinColumn(name: 'topic_bnd_id', referencedColumnName: 'alliance_bnd_id')]
+    #[ORM\ManyToOne(targetEntity: AllianceDiplomacy::class)]
+    private ?AllianceDiplomacy $bnd = null;
 
     #[ORM\JoinColumn(name: 'topic_user_id', referencedColumnName: 'user_id')]
     #[ORM\ManyToOne(targetEntity: User::class)]
@@ -56,18 +57,6 @@ class AllianceBoardTopic
     public function getId(): ?int
     {
         return $this->id;
-    }
-
-    public function getBndId(): ?int
-    {
-        return $this->bndId;
-    }
-
-    public function setBndId(int $bndId): static
-    {
-        $this->bndId = $bndId;
-
-        return $this;
     }
 
     public function getSubject(): ?string
@@ -192,6 +181,18 @@ class AllianceBoardTopic
     public function setUserNick(string $userNick): static
     {
         $this->userNick = $userNick;
+
+        return $this;
+    }
+
+    public function getBnd(): ?AllianceDiplomacy
+    {
+        return $this->bnd;
+    }
+
+    public function setBnd(?AllianceDiplomacy $bnd): static
+    {
+        $this->bnd = $bnd;
 
         return $this;
     }

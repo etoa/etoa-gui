@@ -89,12 +89,15 @@ class AllianceSpendRepository extends AbstractRepository
         return array_map(fn (array $row) => new AllianceSpend($row), $data);
     }
 
-    public function deleteAllianceEntries(int $allianceId): void
+    public function deleteAllianceEntries(Alliance $alliance): void
     {
-        $this->createQueryBuilder('q')
-            ->delete('alliance_spends')
-            ->where('alliance_spend_alliance_id = :allianceId')
-            ->setParameter('allianceId', $allianceId)
-            ->executeQuery();
+
+        $entries = $this->findBy(['alliance'=>$alliance]);
+
+        foreach ($entries as $entry) {
+            $this->remove($entry);
+        }
+
+        $this->save();
     }
 }

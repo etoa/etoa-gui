@@ -111,13 +111,15 @@ class AllianceNewsRepository extends AbstractRepository
             ->getSingleScalarResult();
     }
 
-    public function deleteAllianceEntries(int $allianceId): void
+    public function deleteAllianceEntries(Alliance $alliance): void
     {
-        $this->createQueryBuilder('q')
-            ->delete('alliance_news')
-            ->where('alliance_news_alliance_id = :allianceId')
-            ->setParameter('allianceId', $allianceId)
-            ->executeQuery();
+        $entries = $this->findBy(['alliance'=>$alliance]);
+
+        foreach ($entries as $entry) {
+            $this->remove($entry);
+        }
+
+        $this->save();
     }
 
     public function deleteOlderThan(int $timestamp): int

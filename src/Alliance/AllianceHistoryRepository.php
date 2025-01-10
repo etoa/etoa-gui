@@ -35,12 +35,14 @@ class AllianceHistoryRepository extends AbstractRepository
         return $this->findBy(['alliance'=>$alliance],['timestamp'=>'DESC'],$limit);
     }
 
-    public function removeForAlliance(int $allianceId): void
+    public function removeForAlliance(Alliance $alliance): void
     {
-        $this->createQueryBuilder('q')
-            ->delete('alliance_history')
-            ->where('history_alliance_id = :allianceId')
-            ->setParameter('allianceId', $allianceId)
-            ->executeQuery();
+        $entries = $this->findBy(['alliance'=>$alliance]);
+
+        foreach ($entries as $entry) {
+            $this->remove($entry);
+        }
+
+        $this->save();
     }
 }

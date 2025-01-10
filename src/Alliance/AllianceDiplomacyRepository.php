@@ -253,12 +253,13 @@ class AllianceDiplomacyRepository extends AbstractRepository
             ->executeQuery();
     }
 
-    public function deleteAllianceDiplomacies(int $allianceId): void
+    public function deleteAllianceDiplomacies(Alliance $alliance): void
     {
         $this->createQueryBuilder('q')
-            ->delete('alliance_bnd')
-            ->where('alliance_bnd_alliance_id1 = :allianceId OR alliance_bnd_alliance_id2 = :allianceId')
-            ->setParameter('allianceId', $allianceId)
-            ->executeQuery();
+            ->delete()
+            ->where('q.alliance1 = :alliance OR q.alliance2 = :alliance')
+            ->setParameter('alliance', $alliance)
+            ->getQuery()
+            ->execute();
     }
 }

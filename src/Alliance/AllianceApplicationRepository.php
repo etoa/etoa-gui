@@ -4,6 +4,7 @@ namespace EtoA\Alliance;
 
 use Doctrine\Persistence\ManagerRegistry;
 use EtoA\Core\AbstractRepository;
+use EtoA\Entity\Alliance;
 use EtoA\Entity\AllianceApplication;
 
 class AllianceApplicationRepository extends AbstractRepository
@@ -79,16 +80,15 @@ class AllianceApplicationRepository extends AbstractRepository
             ->rowCount();
     }
 
-    public function deleteAllianceApplication(int $allianceId): int
+    public function deleteAllianceApplication(Alliance $alliance): void
     {
-        return $this->createQueryBuilder('q')
-            ->delete('alliance_applications')
-            ->where('alliance_id = :allianceId')
-            ->setParameters([
-                'allianceId' => $allianceId,
-            ])
-            ->executeQuery()
-            ->rowCount();
+        $applications = $this->findBy(['alliance'=>$alliance]);
+
+        foreach ($applications as $application) {
+            $this->remove($application);
+        }
+
+        $this->save();
     }
 
     public function deleteUserApplication(int $userId): bool

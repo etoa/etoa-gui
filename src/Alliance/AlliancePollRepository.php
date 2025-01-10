@@ -193,18 +193,22 @@ class AlliancePollRepository extends AbstractRepository
         $this->save();
     }
 
-    public function deleteAllianceEntries(int $allianceId): void
+    public function deleteAllianceEntries(Alliance $alliance): void
     {
-        $this->createQueryBuilder('q')
-            ->delete('alliance_polls')
-            ->where('poll_alliance_id = :allianceId')
-            ->setParameter('allianceId', $allianceId)
-            ->executeQuery();
+        $polls = $this->findBy(['alliance'=>$alliance]);
 
-        $this->createQueryBuilder('q')
-            ->delete('alliance_poll_votes')
-            ->where('vote_alliance_id = :allianceId')
-            ->setParameter('allianceId', $allianceId)
-            ->executeQuery();
+        foreach ($polls as $poll) {
+            $this->remove($poll);
+        }
+
+        $this->save();
+
+        $votes = $this->alliancePollVotesRepository->findBy(['alliance'=>$alliance]);
+
+        foreach ($votes as $vote) {
+            $this->remove($vote);
+        }
+
+        $this->alliancePollVotesRepository->save();
     }
 }

@@ -14,6 +14,7 @@ class AllianceRank
 
     public function __construct() {
         $this->rights = new ArrayCollection();
+        $this->rankRights = new ArrayCollection();
     }
 
     #[ORM\Id]
@@ -40,6 +41,10 @@ class AllianceRank
     #[ORM\InverseJoinColumn(name: 'rr_right_id', referencedColumnName: 'right_id')]
     #[ORM\ManyToMany(targetEntity: AllianceRight::class)]
     private Collection $rights;
+
+    #[ORM\OneToMany(mappedBy: 'rank', targetEntity: AllianceRankRight::class, cascade: ['persist', 'remove'])]
+    #[ORM\JoinColumn(name: 'rank_id', referencedColumnName: 'rr_rank_id')]
+    private Collection $rankRights;
 
     public function getId(): ?int
     {
@@ -102,6 +107,36 @@ class AllianceRank
     public function removeRight(AllianceRight $right): static
     {
         $this->rights->removeElement($right);
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, AllianceRankRight>
+     */
+    public function getRankRights(): Collection
+    {
+        return $this->rankRights;
+    }
+
+    public function addRankRight(AllianceRankRight $rankRight): static
+    {
+        if (!$this->rankRights->contains($rankRight)) {
+            $this->rankRights->add($rankRight);
+            $rankRight->setRank($this);
+        }
+
+        return $this;
+    }
+
+    public function removeRankRight(AllianceRankRight $rankRight): static
+    {
+        if ($this->rankRights->removeElement($rankRight)) {
+            // set the owning side to null (unless already changed)
+            if ($rankRight->getRank() === $this) {
+                $rankRight->setRank(null);
+            }
+        }
 
         return $this;
     }

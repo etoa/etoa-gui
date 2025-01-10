@@ -4,6 +4,7 @@ namespace EtoA\Alliance;
 
 use Doctrine\Persistence\ManagerRegistry;
 use EtoA\Core\AbstractRepository;
+use EtoA\Entity\Alliance;
 use EtoA\Entity\AlliancePoints;
 
 class AlliancePointsRepository extends AbstractRepository
@@ -83,12 +84,14 @@ class AlliancePointsRepository extends AbstractRepository
             ])->executeQuery();
     }
 
-    public function removeForAlliance(int $allianceId): void
+    public function removeForAlliance(Alliance $alliance): void
     {
-        $this->createQueryBuilder('q')
-            ->delete('alliance_points')
-            ->where('point_alliance_id = :allianceId')
-            ->setParameter('allianceId', $allianceId)
-            ->executeQuery();
+        $entries = $this->findBy(['alliance'=>$alliance]);
+
+        foreach ($entries as $entry) {
+            $this->remove($entry);
+        }
+
+        $this->save();
     }
 }

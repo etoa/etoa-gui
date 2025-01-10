@@ -163,13 +163,15 @@ class AllianceBuildListRepository extends AbstractRepository
             ->executeQuery();
     }
 
-    public function removeForAlliance(int $allianceId): void
+    public function removeForAlliance(Alliance $alliance): void
     {
-        $this->createQueryBuilder('q')
-            ->delete('alliance_buildlist')
-            ->where('alliance_buildlist_alliance_id = :allianceId')
-            ->setParameter('allianceId', $allianceId)
-            ->executeQuery();
+        $buildings = $this->findBy(['alliance'=>$alliance]);
+
+        foreach ($buildings as $building) {
+            $this->remove($building);
+        }
+
+        $this->save();
     }
 
     public function setCooldown(int $allianceId, int $buildingId, int $cooldownEnd): void

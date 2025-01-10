@@ -355,7 +355,7 @@ class AllianceBoardController extends AbstractGameController
         if ($form->isSubmitted() && $form->isValid()) {
             $cu = $this->getUser()->getData();
 
-            $topic->setBndId(0);
+            $topic->setBnd(null);
             $topic->setCategory($category);
             $topic->setUser($cu);
             $topic->setUserNick($cu->getNick());

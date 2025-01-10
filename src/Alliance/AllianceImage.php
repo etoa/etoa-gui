@@ -4,6 +4,8 @@ namespace EtoA\Alliance;
 
 class AllianceImage
 {
+    public const IMAGE_PATH = '/cache/allianceprofiles/';
+
     // Allianzbild-Breite
     public const IMAGE_WIDTH = 800;
 

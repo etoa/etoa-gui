@@ -69,18 +69,19 @@ class UserRepository extends AbstractRepository
         $this->save();
     }
 
-    public function resetAllianceId(int $allianceId): void
+    public function resetAlliance(Alliance $alliance): void
     {
         $this->createQueryBuilder('q')
-            ->update('users')
-            ->set('user_alliance_id', ':zero')
-            ->set('user_alliance_rank_id', ':zero')
-            ->where('user_alliance_id = :allianceId')
+            ->update()
+            ->set('q.alliance', ':zero')
+            ->set('q.allianceRank', ':zero')
+            ->where('q.alliance = :alliance')
             ->setParameters([
-                'zero' => 0,
-                'allianceId' => $allianceId,
+                'zero' => null,
+                'alliance' => $alliance,
             ])
-            ->executeQuery();
+            ->getQuery()
+            ->execute();
     }
 
     public function hasUserRankId(int $allianceId, int $userId, int $rankId): bool

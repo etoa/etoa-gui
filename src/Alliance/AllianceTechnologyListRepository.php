@@ -120,13 +120,15 @@ class AllianceTechnologyListRepository extends AbstractRepository
             ->executeQuery();
     }
 
-    public function removeForAlliance(int $allianceId): void
+    public function removeForAlliance(Alliance $alliance): void
     {
-        $this->createQueryBuilder('q')
-            ->delete('alliance_techlist')
-            ->where('alliance_techlist_alliance_id = :allianceId')
-            ->setParameter('allianceId', $allianceId)
-            ->executeQuery();
+        $entries = $this->findBy(['alliance'=>$alliance]);
+
+        foreach ($entries as $entry) {
+            $this->remove($entry);
+        }
+
+        $this->save();
     }
 
 

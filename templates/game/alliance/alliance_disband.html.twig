@@ -1,0 +1,13 @@
+{% extends 'game/alliance/alliance.html.twig' %}
+{% import 'macros.html.twig' as macros %}
+
+{% block alliance %}
+    <h2>Allianz auflösen</h2>
+    {{ form_start(form) }}
+        Willst du die Allianz wirklich auflösen?<br/><br/>
+        <a href="{{ path('game.alliance.overview') }}">
+            <input type="button" value="Nein"/>
+        </a>&nbsp;
+        {{ form_widget(form.disband) }}
+    {{ form_end(form) }}
+{% endblock %}

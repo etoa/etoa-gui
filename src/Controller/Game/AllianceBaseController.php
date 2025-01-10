@@ -8,6 +8,8 @@ use EtoA\Alliance\AllianceBuildingRepository;
 use EtoA\Alliance\AllianceBuildListRepository;
 use EtoA\Alliance\AllianceHistoryRepository;
 use EtoA\Alliance\AllianceRepository;
+use EtoA\Alliance\AllianceRights;
+use EtoA\Alliance\AllianceService;
 use EtoA\Alliance\AllianceSpendRepository;
 use EtoA\Alliance\Base\AllianceBase;
 use EtoA\Alliance\Base\AllianceItemBuildStatus;
@@ -57,23 +59,46 @@ class AllianceBaseController extends AbstractGameController
         private readonly EntityRepository $entityRepository,
         private readonly FleetShipRepository $fleetShipRepository,
         private readonly ShipRepository $shipRepository,
-        private readonly AllianceHistoryRepository $allianceHistoryRepository
+        private readonly AllianceHistoryRepository $allianceHistoryRepository,
+        private readonly AllianceService $allianceService
     )
     {
     }
 
     #[Route('/game/alliance/base/buildings', name: 'game.alliance.base.buildings')]
-    public function buildings(Request $request): Response {
-        $buildings = $this->allianceBuildingRepository->findAll();
+    public function buildings(): Response {
+        $cu = $this->getUser()->getData();
+        $userAlliancePermission = $this->allianceService->getUserAlliancePermissions($cu->getAlliance(), $cu);
 
-        return $this->render('game/alliance/base/alliance_base_buildings.html.twig', [
-            'buildings' => $this->allianceBase->renderBuildings($buildings)
+        if ($userAlliancePermission->checkHasRights(AllianceRights::BUILD_MINISTER, 'alliance')) {
+            $buildings = $this->allianceBuildingRepository->findAll();
+
+            return $this->render('game/alliance/base/alliance_base_buildings.html.twig', [
+                'buildings' => $this->allianceBase->renderBuildings($buildings)
+            ]);
+        }
+
+        return $this->render('game/error.html.twig',[
+            'msg' => 'Fehlende Berechtigung!',
+            'path' => $this->generateUrl('game.alliance.overview'),
+            'headline' => 'Allianz'
         ]);
     }
 
     #[Route('/game/alliance/base/research', name: 'game.alliance.base.research')]
-    public function research(Request $request): Response {
-        return $this->render('game/alliance/base/alliance_base.html.twig');
+    public function research(): Response {
+        $cu = $this->getUser()->getData();
+        $userAlliancePermission = $this->allianceService->getUserAlliancePermissions($cu->getAlliance(), $cu);
+
+        if ($userAlliancePermission->checkHasRights(AllianceRights::BUILD_MINISTER, 'alliance')) {
+            return $this->render('game/alliance/base/alliance_base.html.twig');
+        }
+
+        return $this->render('game/error.html.twig',[
+            'msg' => 'Fehlende Berechtigung!',
+            'path' => $this->generateUrl('game.alliance.overview'),
+            'headline' => 'Allianz'
+        ]);
     }
 
     #[Route('/game/alliance/base/storage', name: 'game.alliance.base.storage')]

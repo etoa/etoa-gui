@@ -7,6 +7,7 @@ use Doctrine\Persistence\ManagerRegistry;
 use EtoA\Core\AbstractRepository;
 use EtoA\Entity\AllianceBoardPost;
 use EtoA\Entity\AllianceBoardTopic;
+use EtoA\Entity\AllianceDiplomacy;
 
 class AllianceBoardTopicRepository extends AbstractRepository
 {
@@ -291,27 +292,14 @@ class AllianceBoardTopicRepository extends AbstractRepository
             ->executeQuery();
     }
 
-    public function deleteBndTopic(int $bndId): void
+    public function deleteBndTopic(AllianceDiplomacy $bnd): void
     {
-        $topicIds = array_column($this->createQueryBuilder('q')
-            ->select('topic_id')
-            ->from('allianceboard_topics')
-            ->where('topic_bnd_id = :bndId')
-            ->setParameter('bndId', $bndId)
-            ->fetchAllAssociative(), 'topic_id');
+        $topics = $this->findBy(['bnd'=>$bnd]);
 
-        if (count($topicIds) > 0) {
-            $this->createQueryBuilder('q')
-                ->delete('allianceboard_posts')
-                ->where('post_topic_id IN (:topicId)')
-                ->setParameter('topicId', $topicIds, ArrayParameterType::INTEGER)
-                ->executeQuery();
+        foreach ($topics as $topic) {
+            $this->deleteTopic($topic);
         }
 
-        $this->createQueryBuilder('q')
-            ->delete('allianceboard_topics')
-            ->where('topic_bnd_id = :bndId')
-            ->setParameter('bndId', $bndId)
-            ->executeQuery();
+        $this->save();
     }
 }

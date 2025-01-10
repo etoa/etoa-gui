@@ -41,13 +41,12 @@ class AllianceService
         private readonly AllianceApplicationRepository $allianceApplicationRepository,
         private readonly AllianceBoardTopicRepository $allianceBoardTopicRepository,
         private readonly AllianceBoardPostRepository $allianceBoardPostRepository,
-        private readonly AllianceBuildingRepository $allianceBuildingRepository,
+        private readonly AllianceBuildListRepository $allianceBuildListRepository,
         private readonly AlliancePointsRepository $alliancePointsRepository,
         private readonly AllianceNewsRepository $allianceNewsRepository,
         private readonly AlliancePollRepository $alliancePollRepository,
         private readonly AllianceRankRepository $allianceRankRepository,
         private readonly AllianceSpendRepository $allianceSpendRepository,
-        private readonly AllianceTechnologyRepository $allianceTechnologyRepository,
         private readonly LogRepository $logRepository,
         private readonly MessageRepository $messageRepository,
         private readonly ConfigurationService $config,
@@ -56,7 +55,8 @@ class AllianceService
         private readonly Security $security,
         private readonly UrlGeneratorInterface $router,
         private readonly AllianceRankRightRepository    $allianceRankRightRepository,
-        private readonly MessageCategoryRepository $messageCategoryRepository
+        private readonly MessageCategoryRepository $messageCategoryRepository,
+        private readonly AllianceTechnologyListRepository $allianceTechnologyListRepository
     )
     {}
 
@@ -91,6 +91,27 @@ class AllianceService
 
         return $alliance;
     }
+
+    public function checkRename(Alliance $alliance):bool
+    {
+        $tag = $alliance->getTag();
+        $name =$alliance->getName();
+
+        if (!preg_match('/^[^\'\"?<>$!=;&\\\\[\]]{1,6}$/i', $tag) > 0) {
+            throw new InvalidAllianceParametersException("Ungültiger Tag! Die Länge muss zwischen 3 und 6 Zeichen liegen und darf folgende Zeichen nicht enthalten: ^'\"?<>$!=;&[]\\\\");
+        }
+
+        if (!preg_match('/([^\'\"?<>$!=;&\\\\[\]]{4,25})$/', $name) > 0) {
+            throw new InvalidAllianceParametersException("Ungültiger Name! Die Länge muss zwischen 4 und 25 Zeichen liegen und darf folgende Zeichen nicht enthalten: ^'\"?<>$!=;&[]\\\\");
+        }
+
+        if ($this->repository->exists($tag, $name, $alliance->getId())) {
+            throw new InvalidAllianceParametersException("Eine Allianz mit diesem Tag oder Namen existiert bereits!");
+        }
+
+        return true;
+    }
+
 /*
     public function addMember(AllianceWithMemberCount $alliance, User $user): bool
     {
@@ -172,40 +193,42 @@ class AllianceService
 
     public function delete(Alliance $alliance, User $user = null): bool
     {
-        if (!$this->allianceDiplomacyRepository->isAtWar($alliance->getId())) {
-            $this->allianceBoardCategoryRepository->deleteAllCategories($alliance->getId());
-            $this->allianceApplicationRepository->deleteAllianceApplication($alliance->getId());
+        if (!$this->allianceDiplomacyRepository->isAtWar($alliance)) {
+            $this->allianceBoardCategoryRepository->deleteAllCategories($alliance);
+            $this->allianceApplicationRepository->deleteAllianceApplication($alliance);
             $diplomacies = $this->allianceDiplomacyRepository->getDiplomacies($alliance);
             foreach ($diplomacies as $diplomacy) {
-                $this->allianceBoardTopicRepository->deleteBndTopic($diplomacy->getId());
+                $this->allianceBoardTopicRepository->deleteBndTopic($diplomacy);
             }
 
-            $this->allianceDiplomacyRepository->deleteAllianceDiplomacies($alliance->getId());
+            $this->allianceDiplomacyRepository->deleteAllianceDiplomacies($alliance);
 
-            $this->allianceBuildingRepository->removeForAlliance($alliance->getId());
-            $this->allianceHistoryRepository->removeForAlliance($alliance->getId());
-            $this->alliancePointsRepository->removeForAlliance($alliance->getId());
-            $this->allianceNewsRepository->deleteAllianceEntries($alliance->getId());
-            $this->alliancePollRepository->deleteAllianceEntries($alliance->getId());
-            $this->allianceRankRepository->deleteAllianceRanks($alliance->getId());
-            $this->allianceSpendRepository->deleteAllianceEntries($alliance->getId());
-            $this->allianceTechnologyRepository->removeForAlliance($alliance->getId());
+            $this->allianceBuildListRepository->removeForAlliance($alliance);
+            $this->allianceHistoryRepository->removeForAlliance($alliance);
+            $this->alliancePointsRepository->removeForAlliance($alliance);
+            $this->allianceNewsRepository->deleteAllianceEntries($alliance);
+            $this->alliancePollRepository->deleteAllianceEntries($alliance);
+            $this->allianceRankRepository->deleteAllianceRanks($alliance);
+            $this->allianceSpendRepository->deleteAllianceEntries($alliance);
+            $this->allianceTechnologyListRepository->removeForAlliance($alliance);
 
-            $this->repository->resetMother($alliance->getId());
+            $this->repository->resetMother($alliance);
 
             // Set user alliance link to null
-            $this->userRepository->resetAllianceId($alliance->getId());
+            $this->userRepository->resetAlliance($alliance);
 
-            // Daten löschen
-            $this->repository->remove($alliance);
-
-            //Log schreiben
-            if ($user !== null) {
+            if ($user) {
                 $this->userService->addToUserLog($user, "alliance", "{nick} löst die Allianz [b]" . $alliance->toString() . "[/b] auf.");
                 $this->logRepository->add(LogFacility::ALLIANCE, LogSeverity::INFO, "Die Allianz [b]" . $alliance->toString() . "[/b] wurde von " . $user->getNick() . " aufgelöst!");
             } else {
                 $this->logRepository->add(LogFacility::ALLIANCE, LogSeverity::INFO, "Die Allianz [b]" . $alliance->toString() . "[/b] wurde gelöscht!");
             }
+
+            // Daten löschen
+            $this->repository->remove($alliance);
+
+            $this->repository->save();
+
 
             return true;
         }

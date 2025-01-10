@@ -623,18 +623,18 @@ class AllianceRepository extends AbstractRepository
             ->rowCount();
     }
 
-    public function resetMother(int $allianceId): void
+    public function resetMother(Alliance $alliance): void
     {
         $this->createQueryBuilder('q')
-            ->update('alliances')
-            ->set('alliance_mother', ':zero')
-            ->set('alliance_mother', ':zero')
-            ->where('alliance_mother = :allianceId OR alliance_mother_request = :allianceId')
+            ->update()
+            ->set('q.mother', ':zero')
+            ->where('q.mother = :alliance OR q.motherRequest = :alliance')
             ->setParameters([
-                'zero' => 0,
-                'allianceId' => $allianceId,
+                'zero' => null,
+                'alliance' => $alliance,
             ])
-            ->executeQuery();
+            ->getQuery()
+            ->execute();
     }
 
     public function setMotherOrRequest(int $allianceId, int $motherId, int $motherRequestId): void

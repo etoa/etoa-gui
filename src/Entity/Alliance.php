@@ -2,6 +2,7 @@
 
 namespace EtoA\Entity;
 
+use EtoA\Alliance\AllianceImage;
 use EtoA\Alliance\AllianceRepository;
 use EtoA\Universe\Resources\BaseResources;
 use Doctrine\ORM\Mapping as ORM;
@@ -10,8 +11,6 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Table(name: 'alliances')]
 class Alliance
 {
-    public const PROFILE_PICTURE_PATH = '/cache/allianceprofiles/';
-
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: "AUTO")]
     #[ORM\Column(name: "alliance_id")]
@@ -35,11 +34,13 @@ class Alliance
     #[ORM\Column(name: "alliance_url")]
     protected ?string $url;
 
-    #[ORM\Column(name: "alliance_mother")]
-    protected int $motherId;
+    #[ORM\JoinColumn(name: 'alliance_mother', referencedColumnName: 'alliance_id')]
+    #[ORM\ManyToOne(targetEntity: Alliance::class)]
+    protected ?Alliance $mother = null;
 
-    #[ORM\Column(name: "alliance_mother_request")]
-    protected int $motherRequest = 0;
+    #[ORM\JoinColumn(name: 'alliance_mother_request', referencedColumnName: 'alliance_id')]
+    #[ORM\ManyToOne(targetEntity: Alliance::class)]
+    protected ?Alliance $motherRequest = null;
 
     #[ORM\Column(name: "alliance_accept_applications")]
     protected bool $acceptApplications = true;
@@ -113,7 +114,7 @@ class Alliance
             return null;
         }
 
-        return self::PROFILE_PICTURE_PATH . $this->image;
+        return AllianceImage::IMAGE_PATH . $this->image;
     }
 
     public function getResources(): BaseResources
@@ -201,30 +202,6 @@ class Alliance
     public function setUrl(string $url): static
     {
         $this->url = $url;
-
-        return $this;
-    }
-
-    public function getMotherId(): ?int
-    {
-        return $this->motherId;
-    }
-
-    public function setMotherId(int $motherId): static
-    {
-        $this->motherId = $motherId;
-
-        return $this;
-    }
-
-    public function getMotherRequest(): ?int
-    {
-        return $this->motherRequest;
-    }
-
-    public function setMotherRequest(int $motherRequest): static
-    {
-        $this->motherRequest = $motherRequest;
 
         return $this;
     }
@@ -465,6 +442,30 @@ class Alliance
     public function setFounder(?User $founder): static
     {
         $this->founder = $founder;
+
+        return $this;
+    }
+
+    public function getMother(): ?self
+    {
+        return $this->mother;
+    }
+
+    public function setMother(?self $mother): static
+    {
+        $this->mother = $mother;
+
+        return $this;
+    }
+
+    public function getMotherRequest(): ?self
+    {
+        return $this->motherRequest;
+    }
+
+    public function setMotherRequest(?self $motherRequest): static
+    {
+        $this->motherRequest = $motherRequest;
 
         return $this;
     }

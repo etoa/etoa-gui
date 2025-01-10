@@ -5,6 +5,7 @@ namespace EtoA\Alliance\Board;
 use Doctrine\DBAL\ArrayParameterType;
 use Doctrine\Persistence\ManagerRegistry;
 use EtoA\Core\AbstractRepository;
+use EtoA\Entity\Alliance;
 use EtoA\Entity\AllianceBoardCategory;
 
 class AllianceBoardCategoryRepository extends AbstractRepository
@@ -128,55 +129,15 @@ class AllianceBoardCategoryRepository extends AbstractRepository
             ->executeQuery();
     }
 
-    public function deleteAllCategories(int $allianceId): void
+    public function deleteAllCategories(Alliance $alliance): void
     {
-        $categoryIds = $this->createQueryBuilder('q')
-            ->select('cat_id')
-            ->from('allianceboard_cat')
-            ->where('cat_alliance_id = :allianceId')
-            ->setParameters([
-                'allianceId' => $allianceId,
-            ])
-            ->fetchFirstColumn();
+        $categories = $this->findBy(['alliance'=>$alliance]);
 
-        if (count($categoryIds) === 0) {
-            return;
+        foreach ($categories as $category) {
+            $this->remove($category);
         }
 
-        $topicIds = $this->createQueryBuilder('q')
-            ->select('topic_id')
-            ->from('allianceboard_topics')
-            ->where('topic_cat_id IN (:categoryIds)')
-            ->setParameter('categoryIds', $categoryIds, ArrayParameterType::INTEGER)
-            ->fetchFirstColumn();
-
-        if (count($topicIds) > 0) {
-            $this->createQueryBuilder('q')
-                ->delete('allianceboard_posts')
-                ->where('post_topic_id IN (:topicId)')
-                ->setParameter('topicId', $topicIds, ArrayParameterType::INTEGER)
-                ->executeQuery();
-
-            $this->createQueryBuilder('q')
-                ->delete('allianceboard_topics')
-                ->where('topic_id IN (:topicId)')
-                ->setParameter('topicId', $topicIds, ArrayParameterType::INTEGER)
-                ->executeQuery();
-        }
-
-        $this->createQueryBuilder('q')
-            ->delete('allianceboard_catranks')
-            ->where('cr_cat_id IN (:categoryIds)')
-            ->setParameter('categoryIds', $categoryIds, ArrayParameterType::INTEGER)
-            ->executeQuery();
-
-        $this->createQueryBuilder('q')
-            ->delete('allianceboard_cat')
-            ->where('cat_alliance_id = :allianceId')
-            ->setParameters([
-                'allianceId' => $allianceId,
-            ])
-            ->executeQuery();
+        $this->save();
     }
 
     public function deleteCategory(int $categoryId, int $allianceId): void

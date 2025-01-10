@@ -169,25 +169,14 @@ class AllianceRankRepository extends AbstractRepository
             ->executeQuery();
     }
 
-    public function deleteAllianceRanks(int $allianceId): void
+    public function deleteAllianceRanks(Alliance $alliance): void
     {
-        $rankIds = array_column($this->createQueryBuilder('q')
-            ->select('rank_id')
-            ->from('alliance_ranks')
-            ->where('rank_alliance_id = :allianceId')
-            ->setParameter('allianceId', $allianceId)
-            ->fetchAllAssociative(), 'rank_id');
+        $entries = $this->findBy(['alliance'=>$alliance]);
 
-        $this->createQueryBuilder('q')
-            ->delete('alliance_rankrights')
-            ->where('rr_rank_id IN (:rankIds)')
-            ->setParameter('rankIds', $rankIds, ArrayParameterType::INTEGER)
-            ->executeQuery();
+        foreach ($entries as $entry) {
+            $this->remove($entry);
+        }
 
-        $this->createQueryBuilder('q')
-            ->delete('alliance_ranks')
-            ->where('rank_alliance_id = :allianceId')
-            ->setParameter('allianceId', $allianceId)
-            ->executeQuery();
+        $this->save();
     }
 }
