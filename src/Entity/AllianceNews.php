@@ -22,9 +22,6 @@ class AllianceNews
     #[ORM\Column(name: "alliance_news_date")]
     private int $date;
 
-    #[ORM\Column(name: "alliance_news_alliance_id")]
-    private int $authorAllianceId;
-
     #[ORM\ManyToOne(targetEntity: Alliance::class)]
     #[ORM\JoinColumn(name: 'alliance_news_alliance_id', referencedColumnName: 'alliance_id')]
     private Alliance $alliance;
@@ -74,18 +71,6 @@ class AllianceNews
     public function setDate(int $date): static
     {
         $this->date = $date;
-
-        return $this;
-    }
-
-    public function getAuthorAllianceId(): ?int
-    {
-        return $this->authorAllianceId;
-    }
-
-    public function setAuthorAllianceId(int $authorAllianceId): static
-    {
-        $this->authorAllianceId = $authorAllianceId;
 
         return $this;
     }

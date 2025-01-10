@@ -1,0 +1,213 @@
+{% extends 'game/alliance/alliance.html.twig' %}
+{% import 'macros.html.twig' as macros %}
+
+{% block content %}
+    <script type="text/javascript">
+        function toggleText(elemId, switchId) {
+            if (document.getElementById(switchId).innerHTML === "Anzeigen") {
+                document.getElementById(elemId).style.display = '';
+                document.getElementById(switchId).innerHTML = "Verbergen";
+            } else {
+                document.getElementById(elemId).style.display = 'none';
+                document.getElementById(switchId).innerHTML = "Anzeigen";
+            }
+        }
+    </script>
+
+    <h1>Rathaus</h1>
+    Im Rathaus können Allianzen Nachrichten an ihre Mitglieder oder an
+    andere Allianzen veröffentlichen; diese Nachrichten können öffentlich
+    gemacht oder nur für die Empfänger lesbar publiziert werden.
+    Zum Verfassen einer Nachricht benutze die entsprechende Option auf der Allianzseite.<br><br><br>
+
+    {% if publicNews %}
+        <twig:Table title="Die neusten 10 Nachrichten">
+            {% block table_content %}
+                <tr>
+                    <th style="width:50%;">Titel</th>
+                    <th style="width:20%;">Datum</th>
+                    <th style="width:20%;">Absender</th>
+                    <th style="width:10%;">Text</th>
+                </tr>
+                {% for news in publicNews %}
+                    <tr>
+                        <td>{{ BBCodeToHTML(news.title) }}</td>
+                        <td>{{ formatTimestamp(news.date) }}</td>
+                        {% if news.author.alliance %}
+                            <td {{ tm(news.author.alliance.tag, BBCodeToHTML(news.author.alliance.name))|raw }}>
+                                <a href="{{ path('game.alliance.info',{id:news.author.alliance.id}) }}">{{ news.author.alliance.tag }}</a>
+                            </td>
+                        {% else %}
+                            <td>(gelöscht)</td>
+                        {% endif %}
+                        <td>
+                            [<a href="javascript:" onclick="toggleText('th{{ news.id }}','sth{{ news.id }}');" id="sth{{ news.id }}">Anzeigen</a>]
+                        </td>
+                    </tr>
+                    <tr id="th{{ news.id }}" style="display:none;">
+                        <td colspan="5">{{ BBCodeToHTML(news.text) }}
+                            <br/><br/>-------------------------------------<br/>
+                            {% if news.author %}
+                                Geschrieben von <b><a href="?page=userinfo&amp;id=news.authorUserId">{{ news.author.nick }}</a></b>
+                            {% else %}
+                                <i>Unbekannter Verfasser</i>
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
+            {% endblock %}
+        </twig:Table>
+    {% else %}
+        {{ macros.message('Die neuesten 10 Nachrichten','Es sind momentan keine Nachrichten vorhanden!') }}
+    {% endif %}
+
+    {% if internalNews %}
+        <twig:Table title="Allianzinterne Nachrichten">
+            {% block table_content %}
+                <tr>
+                    <th style="width:50%;">Titel</th>
+                    <th style="width:20%;">Datum</th>
+                    <th style="width:20%;">Absender</th>
+                    <th style="width:10%;">Text</th>
+                </tr>
+                {% for news in internalNews %}
+                    <tr>
+                        <td>{{ BBCodeToHTML(news.title) }}</td>
+                        <td>{{ formatTimestamp(news.date) }}</td>
+                        {% if news.author.alliance %}
+                            <td {{ tm(news.author.alliance.tag, BBCodeToHTML(news.author.alliance.name))|raw }}>
+                                <a href="{{ path('game.alliance.info',{id:news.author.alliance.id}) }}">{{ news.author.alliance.tag }}</a>
+                            </td>
+                        {% else %}
+                            <td>(gelöscht)</td>
+                        {% endif %}
+                        <td>
+                            [<a href="javascript:" onclick="toggleText('th{{ news.id }}','sth{{ news.id }}');" id="sth{{ news.id }}">Anzeigen</a>]
+                        </td>
+                    </tr>
+                    <tr id="th{{ news.id }}" style="display:none;">
+                        <td colspan="5">{{ BBCodeToHTML(news.text) }}
+                            <br/><br/>-------------------------------------<br/>
+                            {% if news.author %}
+                                Geschrieben von <b><a href="?page=userinfo&amp;id=news.authorUserId">{{ news.author.nick }}</a></b>
+                            {% else %}
+                                <i>Unbekannter Verfasser</i>
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
+            {% endblock %}
+        </twig:Table>
+    {% else %}
+        {{ macros.message('Allianzinterne Nachrichten','Es sind momentan keine Nachrichten vorhanden!') }}
+    {% endif %}
+
+    {% if bnds %}
+        <twig:Table title="Neuste Bündnisse">
+            {% block table_content %}
+                <tr>
+                    <th style="width:25%;">Allianz 1</th>
+                    <th style="width:25%;">Allianz 2</th>
+                    <th style="width:20%;">Bündnisname</th>
+                    <th style="width:20%;">Datum</th>
+                    <th style="width:10%;">Erklärung</th>
+                </tr>
+                {% for diplomacy in bnds %}
+                    <tr>
+                        <td>
+                            <a href="{{ path('game.alliance.info',{id:diplomacy.alliance1.id}) }}" {{ tm(diplomacy.alliance1.tag,
+                            BBCodeToHTML(diplomacy.alliance1.name))|raw }}> {{ BBCodeToHTML(diplomacy.alliance1.name) }}
+                        </td>
+                        <td>
+                            <a href="{{ path('game.alliance.info',{id:diplomacy.alliance2.id}) }}" {{ tm(diplomacy.alliance2.tag,
+                            BBCodeToHTML(diplomacy.alliance2.name))|raw }}> {{ BBCodeToHTML(diplomacy.alliance2.name) }}
+                        </td>
+                        <td> {{ diplomacy.name }}</td>
+                        <td> {{ formatTimestamp(diplomacy.date) }}</td>
+                        <td>
+                            {% if diplomacy.publicText %}
+                                [<a href="javascript:" onclick="toggleText('bnd{{ diplomacy.id }}','sbnd{{ diplomacy.id }}');" id="sbnd{{ diplomacy.id }}">Anzeigen</a>]
+                            {% else %}
+                                -
+                            {% endif %}
+                        </td>
+                    </tr>
+                    <tr id="bnd{{ diplomacy.id }}" style="display:none;">
+                        <td colspan="5"> {{ BBCodeToHTML(diplomacy.publicText) }} </td>
+                    </tr>
+                {% endfor %}
+            {% endblock %}
+        </twig:Table>
+    {% else %}
+        {{ macros.message('Neuste Bündnisse','Es sind momentan keine Nachrichten vorhanden!') }}
+    {% endif %}
+
+    {% if wars %}
+        <twig:Table title="Aktuelle Kriege">
+            {% block table_content %}
+                <tr>
+                    <th style="width:25%;">Allianz 1</th>
+                    <th style="width:25%;">Allianz 2</th>
+                    <th style="width:20%;">Start</th>
+                    <th style="width:20%;">Ende</th>
+                    <th style="width:10%;">Erklärung</th>
+                </tr>
+                {% for diplomacy in wars %}
+                    <tr>
+                        <td>
+                            <a href="{{ path('game.alliance.info',{id:diplomacy.alliance1.id}) }}" {{ tm(diplomacy.alliance1.tag,
+                                BBCodeToHTML(diplomacy.alliance1.name))|raw }}> {{ BBCodeToHTML(diplomacy.alliance1.name) }}
+                        </td>
+                        <td>
+                            <a href="{{ path('game.alliance.info',{id:diplomacy.alliance2.id}) }}" {{ tm(diplomacy.alliance2.tag,
+                                BBCodeToHTML(diplomacy.alliance2.name))|raw }}> {{ BBCodeToHTML(diplomacy.alliance2.name) }}
+                        </td>
+                        <td> {{ formatTimestamp(diplomacy.date) }}</td>
+                        <td> {{ formatTimestamp(diplomacy.date + (3600 * configValue('alliance_war_time'))) }}</td>
+                        <td>
+                            {% if diplomacy.publicText %}
+                                [<a href="javascript:" onclick="toggleText('bnd{{ diplomacy.id }}','sbnd{{ diplomacy.id }}');" id="sbnd{{ diplomacy.id }}">Anzeigen</a>]
+                            {% else %}
+                                -
+                            {% endif %}
+                        </td>
+                    </tr>
+                    <tr id="bnd{{ diplomacy.id }}" style="display:none;">
+                        <td colspan="5"> {{ BBCodeToHTML(diplomacy.publicText) }} </td>
+                    </tr>
+                {% endfor %}
+            {% endblock %}
+        </twig:Table>
+    {% else %}
+        {{ macros.message('Aktuelle Kriege','Es sind momentan keine Nachrichten vorhanden!') }}
+    {% endif %}
+
+    {% if peace %}
+        <twig:Table title="Aktuelle Friedensabkommen">
+            {% block table_content %}
+                <tr>
+                    <th style="width:25%;">Allianz 1</th>
+                    <th style="width:25%;">Allianz 2</th>
+                    <th style="width:20%;">Start</th>
+                    <th style="width:20%;">Ende</th>
+                </tr>
+                {% for diplomacy in peace %}
+                    <tr>
+                        <td>
+                            <a href="{{ path('game.alliance.info',{id:diplomacy.alliance1.id}) }}" {{ tm(diplomacy.alliance1.tag,
+                                BBCodeToHTML(diplomacy.alliance1.name))|raw }}> {{ BBCodeToHTML(diplomacy.alliance1.name) }}
+                        </td>
+                        <td>
+                            <a href="{{ path('game.alliance.info',{id:diplomacy.alliance2.id}) }}" {{ tm(diplomacy.alliance2.tag,
+                                BBCodeToHTML(diplomacy.alliance2.name))|raw }}> {{ BBCodeToHTML(diplomacy.alliance2.name) }}
+                        </td>
+                        <td> {{ formatTimestamp(diplomacy.date) }} </td>
+                        <td> {{ formatTimestamp(diplomacy.date + (3600 * param1('alliance_war_time'))) }} </td>
+                    </tr>
+                {% endfor %}
+            {% endblock %}
+        </twig:Table>
+    {% else %}
+        {{ macros.message('Aktuelle Friedensabkommen','Es sind momentan keine Nachrichten vorhanden!') }}
+    {% endif %}
+{% endblock %}
