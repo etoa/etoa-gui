@@ -3,45 +3,19 @@
 namespace EtoA\Controller\Game;
 
 use EtoA\Alliance\AllianceApplicationRepository;
-use EtoA\Alliance\AllianceDiplomacyPoints;
+use EtoA\Alliance\AllianceDiplomacyLevel;
 use EtoA\Alliance\AllianceDiplomacyRepository;
 use EtoA\Alliance\AllianceHistoryRepository;
-use EtoA\Alliance\AllianceImage;
-use EtoA\Alliance\AllianceMemberCosts;
-use EtoA\Alliance\AllianceNewsRepository;
-use EtoA\Alliance\AllianceRankRepository;
 use EtoA\Alliance\AllianceRepository;
-use EtoA\Alliance\AllianceRights;
 use EtoA\Alliance\AllianceService;
 use EtoA\Alliance\Event\AllianceCreate;
 use EtoA\Alliance\InvalidAllianceParametersException;
-use EtoA\Alliance\TownhallService;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Entity\Alliance;
 use EtoA\Entity\AllianceApplication;
-use EtoA\Entity\AllianceRank;
-use EtoA\Entity\MessageData;
-use EtoA\Entity\User;
-use EtoA\Fleet\ForeignFleetLoader;
-use EtoA\Form\Type\Core\AllianceApplicationType;
-use EtoA\Form\Type\Core\AllianceRankType;
-use EtoA\Form\Type\Core\AllianceUploadType;
-use EtoA\Form\Type\Core\EditAllianceMemberType;
-use EtoA\Log\LogFacility;
-use EtoA\Log\LogRepository;
-use EtoA\Log\LogSeverity;
 use EtoA\Message\MessageCategoryId;
 use EtoA\Message\MessageCategoryRepository;
 use EtoA\Message\MessageRepository;
-use EtoA\Support\FileUtils;
-use EtoA\Universe\Entity\EntityRepository;
-use EtoA\Universe\Planet\PlanetRepository;
-use EtoA\User\UserRatingService;
-use EtoA\User\UserRepository;
-use EtoA\User\UserService;
-use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
-use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
@@ -56,7 +30,6 @@ class AllianceExternalController extends AbstractGameController
     public function __construct(
         private readonly AllianceRepository $allianceRepository,
         private readonly AllianceDiplomacyRepository $allianceDiplomacyRepository,
-        private readonly UserRepository $userRepository,
         private readonly AllianceApplicationRepository $allianceApplicationRepository,
         private readonly MessageRepository $messageRepository,
         private readonly AllianceHistoryRepository $allianceHistoryRepository,
@@ -76,11 +49,21 @@ class AllianceExternalController extends AbstractGameController
             $this->allianceRepository->addVisit($infoAlliance->getId(), true);
         }
 
+        // Bündnisse
+        $bnds = $this->allianceDiplomacyRepository->findBy(['level'=>AllianceDiplomacyLevel::BND_CONFIRMED],['date'=>'DESC'],15);
+
+        // Kriege
+        $wars = $this->allianceDiplomacyRepository->findBy(['level'=>AllianceDiplomacyLevel::WAR],['date'=>'DESC']);
+
+        // Friedensabkommen
+        $peace = $this->allianceDiplomacyRepository->findBy(['level'=>AllianceDiplomacyLevel::PEACE],['date'=>'DESC']);
+
         return $this->render('game/alliance/alliance_info.html.twig',[
             'allianceRepository' => $this->allianceRepository,
-            'allianceDiplomacyRepository' => $this->allianceDiplomacyRepository,
             'infoAlliance' => $this->allianceRepository->getAlliance($infoAlliance->getId()),
-            'userRepository' => $this->userRepository
+            'bnds' => $bnds,
+            'wars' => $wars,
+            'peace' => $peace
         ]);
     }
 

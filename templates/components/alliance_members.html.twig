@@ -2,6 +2,7 @@
     {% if this.show %}
         {% if this.entries %}
             <twig:Table>
+            {% block table_content %}
                 <tr>
                     <th colspan="2">Rang</th>
                     <th>User</th>
@@ -14,7 +15,7 @@
                 {% for entry in entries %}
                     <tr>
                         <td>
-                            {{ entry.rank }}
+                            {{ entry.ranking }}
                         </td>
                         <td>
                             {% if entry.shift == 2 %}
@@ -26,7 +27,7 @@
                             {% endif %}
                         </td>
                         <td>
-                            <a href=\"?page=userinfo&id={{ entry.id }}">{{ entry.nick }}</a>
+                            <a href="?page=userinfo&id={{ entry.id }}">{{ entry.nick }}</a>
                         </td>
                         <td>
                             {{ entry.points }}
@@ -45,6 +46,7 @@
                         </td>
                     </tr>
                 {% endfor %}
+            {% endblock %}
             </twig:Table>
         {% endif %}
     {% else %}

@@ -13,11 +13,13 @@
                     </tr>
                 {% endif %}
 
-                {% if configValue('allow_wings') and infoAlliance.motherId != 0 %}
+                {% if configValue('allow_wings') and infoAlliance.mother %}
                     <tr>
                         <th colspan="2" style="text-align:center;">
-                            Diese Allianz ist ein Wing von <b><a
-                                        href={{ path('game.alliance.info',{id:allianceRepository.getAlliance(infoAlliance.motherId).id}) }}>{{ allianceRepository.getAlliance(infoAlliance.motherId).nameWithTag }}</a></b>
+                            Diese Allianz ist ein Wing von
+                            <b>
+                                <a href={{ path('game.alliance.info',{id:infoAlliance.mother.id}) }}>{{ infoAlliance.mother.toString }}</a>
+                            </b>
                         </th>
                     </tr>
                 {% endif %}
@@ -31,7 +33,7 @@
                 {% endif %}
 
                 {# Kriege #}
-                {% if allianceDiplomacyRepository.getDiplomacies(infoAlliance.id, constant('EtoA\\Alliance\\AllianceDiplomacyLevel::WAR')) %}
+                {% if wars %}
                     <tr>
                         <th>Kriege:</th>
                         <td>
@@ -41,11 +43,11 @@
                                     <th>Punkte</th>
                                     <th>Zeitraum</th>
                                 </tr>
-                                {% for diplomacy in allianceDiplomacyRepository.getDiplomacies(infoAlliance.id, constant('EtoA\\Alliance\\AllianceDiplomacyLevel::WAR')) %}
-                                    {% set opAlliance = allianceRepository.getAlliance(diplomacy.otherAllianceId) %}
+                                {% for diplomacy in wars %}
+                                    {% set opAlliance = allianceRepository.getAlliance(diplomacy.alliance1 == app.user.data.alliance ? diplomacy.alliance1.id : diplomacy.alliance2.id) %}
                                     <tr>
                                         <td>
-                                            <a href="{{ path('game.alliance.info',{id:opAlliance.id}) }}">{{ opAlliance.nameWithTag }}</a>
+                                            <a href="{{ path('game.alliance.info',{id:opAlliance.id}) }}">{{ opAlliance.toString }}</a>
                                         </td>
                                         <td>{{ opAlliance.points }} /
                                             {{ opAlliance.averagePoints }}
@@ -61,7 +63,7 @@
                 {% endif %}
 
                 {# Friedensabkommen #}
-                {% if allianceDiplomacyRepository.getDiplomacies(infoAlliance.id, constant('EtoA\\Alliance\\AllianceDiplomacyLevel::PEACE')) %}
+                {% if peace %}
                     <tr>
                         <th>Friedensabkommen:</th>
                         <td>
@@ -71,17 +73,17 @@
                                     <th>Punkte</th>
                                     <th>Zeitraum</th>
                                 </tr>
-                                {% for diplomacy in allianceDiplomacyRepository.getDiplomacies(infoAlliance.id, constant('EtoA\\Alliance\\AllianceDiplomacyLevel::PEACE')) %}
-                                    {% set opAlliance = allianceRepository.getAlliance(diplomacy.otherAllianceId) %}
+                                {% for diplomacy in peace %}
+                                    {% set opAlliance = allianceRepository.getAlliance(diplomacy.alliance1 == app.user.data.alliance ? diplomacy.alliance1.id : diplomacy.alliance2.id) %}
                                     <tr>
                                         <td>
-                                            <a href="{{ path('game.alliance.info',{id:opAlliance.id}) }}">{{ opAlliance.nameWithTag }}</a>
+                                            <a href="{{ path('game.alliance.info',{id:opAlliance.id}) }}">{{ opAlliance.toString }}</a>
                                         </td>
                                         <td>{{ opAlliance.points }} /
                                             {{ opAlliance.averagePoints }}
                                         </td>
                                         <td>{{ formatTimestamp(diplomacy.date, false) }} bis
-                                            {{ formatTimestamp(diplomacy.date + 3600 * configValue('alliance_peace_time'), false) }}
+                                            {{ formatTimestamp(diplomacy.date + 3600 * param1('alliance_war_time'), false) }}
                                         </td>
                                     </tr>
                                 {% endfor %}
@@ -91,7 +93,7 @@
                 {% endif %}
 
                 {# Bündnisse #}
-                {% if allianceDiplomacyRepository.getDiplomacies(infoAlliance.id, constant('EtoA\\Alliance\\AllianceDiplomacyLevel::BND_CONFIRMED')) %}
+                {% if bnds %}
                     <tr>
                         <th>Bündnisse:</th>
                         <td>
@@ -102,12 +104,12 @@
                                     <th>Punkte</th>
                                     <th>Seit</th>
                                 </tr>
-                                {% for diplomacy in allianceDiplomacyRepository.getDiplomacies(infoAlliance.id, constant('EtoA\\Alliance\\AllianceDiplomacyLevel::BND_CONFIRMED')) %}
-                                    {% set opAlliance = allianceRepository.getAlliance(diplomacy.otherAllianceId) %}
+                                {% for diplomacy in bnds %}
+                                    {% set opAlliance = allianceRepository.getAlliance(diplomacy.alliance1 == app.user.data.alliance ? diplomacy.alliance1.id : diplomacy.alliance2.id) %}
                                     <tr>
-                                        <td>diplomacy.name)</td>
+                                        <td>{{ diplomacy.name }}</td>
                                         <td>
-                                            <a href="{{ path('game.alliance.info',{id:opAlliance.id}) }}">{{ opAlliance.nameWithTag }}</a>
+                                            <a href="{{ path('game.alliance.info',{id:opAlliance.id}) }}">{{ opAlliance.toString }}</a>
                                         </td>
                                         <td>{{ formatNumber(opAlliance.points) }} /
                                             {{ formatNumber(opAlliance.averagePoints) }}
@@ -120,7 +122,6 @@
                         </td>
                     </tr>
                 {% endif %}
-
 
                 {# Mitglieder #}
                 <tr>
@@ -147,7 +148,7 @@
                     <th>Gründer:</th>
                     <td>
                         <a href="?page=userinfo&amp;id="
-                           {{ infoAlliance.founder.id }}>{{ userRepository.find(infoAlliance.founder).nick }}</a>
+                           {{ infoAlliance.founder.id }}>{{ infoAlliance.founder.nick }}</a>
                     </td>
                 </tr>
 
@@ -176,7 +177,7 @@
                     </td>
                 </tr>
                 <tr>
-                    <th>Akzeptiert Bündnissanfragen:</th>
+                    <th>Akzeptiert Bündnisanfragen:</th>
                     <td>
                         ({{ infoAlliance.acceptBnd ? "Ja" : "Nein" }})
                     </td>
