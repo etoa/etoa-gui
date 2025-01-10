@@ -1,0 +1,92 @@
+{% extends 'game/alliance/alliance.html.twig' %}
+{% import 'macros.html.twig' as macros %}
+
+{% block alliance %}
+    <h2>Allianzdaten ändern</h2>
+
+    {% if msg.success is defined %}
+        {{ macros.successMessage(msg.success) }}
+    {% endif %}
+
+    {% if msg.error %}
+        {{ macros.errorMessage(msg.error) }}
+    {% endif %}
+
+    {{ form_start(form) }}
+        <twig:Table title="Daten der Info-Seite">
+            {% block table_content %}
+                <tr>
+                    <th>Allianz-Tag:</th>
+                    <td>
+                        {{ form_widget(form.tag) }}
+                    </td>
+                </tr>
+                <tr>
+                    <th>Allianz-Name:</th>
+                    <td>
+                        {{ form_widget(form.name) }}
+                    </td>
+                </tr>
+                <tr>
+                    <th>Beschreibung:</th>
+                    <td>
+                        {{ form_widget(form.text) }}
+                        <br/>helpLink('textformat', 'Hilfe zur Formatierung')
+                    </td>
+                </tr>
+                <tr>
+                    <th>Website/Forum:</th>
+                    <td>
+                        {{ form_widget(form.url) }}
+                    </td>
+                </tr>
+                <tr>
+                    <th>Allianz-Bild:</th>
+                    <td>
+                        {% if form.vars.data.imageUrl %}
+                            <img src="{{ alliance.getImageUrl() }}" alt="Profil" /><br/>
+                            {{ form_widget(form.delete) }}
+                        {% endif %}
+                        Allianzbild heraufladen/ändern: {{ form_widget(form.image) }}<br/>
+                        <b>Regeln:</b> Max {{ constant('EtoA\\Alliance\\AllianceImage::IMAGE_MAX_WIDTH') }} *
+                        {{ constant('EtoA\\Alliance\\AllianceImage::IMAGE_MAX_HEIGHT') }} Pixel, Bilder grösser als
+                        {{ constant('EtoA\\Alliance\\AllianceImage::IMAGE_WIDTH') }} *
+                        {{ constant('EtoA\\Alliance\\AllianceImage::IMAGE_WIDTH') }} werden automatisch verkleinert.<br/>Format: GIF, JPG oder PNG. Grösse: Max
+                        {{ formatNumber(constant('EtoA\\Alliance\\AllianceImage::IMAGE_MAX_SIZE')) }} Byte</td>
+                </tr>
+                <tr>
+                    <th>Bewerbungen zulassen:</th>
+                    <td>
+                        {{ form_widget(form.acceptApplications.children.0) }}
+                        <span {{ tm("Bewerbungen zulassen", "Jeder User kann sich bei dieser Allianz bewerben.") }}>{{ form.acceptApplications.children.0.vars.label }}</span>
+                        {{ form_widget(form.acceptApplications.children.1) }}
+                        <span {{ tm("Bewerbungen zulassen", "Es können keine Bewerbungen an diese Allianz geschrieben
+                        werden.") }}>{{ form.acceptApplications.children.1.vars.label }}</span>
+                    </td>
+                </tr>
+                <tr>
+                    <th>Bündnisanfragen zulassen:</th>
+                    <td>
+                        {{ form_widget(form.acceptBnd.children.0) }}
+                        <span {{ tm("Bündnisanfragen zulassen", "Bündnisanfragen von jeder Allianz sind zugelassen.") }}>{{ form.acceptBnd.children.0.vars.label }}</span>
+                        {{ form_widget(form.acceptBnd.children.1) }}
+                        <span {{ tm("Bewerbungen zulassen", "Es werden keine Bündnisanfragen angenommen.") }} >{{ form.acceptBnd.children.1.vars.label }}</span>
+                    </td>
+                </tr>
+                <tr>
+                    <th>Öffentliche Mitgliederliste:</th>
+                    <td>
+                        {{ form_widget(form.publicMemberlist.children.0) }} {{ form.publicMemberlist.children.0.vars.label }}
+                        {{ form_widget(form.publicMemberlist.children.1) }} {{ form.publicMemberlist.children.1.vars.label }}
+                        (In der Statistik und auf der Raumkarte ist der Allianzname immer sichtbar)
+                    </td>
+                </tr>
+            {% endblock %}
+        </twig:Table>
+        {{ form_widget(form.save) }}&nbsp;
+        <a href="{{ path('game.alliance.overview') }}">
+            <input type="button" value="Zurück" />
+        </a>
+    {{ form_widget(form._token) }}
+    {{ form_end(form, {render_rest:false}) }}
+{% endblock %}
