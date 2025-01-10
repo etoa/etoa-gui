@@ -1,0 +1,41 @@
+{% extends 'game/alliance/alliance.html.twig' %}
+{% import 'macros.html.twig' as macros %}
+
+{% block alliance %}
+    <h2>Bewerbungsvorlage bearbeiten</h2>
+    {% if msg.success is defined %}
+            {{ macros.successMessage(msg.success) }}
+    {% endif %}
+
+    {{ form_start(form) }}
+        <twig:Table title="Bewerbungsvorlage">
+            {% block table_content %}
+                <tr>
+                    <th>Text:</th>
+                    <td>
+                        {{ form_widget(form.applicationTemplate) }}
+                        <br/>helpLink('textformat', 'Hilfe zur Formatierung')
+                    </td>
+                </tr>
+                <tr>
+                    <th>Beispiel:</th>
+                    <td>
+                        Dein Name:<br>
+                        Dein Alter:<br>
+                        Dein Sektor:<br>
+                        Deine Rasse:<br>
+                        Deine Punktezahl:<br>
+                        Deine Erfahrung:<br>
+                        Was du von uns erwartest:<br>
+                        Was kannst du für uns tun:<br>
+                        Der Grund deiner Bewerbung:<br>
+                    </td>
+                </tr>
+            {% endblock %}
+        </twig:Table>
+        {{ form_widget(form.save) }}&nbsp;
+        <a href="{{ path('game.alliance.join') }}">
+            <input type="button" value="Zurück" />
+        </a>
+    {{ form_end(form) }}
+{% endblock %}
