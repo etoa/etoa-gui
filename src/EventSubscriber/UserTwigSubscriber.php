@@ -3,7 +3,10 @@
 namespace EtoA\EventSubscriber;
 
 use EtoA\BuddyList\BuddyListRepository;
+use EtoA\Controller\Game\AllianceBaseController;
 use EtoA\Controller\Game\AllianceBoardController;
+use EtoA\Controller\Game\AllianceDiplomacyController;
+use EtoA\Controller\Game\AllianceInternalController;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Fleet\FleetRepository;
 use EtoA\Fleet\FleetSearch;
@@ -74,6 +77,13 @@ class UserTwigSubscriber implements EventSubscriberInterface
     const WHITELIST = [
         SetupController::class,
         GalaxyMapImageController::class
+    ];
+
+    const ALLIANCE_BLOCKLIST = [
+        AllianceInternalController::class,
+        AllianceBoardController::class,
+        AllianceBaseController::class,
+        AllianceDiplomacyController::class
     ];
 
     public function onKernelRequest(RequestEvent $event):void
@@ -242,8 +252,8 @@ class UserTwigSubscriber implements EventSubscriberInterface
             $event->setController(fn() => new RedirectResponse(($this->router->generate('game.setup.race'))));
         }
 
-        //block allianceboard if not in alliance
-        if($controller[0] == AllianceBoardController::class && !$cu->getData()->getAlliance()->getId())
+        //block internal alliance routes if not in alliance
+        if(in_array($controller[0], self::ALLIANCE_BLOCKLIST) && !$cu->getData()->getAlliance())
             $event->setController(fn() => new RedirectResponse(($this->router->generate('game.alliance'))));
     }
 
