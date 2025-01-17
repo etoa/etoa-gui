@@ -9,6 +9,7 @@ use EtoA\Entity\Fleet;
 use EtoA\Entity\FleetShip;
 use EtoA\Entity\Ship;
 use EtoA\Entity\ShipListItem;
+use EtoA\Entity\User;
 
 /**
  * @extends ServiceEntityRepository<FleetShip>
@@ -58,20 +59,9 @@ class FleetShipRepository extends AbstractRepository
     /**
      * @return array<FleetShip>
      */
-    public function findAllShipsInFleet(int $fleetId, ?bool $faked = false): array
+    public function findAllShipsInFleet(Fleet $fleet, int $faked = 0): array
     {
-        $data = $this->createQueryBuilder('q')
-            ->select('*')
-            ->from('fleet_ships')
-            ->where('fs_fleet_id = :fleetId')
-            ->andWhere('fs_ship_faked = :faked')
-            ->setParameters([
-                'fleetId' => $fleetId,
-                'faked' => $faked,
-            ])
-            ->fetchAllAssociative();
-
-        return array_map(fn ($arr) => new FleetShip($arr), $data);
+        return $this->findBy(['fleet'=>$fleet,'shipFaked'=>$faked]);
     }
 
     public function findShipsInFleet(Fleet $fleet, Ship $ship): ?FleetShip
@@ -179,20 +169,20 @@ class FleetShipRepository extends AbstractRepository
             ->fetchOne();
     }
 
-    public function getFleetSpecialTarnBonus(int $fleetId): float
+    public function getFleetSpecialTarnBonus(Fleet $fleet): float
     {
         $data = $this->createQueryBuilder('q')
-            ->select('s.special_ship_bonus_tarn, fs.fs_special_ship_bonus_tarn')
-            ->from('fleet_ships', 'fs')
-            ->innerJoin('fs', 'ships', 's', 's.ship_id = fs.fs_ship_id')
-            ->where('fs.fs_fleet_id = :fleetId')
-            ->andWhere('s.special_ship = 1')
-            ->setParameter('fleetId', $fleetId)
-            ->fetchAllAssociative();
+            ->select('s.specialBonusTarn, q.specialShipBonusTarn')
+            ->innerJoin('App:Ship', 's', 'WITH', 's.id = q.ship')
+            ->where('q.fleet = :fleet')
+            ->andWhere('s.special = 1')
+            ->setParameter('fleet', $fleet)
+            ->getQuery()
+            ->execute();
 
         $value = 0;
         foreach ($data as $row) {
-            $value += (int) $row['fs_special_ship_bonus_tarn'] * (float) $row['special_ship_bonus_tarn'];
+            $value += $row->getSpecialShipBonusTarn() * $row->getSpecialBonusTarn();
         }
 
         return $value;
@@ -201,19 +191,56 @@ class FleetShipRepository extends AbstractRepository
     /**
      * @return array<FleetShip>
      */
-    public function findAllShipsForLeader(int $leaderId): array
+    public function findAllShipsForLeader(User $leader): array
     {
-        $data = $this->createQueryBuilder('q')
-            ->select('fs.*')
-            ->from('fleet_ships', 'fs')
-            ->innerJoin('fs', 'fleet', 'f', 'f.id = fs.fleet_id')
-            ->where('f.leader_id = :leaderId')
+        return $this->createQueryBuilder('q')
+            ->where('q.fleet.leader = :leader')
             ->setParameters([
-                'leaderId' => $leaderId,
+                'leader' => $leader,
             ])
-            ->fetchAllAssociative();
+            ->getQuery()
+            ->execute();
+    }
 
-        return array_map(fn ($arr) => new FleetShip($arr), $data);
+    public function countShipsInFleet(Fleet $fleet): int
+    {
+        return (int) $this->createQueryBuilder('q')
+            ->select('SUM(q.count)')
+            ->where('q.fleet = :fleet')
+            ->setParameter('fleet', $fleet)
+            ->setMaxResults(1)
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
+
+    /**
+     * @return array<int, int>
+     */
+    public function getFleetShipCounts(int $fleetId): array
+    {
+        return array_map(fn ($value) => (int) $value, $this->createQueryBuilder('q')
+            ->select('fs_ship_id, fs_ship_cnt')
+            ->from('fleet_ships')
+            ->where('fs_fleet_id = :fleetId')
+            ->andWhere('fs_ship_cnt > 0')
+            ->setParameter('fleetId', $fleetId)
+            ->fetchAllKeyValue());
+    }
+
+    /**
+     * @return array<int, int>
+     */
+    public function getLeaderShipCounts(int $leaderId): array
+    {
+        return array_map(fn ($value) => (int) $value, $this->createQueryBuilder('q')
+            ->select('fs_ship_id, SUM(fs_ship_cnt)')
+            ->from('fleet_ships')
+            ->innerJoin('fleet_ships', 'fleet', 'fleet', 'fleet.id = fs_fleet_id')
+            ->where('fleet.leader_id = :leaderId')
+            ->andWhere('fs_ship_cnt > 0')
+            ->groupBy('fs_ship_id')
+            ->setParameter('leaderId', $leaderId)
+            ->fetchAllKeyValue());
     }
 
 }

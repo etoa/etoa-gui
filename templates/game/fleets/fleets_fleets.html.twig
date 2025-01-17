@@ -1,0 +1,71 @@
+{% extends 'game/fleets/fleets.html.twig' %}
+{% import 'macros.html.twig' as macros %}
+
+{% block fleets %}
+    <a href="">
+        <input type="button" value="Allianzflotten anzeigen" title='Schiffsübersicht anzeigen (Kürzel: [ü])' /><br/><br/>
+    </a>
+    {% if ownFleets %}
+        <twig:Table title="Eigene Flotten">
+            {% block table_content %}
+                <tr>
+                    <th>Auftrag</th>
+                    <th>Start / Ziel</th>
+                    <th>Start / Landung</th>
+                </tr>
+                {% for fleet in ownFleets %}
+                    <tr>
+                        <td>
+                            <a href="?page=fleetinfo&id=$fleet.id">
+                                <span style="font-weight:bold;color:{{ fleet.fleetAction.color }}">
+                                    {{ fleet.fleetAction.name }}
+                                </span>[{{ fleet.getStatusCode }}]
+                            </a><br/>
+                            {% if fleet.landTime < 'now'|date('U') %}
+                                {% if fleet.status > 0 %}
+                                    Flotte landet...
+                                {% else %}
+                                    Zielaktion wird durchgeführt...
+                                {% endif %}
+                            {% else %}
+                                Ankunft in <b><span id="cd{{ fleet.id }}">-</span></b>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <b>{{ fleet.entityFrom.getType.entityCodeString }}</b>
+                            <a href="?page=cell&amp;id=$source.cellId">{{ fleet.entityFrom.getCoordinates().toString }} {{ fleet.entityFrom.displayName }}</a><br/>
+
+                            {% if userUniverseDiscoveryService.isEntityDiscovered(app.user.data, fleet.entityTo) %}
+                                <b>{{ fleet.entityTo.codeString }}</b>
+                                <a href="?page=cell">{{ fleet.entityTo.toString }}</a>
+                            {% else %}
+                                <b>{{ fleet.entityTo.getType.entityCodeString }}</b>
+                                <a href="?page=cell&amp">{{ fleet.entityTo.getCoordinates().toString }} {{ fleet.entityTo.displayName }}</a>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {{ formatTimestamp(fleet.launchTime) }}<br/>
+                            {{ formatTimestamp(fleet.landTime) }}
+                        </td>
+                    </tr>
+                    <script type="text/javascript">
+                        if (document.getElementById('cd{{ fleet.id }}') != null) {
+                            cnt["cd{{ fleet.id }}"] = 0;
+                            setCountdown('cd{{ fleet.id }}', {{ 'now' | date('U') }}, {{ fleet.landtime }});
+                        }
+                    </script>
+                {% endfor %}
+            {% endblock %}
+        </twig:Table>
+    {% else %}
+        {{ macros.message("Eigene Flotten","Es sind keine eigenen Flotten unterwegs!") }}
+    {% endif %}
+
+
+    {# Gegnerische Flotten #}
+    {% if foreignFleets %}
+        {{ foreignFleets|raw }}
+    {% else %}
+        {{ macros.message("Fremde Flotten","Es sind keine fremden Flotten zu deinen Planeten unterwegs!") }}
+    {% endif %}
+{% endblock %}

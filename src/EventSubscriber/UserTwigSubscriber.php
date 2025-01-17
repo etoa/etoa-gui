@@ -35,7 +35,7 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use EtoA\Controller\Game\SetupController;
 use EtoA\Controller\Image\GalaxyMapImageController;
-use EtoA\Fleet\ForeignFleetLoader;
+use EtoA\Fleet\ForeignFleetService;
 use EtoA\User\UserWarningRepository;
 
 class UserTwigSubscriber implements EventSubscriberInterface
@@ -47,19 +47,19 @@ class UserTwigSubscriber implements EventSubscriberInterface
         private readonly TextRepository           $textRepo,
         private readonly GameVersionService       $versionService,
         private readonly BuddyListRepository      $buddyListRepository,
-        private readonly Environment              $twig,
-        private readonly FleetRepository          $fleetRepository,
-        private readonly MessageRepository        $messageRepository,
-        private readonly ReportRepository         $reportRepository,
-        private readonly string                   $projectDir,
-        private readonly DesignService            $designService,
-        private readonly ConfigurationService     $config,
-        private readonly GameUtils                $utilities,
-        private readonly UrlGeneratorInterface    $router,
-        private readonly TutorialManager          $tutorialManager,
-        private readonly ForeignFleetLoader       $foreignFleetLoader,
-        private readonly PlanetRepository         $planetRepository,
-        private readonly UserWarningRepository    $userWarningRepository,
+        private readonly Environment                    $twig,
+        private readonly FleetRepository                $fleetRepository,
+        private readonly MessageRepository              $messageRepository,
+        private readonly ReportRepository               $reportRepository,
+        private readonly string                         $projectDir,
+        private readonly DesignService                  $designService,
+        private readonly ConfigurationService           $config,
+        private readonly GameUtils                      $utilities,
+        private readonly UrlGeneratorInterface          $router,
+        private readonly TutorialManager                $tutorialManager,
+        private readonly ForeignFleetService            $foreignFleetLoader,
+        private readonly PlanetRepository               $planetRepository,
+        private readonly UserWarningRepository          $userWarningRepository,
         private readonly TutorialUserProgressRepository $tutorialUserProgressRepository
     )
     {
@@ -180,7 +180,7 @@ class UserTwigSubscriber implements EventSubscriberInterface
             'blinkMessages' => $properties->isMsgBlink(),
             'buddys' => $this->buddyListRepository->countFriendsOnline($cu->getId()),
             'buddyreq' => $this->buddyListRepository->hasPendingFriendRequest($cu->getId()),
-            'fleetAttack' => $this->foreignFleetLoader->getVisibleFleets($cu->getId())->aggressiveCount,
+            'fleetAttack' => $this->foreignFleetLoader->getVisibleFleets($cu->getData())->aggressiveCount,
             'enableKeybinds' => $properties->isEnableKeybinds(),
             'isAdmin' => $cu->getData()->getAdmin(),
             'userPoints' => StringUtils::formatNumber($cu->getData()->getPoints()),

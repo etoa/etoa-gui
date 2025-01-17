@@ -58,45 +58,7 @@ class FleetRepository extends AbstractRepository
             ->fetchOne();
     }
 
-    public function countShipsInFleet(int $fleetId): int
-    {
-        return (int) $this->createQueryBuilder('q')
-            ->select('SUM(fs_ship_cnt)')
-            ->from('fleet_ships')
-            ->where('fs_fleet_id = :fleetId')
-            ->setParameter('fleetId', $fleetId)
-            ->fetchOne();
-    }
 
-    /**
-     * @return array<int, int>
-     */
-    public function getFleetShipCounts(int $fleetId): array
-    {
-        return array_map(fn ($value) => (int) $value, $this->createQueryBuilder('q')
-            ->select('fs_ship_id, fs_ship_cnt')
-            ->from('fleet_ships')
-            ->where('fs_fleet_id = :fleetId')
-            ->andWhere('fs_ship_cnt > 0')
-            ->setParameter('fleetId', $fleetId)
-            ->fetchAllKeyValue());
-    }
-
-    /**
-     * @return array<int, int>
-     */
-    public function getLeaderShipCounts(int $leaderId): array
-    {
-        return array_map(fn ($value) => (int) $value, $this->createQueryBuilder('q')
-            ->select('fs_ship_id, SUM(fs_ship_cnt)')
-            ->from('fleet_ships')
-            ->innerJoin('fleet_ships', 'fleet', 'fleet', 'fleet.id = fs_fleet_id')
-            ->where('fleet.leader_id = :leaderId')
-            ->andWhere('fs_ship_cnt > 0')
-            ->groupBy('fs_ship_id')
-            ->setParameter('leaderId', $leaderId)
-            ->fetchAllKeyValue());
-    }
 
     public function hasFleetsRelatedToEntity(int $entityId): bool
     {
@@ -360,12 +322,7 @@ class FleetRepository extends AbstractRepository
     {
         $sort = $sort !== null ? $sort : FleetSort::landtime('DESC');
 
-        $data = $this->applySearchSortLimit($this->createQueryBuilder('q'), $search, $sort)
-            ->select('fleet.*')
-            ->from('fleet')
-            ->fetchAllAssociative();
-
-        return array_map(fn (array $row) => new Fleet($row), $data);
+        return $this->applySearchSortLimit($this->createQueryBuilder('q'), $search, $sort)->getQuery()->execute();
     }
 
 

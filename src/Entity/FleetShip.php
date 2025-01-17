@@ -27,7 +27,7 @@ class FleetShip
     #[ORM\Column(name: "fs_ship_cnt")]
     private int $count;
 
-    #[ORM\Column(name: "fs_faked")]
+    #[ORM\Column(name: "fs_ship_faked")]
     private int $shipFaked;
 
     #[ORM\Column(name: "fs_special_ship")]
@@ -36,7 +36,7 @@ class FleetShip
     #[ORM\Column(name: "fs_special_ship_level")]
     private int $specialShipLevel;
 
-    #[ORM\Column(name: "fs_special_ship_experience")]
+    #[ORM\Column(name: "fs_special_ship_exp")]
     private int $specialShipExperience;
 
     #[ORM\Column(name: "fs_special_ship_bonus_weapon")]

@@ -3,6 +3,7 @@
 namespace EtoA\Fleet;
 
 use EtoA\Core\Database\AbstractSearch;
+use EtoA\Entity\Alliance;
 use EtoA\Entity\User;
 
 class FleetSearch extends AbstractSearch
@@ -46,10 +47,10 @@ class FleetSearch extends AbstractSearch
         return $this;
     }
 
-    public function notUser(int $userId): self
+    public function notUser(User $user): self
     {
-        $this->parts[] = 'q.userId <> :fleetUserId';
-        $this->parameters['fleetUserId'] = $userId;
+        $this->parts[] = 'q.user <> :fleetUser';
+        $this->parameters['fleetUser'] = $user;
 
         return $this;
     }
@@ -63,18 +64,18 @@ class FleetSearch extends AbstractSearch
         return $this;
     }
 
-    public function planetUser(int $userId): self
+    public function planetUser(User $user): self
     {
-        $this->parts[] = 'q.entityTo = :planetUserId';
-        $this->parameters['planetUserId'] = $userId;
+        $this->parts[] = 'q.entityTo IN (:planets)';
+        $this->parameters['planets'] = $user->getPlanets();
 
         return $this;
     }
 
-    public function allianceId(int $allianceId): self
+    public function alliance(Alliance $alliance): self
     {
-        $this->parts[] = 'q.user = :allianceId';
-        $this->parameters['allianceId'] = $allianceId;
+        $this->parts[] = 'q.user.alliance = :alliance';
+        $this->parameters['alliance'] = $alliance;
 
         return $this;
     }
@@ -122,7 +123,7 @@ class FleetSearch extends AbstractSearch
 
     public function filterNonLeadingAllianceAttacks(): self
     {
-        $this->parts[] = '!(fleet.action = :allianceAttackAction AND fleet.leader_id != fleet.id)';
+        $this->parts[] = 'NOT (q.action = :allianceAttackAction AND q.leader != q.id)';
         $this->parameters['allianceAttackAction'] = FleetAction::ALLIANCE;
 
         return $this;
@@ -138,7 +139,7 @@ class FleetSearch extends AbstractSearch
 
     public function entityFrom(int $entityFrom): self
     {
-        $this->parts[] = 'entity_from = :entityFrom';
+        $this->parts[] = 'q.entityFrom = :entityFrom';
         $this->parameters['entityFrom'] = $entityFrom;
 
         return $this;
@@ -146,7 +147,7 @@ class FleetSearch extends AbstractSearch
 
     public function entityTo(int $entityTo): self
     {
-        $this->parts[] = 'entity_to = :entityTo';
+        $this->parts[] = 'q.entityTo = :entityTo';
         $this->parameters['entityTo'] = $entityTo;
 
         return $this;
@@ -154,8 +155,16 @@ class FleetSearch extends AbstractSearch
 
     public function leader(int $leader): self
     {
-        $this->parts[] = 'leader = :leader';
+        $this->parts[] = 'q.leader = :leader';
         $this->parameters['leader'] = $leader;
+
+        return $this;
+    }
+
+    public function userIn(array $user): self
+    {
+        $this->parts[] = 'q.user in (:user)';
+        $this->parameters['user'] = $user;
 
         return $this;
     }

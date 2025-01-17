@@ -8,11 +8,11 @@ class FleetSort extends AbstractSort
 {
     public static function landtime(string $order): FleetSort
     {
-        return new FleetSort(['landtime' => $order]);
+        return new FleetSort(['q.landTime' => $order]);
     }
 
     public static function launchtime(string $order): FleetSort
     {
-        return new FleetSort(['launchtime' => $order]);
+        return new FleetSort(['q.launchTime' => $order]);
     }
 }

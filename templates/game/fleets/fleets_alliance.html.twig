@@ -1,0 +1,118 @@
+{% extends 'game/fleets/fleets.html.twig' %}
+{% import 'macros.html.twig' as macros %}
+
+{% block fleets %}
+    <a href="">
+        <input type="button" value="Flotten anzeigen" title='Flotten anzeigen' /><br/><br/>
+    </a>
+    {% if supportFleets %}
+        Klicke auf den Auftrag um die Details einer Flotte anzuzeigen<br/><br/>
+        <twig:Table title="Allianz Angriffe">
+            {% block table_content %}
+                <tr>
+                    <th>Auftrag</th>
+                    <th>Start / Ziel</th>
+                    <th>Start / Landung</th>
+                </tr>
+                {% for fleet in supportFleets %}
+                    <tr>
+                        <td>
+                            {% if hasRights %}
+                                <a href="?page=fleetinfo&id=$fleet.id">
+                            {% endif %}
+                            <span style="font-weight:bold;color:{{ fleet.fleetAction.color }}">
+                                {{ fleet.fleetAction.name }}
+                            </span>[{{ fleet.getStatusCode }}]
+                            {% if hasRights %}
+                                </a>
+                            {% endif %}
+                            <br/>
+                            {% if fleet.landTime < 'now'|date('U') %}
+                                {% if fleet.status > 0 %}
+                                    Flotte landet...
+                                {% else %}
+                                    Zielaktion wird durchgeführt...
+                                {% endif %}
+                            {% else %}
+                                Ankunft in <b><span id="cd{{ fleet.id }}">-</span></b>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <b>{{ fleet.entityFrom.getType.entityCodeString }}</b>
+                            <a href="?page=cell&amp;id=$source.cellId">{{ fleet.entityFrom.getCoordinates().toString }} {{ fleet.entityFrom.displayName }}</a><br/>
+                            <b>{{ fleet.entityTo.codeString }}</b>
+                            <a href="?page=cell">{{ fleet.entityTo.toString }}</a>
+                        </td>
+                        <td>
+                            {{ formatTimestamp(fleet.launchTime) }}<br/>
+                            {{ formatTimestamp(fleet.landTime) }}
+                        </td>
+                    </tr>
+                    <script type="text/javascript">
+                        if (document.getElementById('cd{{ fleet.id }}') != null) {
+                            cnt["cd{{ fleet.id }}"] = 0;
+                            setCountdown('cd{{ fleet.id }}', {{ 'now' | date('U') }}, {{ fleet.landtime }});
+                        }
+                    </script>
+                {% endfor %}
+            {% endblock %}
+        </twig:Table>
+    {% else %}
+        {{ macros.message("Allianz Supportflotten","Es sind keine Allianz Supportflotten unterwegs!") }}
+    {% endif %}
+
+    {% if allianceAttackFleets %}
+        Klicke auf den Auftrag um die Details einer Flotte anzuzeigen<br/><br/>
+        <twig:Table title="Allianz Angriffe">
+            {% block table_content %}
+                <tr>
+                    <th>Auftrag</th>
+                    <th>Start / Ziel</th>
+                    <th>Start / Landung</th>
+                </tr>
+                {% for fleet in allianceAttackFleets %}
+                <tr>
+                    <td>
+                        <b>{{ fleet.entityFrom.getType.entityCodeString }}</b>
+                        <a href="?page=cell&amp;id=$source.cellId">{{ fleet.entityFrom.getCoordinates().toString }} {{ fleet.entityFrom.displayName }}</a><br/>
+                        <b>{{ fleet.entityTo.codeString }}</b>
+                        <a href="?page=cell">{{ fleet.entityTo.toString }}</a>
+                    </td>
+                    <td>
+                        {{ formatTimestamp(fleet.launchTime) }}<br/>
+                        {{ formatTimestamp(fleet.landTime) }}
+                    </td>
+                    <td>
+                        {% if hasRights %}
+                            <a href="?page=fleetinfo&id=$fleet.id">
+                        {% endif %}
+                        <span style="font-weight:bold;color:{{ fleet.fleetAction.color }}">
+                            {{ fleet.fleetAction.name }}
+                        </span>[{{ fleet.getStatusCode }}]
+                        {% if hasRights %}
+                            </a>
+                        {% endif %}<br/>
+                        {% if fleet.landTime < 'now'|date('U') %}
+                            {% if fleet.status > 0 %}
+                                Flotte landet...
+                            {% else %}
+                                Zielaktion wird durchgeführt...
+                            {% endif %}
+                        {% else %}
+                            Ankunft in <b><span id="cd{{ fleet.id }}">-</span></b>
+                        {% endif %}
+                    </td>
+                </tr>
+                <script type="text/javascript">
+                    if (document.getElementById('cd{{ fleet.id }}') != null) {
+                        cnt["cd{{ fleet.id }}"] = 0;
+                        setCountdown('cd{{ fleet.id }}', {{ 'now' | date('U') }}, {{ fleet.landtime }});
+                    }
+                </script>
+                {% endfor %}
+            {% endblock %}
+        </twig:Table>
+    {% else %}
+        {{ macros.message("Allianz Angriffe","Es sind keine Allianz Angriffe unterwegs!") }}
+    {% endif %}
+{% endblock %}
