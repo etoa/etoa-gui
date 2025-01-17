@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace EtoA\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use EtoA\User\UserInterface;
 use EtoA\User\UserRepository;
@@ -182,12 +184,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(name: "user_profile_img_check", type: "boolean")]
     protected bool $profileImageCheck;
 
-    #[ORM\Column(name: "user_specialist_id", type: "integer")]
-    protected int $specialistId;
-
     #[ORM\ManyToOne(targetEntity: Specialist::class)]
     #[ORM\JoinColumn(name: 'user_specialist_id', referencedColumnName: 'specialist_id')]
-    protected Specialist $specialist;
+    protected ?Specialist $specialist = null;
 
     #[ORM\Column(name: "user_specialist_time", type: "integer")]
     protected int $specialistTime;
@@ -233,7 +232,16 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\OneToOne(mappedBy: "id", targetEntity: UserRating::class)]
     #[ORM\JoinColumn(name: 'user_id', referencedColumnName: 'id')]
-    protected UserRating $userRating;
+    protected ?UserRating $userRating = null;
+
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: Planet::class)]
+    #[ORM\JoinColumn(name: 'user_id', referencedColumnName: 'planet_user_id')]
+    private Collection $planets;
+
+    public function __construct()
+    {
+        $this->planets = new ArrayCollection();
+    }
 
     public function __toString() {
         return $this->nick;
@@ -820,18 +828,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function getSpecialistId()
-    {
-        return $this->specialistId;
-    }
-
-    public function setSpecialistId($specialistId): static
-    {
-        $this->specialistId = $specialistId;
-
-        return $this;
-    }
-
     public function getSpecialistTime(): ?int
     {
         return $this->specialistTime;
@@ -1068,6 +1064,36 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setUserRating(?UserRating $userRating): static
     {
         $this->userRating = $userRating;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Planet>
+     */
+    public function getPlanets(): Collection
+    {
+        return $this->planets;
+    }
+
+    public function addPlanet(Planet $planet): static
+    {
+        if (!$this->planets->contains($planet)) {
+            $this->planets->add($planet);
+            $planet->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removePlanet(Planet $planet): static
+    {
+        if ($this->planets->removeElement($planet)) {
+            // set the owning side to null (unless already changed)
+            if ($planet->getUser() === $this) {
+                $planet->setUser(null);
+            }
+        }
 
         return $this;
     }
