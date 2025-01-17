@@ -6,6 +6,7 @@ use Doctrine\ORM\Mapping as ORM;
 use EtoA\Specialist\SpecialistDataRepository;
 
 #[ORM\Entity(repositoryClass: SpecialistDataRepository::class)]
+#[ORM\Table(name: 'specialists')]
 class Specialist
 {
     #[ORM\Id]
@@ -58,10 +59,10 @@ class Specialist
     #[ORM\Column(name: "specialist_prod_food", type: "float")]
     protected float $prodFood;
 
-    #[ORM\Column(name: "specialist_prod_power", type: "float")]
+    #[ORM\Column(name: "specialist_power", type: "float")]
     protected float $prodPower;
 
-    #[ORM\Column(name: "specialist_prod_population", type: "float")]
+    #[ORM\Column(name: "specialist_population", type: "float")]
     protected float $prodPeople;
 
     #[ORM\Column(name: "specialist_time_tech", type: "float")]
@@ -94,7 +95,7 @@ class Specialist
     #[ORM\Column(name: "specialist_fleet_max", type: "integer")]
     protected int $fleetMax;
 
-    #[ORM\Column(name: "specialist_defense_repair", type: "float")]
+    #[ORM\Column(name: "specialist_def_repair", type: "float")]
     protected float $defenseRepair;
 
     #[ORM\Column(name: "specialist_spy_level", type: "integer")]
