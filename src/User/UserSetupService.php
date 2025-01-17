@@ -9,7 +9,7 @@ use EtoA\DefaultItem\DefaultItemRepository;
 use EtoA\Defense\DefenseRepository;
 use EtoA\Entity\Planet;
 use EtoA\Ship\ShipListRepository;
-use EtoA\Technology\TechnologyRepository;
+use EtoA\Technology\TechnologyListItemRepository;
 use EtoA\Universe\Entity\EntityRepository;
 use EtoA\Universe\Planet\PlanetRepository;
 use EtoA\Universe\Planet\PlanetService;
@@ -19,7 +19,7 @@ class UserSetupService
 {
     private DefaultItemRepository $defaultItemRepository;
     private BuildingListItemRepository $buildingRepository;
-    private TechnologyRepository $technologyRepository;
+    private TechnologyListItemRepository $technologyRepository;
     private ShipListRepository $shipListRepository;
     private DefenseRepository $defenseRepository;
     private PlanetService $planetService;
@@ -28,16 +28,16 @@ class UserSetupService
     private Security $security;
 
     public function __construct(
-        DefaultItemRepository      $defaultItemRepository,
-        BuildingListItemRepository $buildingRepository,
-        TechnologyRepository       $technologyRepository,
-        DefenseRepository          $defenseRepository,
-        PlanetService              $planetService,
-        PlanetRepository           $planetRepository,
-        UserService                $userService,
-        EntityRepository           $entityRepository,
-        Security                   $security,
-        ShipListRepository         $shipListRepository
+        DefaultItemRepository        $defaultItemRepository,
+        BuildingListItemRepository   $buildingRepository,
+        TechnologyListItemRepository $technologyRepository,
+        DefenseRepository            $defenseRepository,
+        PlanetService                $planetService,
+        PlanetRepository             $planetRepository,
+        UserService                  $userService,
+        EntityRepository             $entityRepository,
+        Security                     $security,
+        ShipListRepository           $shipListRepository
     ) {
         $this->defaultItemRepository = $defaultItemRepository;
         $this->buildingRepository = $buildingRepository;

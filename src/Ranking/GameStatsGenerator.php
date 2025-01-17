@@ -9,7 +9,7 @@ use EtoA\Defense\DefenseRepository;
 use EtoA\Race\RaceDataRepository;
 use EtoA\Ship\ShipRepository;
 use EtoA\Support\StringUtils;
-use EtoA\Technology\TechnologyRepository;
+use EtoA\Technology\TechnologyListItemRepository;
 use EtoA\Universe\Planet\PlanetRepository;
 use EtoA\Universe\Planet\PlanetTypeRepository;
 use EtoA\Universe\Resources\ResourceNames;
@@ -30,23 +30,23 @@ class GameStatsGenerator
     private RaceDataRepository $raceDataRepository;
     private PlanetRepository $planetRepository;
     private BuildingListItemRepository $buildingRepository;
-    private TechnologyRepository $technologyRepository;
+    private TechnologyListItemRepository $technologyRepository;
     private ShipRepository $shipRepository;
     private DefenseRepository $defenseRepository;
     private UserPropertiesRepository $userPropertiesRepository;
     private string $cacheDir;
 
     public function __construct(
-        PlanetTypeRepository       $planetTypeRepository,
-        SolarTypeRepository        $solarTypeRepository,
-        RaceDataRepository         $raceDataRepository,
-        PlanetRepository           $planetRepository,
-        BuildingListItemRepository $buildingRepository,
-        TechnologyRepository       $technologyRepository,
-        ShipRepository             $shipRepository,
-        DefenseRepository          $defenseRepository,
-        UserPropertiesRepository   $userPropertiesRepository,
-        string                     $cacheDir
+        PlanetTypeRepository         $planetTypeRepository,
+        SolarTypeRepository          $solarTypeRepository,
+        RaceDataRepository           $raceDataRepository,
+        PlanetRepository             $planetRepository,
+        BuildingListItemRepository   $buildingRepository,
+        TechnologyListItemRepository $technologyRepository,
+        ShipRepository               $shipRepository,
+        DefenseRepository            $defenseRepository,
+        UserPropertiesRepository     $userPropertiesRepository,
+        string                       $cacheDir
     ) {
         $this->planetTypeRepository = $planetTypeRepository;
         $this->solarTypeRepository = $solarTypeRepository;

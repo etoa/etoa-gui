@@ -20,7 +20,7 @@ use EtoA\Entity\Alliance;
 use EtoA\Entity\AllianceRank;
 use EtoA\Entity\MessageData;
 use EtoA\Entity\User;
-use EtoA\Fleet\ForeignFleetLoader;
+use EtoA\Fleet\ForeignFleetService;
 use EtoA\Form\Type\Core\AllianceApplicationType;
 use EtoA\Form\Type\Core\AllianceRankType;
 use EtoA\Form\Type\Core\AllianceUploadType;
@@ -53,24 +53,24 @@ class AllianceInternalController extends AbstractGameController
     public function __construct(
         private readonly AllianceRepository $allianceRepository,
         private readonly AllianceDiplomacyRepository $allianceDiplomacyRepository,
-        private readonly UserRepository $userRepository,
+        private readonly UserRepository                $userRepository,
         private readonly AllianceApplicationRepository $allianceApplicationRepository,
-        private readonly MessageRepository $messageRepository,
-        private readonly AllianceHistoryRepository $allianceHistoryRepository,
-        private readonly AllianceService $service,
-        private readonly ConfigurationService $config,
-        private readonly LogRepository $logRepository,
-        private readonly UserService $userService,
-        private readonly AllianceMemberCosts $allianceMemberCosts,
-        private readonly PlanetRepository $planetRepository,
-        private readonly ForeignFleetLoader       $foreignFleetLoader,
-        private readonly EntityRepository $entityRepository,
-        private readonly AllianceNewsRepository $allianceNewsRepository,
-        private readonly UserRatingService $userRatingService,
-        private readonly TownhallService $townhallService,
-        private readonly MessageCategoryRepository $messageCategoryRepository,
-        private readonly AllianceRankRepository $allianceRankRepository,
-        private readonly FileUtils                $fileUtils,
+        private readonly MessageRepository             $messageRepository,
+        private readonly AllianceHistoryRepository     $allianceHistoryRepository,
+        private readonly AllianceService               $service,
+        private readonly ConfigurationService          $config,
+        private readonly LogRepository                 $logRepository,
+        private readonly UserService                   $userService,
+        private readonly AllianceMemberCosts           $allianceMemberCosts,
+        private readonly PlanetRepository              $planetRepository,
+        private readonly ForeignFleetService           $foreignFleetLoader,
+        private readonly EntityRepository              $entityRepository,
+        private readonly AllianceNewsRepository        $allianceNewsRepository,
+        private readonly UserRatingService             $userRatingService,
+        private readonly TownhallService               $townhallService,
+        private readonly MessageCategoryRepository     $messageCategoryRepository,
+        private readonly AllianceRankRepository        $allianceRankRepository,
+        private readonly FileUtils                     $fileUtils,
     )
     {
     }

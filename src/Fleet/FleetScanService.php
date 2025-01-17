@@ -25,7 +25,7 @@ use EtoA\Ship\ShipDataRepository;
 use EtoA\Specialist\SpecialistDataRepository;
 use EtoA\Support\StringUtils;
 use EtoA\Technology\TechnologyId;
-use EtoA\Technology\TechnologyRepository;
+use EtoA\Technology\TechnologyListItemRepository;
 use EtoA\Universe\Entity\EntityRepository;
 use EtoA\Universe\Entity\EntityService;
 use EtoA\Universe\Entity\EntityType;
@@ -45,7 +45,7 @@ class FleetScanService
     private FleetRepository $fleetRepository;
     private EntityService $entityService;
     private DefenseRepository $defenseRepository;
-    private TechnologyRepository $technologyRepository;
+    private TechnologyListItemRepository $technologyRepository;
     private ShipDataRepository $shipDataRepository;
     private MessageRepository $messageRepository;
     private AllianceBuildingRepository $allianceBuildingRepository;
@@ -58,21 +58,21 @@ class FleetScanService
     private const FLEET_DIRECTION_DEPARTING = 'departing';
 
     public function __construct(
-        ConfigurationService $config,
-        UserRepository $userRepository,
-        PlanetRepository $planetRepository,
-        EntityRepository $entityRepository,
-        FleetRepository $fleetRepository,
-        EntityService $entityService,
-        DefenseRepository $defenseRepository,
-        TechnologyRepository $technologyRepository,
-        ShipDataRepository $shipDataRepository,
-        MessageRepository $messageRepository,
-        AllianceBuildingRepository $allianceBuildingRepository,
+        ConfigurationService         $config,
+        UserRepository               $userRepository,
+        PlanetRepository             $planetRepository,
+        EntityRepository             $entityRepository,
+        FleetRepository              $fleetRepository,
+        EntityService                $entityService,
+        DefenseRepository            $defenseRepository,
+        TechnologyListItemRepository $technologyRepository,
+        ShipDataRepository           $shipDataRepository,
+        MessageRepository            $messageRepository,
+        AllianceBuildingRepository   $allianceBuildingRepository,
         AllianceTechnologyRepository $allianceTechnologyRepository,
-        AllianceRepository $allianceRepository,
-        AllianceHistoryRepository $allianceHistoryRepository,
-        SpecialistDataRepository $specialistDataRepository
+        AllianceRepository           $allianceRepository,
+        AllianceHistoryRepository    $allianceHistoryRepository,
+        SpecialistDataRepository     $specialistDataRepository
     ) {
         $this->config = $config;
         $this->userRepository = $userRepository;

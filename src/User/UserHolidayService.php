@@ -12,7 +12,7 @@ use EtoA\Fleet\FleetRepository;
 use EtoA\Fleet\FleetSearch;
 use EtoA\Fleet\FleetStatus;
 use EtoA\Ship\ShipQueueRepository;
-use EtoA\Technology\TechnologyRepository;
+use EtoA\Technology\TechnologyListItemRepository;
 use EtoA\Universe\Planet\PlanetRepository;
 
 class UserHolidayService
@@ -20,14 +20,14 @@ class UserHolidayService
     private ConfigurationService $config;
     private UserRepository $userRepository;
     private BuildingListItemRepository $buildingRepository;
-    private TechnologyRepository $technologyRepository;
+    private TechnologyListItemRepository $technologyRepository;
     private ShipQueueRepository $shipQueueRepository;
     private DefenseQueueRepository $defenseQueueRepository;
     private PlanetRepository $planetRepository;
     private FleetRepository $fleetRepository;
     private BackendMessageService $backendMessageService;
 
-    public function __construct(ConfigurationService $config, UserRepository $userRepository, BuildingListItemRepository $buildingRepository, TechnologyRepository $technologyRepository, ShipQueueRepository $shipQueueRepository, DefenseQueueRepository $defenseQueueRepository, PlanetRepository $planetRepository, FleetRepository $fleetRepository, BackendMessageService $backendMessageService)
+    public function __construct(ConfigurationService $config, UserRepository $userRepository, BuildingListItemRepository $buildingRepository, TechnologyListItemRepository $technologyRepository, ShipQueueRepository $shipQueueRepository, DefenseQueueRepository $defenseQueueRepository, PlanetRepository $planetRepository, FleetRepository $fleetRepository, BackendMessageService $backendMessageService)
     {
         $this->config = $config;
         $this->userRepository = $userRepository;

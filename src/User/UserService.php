@@ -31,7 +31,7 @@ use EtoA\Notepad\NotepadDataRepository;
 use EtoA\Security\Player\CurrentPlayer;
 use EtoA\Ship\ShipRepository;
 use EtoA\Support\Mail\MailSenderService;
-use EtoA\Technology\TechnologyRepository;
+use EtoA\Technology\TechnologyListItemRepository;
 use EtoA\Universe\Planet\PlanetRepository;
 use EtoA\Universe\Planet\PlanetService;
 use Exception;
@@ -51,7 +51,7 @@ class UserService
         private readonly UserPropertiesRepository      $userPropertiesRepository,
         private readonly PlanetRepository              $planetRepository,
         private readonly BuildingListItemRepository    $buildingRepository,
-        private readonly TechnologyRepository          $technologyRepository,
+        private readonly TechnologyListItemRepository  $technologyRepository,
         private readonly MailSenderService             $mailSenderService,
         private readonly PlanetService                 $planetService,
         private readonly UserSittingRepository         $userSittingRepository,

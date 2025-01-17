@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace EtoA\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use EtoA\Technology\TechnologyDataRepository;
+use EtoA\Technology\TechnologyListItemRepository;
 
-#[ORM\Entity(repositoryClass: TechnologyDataRepository::class)]
+#[ORM\Entity(repositoryClass: TechnologyListItemRepository::class)]
 #[ORM\Table(name: 'techlist')]
 class TechnologyListItem
 {
@@ -16,14 +16,13 @@ class TechnologyListItem
     #[ORM\Column(name: "techlist_id", type: "integer")]
     private int $id;
 
-    #[ORM\Column(name: "techlist_user_id", type: "integer")]
-    private int $userId;
+    #[ORM\JoinColumn(name: 'techlist_user_id', referencedColumnName: 'user_id')]
+    #[ORM\ManyToOne(targetEntity: User::class)]
+    private ?User $user = null;
 
-    #[ORM\Column(name: "techlist_tech_id", type: "integer")]
-    private int $technologyId;
-
-    #[ORM\Column(name: "techlist_entity_id", type: "integer")]
-    private int $entityId;
+    #[ORM\JoinColumn(name: 'techlist_tech_id', referencedColumnName: 'tech_id')]
+    #[ORM\ManyToOne(targetEntity: Technology::class)]
+    private ?Technology $technology = null;
 
     #[ORM\ManyToOne(targetEntity: Entity::class)]
     #[ORM\JoinColumn(name: 'techlist_entity_id', referencedColumnName: 'id')]
@@ -44,22 +43,6 @@ class TechnologyListItem
     #[ORM\Column(name: "techlist_prod_percent", type: "integer")]
     private int $prodPercent = 100;
 
-    public static function createFromData(array $data): TechnologyListItem
-    {
-        $item = new self();
-        $item->id = (int) $data['techlist_id'];
-        $item->userId = (int) $data['techlist_user_id'];
-        $item->technologyId = (int) $data['techlist_tech_id'];
-        $item->entityId = (int) $data['techlist_entity_id'];
-        $item->currentLevel = (int) $data['techlist_current_level'];
-        $item->buildType = (int) $data['techlist_build_type'];
-        $item->startTime = (int) $data['techlist_build_start_time'];
-        $item->endTime = (int) $data['techlist_build_end_time'];
-        $item->prodPercent = (int) $data['techlist_prod_percent'];
-
-        return $item;
-    }
-
     public static function empty(): TechnologyListItem
     {
         return new TechnologyListItem();
@@ -68,42 +51,6 @@ class TechnologyListItem
     public function getId(): ?int
     {
         return $this->id;
-    }
-
-    public function getUserId(): ?int
-    {
-        return $this->userId;
-    }
-
-    public function setUserId(int $userId): static
-    {
-        $this->userId = $userId;
-
-        return $this;
-    }
-
-    public function getTechnologyId(): ?int
-    {
-        return $this->technologyId;
-    }
-
-    public function setTechnologyId(int $technologyId): static
-    {
-        $this->technologyId = $technologyId;
-
-        return $this;
-    }
-
-    public function getEntityId(): ?int
-    {
-        return $this->entityId;
-    }
-
-    public function setEntityId(int $entityId): static
-    {
-        $this->entityId = $entityId;
-
-        return $this;
     }
 
     public function getCurrentLevel(): ?int
@@ -174,6 +121,30 @@ class TechnologyListItem
     public function setEntity(?Entity $entity): static
     {
         $this->entity = $entity;
+
+        return $this;
+    }
+
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
+
+    public function setUser(?User $user): static
+    {
+        $this->user = $user;
+
+        return $this;
+    }
+
+    public function getTechnology(): ?Technology
+    {
+        return $this->technology;
+    }
+
+    public function setTechnology(?Technology $technology): static
+    {
+        $this->technology = $technology;
 
         return $this;
     }

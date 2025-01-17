@@ -22,7 +22,7 @@ use EtoA\Ship\ShipRepository;
 use EtoA\Support\RuntimeDataStore;
 use EtoA\Technology\TechnologyDataRepository;
 use EtoA\Technology\TechnologyPointRepository;
-use EtoA\Technology\TechnologyRepository;
+use EtoA\Technology\TechnologyListItemRepository;
 use EtoA\Universe\Entity\EntityRepository;
 use EtoA\Universe\Planet\PlanetRepository;
 use EtoA\Universe\Planet\PlanetTypeRepository;
@@ -55,7 +55,7 @@ class RankingServiceProvider implements ServiceProviderInterface
                 $pimple[RaceDataRepository::class],
                 $pimple[PlanetRepository::class],
                 $pimple[BuildingListItemRepository::class],
-                $pimple[TechnologyRepository::class],
+                $pimple[TechnologyListItemRepository::class],
                 $pimple[ShipRepository::class],
                 $pimple[DefenseRepository::class],
                 $pimple[UserPropertiesRepository::class],
@@ -73,7 +73,7 @@ class RankingServiceProvider implements ServiceProviderInterface
                 $pimple[BuildingListItemRepository::class],
                 $pimple[BuildingDataRepository::class],
                 $pimple[BuildingPointRepository::class],
-                $pimple[TechnologyRepository::class],
+                $pimple[TechnologyListItemRepository::class],
                 $pimple[TechnologyDataRepository::class],
                 $pimple[TechnologyPointRepository::class],
                 $pimple[ShipRepository::class],

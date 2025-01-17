@@ -14,7 +14,7 @@ use EtoA\Race\RaceDataRepository;
 use EtoA\Ship\ShipDataRepository;
 use EtoA\Ship\ShipRepository;
 use EtoA\Technology\TechnologyDataRepository;
-use EtoA\Technology\TechnologyRepository;
+use EtoA\Technology\TechnologyListItemRepository;
 use EtoA\Universe\Planet\PlanetRepository;
 use EtoA\Universe\Planet\PlanetTypeRepository;
 use Exception;
@@ -22,12 +22,11 @@ use Exception;
 class UserToXml
 {
     private UserRepository $userRepository;
-    private AllianceRepository $allianceRepository;
     private RaceDataRepository $raceDataRepository;
     private PlanetRepository $planetRepository;
     private PlanetTypeRepository $planetTypeRepository;
     private BuildingListItemRepository $buildingRepository;
-    private TechnologyRepository $technologyRepository;
+    private TechnologyListItemRepository $technologyRepository;
     private TechnologyDataRepository $technologyDataRepository;
     private ShipRepository $shipRepository;
     private ShipDataRepository $shipDataRepository;
@@ -37,23 +36,21 @@ class UserToXml
     private string $cacheDir;
 
     public function __construct(
-        UserRepository             $userRepository,
-        AllianceRepository         $allianceRepository,
-        RaceDataRepository         $raceDataRepository,
-        PlanetRepository           $planetRepository,
-        PlanetTypeRepository       $planetTypeRepository,
-        BuildingListItemRepository $buildingRepository,
-        TechnologyRepository       $technologyRepository,
-        TechnologyDataRepository   $technologyDataRepository,
-        ShipRepository             $shipRepository,
-        ShipDataRepository         $shipDataRepository,
-        FleetRepository            $fleetRepository,
-        DefenseRepository          $defenseRepository,
-        DefenseDataRepository      $defenseDataRepository,
-        string                     $cacheDir
+        UserRepository               $userRepository,
+        RaceDataRepository           $raceDataRepository,
+        PlanetRepository             $planetRepository,
+        PlanetTypeRepository         $planetTypeRepository,
+        BuildingListItemRepository   $buildingRepository,
+        TechnologyListItemRepository $technologyRepository,
+        TechnologyDataRepository     $technologyDataRepository,
+        ShipRepository               $shipRepository,
+        ShipDataRepository           $shipDataRepository,
+        FleetRepository              $fleetRepository,
+        DefenseRepository            $defenseRepository,
+        DefenseDataRepository        $defenseDataRepository,
+        string                       $cacheDir
     ) {
         $this->userRepository = $userRepository;
-        $this->allianceRepository = $allianceRepository;
         $this->raceDataRepository = $raceDataRepository;
         $this->planetRepository = $planetRepository;
         $this->planetTypeRepository = $planetTypeRepository;
@@ -100,7 +97,7 @@ class UserToXml
             return '';
         }
 
-        $alliance = $user->getAllianceId() !== 0 ? $this->allianceRepository->getAlliance($user->getAllianceId()) : null;
+        $alliance = $user->getAlliance();
         $race = $user->getRaceId() !== 0 ? $this->raceDataRepository->getRace($user->getRaceId()) : null;
 
         $xml = "<userbackup>
@@ -115,7 +112,7 @@ class UserToXml
         <online>" . date("d.m.Y, H:i", $user->getLogoutTime()) . "</online>
         <ip>" . $user->getIp() . "</ip>
         <host>" . $user->getHostname() . "</host>
-        <alliance id=\"" . $user->getAllianceId() . "\" tag=\"" . ($alliance !== null ? $alliance->tag : '') . "\">" . ($alliance !== null ? $alliance->name : '') . "</alliance>
+        <alliance id=\"" . $user->getAlliance()->getId() . "\" tag=\"" . ($alliance !== null ? $alliance->getTag() : '') . "\">" . ($alliance !== null ? $alliance->getName() : '') . "</alliance>
         <race id=\"" . $user->getRaceId() . "\">" . ($race !== null ? $race->getName() : '') . "</race>
     </account>";
 
@@ -155,7 +152,7 @@ class UserToXml
         $buildings = $this->buildingRepository->buildingNames();
         $buildListItems = $this->buildingRepository->findForUser($userId);
         foreach ($buildListItems as $item) {
-            $xml .= "<building planet=\"" . $item->entityId . "\" id=\"" . $item->buildingId . "\" level=\"" . $item->currentLevel . "\">" . $buildings[$item->buildingId] . "</building>";
+            $xml .= "<building planet=\"" . $item->getEntity()->getId() . "\" id=\"" . $item->getBuildingId() . "\" level=\"" . $item->getCurrentLevel() . "\">" . $buildings[$item->getBuildingId()] . "</building>";
         }
         $xml .= "</buildings>";
 
@@ -168,7 +165,7 @@ class UserToXml
         $technologies = $this->technologyDataRepository->getTechnologyNames(true);
         $techListItems = $this->technologyRepository->findForUser($userId);
         foreach ($techListItems as $item) {
-            $xml .= "<technology id=\"" . $item->getTechnologyId() . "\" level=\"" . $item->getCurrentLevel() . "\">" . $technologies[$item->getTechnologyId()] . "</technology>";
+            $xml .= "<technology id=\"" . $item->getTechnology()->getId() . "\" level=\"" . $item->getCurrentLevel() . "\">" . $technologies[$item->getTechnologyId()] . "</technology>";
         }
         $xml .= "</technologies>";
 
@@ -201,7 +198,7 @@ class UserToXml
         $defenses = $this->defenseDataRepository->getDefenseNames(true);
         $defenseItems = $this->defenseRepository->findForUser($userId);
         foreach ($defenseItems as $item) {
-            $xml .= "<defense planet=\"" . $item->entityId . "\" id=\"" . $item->defenseId . "\" count=\"" . $item->count . "\">" . $defenses[$item->defenseId] . "</defense>";
+            $xml .= "<defense planet=\"" . $item->getEntity()->getId() . "\" id=\"" . $item->getDefenseId() . "\" count=\"" . $item->getCount() . "\">" . $defenses[$item->getDefenseId()] . "</defense>";
         }
         $xml .= "</defenses>";
 

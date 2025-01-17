@@ -30,7 +30,7 @@ use EtoA\Ship\ShipQueueRepository;
 use EtoA\Ship\ShipRepository;
 use EtoA\Support\Mail\MailSenderService;
 use EtoA\Technology\TechnologyDataRepository;
-use EtoA\Technology\TechnologyRepository;
+use EtoA\Technology\TechnologyListItemRepository;
 use EtoA\Universe\Planet\PlanetRepository;
 use EtoA\Universe\Planet\PlanetService;
 use EtoA\Universe\Planet\PlanetTypeRepository;
@@ -115,7 +115,7 @@ class UserServiceProvider implements ServiceProviderInterface
                 $pimple[ConfigurationService::class],
                 $pimple[UserRepository::class],
                 $pimple[BuildingListItemRepository::class],
-                $pimple[TechnologyRepository::class],
+                $pimple[TechnologyListItemRepository::class],
                 $pimple[ShipQueueRepository::class],
                 $pimple[DefenseQueueRepository::class],
                 $pimple[PlanetRepository::class],
@@ -132,7 +132,7 @@ class UserServiceProvider implements ServiceProviderInterface
                 $pimple[UserPropertiesRepository::class],
                 $pimple[PlanetRepository::class],
                 $pimple[BuildingListItemRepository::class],
-                $pimple[TechnologyRepository::class],
+                $pimple[TechnologyListItemRepository::class],
                 $pimple[MailSenderService::class],
                 $pimple[PlanetService::class],
                 $pimple[UserSittingRepository::class],
@@ -169,7 +169,7 @@ class UserServiceProvider implements ServiceProviderInterface
                 $pimple[PlanetRepository::class],
                 $pimple[PlanetTypeRepository::class],
                 $pimple[BuildingListItemRepository::class],
-                $pimple[TechnologyRepository::class],
+                $pimple[TechnologyListItemRepository::class],
                 $pimple[TechnologyDataRepository::class],
                 $pimple[ShipRepository::class],
                 $pimple[ShipDataRepository::class],
@@ -199,7 +199,7 @@ class UserServiceProvider implements ServiceProviderInterface
             return new UserSetupService(
                 $pimple[DefaultItemRepository::class],
                 $pimple[BuildingListItemRepository::class],
-                $pimple[TechnologyRepository::class],
+                $pimple[TechnologyListItemRepository::class],
                 $pimple[ShipRepository::class],
                 $pimple[DefenseRepository::class],
             );

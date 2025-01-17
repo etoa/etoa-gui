@@ -27,7 +27,7 @@ use EtoA\Ship\ShipRepository;
 use EtoA\Support\RuntimeDataStore;
 use EtoA\Technology\TechnologyDataRepository;
 use EtoA\Technology\TechnologyPointRepository;
-use EtoA\Technology\TechnologyRepository;
+use EtoA\Technology\TechnologyListItemRepository;
 use EtoA\Universe\Entity\EntityRepository;
 use EtoA\Universe\Planet\PlanetRepository;
 use EtoA\User\UserPointsRepository;
@@ -51,7 +51,7 @@ class RankingService
     private BuildingListItemRepository $buildingRepository;
     private BuildingDataRepository $buildingDataRepository;
     private BuildingPointRepository $buildingPointRepository;
-    private TechnologyRepository $technologyRepository;
+    private TechnologyListItemRepository $technologyRepository;
     private TechnologyDataRepository $technologyDataRepository;
     private TechnologyPointRepository $technologyPointRepository;
     private ShipRepository $shipRepository;
@@ -67,7 +67,7 @@ class RankingService
     private AllianceTechnologyRepository $allianceTechnologyRepository;
     private UserPointsRepository $userPointsRepository;
 
-    public function __construct(ConfigurationService $config, RuntimeDataStore $runtimeDataStore, AllianceRepository $allianceRepository, AllianceStatsRepository $allianceStatsRepository, PlanetRepository $planetRepository, BuildingListItemRepository $buildingRepository, BuildingDataRepository $buildingDataRepository, BuildingPointRepository $buildingPointRepository, TechnologyRepository $technologyRepository, TechnologyDataRepository $technologyDataRepository, TechnologyPointRepository $technologyPointRepository, ShipRepository $shipRepository, ShipDataRepository $shipDataRepository, FleetRepository $fleetRepository, DefenseRepository $defenseRepository, DefenseDataRepository $defenseDataRepository, RaceDataRepository $raceRepository, UserStatRepository $userStatRepository, UserRepository $userRepository, EntityRepository $entityRepository, AllianceBuildingRepository $allianceBuildingRepository, AllianceTechnologyRepository $allianceTechnologyRepository, UserPointsRepository $userPointsRepository)
+    public function __construct(ConfigurationService $config, RuntimeDataStore $runtimeDataStore, AllianceRepository $allianceRepository, AllianceStatsRepository $allianceStatsRepository, PlanetRepository $planetRepository, BuildingListItemRepository $buildingRepository, BuildingDataRepository $buildingDataRepository, BuildingPointRepository $buildingPointRepository, TechnologyListItemRepository $technologyRepository, TechnologyDataRepository $technologyDataRepository, TechnologyPointRepository $technologyPointRepository, ShipRepository $shipRepository, ShipDataRepository $shipDataRepository, FleetRepository $fleetRepository, DefenseRepository $defenseRepository, DefenseDataRepository $defenseDataRepository, RaceDataRepository $raceRepository, UserStatRepository $userStatRepository, UserRepository $userRepository, EntityRepository $entityRepository, AllianceBuildingRepository $allianceBuildingRepository, AllianceTechnologyRepository $allianceTechnologyRepository, UserPointsRepository $userPointsRepository)
     {
         $this->config = $config;
         $this->runtimeDataStore = $runtimeDataStore;

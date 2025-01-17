@@ -6,7 +6,7 @@ use EtoA\Components\Helper\AbstractEditComponent;
 use EtoA\Entity\TechnologyListItem;
 use EtoA\Form\Type\Admin\EditTechnologyItemType;
 use EtoA\Technology\TechnologyBuildType;
-use EtoA\Technology\TechnologyRepository;
+use EtoA\Technology\TechnologyListItemRepository;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
@@ -37,7 +37,7 @@ class TechnologyViewComponent extends AbstractEditComponent
     }
 
     public function __construct(
-        private TechnologyRepository $technologyRepository,
+        private TechnologyListItemRepository $technologyRepository,
     ) {
         $this->buildTypes = TechnologyBuildType::all();
     }

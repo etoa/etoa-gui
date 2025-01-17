@@ -10,7 +10,7 @@ use EtoA\Form\Type\Admin\TechnologySearchType;
 use EtoA\Technology\TechnologyBuildType;
 use EtoA\Technology\TechnologyDataRepository;
 use EtoA\Technology\TechnologyListItemSearch;
-use EtoA\Technology\TechnologyRepository;
+use EtoA\Technology\TechnologyListItemRepository;
 use EtoA\Universe\Entity\EntityLabel;
 use EtoA\Universe\Entity\EntityRepository;
 use EtoA\Universe\Entity\EntitySearch;
@@ -36,10 +36,10 @@ class TechnologySearchComponent extends AbstractController
     public array $technologyNames = [];
 
     public function __construct(
-        private TechnologyRepository $technologyRepository,
-        private TechnologyDataRepository $technologyDataRepository,
-        private UserRepository $userRepository,
-        private EntityRepository $entityRepository,
+        private TechnologyListItemRepository $technologyRepository,
+        private TechnologyDataRepository     $technologyDataRepository,
+        private UserRepository               $userRepository,
+        private EntityRepository             $entityRepository,
     ) {
         $this->buildTypes = TechnologyBuildType::all();
         $this->request = new TechnologySearchRequest();

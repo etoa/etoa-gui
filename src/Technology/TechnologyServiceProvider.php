@@ -9,8 +9,8 @@ class TechnologyServiceProvider implements ServiceProviderInterface
 {
     public function register(Container $pimple): void
     {
-        $pimple[TechnologyRepository::class] = function (Container $pimple): TechnologyRepository {
-            return new TechnologyRepository($pimple['db']);
+        $pimple[TechnologyListItemRepository::class] = function (Container $pimple): TechnologyListItemRepository {
+            return new TechnologyListItemRepository($pimple['db']);
         };
 
         $pimple[TechnologyDataRepository::class] = function (Container $pimple): TechnologyDataRepository {

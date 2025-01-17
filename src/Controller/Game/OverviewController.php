@@ -10,17 +10,16 @@ use EtoA\Support\StringUtils;
 use EtoA\Text\TextRepository;
 use EtoA\Universe\Planet\PlanetRepository;
 use EtoA\User\UserPropertiesRepository;
+use EtoA\User\UserRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use EtoA\Alliance\AllianceNewsRepository;
-use EtoA\Fleet\ForeignFleetLoader;
+use EtoA\Fleet\ForeignFleetService;
 use EtoA\Technology\TechnologyDataRepository;
-use EtoA\Technology\TechnologyRepository;
+use EtoA\Technology\TechnologyListItemRepository;
 use EtoA\Technology\TechnologyListItemSearch;
 use EtoA\Technology\TechnologyId;
-use EtoA\Alliance\AllianceBuildingRepository;
-use EtoA\Alliance\AllianceTechnologyRepository;
 use EtoA\Building\BuildingDataRepository;
 use EtoA\Ship\ShipDataRepository;
 use EtoA\Fleet\FleetStatus;
@@ -37,23 +36,24 @@ use EtoA\Universe\Resources\ResourceNames;
 class OverviewController extends AbstractGameController
 {
     public function __construct(
-        private readonly UserPropertiesRepository     $userPropertiesRepository,
-        private readonly PlanetRepository             $planetRepository,
-        private readonly FleetRepository              $fleetRepository,
-        private readonly TextRepository               $textRepo,
-        private readonly UserLoginFailureRepository   $userLoginFailureRepository,
-        private readonly AllianceNewsRepository       $allianceNewsRepository,
-        private readonly ForeignFleetLoader           $foreignFleetLoader,
-        private readonly TechnologyDataRepository     $technologyDataRepository,
-        private readonly TechnologyRepository         $technologyRepository,
-        private readonly BuildingDataRepository       $buildingDataRepository,
-        private readonly ShipDataRepository           $shipDataRepository,
-        private readonly DefenseDataRepository        $defenseDataRepository,
-        private readonly BuildingListItemRepository   $buildingRepository,
-        private readonly ShipQueueRepository          $shipQueueRepository,
-        private readonly DefenseQueueRepository       $defenseQueueRepository,
-        private readonly AllianceBuildListRepository $allianceBuildListRepository,
-        private readonly AllianceTechnologyListRepository $allianceTechnologyListRepository
+        private readonly UserPropertiesRepository         $userPropertiesRepository,
+        private readonly PlanetRepository                 $planetRepository,
+        private readonly FleetRepository                  $fleetRepository,
+        private readonly TextRepository                   $textRepo,
+        private readonly UserLoginFailureRepository       $userLoginFailureRepository,
+        private readonly AllianceNewsRepository           $allianceNewsRepository,
+        private readonly ForeignFleetService              $foreignFleetLoader,
+        private readonly TechnologyDataRepository         $technologyDataRepository,
+        private readonly TechnologyListItemRepository     $technologyRepository,
+        private readonly BuildingDataRepository           $buildingDataRepository,
+        private readonly ShipDataRepository               $shipDataRepository,
+        private readonly DefenseDataRepository            $defenseDataRepository,
+        private readonly BuildingListItemRepository       $buildingRepository,
+        private readonly ShipQueueRepository              $shipQueueRepository,
+        private readonly DefenseQueueRepository           $defenseQueueRepository,
+        private readonly AllianceBuildListRepository      $allianceBuildListRepository,
+        private readonly AllianceTechnologyListRepository $allianceTechnologyListRepository,
+        private readonly UserRepository $userRepository
     )
     {
     }
@@ -74,7 +74,7 @@ class OverviewController extends AbstractGameController
         $ownFleets = $this->fleetRepository->count(['user'=>$this->getUser()->getData()]);
 
         // Fremde Flotten
-        $foreignFleets = $this->foreignFleetLoader->getVisibleFleets($this->getUser()->getId());
+        $foreignFleets = $this->foreignFleetLoader->getVisibleFleets($this->getUser()->getData());
 
         // Technologien
         $technologyNames = $this->technologyDataRepository->getTechnologyNames(true);
@@ -94,7 +94,7 @@ class OverviewController extends AbstractGameController
             $allianceBuildingInProgress = $this->allianceBuildListRepository->getInProgress($this->getUser()->getData()->getAlliance()->getId());
 
             // Supportflotten Flotten
-            $allianceSupportFleetCount = $this->fleetRepository->countFleet(FleetSearch::create()->actionIn([\EtoA\Fleet\FleetAction::SUPPORT])->allianceId($this->getUser()->getData()->getAlliance()->getId()));
+            $allianceSupportFleetCount = $this->fleetRepository->countFleet(FleetSearch::create()->actionIn([FleetAction::SUPPORT])->userIn($this->userRepository->findBy(['alliance'=>$this->getUser()->getData()->getAlliance()])));
 
             // Allianzangriffs
             $allianceAttackFleetCount = $this->fleetRepository->countFleet(FleetSearch::create()->actionIn([FleetAction::ALLIANCE])->nextId($this->getUser()->getData()->getAlliance()->getId())->status(FleetStatus::DEPARTURE)->isLeader());

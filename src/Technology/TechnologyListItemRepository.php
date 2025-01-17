@@ -10,7 +10,7 @@ use EtoA\Core\AbstractRepository;
 use EtoA\Entity\TechnologyListItem;
 use EtoA\Universe\Entity\EntityRepository;
 
-class TechnologyRepository extends AbstractRepository
+class TechnologyListItemRepository extends AbstractRepository
 {
     public function __construct(ManagerRegistry $registry, private readonly EntityRepository $entityRepository)
     {

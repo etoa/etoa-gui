@@ -13,7 +13,7 @@ use EtoA\Ship\ShipDataRepository;
 use EtoA\Ship\ShipRepository;
 use EtoA\Specialist\SpecialistDataRepository;
 use EtoA\Specialist\SpecialistService;
-use EtoA\Technology\TechnologyRepository;
+use EtoA\Technology\TechnologyListItemRepository;
 use EtoA\Universe\Entity\EntityRepository;
 use EtoA\Universe\Entity\EntityService;
 use EtoA\Universe\Planet\PlanetRepository;
@@ -41,10 +41,10 @@ class FleetServiceProvider implements ServiceProviderInterface
             );
         };
 
-        $pimple[ForeignFleetLoader::class] = function (Container $pimple): ForeignFleetLoader {
-            return new ForeignFleetLoader(
+        $pimple[ForeignFleetService::class] = function (Container $pimple): ForeignFleetService {
+            return new ForeignFleetService(
                 $pimple[FleetRepository::class],
-                $pimple[TechnologyRepository::class],
+                $pimple[TechnologyListItemRepository::class],
                 $pimple[SpecialistService::class],
             );
         };
@@ -58,7 +58,7 @@ class FleetServiceProvider implements ServiceProviderInterface
                 $pimple[FleetRepository::class],
                 $pimple[EntityService::class],
                 $pimple[DefenseRepository::class],
-                $pimple[TechnologyRepository::class],
+                $pimple[TechnologyListItemRepository::class],
                 $pimple[ShipDataRepository::class],
                 $pimple[MessageRepository::class],
                 $pimple[AllianceBuildingRepository::class],

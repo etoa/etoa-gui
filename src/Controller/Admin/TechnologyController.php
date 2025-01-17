@@ -11,7 +11,7 @@ use EtoA\Requirement\ObjectRequirement;
 use EtoA\Requirement\RequirementsUpdater;
 use EtoA\Technology\TechnologyDataRepository;
 use EtoA\Technology\TechnologyPointRepository;
-use EtoA\Technology\TechnologyRepository;
+use EtoA\Technology\TechnologyListItemRepository;
 use EtoA\Technology\TechnologyRequirementRepository;
 use EtoA\Universe\Planet\PlanetRepository;
 use Symfony\Component\HttpFoundation\Request;
@@ -23,7 +23,7 @@ use function DeepCopy\deep_copy;
 class TechnologyController extends AbstractAdminController
 {
     public function __construct(
-        private readonly TechnologyRepository            $technologyRepository,
+        private readonly TechnologyListItemRepository    $technologyRepository,
         private readonly TechnologyDataRepository        $technologyDataRepository,
         private readonly TechnologyPointRepository       $technologyPointRepository,
         private readonly RankingService                  $rankingService,
