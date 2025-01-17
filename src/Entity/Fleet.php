@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace EtoA\Entity;
 
+use EtoA\Fleet\FleetAction;
 use EtoA\Fleet\FleetRepository;
 use EtoA\Fleet\FleetStatus;
 use Doctrine\ORM\Mapping as ORM;
@@ -112,6 +113,18 @@ class Fleet
 
     #[ORM\Column(type: "integer")]
     protected int $flag = 0;
+
+    protected FleetAction $fleetAction;
+
+    public function getStatusCode():string
+    {
+        return FleetAction::$statusCode[$this->status];
+    }
+
+    public function getFleetAction():FleetAction
+    {
+        return FleetAction::createFactory($this->getAction());
+    }
 
     public function getRemainingTime(): int
     {
