@@ -16,7 +16,7 @@
                 {% for fleet in ownFleets %}
                     <tr>
                         <td>
-                            <a href="?page=fleetinfo&id=$fleet.id">
+                            <a href="{{path('game.fleets.info',{id:fleet.id})}}">
                                 <span style="font-weight:bold;color:{{ fleet.fleetAction.color }}">
                                     {{ fleet.fleetAction.name }}
                                 </span>[{{ fleet.getStatusCode }}]

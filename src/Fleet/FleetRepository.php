@@ -178,58 +178,33 @@ class FleetRepository extends AbstractRepository
 
     }
 
-    public function update(int $id, int $launchTime, int $landTime, int $entityFrom, int $entityTo, int $status, int $leaderId = 0, BaseResources $resources = null, int $usageFuel = null, int $usageFood = null): bool
+    public function update(Fleet $fleet, int $launchTime, int $landTime, Entity $entityFrom, Entity $entityTo, int $status, User $leader = null, BaseResources $resources = null, int $usageFuel = null, int $usageFood = null): void
     {
-        $qb = $this->createQueryBuilder('q')
-            ->update('fleet')
-            ->set('launchtime', ':launchTime')
-            ->set('landtime', ':landTime')
-            ->set('entity_from', ':entityFrom')
-            ->set('entity_to', ':entityTo')
-            ->set('status', ':status')
-            ->set('leader_id', ':leaderId')
-            ->where('id = :id')
-            ->setParameters([
-                'id' => $id,
-                'launchTime' => $launchTime,
-                'landTime' => $landTime,
-                'entityFrom' => $entityFrom,
-                'entityTo' => $entityTo,
-                'status' => $status,
-                'leaderId' => $leaderId,
-            ]);
+        $fleet->setLaunchTime($launchTime);
+        $fleet->setLandTime($landTime);
+        $fleet->setEntityFrom($entityFrom);
+        $fleet->setEntityTo($entityTo);
+        $fleet->setStatus($status);
+        $fleet->setLeader($leader);
 
-        if ($resources !== null) {
-            $qb
-                ->set('res_metal', ':resMetal')
-                ->set('res_crystal', ':resCrystal')
-                ->set('res_plastic', ':resPlastic')
-                ->set('res_fuel', ':resFuel')
-                ->set('res_food', ':resFood')
-                ->set('res_people', ':resPeople')
-                ->setParameter('resMetal', $resources->metal)
-                ->setParameter('resCrystal', $resources->crystal)
-                ->setParameter('resPlastic', $resources->plastic)
-                ->setParameter('resFuel', $resources->fuel)
-                ->setParameter('resFood', $resources->food)
-                ->setParameter('resPeople', $resources->people);
+        if ($resources) {
+            $fleet->setResMetal($resources->metal);
+            $fleet->setResCrystal($resources->crystal);
+            $fleet->setResPlastic($resources->plastic);
+            $fleet->setResFuel($resources->fuel);
+            $fleet->setResFood($resources->food);
+            $fleet->setResPeople($resources->people);
         }
 
-        if ($usageFuel !== null) {
-            $qb
-                ->set('usage_fuel', ':usageFuel')
-                ->setParameter('usageFuel', $usageFuel);
+        if ($usageFuel) {
+            $fleet->setUsageFuel($usageFuel);
         }
 
-        if ($usageFood !== null) {
-            $qb
-                ->set('usage_food', ':usageFood')
-                ->setParameter('usageFood', $usageFood);
+        if ($usageFood) {
+            $fleet->setResFood($usageFood);
         }
 
-        return (bool) $qb
-            ->executeQuery()
-            ->rowCount();
+        $this->save();
     }
 
     public function markAsLeader(int $id, int $allianceId): void
@@ -246,42 +221,22 @@ class FleetRepository extends AbstractRepository
             ->executeQuery();
     }
 
-    public function promoteNewAllianceFleetLeader(int $newLeader, int $existingLeader, int $landTime): void
+    public function promoteNewAllianceFleetLeader(Fleet $newLeader, Fleet $existingLeader, int $landTime): void
     {
-        $this->createQueryBuilder('q')
-            ->update('fleet')
-            ->set('status', ':status')
-            ->set('landtime', ':landTime')
-            ->where('id = :id')
-            ->setParameters([
-                'status' => FleetStatus::DEPARTURE,
-                'landTime' => $landTime,
-                'id' => $newLeader,
-            ])
-            ->executeQuery();
+        $newLeader->setStatus(FleetStatus::DEPARTURE);
+        $newLeader->setLandTime($landTime);
 
-        $this->createQueryBuilder('q')
-            ->update('fleet')
-            ->set('leader_id', ':newLeaderId')
-            ->where('leader_id = :existingLeaderId')
-            ->setParameters([
-                'existingLeaderId' => $existingLeader,
-                'newLeaderId' => $newLeader,
-            ])
-            ->executeQuery();
+        $existingLeader->setLeader($newLeader);
+
+        $this->save();
     }
 
-    public function removeSupportRes(int $fleetId): void
+    public function removeSupportRes(Fleet $fleet): void
     {
-        $this->createQueryBuilder('q')
-            ->update('fleet')
-            ->set('support_usage_fuel', '0')
-            ->set('support_usage_food', '0')
-            ->where('id = :id')
-            ->setParameters([
-                'id' => $fleetId,
-            ])
-            ->executeQuery();
+        $fleet->setSupportUsageFood(0);
+        $fleet->setSupportUsageFuel(0);
+
+        $this->save();
     }
 
     public function getGlobalResources(): BaseResources

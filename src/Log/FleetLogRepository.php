@@ -101,69 +101,30 @@ class FleetLogRepository extends AbstractRepository
 
     public function addCancel(int $fleetId, int $userId, int $entityFromId, int $targetEntityId, int $launchTime, int $landTime, string $action, int $status, int $pilots, int $fuel, int $food, BaseResources $resourceStart, BaseResources $resourcesEnd): void
     {
-        $this->getConnection()->executeQuery('INSERT DELAYED INTO logs_fleet (
-                fleet_id,
-                facility,
-                timestamp,
-                message,
-                user_id,
-                entity_user_id,
-                entity_from,
-                entity_to,
-                launchtime,
-                landtime,
-                action,
-                status,
-                fleet_res_start,
-                fleet_res_end,
-                fleet_ships_start,
-                fleet_ships_end,
-                entity_res_start,
-                entity_res_end,
-                entity_ships_start,
-                entity_ships_end
-            ) VALUES (
-                :fleetId,
-                :facility,
-                :timestamp,
-                :text,
-                :userId,
-                :userId,
-                :entityFromId,
-                :targetEntityId,
-                :launchTime,
-                :landTime,
-                :action,
-                :status,
-                :fleetResStart,
-                :fleetResEnd,
-                :fleetShipsStart,
-                :fleetShipsEnd,
-                :entityResStart,
-                :entityResEnd,
-                :entityShipsStart,
-                :entityShipsEnd
-            )', [
-            'fleetId' => $fleetId,
-            'facility' => FleetLogFacility::CANCEL,
-            'timestamp' => time(),
-            'text' => sprintf('Treibstoff: %s Nahrung: %s Piloten: %s', $fuel, $food, $pilots),
-            'userId' => $userId,
-            'entityFromId' => $entityFromId,
-            'targetEntityId' => $targetEntityId,
-            'launchTime' => $launchTime,
-            'landTime' => $landTime,
-            'action' => $action,
-            'status' => $status,
-            'fleetResStart' => sprintf('%s:%s:%s:%s:%s:%s:0,f,', $resourceStart->metal, $resourceStart->crystal, $resourceStart->plastic, $resourceStart->fuel, $resourceStart->food, $resourceStart->people),
-            'fleetResEnd' => sprintf('%s:%s:%s:%s:%s:%s:0,f,', $resourcesEnd->metal, $resourcesEnd->crystal, $resourcesEnd->plastic, $resourcesEnd->fuel, $resourcesEnd->food, $resourcesEnd->people),
-            'fleetShipsStart' => '',
-            'fleetShipsEnd' => '',
-            'entityResStart' => 'untouched',
-            'entityResEnd' => 'untouched',
-            'entityShipsStart' => '',
-            'entityShipsEnd' => '',
-        ]);
+        $log = new FleetLog();
+        $log->setFleetId($fleetId);
+        $log->setFacility(FleetLogFacility::CANCEL);
+        $log->setTimestamp(time());
+        $log->setMessage(sprintf('Treibstoff: %s Nahrung: %s Piloten: %s', $fuel, $food, $pilots));
+        $log->setUserId($userId);
+        $log->setEntityUserId($userId);
+        $log->setEntityFrom($entityFromId);
+        $log->setEntityTo($targetEntityId);
+        $log->setLaunchTime($launchTime);
+        $log->setLandTime($landTime);
+        $log->setAction($action);
+        $log->setStatus($status);
+        $log->setFleetResStart(sprintf('%s:%s:%s:%s:%s:%s:0,f,', $resourceStart->metal, $resourceStart->crystal, $resourceStart->plastic, $resourceStart->fuel, $resourceStart->food, $resourceStart->people));
+        $log->setFleetResEnd(sprintf('%s:%s:%s:%s:%s:%s:0,f,', $resourcesEnd->metal, $resourcesEnd->crystal, $resourcesEnd->plastic, $resourcesEnd->fuel, $resourcesEnd->food, $resourcesEnd->people));
+        $log->setFleetShipsStart('');
+        $log->setFleetShipsEnd('');
+        $log->setEntityResStart('untouched');
+        $log->setEntityResEnd('untouched');
+        $log->setEntityShipsStart('');
+        $log->setEntityShipsEnd('');
+
+        $this->persist($log);
+        $this->save();
     }
 
     public function cleanup(int $threshold): int

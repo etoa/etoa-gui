@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace EtoA\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use EtoA\Fleet\FleetAction;
 use EtoA\Fleet\FleetRepository;
 use EtoA\Fleet\FleetStatus;
@@ -21,9 +23,9 @@ class Fleet
     #[ORM\ManyToOne(targetEntity: User::class)]
     protected User $user;
 
-    #[ORM\JoinColumn(name: 'leader_id', referencedColumnName: 'user_id')]
-    #[ORM\ManyToOne(targetEntity: User::class)]
-    protected ?User $leader = null;
+    #[ORM\JoinColumn(name: 'leader_id', referencedColumnName: 'id')]
+    #[ORM\ManyToOne(targetEntity: Fleet::class)]
+    protected ?Fleet $leader = null;
 
     #[ORM\JoinColumn(name: 'entity_from', referencedColumnName: 'id')]
     #[ORM\ManyToOne(targetEntity: Entity::class)]
@@ -114,7 +116,30 @@ class Fleet
     #[ORM\Column(type: "integer")]
     protected int $flag = 0;
 
+    protected int $peopleCapacity = 0;
+
+    protected int $capacity = 0;
+
+    #[ORM\OneToMany(mappedBy: 'fleet', targetEntity: FleetShip::class)]
+    #[ORM\JoinColumn(name: 'id', referencedColumnName: 'fs_fleet_id')]
+    protected Collection $fleetShips;
+
     protected FleetAction $fleetAction;
+
+    /**
+     * @var Collection<int, Ship>
+     */
+    #[ORM\JoinTable(name: 'fleet_ships')]
+    #[ORM\JoinColumn(name: 'fs_fleet_id', referencedColumnName: 'id')]
+    #[ORM\InverseJoinColumn(name: 'fs_ship_id', referencedColumnName: 'ship_id')]
+    #[ORM\ManyToMany(targetEntity: Ship::class)]
+    protected Collection $ships;
+
+    public function __construct()
+    {
+        $this->ships = new ArrayCollection();
+        $this->fleetShips = new ArrayCollection();
+    }
 
     public function getStatusCode():string
     {
@@ -506,14 +531,120 @@ class Fleet
         return $this;
     }
 
-    public function getLeader(): ?User
+    public function getLeader(): ?Fleet
     {
         return $this->leader;
     }
 
-    public function setLeader(?User $leader): static
+    public function setLeader(?Fleet $leader): static
     {
         $this->leader = $leader;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Ship>
+     */
+    public function getShips(): Collection
+    {
+        return $this->ships;
+    }
+
+    public function addShip(Ship $ship): static
+    {
+        if (!$this->ships->contains($ship)) {
+            $this->ships->add($ship);
+        }
+
+        return $this;
+    }
+
+    public function removeShip(Ship $ship): static
+    {
+        $this->ships->removeElement($ship);
+
+        return $this;
+    }
+
+    /**
+     * Returns the full passenger capacity
+     */
+    public function getPeopleCapacity():int
+    {
+        $this->peopleCapacity = 0;
+        foreach ($this->getShips() as $ship) {
+            $this->peopleCapacity += $ship->getPeopleCapacity();
+        }
+        return $this->peopleCapacity;
+    }
+
+    /**
+     * Returns the free space for passengers
+     */
+    public function getFreePeopleCapacity():int
+    {
+        return $this->getPeopleCapacity() - $this->resPeople;
+    }
+
+    /**
+     * Returns the full storage capacity
+     */
+    public function getCapacity():float
+    {
+        $this->capacity = 0;
+        $BCapa = 1;
+        foreach ($this->getShips() as $ship) {
+            $this->capacity += $ship->getCapacity();
+            $BCapa += $ship->getSpecialBonusCapacity() * 10;
+        }
+
+        return $this->capacity * $BCapa;
+    }
+
+    /**
+     * Returns the free storage capacity
+     */
+    public function getFreeCapacity():float
+    {
+        return $this->getCapacity()
+            - $this->usageFuel
+            - $this->usageFood
+            - $this->usagePower
+            - $this->resMetal
+            - $this->resCrystal
+            - $this->resPlastic
+            - $this->resFuel
+            - $this->resFood
+            - $this->resPower;
+    }
+
+    /**
+     * @return Collection<int, FleetShip>
+     */
+    public function getFleetShips(): Collection
+    {
+        return $this->fleetShips;
+    }
+
+    public function addFleetShip(FleetShip $fleetShip): static
+    {
+        if (!$this->fleetShips->contains($fleetShip)) {
+            $this->fleetShips->add($fleetShip);
+            $fleetShip->setFleet($this);
+        }
+
+        return $this;
+    }
+
+    public function removeFleetShip(FleetShip $fleetShip): static
+    {
+        if ($this->fleetShips->removeElement($fleetShip)) {
+            // set the owning side to null (unless already changed)
+            if ($fleetShip->getFleet() === $this) {
+                $fleetShip->setFleet(null);
+            }
+        }
 
         return $this;
     }

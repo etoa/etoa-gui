@@ -19,14 +19,20 @@ class FleetLog
     #[ORM\Column(type: "integer")]
     private int $userId;
 
+    #[ORM\Column(type: "integer")]
+    private int $fleetId;
+
+    #[ORM\Column(type: "integer")]
+    private int $entityUserId;
+
     #[ORM\Column]
     private string $action;
 
     #[ORM\Column(type: "integer")]
-    private int $entityFromId;
+    private int $entityFrom;
 
     #[ORM\Column(type: "integer")]
-    private int $entityToId;
+    private int $entityTo;
 
     #[ORM\Column(type: "integer")]
     private int $timestamp;
@@ -35,32 +41,28 @@ class FleetLog
     private int $facility;
 
     #[ORM\Column(type: "integer")]
-    private int $severity;
+    private int $severity = 1;
 
     #[ORM\Column(type: "integer")]
     private int $status;
 
-    #[ORM\Column(type: "integer")]
+    #[ORM\Column(name: "launchtime", type: "integer")]
     private int $launchTime;
 
-    #[ORM\Column(type: "integer")]
+    #[ORM\Column(name: "landtime", type: "integer")]
     private int $landTime;
 
-    /** @var array<int, int> */
-    #[ORM\Column(type: Types::JSON)]
-    private array $fleetShipsStart;
+    #[ORM\Column]
+    private string $fleetShipsStart;
 
-    /** @var array<int, int> */
-    #[ORM\Column(type: Types::JSON)]
-    private array $fleetShipsEnd;
+    #[ORM\Column]
+    private string $fleetShipsEnd;
 
-    /** @var array<int, int> */
-    #[ORM\Column(type: Types::JSON)]
-    private array $entityShipsStart;
+    #[ORM\Column]
+    private string $entityShipsStart;
 
-    /** @var array<int, int> */
-    #[ORM\Column(type: Types::JSON)]
-    private array $entityShipsEnd;
+    #[ORM\Column]
+    private string $entityShipsEnd;
 
     #[ORM\Column]
     private string $fleetResStart;
@@ -76,69 +78,6 @@ class FleetLog
 
     #[ORM\Column]
     private string $message;
-
-    /**
-     * @return array<int, int>
-     */
-    private function transformShips(string $shipString): array
-    {
-        $ships = [];
-        $shipEntries = array_filter(explode(',', $shipString));
-        foreach ($shipEntries as $entry) {
-            [$shipId, $count] = explode(":", $entry);
-            if ($shipId > 0) {
-                $ships[(int) $shipId] = (int) $count;
-            }
-        }
-
-        return $ships;
-    }
-
-    /**
-     * @return iterable<int, array{0: int, 1: int}>
-     */
-    public function iterateFleetShips(): iterable
-    {
-        $shipIds = array_unique(array_merge(array_keys($this->fleetShipsStart), array_keys($this->fleetShipsEnd)));
-        foreach ($shipIds as $shipId) {
-            yield $shipId => [$this->fleetShipsStart[$shipId] ?? 0, $this->fleetShipsEnd[$shipId] ?? 0];
-        }
-    }
-
-    /**
-     * @return iterable<int, array{0: int, 1: int}>
-     */
-    public function iterateEntityShips(): iterable
-    {
-        $shipIds = array_unique(array_merge(array_keys($this->entityShipsStart), array_keys($this->entityShipsEnd)));
-        foreach ($shipIds as $shipId) {
-            yield $shipId => [$this->entityShipsStart[$shipId] ?? 0, $this->entityShipsEnd[$shipId] ?? 0];
-        }
-    }
-
-    /**
-     * @return iterable<string, array{0: int, 1: int}>
-     */
-    public function iterateFleetResources(): iterable
-    {
-        $startResources = explode(":", $this->fleetResStart);
-        $endResources = explode(":", $this->fleetResEnd);
-        foreach (ResourceNames::NAMES as $k => $v) {
-            yield $v => [(int) $startResources[$k], (int) $endResources[$k]];
-        }
-    }
-
-    /**
-     * @return iterable<string, array{0: int, 1: int}>
-     */
-    public function iterateEntityResources(): iterable
-    {
-        $startResources = explode(":", $this->entityResStart);
-        $endResources = explode(":", $this->entityResEnd);
-        foreach (ResourceNames::NAMES as $k => $v) {
-            yield $v => [(int) $startResources[$k], (int) $endResources[$k]];
-        }
-    }
 
     public function getId(): ?int
     {
@@ -169,26 +108,26 @@ class FleetLog
         return $this;
     }
 
-    public function getEntityFromId(): ?int
+    public function getEntityFrom(): ?int
     {
-        return $this->entityFromId;
+        return $this->entityFrom;
     }
 
-    public function setEntityFromId(int $entityFromId): static
+    public function setEntityFrom(int $entityFrom): static
     {
-        $this->entityFromId = $entityFromId;
+        $this->entityFrom = $entityFrom;
 
         return $this;
     }
 
-    public function getEntityToId(): ?int
+    public function getEntityTo(): ?int
     {
-        return $this->entityToId;
+        return $this->entityTo;
     }
 
-    public function setEntityToId(int $entityToId): static
+    public function setEntityTo(int $entityTo): static
     {
-        $this->entityToId = $entityToId;
+        $this->entityTo = $entityTo;
 
         return $this;
     }
@@ -265,48 +204,48 @@ class FleetLog
         return $this;
     }
 
-    public function getFleetShipsStart(): array
+    public function getFleetShipsStart(): string
     {
         return $this->fleetShipsStart;
     }
 
-    public function setFleetShipsStart(array $fleetShipsStart): static
+    public function setFleetShipsStart(string $fleetShipsStart): static
     {
         $this->fleetShipsStart = $fleetShipsStart;
 
         return $this;
     }
 
-    public function getFleetShipsEnd(): array
+    public function getFleetShipsEnd(): string
     {
         return $this->fleetShipsEnd;
     }
 
-    public function setFleetShipsEnd(array $fleetShipsEnd): static
+    public function setFleetShipsEnd(string $fleetShipsEnd): static
     {
         $this->fleetShipsEnd = $fleetShipsEnd;
 
         return $this;
     }
 
-    public function getEntityShipsStart(): array
+    public function getEntityShipsStart(): string
     {
         return $this->entityShipsStart;
     }
 
-    public function setEntityShipsStart(array $entityShipsStart): static
+    public function setEntityShipsStart(string $entityShipsStart): static
     {
         $this->entityShipsStart = $entityShipsStart;
 
         return $this;
     }
 
-    public function getEntityShipsEnd(): array
+    public function getEntityShipsEnd(): string
     {
         return $this->entityShipsEnd;
     }
 
-    public function setEntityShipsEnd(array $entityShipsEnd): static
+    public function setEntityShipsEnd(string $entityShipsEnd): static
     {
         $this->entityShipsEnd = $entityShipsEnd;
 
@@ -369,6 +308,30 @@ class FleetLog
     public function setMessage(string $message): static
     {
         $this->message = $message;
+
+        return $this;
+    }
+
+    public function getFleetId(): ?int
+    {
+        return $this->fleetId;
+    }
+
+    public function setFleetId(int $fleetId): static
+    {
+        $this->fleetId = $fleetId;
+
+        return $this;
+    }
+
+    public function getEntityUserId(): ?int
+    {
+        return $this->entityUserId;
+    }
+
+    public function setEntityUserId(int $entityUserId): static
+    {
+        $this->entityUserId = $entityUserId;
 
         return $this;
     }

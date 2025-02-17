@@ -245,4 +245,12 @@ class Entity
             default => null,
         };
     }
+
+    public function displayOwner(): ?string
+    {
+        return match ($this->getCode()) {
+            EntityType::PLANET => $this->getPlanet()->getUser()?->getNick()??'Niemand',
+            default => 'Niemand',
+        };
+    }
 }

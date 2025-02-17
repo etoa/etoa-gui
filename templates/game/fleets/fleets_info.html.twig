@@ -1,0 +1,240 @@
+{% extends 'layout/game.html.twig' %}
+{% import 'macros.html.twig' as macros %}
+
+{% block content %}
+    <h1>Flotten</h1>
+
+    {% if msg.success is defined %}
+            {{ macros.successMessage(msg.success) }}
+    {% endif %}
+
+    <h2>Details</h2>
+    <table>
+        <tr>
+            <td colspan="3">
+                <div class="boxLayout fleetInfoContainer">
+                    <div class="infoboxtitle">
+                        <span>Flugdaten</span>
+                    </div>
+                    <div class="infoboxcontent">
+                        <div class="fleetInfoWrap">
+                            <div class="fleetInfoProgress" id="fleetProgress"></div>
+                            <div id="source" class="fleetInfoSource">
+                                {% if fleet.fleetAction.visibleSource %}
+                                    <img src="{{ fleet.entityFrom.getType.getImagePath }}" style="width:40px;height:40px;"/>
+                                    <br/>
+                                    <a href="?page=cell&amp;id= {{ fleet.entityFrom.cell.id }}">{{ fleet.entityFrom.toString }}</a><br/>
+                                {% else %}
+                                    {{ fleet.getSource.smallImage }} <br /> {{ fleet.getSource.entityCodeString }} <br />
+                                {% endif %}
+                                <b><span id="sourceLabel">Start</span>:</b> {{ formatTimestamp(fleet.launchTime) }}
+                            </div>
+                            <div class="fleetInfoAction">
+                                <div style="color: {{ fleet.fleetAction.color }} ">{{ fleet.fleetAction.name }}[{{ fleet.getStatusCode }}]</div>
+                                <div><span id="flighttime"></span> (<span id="flightPercent"></span>)</div>
+                            </div>
+                            <div id="target" class="fleetInfoTarget">
+                                <img src="{{ fleet.entityFrom.getType.getImagePath }}" style="width:40px;height:40px;"/><br/>
+                                <a href="?page=cell&amp;id= {{ fleet.entityTo.cell.id }}">{{ fleet.entityTo.toString }}</a><br/>
+                                <b><span id="targetLabel">Landung</span>: </b>{{ formatTimestamp(fleet.landTime) }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <div id="allianceBox" style="display:none;"></div>
+                    <twig:Table title="Piloten & Verbrauch" style="width:50%">
+                        {% block table_content %}
+                            <tr>
+                                <th style="width:150px;">{{ constant('EtoA\\Universe\\Resources\\ResIcons::PEOPLE')|raw }} Piloten:</th>
+                                <td class="tbldata">{{ formatNumber(fleet.pilots) }}</td>
+                            </tr>
+                            <tr>
+                                <th>{{ constant('EtoA\\Universe\\Resources\\ResIcons::FUEL')|raw }}
+                                    {{ constant('EtoA\\Universe\\Resources\\ResourceNames::FUEL') }}:</th>
+                                <td class="tbldata">{{ formatNumber(fleet.usageFuel) }}</td>
+                            </tr>
+                            <tr>
+                                <th>{{ constant('EtoA\\Universe\\Resources\\ResIcons::FOOD')|raw }}
+                                    {{ constant('EtoA\\Universe\\Resources\\ResourceNames::FOOD') }}:</th>
+                                <td class="tbldata">{{ formatNumber(fleet.usageFood) }}</td>
+                            </tr>
+                            <tr>
+                                <th>{{ constant('EtoA\\Universe\\Resources\\ResIcons::POWER')|raw }}
+                                    {{ constant('EtoA\\Universe\\Resources\\ResourceNames::POWER') }}:</th>
+                                <td class="tbldata">{{ formatNumber(fleet.usagePower) }}</td>
+                            </tr>
+                        {% endblock %}
+                    </twig:Table>
+                    <twig:Table title="Passagierraum" style="width:50%">
+                        {% block table_content %}
+                            <tr>
+                                <th>{{ constant('EtoA\\Universe\\Resources\\ResIcons::PEOPLE')|raw }} Passagiere</th>
+                                <td class="tbldata">{{ formatNumber(fleet.resPeople) }}</td>
+                            </tr>
+                            <tr>
+                                <th style="width:150px;">Freier Platz:</th><td class="tbldata">
+                                {{ formatNumber(fleet.getFreePeopleCapacity) }}</td>
+                            </tr>
+                            <tr>
+                                <th style="width:150px;">Totaler Platz:</th><td class="tbldata">
+                                {{ formatNumber(fleet.getPeopleCapacity) }}</td>
+                            </tr>
+                        {% endblock %}
+                    </twig:Table>
+                </td>
+            <td style="width:5%;vertical-align:top;"></td>
+            <td style="width:45%;vertical-align:top;">
+                <twig:Table title="Frachtraum" style="width:50%">
+                    {% block table_content %}
+                        <tr>
+                            <th>{{ constant('EtoA\\Universe\\Resources\\ResIcons::METAL')|raw }}
+                                {{ constant('EtoA\\Universe\\Resources\\ResourceNames::METAL') }}
+                            </th>
+                            <td class="tbldata">
+                                {{ formatNumber(fleet.resMetal) }} t
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>
+                                {{ constant('EtoA\\Universe\\Resources\\ResIcons::CRYSTAL')|raw }}
+                                {{ constant('EtoA\\Universe\\Resources\\ResourceNames::CRYSTAL') }}
+                            </th>
+                            <td class="tbldata" >
+                                {{ formatNumber(fleet.resCrystal) }} t
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>{{ constant('EtoA\\Universe\\Resources\\ResIcons::PLASTIC')|raw }}
+                                {{ constant('EtoA\\Universe\\Resources\\ResourceNames::PLASTIC') }}
+                            </th>
+                            <td class="tbldata">
+                                {{ formatNumber(fleet.resPlastic) }} t
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>
+                                {{ constant('EtoA\\Universe\\Resources\\ResIcons::FUEL')|raw }}
+                                {{ constant('EtoA\\Universe\\Resources\\ResourceNames::FUEL') }}
+                            </th>
+                            <td class="tbldata">
+                                {{ formatNumber(fleet.resFuel) }} t
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>
+                                {{ constant('EtoA\\Universe\\Resources\\ResIcons::FOOD')|raw }}
+                                {{ constant('EtoA\\Universe\\Resources\\ResourceNames::FOOD') }}
+                            </th>
+                            <td class="tbldata">
+                                {{ formatNumber(fleet.resFood) }} t
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>
+                                {{ constant('EtoA\\Universe\\Resources\\ResIcons::POWER')|raw }}
+                                {{ constant('EtoA\\Universe\\Resources\\ResourceNames::POWER') }}
+                            </th>
+                            <td class="tbldata">
+                                {{ formatNumber(fleet.resPower) }} t
+                            </td>
+                        </tr>
+                        <tr>
+                            <th style="width:150px;">Freier Frachtraum:</th>
+                            <td class="tbldata">
+                                {{ formatNumber(fleet.getFreeCapacity) }} t
+                            </td>
+                        </tr>
+                        <tr>
+                            <th style="width:150px;">Totaler Frachtraum:</th>
+                            <td class="tbldata">
+                                {{ formatNumber(fleet.getCapacity) }} t
+                            </td>
+                        </tr>
+                    {% endblock %}
+                </twig:Table>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="3">
+                {% if fleet.fleetShips %}
+                    <twig:Table title="Schiffe">
+                        {% block table_content %}
+                            <tr>
+                                <th colspan="2">Schifftyp</th>
+                                <th>Anzahl</th>
+                            </tr>
+                            {% for fleetShip in fleet.fleetShips %}
+                                <tr>
+                                    <td class="tbldata" style="width:40px;height: 40px;background:#000">
+                                        <img src="{{ fleetShip.ship.getImagePath('small') }}"/>
+                                    </td>
+                                    <td class="tbldata">
+                                        <b>{{ fleetShip.ship.name }}</b><br/>
+                                        {{ BBCodeToHTML(fleetShip.ship.shortComment) }}
+                                    </td>
+                                    <td class="tbldata" style="width:50px;">{{ formatNumber(fleetShip.count) }}</td>
+                                </tr>
+                            {% endfor %}
+                        {% endblock %}
+                    </twig:Table>
+                {% endif %}
+            </td>
+        </tr>
+    </table>
+
+    {{ form_start(form) }}
+        <a href="{{ path('game.fleets') }}">
+            <input type="button" value="Zurück zur Flottenübersicht"> &nbsp;
+        </a>
+        {% if valid >= constant('EtoA\\Alliance\\AllianceFleetControlLevel::SEND_HOME') and (fleet.status == 0 and fleet.leader) and fleet.landTime > 'now'|date('U') %}
+            {{ form_widget(form.cancelAlliance) }}
+        {% elseif
+            valid >= constant('EtoA\\Alliance\\AllianceFleetControlLevel::SEND_HOME_PART') and
+            (
+                (
+                    fleet.status == 0 and
+                    not fleet.leader
+                ) or
+                fleet.status == 3
+            ) and
+            fleet.landTime > 'now'|date('U') and
+            fleet.fleetAction.cancelable %}
+            {{ form_widget(form.cancel) }}
+        {% endif %}
+        {{ form_widget(form._token) }}
+    {{ form_end(form,{render_rest:false}) }}
+
+    <script type="text/javascript">
+        if (document.getElementById('flighttime') != null) {
+            cnt["flighttime"] = 0;
+            setCountdown('flighttime',{{ 'now' | date('U') }}, {{ fleet.landtime }});
+        }
+
+        let totalFlightTime = {{ fleet.landtime }} -{{ fleet.launchTime }};
+        function moveFleet(t) {
+            const objectWidth = 40;
+            const progrssWidth = $('.fleetInfoWrap').width() - (2 * objectWidth);
+            let perc = totalFlightTime  > 0 ? ((t - {{ fleet.launchTime }} ) / (totalFlightTime)) : 1;
+            perc = Math.min(1, perc);
+            let pxl = objectWidth + Math.round(perc * progrssWidth);
+            $('#fleetProgress').css('left', pxl + 'px');
+            $('#flightPercent').html(Math.round(perc * 100) + "%");
+            setTimeout(function() {
+                moveFleet(t + 0.05);
+            }, 50);
+        }
+        document.addEventListener("DOMContentLoaded", () => {
+            moveFleet({{ 'now'|date('U') }});
+        });
+    </script>
+
+    {% if fleet.action == "support" and fleet.status == 3 %}
+        <script type="text/javascript">
+            document.getElementById('targetLabel').innerHTML = 'Ende';
+        </script>
+    {% endif %}
+{% endblock %}
