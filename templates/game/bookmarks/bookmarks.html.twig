@@ -1,0 +1,15 @@
+{% extends 'layout/game.html.twig' %}
+{% block content %}
+    <h1>Favoriten</h1>
+    <twig:ResourceBox/>
+    {% set tabs = {
+        "game.bookmarks.target" : "Zielfavoriten",
+        "game.bookmarks.fleet" : "Flottenfavoriten",
+        "game.bookmarks.new" : "Neuer Flottenfavorit",
+    } %}
+
+    <twig:tabmenu data="{{ tabs }}" active="{{ app.request.attributes.get('_route') }}"/><br>
+    <br/>
+    {% block bookmarks %}
+    {% endblock %}
+{% endblock %}

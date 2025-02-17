@@ -105,4 +105,9 @@ class BaseResources
     {
         return $this->metal + $this->crystal + $this->plastic + $this->fuel + $this->food + $this->people;
     }
+
+    public function toString(): string
+    {
+        return $this->metal .','. $this->crystal .','. $this->plastic .','. $this->fuel .','. $this->food .','. $this->people;
+    }
 }

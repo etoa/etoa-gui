@@ -6,6 +6,8 @@ namespace EtoA\Bookmark;
 
 use Doctrine\Persistence\ManagerRegistry;
 use EtoA\Core\AbstractRepository;
+use EtoA\Entity\Bookmark;
+use EtoA\Entity\User;
 
 class BookmarkRepository extends AbstractRepository
 {
@@ -17,33 +19,30 @@ class BookmarkRepository extends AbstractRepository
     /**
      * @return array<Bookmark>
      */
-    public function findForUser(int $userId, BookmarkOrder $order = null): array
+    public function findForUser(User $user, BookmarkOrder $order = null): array
     {
-        $qb = $this->createQueryBuilder('q')
-            ->select('bookmarks.*')
-            ->addSelect('entities.code as entityCode')
-            ->from('bookmarks')
-            ->innerJoin('bookmarks', 'entities', 'entities', 'bookmarks.entity_id = entities.id')
-            ->where('bookmarks.user_id = :userId')
+        $qb = $this->createQueryBuilder('bookmarks')
+            ->select()
+            ->innerJoin('App:Entity', 'entities', 'WITH', 'bookmarks.entity = entities.id')
+            ->where('bookmarks.user = :user')
             ->setParameters([
-                'userId' => $userId,
+                'user' => $user,
             ]);
 
         if ($order !== null) {
             if ($order->order === BookmarkOrder::ORDER_OWNER) {
                 $qb
-                    ->leftJoin('bookmarks', 'planets', 'planets', 'bookmarks.entity_id = planets.id')
-                    ->leftJoin('planets', 'users', 'users', 'planets.planet_user_id = users.user_id');
+                    ->leftJoin('App:Planet', 'planets', 'WITH', 'bookmarks.entity = planets.id')
+                    ->leftJoin('App:User', 'users', 'WITH', 'planets.user = users.id');
             }
 
             $qb
                 ->orderBy($order->order, $order->direction);
         }
 
-        $data = $qb
-            ->fetchAllAssociative();
-
-        return array_map(fn ($arr) => new Bookmark($arr), $data);
+        return $qb
+            ->getQuery()
+            ->execute();
     }
 
     /**

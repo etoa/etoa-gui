@@ -6,6 +6,7 @@ namespace EtoA\Bookmark;
 
 use Doctrine\Persistence\ManagerRegistry;
 use EtoA\Core\AbstractRepository;
+use EtoA\Entity\FleetBookmark;
 use EtoA\Universe\Resources\BaseResources;
 
 class FleetBookmarkRepository extends AbstractRepository

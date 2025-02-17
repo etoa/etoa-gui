@@ -1,0 +1,32 @@
+{% extends 'game/bookmarks/bookmarks.html.twig' %}
+{% import 'macros.html.twig' as macros %}
+
+{% block bookmarks %}
+    {% if msg.success is defined %}
+        {{ macros.successMessage(msg.success) }}
+    {% endif %}
+
+    {% if msg.error is defined %}
+        {{ macros.errorMessage(msg.error) }}
+    {% endif %}
+    {{ form_start(form) }}
+        <twig:Table title="Favorit bearbeiten">
+            {% block table_content %}
+                <tr>
+                    <th>Koordinaten</th>
+                    <td>{{ form.vars.value.entity.toString }} {{ form.vars.value.entity.displayName }}</td>
+                </tr>
+                <tr>
+                    <th>Kommentar</th>
+                    <td>
+                        {{ form_widget(form.comment) }}
+                    </td>
+                </tr>
+            {% endblock %}
+        </twig:Table>
+        {{ form_widget(form.save) }}&nbsp;
+        <a href="{{ path('game.bookmarks.target') }}">
+            <input type="button" value="Zurück" />
+        </a>
+    {{ form_end(form) }}
+{% endblock %}
