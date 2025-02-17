@@ -2,6 +2,7 @@
 
 namespace EtoA\Entity;
 
+use EtoA\Message\ReportData\SpyReportData;
 use EtoA\Message\ReportRepository;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -29,23 +30,36 @@ class Report
     #[ORM\Column(type: "boolean")]
     private bool $archived;
 
-    #[ORM\Column(type: "integer")]
-    private int $userId;
+    #[ORM\JoinColumn(name: 'user_id', referencedColumnName: 'user_id')]
+    #[ORM\ManyToOne(targetEntity: User::class)]
+    private ?User $user = null;
 
-    #[ORM\Column(type: "integer")]
-    private int $allianceId;
+    #[ORM\JoinColumn(name: 'alliance_id', referencedColumnName: 'alliance_id')]
+    #[ORM\ManyToOne(targetEntity: Alliance::class)]
+    private ?Alliance $alliance = null;
 
     #[ORM\Column(type: "string")]
     private ?string $content;
 
-    #[ORM\Column(type: "integer")]
-    private int $entity1Id;
+    #[ORM\JoinColumn(name: 'entity1_id', referencedColumnName: 'id')]
+    #[ORM\ManyToOne(targetEntity: Entity::class)]
+    private ?Entity $entity1 = null;
 
-    #[ORM\Column(type: "integer")]
-    private int $entity2Id;
+    #[ORM\JoinColumn(name: 'entity2_id', referencedColumnName: 'id')]
+    #[ORM\ManyToOne(targetEntity: Entity::class)]
+    private ?Entity $entity2 = null;
 
-    #[ORM\Column(name:"opponent1_id", type: "integer")]
-    private int $opponentId;
+    #[ORM\JoinColumn(name: 'opponent1_id', referencedColumnName: 'user_id')]
+    #[ORM\ManyToOne(targetEntity: User::class)]
+    private ?User $opponent1 = null;
+
+    #[ORM\OneToOne(inversedBy: 'id', targetEntity: SpyReportData::class)]
+    #[ORM\JoinColumn(name: 'id', referencedColumnName: 'id')]
+    private SpyReportData $spyReportData;
+
+    #[ORM\OneToOne(inversedBy: 'id', targetEntity: MarketReportData::class)]
+    #[ORM\JoinColumn(name: 'id', referencedColumnName: 'id')]
+    private MarketReportData $marketReportData;
 
     public static function createFromArray(array $data): Report
     {
@@ -143,30 +157,6 @@ class Report
         return $this;
     }
 
-    public function getUserId(): ?int
-    {
-        return $this->userId;
-    }
-
-    public function setUserId(int $userId): static
-    {
-        $this->userId = $userId;
-
-        return $this;
-    }
-
-    public function getAllianceId(): ?int
-    {
-        return $this->allianceId;
-    }
-
-    public function setAllianceId(int $allianceId): static
-    {
-        $this->allianceId = $allianceId;
-
-        return $this;
-    }
-
     public function getContent(): ?string
     {
         return $this->content;
@@ -179,38 +169,86 @@ class Report
         return $this;
     }
 
-    public function getEntity1Id(): ?int
+    public function getUser(): ?User
     {
-        return $this->entity1Id;
+        return $this->user;
     }
 
-    public function setEntity1Id(int $entity1Id): static
+    public function setUser(?User $user): static
     {
-        $this->entity1Id = $entity1Id;
+        $this->user = $user;
 
         return $this;
     }
 
-    public function getEntity2Id(): ?int
+    public function getAlliance(): ?Alliance
     {
-        return $this->entity2Id;
+        return $this->alliance;
     }
 
-    public function setEntity2Id(int $entity2Id): static
+    public function setAlliance(?Alliance $alliance): static
     {
-        $this->entity2Id = $entity2Id;
+        $this->alliance = $alliance;
 
         return $this;
     }
 
-    public function getOpponentId(): ?int
+    public function getEntity1(): ?Entity
     {
-        return $this->opponentId;
+        return $this->entity1;
     }
 
-    public function setOpponentId(int $opponentId): static
+    public function setEntity1(?Entity $entity1): static
     {
-        $this->opponentId = $opponentId;
+        $this->entity1 = $entity1;
+
+        return $this;
+    }
+
+    public function getEntity2(): ?Entity
+    {
+        return $this->entity2;
+    }
+
+    public function setEntity2(?Entity $entity2): static
+    {
+        $this->entity2 = $entity2;
+
+        return $this;
+    }
+
+    public function getOpponent1(): ?User
+    {
+        return $this->opponent1;
+    }
+
+    public function setOpponent1(?User $opponent1): static
+    {
+        $this->opponent1 = $opponent1;
+
+        return $this;
+    }
+
+    public function getSpyReportData(): ?SpyReportData
+    {
+        return $this->spyReportData;
+    }
+
+    public function setSpyReportData(?SpyReportData $spyReportData): static
+    {
+        $this->spyReportData = $spyReportData;
+
+        return $this;
+    }
+
+    public function getMarketReportData(): ?MarketReportData
+    {
+        return $this->marketReportData;
+    }
+
+    public function setMarketReportData(?MarketReportData $marketReportData): static
+    {
+        $this->marketReportData = $marketReportData;
 
         return $this;
     }

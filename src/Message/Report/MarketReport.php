@@ -3,9 +3,9 @@
 namespace EtoA\Message\Report;
 
 use EtoA\Core\Database\PropertyAssign;
+use EtoA\Entity\MarketReportData;
 use EtoA\Entity\Report;
 use EtoA\Message\ReportContext;
-use EtoA\Message\ReportData\MarketReportData;
 
 class MarketReport extends Report implements ReportInterface
 {

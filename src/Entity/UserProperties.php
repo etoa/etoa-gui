@@ -32,10 +32,10 @@ class UserProperties
     private string $itemOrderDef = 'name';
 
     #[ORM\Column(type: "string")]
-    private string $itemOrderBookmark = 'bookmarks.id';
+    private ?string $itemOrderBookmark = 'bookmarks.id';
 
     #[ORM\Column(type: "string")]
-    private string $itemOrderWay = 'ASC';
+    private ?string $itemOrderWay = 'ASC';
 
     #[ORM\Column(type: "boolean")]
     private bool $imageFilter = true;
@@ -165,7 +165,7 @@ class UserProperties
         return $this->itemOrderBookmark;
     }
 
-    public function setItemOrderBookmark(string $itemOrderBookmark): static
+    public function setItemOrderBookmark(?string $itemOrderBookmark): static
     {
         $this->itemOrderBookmark = $itemOrderBookmark;
 
@@ -177,7 +177,7 @@ class UserProperties
         return $this->itemOrderWay;
     }
 
-    public function setItemOrderWay(string $itemOrderWay): static
+    public function setItemOrderWay(?string $itemOrderWay): static
     {
         $this->itemOrderWay = $itemOrderWay;
 

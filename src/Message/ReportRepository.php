@@ -7,9 +7,10 @@ namespace EtoA\Message;
 use Doctrine\DBAL\ArrayParameterType;
 use Doctrine\Persistence\ManagerRegistry;
 use EtoA\Core\AbstractRepository;
+use EtoA\Entity\MarketReportData;
 use EtoA\Entity\Report;
+use EtoA\Entity\User;
 use EtoA\Message\ReportData\BattleReportData;
-use EtoA\Message\ReportData\MarketReportData;
 use EtoA\Message\ReportData\OtherReportData;
 use EtoA\Message\ReportData\SpyReportData;
 
@@ -38,9 +39,9 @@ class ReportRepository extends AbstractRepository
             ->fetchOne();
     }
 
-    public function countUserUnread(int $userId): int
+    public function countUserUnread(User $user): int
     {
-        return $this->count(['userId'=>$userId,'read'=>0,'deleted'=>0]);
+        return $this->count(['user'=>$user,'read'=>0,'deleted'=>0]);
     }
 
     /**
