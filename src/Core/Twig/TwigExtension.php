@@ -70,6 +70,7 @@ class TwigExtension extends AbstractExtension
             new TwigFunction('tm', [$this, 'tm']),
             new TwigFunction('icon', [$this, 'icon']),
             new TwigFunction('banner', [$this, 'getBannerValues']),
+            new TwigFunction('formatPercentString', [$this, 'formatPercentString']),
         ];
     }
 
@@ -262,5 +263,10 @@ class TwigExtension extends AbstractExtension
     public function base64(string $value): string
     {
         return base64_encode($value);
+    }
+
+    public function formatPercentString($val, bool $colors = false, bool $inverse = false):string
+    {
+        return StringUtils::formatPercentString($val, $colors, $inverse);
     }
 }
