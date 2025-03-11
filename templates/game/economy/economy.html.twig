@@ -1,0 +1,63 @@
+{% extends 'layout/game.html.twig' %}
+
+{% block content %}
+    <h1>Wirtschaft des Planeten {{ planet.name }}</h1>
+    <twig:ResourceBox/>
+    {% if prodIncludingBoni %}
+        {{ form_start(form) }}
+            <twig:Table title="Rohstoffproduktion und Energieverbrauch">
+                {% block table_content %}
+                    <tr>
+                        <th style="width:200px;">Gebäude</th>
+                        <th class="resmetalcolor"> {{ constant('EtoA\\Universe\\Resources\\ResourceNames::METAL') }} </th>
+                        <th class="rescrystalcolor"> {{ constant('EtoA\\Universe\\Resources\\ResourceNames::CRYSTAL') }} </th>
+                        <th class="resplasticcolor"> {{ constant('EtoA\\Universe\\Resources\\ResourceNames::PLASTIC') }} </th>
+                        <th class="resfuelcolor"> {{ constant('EtoA\\Universe\\Resources\\ResourceNames::FUEL') }} </th>
+                        <th class="resfoodcolor"> {{ constant('EtoA\\Universe\\Resources\\ResourceNames::FOOD') }} </th>
+                        <th class="respowercolor" colspan="2"> {{ constant('EtoA\\Universe\\Resources\\ResourceNames::POWER') }} </th>
+                    </tr>
+                    {% for key,prod in prodIncludingBoni %}
+                        <tr>
+                            <td>
+                                {{ prod.name }} ({{ prod.level }})
+                                {% if prod.prod == 0 %}
+                                    <br/><span style="color:red;" class='textSmall'>Produktion ausgeschaltet!</span>
+                                {% endif %}
+                            </td>
+                                {% for resourceKey in resourceKeys %}
+                                    {% if resourceKey == 'fuel' %}
+                                        <td {{ tm(
+                                            "Grundproduktion ohne Boni", formatNumber(bareBuildingProduction[key][resourceKey]|round(0, 'floor'))~
+                                            ' t/h '~'<br/>'~fuelBonus)|raw}}>
+                                            {{ formatNumber(prod[resourceKey]) }}
+                                        </td>
+                                    {% else %}
+                                        <td {{ tm(
+                                            "Grundproduktion ohne Boni", formatNumber(bareBuildingProduction[key][resourceKey]|round(0, 'floor'))~
+                                            ' t/h')|raw}}>
+                                            {{ formatNumber(prod[resourceKey]) }}
+                                        </td>
+                                    {% endif %}
+                                {% endfor %}
+                            <td
+                                {% if prod['power'] %}
+                                    style="color:#f00"
+                                {% endif %}
+                            >
+                                {{ prod['power'] }}
+                            </td>
+                            <td>
+                                {{ form_widget(form[key]) }}
+                                {% if prod['type'] == constant('EtoA\\Building\\BuildingTypeId::RES') %}
+                                {% elseif key == constant('EtoA\\Building\\BuildingId::MISSILE') or constant('EtoA\\Building\\BuildingId::CRYPTO') %}
+                                {% else %}
+
+                                {% endif%}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                {% endblock %}
+            </twig:Table>
+        {{ form_end(form) }}
+    {% endif %}
+{% endblock %}

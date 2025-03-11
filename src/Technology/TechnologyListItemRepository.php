@@ -8,6 +8,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use EtoA\Core\AbstractRepository;
 use EtoA\Entity\TechnologyListItem;
+use EtoA\Entity\User;
 use EtoA\Universe\Entity\EntityRepository;
 
 class TechnologyListItemRepository extends AbstractRepository
@@ -20,24 +21,21 @@ class TechnologyListItemRepository extends AbstractRepository
     /**
      * @return TechnologyListItem[]
      */
-    public function findForUser(int $userId, int $endTimeAfter = null): array
+    public function findForUser(User $user, int $endTimeAfter = null): array
     {
         $qb = $this->createQueryBuilder('q')
-            ->select('*')
-            ->from('techlist')
-            ->where('techlist_user_id = :userId')
-            ->setParameter('userId', $userId);
+            ->where('q.user = :user')
+            ->setParameter('user', $user);
 
-        if ($endTimeAfter !== null) {
+        if ($endTimeAfter) {
             $qb
-                ->andWhere('techlist_build_end_time > :time')
+                ->andWhere('q.endTime > :time')
                 ->setParameter('time', $endTimeAfter);
         }
 
-        $data = $qb
-            ->fetchAllAssociative();
-
-        return array_map(fn ($row) => TechnologyListItem::createFromData($row), $data);
+        return $qb
+            ->getQuery()
+            ->execute();
     }
 
     public function getEntry(int $id): ?TechnologyListItem

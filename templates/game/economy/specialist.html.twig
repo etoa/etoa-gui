@@ -1,0 +1,127 @@
+{% extends 'layout/game.html.twig' %}
+{% import 'macros.html.twig' as macros %}
+
+{% block content %}
+    <h1>Spezialisten</h1>
+    <twig:ResourceBox/>
+    {% if msg.success is defined %}
+        {{ macros.successMessage(msg.success) }}
+    {% endif %}
+
+    {% if app.user.data.specialist and (app.user.data.specialistTime > 'now'|date('U')) %}
+        {{ form_start(form_discharge) }}
+            <twig:Table title="Momentan eingestellter Spezialist">
+                {% block table_content %}
+                    <tr>
+                        <th>Funktion</th>
+                        <th>Angestellt bis</th>
+                        <th>Verbleibende Zeit</th>
+                        <th>Aktionen</th>
+                    </tr>
+                    <tr>
+                        <td> {{ app.user.data.specialist.name }} </td>
+                        <td> {{ formatTimestamp(app.user.data.specialistTime) }} </td>
+                        <td id="countDownElem">
+                            {% if app.user.data.specialistTime - 'now'|date('U') > 0 %}
+                                {{ formatTimespan(app.user.data.specialistTime - 'now'|date('U')) }}
+                            {% else %}
+                                Anstellung abgelaufen!
+                            {% endif %}
+                        </td>
+                        <td id="dischargeElem">
+                            {% if app.user.data.specialistTime - 'now'|date('U') > 0 %}
+                                {{ form_widget(form_discharge.discharge)}}
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endblock %}
+            </twig:Table>
+            {{ form_widget(form_discharge._token) }}
+        {{ form_end(form_discharge,{render_rest:false}) }}
+        <script type="text/javascript">
+            if (document.getElementById('countDownElem') != null) {
+                cnt["countDownElem"] = 0;
+                setCountdown('countDownElem', {{ 'now' | date('U') }}, {{ app.user.data.specialistTime }}, 'dischargeElem');
+            }
+        </script>
+    {% endif %}
+    {% if not app.user.data.specialist %}
+        {{ form_start(form_specialists) }}
+    {% endif %}
+        <twig:Table title="Galaktisches Arbeitsamt helpLink('specialists')">
+        {% block table_content %}
+            <tr>
+                <th>Name</th>
+                <th>Benötigte Punkte</th>
+                <th>Anstellbar für</th>
+                <th>Verfügbar</th>
+                <th>Kosten</th>
+                {% if not app.user.data.specialist %}
+                    <th>Auswahl</th>
+                {% endif %}
+            </tr>
+            {% for specialist in form_specialists.children.specialist.vars.choices %}
+                <tr>
+                    <th style="width:140px;"> {{ specialist.data.name }} </th>
+                    <td>
+                        {{ formatNumber(specialist.data.pointsRequirement) }}
+                        </td>
+                    <td>
+                        {{ specialist.data.days }}  Tage
+                        </td>
+                    <td style="color:
+                        {% if specialistService.getAvailable(specialist.data) %}
+                            '#0f0'
+                        {% else %}
+                            '#f90'
+                        {% endif %}"
+                    >
+                        {{ specialistService.getAvailable(specialist.data) }} / {{ specialistService.getTotalAvailable }}
+                    </td>
+                    <td style="width:150px;">
+                        {{ constant('EtoA\\Universe\\Resources\\ResIcons::METAL')|raw }} {{ formatNumber(specialist.data.costsMetal
+                        * specialistService.getFactor(specialist.data)) }}   {{ constant('EtoA\\Universe\\Resources\\ResourceNames::METAL') }} <br style="clear:both;"/>
+                        {{ constant('EtoA\\Universe\\Resources\\ResIcons::CRYSTAL')|raw }}
+                        {{ formatNumber(specialist.data.costsCrystal * specialistService.getFactor(specialist.data)) }}   {{ constant('EtoA\\Universe\\Resources\\ResourceNames::CRYSTAL') }} <br style="clear:both;"/>
+                        {{ constant('EtoA\\Universe\\Resources\\ResIcons::PLASTIC')|raw }}
+                        {{ formatNumber(specialist.data.costsPlastic * specialistService.getFactor(specialist.data)) }}   {{ constant('EtoA\\Universe\\Resources\\ResourceNames::PLASTIC') }} <br style="clear:both;"/>
+                        {{ constant('EtoA\\Universe\\Resources\\ResIcons::FUEL')|raw }}  {{ formatNumber(specialist.data.costsFuel
+                        * specialistService.getFactor(specialist.data)) }}   {{ constant('EtoA\\Universe\\Resources\\ResourceNames::FUEL') }} <br style="clear:both;"/>
+                        {{ constant('EtoA\\Universe\\Resources\\ResIcons::FOOD')|raw }}  {{ formatNumber(specialist.data.costsFood
+                        * specialistService.getFactor(specialist.data)) }}   {{ constant('EtoA\\Universe\\Resources\\ResourceNames::FOOD') }} <br style="clear:both;"/>
+                    </td>
+                    {% if not app.user.data.specialist %}
+                        <td>
+                            {% if specialistService.getAvailable(specialist.data) %}
+                                {% if
+                                    planet.resMetal  >= (specialist.data.costsMetal * specialistService.getFactor(specialist.data)) and
+                                    planet.resCrystal >= (specialist.data.costsCrystal * specialistService.getFactor(specialist.data)) and
+                                    planet.resPlastic >= (specialist.data.costsPlastic * specialistService.getFactor(specialist.data)) and
+                                    planet.resFuel >= (specialist.data.costsFuel * specialistService.getFactor(specialist.data)) and
+                                    planet.resFood >= (specialist.data.costsFood * specialistService.getFactor(specialist.data)) and
+                                    app.user.data.points >= specialist.data.pointsRequirement
+                                %}
+                                    {{ form_widget(form_specialists.children.specialist.children[loop.index0]) }}
+                                {% else %}
+                                    Zuwenig Rohstoffe/Punkte
+                                {% endif %}
+                            {% else %}
+                                Zurzeit nicht verfügbar!
+                            {% endif %}
+                        </td>
+                    {% endif %}
+                </tr>
+            {% endfor %}
+        {% endblock %}
+        </twig:Table>
+    {% if not app.user.data.specialist %}
+        {{ form_widget(form_specialists.engage) }}
+        {{ form_widget(form_specialists._token) }}
+        {{ form_end(form_specialists,{render_rest:false}) }}
+    {% endif %}
+    <div><br/>
+        <a href="{{path('game.economy',{id:planet.id})}}">
+            <input type="button" value="Wirtschaft des aktuellen Planeten anzeigen" />
+        </a>
+    </div>
+{% endblock %}

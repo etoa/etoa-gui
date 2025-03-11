@@ -1,0 +1,34 @@
+{% extends 'layout/game.html.twig' %}
+{% import 'macros.html.twig' as macros %}
+
+{% block content %}
+    <h1>Wirtschaftsübersicht</h1>
+    <twig:Table title="Rohstoffe und Bewohner">
+    {% block table_content %}
+        <tr>
+            <th>Name:</th>
+            <th>{{ constant('EtoA\\Universe\\Resources\\ResourceNames::METAL') }}</th>
+            <th>{{ constant('EtoA\\Universe\\Resources\\ResourceNames::CRYSTAL') }}</th>
+            <th>{{ constant('EtoA\\Universe\\Resources\\ResourceNames::PLASTIC') }}</th>
+            <th>{{ constant('EtoA\\Universe\\Resources\\ResourceNames::FUEL') }}</th>
+            <th>{{ constant('EtoA\\Universe\\Resources\\ResourceNames::FOOD') }}</th>
+            <th>Bewohner</th>
+        </tr>
+        {{ ress|raw }}
+    {% endblock %}
+    </twig:Table>
+    <twig:Table title="Produktion">
+    {% block table_content %}
+        <tr>
+            <th>Name:</th>
+            <th>{{ constant('EtoA\\Universe\\Resources\\ResourceNames::METAL') }}</th>
+            <th>{{ constant('EtoA\\Universe\\Resources\\ResourceNames::CRYSTAL') }}</th>
+            <th>{{ constant('EtoA\\Universe\\Resources\\ResourceNames::PLASTIC') }}</th>
+            <th>{{ constant('EtoA\\Universe\\Resources\\ResourceNames::FUEL') }}</th>
+            <th>{{ constant('EtoA\\Universe\\Resources\\ResourceNames::FOOD') }}</th>
+            <th>Energie</th>
+        </tr>
+        {{ prod|raw }}
+    {% endblock %}
+</twig:Table>
+{% endblock %}
