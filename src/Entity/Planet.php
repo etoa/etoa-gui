@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace EtoA\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use EtoA\Core\ObjectWithImage;
 use EtoA\Universe\Entity\AbstractEntity;
@@ -43,9 +45,6 @@ class Planet extends AbstractEntity implements ObjectWithImage
     #[ORM\JoinColumn(name: 'planet_type_id', referencedColumnName: 'type_id')]
     #[ORM\ManyToOne(targetEntity: PlanetType::class)]
     private PlanetType $planetType;
-
-    #[ORM\Column(name: "planet_type_id", type: "integer")]
-    private int $typeId;
 
     #[ORM\Column(name: "planet_fields", type: "integer")]
     private int $fields;
@@ -167,6 +166,25 @@ class Planet extends AbstractEntity implements ObjectWithImage
     #[ORM\Column(name: "invadedby", type: "integer")]
     private int $invadedBy;
     private array $allowedFleetActions = [];
+
+    #[ORM\OneToMany(mappedBy: 'entity', targetEntity: BuildingListItem::class)]
+    #[ORM\JoinColumn(name: 'id', referencedColumnName: 'buildlist_entity_id')]
+    private Collection $buildlist;
+
+    #[ORM\OneToMany(mappedBy: 'entity', targetEntity: DefenseListItem::class)]
+    #[ORM\JoinColumn(name: 'id', referencedColumnName: 'deflist_entity_id')]
+    private Collection $deflist;
+
+    #[ORM\OneToMany(mappedBy: 'entity', targetEntity: ShipListItem::class)]
+    #[ORM\JoinColumn(name: 'id', referencedColumnName: 'shiplist_entity_id')]
+    private Collection $shiplist;
+
+    public function __construct()
+    {
+        $this->buildlist = new ArrayCollection();
+        $this->deflist = new ArrayCollection();
+        $this->shiplist = new ArrayCollection();
+    }
 
     public function displayName(): string
     {
@@ -736,6 +754,96 @@ class Planet extends AbstractEntity implements ObjectWithImage
     public function setEntity(?Entity $entity): static
     {
         $this->entity = $entity;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, BuildingListItem>
+     */
+    public function getBuildlist(): Collection
+    {
+        return $this->buildlist;
+    }
+
+    public function addBuildlist(BuildingListItem $buildlist): static
+    {
+        if (!$this->buildlist->contains($buildlist)) {
+            $this->buildlist->add($buildlist);
+            $buildlist->setEntity($this);
+        }
+
+        return $this;
+    }
+
+    public function removeBuildlist(BuildingListItem $buildlist): static
+    {
+        if ($this->buildlist->removeElement($buildlist)) {
+            // set the owning side to null (unless already changed)
+            if ($buildlist->getEntity() === $this) {
+                $buildlist->setEntity(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, DefenseListItem>
+     */
+    public function getDeflist(): Collection
+    {
+        return $this->deflist;
+    }
+
+    public function addDeflist(DefenseListItem $deflist): static
+    {
+        if (!$this->deflist->contains($deflist)) {
+            $this->deflist->add($deflist);
+            $deflist->setEntity($this);
+        }
+
+        return $this;
+    }
+
+    public function removeDeflist(DefenseListItem $deflist): static
+    {
+        if ($this->deflist->removeElement($deflist)) {
+            // set the owning side to null (unless already changed)
+            if ($deflist->getEntity() === $this) {
+                $deflist->setEntity(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, ShipListItem>
+     */
+    public function getShiplist(): Collection
+    {
+        return $this->shiplist;
+    }
+
+    public function addShiplist(ShipListItem $shiplist): static
+    {
+        if (!$this->shiplist->contains($shiplist)) {
+            $this->shiplist->add($shiplist);
+            $shiplist->setEntity($this);
+        }
+
+        return $this;
+    }
+
+    public function removeShiplist(ShipListItem $shiplist): static
+    {
+        if ($this->shiplist->removeElement($shiplist)) {
+            // set the owning side to null (unless already changed)
+            if ($shiplist->getEntity() === $this) {
+                $shiplist->setEntity(null);
+            }
+        }
 
         return $this;
     }

@@ -238,9 +238,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\JoinColumn(name: 'user_id', referencedColumnName: 'planet_user_id')]
     private Collection $planets;
 
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: TechnologyListItem::class)]
+    #[ORM\JoinColumn(name: 'user_id', referencedColumnName: 'techlist_user_id')]
+    private Collection $techlist;
+
     public function __construct()
     {
         $this->planets = new ArrayCollection();
+        $this->techlist = new ArrayCollection();
     }
 
     public function __toString() {
@@ -1092,6 +1097,36 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             // set the owning side to null (unless already changed)
             if ($planet->getUser() === $this) {
                 $planet->setUser(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, TechnologyListItem>
+     */
+    public function getTechlist(): Collection
+    {
+        return $this->techlist;
+    }
+
+    public function addTechlist(TechnologyListItem $techlist): static
+    {
+        if (!$this->techlist->contains($techlist)) {
+            $this->techlist->add($techlist);
+            $techlist->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeTechlist(TechnologyListItem $techlist): static
+    {
+        if ($this->techlist->removeElement($techlist)) {
+            // set the owning side to null (unless already changed)
+            if ($techlist->getUser() === $this) {
+                $techlist->setUser(null);
             }
         }
 

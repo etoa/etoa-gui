@@ -16,18 +16,17 @@ class DefenseListItem
     #[ORM\Column(name: "deflist_id", type: "integer")]
     private int $id;
 
-    #[ORM\Column(name: "deflist_user_id", type: "integer")]
-    private int $userId;
+    #[ORM\JoinColumn(name: 'deflist_user_id', referencedColumnName: 'user_id')]
+    #[ORM\ManyToOne(targetEntity: User::class)]
+    private ?User $user = null;
 
-    #[ORM\Column(name: "deflist_def_id", type: "integer")]
-    private int $defenseId;
+    #[ORM\JoinColumn(name: 'deflist_def_id', referencedColumnName: 'def_id')]
+    #[ORM\ManyToOne(targetEntity: Defense::class)]
+    private ?Defense $defense = null;
 
-    #[ORM\Column(name: "deflist_entity_id", type: "integer")]
-    private int $entityId;
-
-    #[ORM\ManyToOne(targetEntity: Entity::class)]
+    #[ORM\ManyToOne(targetEntity: Planet::class)]
     #[ORM\JoinColumn(name: 'deflist_entity_id', referencedColumnName: 'id')]
-    private Entity $entity;
+    private Planet $entity;
 
     #[ORM\Column(name: "deflist_count", type: "integer")]
     private int $count = 0;
@@ -61,42 +60,6 @@ class DefenseListItem
         return $this->id;
     }
 
-    public function getUserId(): ?int
-    {
-        return $this->userId;
-    }
-
-    public function setUserId(int $userId): static
-    {
-        $this->userId = $userId;
-
-        return $this;
-    }
-
-    public function getDefenseId(): ?int
-    {
-        return $this->defenseId;
-    }
-
-    public function setDefenseId(int $defenseId): static
-    {
-        $this->defenseId = $defenseId;
-
-        return $this;
-    }
-
-    public function getEntityId(): ?int
-    {
-        return $this->entityId;
-    }
-
-    public function setEntityId(int $entityId): static
-    {
-        $this->entityId = $entityId;
-
-        return $this;
-    }
-
     public function getCount(): ?int
     {
         return $this->count;
@@ -109,14 +72,38 @@ class DefenseListItem
         return $this;
     }
 
-    public function getEntity(): ?Entity
+    public function getEntity(): ?Planet
     {
         return $this->entity;
     }
 
-    public function setEntity(?Entity $entity): static
+    public function setEntity(?Planet $entity): static
     {
         $this->entity = $entity;
+
+        return $this;
+    }
+
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
+
+    public function setUser(?User $user): static
+    {
+        $this->user = $user;
+
+        return $this;
+    }
+
+    public function getDefense(): ?Defense
+    {
+        return $this->defense;
+    }
+
+    public function setDefense(?Defense $defense): static
+    {
+        $this->defense = $defense;
 
         return $this;
     }

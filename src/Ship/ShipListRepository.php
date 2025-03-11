@@ -4,6 +4,7 @@ namespace EtoA\Ship;
 
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use EtoA\Entity\Entity;
 use EtoA\Entity\ShipListItem;
 use EtoA\Entity\User;
 use EtoA\Universe\Entity\EntityRepository;
@@ -165,18 +166,29 @@ class ShipListRepository extends ServiceEntityRepository
         return $amount;
     }
 
-    public function hasShipsOnEntity(int $entityId): bool
+    public function hasShipsOnEntity(Entity $entity): bool
     {
-        $count = (int) $this->createQueryBuilder('q')
-            ->select('COUNT(shiplist_id)')
-            ->from('shiplist')
-            ->where('shiplist_entity_id = :entityId')
-            ->andWhere('shiplist_count  > 0')
-            ->setParameter('entityId', $entityId)
-            ->fetchOne();
+        $count = $this->createQueryBuilder('q')
+            ->select('COUNT(q.id)')
+            ->where('q.entity = :entity')
+            ->andWhere('q.count  > 0')
+            ->setParameter('entity', $entity)
+            ->getQuery()
+            ->getSingleScalarResult();
 
         return $count > 0;
     }
+
+    public function removeForEntity(Entity $entity): void
+    {
+        $this->createQueryBuilder('q')
+            ->delete()
+            ->where('q.entity = :entity')
+            ->setParameter('entity', $entity)
+            ->getQuery()
+            ->execute();
+    }
+
 
     public function saveItem(ShipListItem $item): void
     {

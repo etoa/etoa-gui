@@ -8,7 +8,11 @@ use Doctrine\DBAL\ArrayParameterType;
 use Doctrine\DBAL\Query\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 use EtoA\Core\AbstractRepository;
+use EtoA\Entity\Building;
 use EtoA\Entity\BuildingListItem;
+use EtoA\Entity\Entity;
+use EtoA\Entity\Planet;
+use EtoA\Entity\User;
 use EtoA\Universe\Entity\EntityRepository;
 
 class BuildingListItemRepository extends AbstractRepository
@@ -244,21 +248,16 @@ class BuildingListItemRepository extends AbstractRepository
             ->executeQuery();
     }
 
-    public function removeForEntity(int $entityId): void
+    public function removeForEntity(Entity $entity): void
     {
         $this->createQueryBuilder('q')
-            ->delete('building_queue')
-            ->where('entity_id = :entityId')
-            ->setParameter('entityId', $entityId)
-            ->executeQuery();
-
-        $this->createQueryBuilder('q')
-            ->delete('buildlist')
-            ->where('buildlist_entity_id = :entityId')
+            ->delete()
+            ->where('q.entity = :entity')
             ->setParameters([
-                'entityId' => $entityId,
+                'entity' => $entity,
             ])
-            ->executeQuery();
+            ->getQuery()
+            ->execute();
     }
 
     public function deleteBuildingListEntry(int $id): bool
@@ -346,16 +345,15 @@ class BuildingListItemRepository extends AbstractRepository
         return $qry;
     }
 
-    public function addBuilding(int $buildingId, int $level, int $userId, int $entityId, int $buildType = 0, int $startTime = 0, int $endTime = 0): void
+    public function addBuilding(Building $building, int $level, User $user, Planet $entity, int $buildType = 0, int $startTime = 0, int $endTime = 0): void
     {
-        $item = $this->findOneBy(['userId'=>$userId,'buildingId'=>$buildingId,'entityId'=>$entityId]);
+        $item = $this->findOneBy(['user'=>$user,'building'=>$building,'entity'=>$entity]);
 
         if(!$item) {
             $item = new BuildingListItem();
-            $item->setBuildingId($buildingId);
-            $item->setUserId($userId);
-            $item->setEntityId($entityId);
-            $item->setEntity($this->entityRepository->findOneBy(['id'=>$entityId]));
+            $item->setBuilding($building);
+            $item->setUser($user);
+            $item->setEntity($entity);
         }
 
         $item->setCurrentLevel(max(0, $level));
@@ -363,8 +361,8 @@ class BuildingListItemRepository extends AbstractRepository
         $item->setStartTime($startTime);
         $item->setEndTime($endTime);
 
-        $this->getEntityManager()->persist($item);
-        $this->getEntityManager()->flush();
+        $this->persist($item);
+        $this->save();
     }
 
     /**
@@ -383,16 +381,16 @@ class BuildingListItemRepository extends AbstractRepository
     /**
      * @return BuildingListItem[]
      */
-    public function findForUser(int $userId, int $entityId = null, int $endTimeAfter = null): array
+    public function findForUser(User $user, Planet $entity = null, int $endTimeAfter = null): array
     {
         $qb = $this->createQueryBuilder('q')
-            ->where('q.userId = :userId')
-            ->setParameter('userId', $userId);
+            ->where('q.user = :user')
+            ->setParameter('user', $user);
 
-        if ($entityId !== null) {
+        if ($entity !== null) {
             $qb
-                ->andWhere('q.entityId = :entityId')
-                ->setParameter('entityId', $entityId);
+                ->andWhere('q.entity = :entity')
+                ->setParameter('entity', $entity);
         }
 
         if ($endTimeAfter !== null) {
@@ -401,11 +399,9 @@ class BuildingListItemRepository extends AbstractRepository
                 ->setParameter('time', $endTimeAfter);
         }
 
-        $data = $qb
+        return $qb
             ->getQuery()
             ->execute();
-
-        return array_map(fn($row) => BuildingListItem::createFromData($row), $data);
     }
 
     public function getEntry(int $id): ?BuildingListItem
@@ -715,5 +711,18 @@ class BuildingListItemRepository extends AbstractRepository
             ", [
                 'entityId' => $entityId,
             ]);
+    }
+
+    public function findWithProductionOrPowerUse(Entity $entity): array
+    {
+        return $this->createQueryBuilder('q')
+            ->innerJoin('App:Building', 'b', 'WITH', 'q.building = b.id')
+            ->where('q.entity = :entity')
+            ->andWhere('b.prodMetal > 0 OR b.prodCrystal > 0 OR b.prodPlastic > 0 OR b.prodFuel > 0 OR b.prodFood > 0 OR b.powerUse > 0')
+            ->setParameters([
+                'entity' => $entity
+            ])
+            ->getQuery()
+            ->execute();
     }
 }

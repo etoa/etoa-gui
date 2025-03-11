@@ -7,6 +7,7 @@ namespace EtoA\Defense;
 use Doctrine\Persistence\ManagerRegistry;
 use EtoA\Core\AbstractRepository;
 use EtoA\Entity\DefenseListItem;
+use EtoA\Entity\Entity;
 use EtoA\Universe\Entity\EntityRepository;
 
 class DefenseRepository extends AbstractRepository
@@ -204,21 +205,6 @@ class DefenseRepository extends AbstractRepository
             ->fetchOne();
     }
 
-    public function removeForEntity(int $entityId): void
-    {
-        $this->createQueryBuilder('q')
-            ->delete('def_queue')
-            ->where('queue_entity_id = :entityId')
-            ->setParameter('entityId', $entityId)
-            ->executeQuery();
-
-        $this->createQueryBuilder('q')
-            ->delete('deflist')
-            ->where('deflist_entity_id = :entityId')
-            ->setParameter('entityId', $entityId)
-            ->executeQuery();
-    }
-
     public function removeForUser(int $userId): void
     {
         $this->createQueryBuilder('q')
@@ -313,5 +299,15 @@ class DefenseRepository extends AbstractRepository
             ->fetchAllAssociative();
 
         return array_map(fn ($row) => DefenseListItem::createFromData($row), $data);
+    }
+
+    public function removeForEntity(Entity $entity): void
+    {
+        $this->createQueryBuilder('q')
+            ->delete()
+            ->where('q.entity = :entity')
+            ->setParameter('entity', $entity)
+            ->getQuery()
+            ->execute();
     }
 }

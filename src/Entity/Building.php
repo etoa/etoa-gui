@@ -19,13 +19,14 @@ class Building implements ObjectWithImage
     #[ORM\Column(name: "building_name")]
     private string $name;
 
-    #[ORM\Column(name: "building_type_id", type: "integer")]
-    private int $typeId;
+    #[ORM\ManyToOne(targetEntity: BuildingType::class)]
+    #[ORM\JoinColumn(name: 'building_type_id', referencedColumnName: 'type_id')]
+    private BuildingType $type;
 
-    #[ORM\Column(name: "building_short_comment")]
+    #[ORM\Column(name: "building_shortcomment")]
     private string $shortComment;
 
-    #[ORM\Column(name: "building_long_comment")]
+    #[ORM\Column(name: "building_longcomment")]
     private string $longComment;
 
     #[ORM\Column(name: "building_costs_metal", type: "integer")]
@@ -55,7 +56,7 @@ class Building implements ObjectWithImage
     #[ORM\Column(name: "building_power_use", type: "integer")]
     private int $powerUse;
 
-    #[ORM\Column(name: "building_power_required", type: "integer")]
+    #[ORM\Column(name: "building_power_req", type: "integer")]
     private int $powerRequired;
 
     #[ORM\Column(name: "building_fuel_use", type: "integer")]
@@ -78,6 +79,8 @@ class Building implements ObjectWithImage
 
     #[ORM\Column(name: "building_prod_power", type: "integer")]
     private int $prodPower;
+
+    #[ORM\Column(name: "building_production_factor", type: "float")]
     private float $productionFactor;
 
     #[ORM\Column(name: "building_store_metal", type: "integer")]
@@ -107,13 +110,13 @@ class Building implements ObjectWithImage
     #[ORM\Column(name: "building_fields", type: "integer")]
     private int $fields;
 
-    #[ORM\Column(name: "building_shiw", type: "boolean")]
+    #[ORM\Column(name: "building_show", type: "boolean")]
     private bool $show;
 
     #[ORM\Column(name: "building_order", type: "integer")]
     private int $order;
 
-    #[ORM\Column(name: "building_fields_provide", type: "integer")]
+    #[ORM\Column(name: "building_fieldsprovide", type: "integer")]
     private int $fieldsProvide;
 
     #[ORM\Column(name: "building_workplace", type: "boolean")]
@@ -180,18 +183,6 @@ class Building implements ObjectWithImage
     public function setName(string $name): static
     {
         $this->name = $name;
-
-        return $this;
-    }
-
-    public function getTypeId(): ?int
-    {
-        return $this->typeId;
-    }
-
-    public function setTypeId(int $typeId): static
-    {
-        $this->typeId = $typeId;
 
         return $this;
     }
@@ -612,6 +603,30 @@ class Building implements ObjectWithImage
     public function setBunkerFleetSpace(int $bunkerFleetSpace): static
     {
         $this->bunkerFleetSpace = $bunkerFleetSpace;
+
+        return $this;
+    }
+
+    public function getProductionFactor(): ?float
+    {
+        return $this->productionFactor;
+    }
+
+    public function setProductionFactor(float $productionFactor): static
+    {
+        $this->productionFactor = $productionFactor;
+
+        return $this;
+    }
+
+    public function getType(): ?BuildingType
+    {
+        return $this->type;
+    }
+
+    public function setType(?BuildingType $type): static
+    {
+        $this->type = $type;
 
         return $this;
     }

@@ -8,6 +8,7 @@ use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 use EtoA\Core\AbstractRepository;
 use EtoA\Entity\Planet;
+use EtoA\Entity\User;
 use EtoA\Universe\Entity\EntityRepository;
 use EtoA\Universe\Entity\EntitySearch;
 use EtoA\Universe\Resources\BaseResources;
@@ -249,7 +250,7 @@ class PlanetRepository extends AbstractRepository
     }
 
     public function addResources(
-        int $id,
+        Planet $planet,
         float $resMetal,
         float $resCrystal,
         float $resPlastic,
@@ -257,31 +258,17 @@ class PlanetRepository extends AbstractRepository
         float $resFood,
         int $people = 0,
         int $fields = 0
-    ): bool {
-        $affected = $this->createQueryBuilder('q')
-            ->update('planets')
-            ->set('planet_res_metal', 'planet_res_metal + :res_metal')
-            ->set('planet_res_crystal', 'planet_res_crystal + :res_crystal')
-            ->set('planet_res_plastic', 'planet_res_plastic + :res_plastic')
-            ->set('planet_res_fuel', 'planet_res_fuel + :res_fuel')
-            ->set('planet_res_food', 'planet_res_food + :res_food')
-            ->set('planet_people', 'planet_people + :people')
-            ->set('planet_fields_used', 'planet_fields_used + :fields')
-            ->where('id = :id')
-            ->setParameters([
-                'id' => $id,
-                'res_metal' => $resMetal,
-                'res_crystal' => $resCrystal,
-                'res_plastic' => $resPlastic,
-                'res_fuel' => $resFuel,
-                'res_food' => $resFood,
-                'people' => $people,
-                'fields' => $fields,
-            ])
-            ->executeQuery()
-            ->rowCount();
+    ): void {
 
-        return $affected > 0;
+        $planet->setResMetal($planet->getResMetal()+$resMetal);
+        $planet->setResCrystal($planet->getResCrystal()+$resCrystal);
+        $planet->setResPlastic($planet->getResPlastic()+$resPlastic);
+        $planet->setResFuel($planet->getResFuel()+$resFuel);
+        $planet->setResFood($planet->getResFood()+$resFood);
+        $planet->setPeople($planet->getPeople()+$people);
+        $planet->setFieldsUsed($planet->getFieldsUsed()+$fields);
+
+         $this->save();
     }
 
     /**
@@ -424,7 +411,7 @@ class PlanetRepository extends AbstractRepository
 
     public function reset(Planet $planet): void
     {
-        $planet->setUserId(0);
+        $planet->setUser(null);
         $planet->setName('');
         $planet->setMainPlanet(false);
         $planet->setFieldsUsed(0);
@@ -481,34 +468,22 @@ class PlanetRepository extends AbstractRepository
             ->execute();
     }
 
-    public function setMain(int $id, int $userId): bool
+    public function setMain(Planet $planet, User $user): void
     {
-        if ($userId == 0) {
-            return false;
-        }
-
         $this->createQueryBuilder('q')
-            ->update('planets')
-            ->set('planet_user_main', (string) 0)
-            ->where('planet_user_id = :userId')
+            ->update()
+            ->set('q.mainPlanet',0)
+            ->where('q.user = :user')
             ->setParameters([
-                'userId' => $userId,
+                'user' => $user,
             ])
-            ->executeQuery();
+            ->getQuery()
+            ->execute();
 
-        $affected = $this->createQueryBuilder('q')
-            ->update('planets')
-            ->set('planet_user_main', (string) 1)
-            ->where('id = :id')
-            ->andWhere('planet_user_id = :userId')
-            ->setParameters([
-                'id' => $id,
-                'userId' => $userId,
-            ])
-            ->executeQuery()
-            ->rowCount();
+        $planet->setMainPlanet(true);
+        $user->setUserChangedMainPlanet(true);
 
-        return $affected > 0;
+        $this->save();
     }
 
     public function unsetMain(int $id): bool

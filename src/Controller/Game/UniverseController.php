@@ -96,8 +96,8 @@ class UniverseController extends Game\AbstractGameController
         $starNamed = true;
 
         if ($cell) {
-            $entities = $this->entityRepository->findBy(['cellId'=>$cell->getId()],['pos'=>'ASC']);
-            $star = $this->entityRepository->findOneBy(['code'=>'s','cellId'=>$cell->getId()])?->getType();
+            $entities = $this->entityRepository->findBy(['cell'=>$cell],['pos'=>'ASC']);
+            $star = $this->entityRepository->findOneBy(['code'=>'s','cell'=>$cell])?->getType();
             $abs = $cell->getAbsoluteCoordinates( $this->config->param1Int('num_of_cells'), $this->config->param2Int('num_of_cells'));
 
             if ($this->userUniverseDiscoveryService->discovered($this->getUser()->getData(), $abs[0], $abs[1])) {

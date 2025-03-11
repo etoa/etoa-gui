@@ -26,9 +26,6 @@ class Star extends AbstractEntity implements ObjectWithImage
     #[ORM\Column]
     private ?string $name = 'Unbenannt';
 
-    #[ORM\Column]
-    private int $typeId;
-
     #[ORM\JoinColumn(name: 'type_id', referencedColumnName: 'sol_type_id')]
     #[ORM\ManyToOne(targetEntity: SolarType::class)]
     private SolarType $solarType;

@@ -20,7 +20,7 @@ class Specialist
     #[ORM\Column(name: "specialist_desc", type: "string")]
     protected string $description;
 
-    #[ORM\Column(name: "specialist_enabled", type: "bool")]
+    #[ORM\Column(name: "specialist_enabled", type: "boolean")]
     protected bool $enabled;
 
     #[ORM\Column(name: "specialist_points_req", type: "integer")]

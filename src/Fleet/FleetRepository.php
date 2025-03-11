@@ -60,15 +60,15 @@ class FleetRepository extends AbstractRepository
 
 
 
-    public function hasFleetsRelatedToEntity(int $entityId): bool
+    public function hasFleetsRelatedToEntity(Entity $entity): bool
     {
-        $count = (int) $this->createQueryBuilder('q')
-            ->select('COUNT(id)')
-            ->from('fleet')
-            ->where('entity_to = :entityId')
-            ->orWhere('entity_from  = :entityId')
-            ->setParameter('entityId', $entityId)
-            ->fetchOne();
+        $count = $this->createQueryBuilder('q')
+            ->select('COUNT(q.id)')
+            ->where('q.entityTo = :entity')
+            ->orWhere('q.entityFrom  = :entity')
+            ->setParameter('entity', $entity)
+            ->getQuery()
+            ->getSingleScalarResult();
 
         return $count > 0;
     }

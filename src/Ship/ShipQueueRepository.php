@@ -4,6 +4,7 @@ namespace EtoA\Ship;
 
 use Doctrine\Persistence\ManagerRegistry;
 use EtoA\Core\AbstractRepository;
+use EtoA\Entity\Entity;
 use EtoA\Entity\ShipQueueItem;
 use EtoA\Entity\User;
 
@@ -175,6 +176,16 @@ class ShipQueueRepository extends AbstractRepository
             ->setParameters([
                 'userId' => $userId,
             ])
+            ->getQuery()
+            ->execute();
+    }
+
+    public function removeForEntity(Entity $entity): void
+    {
+        $this->createQueryBuilder('q')
+            ->delete()
+            ->where('q.entity = :entity')
+            ->setParameter('entity', $entity)
             ->getQuery()
             ->execute();
     }

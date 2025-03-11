@@ -1,4 +1,4 @@
-<div class="boxLayout {{ class }}">
+<div class="boxLayout {{ class|default('') }}">
     {% if title %}
         <div class="infoboxtitle"><span>{{ title }}</span></div>
     {% endif %}

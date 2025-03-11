@@ -15,21 +15,6 @@ class ShipRepository extends AbstractRepository
         parent::__construct($registry, Ship::class);
     }
 
-    public function removeForEntity(int $entityId): void
-    {
-        $this->createQueryBuilder('q')
-            ->delete('ship_queue')
-            ->where('queue_entity_id = :entityId')
-            ->setParameter('entityId', $entityId)
-            ->executeQuery();
-
-        $this->createQueryBuilder('q')
-            ->delete('shiplist')
-            ->where('shiplist_entity_id = :entityId')
-            ->setParameter('entityId', $entityId)
-            ->executeQuery();
-    }
-
     public function removeForUser(int $userId): void
     {
         $this->createQueryBuilder('q')

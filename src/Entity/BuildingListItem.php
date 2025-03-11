@@ -17,18 +17,17 @@ class BuildingListItem
     #[ORM\Column(name: "buildlist_id", type: "integer")]
     private int $id;
 
-    #[ORM\Column(name: "buildlist_user_id", type: "integer")]
-    private int $userId;
+    #[ORM\JoinColumn(name: 'buildlist_user_id', referencedColumnName: 'user_id')]
+    #[ORM\ManyToOne(targetEntity: User::class)]
+    private ?User $user = null;
 
-    #[ORM\Column(name: "buildlist_building_id", type: "integer")]
-    private int $buildingId;
+    #[ORM\JoinColumn(name: 'buildlist_building_id', referencedColumnName: 'building_id')]
+    #[ORM\ManyToOne(targetEntity: Building::class)]
+    private ?Building $building = null;
 
-    #[ORM\ManyToOne(targetEntity: Entity::class)]
+    #[ORM\ManyToOne(targetEntity: Planet::class)]
     #[ORM\JoinColumn(name: 'buildlist_entity_id', referencedColumnName: 'id')]
-    private Entity $entity;
-
-    #[ORM\Column(name: "buildlist_entity_id", type: "integer")]
-    private int $entityId;
+    private Planet $entity;
 
     #[ORM\Column(name: "buildlist_current_level", type: "smallint")]
     private int $currentLevel = 0;
@@ -110,42 +109,6 @@ class BuildingListItem
     public function getId(): ?int
     {
         return $this->id;
-    }
-
-    public function getUserId(): ?int
-    {
-        return $this->userId;
-    }
-
-    public function setUserId(int $userId): static
-    {
-        $this->userId = $userId;
-
-        return $this;
-    }
-
-    public function getBuildingId(): ?int
-    {
-        return $this->buildingId;
-    }
-
-    public function setBuildingId(int $buildingId): static
-    {
-        $this->buildingId = $buildingId;
-
-        return $this;
-    }
-
-    public function getEntityId(): ?int
-    {
-        return $this->entityId;
-    }
-
-    public function setEntityId(int $entityId): static
-    {
-        $this->entityId = $entityId;
-
-        return $this;
     }
 
     public function getCurrentLevel(): ?int
@@ -256,14 +219,38 @@ class BuildingListItem
         return $this;
     }
 
-    public function getEntity(): ?Entity
+    public function getEntity(): ?Planet
     {
         return $this->entity;
     }
 
-    public function setEntity(?Entity $entity): static
+    public function setEntity(?Planet $entity): static
     {
         $this->entity = $entity;
+
+        return $this;
+    }
+
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
+
+    public function setUser(?User $user): static
+    {
+        $this->user = $user;
+
+        return $this;
+    }
+
+    public function getBuilding(): ?Building
+    {
+        return $this->building;
+    }
+
+    public function setBuilding(?Building $building): static
+    {
+        $this->building = $building;
 
         return $this;
     }

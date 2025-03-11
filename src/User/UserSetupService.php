@@ -8,6 +8,7 @@ use EtoA\Building\BuildingListItemRepository;
 use EtoA\DefaultItem\DefaultItemRepository;
 use EtoA\Defense\DefenseRepository;
 use EtoA\Entity\Planet;
+use EtoA\Entity\User;
 use EtoA\Ship\ShipListRepository;
 use EtoA\Technology\TechnologyListItemRepository;
 use EtoA\Universe\Entity\EntityRepository;
@@ -53,14 +54,14 @@ class UserSetupService
     /**
      * Add an item setlist to a given planet
      */
-    public function addItemSetListToPlanet(int $planetId, int $userId, int $setId): void
+    public function addItemSetListToPlanet(Planet $planet, User $user, int $setId): void
     {
         $defaultItems = $this->defaultItemRepository->getItemsGroupedByCategory($setId);
 
         // Add buildings
         if (isset($defaultItems['b'])) {
             foreach ($defaultItems['b'] as $defaultItem) {
-                $this->buildingRepository->addBuilding($defaultItem->getObjectId(), $defaultItem->getCount(), $userId, $planetId);
+                $this->buildingRepository->addBuilding($defaultItem->getObjectId(), $defaultItem->getCount(), $user, $planet);
             }
         }
 

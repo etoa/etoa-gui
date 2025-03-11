@@ -15,12 +15,6 @@ class BBCodeUtils
      */
     public static function toHTML(?string $string): string
     {
-        $string = str_replace("	 ", "&nbsp;&nbsp;", (string) $string);
-
-        $string = str_replace("\"", "&quot;", $string);
-        $string = str_replace("<", "&lt;", $string);
-        $string = str_replace(">", "&gt;", $string);
-
         $string = preg_replace("((\r\n))", trim('<br/>'), $string);
         $string = preg_replace("((\n))", trim('<br/>'), $string);
         $string = preg_replace("((\r)+)", trim('<br/>'), $string);

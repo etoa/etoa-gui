@@ -18,10 +18,10 @@ class Defense implements ObjectWithImage
     #[ORM\Column(name: "def_name")]
     private string $name;
 
-    #[ORM\Column(name: "def_short_comment")]
+    #[ORM\Column(name: "def_shortcomment")]
     private string $shortComment;
 
-    #[ORM\Column(name: "def_long_comment")]
+    #[ORM\Column(name: "def_longcomment")]
     private string $longComment;
 
     #[ORM\Column(name: "def_costs_metal", type: "integer")]

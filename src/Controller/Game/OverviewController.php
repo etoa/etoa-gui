@@ -138,7 +138,7 @@ class OverviewController extends AbstractGameController
         $planets = '';
         foreach ($userPlanets as $userPlanet) {
             // Bauhof infos
-            $buildingEntries = $this->buildingRepository->findForUser($this->getUser()->getId(), $userPlanet->getId(), time());
+            $buildingEntries = $this->buildingRepository->findForUser($this->getUser()->getData(), $userPlanet, time());
             if (count($buildingEntries) > 0) {
                 $entry = $buildingEntries[0];
 
@@ -197,14 +197,14 @@ class OverviewController extends AbstractGameController
             }
 
             // waffenfabrik infos
-            $queueEntries = $this->defenseQueueRepository->searchQueueItems(DefenseQueueSearch::create()->entityId($userPlanet->getId())->endAfter(time()), 1);
+            $queueEntries = $this->defenseQueueRepository->searchQueueItems(DefenseQueueSearch::create()->entity($userPlanet->getEntity())->endAfter(time()), 1);
             if (count($queueEntries) > 0) {
                 $queueItem = $queueEntries[0];
 
                 //Verbleibende Zeit bis zur fertigstellung des aktuellen Auftrages
                 $defense_rest_time[$userPlanet->getId()] = $queueItem->getEndTime() - time();
                 //Defname
-                $defense_name[$userPlanet->getId()] = $defenseNames[$queueItem->getDefenseId()];
+                $defense_name[$userPlanet->getId()] = $defenseNames[$queueItem->getDefense()];
 
                 // Infos über die Waffenfabrik
                 $defense_h = floor($defense_rest_time[$userPlanet->getId()] / 3600);

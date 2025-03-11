@@ -3,6 +3,8 @@
 namespace EtoA\Defense;
 
 use EtoA\Core\Database\AbstractSearch;
+use EtoA\Entity\Entity;
+use EtoA\Entity\User;
 
 class DefenseQueueSearch extends AbstractSearch
 {
@@ -11,10 +13,10 @@ class DefenseQueueSearch extends AbstractSearch
         return new DefenseQueueSearch();
     }
 
-    public function userId(int $userId): self
+    public function user(User $user): self
     {
-        $this->parts[] = 'q.userId = :userId';
-        $this->parameters['userId'] = $userId;
+        $this->parts[] = 'q.user = :user';
+        $this->parameters['user'] = $user;
 
         return $this;
     }
@@ -27,10 +29,10 @@ class DefenseQueueSearch extends AbstractSearch
         return $this;
     }
 
-    public function entityId(int $entityId): self
+    public function entity(Entity $entity): self
     {
-        $this->parts[] = 'q.entityId = :entityId';
-        $this->parameters['entityId'] = $entityId;
+        $this->parts[] = 'q.entity = :entity';
+        $this->parameters['entity'] = $entity;
 
         return $this;
     }

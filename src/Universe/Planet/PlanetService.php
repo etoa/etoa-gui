@@ -5,13 +5,17 @@ declare(strict_types=1);
 namespace EtoA\Universe\Planet;
 
 use EtoA\Building\BuildingListItemRepository;
+use EtoA\Building\BuildingQueueItemRepository;
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Defense\DefenseQueueRepository;
 use EtoA\Defense\DefenseRepository;
 use EtoA\Entity\Planet;
 use EtoA\Fleet\FleetAction;
 use EtoA\Log\LogFacility;
 use EtoA\Log\LogRepository;
 use EtoA\Log\LogSeverity;
+use EtoA\Ship\ShipListRepository;
+use EtoA\Ship\ShipQueueRepository;
 use EtoA\Ship\ShipRepository;
 
 class PlanetService
@@ -23,7 +27,11 @@ class PlanetService
         private readonly DefenseRepository          $defenseRepository,
         private readonly ConfigurationService       $config,
         private readonly LogRepository              $logRepository,
-        private readonly PlanetTypeRepository       $planetTypeRepository
+        private readonly PlanetTypeRepository       $planetTypeRepository,
+        private readonly ShipListRepository $shipListRepository,
+        private readonly ShipQueueRepository $shipQueueRepository,
+        private readonly DefenseQueueRepository $defenseQueueRepository,
+        private readonly BuildingQueueItemRepository $buildingQueueItemRepository
     ) {}
 
     /**
@@ -70,18 +78,17 @@ class PlanetService
         );
     }
 
-    public function reset(int $id): void
+    public function reset(Planet $planet): void
     {
-        if ($id == 0) {
-            return;
-        }
+        $this->repository->reset($planet);
+        $this->shipListRepository->removeForEntity($planet->getEntity());
+        $this->shipQueueRepository->removeForEntity($planet->getEntity());
+        $this->defenseRepository->removeForEntity($planet->getEntity());
+        $this->defenseQueueRepository->removeForEntity($planet->getEntity());
+        $this->buildingRepository->removeForEntity($planet->getEntity());
+        $this->buildingQueueItemRepository->removeForEntity($planet->getEntity());
 
-        $this->repository->reset($id);
-        $this->shipRepository->removeForEntity($id);
-        $this->defenseRepository->removeForEntity($id);
-        $this->buildingRepository->removeForEntity($id);
-
-        $this->logRepository->add(LogFacility::GALAXY, LogSeverity::INFO, "Der Planet mit der ID " . $id . " wurde zurückgesetzt!");
+        $this->logRepository->add(LogFacility::GALAXY, LogSeverity::INFO, "Der Planet mit der ID " . $planet->getId() . " wurde zurückgesetzt!");
     }
 
     public function getAllowedFleetActions(Planet $planet):array {
