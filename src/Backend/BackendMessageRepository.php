@@ -5,36 +5,30 @@ declare(strict_types=1);
 namespace EtoA\Backend;
 
 use Doctrine\Persistence\ManagerRegistry;
-use EtoA\Alliance\Board\Category;
 use EtoA\Core\AbstractRepository;
+use EtoA\Entity\BackendMessage;
 
 class BackendMessageRepository extends AbstractRepository
 {
-    //todo: create entity
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, BackendMessageRepository::class);
+        parent::__construct($registry, BackendMessage::class);
     }
 
     public function addMessage(string $cmd, string $arg = ''): void
     {
-        $this->getConnection()
-            ->executeStatement(
-                "INSERT IGNORE
-                INTO backend_message_queue (cmd, arg)
-                VALUES (?, ?);",
-                [
-                    $cmd, $arg,
-                ]
-            );
+        if(!$this->findOneBy(['cmd'=>$cmd,'arg'=>$arg])) {
+            $message = new BackendMessage();
+            $message->setCmd($cmd);
+            $message->setArg($arg);
+
+            $this->persist($message);
+            $this->save();
+        }
     }
 
     public function getMessageQueueSize(): int
     {
-        return (int) $this->getConnection()
-            ->fetchOne(
-                "SELECT COUNT(id)
-                FROM backend_message_queue;"
-            );
+        return $this->count([]);
     }
 }
