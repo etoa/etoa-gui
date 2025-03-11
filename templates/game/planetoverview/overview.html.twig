@@ -1,0 +1,29 @@
+{% extends 'layout/game.html.twig' %}
+{% block content %}
+    <h1>Übersicht über den Planeten {{ planet.name }}</h1>
+
+    {% set tabs = {
+        "game.planetoverview.overview" : "Übersicht",
+        "game.planetoverview.name" : "Name & Beschreibung",
+        "game.planetoverview.fields" : "Felder",
+        "game.planetoverview.ships" : "Schiffe",
+        "game.planetoverview.defense" : "Verteidigung",
+    } %}
+    <twig:tabmenu data="{{ tabs }}" active="{{ app.request.attributes.get('_route') }}"/>
+
+    {% block overview %}
+    {% endblock %}
+
+    {% if not planet.mainPlanet %}
+        &nbsp;
+        <a href="{{ path('game.planetoverview.delete') }}">
+            <input type="button" value="Kolonie aufheben"/>
+        </a>
+        {% if not app.user.data.userChangedMainPlanet %}
+            &nbsp;
+            <a href="{{ path('game.planetoverview.change') }}">
+                <input type="button" value="Zum Hauptplaneten machen"/>
+            </a>
+        {% endif %}
+    {% endif %}
+{% endblock %}

@@ -1,0 +1,82 @@
+{% extends 'game/planetoverview/overview.html.twig' %}
+{% import 'macros.html.twig' as macros %}
+
+{% block overview %}
+    <div id="tabFields">
+        <twig:Table title="Felderbelegung">
+        {% block table_content %}
+            <tr>
+                <td colspan="2">
+                    <img src="{{ asset('images/progress/'~(planet.fieldsUsed / planet.fields * 100)|round(0, 'ceil')) }}?r=1&w=650" alt="progress" style="width:100%;"/>
+                    <br/>Benutzt: {{ planet.fieldsUsed }} , Total: {{ formatNumber(planet.fields) }}  =
+                    {{ formatNumber(planet.fields) }}  Basisfelder + {{ formatNumber(planet.fieldsExtra) }} zusätzliche Felder<br/>
+                </td>
+            </tr>
+            <tr>
+                <td style="width:50%;vertical-align:top;padding:5px;">
+                    <table style="width:100%" class="tb">
+                        <caption>Gebäude</caption>
+                        {% if planet.buildlist %}
+                            <tr>
+                                <th>Name</th>
+                                <th>Stufe</th>
+                                <th>Felder</th>
+                            </tr>
+                            {% set fcnt = 0 %}
+                            {% for building in planet.buildlist %}
+                                {% set fcnt = fcnt + (building.currentLevel * building.building.fields) %}
+                                <tr>
+                                    <th> {{ building.building.name }} </th>
+                                    <td> {{ building.currentLevel }} </td>
+                                    <td> {{ formatNumber(building.currentLevel * building.building.fields) }} </td>
+                                </tr>
+                            {% endfor %}
+                            <tr>
+                                <th colspan="2">Total</th>
+                                <td> {{ formatNumber(fcnt) }} </td>
+                            </tr>
+                        {% else %}
+                            <tr>
+                                <td>
+                                    <i>Keine Gebäude vorhanden!</i>
+                                </td>
+                            </tr>
+                        {% endif %}
+                    </table>
+                </td>
+                <td style="width:50%;vertical-align:top;padding:5px;">
+                    <table style="width:100%" class="tb">
+                        <caption>Verteidigungsanlagen</caption>
+                        {% if planet.deflist %}
+                            <tr>
+                                <th>Name</th>
+                                <th>Anzahl</th>
+                                <th>Felder</th>
+                            </tr>
+                            {% set dfcnt = 0 %}
+                            {% for def in planet.deflist %}
+                                {% set dfcnt = dfcnt + (def.count * def.defense.fields) %}
+                                <tr>
+                                    <th> {{ def.defense.name }} </th>
+                                    <td> {{ def.count }} </td>
+                                    <td> {{ formatNumber(def.count * def.defense.fields) }} </td>
+                                </tr>
+                            {% endfor %}
+                            <tr>
+                                <th colspan="2">Total</th>
+                                <td> {{ formatNumber(dfcnt) }} </td>
+                            </tr>
+                        {% else %}
+                            <tr>
+                                <td>
+                                    <i>Keine Verteidigungsanlagen vorhanden!</i>
+                                </td>
+                            </tr>
+                        {% endif %}
+                    </table>
+                </td>
+            </tr>
+        {% endblock %}
+        </twig:Table>
+    </div>
+{% endblock %}

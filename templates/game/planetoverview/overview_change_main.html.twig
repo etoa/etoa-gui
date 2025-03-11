@@ -1,0 +1,19 @@
+{% extends 'layout/game.html.twig' %}
+
+{% block content %}
+    <h2>:: Kolonie zum Hauptplaneten machen ::</h2>
+
+    <twig:box title="Sicherheitsabfrage">
+        {% block content %}
+            Willst du die Kolonie auf dem Planeten <b>{{ planet.name }}</b> wirklich zu deinem Hauptplaneten machen?<br>
+            Du kannst deinen Hauptplaneten nur ein einziges Mal ändern.
+
+            {{ form_start(form) }}
+                <a href="{{ path('game.planetoverview.overview') }}">
+                    <input type="button" value="Nein, Vorgang abbrechen"/>
+                </a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                {{ form_widget(form.save) }}
+            {{ form_end(form) }}
+        {% endblock %}
+    </twig:box>
+{% endblock %}

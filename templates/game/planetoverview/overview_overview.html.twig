@@ -1,0 +1,58 @@
+{% extends 'game/planetoverview/overview.html.twig' %}
+{% import 'macros.html.twig' as macros %}
+
+{% block overview %}
+    <div id="tabOverview">
+        <div class="boxLayout planetInfoBox">
+            <div class="infoboxtitle">
+                <span>Übersicht</span>
+            </div>
+            <div class="infoboxcontent">
+                <div style="position:relative;height:320px;padding:0;background:#000 url({{ asset('build/images/stars_middle.jpg') }});">
+                    <div style="position:absolute;right:20px;top:20px;">
+                        <img src="{{ planet.getImagePath('other') }}" style="width:220px;height:220px;" alt="Planet" /></div>
+                    <div class="planetOverviewName"><a href="{{ path('game.planetoverview.name') }}">{{ planet.name }}</a></div>
+                    <div class="planetOverviewList">
+                        <div class="planetOverviewItem">Grösse</div>
+                        {{ formatNumber(configValue('field_squarekm') * planet.fields) }} km²<br style="clear:left;"/>
+                        <div class="planetOverviewItem">Temperatur</div>
+                        {{ planet.tempFrom }} °C bis {{ planet.tempTo }} °C <br style="clear:left;"/>
+                        <div class="planetOverviewItem">System</div>
+                        <a href="{{ path('game.cell',{id:planet.entity.cell.id}) }}&hl={{ planet.id }}">
+                            {{ planet.entity.coordinatesString }}
+                        </a><br style="clear:left;"/>
+                        <div class="planetOverviewItem">Kennung</div>
+                        <a href="{{ path('game.entity',{id:planet.id}) }}">
+                            {{ planet.id }}
+                        </a><br style="clear:left;"/>
+                        <div class="planetOverviewItem">Stern</div>  helpLink("stars", cp.starTypeName) <br style="clear:left;"/>
+                        <div class="planetOverviewItem">Planetentyp</div>  helpLink("planets", cp.type()) <br style="clear:left;"/>
+                        <div class="planetOverviewItem">Felder</div>
+                        <a href="{{ path('game.planetoverview.fields') }}">
+                            {{ formatNumber(planet.fieldsUsed) }}  von  {{ formatNumber(planet.fields) }} benutzt
+                        </a> {{ (planet.fieldsUsed / planet.fields * 100)|round(0, 'ceil') }}%<br style="clear:left;"/>
+                        {% if planet.hasDebrisField %}
+                            <div class="planetOverviewItem">Trümmerfeld</div>
+                            <span class="resmetal"> {{ formatNumber(planet.wfMetal) }} </span>
+                            <span class="rescrystal"> {{ formatNumber(planet.wfCrystal) }} </span>
+                            <span class="resplastic"> {{ formatNumber(planet.wfPlastic) }} </span>
+                            <br style="clear:left;"/>
+                        {% endif %}
+                        {% if planet.description %}
+                            {% if planet.description|length > 90 %}
+                                <div class="planetOverviewItem">Beschreibung</div><span {{ tm('Beschreibung',
+                        planet.description)|raw }}>{{ planet.description|slice(0, 90) }}...</span><br style="clear:left;"/>
+                            {% else %}
+                                <div class="planetOverviewItem">Beschreibung</div>
+                                {{ planet.description }} <br style="clear:left;"/>
+                            {% endif %}
+                        {% endif %}
+                        {% if planet.mainPlanet %}
+                            <div class="planetOverviewItem">Hauptplanet</div> Dies ist dein Hauptplanet. Hauptplaneten können nicht invasiert oder aufgegeben werden!<br style="clear:left;"/>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

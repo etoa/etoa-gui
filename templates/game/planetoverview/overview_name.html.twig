@@ -1,0 +1,27 @@
+{% extends 'game/planetoverview/overview.html.twig' %}
+{% import 'macros.html.twig' as macros %}
+
+{% block overview %}
+    <div id="tabName">
+        {{ form_start(changeForm) }}
+            <twig:Table title="Name und Beschreibung ändern:">
+            {% block table_content %}
+                <tr>
+                    <th>Name:</th>
+                    <td>
+                        {{ form_widget(changeForm.name )}}&nbsp;
+                        <a href="javascript:" onclick="GenPlot();">Name generieren</a>
+                    </td>
+                </tr>
+                <tr>
+                    <th>Beschreibung:</th>
+                    <td>
+                        {{ form_widget(changeForm.description) }}
+                    </td>
+                </tr>
+            {% endblock %}
+            </twig:Table>
+            {{ form_widget(changeForm.save) }}
+        {{ form_end(changeForm) }}
+    </div>
+{% endblock %}
