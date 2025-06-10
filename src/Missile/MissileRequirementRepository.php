@@ -2,13 +2,14 @@
 
 namespace EtoA\Missile;
 
-use Doctrine\DBAL\Connection;
+use Doctrine\Persistence\ManagerRegistry;
+use EtoA\Entity\MissileRequirements;
 use EtoA\Requirement\AbstractRequirementRepository;
 
 class MissileRequirementRepository extends AbstractRequirementRepository
 {
-    public function __construct(Connection $connection)
+    public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($connection, 'missile_requirements');
+        parent::__construct($registry, MissileRequirements::class);
     }
 }

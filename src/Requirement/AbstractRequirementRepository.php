@@ -9,11 +9,6 @@ abstract class AbstractRequirementRepository extends AbstractRepository
 {
     private string $table;
 
-    public function __construct(Connection $connection, string $table)
-    {
-        parent::__construct($connection);
-        $this->table = $table;
-    }
 
     public function getAll(): RequirementsCollection
     {

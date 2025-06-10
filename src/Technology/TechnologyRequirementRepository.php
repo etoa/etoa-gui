@@ -2,13 +2,14 @@
 
 namespace EtoA\Technology;
 
-use Doctrine\DBAL\Connection;
+use Doctrine\Persistence\ManagerRegistry;
+use EtoA\Entity\TechnologyRequirement;
 use EtoA\Requirement\AbstractRequirementRepository;
 
 class TechnologyRequirementRepository extends AbstractRequirementRepository
 {
-    public function __construct(Connection $connection)
+    public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($connection, 'tech_requirements');
+        parent::__construct($registry, TechnologyRequirement::class);
     }
 }

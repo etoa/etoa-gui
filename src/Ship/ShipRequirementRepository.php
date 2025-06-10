@@ -2,15 +2,17 @@
 
 namespace EtoA\Ship;
 
-use Doctrine\DBAL\Connection;
+use Doctrine\Persistence\ManagerRegistry;
+use EtoA\Entity\Race;
+use EtoA\Entity\ShipRequirements;
 use EtoA\Requirement\AbstractRequirementRepository;
 use EtoA\Technology\TechnologyTypeId;
 
 class ShipRequirementRepository extends AbstractRequirementRepository
 {
-    public function __construct(Connection $connection)
+    public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($connection, 'ship_requirements');
+        parent::__construct($registry, ShipRequirements::class);
     }
 
     /**

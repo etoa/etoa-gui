@@ -2,13 +2,14 @@
 
 namespace EtoA\Building;
 
-use Doctrine\DBAL\Connection;
+use Doctrine\Persistence\ManagerRegistry;
+use EtoA\Entity\BuildingRequirements;
 use EtoA\Requirement\AbstractRequirementRepository;
 
 class BuildingRequirementRepository extends AbstractRequirementRepository
 {
-    public function __construct(Connection $connection)
+    public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($connection, 'building_requirements');
+        parent::__construct($registry, BuildingRequirements::class);
     }
 }
