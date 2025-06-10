@@ -3,9 +3,6 @@
 namespace EtoA\Form\Validation;
 
 use EtoA\Support\StringUtils;
-use EtoA\User\UserRepository;
-use EtoA\User\UserSearch;
-use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 use Symfony\Component\Validator\Exception\UnexpectedTypeException;
@@ -13,11 +10,6 @@ use Symfony\Component\Validator\Exception\UnexpectedValueException;
 
 class AlphaDotsOrUnderlinesConstraintValidator extends ConstraintValidator
 {
-    public function __construct(
-        private readonly UserRepository     $userRepository,
-        private readonly Security                 $security,
-    ){}
-
     /**
      * @inheritDoc
      */

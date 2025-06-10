@@ -41,45 +41,39 @@ class BuildingListItemRepository extends AbstractRepository
     }
 
     /**
-     * @return BuildingWorkplace[]
+     * @return BuildingListItem[]
      */
-    public function getWorkplaceBuildings(int $entityId): array
+    public function getWorkplaceBuildings(Planet $planet): array
     {
-        $data = $this->createQueryBuilder('q')
-            ->select('buildlist_people_working')
-            ->addSelect('building_id, building_name, building_people_place')
-            ->from('buildlist')
-            ->innerJoin('buildlist', 'buildings', 'b', 'buildlist_building_id = b.building_id')
-            ->andWhere('buildlist_entity_id = :entityId')
-            ->andWhere('buildlist_current_level > 0')
-            ->andWhere('building_workplace = 1')
+        return $this->createQueryBuilder('q')
+            ->select('q')
+            ->innerJoin('App:Building', 'b', 'WITH', 'q.building = b.id')
+            ->andWhere('q.entity = :planet')
+            ->andWhere('q.currentLevel > 0')
+            ->andWhere('b.workplace = 1')
             ->setParameters([
-                'entityId' => $entityId,
+                'planet' => $planet,
             ])
-            ->fetchAllAssociative();
-
-        return array_map(fn(array $row) => new BuildingWorkplace($row), $data);
+            ->getQuery()
+            ->execute();
     }
 
     /**
-     * @return BuildingPeopleStorage[]
+     * @return BuildingListItem[]
      */
-    public function getPeopleStorageBuildings(int $entityId): array
+    public function getPeopleStorageBuildings(Planet $planet): array
     {
-        $data = $this->createQueryBuilder('q')
-            ->select('buildlist_current_level')
-            ->addSelect('building_store_factor, building_name, building_people_place')
-            ->from('buildlist')
-            ->innerJoin('buildlist', 'buildings', 'b', 'buildlist_building_id = b.building_id')
-            ->andWhere('buildlist_entity_id = :entityId')
-            ->andWhere('buildlist_current_level > 0')
-            ->andWhere('building_people_place > 0')
+        return $this->createQueryBuilder('q')
+            ->select('q')
+            ->innerJoin('App:Building', 'b', 'WITH', 'q.building = b.id')
+            ->where('q.entity = :planet')
+            ->andWhere('q.currentLevel > 0')
+            ->andWhere('b.peoplePlace > 0')
             ->setParameters([
-                'entityId' => $entityId,
+                'planet' => $planet,
             ])
-            ->fetchAllAssociative();
-
-        return array_map(fn(array $row) => new BuildingPeopleStorage($row), $data);
+            ->getQuery()
+            ->execute();
     }
 
     public function getBuildingLevel(int $userId, int $buildingId, int $entityId): int
@@ -479,22 +473,35 @@ class BuildingListItemRepository extends AbstractRepository
             ->executeQuery();
     }
 
-    public function getPeopleWorking(int $entityId, bool $onlyWorkingStatus = false): PeopleWorking
+    public function getPeopleWorking(Planet $entity, bool $onlyWorkingStatus = false): array
     {
         $qb = $this->createQueryBuilder('q')
-            ->select('buildlist_building_id, buildlist_people_working')
-            ->from('buildlist')
-            ->where('buildlist_entity_id = :entityId')
-            ->setParameter('entityId', $entityId);
+            ->where('q.entity = :entity')
+            ->setParameter('entity', $entity);
 
         if ($onlyWorkingStatus) {
-            $qb->andWhere('buildlist_people_working_status = 1');
+            $qb->andWhere('q.peopleWorkingStatus = 1');
         }
 
-        $data = $qb
-            ->fetchAllKeyValue();
+        return $qb
+            ->getQuery()
+            ->execute();
+    }
 
-        return new PeopleWorking($data);
+    public function getTotalPeopleWorking(Planet $entity, bool $onlyWorkingStatus = false): int
+    {
+        $qb = $this->createQueryBuilder('q')
+            ->select('SUM(q.peopleWorking)')
+            ->where('q.entity = :entity')
+            ->setParameter('entity', $entity);
+
+        if ($onlyWorkingStatus) {
+            $qb->andWhere('q.peopleWorkingStatus = 1');
+        }
+
+        return (int)$qb
+            ->getQuery()
+            ->getSingleScalarResult();
     }
 
     public function updateProductionPercent(int $userId, int $entityId, int $buildingId, float $percent): void

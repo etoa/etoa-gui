@@ -498,4 +498,9 @@ class Specialist
 
         return $this;
     }
+
+    public function isEnabled(): ?bool
+    {
+        return $this->enabled;
+    }
 }

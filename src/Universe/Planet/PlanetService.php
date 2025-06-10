@@ -125,4 +125,14 @@ class PlanetService
         $arr[] = FleetAction::FLIGHT;
         return $arr;
     }
+
+    public function getTotalPeopleWorking(Planet $planet):int
+    {
+        $people_working = 0;
+        foreach ($this->buildingRepository->getPeopleWorking($planet) as $building) {
+            $people_working =+ $building->getPeopleWorking();
+        }
+
+        return $people_working;
+    }
 }

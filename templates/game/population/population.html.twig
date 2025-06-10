@@ -1,0 +1,138 @@
+{% extends 'layout/game.html.twig' %}
+{% block content %}
+    <h1>Bevölkerungsübersicht des Planeten {{ planet.name }} </h1>
+    <twig:ResourceBox/>
+    <twig:Table title="Wohnfläche" width="400">
+    {% block table_content %}
+        <tr>
+            <th style="width:150px">Grundwohnfläche</th>
+            <td>{{ formatNumber(param1('user_start_people')) }}</td>
+        </tr>
+        {% for key,value in values.building %}
+            <tr>
+                <th>{{ key }} </th>
+                <td>{{ formatNumber(value) }}</td>
+            </tr>
+        {% endfor %}
+        <tr>
+            <th>
+                <b>TOTAL</b>
+            </th>
+            <td>
+                <b>{{ formatNumber(values.total) }}</b>
+            </td>
+        </tr>
+    {% endblock %}
+    </twig:Table>
+    {{ form_start(form) }}
+        <twig:Table title="Arbeiter zuteilen">
+        {% block table_content %}
+            <tr>
+                <th>Gebäude</th>
+                <th>Arbeiter</th>
+                <th>Zusätzliche Nahrung</th>
+            </tr>
+            {% for workplace in form.workplaces %}
+                <tr>
+                    <td style="width:150px">
+                        {% if workplace.vars.data.displayName is defined %}
+                            {{ workplace.vars.data.displayName }}
+                        {% else %}
+                            {{ workplace.vars.data.building.name }}
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if workplace.vars.data.peopleWorkingStatus > 0 %}
+                            {{ workplace.vars.data.peopleWorkingStatus }}
+                        {% else %}
+                            {{ form_widget(workplace.children.peopleWorking) }}
+                        {% endif %}
+                    </td>
+                    <td>{{ formatNumber(workplace.children.peopleWorking.vars.value * configValue('people_food_require')) }} t</td>
+                </tr>
+            {% endfor %}
+            <tr>
+                <td>&nbsp;</td>
+                <td>
+                    {{ form_widget(form.save) }}
+                </td>
+                <td>
+                    {{ form_widget(form.free) }}
+                </td>
+            </tr>
+            <tr>
+                <td colspan="3">
+                    Wenn einem Geb&auml;ude Arbeiter zugeteilt werden, wird es entsprechend schneller gebaut. Die Arbeiter benötigen jedoch Nahrung.
+                    Die Zuteilung der Arbeiter kann erst geändert werden, wenn entsprechende Bauaufträge abgeschlossen sind.
+                    Die gesamte Nahrung für die Arbeiter wird beim Start eines Bauvorgangs sofort vom Planetenkonto abgezogen.
+                </td>
+            </tr>
+
+        {% endblock %}
+        </twig:Table>
+    {{ form_end(form) }}
+    <twig:Table title="Daten" width="500">
+    {% block table_content %}
+        <tr>
+            <th style="width:300px">Bevölkerung total</th>
+            <td>{{ formatNumber(planet.people|round(0, 'floor')) }}</td>
+        </tr>
+        <tr>
+            <th>Arbeiter</th>
+            <td>{{ formatNumber(peopleWorking) }}</td>
+        </tr>
+        <tr>
+            <th>Freie Leute</th>
+            <td>{{ formatNumber(peopleFree) }}</td>
+        </tr>
+        <tr>
+            <th>Zeitreduktion pro Arbeiter und Auftrag</th>
+            <td>{{ formatTimespan(configValue('people_work_done')) }} </td>
+        </tr>
+        <tr>
+            <th>Nahrung pro Arbeiter und Auftrag</th>
+            <td>{{ formatNumber(configValue('people_food_require')) }}t</td>
+        </tr>
+        <tr>
+            <th>Grundwachstumsrate</th>
+            <td>{{ formatPercentString(configValue('people_multiply')) }}</td>
+        </tr>
+        <tr>
+            <th>Wachstumsbonus {{ planet.planetType.name }} </th>
+            <td>{{ formatPercentString(planet.planetType.people, true) }}</td>
+        </tr>
+        <tr>
+            <th>Wachstumsbonus {{ app.user.data.race.name }} </th>
+            <td>{{ formatPercentString(app.user.data.race.population, true)|raw }}</td>
+        </tr>
+        <tr>
+            <th>Wachstumsbonus {{ star.solarType.name }}</th>
+            <td>{{ formatPercentString(star.solarType.people, true)|raw }}</td>
+        </tr>
+        {% if app.user.data.specialist %}
+            <tr>
+                <th>Wachstumsbonus {{ app.user.data.specialist.name }} </th>
+                <td>{{ formatPercentString(app.user.data.specialist.prodPeople, true)|raw }}</td>
+            </tr>
+            <tr>
+                <th>Wachstumsbonus total</th>
+                <td>
+                    {{ formatPercentString({0:planet.planetType.people,1:app.user.data.race.population,2:star.solarType.people,3:
+                        app.user.data.specialist.prodPeople}, true)|raw }}
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <th>Wachstumsbonus total</th>
+                <td>
+                    {{ formatPercentString({0:planet.planetType.people,1:app.user.data.race.population,2:star.solarType.people},
+                        true)|raw }}</td>
+            </tr>
+        {% endif %}
+        <tr>
+            <th>Bevölkerungszuwachs pro Stunde</th>
+            <td>{{ formatNumber(peopleDiv) }}</td>
+        </tr>
+    {% endblock %}
+    </twig:Table>
+{% endblock %}
