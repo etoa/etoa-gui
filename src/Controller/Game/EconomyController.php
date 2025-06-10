@@ -341,7 +341,8 @@ class EconomyController extends AbstractGameController
     public function planetStats(Request $request): Response {
         return $this->render('game/economy/planetstats.html.twig', [
             'ress' => $this->economyService->renderRess(),
-            'prod' => $this->economyService->renderProduction()
+            'prod' => $this->economyService->renderProduction(),
+            'id' => $request->getSession()->get('cpid')
         ]);
     }
 }

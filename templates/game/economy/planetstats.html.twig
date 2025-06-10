@@ -30,5 +30,20 @@
         </tr>
         {{ prod|raw }}
     {% endblock %}
-</twig:Table>
+    </twig:Table>
+    <twig:Table title="Produktion">
+    {% block table_content %}
+        <tr>
+            <td style="color:#f00">Minimum</td>
+            <td style="color:#0f0">Maximum</td>
+            <td style="font-style:italic">Speicher bald voll</td>
+            <td style="font-weight:bold">Speicher voll</td>
+        </tr>
+    {% endblock %}
+    </twig:Table>
+    <div><br/>
+        <a href="{{ path('game.economy',{'id':id}) }}">
+            <input type="button" value="Wirtschaft des aktuellen Planeten anzeigen" />
+        </a>
+    </div>
 {% endblock %}
