@@ -29,11 +29,11 @@ class TechTreeSelectionType extends AbstractType
             'required' => false,
             'placeholder' => 'Auswahl',
             'choices' => [
-                'Gebäude' => array_map(fn (int $id) => 'b:'.$id, array_flip($this->buildingDataRepository->getBuildingNames())),
-                'Technologien' => array_map(fn (int $id) => 't:'.$id, array_flip($this->technologyDataRepository->getTechnologyNames())),
+                'Gebäude' => $this->buildingDataRepository->findBy(['show'=>1]),
+                'Technologien' => $this->technologyDataRepository->findBy(['show'=>1]),/*
                 'Schiffe' => array_map(fn (int $id) => 's:'.$id, array_flip($this->shipDataRepository->getShipNames())),
                 'Verteidigung' => array_map(fn (int $id) => 'd:'.$id, array_flip($this->defenseDataRepository->getDefenseNames())),
-                'Raketen' => array_map(fn (int $id) => 'm:'.$id, array_flip($this->missileDataRepository->getMissileNames())),
+                'Raketen' => array_map(fn (int $id) => 'm:'.$id, array_flip($this->missileDataRepository->getMissileNames())),*/
             ],
         ]);
     }

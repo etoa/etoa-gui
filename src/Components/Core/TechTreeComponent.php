@@ -35,9 +35,9 @@ class TechTreeComponent extends AbstractController
     #[LiveProp(writable: true)]
     public ?string $id = null;
     private null|Missile|Ship|Defense|Technology|Building $object = null;
-    /** @var mixed[] */
+    /** @var array */
     public array $requiredObjects = [];
-    /** @var mixed[] */
+    /** @var array */
     public array $allowedObjects = [];
 
     public function __construct(
@@ -57,48 +57,33 @@ class TechTreeComponent extends AbstractController
 
     public function getObject(): Missile|Ship|Defense|Technology|Building
     {
-        $id = $this->formValues['id'] ?? '';
+        $id = $this->formView->vars['attr']['id'] ?? '';
         [$cat, $id] = explode(':', $id);
         $id = (int) $id;
         $repository = $this->requirementRepositoryProvider->getRepositoryForCategory($cat);
         $requirements = $repository->getRequirements($id);
 
-        $buildings = $this->buildingDataRepository->searchBuildings();
-        $technologies = $this->technologyDataRepository->getTechnologies();
-        $ships = $this->shipDataRepository->getAllShips(false);
-        $defenses = $this->defenseDataRepository->getAllDefenses();
-        $missiles = $this->missileDataRepository->getMissiles();
-
-        $this->requiredObjects = [];
-        foreach ($requirements->getBuildingRequirements($id) as $requirement) {
-            $building = $buildings[$requirement->requiredBuildingId];
-            $this->requiredObjects[] = ['item' => $building, 'level' => $requirement->requiredLevel, 'category' => 'b'];
-        }
-
-        foreach ($requirements->getTechnologyRequirements($id) as $requirement) {
-            $technology = $technologies[$requirement->requiredTechnologyId];
-            $this->requiredObjects[] = ['item' => $technology, 'level' => $requirement->requiredLevel, 'category' => 't'];
-        }
+        $this->requiredObjects = $requirements;
 
         switch ($cat) {
             case 'b':
-                $this->object = $buildings[$id];
+                $this->object = $this->buildingDataRepository->find($id);
 
                 break;
             case 't':
-                $this->object = $technologies[$id];
+                $this->object = $this->technologyDataRepository->find($id);
 
                 break;
             case 's':
-                $this->object = $ships[$id];
+                $this->object = $this->shipDataRepository->find($id);
 
                 break;
             case 'd':
-                $this->object = $defenses[$id];
+                $this->object = $this->defenseDataRepository->find($id);
 
                 break;
             case 'm':
-                $this->object = $missiles[$id];
+                $this->object = $this->missileDataRepository->find($id);
 
                 break;
             default:
@@ -121,39 +106,15 @@ class TechTreeComponent extends AbstractController
                 $missileRequirements = $this->missileRequirementRepository->getRequiredByTechnology($id);
             }
 
-            foreach ($buildingRequirements as $requirement) {
-                if (isset($buildings[$requirement->objectId])) {
-                    $this->allowedObjects[] = ['item' => $buildings[$requirement->objectId], 'level' => $requirement->requiredLevel, 'category' => 'b'];
-                }
-            }
-            foreach ($technologyRequirements as $requirement) {
-                if (isset($technologies[$requirement->objectId])) {
-                    $this->allowedObjects[] = ['item' => $technologies[$requirement->objectId], 'level' => $requirement->requiredLevel, 'category' => 't'];
-                }
-            }
-            foreach ($shipRequirements as $requirement) {
-                if (isset($ships[$requirement->objectId])) {
-                    $this->allowedObjects[] = ['item' => $ships[$requirement->objectId], 'level' => $requirement->requiredLevel, 'category' => 's'];
-                }
-            }
-            foreach ($defenseRequirements as $requirement) {
-                if (isset($defenses[$requirement->objectId])) {
-                    $this->allowedObjects[] = ['item' => $defenses[$requirement->objectId], 'level' => $requirement->requiredLevel, 'category' => 'd'];
-                }
-            }
-            foreach ($missileRequirements as $requirement) {
-                if (isset($missiles[$requirement->objectId])) {
-                    $this->allowedObjects[] = ['item' => $missiles[$requirement->objectId], 'level' => $requirement->requiredLevel, 'category' => 'm'];
-                }
-            }
-        }
+            $this->allowedObjects = array_merge($buildingRequirements,$defenseRequirements,$shipRequirements,$technologyRequirements,$missileRequirements);
 
+        }
         return $this->object;
     }
 
     protected function instantiateForm(): FormInterface
     {
-        return $this->createFormBuilder(['id' => $this->id ?? 'b:6'])
+        return $this->createFormBuilder(null, ['attr' => ['id' => $this->id ?? 'b:6']])
             ->add('id', TechTreeSelectionType::class, ['label' => false])
             ->getForm();
     }
