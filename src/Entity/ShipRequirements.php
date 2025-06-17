@@ -25,7 +25,7 @@ class ShipRequirements
     #[ORM\ManyToOne(targetEntity: Technology::class)]
     private ?string $tech = null;
 
-    #[ORM\Column]
+    #[ORM\Column(name: 'req_level')]
     private ?int $level = null;
 
     public function getLevel(): ?int

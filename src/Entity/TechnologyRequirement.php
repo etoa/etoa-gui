@@ -17,70 +17,71 @@ class TechnologyRequirement
 
     #[ORM\JoinColumn(name: 'obj_id', referencedColumnName: 'tech_id')]
     #[ORM\ManyToOne(targetEntity: Technology::class)]
-    private Technology $object;
+    private Technology $obj;
 
     #[ORM\JoinColumn(name: 'req_building_id', referencedColumnName: 'building_id')]
     #[ORM\ManyToOne(targetEntity: Building::class)]
-    private ?Building $requiredBuilding = null;
+    private ?Building $building = null;
 
     #[ORM\JoinColumn(name: 'req_tech_id', referencedColumnName: 'tech_id')]
     #[ORM\ManyToOne(targetEntity: Technology::class)]
-    private ?Technology $requiredTechnology = null;
+    private ?Technology $technology = null;
 
     #[ORM\Column(name: 'req_level')]
-    private int $requiredLevel = 1;
+    private int $level = 1;
 
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    public function getRequiredLevel(): ?int
+    public function getLevel(): ?int
     {
-        return $this->requiredLevel;
+        return $this->level;
     }
 
-    public function setRequiredLevel(int $requiredLevel): static
+    public function setLevel(int $level): static
     {
-        $this->requiredLevel = $requiredLevel;
+        $this->level = $level;
 
         return $this;
     }
 
-    public function getObject(): ?Technology
+    public function getObj(): ?Technology
     {
-        return $this->object;
+        return $this->obj;
     }
 
-    public function setObject(?Technology $object): static
+    public function setObj(?Technology $obj): static
     {
-        $this->object = $object;
+        $this->obj = $obj;
 
         return $this;
     }
 
-    public function getRequiredBuilding(): ?Building
+    public function getBuilding(): ?Building
     {
-        return $this->requiredBuilding;
+        return $this->building;
     }
 
-    public function setRequiredBuilding(?Building $requiredBuilding): static
+    public function setBuilding(?Building $building): static
     {
-        $this->requiredBuilding = $requiredBuilding;
+        $this->building = $building;
 
         return $this;
     }
 
-    public function getRequiredTechnology(): ?Technology
+    public function getTechnology(): ?Technology
     {
-        return $this->requiredTechnology;
+        return $this->technology;
     }
 
-    public function setRequiredTechnology(?Technology $requiredTechnology): static
+    public function setTechnology(?Technology $technology): static
     {
-        $this->requiredTechnology = $requiredTechnology;
+        $this->technology = $technology;
 
         return $this;
     }
 
+    
 }

@@ -51,21 +51,7 @@ class TechnologyDataRepository extends AbstractRepository
      */
     public function getTechnologies(): array
     {
-
-        $data = $this->createQueryBuilder('q')
-            ->select('*')
-            ->where('tech_show = 1')
-            ->orderBy('tech_order')
-            ->addOrderBy('tech_name')
-            ->getQuery()
-            ->execute();
-
-        $technologies = [];
-        foreach ($data as $row) {
-            $technologies[$row->getId()] = $row;
-        }
-
-        return $technologies;
+        return $this->findBy(['show'=>1],['order'=>'DESC','name'=>'DESC']);
     }
 
     public function getTechnology(int $techId): ?Technology

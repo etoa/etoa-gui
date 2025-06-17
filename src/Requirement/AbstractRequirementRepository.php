@@ -4,6 +4,7 @@ namespace EtoA\Requirement;
 
 use Doctrine\DBAL\Connection;
 use EtoA\Core\AbstractRepository;
+use phpDocumentor\Reflection\Types\This;
 
 abstract class AbstractRequirementRepository extends AbstractRepository
 {
@@ -20,17 +21,14 @@ abstract class AbstractRequirementRepository extends AbstractRepository
         return new RequirementsCollection(array_map(fn (array $row) => ObjectRequirement::createFromData($row), $data));
     }
 
-    public function getRequirements(int $objectId): RequirementsCollection
+    public function getRequirements(int $objectId): array
     {
-        $data = $this->createQueryBuilder('q')
-            ->select('*')
-            ->from($this->table)
-            ->where('obj_id = :objectId')
-            ->orderBy('req_level')
+        return $this->createQueryBuilder('q')
+            ->where('q.obj = :objectId')
+            ->orderBy('q.level')
             ->setParameter('objectId', $objectId)
-            ->fetchAllAssociative();
-
-        return new RequirementsCollection(array_map(fn (array $row) => ObjectRequirement::createFromData($row), $data));
+            ->getQuery()
+            ->execute();
     }
 
     /**
@@ -38,15 +36,7 @@ abstract class AbstractRequirementRepository extends AbstractRepository
      */
     public function getRequiredByBuilding(int $buildingId): array
     {
-        $data = $this->createQueryBuilder('q')
-            ->select('*')
-            ->from($this->table)
-            ->where('req_building_id = :buildingId')
-            ->orderBy('req_level')
-            ->setParameter('buildingId', $buildingId)
-            ->fetchAllAssociative();
-
-        return array_map(fn (array $row) => ObjectRequirement::createFromData($row), $data);
+        return $this->findBy(['building'=>$buildingId],['level'=>'DESC']);
     }
 
     /**

@@ -118,7 +118,7 @@ class DefenseDataRepository extends AbstractRepository
      */
     public function getAllDefenses(): array
     {
-        return $this->findBy(array(), array('username' => 'def_order'));
+        return $this->findBy(array(), array('order'=>'DESC'));
     }
 
     /**

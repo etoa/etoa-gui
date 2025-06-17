@@ -26,18 +26,9 @@ class BuildingDataRepository extends AbstractRepository
      */
     public function searchBuildings(BuildingSearch $search = null, BuildingSort $sort = null): array
     {
-        $data = $this->applySearchSortLimit($this->createQueryBuilder('q'), $search, $sort)
-            ->select('*')
-            ->from('buildings')
-            ->fetchAllAssociative();
-
-        $buildings = [];
-        foreach ($data as $row) {
-            $building = new Building($row);
-            $buildings[$building->getId()] = $building;
-        }
-
-        return $buildings;
+        return $this->applySearchSortLimit($this->createQueryBuilder('q'), $search, $sort)
+            ->getQuery()
+            ->execute();
     }
 
     public function getBuilding(int $buildingId): ?Building

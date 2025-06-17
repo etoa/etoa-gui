@@ -49,18 +49,6 @@ class MissileDataRepository extends AbstractRepository
      */
     public function getMissiles(): array
     {
-        $data = $this->createQueryBuilder('q')
-            ->select('*')
-            ->from('missiles')
-            ->where('missile_show=1')
-            ->fetchAllAssociative();
-
-        $result = [];
-        foreach ($data as $row) {
-            $missile = new Missile($row);
-            $result[$missile->id] = $missile;
-        }
-
-        return $result;
+        return $this->findBy(['show'=>1]);
     }
 }

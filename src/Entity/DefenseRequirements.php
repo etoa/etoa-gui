@@ -14,7 +14,7 @@ class DefenseRequirements
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\JoinColumn(name: 'obj_id', referencedColumnName: 'ship_id')]
+    #[ORM\JoinColumn(name: 'obj_id', referencedColumnName: 'def_id')]
     #[ORM\ManyToOne(targetEntity: Defense::class)]
     private Defense $obj;
 
@@ -26,7 +26,7 @@ class DefenseRequirements
     #[ORM\ManyToOne(targetEntity: Technology::class)]
     private ?string $tech = null;
 
-    #[ORM\Column]
+    #[ORM\Column(name: 'req_level')]
     private ?int $level = null;
 
     public function getLevel(): ?int
