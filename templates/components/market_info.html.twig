@@ -1,0 +1,44 @@
+<twig:Table title="Marktplatz-Infos">
+    {% block table_content %}
+        <tr>
+            <th>Angebote:</th>
+            <td>Im Moment hast du {{ anzahl }} Angebote von diesem Planeten auf dem Markt</td>
+        </tr>
+        <tr>
+            <th>Mögliche Angebote:</th>
+            <td>Du kannst noch {{ possible }} Angebote einstellen</td>
+        </tr>
+        <tr>
+            <th>Rückzugs gebühren:</th>
+            <td>Wenn du ein Angebot von diesem Planeten zurückziehst, erhältst du {{ returnFactor }} % des Angebotes zurück (abgerundet).</td>
+        </tr>
+        <tr>
+            <th>Verkaufsgebühren:</th>
+            <td>
+                Die Verkaufsgebühr des Marktplatzes beträgt  {{ tax|raw }}
+                {% if app.user.data.specialist %}
+                    (inkl. {{ formatPercentString(app.user.data.specialist) }} Kostenverringerung durch
+                    {{ app.user.data.specialist.name }}!
+                {% endif %}
+            </td>
+        </tr>
+        {% if app.user.data.specialist and app.user.data.specialist.tradeTime %}
+            <tr>
+                <th>Handelsflottengeschwindigkeit:</th>
+                <td>Die Handelsflotten fliegen durch {{ app.user.data.specialist }} mit
+                    {{ formatPercentString(app.user.data.specialist.tradeTime) }}  Geschwindigkeit!</td>
+            </tr>
+        {% endif %}
+        {% if app.user.data.alliance %}
+            <tr>
+                <th>Allianzmarktstatus:</th>
+                <td> {{ statusText }} </td>
+            </tr>
+        {% endif %}
+        <tr>
+            <th>Rohstoffkurse:</th>
+            <td> popUp("Details anzeigen", "page=help&amp;site=rates") </td>
+        </tr>
+    {% endblock %}
+</twig:Table>
+

@@ -7,6 +7,7 @@ use EtoA\Universe\Resources\BaseResources;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: MarketResourceRepository::class)]
+#[ORM\Table(name: 'market_ressource')]
 class MarketResource
 {
 
@@ -15,11 +16,13 @@ class MarketResource
     #[ORM\Column(type: "integer")]
     private int $id;
 
-    #[ORM\Column(type: "integer")]
-    private int $userId;
+    #[ORM\JoinColumn(name: 'user_id', referencedColumnName: 'user_id')]
+    #[ORM\ManyToOne(targetEntity: User::class)]
+    private ?User $user = null;
 
-    #[ORM\Column(type: "integer")]
-    private int $entityId;
+    #[ORM\JoinColumn(name: 'entity_id', referencedColumnName: 'id')]
+    #[ORM\ManyToOne(targetEntity: Entity::class)]
+    private Entity $entity;
 
     #[ORM\Column(type: "integer")]
     private int $sell0;
@@ -51,17 +54,21 @@ class MarketResource
     #[ORM\Column(type: "integer")]
     private int $buy4;
 
-    #[ORM\Column(type: "integer")]
-    private int $buyerId;
+    #[ORM\JoinColumn(name: 'buyer_id', referencedColumnName: 'user_id')]
+    #[ORM\ManyToOne(targetEntity: User::class)]
+    private ?User $buyer = null;
 
-    #[ORM\Column(type: "integer")]
-    private int $buyerEntityId;
+    #[ORM\JoinColumn(name: 'buyer_entity_id', referencedColumnName: 'id')]
+    #[ORM\ManyToOne(targetEntity: Entity::class)]
+    private Entity $buyerEntity;
 
-    #[ORM\Column(type: "integer")]
-    private int $forUserId;
+    #[ORM\JoinColumn(name: 'for_user', referencedColumnName: 'user_id')]
+    #[ORM\ManyToOne(targetEntity: User::class)]
+    private ?User $forUser = null;
 
-    #[ORM\Column(type: "integer")]
-    private int $forAllianceId;
+    #[ORM\JoinColumn(name: 'for_alliance', referencedColumnName: 'alliance_id')]
+    #[ORM\ManyToOne(targetEntity: Alliance::class)]
+    private ?Alliance $forAlliance = null;
 
     #[ORM\Column(type: "boolean")]
     private bool $buyable;
@@ -99,30 +106,6 @@ class MarketResource
     public function getId(): ?int
     {
         return $this->id;
-    }
-
-    public function getUserId(): ?int
-    {
-        return $this->userId;
-    }
-
-    public function setUserId(int $userId): static
-    {
-        $this->userId = $userId;
-
-        return $this;
-    }
-
-    public function getEntityId(): ?int
-    {
-        return $this->entityId;
-    }
-
-    public function setEntityId(int $entityId): static
-    {
-        $this->entityId = $entityId;
-
-        return $this;
     }
 
     public function getSell0(): ?int
@@ -245,54 +228,6 @@ class MarketResource
         return $this;
     }
 
-    public function getBuyerId(): ?int
-    {
-        return $this->buyerId;
-    }
-
-    public function setBuyerId(int $buyerId): static
-    {
-        $this->buyerId = $buyerId;
-
-        return $this;
-    }
-
-    public function getBuyerEntityId(): ?int
-    {
-        return $this->buyerEntityId;
-    }
-
-    public function setBuyerEntityId(int $buyerEntityId): static
-    {
-        $this->buyerEntityId = $buyerEntityId;
-
-        return $this;
-    }
-
-    public function getForUserId(): ?int
-    {
-        return $this->forUserId;
-    }
-
-    public function setForUserId(int $forUserId): static
-    {
-        $this->forUserId = $forUserId;
-
-        return $this;
-    }
-
-    public function getForAllianceId(): ?int
-    {
-        return $this->forAllianceId;
-    }
-
-    public function setForAllianceId(int $forAllianceId): static
-    {
-        $this->forAllianceId = $forAllianceId;
-
-        return $this;
-    }
-
     public function isBuyable(): ?bool
     {
         return $this->buyable;
@@ -325,6 +260,78 @@ class MarketResource
     public function setDate(int $date): static
     {
         $this->date = $date;
+
+        return $this;
+    }
+
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
+
+    public function setUser(?User $user): static
+    {
+        $this->user = $user;
+
+        return $this;
+    }
+
+    public function getEntity(): ?Entity
+    {
+        return $this->entity;
+    }
+
+    public function setEntity(?Entity $entity): static
+    {
+        $this->entity = $entity;
+
+        return $this;
+    }
+
+    public function getBuyer(): ?User
+    {
+        return $this->buyer;
+    }
+
+    public function setBuyer(?User $buyer): static
+    {
+        $this->buyer = $buyer;
+
+        return $this;
+    }
+
+    public function getBuyerEntity(): ?Entity
+    {
+        return $this->buyerEntity;
+    }
+
+    public function setBuyerEntity(?Entity $buyerEntity): static
+    {
+        $this->buyerEntity = $buyerEntity;
+
+        return $this;
+    }
+
+    public function getForUser(): ?User
+    {
+        return $this->forUser;
+    }
+
+    public function setForUser(?User $forUser): static
+    {
+        $this->forUser = $forUser;
+
+        return $this;
+    }
+
+    public function getForAlliance(): ?Alliance
+    {
+        return $this->forAlliance;
+    }
+
+    public function setForAlliance(?Alliance $forAlliance): static
+    {
+        $this->forAlliance = $forAlliance;
 
         return $this;
     }

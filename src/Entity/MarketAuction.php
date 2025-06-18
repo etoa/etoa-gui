@@ -14,11 +14,13 @@ class MarketAuction
     #[ORM\Column(type: "integer")]
     private int $id;
 
-    #[ORM\Column(type: "integer")]
-    private int $userId;
+    #[ORM\JoinColumn(name: 'user_id', referencedColumnName: 'user_id')]
+    #[ORM\ManyToOne(targetEntity: User::class)]
+    private ?User $user = null;
 
-    #[ORM\Column(type: "integer")]
-    private int $entityId;
+    #[ORM\JoinColumn(name: 'entity_id', referencedColumnName: 'id')]
+    #[ORM\ManyToOne(targetEntity: Entity::class)]
+    private Entity $entity;
 
     #[ORM\Column(type: "integer")]
     private int $dateStart;
@@ -68,11 +70,13 @@ class MarketAuction
     #[ORM\Column(type: "integer")]
     private int $currency4;
 
-    #[ORM\Column(type: "integer")]
-    private int $currentBuyerId;
+    #[ORM\JoinColumn(name: 'current_buyer_id', referencedColumnName: 'user_id')]
+    #[ORM\ManyToOne(targetEntity: User::class)]
+    private ?User $currentBuyer = null;
 
-    #[ORM\Column(type: "integer")]
-    private int $currentBuyerEntityId;
+    #[ORM\JoinColumn(name: 'current_buyer_entity_id', referencedColumnName: 'id')]
+    #[ORM\ManyToOne(targetEntity: Entity::class)]
+    private Entity $currentBuyerEntity;
 
     #[ORM\Column(type: "integer")]
     private int $currentBuyerDate;
@@ -140,30 +144,6 @@ class MarketAuction
     public function getId(): ?int
     {
         return $this->id;
-    }
-
-    public function getUserId(): ?int
-    {
-        return $this->userId;
-    }
-
-    public function setUserId(int $userId): static
-    {
-        $this->userId = $userId;
-
-        return $this;
-    }
-
-    public function getEntityId(): ?int
-    {
-        return $this->entityId;
-    }
-
-    public function setEntityId(int $entityId): static
-    {
-        $this->entityId = $entityId;
-
-        return $this;
     }
 
     public function getDateStart(): ?int
@@ -358,30 +338,6 @@ class MarketAuction
         return $this;
     }
 
-    public function getCurrentBuyerId(): ?int
-    {
-        return $this->currentBuyerId;
-    }
-
-    public function setCurrentBuyerId(int $currentBuyerId): static
-    {
-        $this->currentBuyerId = $currentBuyerId;
-
-        return $this;
-    }
-
-    public function getCurrentBuyerEntityId(): ?int
-    {
-        return $this->currentBuyerEntityId;
-    }
-
-    public function setCurrentBuyerEntityId(int $currentBuyerEntityId): static
-    {
-        $this->currentBuyerEntityId = $currentBuyerEntityId;
-
-        return $this;
-    }
-
     public function getCurrentBuyerDate(): ?int
     {
         return $this->currentBuyerDate;
@@ -486,6 +442,54 @@ class MarketAuction
     public function setSent(int $sent): static
     {
         $this->sent = $sent;
+
+        return $this;
+    }
+
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
+
+    public function setUser(?User $user): static
+    {
+        $this->user = $user;
+
+        return $this;
+    }
+
+    public function getEntity(): ?Entity
+    {
+        return $this->entity;
+    }
+
+    public function setEntity(?Entity $entity): static
+    {
+        $this->entity = $entity;
+
+        return $this;
+    }
+
+    public function getCurrentBuyer(): ?User
+    {
+        return $this->currentBuyer;
+    }
+
+    public function setCurrentBuyer(?User $currentBuyer): static
+    {
+        $this->currentBuyer = $currentBuyer;
+
+        return $this;
+    }
+
+    public function getCurrentBuyerEntity(): ?Entity
+    {
+        return $this->currentBuyerEntity;
+    }
+
+    public function setCurrentBuyerEntity(?Entity $currentBuyerEntity): static
+    {
+        $this->currentBuyerEntity = $currentBuyerEntity;
 
         return $this;
     }
