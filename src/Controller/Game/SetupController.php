@@ -251,7 +251,7 @@ class SetupController extends AbstractGameController
                 if (count($sets) > 1) {
                     return $this->redirectToRoute('game.setup.itemset');
                 } elseif (count($sets) === 1) {
-                    $this->userSetupService->addItemSetListToPlanet($planet->getId(), $this->getUser()->getId(), $sets[0]->getId());
+                    $this->userSetupService->addItemSetListToPlanet($planet, $this->getUser()->getData(), $sets[0]->getId());
                     $this->userRepository->setSetupFinished($this->getUser()->getData());
                     return $this->redirectToRoute('game.setup.finished');
                 } else {

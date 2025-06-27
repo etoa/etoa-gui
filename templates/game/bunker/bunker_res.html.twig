@@ -1,0 +1,56 @@
+{% extends 'game/bunker/bunker.html.twig' %}
+{% import 'macros.html.twig' as macros %}
+
+{% block bunker %}
+    {% if msg.success is defined %}
+        {{ macros.successMessage(msg.success) }}
+    {% endif %}
+
+    {{ form_start(form) }}
+        <twig:Table title="Rohstoffbunker" width="400">
+            {% block table_content %}
+                <tr>
+                    <th style="width:150px"> {{ constant('EtoA\\Universe\\Resources\\ResIcons::METAL')|raw }}  {{ constant('EtoA\\Universe\\Resources\\ResourceNames::METAL') }} </th>
+                    <td>
+                        {{ form_widget(form.bunkerMetal) }}
+
+                    </td>
+                </tr>
+                <tr>
+                    <th style="width:150px"> {{ constant('EtoA\\Universe\\Resources\\ResIcons::CRYSTAL')|raw }}  {{ constant('EtoA\\Universe\\Resources\\ResourceNames::CRYSTAL') }} </th>
+                    <td>
+                        {{ form_widget(form.bunkerCrystal) }}
+                    </td>
+                </tr>
+                <tr>
+                    <th style="width:150px"> {{ constant('EtoA\\Universe\\Resources\\ResIcons::PLASTIC')|raw }}  {{ constant('EtoA\\Universe\\Resources\\ResourceNames::PLASTIC') }} </th>
+                    <td>
+                        {{ form_widget(form.bunkerPlastic) }}
+                    </td>
+                </tr>
+                <tr>
+                    <th style="width:150px"> {{ constant('EtoA\\Universe\\Resources\\ResIcons::FUEL')|raw }}  {{ constant('EtoA\\Universe\\Resources\\ResourceNames::FUEL') }} </th>
+                    <td>
+                        {{ form_widget(form.bunkerFuel) }}
+                    </td>
+                </tr>
+                <tr>
+                    <th style="width:150px"> {{ constant('EtoA\\Universe\\Resources\\ResIcons::FOOD')|raw }}  {{ constant('EtoA\\Universe\\Resources\\ResourceNames::FOOD') }} </th>
+                    <td>
+                        {{ form_widget(form.bunkerFood) }}
+                    </td>
+                </tr>
+                <tr>
+                    <th style="width:150px">Benutzt:</th>
+                    <td>{{ formatNumber(bunkered) }} / {{ formatNumber(resBunker.building.calculateBunkerResources(resBunker.currentLevel)) }} </td>
+                </tr>
+                <tr>
+                    <th>Verfügbar:</th>
+                    <td>
+                        <img src="{{'/images/progress/'~(bunkered/resBunker.building.calculateBunkerResources(resBunker.currentLevel) * 100)|round~'?r=1&w=100'}}" alt="progress" />
+                    </td>
+                </tr>
+            {% endblock %}
+        </twig:Table>
+    {{ form_end(form) }}
+{% endblock %}

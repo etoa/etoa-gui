@@ -1,0 +1,58 @@
+{% extends 'game/bunker/bunker.html.twig' %}
+{% import 'macros.html.twig' as macros %}
+
+{% block bunker %}
+    {% if msg.success is defined %}
+        {{ macros.successMessage(msg.success) }}
+    {% endif %}
+
+    {% if msg.error is defined %}
+        {{ macros.errorMessage(msg.error) }}
+    {% endif %}
+
+    {{ form_start(form) }}
+        <twig:Table title="Vorhandene Raumschiffe">
+            {% block table_content %}
+                <tr>
+                    <th colspan="5">Schiffe wählen:</th>
+                </tr>
+                <tr>
+                    <th colspan="2">Typ</th>
+                    <th>Struktur</th>
+                    <th>Anzahl</th>
+                    <th>Einbunkern</th>
+                </tr>
+                {% for ship in form.ships %}
+                    <tr>
+                        {% if ship.vars.data.ship.special %}
+                            <td style="width:40px;background:#000;">
+                                <a href="?page=ship_upgrade&amp;id=">
+                                    <img src="{{ ship.vars.data.ship.getImagePath('small') }}" width="40" height="40" alt="Ship"/>
+                                </a>
+                            </td>
+                        {% else %}
+                            <td style="width:40px;background:#000;">
+                                <a href="?page=help&amp;site=shipyard&amp;id= $shipId">
+                                    <img src="{{ ship.vars.data.ship.getImagePath('small') }}" width="40" height="40" alt="Ship"/>
+                                </a>
+                            </td>
+                        {% endif %}
+                        <td {{ tm(ship.vars.data.ship.name,
+                            "<img src=\""~ship.vars.data.ship.getImagePath('medium')~"\" style=\"float:left;margin-right:5px;\">"~
+                            BBCodeToHTML(ship.vars.data.ship.shortComment))|raw }} >
+                            {{ ship.vars.data.ship.name }} </td>
+                        <td> {{ formatNumber(ship.vars.data.ship.structure) }} </td>
+                        <td> {{ formatNumber(ship.vars.data.count) }} </td>
+                        <td>
+                            {{ form_widget(ship.children.count) }}
+                            <br/>
+                            <a href="javascript:;" onclick="document.getElementById('{{ ship.children.count.vars.id }}').value={{ ship.vars.data.count }};document.getElementById('{{ship.children.count.vars.id}}').select()">Alle</a> &nbsp;
+                            <a href="javascript:;" onclick="document.getElementById('{{ ship.children.count.vars.id }}').value=0;">Keine</a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            {% endblock %}
+        </twig:Table>
+        {{ form_widget(form.submit) }}
+    {{ form_end(form) }}
+{% endblock %}

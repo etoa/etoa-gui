@@ -604,7 +604,7 @@ class UserConfigController extends AbstractGameController
                 $user->getEmail()
             );
 
-            $userService->addToUserLog($user->getId(), "settings", "{nick} ändert sein Passwort.", false);
+            $userService->addToUserLog($user, "settings", "{nick} ändert sein Passwort.", false);
             $msg['success'] = 'Das Passwort wurde geändert!';
         }
 
@@ -684,7 +684,7 @@ class UserConfigController extends AbstractGameController
             if ($form->get('activate')->isClicked()) {
                 if ($userHolidayService->activateHolidayMode($user)) {
                     $msg['success'] = BBCodeUtils::toHTML("Du bist nun im Urlaubsmodus bis mind. [b]" . StringUtils::formatDate(time() + $config->getInt('hmode_days') * 24 * 3600) . "[/b].");
-                    $userService->addToUserLog($user->getId(), "settings", "{nick} ist nun im Urlaub.", true);
+                    $userService->addToUserLog($user, "settings", "{nick} ist nun im Urlaub.", true);
                 } else {
                     $msg['error'] = "Es sind noch Flotten unterwegs!";
                 }
@@ -693,7 +693,7 @@ class UserConfigController extends AbstractGameController
             if ($form->get('deactivate')->isClicked()) {
                 if (!$user->getDeleted() && $userHolidayService->deactivateHolidayMode($user)) {
                     $msg['success'] = "Urlaubsmodus aufgehoben! Denke daran, auf allen deinen Planeten die Produktion zu überprüfen!";
-                    $userService->addToUserLog($user->getId(), "settings", "{nick} ist nun aus dem Urlaub zurück.", true);
+                    $userService->addToUserLog($user, "settings", "{nick} ist nun aus dem Urlaub zurück.", true);
                     $showButton = true;
                 } else {
                     $msg['error'] = "Urlaubsmodus kann nicht aufgehoben werden!";
@@ -703,7 +703,7 @@ class UserConfigController extends AbstractGameController
             if ($form->get('cancelDelete')->isClicked()) {
                 $userService->updateDelete($user, 0);
                 $msg['success'] = "Löschantrag aufgehoben!";
-                $userService->addToUserLog($user->getId(), "settings", "{nick} hat seine Accountlöschung aufgehoben.", true);
+                $userService->addToUserLog($user, "settings", "{nick} hat seine Accountlöschung aufgehoben.", true);
                 $showButton = true;
             }
 
@@ -712,7 +712,7 @@ class UserConfigController extends AbstractGameController
                 $userService->updateDelete($user, $timestamp);
                 $msg['success'] = "Deine Daten werden am " . StringUtils::formatDate(time() + ($config->getInt('user_delete_days') * 3600 * 24)) . " Uhr von unserem System gelöscht! Wir wünschen weiterhin viel Erfolg im Netz!";
                 $userHolidayService->activateHolidayMode($user, true);
-                $userService->addToUserLog($user->getId(), "settings", "{nick} hat seinen Account zur Löschung freigegeben.", true);
+                $userService->addToUserLog($user, "settings", "{nick} hat seinen Account zur Löschung freigegeben.", true);
                 $security->logout();
             }
         }

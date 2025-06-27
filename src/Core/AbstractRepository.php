@@ -32,6 +32,13 @@ abstract class AbstractRepository extends ServiceEntityRepository
         return $uow->getEntityChangeSet($model);
     }
 
+    public function getOriginal(Object $model): array
+    {
+        $uow = $this->getEntityManager()->getUnitOfWork();
+
+        return $uow->getOriginalEntityData($model);
+    }
+
     protected function applySearchSortLimit(QueryBuilder $qb, AbstractSearch $search = null, AbstractSort $sorts = null, int $limit = null, int $offset = null): QueryBuilder
     {
         if ($search !== null) {

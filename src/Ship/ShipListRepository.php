@@ -4,7 +4,10 @@ namespace EtoA\Ship;
 
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use EtoA\Core\AbstractRepository;
 use EtoA\Entity\Entity;
+use EtoA\Entity\Planet;
+use EtoA\Entity\Ship;
 use EtoA\Entity\ShipListItem;
 use EtoA\Entity\User;
 use EtoA\Universe\Entity\EntityRepository;
@@ -17,7 +20,7 @@ use EtoA\Universe\Entity\EntityRepository;
  * @method ShipListItem[]    findAll()
  * @method ShipListItem[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class ShipListRepository extends ServiceEntityRepository
+class ShipListRepository extends AbstractRepository
 {
     public function __construct(ManagerRegistry $registry, private readonly EntityRepository $entityRepository)
     {
@@ -35,23 +38,20 @@ class ShipListRepository extends ServiceEntityRepository
     }
 
     /**
-     * @return array<int, int>
+     * @return array<int, ShipListItem>
      */
-    public function getEntityShipCounts(int $userId, int $entityId): array
+    public function getEntityShipCounts(User $user, Planet $entity): array
     {
-        $data = $this->createQueryBuilder('q')
-            ->select('shiplist_ship_id, shiplist_count')
-            ->from('shiplist')
-            ->where('shiplist_user_id = :userId')
-            ->andWhere('shiplist_entity_id = :entityId')
-            ->andWhere('shiplist_count > 0')
+        return $this->createQueryBuilder('q')
+            ->where('q.user = :user')
+            ->andWhere('q.entity = :entity')
+            ->andWhere('q.count > 0')
             ->setParameters([
-                'userId' => $userId,
-                'entityId' => $entityId,
+                'user' => $user,
+                'entity' => $entity,
             ])
-            ->fetchAllKeyValue();
-
-        return array_map(fn ($value) => (int) $value, $data);
+            ->getQuery()
+            ->execute();
     }
 
     /**
@@ -247,92 +247,46 @@ class ShipListRepository extends ServiceEntityRepository
             ->executeQuery();
     }
 
-    public function bunker(int $userId, int $entityId, int $shipId, int $count): int
+    public function bunker(ShipListItem $shipListItem, int $count): int
     {
-        $info = $this->createQueryBuilder('q')
-            ->select('shiplist_id', 'shiplist_count')
-            ->from('shiplist')
-            ->where('shiplist_ship_id = :shipId')
-            ->andWhere('shiplist_user_id = :userId')
-            ->andWhere('shiplist_entity_id = :entityId')
-            ->setParameters([
-                'userId' => $userId,
-                'entityId' => $entityId,
-                'shipId' => $shipId,
-            ])->fetchAssociative();
 
-        if ($info === false) {
-            return 0;
-        }
+        $delable = max(0, min($shipListItem->getCount(), $count));
 
-        $delable = max(0, min($count, (int) $info['shiplist_count']));
+        $shipListItem->setBunkered($shipListItem->getBunkered()+$delable);
+        $shipListItem->setCount($shipListItem->getBunkered()-$delable);
 
-        $this->createQueryBuilder('q')
-            ->update('shiplist')
-            ->set('shiplist_bunkered', 'shiplist_bunkered + :change')
-            ->set('shiplist_count', 'shiplist_count - :change')
-            ->where('shiplist_ship_id = :shipId')
-            ->andWhere('shiplist_id = :id')
-            ->setParameters([
-                'change' => $delable,
-                'id' => $info['shiplist_id'],
-                'shipId' => $shipId,
-            ])->executeQuery();
+        $this->save();
 
         return $delable;
     }
 
     /**
-     * @return array<int, int>
+     * @return array<int, ShipListItem>
      */
-    public function getBunkeredCount(int $userId, int $entityId): array
+    public function getBunkered(User $user, Planet $entity): array
     {
-        $data = $this->createQueryBuilder('q')
-            ->select('shiplist_ship_id, shiplist_bunkered')
-            ->from('shiplist')
-            ->where('shiplist_entity_id = :entityId')
-            ->andWhere('shiplist_user_id = :userId')
-            ->andWhere('shiplist_bunkered  > 0')
+        return $this->createQueryBuilder('q')
+            ->where('q.entity = :entity')
+            ->andWhere('q.user = :user')
+            ->andWhere('q.bunkered  > 0')
             ->setParameters([
-                'entityId' => $entityId,
-                'userId' => $userId,
+                'entity' => $entity,
+                'user' => $user,
             ])
-            ->fetchAllKeyValue();
-
-        return array_map(fn ($value) => (int) $value, $data);
+            ->getQuery()
+            ->execute();
     }
 
-    public function leaveBunker(int $userId, int $entityId, int $shipId, int $count): int
+    public function leaveBunker(ShipListItem $shipListItem): int
     {
-        $info = $this->createQueryBuilder('q')
-            ->select('shiplist_id', 'shiplist_bunkered')
-            ->from('shiplist')
-            ->where('shiplist_ship_id = :shipId')
-            ->andWhere('shiplist_user_id = :userId')
-            ->andWhere('shiplist_entity_id = :entityId')
-            ->setParameters([
-                'userId' => $userId,
-                'entityId' => $entityId,
-                'shipId' => $shipId,
-            ])->fetchAssociative();
+        $org = $this->getOriginal($shipListItem);
 
-        if ($info === false) {
-            return 0;
-        }
+        $delable = max(0, min($shipListItem->getBunkered(), $org['bunkered']));
 
-        $delable = max(0, min($count, (int) $info['shiplist_bunkered']));
+        $shipListItem->setBunkered($org['bunkered']-$delable);
+        $shipListItem->setCount($org['count']+$delable);
 
-        $this->createQueryBuilder('q')
-            ->update('shiplist')
-            ->set('shiplist_bunkered', 'shiplist_bunkered - :change')
-            ->set('shiplist_count', 'shiplist_count + :change')
-            ->where('shiplist_ship_id = :shipId')
-            ->andWhere('shiplist_id = :id')
-            ->setParameters([
-                'change' => $delable,
-                'id' => $info['shiplist_id'],
-                'shipId' => $shipId,
-            ])->executeQuery();
+        $this->save();
 
         return $delable;
     }

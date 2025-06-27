@@ -1,0 +1,16 @@
+{% extends 'layout/game.html.twig' %}
+{% block content %}
+    <h1>Bunker des Planeten {{ planet.name }} </h1>
+
+    <twig:ResourceBox/>
+
+    {% set tabs = {
+        "game.bunker.res" : "Rohstoffbunker",
+        "game.bunker.bunker" : "Flottenbunker",
+        "game.bunker.fleet" : "Schiffe einbunkern",
+    } %}
+    <twig:tabmenu data="{{ tabs }}" active="{{ app.request.attributes.get('_route') }}"/><br>
+
+    {% block bunker %}
+    {% endblock %}
+{% endblock %}
