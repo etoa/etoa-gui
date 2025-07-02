@@ -8,6 +8,8 @@ use Doctrine\Persistence\ManagerRegistry;
 use EtoA\Core\AbstractRepository;
 use EtoA\Entity\DefenseListItem;
 use EtoA\Entity\Entity;
+use EtoA\Entity\Planet;
+use EtoA\Entity\User;
 use EtoA\Universe\Entity\EntityRepository;
 
 class DefenseRepository extends AbstractRepository
@@ -85,40 +87,16 @@ class DefenseRepository extends AbstractRepository
             ])->executeQuery();
     }
 
-    public function removeDefense(int $defenseId, int $amount, int $userId, int $entityId): int
+    public function removeDefense(DefenseListItem $defenseListItem, int $amount): int
     {
         if ($amount < 0) {
             throw new \InvalidArgumentException('Cannot remove negative defense count');
         }
 
-        $available = (int) $this->createQueryBuilder('q')
-            ->select('deflist_count')
-            ->from('deflist')
-            ->where('deflist_def_id = :defenseId')
-            ->andWhere('deflist_user_id = :userId')
-            ->andWhere('deflist_entity_id = :entityId')
-            ->setParameters([
-                'userId' => $userId,
-                'entityId' => $entityId,
-                'defenseId' => $defenseId,
-            ])->fetchOne();
+        $amount = min($defenseListItem->getCount(), $amount);
 
-        $amount = min($available, $amount);
-
-        $this->createQueryBuilder('q')
-            ->update('deflist')
-            ->set('deflist_count', 'deflist_count - :amount')
-            ->where('deflist_def_id = :defenseId')
-            ->andWhere('deflist_user_id = :userId')
-            ->andWhere('deflist_entity_id = :entityId')
-            ->setParameters([
-                'userId' => $userId,
-                'entityId' => $entityId,
-                'defenseId' => $defenseId,
-                'amount' => $amount,
-            ])
-            ->executeQuery()
-            ->rowCount();
+        $defenseListItem->setCount($defenseListItem->getCount()-$amount);
+        $this->save();
 
         return $amount;
     }
@@ -139,26 +117,6 @@ class DefenseRepository extends AbstractRepository
 
         $this->getEntityManager()->persist($item);
         $this->getEntityManager()->flush();
-    }
-
-    /**
-     * @return array<int, int>
-     */
-    public function getEntityDefenseCounts(int $userId, int $entityId): array
-    {
-        $data = $this->createQueryBuilder('q')
-            ->select('deflist_def_id, deflist_count')
-            ->from('deflist')
-            ->where('deflist_user_id = :userId')
-            ->andWhere('deflist_entity_id = :entityId')
-            ->andWhere('deflist_count > 0')
-            ->setParameters([
-                'userId' => $userId,
-                'entityId' => $entityId,
-            ])
-            ->fetchAllKeyValue();
-
-        return array_map(fn ($value) => (int) $value, $data);
     }
 
     public function getDefenseCount(int $userId, int $defenseId): int
@@ -203,6 +161,43 @@ class DefenseRepository extends AbstractRepository
                 'entityId' => $entityId,
             ])
             ->fetchOne();
+    }
+
+    /**
+     * @return array<int, DefenseListItem>
+     */
+    public function getRecyclable (User $user, Planet $entity): array
+    {
+        return $this->createQueryBuilder('q')
+            ->innerJoin('App:Defense', 'd', 'WITH', 'q.defense = d.id')
+            ->where('q.user = :user')
+            ->andWhere('q.entity = :entity')
+            ->andWhere('q.count > 0')
+            ->andWhere('d.buildable = 1')
+            ->setParameters([
+                'user' => $user,
+                'entity' => $entity,
+            ])
+            ->getQuery()
+            ->execute();
+    }
+
+
+    /**
+     * @return array<int, DefenseListItem>
+     */
+    public function getEntityDefenseCounts(User $user, Planet $entity): array
+    {
+        return $this->createQueryBuilder('q')
+            ->where('q.user = :user')
+            ->andWhere('q.entity = :entity')
+            ->andWhere('q.count > 0')
+            ->setParameters([
+                'user' => $user,
+                'entity' => $entity,
+            ])
+            ->getQuery()
+            ->execute();
     }
 
     public function removeForUser(int $userId): void

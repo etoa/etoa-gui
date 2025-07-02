@@ -2,16 +2,13 @@
 
 namespace EtoA\Form\Type\Core;
 
-use EtoA\Entity\ShipListItem;
-use EtoA\Support\StringUtils;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
-use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class BunkerShipType extends AbstractType
+class CountType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
@@ -25,22 +22,9 @@ class BunkerShipType extends AbstractType
                         'size' => 10,
                         'onkeyup'=> "FormatNumber(this.id,this.value,'".$event->getData()->getCount(). "','','')"
                     ],
-                    'mapped' =>false
+                    'mapped' => false,
+                    'data' => 0
                 ]);
         });
-
-        $builder->addEventListener(FormEvents::PRE_SUBMIT, function (FormEvent $event) {
-            $data = $event->getData();
-            $data['count'] = StringUtils::parseFormattedNumber($data['count']);
-
-            $event->setData($data);
-        });
-    }
-
-    public function configureOptions(OptionsResolver $resolver): void
-    {
-        $resolver->setDefaults([
-            'data_class' => ShipListItem::class,
-        ]);
     }
 }

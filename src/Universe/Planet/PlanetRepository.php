@@ -268,7 +268,7 @@ class PlanetRepository extends AbstractRepository
         $planet->setPeople($planet->getPeople()+$people);
         $planet->setFieldsUsed($planet->getFieldsUsed()+$fields);
 
-         $this->save();
+        $this->save();
     }
 
     /**

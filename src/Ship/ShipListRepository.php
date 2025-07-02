@@ -40,6 +40,25 @@ class ShipListRepository extends AbstractRepository
     /**
      * @return array<int, ShipListItem>
      */
+    public function getRecyclable (User $user, Planet $entity): array
+    {
+        return $this->createQueryBuilder('q')
+            ->innerJoin('App:Ship', 's', 'WITH', 'q.ship = s.id')
+            ->where('q.user = :user')
+            ->andWhere('q.entity = :entity')
+            ->andWhere('q.count > 0')
+            ->andWhere('s.special = 0')
+            ->setParameters([
+                'user' => $user,
+                'entity' => $entity,
+            ])
+            ->getQuery()
+            ->execute();
+    }
+
+    /**
+     * @return array<int, ShipListItem>
+     */
     public function getEntityShipCounts(User $user, Planet $entity): array
     {
         return $this->createQueryBuilder('q')
@@ -98,6 +117,7 @@ class ShipListRepository extends AbstractRepository
         return array_map(fn ($row) => ShipListItem::createFromData($row), $data);
     }
 
+
     /**
      * @return array<int, ShipListItemCount>
      */
@@ -129,39 +149,15 @@ class ShipListRepository extends AbstractRepository
         $this->addShipCount($shipId, $amount, $userId, $entityId);
     }
 
-    public function removeShips(int $shipId, int $amount, int $userId, int $entityId): int
+    public function removeShips(ShipListItem $shipListItem, int $amount): int
     {
         if ($amount < 0) {
             throw new \InvalidArgumentException('Cannot remove negative ship count');
         }
+        $amount = min($shipListItem->getCount(), $amount);
 
-        $available = (int) $this->createQueryBuilder('q')
-            ->select('shiplist_count')
-            ->from('shiplist')
-            ->where('shiplist_ship_id = :shipId')
-            ->andWhere('shiplist_user_id = :userId')
-            ->andWhere('shiplist_entity_id = :entityId')
-            ->setParameters([
-                'userId' => $userId,
-                'entityId' => $entityId,
-                'shipId' => $shipId,
-            ])->fetchOne();
-
-        $amount = min($available, $amount);
-
-        $this->createQueryBuilder('q')
-            ->update('shiplist')
-            ->set('shiplist_count', 'shiplist_count - :amount')
-            ->where('shiplist_ship_id = :shipId')
-            ->andWhere('shiplist_user_id = :userId')
-            ->andWhere('shiplist_entity_id = :entityId')
-            ->setParameters([
-                'userId' => $userId,
-                'entityId' => $entityId,
-                'shipId' => $shipId,
-                'amount' => $amount,
-            ])
-            ->executeQuery();
+        $shipListItem->setCount($shipListItem->getCount()-$amount);
+        $this->save();
 
         return $amount;
     }

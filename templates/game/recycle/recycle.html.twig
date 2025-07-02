@@ -1,0 +1,89 @@
+{% extends 'layout/game.html.twig' %}
+{% import 'macros.html.twig' as macros %}
+
+{% block content %}
+    <h1>Recyclingstation des Planeten {{ planet.name }} </h1>
+
+    <twig:ResourceBox/>
+
+    {% if msg.success is defined %}
+        {{ macros.successMessage(msg.success) }}
+    {% endif %}
+
+    <twig:Table title="Recycling">
+    {% block table_content %}
+        <tr>
+            <td>Deine Recyclingtechnologie ist auf Stufe {{ techLevel }} entwickelt. Es werden {{ payback }}% der Kosten zurückerstattet.<br/>
+                Der Recyclingvorgang kann nicht rückgängig gemacht werden, die Objekte werden sofort verschrottet!
+            </td>
+        </tr>
+    {% endblock %}
+    </twig:Table>
+
+    {% if formShips.ships %}
+        {{ form_start(formShips) }}
+            <twig:Table title="Schiffe">
+                {% block table_content %}
+                    <tr>
+                        <th colspan="2">Typ</th>
+                        <th>Anzahl</th>
+                        <th>Auswahl</th>
+                    </tr>
+                    {% for ship in formShips.ships %}
+                        <tr>
+                            <td>
+                                <a href="HELP_URL_SHIP &amp;id=$shipId ">
+                                    <img src="{{ ship.vars.data.ship.getImagePath }}" width="40"  height="40"/>
+                                </a>
+                            </td>
+                            <td>{{ ship.vars.data.ship.name }}</td>
+                            <td>{{ formatNumber(ship.vars.data.count) }}</td>
+                            <td>
+                                {{ form_widget(ship.children.count) }}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                {% endblock %}
+            </twig:Table>
+            {{ form_widget(formShips.submit) }}
+        {{ form_end(formShips) }}
+    {% else %}
+        <twig:Box title="Information" class="information">
+            Es sind keine Schiffe auf diesem Planeten vorhanden!
+        </twig:Box>
+    {% endif %}
+
+    {% if formDefenses.defenses %}
+        {{ form_start(formDefenses) }}
+            <twig:Table title="Schiffe">
+            {% block table_content %}
+                <tr>
+                    <th colspan="2">Typ</th>
+                    <th >Anzahl</th>
+                    <th >Auswahl</th>
+                </tr>
+                {% for defense in formDefenses.defenses %}
+                    <tr>
+                        <td>
+                            <a href="HELP_URL_DEF &amp;id=$defenseId ">
+                                <img src="{{ defense.vars.data.defense.getImagePath }}" width="40"  height="40"/>
+                            </a>
+                        </td>
+                        <td>{{ defense.vars.data.defense.name }}</td>
+                        <td>{{ formatNumber(defense.vars.data.count) }}</td>
+                        <td>
+                            {{ form_widget(defense.children.count) }}
+                        </td>
+                    </tr>
+                {% endfor %}
+            {% endblock %}
+            </twig:Table>
+            {{ form_widget(formDefenses.submit) }}
+            {{ form_widget(formDefenses._token) }}
+        {{ form_end(formDefenses,{render_rest:false})}}
+    {% else %}
+        <twig:Box title="Information" class="information">
+            Es sind keine Verteidigungsanlagen auf diesem Planeten vorhanden!
+        </twig:Box>
+    {% endif %}
+{% endblock %}

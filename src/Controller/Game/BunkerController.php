@@ -5,7 +5,7 @@ namespace EtoA\Controller\Game;
 use EtoA\Building\BuildingId;
 use EtoA\Building\BuildingListItemRepository;
 use EtoA\Form\Type\Core\BunkerShipCountType;
-use EtoA\Form\Type\Core\BunkerShipType;
+use EtoA\Form\Type\Core\CountType;
 use EtoA\Ship\ShipListRepository;
 use EtoA\Support\StringUtils;
 use EtoA\Universe\Planet\PlanetRepository;
@@ -181,7 +181,7 @@ class BunkerController extends AbstractGameController
 
             $form = $this->createFormBuilder(['ships'=>$ships])
                 ->add('ships', CollectionType::class, [
-                    'entry_type' => BunkerShipType::class,
+                    'entry_type' => CountType::class,
                     'label' => false
                 ])
                 ->add('submit', SubmitType::class, [
@@ -204,15 +204,15 @@ class BunkerController extends AbstractGameController
                     $structure -= $ship->getCount() * $ship->getShip()->getStructure();
                 }
 
-                foreach ($form->getData()['ships'] as $shipListItem) {
-                    $cnt = $shipListItem->getCount();
-                    if ($cnt > 0) {
+                foreach ($form->get('ships')->all() as $shipListItem) {
+                    $cnt = $shipListItem->get('count')->getData();
+                    if ($cnt) {
                         $countBunker = min($count, $cnt);
-                        $spaceBunker = $shipListItem->getShip()->getStructure() > 0 ? min($cnt, $structure / $shipListItem->getShip()->getStructure()) : $cnt;
+                        $spaceBunker = $shipListItem->getData()->getShip()->getStructure() > 0 ? min($cnt, $structure / $shipListItem->getData()->getShip()->getStructure()) : $cnt;
                         $cnt = (int) floor(min($countBunker, $spaceBunker));
-                        $cnt = $this->shipListRepository->bunker($shipListItem, $cnt);
+                        $cnt = $this->shipListRepository->bunker($shipListItem->getData(), $cnt);
                         $count -= $cnt;
-                        $structure -= $cnt * $shipListItem->getShip()->getStructure();
+                        $structure -= $cnt * $shipListItem->getData()->getShip()->getStructure();
                         $counter += $cnt;
                     }
                 }
