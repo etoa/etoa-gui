@@ -17,8 +17,9 @@ class UserSessionLog
     #[ORM\Column]
     private string $sessionId;
 
-    #[ORM\Column]
-    private int $userId;
+    #[ORM\JoinColumn(name: 'user_id', referencedColumnName: 'user_id')]
+    #[ORM\ManyToOne(targetEntity: User::class)]
+    private ?User $user = null;
 
     #[ORM\Column]
     private string $ipAddr;
@@ -48,18 +49,6 @@ class UserSessionLog
     public function setSessionId(string $sessionId): static
     {
         $this->sessionId = $sessionId;
-
-        return $this;
-    }
-
-    public function getUserId(): ?int
-    {
-        return $this->userId;
-    }
-
-    public function setUserId(int $userId): static
-    {
-        $this->userId = $userId;
 
         return $this;
     }
@@ -120,6 +109,18 @@ class UserSessionLog
     public function setTimeLogout(int $timeLogout): static
     {
         $this->timeLogout = $timeLogout;
+
+        return $this;
+    }
+
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
+
+    public function setUser(?User $user): static
+    {
+        $this->user = $user;
 
         return $this;
     }

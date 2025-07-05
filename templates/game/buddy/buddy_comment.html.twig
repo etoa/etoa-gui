@@ -1,0 +1,18 @@
+{% extends 'game/buddy/buddy.html.twig' %}
+{% import 'macros.html.twig' as macros %}
+
+{% block buddy %}
+    {% if msg.success is defined %}
+        {{ macros.successMessage(msg.success) }}
+    {% endif %}
+
+    {{ form_start(form) }}
+        <twig:Box title="Kommentar für {{ form.vars.data.buddy.nick }}">
+            {{ form_widget(form.comment) }}
+        </twig:Box>
+        {{ form_widget(form.save) }}
+        <a href="{{ path('game.buddylist.overview') }}">
+            <input type="button" value="Abbrechen" />
+        </a>
+    {{ form_end(form) }}
+{% endblock %}

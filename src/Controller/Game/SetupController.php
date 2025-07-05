@@ -281,13 +281,13 @@ class SetupController extends AbstractGameController
             return $this->redirectToRoute('game.setup.finished');
         }
 
-        $planetId = $this->planetRepository->getUserMainId($this->getUser()->getId());
-        if($planetId) {
+        $planet = $this->planetRepository->getUserMain($this->getUser()->getData());
+        if($planet) {
             $addForm = $this->createForm(ItemSetupType::class);
             $addForm->handleRequest($request);
 
             if($addForm->isSubmitted() && $addForm->isValid()) {
-                $this->userSetupService->addItemSetListToPlanet($planetId, $this->getUser()->getId(), $addForm->getData()['itemset_id']->getId());
+                $this->userSetupService->addItemSetListToPlanet($planet, $this->getUser()->getData(), $addForm->getData()['itemset_id']->getId());
                 $this->userRepository->setSetupFinished($this->getUser()->getData());
                 return $this->redirectToRoute('game.setup.finished');
             }

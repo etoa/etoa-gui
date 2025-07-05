@@ -5,6 +5,7 @@ namespace EtoA\BuddyList;
 use Doctrine\Persistence\ManagerRegistry;
 use EtoA\Core\AbstractRepository;
 use EtoA\Entity\Buddy;
+use EtoA\Entity\User;
 
 class BuddyListRepository extends AbstractRepository
 {
@@ -100,74 +101,28 @@ class BuddyListRepository extends AbstractRepository
         return array_map(fn (array $row) => new PendingBuddyRequest($row), $data);
     }
 
-    public function addBuddyRequest(int $userId, int $buddyId): void
+    public function addBuddyRequest(User $user, User $buddy): void
     {
-        $this->createQueryBuilder('q')
-            ->insert('buddylist')
-            ->values([
-                'bl_user_id' => ':userId',
-                'bl_buddy_id' => ':buddyId',
-                'bl_allow' => ':allow',
-            ])
-            ->setParameters([
-                'userId' => $userId,
-                'buddyId' => $buddyId,
-                'allow' => 0,
-            ])
-            ->executeQuery();
+
+        $request = new Buddy();
+        $request->setAllowed(false);
+        $request->setBuddy($buddy);
+        $request->setUser($user);
+
+        $this->persist($request);
+        $this->save();
     }
 
-    public function acceptBuddyRequest(int $userId, int $buddyId): bool
+    public function acceptBuddyRequest(Buddy $buddy): void
     {
-        $existed = (bool) $this->createQueryBuilder('q')
-            ->update('buddylist')
-            ->set('bl_allow', ':allow')
-            ->where('bl_user_id = :buddyId')
-            ->andWhere('bl_buddy_id = :userId')
-            ->andWhere('bl_allow = 0')
-            ->setParameters([
-                'allow' => 1,
-                'buddyId' => $buddyId,
-                'userId' => $userId,
-            ])
-            ->executeQuery()
-            ->rowCount();
+        $buddy->setAllowed(true);
 
-        if (!$existed) {
-            return false;
-        }
-
-        if ($this->buddyListEntryExist($userId, $buddyId)) {
-            $this->createQueryBuilder('q')
-                ->update('buddylist')
-                ->set('bl_allow', ':allow')
-                ->where('bl_user_id = :userId')
-                ->andWhere('bl_buddy_id = :buddyId')
-                ->setParameters([
-                    'allow' => 1,
-                    'userId' => $userId,
-                    'buddyId' => $buddyId,
-                ])
-                ->executeQuery();
-
-            return true;
-        }
-
-        $this->createQueryBuilder('q')
-            ->insert('buddylist')
-            ->values([
-                'bl_allow' => ':allow',
-                'bl_user_id' => ':userId',
-                'bl_buddy_id' => ':buddyId',
-            ])
-            ->setParameters([
-                'allow' => 1,
-                'userId' => $userId,
-                'buddyId' => $buddyId,
-            ])
-            ->executeQuery();
-
-        return true;
+        $otherBuddy = new Buddy();
+        $otherBuddy->setAllowed(true);
+        $otherBuddy->setBuddy($buddy->getUser());
+        $otherBuddy->setUser($buddy->getBuddy());
+        $this->persist($otherBuddy);
+        $this->save();
     }
 
     public function rejectBuddyRequest(int $userId, int $buddyId): bool
@@ -200,7 +155,7 @@ class BuddyListRepository extends AbstractRepository
             ->executeQuery();
     }
 
-    public function buddyListEntryExist(int $userId, int $buddyId): bool
+    public function buddyListEntryExist(User $user, User $buddy): bool
     {
         return (bool) $this->createQueryBuilder('q')
             ->select('1')
@@ -214,20 +169,18 @@ class BuddyListRepository extends AbstractRepository
             ->fetchOne();
     }
 
-    public function removeBuddy(int $userId, int $buddyId): bool
+    public function removeBuddy(Buddy $buddy): void
     {
-        $counts = $this->createQueryBuilder('q')
-            ->delete('buddylist')
-            ->where('bl_user_id = :userId AND bl_buddy_id = :buddyId')
-            ->orWhere('bl_user_id = :buddyId AND bl_buddy_id = :userId')
+        $this->createQueryBuilder('q')
+            ->delete()
+            ->where('q.user = :user AND q.buddy = :buddy')
+            ->orWhere('q.user = :buddy AND q.buddy = :user')
             ->setParameters([
-                'userId' => $userId,
-                'buddyId' => $buddyId,
+                'user' => $buddy->getUser(),
+                'buddy' => $buddy->getBuddy(),
             ])
-            ->executeQuery()
-            ->rowCount();
-
-        return (bool) $counts;
+            ->getQuery()
+            ->execute();
     }
 
     public function removeForUser(int $userId): void

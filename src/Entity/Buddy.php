@@ -14,15 +14,16 @@ class Buddy
     #[ORM\Column(name: "bl_id", type: "integer")]
     private int $id;
 
-    #[ORM\Column(name: "bl_user_id", type: "integer")]
-    private int $userId;
+    #[ORM\JoinColumn(name: 'bl_user_id', referencedColumnName: 'user_id')]
+    #[ORM\ManyToOne(targetEntity: User::class)]
+    private ?User $user = null;
 
-    #[ORM\Column(name: "bl_buddy_id", type: "integer")]
-    private int $buddyId;
+    #[ORM\JoinColumn(name: 'bl_buddy_id', referencedColumnName: 'user_id')]
+    #[ORM\ManyToOne(targetEntity: User::class)]
+    private ?User $buddy = null;
 
     #[ORM\Column(name: "bl_comment", type: "string")]
     private ?string $comment;
-
 
     #[ORM\Column(name: "bl_allow", type: "boolean")]
     private bool $allowed;
@@ -30,30 +31,6 @@ class Buddy
     public function getId(): ?int
     {
         return $this->id;
-    }
-
-    public function getUserId(): ?int
-    {
-        return $this->userId;
-    }
-
-    public function setUserId(int $userId): static
-    {
-        $this->userId = $userId;
-
-        return $this;
-    }
-
-    public function getBuddyId(): ?int
-    {
-        return $this->buddyId;
-    }
-
-    public function setBuddyId(int $buddyId): static
-    {
-        $this->buddyId = $buddyId;
-
-        return $this;
     }
 
     public function getComment(): ?string
@@ -76,6 +53,30 @@ class Buddy
     public function setAllowed(bool $allowed): static
     {
         $this->allowed = $allowed;
+
+        return $this;
+    }
+
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
+
+    public function setUser(?User $user): static
+    {
+        $this->user = $user;
+
+        return $this;
+    }
+
+    public function getBuddy(): ?User
+    {
+        return $this->buddy;
+    }
+
+    public function setBuddy(?User $buddy): static
+    {
+        $this->buddy = $buddy;
 
         return $this;
     }

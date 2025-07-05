@@ -13,8 +13,9 @@ class UserSession
     #[ORM\Column(type: "string")]
     private string $id;
 
-    #[ORM\Column]
-    private int $userId;
+    #[ORM\OneToOne(mappedBy: "session", targetEntity: User::class)]
+    #[ORM\JoinColumn(name: 'user_id', referencedColumnName: 'user_id')]
+    private User $user;
 
     #[ORM\Column]
     private ?string $ipAddr;
@@ -42,18 +43,6 @@ class UserSession
     public function setId(string $id): static
     {
         $this->id = $id;
-
-        return $this;
-    }
-
-    public function getUserId(): ?int
-    {
-        return $this->userId;
-    }
-
-    public function setUserId(int $userId): static
-    {
-        $this->userId = $userId;
 
         return $this;
     }
@@ -126,6 +115,18 @@ class UserSession
     public function setBotCount(int $botCount): static
     {
         $this->botCount = $botCount;
+
+        return $this;
+    }
+
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
+
+    public function setUser(?User $user): static
+    {
+        $this->user = $user;
 
         return $this;
     }

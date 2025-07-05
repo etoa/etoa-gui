@@ -1,0 +1,97 @@
+{% extends 'game/buddy/buddy.html.twig' %}
+{% import 'macros.html.twig' as macros %}
+
+{% block buddy %}
+    {% if msg.success is defined %}
+        {{ macros.successMessage(BBCodeToHTML(msg.success))|raw }}
+    {% endif %}
+
+    {% if msg.error is defined %}
+        {{ macros.errorMessage(BBCodeToHTML(msg.error))|raw }}
+    {% endif %}
+
+    {% if buddies %}
+        <twig:Table title="Meine Freunde">
+        {% block table_content %}
+            <tr>
+                <th>Nick</th>
+                <th>Punkte</th>
+                <th>Hauptplanet</th>
+                <th>Online</th>
+                <th>Kommentar</th>
+                <th>Aktion</th>
+            </tr>
+            {% for buddy in buddies %}
+                <tr>
+                    <td> {{ buddy.buddy.nick }} </td>
+                    {% if buddy.allowed %}
+                        <td>{{ formatNumber(buddy.user.points) }}</td>
+                        <td>
+                            {% if planetRepository.getUserMain(buddy.buddy) %}
+                                <a href="{{ path('game.cell',{id:planetRepository.getUserMain(buddy.buddy).entity.cell.id}) }}&hl={{ planet.id }}">{{ planetRepository.getUserMain(buddy.buddy).name }}</a>
+                            {% else %}
+                                Noch kein Hauptplanet vorhanden!
+                            {% endif %}
+                        </td>
+                        {% if sessionRepository.findOneBy({user:buddy.buddy}) %}
+                            <td style="color:#0f0;">online</td>
+                        {% elseif sessionLogRepository.findOneBy({user:buddy.buddy},{timeAction:'DESC'},1) %}
+                            <td> {{ formatTimestamp(sessionLogRepository.findOneBy({user:buddy.buddy},{timeAction:'DESC'},1).timeAction) }} </td>
+                        {% else %}
+                            <td>Noch nicht eingeloggt!</td>
+                        {% endif %}
+                    {% else %}
+                        <td colspan="3"><i>Noch keine Erlaubnis</i></td>
+                    {% endif %}
+                    <td>
+                        {% if buddy.comment %}
+                            {{ BBCodeToHTML(buddy.comment) }}
+                        {% endif %}
+                    </td>
+                    <td>
+                        <a href="?page=messages&mode=new&message_user_to= buddy.userId " title="Nachricht">Nachricht</a>
+                        <a href="?page=userinfo&amp;id= buddy.userId " title="Info">Profil</a><br/>
+                        <a href="{{path('game.buddylist.comment',{id:buddy.id})}}" title="Kommentar bearbeiten">Kommentar</a>
+                        <a href="{{path('game.buddylist.remove',{id:buddy.id})}}" onclick="return confirm('Willst du  {{ buddy.user.nick }}  wirklich von deiner Liste entfernen?');">Entfernen</a>
+                    </td>
+                </tr>
+            {% endfor %}
+        {% endblock %}
+        </twig:Table>
+    {% else %}
+        <twig:Box title="Information" class="information">
+            Es sind noch keine Freunde in deiner Buddyliste eingetragen!
+        </twig:Box>
+    {% endif %}
+
+    {% if pendings %}
+        <twig:Table title="Offene Anfragen">
+            {% block table_content %}
+                <tr>
+                    <th class="tbltitle">Nick</th>
+                    <th class="tbltitle">Punkte</th>
+                    <th class="tbltitle">Aktion</th>
+                </tr>
+                {% for pending in pendings %}
+                    <tr>
+                        <td class="tbldata"> {{ pending.user.nick }} </td>
+                        <td> {{ formatNumber(pending.user.points) }} </td>
+                        <td style="width:280px;">
+                            <a href="?page=messages&mode=new&message_user_to= pending.userId " title="Nachricht">Nachricht</a>
+                            <a href="?page=userinfo&amp;id= pending.userId " title="Info">Profil</a>
+                            <a href="{{path('game.buddylist.accept',{id:pending.id})}}" style="color:#0f0">Annehmen</a>
+                            <a href="{{path('game.buddylist.deny',{id:pending.id})}}" style="color:#f90">Zurückweisen</a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            {% endblock %}
+        </twig:Table>
+    {% endif %}
+
+    <h2>Füge einen Freund hinzu</h2>
+    {{ form_start(form) }}
+        {{ form_widget(form.user) }}
+        {{ form_widget(form.submit) }}
+    {{ form_end(form) }}
+    <br><br>
+{% endblock %}

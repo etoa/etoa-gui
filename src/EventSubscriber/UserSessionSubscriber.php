@@ -51,14 +51,14 @@ class UserSessionSubscriber implements EventSubscriberInterface
             /** @var CurrentPlayer $user */
             $user = $event->getAuthenticatedToken()->getUser();
 
-            $oldSession = $this->userSessionRepository->findOneBy(['userId'=>$user->getId()]);
+            $oldSession = $this->userSessionRepository->findOneBy(['user'=>$user->getData()]);
             if($oldSession)
                 $this->userSessionRepository->remove($oldSession);
 
             $sessionModel = new UserSession();
             $sessionModel
                 ->setId($session->getId())
-                ->setUserId($user->getId())
+                ->setUser($user->getData())
                 ->setIpAddr($event->getRequest()->getClientIp())
                 ->setUserAgent($event->getRequest()->headers->get('User-Agent'))
                 ->setTimeLogin($time);
