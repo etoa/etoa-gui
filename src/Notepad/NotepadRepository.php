@@ -4,6 +4,7 @@ namespace EtoA\Notepad;
 
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use EtoA\Core\AbstractRepository;
 use EtoA\Entity\Notepad;
 
 /**
@@ -14,7 +15,7 @@ use EtoA\Entity\Notepad;
  * @method Notepad[]    findAll()
  * @method Notepad[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class NotepadRepository extends ServiceEntityRepository
+class NotepadRepository extends AbstractRepository
 {
     public function __construct(ManagerRegistry $registry)
     {

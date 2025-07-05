@@ -13,44 +13,54 @@ class Notepad
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column]
-    private ?int $userId = null;
+    #[ORM\JoinColumn(name: 'user_id', referencedColumnName: 'user_id')]
+    #[ORM\ManyToOne(targetEntity: User::class)]
+    private ?User $user = null;
 
-    #[ORM\Column(length: 255)]
-    private ?string $timestamp = null;
+    #[ORM\Column]
+    private ?int $timestamp = null;
+
+    #[ORM\OneToOne(mappedBy: "id", targetEntity: NotepadData::class, cascade: ['persist', 'remove'])]
+    #[ORM\JoinColumn(name: 'id', referencedColumnName: 'id')]
+    private ?NotepadData $data = null;
 
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    public function setId(int $id): static
-    {
-        $this->id = $id;
-
-        return $this;
-    }
-
-    public function getUserId(): ?int
-    {
-        return $this->userId;
-    }
-
-    public function setUserId(int $userId): static
-    {
-        $this->userId = $userId;
-
-        return $this;
-    }
-
-    public function getTimestamp(): ?string
+    public function getTimestamp(): ?int
     {
         return $this->timestamp;
     }
 
-    public function setTimestamp(string $timestamp): static
+    public function setTimestamp(int $timestamp): static
     {
         $this->timestamp = $timestamp;
+
+        return $this;
+    }
+
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
+
+    public function setUser(?User $user): static
+    {
+        $this->user = $user;
+
+        return $this;
+    }
+
+    public function getData(): ?NotepadData
+    {
+        return $this->data;
+    }
+
+    public function setData(?NotepadData $data): static
+    {
+        $this->data = $data;
 
         return $this;
     }

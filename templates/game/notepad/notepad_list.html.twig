@@ -1,0 +1,32 @@
+{% extends 'game/notepad/notepad.html.twig' %}
+
+{% block notepad %}
+    {% if list %}
+        <twig:Table title="Meine Notizen">
+            {% block table_content %}
+                {% for note in list %}
+                    <tr>
+                        <td>
+                            <b>{{ note.data.subject }}</b>
+                            <br/>{{ formatTimestamp(note.timestamp) }}
+                        </td>
+                        <td>{{ BBCodeToHTML(note.data.text) }}</td>
+                        <td style="width:130px;">
+                            <a href="{{path('game.notepad.edit',{id:note.id})}}">Bearbeiten</a> &nbsp;
+                            <a href="{{path('game.notepad.delete',{id:note.id})}}"
+                               onclick="return confirm('Soll die Notiz {{ note.data.subject }} wirklich gelöscht werden?');">Löschen</a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            {% endblock %}
+        </twig:Table>
+    {% else %}
+        Keine Notizen vorhanden!
+        <br>
+        <br>
+    {% endif %}
+
+    <a href="{{ path('game.notepad.new') }}">
+        <input type="button" value="Neue Notiz"/>&nbsp;
+    </a>
+{% endblock %}

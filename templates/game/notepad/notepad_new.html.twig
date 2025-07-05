@@ -1,0 +1,26 @@
+{% extends 'game/notepad/notepad.html.twig' %}
+
+{% block notepad %}
+    {{ form_start(form) }}
+    <twig:Table title="Neue Notiz">
+        {% block table_content %}
+            <tr>
+                <th>Titel:</th>
+                <td>
+                    {{form_widget(form.subject)}}
+                </td>
+            </tr>
+            <tr>
+                <th>Text:</th>
+                <td>
+                    {{form_widget(form.text)}}<br/>' helpLink('textformat', 'Hilfe zur Formatierung')
+                </td>
+            </tr>
+        {% endblock %}
+    </twig:Table>
+    {{ form_widget(form.save) }}
+    <a href="{{ path('game.notepad.list') }}">
+        <input type="button" value="Abbrechen"/>&nbsp;
+    </a>
+    {{ form_end(form) }}
+{% endblock %}

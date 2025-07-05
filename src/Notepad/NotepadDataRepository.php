@@ -6,57 +6,29 @@ namespace EtoA\Notepad;
 
 use Doctrine\Persistence\ManagerRegistry;
 use EtoA\Core\AbstractRepository;
+use EtoA\Entity\Notepad;
 use EtoA\Entity\NotepadData;
 use EtoA\Entity\User;
 
 class NotepadDataRepository extends AbstractRepository
 {
-    public function __construct(ManagerRegistry $registry)
+    public function __construct(ManagerRegistry $registry, private readonly NotepadRepository $notepadRepository)
     {
         parent::__construct($registry, NotepadData::class);
     }
 
-    public function add(string $subject, string $text, int $userId): int
+    public function add(NotepadData $notepadData, User $user): void
     {
-        $this->getConnection()->executeStatement(
-            "INSERT INTO
-                notepad
-            (
-                user_id,
-                timestamp
-            )
-            VALUES
-            (
-                :userId,
-                :timestamp
-            );",
-            [
-                'userId' => $userId,
-                'timestamp' => time(),
-            ]
-        );
-        $id = (int) $this->getConnection()->lastInsertId();
+        $notepad = new Notepad();
+        $notepad->setUser($user);
+        $notepad->setTimestamp(time());
 
-        $this->getConnection()->executeStatement(
-            "INSERT INTO
-                notepad_data
-            (
-                id,
-                subject,
-                text
-            )
-            VALUES
-            (
-                :id, :subject, :text
-            );",
-            [
-                'id' => $id,
-                'subject' => $subject,
-                'text' => $text,
-            ]
-        );
+        $this->notepadRepository->persist($notepad);
+        $this->notepadRepository->save();
 
-        return $id;
+        $notepadData->setId($notepad->getId());
+        $this->persist($notepadData);
+        $this->save();
     }
 
     public function update(int $noteId, int $userId, string $subject, string $text): void
