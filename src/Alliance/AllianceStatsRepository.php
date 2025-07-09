@@ -4,7 +4,7 @@ namespace EtoA\Alliance;
 
 use Doctrine\Persistence\ManagerRegistry;
 use EtoA\Core\AbstractRepository;
-use EtoA\Entity\User;
+use EtoA\Entity\AllianceStats;
 
 class AllianceStatsRepository extends AbstractRepository
 {
