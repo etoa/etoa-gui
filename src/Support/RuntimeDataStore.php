@@ -17,14 +17,7 @@ class RuntimeDataStore extends AbstractRepository
 
     public function get(string $key, string $default = null): ?string
     {
-        $value = $this->createQueryBuilder('q')
-            ->select('data_value')
-            ->from('runtime_data')
-            ->where('data_key = :key')
-            ->setParameter('key', $key)
-            ->fetchOne();
-
-        return $value !== false ? $value : $default;
+        return $this->findOneBy(['dataKey'=>$key])??$default;
     }
 
     public function set(string $key, string $value): void

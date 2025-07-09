@@ -53,6 +53,10 @@ class UserStat
     #[ORM\Column]
     private string $raceName;
 
+    #[ORM\JoinColumn(name: 'alliance_id', referencedColumnName: 'alliance_id')]
+    #[ORM\ManyToOne(targetEntity: Alliance::class)]
+    private ?Alliance $alliance = null;
+
     #[ORM\Column]
     private ?string $allianceTag;
 
@@ -305,5 +309,32 @@ class UserStat
         $this->shiftExp = $shiftExp;
 
         return $this;
+    }
+
+    public function getAlliance(): ?Alliance
+    {
+        return $this->alliance;
+    }
+
+    public function setAlliance(?Alliance $alliance): static
+    {
+        $this->alliance = $alliance;
+
+        return $this;
+    }
+
+    public function getBlocked(): ?string
+    {
+        return $this->blocked;
+    }
+
+    public function getHmod(): ?string
+    {
+        return $this->hmod;
+    }
+
+    public function getInactive(): ?string
+    {
+        return $this->inactive;
     }
 }

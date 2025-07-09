@@ -27,7 +27,7 @@ class UserRating
     private ?string $battlesLost;
 
     #[ORM\Column]
-    private ?string $battlesRating;
+    private ?string $battleRating;
 
     #[ORM\Column]
     private ?string $tradesSell;
@@ -80,14 +80,14 @@ class UserRating
         return $this;
     }
 
-    public function getBattlesRating(): ?string
+    public function getBattleRating(): ?string
     {
-        return $this->battlesRating;
+        return $this->battleRating;
     }
 
-    public function setBattlesRating(string $battlesRating): static
+    public function setBattleRating(string $battlesRating): static
     {
-        $this->battlesRating = $battlesRating;
+        $this->battleRating = $battlesRating;
 
         return $this;
     }

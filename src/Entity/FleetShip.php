@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace EtoA\Entity;
 
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use EtoA\Fleet\FleetShipRepository;
 
@@ -30,7 +31,7 @@ class FleetShip
     #[ORM\Column(name: "fs_ship_faked")]
     private int $shipFaked;
 
-    #[ORM\Column(name: "fs_special_ship")]
+    #[ORM\Column(name: "fs_special_ship", type: Types::BOOLEAN)]
     private bool $specialShip;
 
     #[ORM\Column(name: "fs_special_ship_level")]

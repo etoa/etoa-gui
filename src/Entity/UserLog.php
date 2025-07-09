@@ -2,6 +2,7 @@
 
 namespace EtoA\Entity;
 
+use Doctrine\DBAL\Types\Types;
 use EtoA\User\UserLogRepository;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -28,7 +29,7 @@ class UserLog
     #[ORM\Column]
     private string $host;
 
-    #[ORM\Column]
+    #[ORM\Column(type: Types::BOOLEAN)]
     private bool $public;
 
     public function getId(): ?int

@@ -19,7 +19,7 @@ class UserSessionLogRepository extends AbstractRepository
     {
         $log = new UserSessionLog();
         $log->setSessionId($userSession->getId());
-        $log->setUserId($userSession->getUserId());
+        $log->setUser($userSession->getUser());
         $log->setIpAddr($userSession->getIpAddr());
         $log->setUserAgent($userSession->getUserAgent());
         $log->setTimeLogin($userSession->getTimeLogin());

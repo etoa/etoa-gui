@@ -101,12 +101,11 @@ class UserRepository extends AbstractRepository
             ->fetchOne();
     }
 
-    public function setLogoutTime(int $userId, ?int $time = null): void
+    public function setLogoutTime(User $user, ?int $time = null): void
     {
-        $user = $this->find($userId);
         $user->setLogoutTime($time??time());
 
-        $this->getEntityManager()->flush();
+        $this->save();
     }
 
     public function addSpecialistTime(int $userId, int $time): void

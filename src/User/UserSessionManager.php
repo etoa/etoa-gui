@@ -29,7 +29,7 @@ class UserSessionManager
         if ($userSession != null) {
             $this->userSessionLogRepository->addSessionLog($userSession, $logoutPressed ? time() : 0);
             $this->repository->remove($userSession);
-            $this->userRepository->setLogoutTime($userSession->getUserId());
+            $this->userRepository->setLogoutTime($userSession->getUser());
         }
     }
 

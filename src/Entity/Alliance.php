@@ -103,6 +103,10 @@ class Alliance
     #[ORM\Column(name: "alliance_objects_for_members")]
     protected int $objectsForMembers = 1;
 
+    #[ORM\OneToOne(mappedBy: "id", targetEntity: AllianceStats::class,cascade: ['remove'])]
+    #[ORM\JoinColumn(name: 'alliance_id', referencedColumnName: 'alliance_id')]
+    protected ?AllianceStats $allianceStats = null;
+
     public function toString(): string
     {
         return "[" . $this->tag . "] " . $this->name;
@@ -466,6 +470,18 @@ class Alliance
     public function setMotherRequest(?self $motherRequest): static
     {
         $this->motherRequest = $motherRequest;
+
+        return $this;
+    }
+
+    public function getAllianceStats(): ?AllianceStats
+    {
+        return $this->allianceStats;
+    }
+
+    public function setAllianceStats(?AllianceStats $allianceStats): static
+    {
+        $this->allianceStats = $allianceStats;
 
         return $this;
     }
