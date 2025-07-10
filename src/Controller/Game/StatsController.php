@@ -2,8 +2,10 @@
 
 namespace EtoA\Controller\Game;
 
+use EtoA\Alliance\AlliancePointsRepository;
 use EtoA\Alliance\AllianceStatsRepository;
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Entity\Alliance;
 use EtoA\Entity\AllianceStats;
 use EtoA\Entity\User;
 use EtoA\Entity\UserStat;
@@ -25,15 +27,16 @@ use Symfony\Component\Routing\Annotation\Route;
 class StatsController extends AbstractGameController
 {
     public function __construct(
-        private readonly UserStatRepository      $userStatsRepository,
-        private readonly UserTitlesService       $userTitlesService,
-        private readonly UserRatingRepository    $userRatingRepository,
-        private readonly AllianceStatsRepository $allianceStatsRepository,
-        private readonly ConfigurationService    $configurationService,
-        private readonly UserRepository          $userRepository,
-        private readonly GameStatsGenerator      $gameStatsGenerator,
-        private readonly Kernel                  $kernel,
-        private readonly UserPointsRepository    $userPointsRepository
+        private readonly UserStatRepository       $userStatsRepository,
+        private readonly UserTitlesService        $userTitlesService,
+        private readonly UserRatingRepository     $userRatingRepository,
+        private readonly AllianceStatsRepository  $allianceStatsRepository,
+        private readonly ConfigurationService     $configurationService,
+        private readonly UserRepository           $userRepository,
+        private readonly GameStatsGenerator       $gameStatsGenerator,
+        private readonly Kernel                   $kernel,
+        private readonly UserPointsRepository     $userPointsRepository,
+        private readonly AlliancePointsRepository $alliancePointsRepository
     )
     {
     }
@@ -255,6 +258,23 @@ class StatsController extends AbstractGameController
             return $this->render('game/stats/stats_userdetail.html.twig', [
                 'user'=>$user,
                 'pointEntries'=>$this->userPointsRepository->getPoints($user, 48)
+            ]);
+        }
+
+        return $this->render('game/error.html.twig',[
+            'msg' => 'Datensatz wurde nicht gefunden!',
+            'path' => $this->generateUrl('game.stats.total'),
+            'headline' => 'Statistiken'
+        ]);
+    }
+
+    #[Route("/game/stats/alliancedetail/{id}", name: 'game.stats.alliancedetail')]
+    public function alliancedetail(?Alliance $alliance = null): Response
+    {
+        if ($alliance) {
+            return $this->render('game/stats/stats_alliancedetail.html.twig', [
+                'alliance'=>$alliance,
+                'pointEntries'=>$this->alliancePointsRepository->getPoints($alliance, 48)
             ]);
         }
 

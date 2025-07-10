@@ -2,6 +2,7 @@
 
 namespace EtoA\Controller\Image;
 
+use EtoA\Entity\Alliance;
 use EtoA\Image\AllianceStatsImageGenerator;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -15,16 +16,16 @@ class AllianceStatsImageController extends AbstractImageController
     {
     }
 
-    #[Route('/images/alliance/stats/{alliance}', name: 'images.alliance.stats')]
+    #[Route('/game/images/alliance/stats/{id}', name: 'images.alliance.stats')]
     #[IsGranted('IS_AUTHENTICATED_REMEMBERED')]
-    public function mapImage(int $alliance): Response
+    public function mapImage(Alliance $alliance): Response
     {
         return self::createImageResponse(fn() => $this->generator->create($alliance));
     }
 
     #[Route('/admin/images/alliance/stats/{alliance}', name: 'admin.images.alliance.stats')]
     #[IsGranted('ROLE_ADMIN_GAME-ADMIN')]
-    public function adminMapImage(int $alliance): Response
+    public function adminMapImage(Alliance $alliance): Response
     {
         return self::createImageResponse(fn() => $this->generator->create($alliance));
     }

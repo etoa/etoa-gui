@@ -17,33 +17,30 @@ class AlliancePointsRepository extends AbstractRepository
     /**
      * @return AlliancePoints[]
      */
-    public function getPoints(int $allianceId, int $limit, int $start = null, int $end = null): array
+    public function getPoints(Alliance $alliance, int $limit, int $start = null, int $end = null): array
     {
         $qb = $this->createQueryBuilder('q')
-            ->select("*")
-            ->from('alliance_points')
-            ->where('point_alliance_id = :allianceId')
-            ->andWhere('point_points > 0')
-            ->setParameter('allianceId', $allianceId)
-            ->orderBy('point_timestamp', 'DESC')
+            ->where('q.alliance = :alliance')
+            ->andWhere('q.points > 0')
+            ->setParameter('alliance', $alliance)
+            ->orderBy('q.timestamp', 'DESC')
             ->setMaxResults($limit);
 
         if ($start > 0) {
             $qb
-                ->andWhere('point_timestamp > :start')
+                ->andWhere('q.timestamp > :start')
                 ->setParameter('start', $start);
         }
 
         if ($end > 0) {
             $qb
-                ->andWhere('point_timestamp < :end')
+                ->andWhere('q.timestamp < :end')
                 ->setParameter('end', $end);
         }
 
-        $data = $qb
-            ->fetchAllAssociative();
-
-        return array_map(fn (array $row) => new AlliancePoints($row), $data);
+        return $qb
+            ->getQuery()
+            ->execute();
     }
 
     public function add(AllianceStats $stats): void

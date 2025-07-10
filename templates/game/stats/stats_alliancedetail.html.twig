@@ -1,0 +1,34 @@
+{% extends 'layout/game.html.twig' %}
+{% block content %}
+    <h2>Punktedetails für [{{ BBCodeToHTML(alliance.tag) }}] {{ BBCodeToHTML(alliance.name) }}</h2>
+    <b>Punkte aktuell:</b> {{ formatNumber(alliance.points) }}, <b>Rang aktuell:</b> {{ alliance.currentRank }} <br/><br/>
+    <img src="{{ path('images.alliance.stats',{id:alliance.id}) }}" alt="Diagramm"/><br/><br/>
+    <twig:Table width="400">
+        {% block table_content %}
+            {% if pointEntries %}
+                <tr>
+                    <th>Datum</th>
+                    <th>Zeit</th>
+                    <th>Punkte</th>
+                    <th>User-Schnitt</th>
+                    <th>User</th>
+                </tr>
+                {% for entry in pointEntries %}
+                    <tr>
+                        <td>{{ entry.timestamp|date('d.m.Y') }}</td>
+                        <td>{{ entry.timestamp|date('H:i') }}</td>
+                        <td>{{ formatNumber(entry.points) }}</td>
+                        <td>{{ formatNumber(entry.avg) }}</td>
+                        <td>{{ formatNumber(entry.count) }}</td>
+                    </tr>
+                {% endfor %}
+            {% else %}
+                <tr>
+                    <td colspan="6">
+                        <i>Keine Punktedaten vorhanden!</i>
+                    </td>
+                </tr>
+            {% endif %}
+        {% endblock %}
+    </twig:Table>
+{% endblock %}
