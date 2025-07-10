@@ -1,0 +1,69 @@
+{% extends 'game/stats/stats.html.twig' %}
+{% import 'macros.html.twig' as macros %}
+
+{% block stats %}
+    {% if stats %}
+        <twig:Table title="Allianzbasis">
+            {% block table_content %}
+                <tr>
+                    <th style="width:50px;">Rang</th>
+                    <th>Tag</th>
+                    <th>
+                        Gebäude
+                        <a href="{{ path('game.stats.base', {sort: 'buildingPoints', order: 'DESC'}) }}" title="Absteigend sortieren">
+                            <img src="{{ asset('build/images/s_desc.png') }}" alt="Absteigend sortieren"/>
+                        </a>
+                        <a href="{{ path('game.stats.base', {sort: 'buildingPoints', order: 'ASC'}) }}" title="Aufsteigend sortieren">
+                            <img src="{{ asset('build/images/s_asc.png') }}" alt="Aufsteigend sortieren"/>
+                        </a>
+                    </th>
+                    <th>
+                        Forschung
+                        <a href="{{ path('game.stats.base', {sort: 'technologyPoints', order: 'DESC'}) }}" title="Absteigend sortieren">
+                            <img src="{{ asset('build/images/s_desc.png') }}" alt="Absteigend sortieren"/>
+                        </a>
+                        <a href="{{ path('game.stats.base', {sort: 'technologyPoints', order: 'ASC'}) }}" title="Aufsteigend sortieren">
+                            <img src="{{ asset('build/images/s_asc.png') }}" alt="Aufsteigend sortieren"/>
+                        </a>
+                    </th>
+                    <th>
+                        Schiffe
+                        <a href="{{ path('game.stats.base', {sort: 'shipPoints', order: 'DESC'}) }}" title="Absteigend sortieren">
+                            <img src="{{ asset('build/images/s_desc.png') }}" alt="Absteigend sortieren"/>
+                        </a>
+                        <a href="{{ path('game.stats.base', {sort: 'shipPoints', order: 'ASC'}) }}" title="Aufsteigend sortieren">
+                            <img src="{{ asset('build/images/s_asc.png') }}" alt="Aufsteigend sortieren"/>
+                        </a>
+                    <th>
+                        Allianzbasis
+                        <a href="{{ path('game.stats.base', {sort: 'alliancePoints', order: 'DESC'}) }}" title="Absteigend sortieren">
+                            <img src="{{ asset('build/images/s_desc.png') }}" alt="Absteigend sortieren"/>
+                        </a>
+                        <a href="{{ path('game.stats.base', {sort: 'alliancePoints', order: 'ASC'}) }}" title="Aufsteigend sortieren">
+                            <img src="{{ asset('build/images/s_asc.png') }}" alt="Aufsteigend sortieren"/>
+                        </a>
+                    </th>
+                </tr>
+                {% for stat in stats %}
+                    {% if stat.alliance == app.user.data.alliance %}
+                        {% set addClass = 'userAllianceMemberColor' %}
+                    {% else %}
+                        {% set addClass = '' %}
+                    {% endif %}
+                    <tr>
+                        <td class="{{ addClass }}">{{ loop.index }}</td>
+                        <td class="{{ addClass }}">{{ stat.allianceTag }}</td>
+                        <td class="{{ addClass }}">{{ formatNumber(stat.buildingPoints) }}</td>
+                        <td class="{{ addClass }}">{{ formatNumber(stat.technologyPoints) }}</td>
+                        <td class="{{ addClass }}">{{ formatNumber(stat.shipPoints) }}</td>
+                        <td class="{{ addClass }}">{{ formatNumber(stat.alliancePoints) }}</td>
+                    </tr>
+                {% endfor %}
+            {% endblock %}
+        </twig:Table>
+    {% else %}
+        <div>
+            <i>Keine Datensätze gefunden!</i>
+        </div>
+    {% endif %}
+{% endblock %}

@@ -57,16 +57,9 @@ class RaceDataRepository extends AbstractRepository
     /**
      * @return Race[]
      */
-    public function getActiveRaces(string $order = 'race_name', string $sort = 'ASC'): array
+    public function getActiveRaces(string $order = 'name', string $sort = 'ASC'): array
     {
-        $data = $this->createQueryBuilder('q')
-            ->select('r.*')
-            ->from('races', 'r')
-            ->where('r.race_active = 1')
-            ->orderBy('r.' . $order, $sort)
-            ->fetchAllAssociative();
-
-        return array_map(fn (array $row) => new Race($row), $data);
+        return $this->findBy(['active'=>1],[$order=>$sort]);
     }
 
     /**

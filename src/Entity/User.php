@@ -81,8 +81,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(name: "user_attack_bans", type: "integer")]
     protected int $attackBans;
 
-    #[ORM\Column(name: "user_ban_admin_id", type: "integer")]
-    protected int $banAdminId;
+    #[ORM\JoinColumn(name: 'user_ban_admin_id', referencedColumnName: 'user_id')]
+    #[ORM\ManyToOne(targetEntity: AdminUser::class)]
+    protected ?AdminUser $banAdmin = null;
 
     #[ORM\Column(name: "user_hmode_from", type: "integer")]
     protected int $hmodFrom;
@@ -469,18 +470,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setAttackBans(int $attackBans): static
     {
         $this->attackBans = $attackBans;
-
-        return $this;
-    }
-
-    public function getBanAdminId(): ?int
-    {
-        return $this->banAdminId;
-    }
-
-    public function setBanAdminId(int $banAdminId): static
-    {
-        $this->banAdminId = $banAdminId;
 
         return $this;
     }
@@ -1129,6 +1118,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
                 $techlist->setUser(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getBanAdmin(): ?AdminUser
+    {
+        return $this->banAdmin;
+    }
+
+    public function setBanAdmin(?AdminUser $banAdmin): static
+    {
+        $this->banAdmin = $banAdmin;
 
         return $this;
     }

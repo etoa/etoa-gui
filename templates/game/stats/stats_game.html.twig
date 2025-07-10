@@ -1,0 +1,10 @@
+{% extends 'game/stats/stats.html.twig' %}
+{% import 'macros.html.twig' as macros %}
+
+{% block stats %}
+    {% if img %}
+        <p><img src="{{ constant('EtoA\\Ranking\\GameStatsGenerator::GameStatsGenerator::USER_STATS_FILE_PUBLIC_PATH') }}" alt="Userstats" /></p>
+    {% endif %}
+
+    {{ stats|raw }}
+{% endblock %}

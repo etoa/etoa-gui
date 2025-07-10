@@ -18,134 +18,134 @@ class UserRating
     private User $user;
 
     #[ORM\Column]
-    private ?string $battlesFought;
+    private ?int $battlesFought;
 
     #[ORM\Column]
-    private ?string $battlesWon;
+    private ?int $battlesWon;
 
     #[ORM\Column]
-    private ?string $battlesLost;
+    private ?int $battlesLost;
 
     #[ORM\Column]
-    private ?string $battleRating;
+    private ?int $battleRating;
 
     #[ORM\Column]
-    private ?string $tradesSell;
+    private ?int $tradesSell;
 
     #[ORM\Column]
-    private ?string $tradesBuy;
+    private ?int $tradesBuy;
 
     #[ORM\Column]
-    private ?string $tradeRating;
+    private ?int $tradeRating;
 
     #[ORM\Column]
-    private ?string $diplomacyRating;
+    private ?int $diplomacyRating;
 
     #[ORM\Column]
-    private ?string $elorating;
+    private ?int $elorating;
 
-    public function getBattlesFought(): ?string
+    public function getBattlesFought(): ?int
     {
         return $this->battlesFought;
     }
 
-    public function setBattlesFought(string $battlesFought): static
+    public function setBattlesFought(int $battlesFought): static
     {
         $this->battlesFought = $battlesFought;
 
         return $this;
     }
 
-    public function getBattlesWon(): ?string
+    public function getBattlesWon(): ?int
     {
         return $this->battlesWon;
     }
 
-    public function setBattlesWon(string $battlesWon): static
+    public function setBattlesWon(int $battlesWon): static
     {
         $this->battlesWon = $battlesWon;
 
         return $this;
     }
 
-    public function getBattlesLost(): ?string
+    public function getBattlesLost(): ?int
     {
         return $this->battlesLost;
     }
 
-    public function setBattlesLost(string $battlesLost): static
+    public function setBattlesLost(int $battlesLost): static
     {
         $this->battlesLost = $battlesLost;
 
         return $this;
     }
 
-    public function getBattleRating(): ?string
+    public function getBattleRating(): ?int
     {
         return $this->battleRating;
     }
 
-    public function setBattleRating(string $battlesRating): static
+    public function setBattleRating(int $battlesRating): static
     {
         $this->battleRating = $battlesRating;
 
         return $this;
     }
 
-    public function getTradesSell(): ?string
+    public function getTradesSell(): ?int
     {
         return $this->tradesSell;
     }
 
-    public function setTradesSell(string $tradesSell): static
+    public function setTradesSell(int $tradesSell): static
     {
         $this->tradesSell = $tradesSell;
 
         return $this;
     }
 
-    public function getTradesBuy(): ?string
+    public function getTradesBuy(): ?int
     {
         return $this->tradesBuy;
     }
 
-    public function setTradesBuy(string $tradesBuy): static
+    public function setTradesBuy(int $tradesBuy): static
     {
         $this->tradesBuy = $tradesBuy;
 
         return $this;
     }
 
-    public function getTradeRating(): ?string
+    public function getTradeRating(): ?int
     {
         return $this->tradeRating;
     }
 
-    public function setTradeRating(string $tradeRating): static
+    public function setTradeRating(int $tradeRating): static
     {
         $this->tradeRating = $tradeRating;
 
         return $this;
     }
 
-    public function getDiplomacyRating(): ?string
+    public function getDiplomacyRating(): ?int
     {
         return $this->diplomacyRating;
     }
 
-    public function setDiplomacyRating(string $diplomacyRating): static
+    public function setDiplomacyRating(int $diplomacyRating): static
     {
         $this->diplomacyRating = $diplomacyRating;
 
         return $this;
     }
 
-    public function getElorating(): ?string
+    public function getElorating(): ?int
     {
         return $this->elorating;
     }
 
-    public function setElorating(string $elorating): static
+    public function setElorating(int $elorating): static
     {
         $this->elorating = $elorating;
 

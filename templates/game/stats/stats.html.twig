@@ -1,0 +1,52 @@
+{% extends 'layout/game.html.twig' %}
+{% block content %}
+    <h1>Statistiken</h1>
+
+    {% set tabs1 = {
+        "game.stats.total" : "Gesamtstatistik",
+        "game.stats.buildings" : "Gebäude",
+        "game.stats.tech" : "Forschung",
+        "game.stats.ships" : "Schiffe",
+        "game.stats.exp" : "Erfahrung",
+        "game.stats.battles" : "Kampf",
+        "game.stats.trade" : "Handel",
+        "game.stats.diplomacy" : "Diplomatie"
+    } %}
+
+    {% set tabs2 = {
+        "game.stats.alliances" : "Allianzen",
+        "game.stats.base" : "Allianzbasis",
+        "game.stats.titles" : "Titel",
+        "game.stats.pillory" : "Pranger",
+        "game.stats.gamestats" : "Spielstatistik",
+    } %}
+    <twig:tabmenu data="{{ tabs1 }}" active="{{ app.request.attributes.get('_route') }}"/><br>
+    <twig:tabmenu data="{{ tabs2 }}" active="{{ app.request.attributes.get('_route') }}"/><br>
+
+    {% block stats %}
+    {% endblock %}
+
+    <twig:Box title="Legende zur Statistik">
+        <b>Farben:</b>
+        <span class="userSelfColor">Eigener Account</span>,
+        <span class="userLockedColor">Gesperrt</span>,
+        <span class="userHolidayColor">Urlaubsmodus</span>,
+        <span class="userInactiveColor">Inaktiv ({{ configValue('user_inactive_days') }} Tage)</span>,
+        <span class="userAllianceMemberColor">Allianz(-mitglied)</span>
+        <br/>
+        {% if runtimeValue('statsupdate') %}
+            Letzte Aktualisierung: <b> {{ formatTimestamp(runtimeValue('statsupdate')) }} Uhr</b><br/>
+        {% endif %}
+        Die Aktualisierung der Punkte erfolgt 
+        {% if configValue('points_update')/3600 > 1 %}
+            alle {{ configValue('points_update')/3600 }} Stunden!<br>
+        {% elseif configValue('points_update')/3600 == 1 %}
+            jede Stunde!<br>
+        {% else %}
+            alle {{ configValue('points_update')/60 }} Minuten!<br/>
+        {% endif %}
+        Neu angemeldete Benutzer erscheinen erst nach der ersten Aktualisierung in der Liste.<br/>
+        Für {{ configValue('points_update') }} verbaute Rohstoffe bekommt der Spieler 1 Punkt in der Statistik<br/>
+        Für {{ configValue('points_update') }} Spielerpunkte bekommt die Allianz 1 Punkt in der Statistik
+    </twig:Box>
+{% endblock %}

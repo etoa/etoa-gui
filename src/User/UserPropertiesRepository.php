@@ -62,25 +62,18 @@ class UserPropertiesRepository extends AbstractRepository
     }
 
     /**
-     * @return array<string, int>
+     * @return array<int, array>
      */
     public function getDesignStats(int $limit): array
     {
-        $data = $this->getConnection()
-            ->fetchAllKeyValue(
-                "SELECT
-                    css_style,
-                    COUNT(id) cnt
-                FROM
-                    user_properties
-                GROUP BY
-                    css_style
-                ORDER BY
-                    cnt DESC
-                LIMIT $limit;"
-            );
-
-        return array_map(fn ($value) => (int) $value, $data);
+        return $this->createQueryBuilder('q')
+            ->select( 'COUNT(q.id) as cnt')
+            ->addSelect('q.cssStyle')
+            ->groupBy('q.cssStyle')
+            ->orderBy('cnt','DESC')
+            ->setMaxResults($limit)
+            ->getQuery()
+            ->execute();
     }
 
     public function removeForUser(int $userId) : void

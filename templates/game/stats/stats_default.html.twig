@@ -1,0 +1,81 @@
+{% extends 'game/stats/stats_pagination.html.twig' %}
+{% import 'macros.html.twig' as macros %}
+
+{% block pagination %}
+    {% if paginator.getPaginatedItems %}
+        <twig:Table>
+            {% block table_content %}
+                <tr>
+                    <th colspan="7" style="text-align:center;">{{ tableTitle }}</th>
+                </tr>
+                <tr>
+                    <th style="width:50px;">#
+                        <a href="{{ app.request.pathInfo }}?{{ {sort: 'points', order: 'DESC'}|url_encode }}" title="Absteigend sortieren">
+                            <img src="{{ asset('build/images/s_desc.png') }}" alt="Absteigend sortieren"/>
+                        </a>
+                        <a href="{{ app.request.pathInfo }}?{{ {sort: 'points', order: 'ASC'}|url_encode }}" title="Aufsteigend sortieren">
+                            <img src="{{ asset('build/images/s_asc.png') }}" alt="Aufsteigend sortieren"/>
+                        </a>
+                    </th>
+                    <th>
+                        Nick
+                        <a href="{{ app.request.pathInfo }}?{{ {sort: 'nick', order: 'DESC'}|url_encode }}" title="Absteigend sortieren">
+                            <img src="{{ asset('build/images/s_desc.png') }}" alt="Absteigend sortieren"/>
+                        </a>
+                        <a href="{{ app.request.pathInfo }}?{{ {sort: 'nick', order: 'ASC'}|url_encode }}" title="Aufsteigend sortieren">
+                            <img src="{{ asset('build/images/s_asc.png') }}" alt="Aufsteigend sortieren"/>
+                        </a>
+                    </th>
+                    <th>Rasse</th>
+                    <th>Sektor</th>
+                    <th>
+                        Allianz
+                        <a href="{{ app.request.pathInfo }}?{{ {sort: 'allianceTag', order: 'DESC'}|url_encode }}" title="Absteigend sortieren">
+                            <img src="{{ asset('build/images/s_desc.png') }}" alt="Absteigend sortieren"/>
+                        </a>
+                        <a href="{{ app.request.pathInfo }}?{{ {sort: 'allianceTag', order: 'ASC'}|url_encode }}" title="Aufsteigend sortieren">
+                            <img src="{{ asset('build/images/s_asc.png') }}" alt="Aufsteigend sortieren"/>
+                        </a>
+                    </th>
+                    <th>Punkte</th>
+                </tr>
+                {% for stat in paginator.getPaginatedItems %}
+                    {% if stat.blocked %}
+                        {% set addClass = 'userLockedColor' %}
+                    {% elseif stat.hmod %}
+                        {% set addClass = 'userHolidayColor' %}
+                    {% elseif stat.inactive %}
+                        {% set addClass = 'userInactiveColor' %}
+                    {% elseif stat.nick == app.user.data.nick %}
+                        {% set addClass = 'userSelfColor' %}
+                    {% elseif stat.alliance == app.user.data.alliance %}
+                        {% set addClass = 'userAllianceMemberColor' %}
+                    {% else %}
+                        {% set addClass = '' %}
+                    {% endif %}
+                    <tr>
+                        <td class="{{ addClass }}">
+                            {{ loop.index }}
+                            {% if stat.shift == 2 %}
+                                <img src="{{ asset('build/images/stats/stat_down.gif') }}" alt="down" width="9" height="12"/>
+                            {% elseif stat.shift == 1 %}
+                                <img src="{{ asset('build/images/stats/stat_up.gif') }}" alt="up" width="9" height="11"/>
+                            {% else %}
+                                <img src="{{ asset('build/images/stats/stat_same.gif') }}" alt="same" width="21" height="9"/>
+                            {% endif %}
+                        </td>
+                        <td class="{{ addClass }}">{{ stat.nick }}</td>
+                        <td class="{{ addClass }}">{{ stat.raceName }}</td>
+                        <td class="{{ addClass }}">{{ stat.sx }}/{{ stat.sy }}</td>
+                        <td class="{{ addClass }}">{{ stat.allianceTag }}</td>
+                        <td class="{{ addClass }}">{{ formatNumber(attribute(stat, value)) }}</td>
+                    </tr>
+                {% endfor %}
+            {% endblock %}
+        </twig:Table>
+    {% else %}
+        <div>
+            <i>Keine Datensätze gefunden!</i>
+        </div>
+    {% endif %}
+{% endblock %}

@@ -6,15 +6,14 @@ namespace EtoA\Ranking;
 
 use EtoA\Building\BuildingListItemRepository;
 use EtoA\Defense\DefenseRepository;
-use EtoA\Race\RaceDataRepository;
-use EtoA\Ship\ShipRepository;
+use EtoA\Ship\ShipListRepository;
 use EtoA\Support\StringUtils;
 use EtoA\Technology\TechnologyListItemRepository;
 use EtoA\Universe\Planet\PlanetRepository;
-use EtoA\Universe\Planet\PlanetTypeRepository;
 use EtoA\Universe\Resources\ResourceNames;
-use EtoA\Universe\Star\SolarTypeRepository;
+use EtoA\Universe\Star\StarRepository;
 use EtoA\User\UserPropertiesRepository;
+use EtoA\User\UserRepository;
 use Exception;
 
 class GameStatsGenerator
@@ -25,38 +24,19 @@ class GameStatsGenerator
     public const XML_INFO_FILE = "/xml/info.xml";
     public const XML_INFO_FILE_PUBLIC_PATH = "/cache/xml/info.xml";
 
-    private PlanetTypeRepository $planetTypeRepository;
-    private SolarTypeRepository $solarTypeRepository;
-    private RaceDataRepository $raceDataRepository;
-    private PlanetRepository $planetRepository;
-    private BuildingListItemRepository $buildingRepository;
-    private TechnologyListItemRepository $technologyRepository;
-    private ShipRepository $shipRepository;
-    private DefenseRepository $defenseRepository;
-    private UserPropertiesRepository $userPropertiesRepository;
     private string $cacheDir;
 
     public function __construct(
-        PlanetTypeRepository         $planetTypeRepository,
-        SolarTypeRepository          $solarTypeRepository,
-        RaceDataRepository           $raceDataRepository,
-        PlanetRepository             $planetRepository,
-        BuildingListItemRepository   $buildingRepository,
-        TechnologyListItemRepository $technologyRepository,
-        ShipRepository               $shipRepository,
-        DefenseRepository            $defenseRepository,
-        UserPropertiesRepository     $userPropertiesRepository,
-        string                       $cacheDir
+        private readonly PlanetRepository             $planetRepository,
+        private readonly BuildingListItemRepository   $buildingRepository,
+        private readonly TechnologyListItemRepository $technologyRepository,
+        private readonly DefenseRepository            $defenseRepository,
+        private readonly UserPropertiesRepository     $userPropertiesRepository,
+        private readonly StarRepository               $starRepository,
+        private readonly UserRepository               $userRepository,
+        private readonly ShipListRepository           $shipListRepository,
+        string                                        $cacheDir
     ) {
-        $this->planetTypeRepository = $planetTypeRepository;
-        $this->solarTypeRepository = $solarTypeRepository;
-        $this->raceDataRepository = $raceDataRepository;
-        $this->planetRepository = $planetRepository;
-        $this->buildingRepository = $buildingRepository;
-        $this->technologyRepository = $technologyRepository;
-        $this->shipRepository = $shipRepository;
-        $this->defenseRepository = $defenseRepository;
-        $this->userPropertiesRepository = $userPropertiesRepository;
         $this->cacheDir = $cacheDir;
     }
 
@@ -81,10 +61,11 @@ class GameStatsGenerator
 
     public function generate(): string
     {
-        $renderStartTime = timerStart();
+        // Renderzeit-Start festlegen
+        $render_time = explode(" ", microtime());
+        $renderStartTime = (float)$render_time[1] + (float)$render_time[0];
 
-        $out = '';
-        $out .= $this->createUniverseStats();
+        $out = $this->createUniverseStats();
         $out .= $this->createResourceStats();
         $out .= $this->createOverallConstructionStats();
         $out .= $this->createBestPlayerConstructionStats();
@@ -100,7 +81,7 @@ class GameStatsGenerator
     private function createUniverseStats(): string
     {
         $out = "<h2>Universum</h2>";
-        $out .= "<table width=\"95%\">";
+        $out .= "<table>";
         $out .= "<tr>";
 
         $out .= "<td style=\"width:33%;vertical-align:top;\">";
@@ -123,11 +104,11 @@ class GameStatsGenerator
 
     private function numberOfOwnedPlanetsByType(): string
     {
-        $out = "<table width=\"100%\" class=\"tb\">";
+        $out = "<table class=\"tb\">";
         $out .= "<tr><th  colspan=\"3\">Bewohnte Planetentypen</th></tr>";
         $rank = 1;
         $total = 0;
-        foreach ($this->planetTypeRepository->getNumberOfOwnedPlanetsByType() as $arr) {
+        foreach ($this->planetRepository->getNumberOfOwnedPlanetsByType() as $arr) {
             $out .= "<tr>
                 <td>" . $rank++ . "</td>
                 <td>" . $arr['name'] . "</td>
@@ -146,11 +127,11 @@ class GameStatsGenerator
 
     private function numberOfOwnedSystemsByType(): string
     {
-        $out = "<table width=\"100%\" class=\"tb\">";
+        $out = "<table class=\"tb\">";
         $out .= "<tr><th colspan=\"3\">Benannte Systeme</th></tr>";
         $rank = 1;
         $total = 0;
-        foreach ($this->solarTypeRepository->getNumberOfNamedSystemsByType() as $arr) {
+        foreach ($this->starRepository->getNumberOfNamedSystemsByType() as $arr) {
             $out .= "<tr>
                 <td>" . $rank++ . "</td>
                 <td>" . $arr['name'] . "</td>
@@ -169,11 +150,11 @@ class GameStatsGenerator
 
     private function numberOfRacesByType(): string
     {
-        $out = "<table width=\"100%\" class=\"tb\">";
+        $out = "<table class=\"tb\">";
         $out .= "<tr><th  colspan=\"3\">Rassen</th></tr>";
         $rank = 1;
         $total = 0;
-        foreach ($this->raceDataRepository->getNumberOfRacesByType() as $arr) {
+        foreach ($this->userRepository->getNumberOfRacesByType() as $arr) {
             $out .= "<tr>
                 <td>" . $rank++ . "</td>
                 <td>" . $arr['name'] . "</td>
@@ -193,7 +174,7 @@ class GameStatsGenerator
     private function createResourceStats(): string
     {
         $out = "<h2>Rohstoffe</h2>";
-        $out .= "<table width=\"95%\">";
+        $out .= "<table>";
         $out .= "<tr>";
 
         $out .= "<td style=\"width:33%;vertical-align:top;\">";
@@ -216,7 +197,7 @@ class GameStatsGenerator
 
     private function maxResourcesOnAPlanet(): string
     {
-        $out = "<table width=\"100%\" class=\"tb\">";
+        $out = "<table class=\"tb\">";
         $out .= "<tr><th  colspan=\"3\">Max Ressourcen auf einem Planeten</th></tr>";
 
         $metal = $this->planetRepository->getMaxMetalOnAPlanet();
@@ -270,7 +251,7 @@ class GameStatsGenerator
 
     private function maxResourcesInUniverse(): string
     {
-        $out = "<table width=\"100%\" class=\"tb\">";
+        $out = "<table class=\"tb\">";
         $out .= "<tr><th  colspan=\"4\">Total Ressourcen im Universum</th></tr>";
         $out .= "<tr><th >Ressource</th><th >Total</th><th >Durchschnitt</th><th >Planeten</th></tr>";
 
@@ -320,7 +301,7 @@ class GameStatsGenerator
 
     private function maxResourcesOfAPlayer(): string
     {
-        $out = "<table width=\"100%\" class=\"tb\">";
+        $out = "<table class=\"tb\">";
         $out .= "<tr><th  colspan=\"3\">Max Ressourcen eines Spielers</th></tr>";
         $out .= "<tr>
                 <td >" . ResourceNames::METAL . "</td>
@@ -350,7 +331,7 @@ class GameStatsGenerator
     private function createOverallConstructionStats(): string
     {
         $out = "<h2>Konstruktionen (Gesamt Anzahl von allen Spielern)</h2>";
-        $out .= "<table width=\"95%\">";
+        $out .= "<table>";
         $out .= "<tr>";
 
         $out .= "<td style=\"width:33%;vertical-align:top;\">";
@@ -373,11 +354,11 @@ class GameStatsGenerator
 
     private function overallShipsInUniverse(): string
     {
-        $out = "<table width=\"100%\" class=\"tb\">";
+        $out = "<table class=\"tb\">";
         $out .= "<tr><th  colspan=\"4\">Schiffe ohne Flotten (Beste Leistung, Gesamt)</th></tr>";
         $rank = 1;
         $total = 0;
-        foreach ($this->shipRepository->getOverallCount() as $arr) {
+        foreach ($this->shipListRepository->getOverallCount() as $arr) {
             $out .= "<tr>
                 <td>" . $rank . "</td>
                 <td>" . $arr['name'] . "</td>
@@ -399,7 +380,7 @@ class GameStatsGenerator
 
     private function overallDefenseInUniverse(): string
     {
-        $out = "<table width=\"100%\" class=\"tb\">";
+        $out = "<table class=\"tb\">";
         $out .= "<tr><th colspan=\"4\">Verteidigung</th></tr>";
         $rank = 1;
         $total = 0;
@@ -425,7 +406,7 @@ class GameStatsGenerator
 
     private function overallBuildingsInUniverse(): string
     {
-        $out = "<table width=\"100%\" class=\"tb\">";
+        $out = "<table class=\"tb\">";
         $out .= "<tr><th  colspan=\"3\">Geb&auml;ude</th></tr>";
         $rank = 1;
         $total = 0;
@@ -450,7 +431,7 @@ class GameStatsGenerator
     private function createBestPlayerConstructionStats(): string
     {
         $out = "<h2>Konstruktionen (Die beste Leistung eines Einzelnen)</h2>";
-        $out .= "<table width=\"95%\">";
+        $out .= "<table>";
         $out .= "<tr>";
 
         $out .= "<td style=\"width:33%;vertical-align:top;\">";
@@ -473,7 +454,7 @@ class GameStatsGenerator
 
     private function bestPlayerResearchStats(): string
     {
-        $out = "<table width=\"100%\" class=\"tb\">";
+        $out = "<table class=\"tb\">";
         $out .= "<tr><th  colspan=\"3\">Forschungen</th></tr>";
         $rank = 1;
         foreach ($this->technologyRepository->getBestLevels() as $arr) {
@@ -491,7 +472,7 @@ class GameStatsGenerator
 
     private function bestPlayerBuildingStats(): string
     {
-        $out = "<table width=\"100%\" class=\"tb\">";
+        $out = "<table class=\"tb\">";
         $out .= "<tr><th  colspan=\"3\">Geb&auml;ude</th></tr>";
         $rank = 1;
         foreach ($this->buildingRepository->getBestLevels() as $arr) {
@@ -509,10 +490,10 @@ class GameStatsGenerator
 
     private function specialShipStats(): string
     {
-        $out = "<table width=\"100%\" class=\"tb\">";
+        $out = "<table class=\"tb\">";
         $out .= "<tr><th  colspan=\"4\">Spezialschiffe (Level, EXP)</th></tr>";
         $rank = 1;
-        foreach ($this->shipRepository->getSpecialShipStats() as $arr) {
+        foreach ($this->shipListRepository->getSpecialShipStats() as $arr) {
             $out .= "<tr>
                 <td>" . $rank . "</td>
                 <td>" . $arr['name'] . "</td>
@@ -546,11 +527,14 @@ class GameStatsGenerator
 
     private function designStats(int $limit): string
     {
-        $out = "<table width=\"100%\" class=\"tb\">";
+        $out = "<table class=\"tb\">";
         $out .= "<tr><th colspan=\"4\">Design</th></tr>";
         $rank = 1;
         $total = 0;
-        foreach ($this->userPropertiesRepository->getDesignStats($limit) as $design => $count) {
+        foreach ($this->userPropertiesRepository->getDesignStats($limit) as $item) {
+            $count = $item['cnt'];
+            $design = $item['cssStyle'];
+
             $total += $count;
             $out .= "<tr>
                 <td>" . $rank++ . "</td>";

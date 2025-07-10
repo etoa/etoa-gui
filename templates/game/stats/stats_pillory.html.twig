@@ -1,0 +1,31 @@
+{% extends 'game/stats/stats.html.twig' %}
+{% import 'macros.html.twig' as macros %}
+
+{% block stats %}
+    {% if stats %}
+        <twig:Table title="Allianzbasis">
+            {% block table_content %}
+                <tr>
+                    <th>Nick</th>
+                    <th>Von</th>
+                    <th>Bis</th>
+                    <th>Admin</th>
+                    <th>Grund der Sperrung</th>
+                </tr>
+                {% for stat in stats %}
+                    <tr>
+                        <td>{{ stat.nick }}</td>
+                        <td>{{ formatTimestamp(stat.blockedFrom) }}</td>
+                        <td>{{ formatTimestamp(stat.blockedTo) }}</td>
+                        <td>{{ stat.banAdmin.nick }}</td>
+                        <td>{{ stat.banReason }}</td>
+                    </tr>
+                {% endfor %}
+            {% endblock %}
+        </twig:Table>
+    {% else %}
+        <div>
+            <i>Keine Einträge gefunden</i>
+        </div>
+    {% endif %}
+{% endblock %}

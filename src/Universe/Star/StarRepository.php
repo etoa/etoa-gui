@@ -81,4 +81,23 @@ class StarRepository extends AbstractRepository
             ->executeQuery()
             ->rowCount();
     }
+
+    /**
+     * @return array<int, array{name: string, cnt: string}>
+     */
+    public function getNumberOfNamedSystemsByType(): array
+    {
+        return $this->createQueryBuilder('q')
+            ->select('COUNT(q.id) as cnt')
+            ->addSelect('t.name as name')
+            ->innerJoin('App:SolarType', 't', 'WITH', 'q.solarType = t.id')
+            ->where('q.name = :name')
+            ->setParameters([
+                'name' => '',
+            ])
+            ->groupBy('t.id')
+            ->orderBy('cnt')
+            ->getQuery()
+            ->execute();
+    }
 }

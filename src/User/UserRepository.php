@@ -675,28 +675,19 @@ class UserRepository extends AbstractRepository
      */
     public function searchUsers(UserSearch $search = null, UserSort $sort = null, int $limit = null): array
     {
-        $qb = $this->createQueryBuilder('q')
-            ->select('*')
-            ->from('users');
+        $qb = $this->createQueryBuilder('q');
 
         if ($sort == null || count($sort->sorts) === 0) {
-            $qb->orderBy('user_nick');
+            $qb->orderBy('q.nick');
         }
 
         if (isset($search->parameters['allianceLike'])) {
-            $qb->innerJoin('users', 'alliances', 'alliances', 'user_alliance_id = alliances.alliance_id');
+            $qb->innerJoin('App:Alliance', 'alliances', 'WITH', 'q.alliance = alliance.id');
         }
 
-        $data = $this->applySearchSortLimit($qb, $search, $sort, $limit)
-            ->fetchAllAssociative();
-
-        $users = [];
-        foreach ($data as $row) {
-            $user = new User($row);
-            $users[$user->getId()] = $user;
-        }
-
-        return $users;
+        return $this->applySearchSortLimit($qb, $search, $sort, $limit)
+            ->getQuery()
+            ->execute();
     }
 
     /**
@@ -704,18 +695,13 @@ class UserRepository extends AbstractRepository
      */
     public function getPillory(): array
     {
-        $data = $this->createQueryBuilder('q')
-            ->select('u.user_nick, u.user_blocked_from, u.user_blocked_to, u.user_ban_reason')
-            ->addSelect('a.user_nick AS admin_nick, a.user_email AS admin_email')
-            ->from('users', 'u')
-            ->leftJoin('u', 'admin_users', 'a', 'u.user_ban_admin_id = a.user_id')
-            ->where('u.user_blocked_from < :time')
-            ->andWhere('u.user_blocked_to > :time')
-            ->orderBy('u.user_blocked_from', 'DESC')
+        return $this->createQueryBuilder('q')
+            ->where('q.blockedFrom < :time')
+            ->andWhere('q.blockedTo > :time')
+            ->orderBy('q.blockedFrom', 'DESC')
             ->setParameter('time', time())
-            ->fetchAllAssociative();
-
-        return array_map(fn(array $row) => new Pillory($row), $data);
+            ->getQuery()
+            ->execute();
     }
 
     public function updatePointsAndRank(UserStatistic $userStatistic, int $highestRank): void
@@ -823,5 +809,23 @@ class UserRepository extends AbstractRepository
             ->where('user_id = :userId')
             ->setParameter('userId', $userId)
             ->executeQuery();
+    }
+
+    /**
+     * @return array<int, array{name: string, cnt: string}>
+     */
+    public function getNumberOfRacesByType(): array
+    {
+        return $this->createQueryBuilder('q')
+            ->select('COUNT(q.id) as cnt')
+            ->addSelect('t.name as name')
+            ->innerJoin('App:Race', 't', 'WITH', 'q.race = t.id')
+            ->where('q.ghost = 0')
+            ->andWhere('q.hmodFrom = 0')
+            ->andWhere('q.hmodTo = 0')
+            ->groupBy('t.id')
+            ->orderBy('cnt')
+            ->getQuery()
+            ->execute();
     }
 }

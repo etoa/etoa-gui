@@ -535,50 +535,42 @@ class PlanetRepository extends AbstractRepository
 
     public function getMaxMetalOfAPlayer(): int
     {
-        return $this->getMaxResourcesOfAPlayer('planet_res_metal');
+        return $this->getMaxResourcesOfAPlayer('q.resMetal');
     }
 
     public function getMaxCrystalOfAPlayer(): int
     {
-        return $this->getMaxResourcesOfAPlayer('planet_res_crystal');
+        return $this->getMaxResourcesOfAPlayer('q.resCrystal');
     }
 
     public function getMaxPlasticOfAPlayer(): int
     {
-        return $this->getMaxResourcesOfAPlayer('planet_res_plastic');
+        return $this->getMaxResourcesOfAPlayer('q.resPlastic');
     }
 
     public function getMaxFuelOfAPlayer(): int
     {
-        return $this->getMaxResourcesOfAPlayer('planet_res_fuel');
+        return $this->getMaxResourcesOfAPlayer('q.resFuel');
     }
 
     public function getMaxFoodOfAPlayer(): int
     {
-        return $this->getMaxResourcesOfAPlayer('planet_res_food');
+        return $this->getMaxResourcesOfAPlayer('q.resFood');
     }
 
     private function getMaxResourcesOfAPlayer(string $field): int
     {
-        return (int) $this->getConnection()
-            ->fetchOne(
-                "SELECT
-                    SUM(" . $field . ") AS sum
-                FROM
-                    planets
-                INNER JOIN
-                    users
-                ON
-                    user_id = planet_user_id
-                    AND user_ghost = 0
-                    AND user_hmode_from = 0
-                    AND user_hmode_to = 0
-                GROUP BY
-                    planet_user_id
-                ORDER BY
-                    sum DESC
-                LIMIT 1;"
-            );
+        return (int)$this->createQueryBuilder('q')
+            ->select( "SUM($field) as sum")
+            ->innerJoin('App:User', 'u', 'WITH', 'u.id = q.user')
+            ->andWhere('u.ghost = 0')
+            ->andWhere('u.hmodFrom = 0')
+            ->andWhere('u.hmodTo = 0')
+            ->setMaxResults(1)
+            ->groupBy('q.user')
+            ->orderBy('sum', 'DESC')
+            ->getQuery()
+            ->getSingleScalarResult();
     }
 
     /**
@@ -586,7 +578,7 @@ class PlanetRepository extends AbstractRepository
      */
     public function getMaxMetal(): array
     {
-        return $this->getMaxResources('planet_res_metal');
+        return $this->getMaxResources('q.resMetal');
     }
 
     /**
@@ -594,7 +586,7 @@ class PlanetRepository extends AbstractRepository
      */
     public function getMaxCrystal(): array
     {
-        return $this->getMaxResources('planet_res_crystal');
+        return $this->getMaxResources('q.resCrystal');
     }
 
     /**
@@ -602,7 +594,7 @@ class PlanetRepository extends AbstractRepository
      */
     public function getMaxPlastic(): array
     {
-        return $this->getMaxResources('planet_res_plastic');
+        return $this->getMaxResources('q.resPlastic');
     }
 
     /**
@@ -610,7 +602,7 @@ class PlanetRepository extends AbstractRepository
      */
     public function getMaxFuel(): array
     {
-        return $this->getMaxResources('planet_res_fuel');
+        return $this->getMaxResources('q.resFuel');
     }
 
     /**
@@ -618,7 +610,7 @@ class PlanetRepository extends AbstractRepository
      */
     public function getMaxFood(): array
     {
-        return $this->getMaxResources('planet_res_food');
+        return $this->getMaxResources('q.resFood');
     }
 
     /**
@@ -626,23 +618,18 @@ class PlanetRepository extends AbstractRepository
      */
     private function getMaxResources(string $field): array
     {
-        return $this->getConnection()
-            ->fetchAssociative(
-                "SELECT
-                    SUM(" . $field . ") AS sum,
-                    AVG(" . $field . ") AS avg,
-                    COUNT(id) AS cnt
-                FROM
-                    planets
-                INNER JOIN
-                    users
-                ON
-                    planet_user_id = user_id
-                    AND user_ghost = 0
-                    AND user_hmode_from = 0
-                    AND user_hmode_to = 0
-                    AND " . $field . " > 0"
-            );
+        return $this->createQueryBuilder('q')
+            ->select( "SUM($field) as sum")
+            ->addSelect("AVG($field) as avg")
+            ->addSelect('COUNT(q.id) as cnt')
+            ->innerJoin('App:User', 'u', 'WITH', 'u.id = q.user')
+            ->andWhere('u.ghost = 0')
+            ->andWhere('u.hmodFrom = 0')
+            ->andWhere('u.hmodTo = 0')
+            ->andWhere("$field > 0")
+            ->setMaxResults(1)
+            ->getQuery()
+            ->getOneOrNullResult();
     }
 
     /**
@@ -650,7 +637,7 @@ class PlanetRepository extends AbstractRepository
      */
     public function getMaxMetalOnAPlanet(): ?array
     {
-        return $this->getMaxResourcesOnAPlanet('planet_res_metal');
+        return $this->getMaxResourcesOnAPlanet('q.resMetal');
     }
 
     /**
@@ -658,7 +645,7 @@ class PlanetRepository extends AbstractRepository
      */
     public function getMaxCrystalOnAPlanet(): ?array
     {
-        return $this->getMaxResourcesOnAPlanet('planet_res_crystal');
+        return $this->getMaxResourcesOnAPlanet('q.resCrystal');
     }
 
     /**
@@ -666,7 +653,7 @@ class PlanetRepository extends AbstractRepository
      */
     public function getMaxPlasticOnAPlanet(): ?array
     {
-        return $this->getMaxResourcesOnAPlanet('planet_res_plastic');
+        return $this->getMaxResourcesOnAPlanet('q.resPlastic');
     }
 
     /**
@@ -674,7 +661,7 @@ class PlanetRepository extends AbstractRepository
      */
     public function getMaxFuelOnAPlanet(): ?array
     {
-        return $this->getMaxResourcesOnAPlanet('planet_res_fuel');
+        return $this->getMaxResourcesOnAPlanet('q.resFuel');
     }
 
     /**
@@ -682,7 +669,7 @@ class PlanetRepository extends AbstractRepository
      */
     public function getMaxFoodOnAPlanet(): ?array
     {
-        return $this->getMaxResourcesOnAPlanet('planet_res_food');
+        return $this->getMaxResourcesOnAPlanet('q.resFood');
     }
 
     /**
@@ -690,31 +677,36 @@ class PlanetRepository extends AbstractRepository
      */
     private function getMaxResourcesOnAPlanet(string $field): ?array
     {
-        $data = $this->getConnection()
-            ->fetchAssociative(
-                "SELECT
-                    " . $field . " AS res,
-                    type_name AS type
-                FROM
-                    planet_types
-                INNER JOIN
-                    (
-                        planets
-                    INNER JOIN
-                        users
-                    ON
-                        planet_user_id = user_id
-                        AND user_ghost = 0
-                        AND user_hmode_from = 0
-                        AND user_hmode_to = 0
-                    )
-                ON
-                    planet_type_id = type_id
-                ORDER BY
-                    res DESC
-                LIMIT 1;"
-            );
+        return $this->createQueryBuilder('q')
+            ->select( "$field as res")
+            ->addSelect('t.name as type')
+            ->innerJoin('App:PlanetType', 't', 'WITH', 'q.planetType = t.id')
+            ->innerJoin('App:User', 'u', 'WITH', 'u.id = q.user')
+            ->andWhere('u.ghost = 0')
+            ->andWhere('u.hmodFrom = 0')
+            ->andWhere('u.hmodTo = 0')
+            ->orderBy('res')
+            ->setMaxResults(1)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
 
-        return $data !== false ? $data : null;
+    /**
+     * @return array<int, array{name: string, cnt: string}>
+     */
+    public function getNumberOfOwnedPlanetsByType(): array
+    {
+        return $this->createQueryBuilder('q')
+            ->select('COUNT(q.id) as cnt')
+            ->addSelect('t.name as name')
+            ->innerJoin('App:PlanetType', 't', 'WITH', 'q.planetType = t.id')
+            ->innerJoin('App:User', 'u', 'WITH', 'q.user = u.id')
+            ->where('u.ghost = 0')
+            ->andWhere('u.hmodFrom = 0')
+            ->andWhere('u.hmodTo = 0')
+            ->groupBy('t.id')
+            ->orderBy('cnt')
+            ->getQuery()
+            ->execute();
     }
 }

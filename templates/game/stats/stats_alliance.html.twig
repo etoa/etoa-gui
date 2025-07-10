@@ -1,0 +1,70 @@
+{% extends 'game/stats/stats.html.twig' %}
+{% import 'macros.html.twig' as macros %}
+
+{% block stats %}
+    {% if stats %}
+        <twig:Table title="Allianzen">
+            {% block table_content %}
+                <tr>
+                    <th style="width:50px;">Rang</th>
+                    <th>Tag</th>
+                    <th>Name</th>
+                    <th>
+                        Punkte
+                        <a href="{{ path('game.stats.alliances', {sort: 'points', order: 'DESC'}) }}" title="Absteigend sortieren">
+                            <img src="{{ asset('build/images/s_desc.png') }}" alt="Absteigend sortieren"/>
+                        </a>
+                        <a href="{{ path('game.stats.alliances', {sort: 'points', order: 'ASC'}) }}" title="Aufsteigend sortieren">
+                            <img src="{{ asset('build/images/s_asc.png') }}" alt="Aufsteigend sortieren"/>
+                        </a>
+                    </th>
+                    <th>
+                        User-Schnitt
+                        <a href="{{ path('game.stats.alliances', {sort: 'userAverage', order: 'DESC'}) }}" title="Absteigend sortieren">
+                            <img src="{{ asset('build/images/s_desc.png') }}" alt="Absteigend sortieren"/>
+                        </a>
+                        <a href="{{ path('game.stats.alliances', {sort: 'userAverage', order: 'ASC'}) }}" title="Aufsteigend sortieren">
+                            <img src="{{ asset('build/images/s_asc.png') }}" alt="Aufsteigend sortieren"/>
+                        </a>
+                    <th>
+                        User
+                        <a href="{{ path('game.stats.alliances', {sort: 'count', order: 'DESC'}) }}" title="Absteigend sortieren">
+                            <img src="{{ asset('build/images/s_desc.png') }}" alt="Absteigend sortieren"/>
+                        </a>
+                        <a href="{{ path('game.stats.alliances', {sort: 'count', order: 'ASC'}) }}" title="Aufsteigend sortieren">
+                            <img src="{{ asset('build/images/s_asc.png') }}" alt="Aufsteigend sortieren"/>
+                        </a>
+                    </th>
+                </tr>
+                {% for stat in stats %}
+                    {% if stat.alliance == app.user.data.alliance %}
+                        {% set addClass = 'userAllianceMemberColor' %}
+                    {% else %}
+                        {% set addClass = '' %}
+                    {% endif %}
+                    <tr>
+                        <td class="{{ addClass }}">
+                            {{ loop.index }}
+                            {% if stat.currentRank < stat.lastRank %}
+                                <img src="{{ asset('build/images/stats/stat_down.gif') }}" alt="down" width="9" height="12"/>
+                            {% elseif stat.currentRank > stat.lastRank %}
+                                <img src="{{ asset('build/images/stats/stat_up.gif') }}" alt="up" width="9" height="11"/>
+                            {% else %}
+                                <img src="{{ asset('build/images/stats/stat_same.gif') }}" alt="same" width="21" height="9"/>
+                            {% endif %}
+                        </td>
+                        <td class="{{ addClass }}">{{ stat.allianceTag }}</td>
+                        <td class="{{ addClass }}">{{ stat.allianceName }}</td>
+                        <td class="{{ addClass }}">{{ formatNumber(stat.points) }}</td>
+                        <td class="{{ addClass }}">{{ formatNumber(stat.userAverage) }}</td>
+                        <td class="{{ addClass }}">{{ stat.count }}</td>
+                    </tr>
+                {% endfor %}
+            {% endblock %}
+        </twig:Table>
+    {% else %}
+        <div>
+            <i>Keine Datensätze gefunden!</i>
+        </div>
+    {% endif %}
+{% endblock %}

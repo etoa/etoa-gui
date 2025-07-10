@@ -350,4 +350,58 @@ class ShipListRepository extends AbstractRepository
         $this->getEntityManager()->persist($item);
         $this->getEntityManager()->flush();
     }
+
+    /**
+     * @return array<int, array{name: string, cnt: int, max: int}>
+     */
+    public function getOverallCount(): array
+    {
+        $data = $this->createQueryBuilder('q')
+            ->select( 'SUM(q.count+q.bunkered) as cnt')
+            ->addSelect('s.name as name')
+            ->addSelect('MAX(q.count+q.bunkered) as max')
+            ->innerJoin('App:User', 'u', 'WITH', 'u.id = q.user')
+            ->innerJoin('App:Ship', 's', 'WITH', 's.id = q.ship')
+            ->andWhere('u.ghost = 0')
+            ->andWhere('u.hmodFrom = 0')
+            ->andWhere('u.hmodTo = 0')
+            ->andWhere('s.special = 0')
+            ->groupBy('s.id')
+            ->orderBy('cnt', 'DESC')
+            ->getQuery()
+            ->execute();
+
+        return array_map(fn ($arr) => [
+            'name' => $arr['name'],
+            'cnt' => (int) $arr['cnt'],
+            'max' => (int) $arr['max'],
+        ], $data);
+    }
+
+    /**
+     * @return array<int, array{name: string, level: int, exp: int}>
+     */
+    public function getSpecialShipStats(): array
+    {
+        $data = $this->createQueryBuilder('q')
+            ->select( 'MAX(q.specialShipLevel) as level')
+            ->addSelect('s.name as name')
+            ->addSelect('MAX(q.specialShipExp) as exp')
+            ->innerJoin('App:User', 'u', 'WITH', 'u.id = q.user')
+            ->innerJoin('App:Ship', 's', 'WITH', 's.id = q.ship')
+            ->andWhere('u.ghost = 0')
+            ->andWhere('u.hmodFrom = 0')
+            ->andWhere('u.hmodTo = 0')
+            ->andWhere('s.special = 1')
+            ->groupBy('s.id')
+            ->orderBy('exp', 'DESC')
+            ->getQuery()
+            ->execute();
+
+        return array_map(fn ($arr) => [
+            'name' => $arr['name'],
+            'level' => (int) $arr['level'],
+            'exp' => (int) $arr['exp'],
+        ], $data);
+    }
 }

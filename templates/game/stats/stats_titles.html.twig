@@ -1,0 +1,60 @@
+{% extends 'game/stats/stats.html.twig' %}
+{% import 'macros.html.twig' as macros %}
+
+{% block stats %}
+        <twig:Table title="Allgemeine Titel">
+            {% block table_content %}
+                {% for title in titles.titles %}
+                    <tr>
+                        <th class="tbltitle" style="width:100px;height:100px;">
+                            <img src="{{ asset(title.medal_image) }}" alt="medal" style="height:100px;">
+                        </th>
+                        <td class="tbldata" style="font-size:16pt;vertical-align:middle;padding:2px 10px 2px 10px;width:400px;">
+                            {{ title.rank_title }}
+                        </td>
+                        <td class="tbldata" style="vertical-align:middle;padding-top:0;padding-left:15px;">
+                            <span style="font-size:13pt;color:#ff0;">{{ title.result.0.nick }}</span><br><br>
+                            {{ formatNumber(title.result.0.points) }}Punkte<br><br>[
+                            <a href="?page=userinfo&amp;id=11">Profil</a>]
+                        </td>
+                    </tr>
+                {% endfor %}
+                {% for title in titles.titles2 %}
+                    <tr>
+                        <th class="tbltitle" style="width:100px;height:100px;">
+                            <img src="{{ asset(title.medal_image) }}" alt="medal" style="height:100px;">
+                        </th>
+                        <td class="tbldata" style="font-size:16pt;vertical-align:middle;padding:2px 10px 2px 10px;width:400px;">
+                            {{ title.rank_title }}
+                        </td>
+                        <td class="tbldata" style="vertical-align:middle;padding-top:0;padding-left:15px;">
+                            <span style="font-size:13pt;color:#ff0;">{{ title.result.0.0.0.user.nick }}</span><br><br>
+                            {{ formatNumber(title.result.0.points) }}Punkte<br><br>[
+                            <a href="?page=userinfo&amp;id=11">Profil</a>]
+                        </td>
+                    </tr>
+                {% endfor %}
+            {% endblock %}
+        </twig:Table>
+        <twig:Table title="Rassenleader">
+        {% block table_content %}
+            {% for title in titles.titles3 %}
+                {% if title %}
+                    <tr>
+                        <th class="tbltitle" style="width:100px;height:100px;">
+                            <img src="{{ asset('/build/images/medals/medal_race.png') }}" alt="medal" style="height:100px;">
+                        </th>
+                        <td class="tbldata" style="font-size:16pt;vertical-align:middle;padding:2px 10px 2px 10px;width:400px;">
+                            {{ title.0.race.leaderTitle }}
+                        </td>
+                        <td class="tbldata" style="vertical-align:middle;padding-top:0;padding-left:15px;">
+                            <span style="font-size:13pt;color:#ff0;">{{ title.0.nick }}</span><br><br>
+                            {{ formatNumber(title.0.points) }}<br><br>[
+                            <a href="?page=userinfo&amp;id=11">Profil</a>]
+                        </td>
+                    </tr>
+                {% endif %}
+            {% endfor %}
+        {% endblock %}
+        </twig:Table>
+{% endblock %}

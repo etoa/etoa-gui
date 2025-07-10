@@ -41,73 +41,43 @@ class UserTitlesService
         $this->cacheDir = $cacheDir;
     }
 
-    public function getTitles(bool $admin = false): string
+    public function getTitles(bool $admin = false): array
     {
-        ob_start();
-
         $img_dir = ($admin == 1)
             ? "../images"
-            : "images";
-
-        tableStart("Allgemeine Titel");
-        $cnt = 0;
+            : "/build/images";
 
         $titles = [
             [
-                'search' => UserStatSearch::points(),
+                'result' => $this->userStatRepository->searchStats(UserStatSearch::points(),null,1),
                 'medal_image' => $img_dir . '/medals/medal_total.png',
                 'rank_title' => $this->config->get('userrank_total'),
             ],
             [
-                'search' => UserStatSearch::ships(),
+                'result' => $this->userStatRepository->searchStats(UserStatSearch::ships(),null,1),
                 'medal_image' => $img_dir . '/medals/medal_fleet.png',
                 'rank_title' => $this->config->get('userrank_fleet'),
             ],
             [
-                'search' => UserStatSearch::technologies(),
+                'result' => $this->userStatRepository->searchStats(UserStatSearch::technologies(),null,1),
                 'medal_image' => $img_dir . '/medals/medal_tech.png',
                 'rank_title' => $this->config->get('userrank_tech'),
             ],
             [
-                'search' => UserStatSearch::buildings(),
+                'result' => $this->userStatRepository->searchStats(UserStatSearch::buildings(),null,1),
                 'medal_image' => $img_dir . '/medals/medal_buildings.png',
                 'rank_title' => $this->config->get('userrank_buildings'),
             ],
             [
-                'search' => UserStatSearch::exp(),
+                'result' => $this->userStatRepository->searchStats(UserStatSearch::exp(),null,1),
                 'medal_image' => $img_dir . '/medals/medal_exp.png',
                 'rank_title' => $this->config->get('userrank_exp'),
             ],
         ];
-        foreach ($titles as $title) {
-            $stats = $this->userStatRepository->searchStats($title['search'], null, 1);
-            if (count($stats) > 0) {
-                $stat = $stats[0];
-                if ($stat->points > 0) {
-                    $profile = ($admin == 1)
-                        ? "?page=user&amp;sub=edit&amp;user_id=" . $stat->id . ""
-                        : "?page=userinfo&amp;id=" . $stat->id;
-                    echo "<tr>
-                        <th class=\"tbltitle\" style=\"width:100px;height:100px;\">
-                            <img src='" . $title['medal_image'] . "' alt=\"medal\" style=\"height:100px;\" />
-                        </th>
-                        <td class=\"tbldata\" style=\"font-size:16pt;vertical-align:middle;padding:2px 10px 2px 10px;width:400px;\">
-                            " . $title['rank_title'] . "
-                        </td>
-                        <td class=\"tbldata\" style=\"vertical-align:middle;padding-top:0px;padding-left:15px;\">
-                            <span style=\"font-size:13pt;color:#ff0;\">" . $stat->nick . "</span><br/><br/>
-                            " . StringUtils::formatNumber($stat->points) . " Punkte<br/><br/>";
-                    echo "[<a href=\"" . $profile . "\">Profil</a>]";
-                    echo "</td>
-                    </tr>";
-                    $cnt++;
-                }
-            }
-        }
 
         $titles2 = [
             [
-                'results' => $this->userRatingRepository->getBattleRating(
+                'result' => $this->userRatingRepository->getBattleRating(
                     UserRatingSearch::create()->ghost(false),
                     UserRatingSort::rank('DESC'),
                     1
@@ -116,7 +86,7 @@ class UserTitlesService
                 'rank_title' => $this->config->get('userrank_battle'),
             ],
             [
-                'results' => $this->userRatingRepository->getTradeRating(
+                'result' => $this->userRatingRepository->getTradeRating(
                     UserRatingSearch::create()->ghost(false),
                     UserRatingSort::rank('DESC'),
                     1
@@ -125,7 +95,7 @@ class UserTitlesService
                 'rank_title' => $this->config->get('userrank_trade'),
             ],
             [
-                'results' => $this->userRatingRepository->getDiplomacyRating(
+                'result' => $this->userRatingRepository->getDiplomacyRating(
                     UserRatingSearch::create()->ghost(false),
                     UserRatingSort::rank('DESC'),
                     1
@@ -134,74 +104,25 @@ class UserTitlesService
                 'rank_title' => $this->config->get('userrank_diplomacy'),
             ],
         ];
-        foreach ($titles2 as $title) {
-            if (count($title['results']) > 0) {
-                $rating = $title['results'][0];
-                if ($rating->rating > 0) {
-                    $profile = ($admin == 1)
-                        ? "?page=user&amp;sub=edit&amp;user_id=" . $rating->userId . ""
-                        : "?page=userinfo&amp;id=" . $rating->userId;
-                    echo "<tr>
-                        <th class=\"tbltitle\" style=\"width:100px;height:100px;\">
-                            <img src='" . $title['medal_image'] . "' style=\"height:100px;\" />
-                        </th>
-                        <td class=\"tbldata\" style=\"font-size:16pt;vertical-align:middle;padding:2px 10px 2px 10px;width:400px;\">
-                            " . $title['rank_title'] . "
-                        </td>
-                        <td class=\"tbldata\" style=\"vertical-align:middle;padding-top:0px;padding-left:15px;\">
-                            <span style=\"font-size:13pt;color:#ff0;\">" . $rating->userNick . "</span><br/><br/>
-                            " . StringUtils::formatNumber($rating->rating) . " Punkte<br/><br/>";
-                    echo "[<a href=\"" . $profile . "\">Profil</a>]";
-                    echo "</td>
-                    </tr>";
-                    $cnt++;
-                }
-            }
-        }
 
-        if ($cnt == 0) {
-            echo "<tr><td class=\"tbldata\">Keine Titel vorhanden (kein Spieler hat die minimale Punktzahl zum Erwerb eines Titels erreicht)!</td></tr>";
-        }
-
-        tableEnd();
-        tableStart("Rassenleader");
         $races = $this->raceRepository->getActiveRaces();
+
+        $titles3 = [];
+
         foreach ($races as $race) {
             $users = $this->userRepository->searchUsers(
                 UserSearch::create()
-                    ->raceId($race->id)
+                    ->raceId($race->getId())
                     ->notGhost()
                     ->hasPoints(),
                 UserSort::points('desc'),
                 1
             );
-            if (count($users) > 0) {
-                $user = array_values($users)[0];
-                $profile = ($admin == 1)
-                    ? "?page=user&amp;sub=edit&amp;user_id=" . $user->id . ""
-                    : "?page=userinfo&amp;id=" . $user->id;
-                echo "<tr>
-                        <th class=\"tbltitle\" style=\"width:70px;height:70px;\">
-                            <img src='" . $img_dir . "/medals/medal_race.png' style=\"height:70px;\" />
-                        </th>
-                        <td class=\"tbldata\" style=\"vertical-align:middle;padding:2px 10px 2px 10px;width:360px;\">
-                            <div style=\"font-size:16pt;\">" . $race->leaderTitle . "</div>
-                            " . $this->raceRepository->getNumberOfUsersWithRace($race->id) . " V&ouml;lker
-                        </td>
-                        <td class=\"tbldata\" style=\"vertical-align:middle;padding-top:0px;padding-left:15px;\">
-                            <span style=\"font-size:13pt;color:#ff0;\">" . $user->nick . "</span><br/><br/>
-                            " . StringUtils::formatNumber($user->points) . " Punkte &nbsp;&nbsp;&nbsp;";
-                echo "[<a href=\"" . $profile . "\">Profil</a>]";
-                echo "</td>
-                    </tr>";
-            }
+
+            $titles3[] = $users;
         }
-        tableEnd();
 
-        $rtn = ob_get_contents();
-        ob_end_clean();
-
-        return $rtn;
+        return ['titles'=>$titles,'titles2'=>$titles2,'titles3'=>$titles3];
     }
 
     /**

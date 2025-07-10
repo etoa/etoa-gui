@@ -237,32 +237,19 @@ class DefenseRepository extends AbstractRepository
      */
     public function getOverallCount(): array
     {
-        $data = $this->getConnection()
-            ->fetchAllAssociative(
-                "SELECT
-                    defense.def_name as name,
-                    SUM(deflist.deflist_count) as cnt,
-                    MAX(deflist.deflist_count) as max
-                FROM
-                    defense
-                INNER JOIN
-                    (
-                        deflist
-                    INNER JOIN
-                        users
-                    ON
-                        deflist_user_id = user_id
-                        AND user_ghost = 0
-                        AND user_hmode_from = 0
-                        AND user_hmode_to = 0
-                    )
-                ON
-                    deflist_def_id = def_id
-                GROUP BY
-                    defense.def_id
-                ORDER BY
-                    cnt DESC;"
-            );
+        $data= $this->createQueryBuilder('q')
+            ->select( 'SUM(q.count) as cnt')
+            ->addSelect('d.name as name')
+            ->addSelect('MAX(q.count) as max')
+            ->innerJoin('App:User', 'u', 'WITH', 'u.id = q.user')
+            ->innerJoin('App:Defense', 'd', 'WITH', 'd.id = q.defense')
+            ->andWhere('u.ghost = 0')
+            ->andWhere('u.hmodFrom = 0')
+            ->andWhere('u.hmodTo = 0')
+            ->groupBy('d.id')
+            ->orderBy('cnt', 'DESC')
+            ->getQuery()
+            ->execute();
 
         return array_map(fn ($arr) => [
             'name' => $arr['name'],

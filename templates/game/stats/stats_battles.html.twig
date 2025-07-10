@@ -1,0 +1,55 @@
+{% extends 'game/stats/stats_pagination.html.twig' %}
+{% import 'macros.html.twig' as macros %}
+
+{% block pagination %}
+    {% if paginator.getPaginatedItems %}
+        <twig:Table>
+            {% block table_content %}
+                <tr>
+                    <th colspan="7" style="text-align:center;">Kampfwertung</th>
+                </tr>
+                <tr>
+                    <th style="width:25px;">#</th>
+                    <th>Nick</th>
+                    <th>Rasse</th>
+                    <th>Allianz</th>
+                    <th>Kämpfe Gewonnen</th>
+                    <th>Kämpfe Verloren</th>
+                    <th>Kämpfe Total</th>
+                    <th>Bewertung</th>
+                    <th>Elo Rating</th>
+                </tr>
+                {% for stat in paginator.getPaginatedItems %}
+                    {% if stat.user.nick == app.user.data.nick %}
+                        {% set addClass = 'userSelfColor' %}
+                    {% elseif stat.user.alliance == app.user.data.alliance %}
+                        {% set addClass = 'userAllianceMemberColor' %}
+                    {% else %}
+                        {% set addClass = '' %}
+                    {% endif %}
+                    <tr>
+                        <td class="{{ addClass }}">
+                            {{ loop.index }}
+                        </td>
+                        <td class="{{ addClass }}">{{ stat.user.nick }}</td>
+                        <td class="{{ addClass }}">{{ stat.user.race.name }}</td>
+                        <td class="{{ addClass }}">
+                            {% if stat.user.alliance %}
+                                {{ stat.user.alliance.tag }}
+                            {% endif %}
+                        </td>
+                        <td class="{{ addClass }}">{{ stat.battlesWon }}</td>
+                        <td class="{{ addClass }}">{{ stat.battlesLost }}</td>
+                        <td class="{{ addClass }}">{{ stat.battlesFought }}</td>
+                        <td class="{{ addClass }}">{{ stat.battleRating }}</td>
+                        <td class="{{ addClass }}">{{ stat.elorating }}</td>
+                    </tr>
+                {% endfor %}
+            {% endblock %}
+        </twig:Table>
+    {% else %}
+        <div>
+            <i>Keine Datensätze gefunden!</i>
+        </div>
+    {% endif %}
+{% endblock %}

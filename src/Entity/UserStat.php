@@ -2,6 +2,7 @@
 
 namespace EtoA\Entity;
 
+use Doctrine\DBAL\Types\Types;
 use EtoA\User\UserStatRepository;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -17,7 +18,7 @@ class UserStat
     #[ORM\Column]
     private string $nick;
 
-    #[ORM\Column]
+    #[ORM\Column(type: Types::BOOLEAN)]
     private bool $blocked;
 
     #[ORM\Column]
@@ -29,6 +30,18 @@ class UserStat
     /** Rank for the current selection */
     #[ORM\Column]
     private int $rank;
+
+    #[ORM\Column]
+    private int $rankShips;
+
+    #[ORM\Column]
+    private int $rankTech;
+
+    #[ORM\Column]
+    private int $rankBuildings;
+
+    #[ORM\Column]
+    private int $rankExp;
 
     /** Points for the current selection */
     #[ORM\Column]
@@ -42,7 +55,7 @@ class UserStat
     private int $shiftShips;
 
     #[ORM\Column(name:"rankshift_tech")]
-    private int $shifTechs;
+    private int $shiftTechs;
 
     #[ORM\Column(name:"rankshift_buildings")]
     private int $shiftBuildings;
@@ -275,14 +288,14 @@ class UserStat
         return $this;
     }
 
-    public function getShifTechs(): ?int
+    public function getShiftTechs(): ?int
     {
-        return $this->shifTechs;
+        return $this->shiftTechs;
     }
 
-    public function setShifTechs(int $shifTechs): static
+    public function setShiftTechs(int $shiftTechs): static
     {
-        $this->shifTechs = $shifTechs;
+        $this->shiftTechs = $shiftTechs;
 
         return $this;
     }
@@ -323,18 +336,51 @@ class UserStat
         return $this;
     }
 
-    public function getBlocked(): ?string
+    public function getRankShips(): ?int
     {
-        return $this->blocked;
+        return $this->rankShips;
     }
 
-    public function getHmod(): ?string
+    public function setRankShips(int $rankShips): static
     {
-        return $this->hmod;
+        $this->rankShips = $rankShips;
+
+        return $this;
     }
 
-    public function getInactive(): ?string
+    public function getRankTech(): ?int
     {
-        return $this->inactive;
+        return $this->rankTech;
+    }
+
+    public function setRankTech(int $rankTech): static
+    {
+        $this->rankTech = $rankTech;
+
+        return $this;
+    }
+
+    public function getRankBuildings(): ?int
+    {
+        return $this->rankBuildings;
+    }
+
+    public function setRankBuildings(int $rankBuildings): static
+    {
+        $this->rankBuildings = $rankBuildings;
+
+        return $this;
+    }
+
+    public function getRankExp(): ?int
+    {
+        return $this->rankExp;
+    }
+
+    public function setRankExp(int $rankExp): static
+    {
+        $this->rankExp = $rankExp;
+
+        return $this;
     }
 }

@@ -1,0 +1,51 @@
+{% extends 'game/stats/stats.html.twig' %}
+{% block stats %}
+    <div class="boxLayout">
+        <div class="infoboxtitle">
+            <span>Statistik</span>
+        </div>
+        <div class="infoboxcontent">
+            <div id="statsHeaderContainer">
+                <div id="statsSearchContainer">
+                    <b>&nbsp;&nbsp;Suche:</b>
+                    {{ form_start(form) }}
+                        {{ form_widget(form.search) }}
+                        <a href="{{ app.request.pathInfo }}">
+                            <input type="button" value="Reset" />
+                        </a>
+                        {{ form_widget(form.nick) }}
+                    {{ form_end(form) }}
+                </div>
+                <div id="statsNav1">
+                    {% if pagination.getNextPageNumber %}
+                        <a href="{{ app.request.pathInfo }}?{{ app.request.query.all|merge({page: pagination.getNextPageNumber})|url_encode }}">
+                            <input type="button" value=">">
+                        </a>
+                    {%  endif %}
+                    {% if pagination.getPreviousPageNumber %}
+                        <a href="{{ app.request.pathInfo }}?{{ app.request.query.all|merge({page: pagination.getPreviousPageNumber})|url_encode }}">
+                            <input type="button" value="<">
+                        </a>
+                    {%  endif %}
+                </div>
+                <br style="clear:both;"/>
+            </div>
+            <div id="statsTable">
+                {% block pagination %}
+                {% endblock %}
+            </div>
+            <div id="statsNav2">
+                {% if pagination.getNextPageNumber %}
+                    <a href="{{ app.request.pathInfo }}?{{ app.request.query.all|merge({page: pagination.getNextPageNumber})|url_encode }}">
+                        <input type="button" value=">">
+                    </a>
+                {%  endif %}
+                {% if pagination.getPreviousPageNumber %}
+                    <a href="{{ app.request.pathInfo }}?{{ app.request.query.all|merge({page: pagination.getPreviousPageNumber})|url_encode }}">
+                        <input type="button" value="<">
+                    </a>
+                {%  endif %}
+            </div>
+        </div>
+    </div>
+{% endblock %}

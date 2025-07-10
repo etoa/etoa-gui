@@ -21,7 +21,7 @@ class UserRatingSearch extends AbstractSearch
 
     public function id(int $userId): self
     {
-        $this->parts[] = 'u.user_id LIKE :id';
+        $this->parts[] = 'u.id LIKE :id';
         $this->parameters['id'] = $userId . '%';
 
         return $this;
@@ -29,7 +29,7 @@ class UserRatingSearch extends AbstractSearch
 
     public function ghost(bool $ghost): self
     {
-        $this->parts[] = 'u.user_ghost = :ghost';
+        $this->parts[] = 'u.ghost = :ghost';
         $this->parameters['ghost'] = (int) $ghost;
 
         return $this;

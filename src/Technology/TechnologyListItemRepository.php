@@ -206,37 +206,24 @@ class TechnologyListItemRepository extends AbstractRepository
      */
     public function getBestLevels(): array
     {
-        $data = $this->getConnection()
-            ->fetchAllAssociative(
-                "SELECT
-                    technologies.tech_name as name,
-                    MAX(techlist.techlist_current_level) as max
-                FROM
-                    technologies
-                INNER JOIN
-                    (
-                        techlist
-                    INNER JOIN
-                        users
-                    ON
-                        techlist_user_id = user_id
-                        AND user_ghost = 0
-                        AND user_hmode_from = 0
-                        AND user_hmode_to = 0
-                    )
-                ON
-                    tech_id = techlist_tech_id
-                GROUP BY
-                    technologies.tech_id
-                ORDER BY
-                    max DESC;"
-            );
+        $data= $this->createQueryBuilder('q')
+            ->select( 'MAX(q.currentLevel) as max')
+            ->addSelect('t.name as name')
+            ->innerJoin('App:User', 'u', 'WITH', 'u.id = q.user')
+            ->innerJoin('App:Technology', 't', 'WITH', 't.id = q.technology')
+            ->andWhere('u.ghost = 0')
+            ->andWhere('u.hmodFrom = 0')
+            ->andWhere('u.hmodTo = 0')
+            ->groupBy('t.id')
+            ->orderBy('max', 'DESC')
+            ->getQuery()
+            ->execute();
 
         return array_map(fn ($arr) => [
             'name' => $arr['name'],
             'max' => (int) $arr['max'],
         ], $data);
-    }
+   }
 
     public function removeForUser(int $userId): void
     {
