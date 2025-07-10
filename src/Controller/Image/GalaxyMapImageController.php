@@ -4,11 +4,10 @@ namespace EtoA\Controller\Image;
 
 use EtoA\Image\GalaxyMapImageGenerator;
 use EtoA\Universe\GalaxyMap;
+use EtoA\User\UserRepository;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\StreamedResponse;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 class GalaxyMapImageController extends AbstractImageController
@@ -17,6 +16,7 @@ class GalaxyMapImageController extends AbstractImageController
 
     public function __construct(
         private readonly GalaxyMapImageGenerator $generator,
+        private readonly UserRepository $userRepository
     ) {
     }
 
@@ -34,7 +34,7 @@ class GalaxyMapImageController extends AbstractImageController
             type: $request->query->getString('type', 'default'),
             size: $this->getSize($request),
             showLegend: $request->query->has('legend'),
-            userId: $this->getUser()->getId()
+            user: $this->getUser()->getData()
         ));
     }
 
@@ -47,7 +47,7 @@ class GalaxyMapImageController extends AbstractImageController
             size: $this->getSize($request),
             showLegend: $request->query->has('legend'),
             showAll: true,
-            userId: $request->query->getInt('user'),
+            user: $this->userRepository->find($request->query->getInt('user')),
         ));
     }
 

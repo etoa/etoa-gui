@@ -30,10 +30,8 @@ class GalaxyMapImageGenerator
     {
     }
 
-    public function createMap(string $type, int $size, bool $showLegend, bool $showAll = false, int $userId = 0): void
+    public function createMap(string $type, int $size, bool $showLegend, bool $showAll = false, ?User $user = null): void
     {
-        $user = $userId > 0 ? $this->userRepository->getUser($userId) : null;
-
         $mim = new GalaxyMapImage(
             size: $size,
             showLegend: $showLegend,

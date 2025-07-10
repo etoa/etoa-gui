@@ -4,6 +4,7 @@ namespace EtoA\User;
 
 use Doctrine\Persistence\ManagerRegistry;
 use EtoA\Core\AbstractRepository;
+use EtoA\Entity\User;
 use EtoA\Entity\UserPoints;
 
 class UserPointsRepository extends AbstractRepository
@@ -48,15 +49,13 @@ class UserPointsRepository extends AbstractRepository
     /**
      * @return UserPoints[]
      */
-    public function getPoints(int $userId, int $limit = null, int $start = null, int $end = null): array
+    public function getPoints(User $user, int $limit = null, int $start = null, int $end = null): array
     {
         $qb = $this->createQueryBuilder('q')
-            ->select("*")
-            ->from('user_points')
-            ->where('point_user_id = :userId')
-            ->andWhere('point_points > 0')
-            ->setParameter('userId', $userId)
-            ->orderBy('point_timestamp', 'DESC');
+            ->where('q.user = :user')
+            ->andWhere('q.points > 0')
+            ->setParameter('user', $user)
+            ->orderBy('q.timestamp', 'DESC');
 
         if ($limit !== null) {
             $qb->setMaxResults($limit);
@@ -64,20 +63,19 @@ class UserPointsRepository extends AbstractRepository
 
         if ($start > 0) {
             $qb
-                ->andWhere('point_timestamp > :start')
+                ->andWhere('q.timestamp > :start')
                 ->setParameter('start', $start);
         }
 
         if ($end > 0) {
             $qb
-                ->andWhere('point_timestamp < :end')
+                ->andWhere('q.timestamp < :end')
                 ->setParameter('end', $end);
         }
 
-        $data = $qb
-            ->fetchAllAssociative();
-
-        return array_map(fn (array $row) => new UserPoints($row), $data);
+        return $qb
+            ->getQuery()
+            ->execute();
     }
 
     public function removeForUser(int $userId) : void

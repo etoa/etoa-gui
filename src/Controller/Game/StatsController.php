@@ -5,12 +5,14 @@ namespace EtoA\Controller\Game;
 use EtoA\Alliance\AllianceStatsRepository;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Entity\AllianceStats;
+use EtoA\Entity\User;
 use EtoA\Entity\UserStat;
 use EtoA\Kernel;
 use EtoA\Pagination\ArrayPaginator;
 use EtoA\Pagination\SimplePagination;
 use EtoA\Ranking\GameStatsGenerator;
 use EtoA\Ranking\UserTitlesService;
+use EtoA\User\UserPointsRepository;
 use EtoA\User\UserRatingRepository;
 use EtoA\User\UserRepository;
 use EtoA\User\UserStatRepository;
@@ -30,7 +32,8 @@ class StatsController extends AbstractGameController
         private readonly ConfigurationService    $configurationService,
         private readonly UserRepository          $userRepository,
         private readonly GameStatsGenerator      $gameStatsGenerator,
-        private readonly Kernel $kernel
+        private readonly Kernel                  $kernel,
+        private readonly UserPointsRepository    $userPointsRepository
     )
     {
     }
@@ -234,7 +237,7 @@ class StatsController extends AbstractGameController
     }
 
     #[Route("/game/stats/gamestats", name: 'game.stats.gamestats')]
-    public function gamestats(Request $request): Response
+    public function gamestats(): Response
     {
         $cacheDir = $this->kernel->getContainer()->getParameter('kernel.cache_dir');
         $img = is_file($cacheDir . GameStatsGenerator::USER_STATS_FILE);
@@ -242,6 +245,23 @@ class StatsController extends AbstractGameController
         return $this->render('game/stats/stats_game.html.twig', [
             'stats' => $this->gameStatsGenerator->generate(),
             'img' => $img
+        ]);
+    }
+
+    #[Route("/game/stats/userdetail/{id}", name: 'game.stats.userdetail')]
+    public function userdetail(?User $user = null): Response
+    {
+        if ($user) {
+            return $this->render('game/stats/stats_userdetail.html.twig', [
+                'user'=>$user,
+                'pointEntries'=>$this->userPointsRepository->getPoints($user, 48)
+            ]);
+        }
+
+        return $this->render('game/error.html.twig',[
+            'msg' => 'Datensatz wurde nicht gefunden!',
+            'path' => $this->generateUrl('game.stats.total'),
+            'headline' => 'Statistiken'
         ]);
     }
 
