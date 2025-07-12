@@ -31,26 +31,23 @@ class UserLogRepository extends AbstractRepository
     /**
      * @return UserLog[]
      */
-    public function getUserLogs(int $userId, int $limit, bool $public = null): array
+    public function getUserLogs(User $user, int $limit, bool $public = null): array
     {
         $qb = $this->createQueryBuilder('q')
-            ->select('*')
-            ->from('user_log')
-            ->where('user_id = :userId')
-            ->setParameter('userId', $userId)
-            ->orderBy('timestamp', 'DESC')
+            ->where('q.user = :user')
+            ->setParameter('user', $user)
+            ->orderBy('q.timestamp', 'DESC')
             ->setMaxResults($limit);
 
         if ($public !== null) {
             $qb
-                ->andWhere('public = :public')
-                ->setParameter('public', (int) $public);
+                ->andWhere('q.public = :public')
+                ->setParameter('public', $public);
         }
 
-        $data = $qb
-            ->fetchAllAssociative();
-
-        return array_map(fn (array $row) => new UserLog($row), $data);
+        return $qb
+            ->getQuery()
+            ->execute();
     }
 
     public function deleteAll(): void

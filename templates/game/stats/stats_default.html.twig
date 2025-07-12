@@ -54,7 +54,7 @@
                         {% set addClass = '' %}
                     {% endif %}
                     <tr>
-                        <td class="{{ addClass }}">
+                        <td {{ tm('Punkteverlauf', '<div><img src="'~path('images.stats',{id:stat.id})~'" alt="Diagramm" style="width:600px;height:400px;background:#335 url('~asset('/build/images/loading335.gif')~') no-repeat 300px 200px;" /></div>')|raw }} class="{{ addClass }}">
                             {{ loop.index }}
                             {% if stat.shift == 2 %}
                                 <img src="{{ asset('build/images/stats/stat_down.gif') }}" alt="down" width="9" height="12"/>
@@ -64,7 +64,13 @@
                                 <img src="{{ asset('build/images/stats/stat_same.gif') }}" alt="same" width="21" height="9"/>
                             {% endif %}
                         </td>
-                        <td class="{{ addClass }}">{{ stat.nick }}</td>
+                        <td class="{{ addClass }}">
+                            <div id="ttuser{{ stat.id }}" style="display:none;">
+                                <a href="?page=userinfo&amp;id=156" onclick="window.open('popup.php?page=userinfo&amp;id=156','popup','status=no,width=800,height=600,scrollbars=yes');return false;">Profil anzeigen</a> <br>
+                                <a href="?page=stats&amp;mode=user&amp;userdetail=156" onclick="window.open('popup.php?page=stats&amp;mode=user&amp;userdetail=156','popup','status=no,width=800,height=600,scrollbars=yes');return false;">Punkteverlauf</a> <br>
+                            </div>
+                            <a class="userSelfColor" href="#" onclick="showTT('{{ stat.nick }}','ttuser{{ stat.id }}',0,event,this);return false;">{{ stat.nick }}</a>
+                        </td>
                         <td class="{{ addClass }}">{{ stat.raceName }}</td>
                         <td class="{{ addClass }}">{{ stat.sx }}/{{ stat.sy }}</td>
                         <td class="{{ addClass }}">{{ stat.allianceTag }}</td>

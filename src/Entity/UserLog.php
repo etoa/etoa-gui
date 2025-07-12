@@ -14,8 +14,9 @@ class UserLog
     #[ORM\Column]
     private int $id;
 
-    #[ORM\Column]
-    private int $userId;
+    #[ORM\JoinColumn(name: 'user_id', referencedColumnName: 'user_id')]
+    #[ORM\ManyToOne(targetEntity: User::class)]
+    private ?User $user = null;
 
     #[ORM\Column]
     private int $timestamp;
@@ -105,6 +106,18 @@ class UserLog
     public function setPublic(bool $public): static
     {
         $this->public = $public;
+
+        return $this;
+    }
+
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
+
+    public function setUser(?User $user): static
+    {
+        $this->user = $user;
 
         return $this;
     }

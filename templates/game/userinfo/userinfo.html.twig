@@ -1,0 +1,146 @@
+{% extends 'layout/game.html.twig' %}
+{% block content %}
+    <h1>Benutzerprofil</h1>
+
+    <twig:Table title="Profil von {{ user.nick }}">
+    {% block table_content %}
+        {% if user.profileImage %}
+            <tr><td class="tblblack" colspan="2" style="text-align:center;background:#000;">
+                    <img src="{{ constant('EtoA\\User\\ProfileImage::IMAGE_PATH')~user.profileImage }}" alt="Profil" /></td>
+            </tr>    
+        {% endif %}
+        {% if user.profileText %}
+            <tr>
+                <td colspan="2" style="text-align:center">{{ BBCodeToHTML(user.profileText)|raw }}</td></tr>
+        {% endif %}
+        <tr>
+            <th style="width:120px;">Punkte:</th>
+            <td>{{ formatNumber(user.points) }}</td>
+        </tr>
+        <tr>
+            <th>Rasse:</th>
+            <td>{{ user.race.name}}</td>
+        </tr>
+        {% if user.alliance %}
+            <tr>
+                <th style="width:120px;">Allianz:</th>
+                <td>
+                    {% if user.alliance.founder == app.user.data %}
+                        Gründer von
+                    {% elseif user.allianceRank %}
+                        {{ user.allianceRank.name }} von
+                    {% endif %}
+                    <a href="{{ path('game.alliance.info',{id:user.alliance.id}) }}">{{ user.alliance.toString }}</a>
+                </td>
+            </tr>
+        {% endif %}
+        {% if user.visits %}
+            <tr>
+                <th style="width:120px;">Besucherzähler:</th>
+                <td>{{ formatNumber(user.visits) }} Besucher</td>
+            </tr>
+        {% endif %}
+        {% if user.rank > 0 %}
+            <tr>
+                <th style="width:120px;">Aktueller Rang:</th>
+                <td>{{ formatNumber(user.rank) }}</td></tr>
+        {% endif %}
+        {% if user.rankHighest %}
+            <tr>
+                <th style="width:120px;">Bester Rang:</th>
+                <td>{{ formatNumber(user.rankHighest) }}</td>
+            </tr>
+        {% endif %}
+        {% if user.userRating %}
+            <tr>
+                <th style="width:120px;">Kampfpunkte:</th>
+                <td>
+                    {{ formatNumber(user.userRating.battleRating) }}  (Gewonnen/Verloren/Total:
+                    {{ formatNumber(user.userRating.battlesWon) }} / {{ formatNumber(user.userRating.battlesLost) }} /
+                    {{ formatNumber(user.userRating.battlesFought) }} )
+                </td>
+            </tr>
+            <tr>
+                <th style="width:120px;">Handelspunkte:</th>
+                <td>
+                    {{ formatNumber(user.userRating.tradeRating) }}  (Einkäufe/Verkäufe:
+                    {{ formatNumber(user.userRating.tradesBuy) }} / {{ formatNumber(user.userRating.tradesSell) }} )
+                </td>
+            </tr>
+            <tr>
+                <th style="width:120px;">Diplomatiepunkte:</th>
+                <td>{{ formatNumber(user.userRating.DiplomacyRating) }}</td>
+            </tr>
+        {% endif %}
+        {% if user.profileBoardUrl %}
+            <tr>
+                <th style="width:120px;">Foren-Profil:</th>
+                <td>
+                    <a href="/{{ user.profileBoardUrl }}"></a>
+                </td>
+            </tr>
+        {% endif %}
+        {% if user.registered > 0 %}
+            <tr>
+                <th style="width:120px;">Registriert:</th>
+                <td>{{ formatTimestamp(user.registered) }}  (dabei seit {{ formatTimestamp(date().timestamp  - user.registered) }} )</td>
+            </tr>
+        {% endif %}
+        {% if user.admin %}
+            <tr>
+                <th style="width:120px;">Game-Admin:</th>
+                <td class="adminColor">Dies ist ein Account eines Game-Admins. Er darf gemäss Regeln nicht angegriffen werden.</td>
+            </tr>
+        {% endif %}
+        {% if user.chatadmin %}
+            <tr>
+                <th style="width:120px;">Chat-Admin:</th>
+                <td>Dies ist ein Account eines Chat-Admins. Er hat das Recht, Spieler im Chat zu kicken oder zu bannen.</td>
+            </tr>
+        {% endif %}
+        {% if user.ghost %}
+            <tr>
+                <th style="width:120px;">Geist:</th>
+                <td>Dies ist ein Geist-Account. Er wird nicht in der Statistik angezeigt.</td>
+            </tr>
+        {% endif %}
+    {% endblock %}
+    </twig:Table>
+    <twig:Box title="Öffentliches Benutzer-Log">
+        {% if user.logs %}
+            {% for log in userLogRepository.getUserLogs(user, 10, true) %}
+                <div class="infoLog"> {{ BBCodeToHTML(log.message)|raw }}
+                    <span>{{ formatTimestamp(log.timestamp) }}</span>
+                </div>
+            {% endfor %}
+            <div style="font-size:7pt;padding-top:6px;">Nur die 10 neusten Nachrichten werden angezeigt.</div>
+        {% else %}
+            Keine Nachrichten!
+        {% endif %}
+    </twig:Box>
+    {% if user == app.user.data %}
+        <twig:Box title="Privates Benutzer-Log">
+            {% if user.logs %}
+                {% for log in userLogRepository.getUserLogs(user, 30, false) %}
+                    <div class="infoLog"> {{ BBCodeToHTML(log.message)|raw }}
+                        <span>{{ formatTimestamp(log.timestamp) }}</span>
+                    </div>
+                {% endfor %}
+                <div style="font-size:7pt;padding-top:6px;">Nur die 10 neusten Nachrichten werden angezeigt.</div>
+            {% else %}
+                Keine Nachrichten!
+            {% endif %}
+        </twig:Box>
+        <twig:Box title="Rohstoffe von...">
+            Raids: {{ formatNumber(user.resFromRaid) }} t<br>
+            Asteroiden: {{ formatNumber(user.resFromAsteroid) }} t<br>
+            Nebelfelder: {{ formatNumber(user.resFromNebula) }} t<br>
+            Trümmerfelder: {{ formatNumber(user.resFromTf) }} t
+        </twig:Box>
+    {% endif %}
+
+    <input type="button" value="Nachricht senden" onclick="document.location='?page=messages&amp;mode=new&amp;message_user_to= intval(user.id) '" />
+    <a href="{{ path('game.stats.userdetail',{id:user.id}) }}">
+        <input type="button" value="Statistiken anzeigen"/>
+    </a>
+{% endblock %}

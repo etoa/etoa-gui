@@ -243,10 +243,15 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\JoinColumn(name: 'user_id', referencedColumnName: 'techlist_user_id')]
     private Collection $techlist;
 
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: UserLog::class)]
+    #[ORM\JoinColumn(name: 'user_id', referencedColumnName: 'user_id')]
+    private Collection $logs;
+
     public function __construct()
     {
         $this->planets = new ArrayCollection();
         $this->techlist = new ArrayCollection();
+        $this->logs = new ArrayCollection();
     }
 
     public function __toString() {
@@ -1130,6 +1135,36 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setBanAdmin(?AdminUser $banAdmin): static
     {
         $this->banAdmin = $banAdmin;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, UserLog>
+     */
+    public function getLogs(): Collection
+    {
+        return $this->logs;
+    }
+
+    public function addLog(UserLog $log): static
+    {
+        if (!$this->logs->contains($log)) {
+            $this->logs->add($log);
+            $log->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeLog(UserLog $log): static
+    {
+        if ($this->logs->removeElement($log)) {
+            // set the owning side to null (unless already changed)
+            if ($log->getUser() === $this) {
+                $log->setUser(null);
+            }
+        }
 
         return $this;
     }

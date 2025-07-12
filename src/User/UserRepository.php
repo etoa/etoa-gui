@@ -801,14 +801,15 @@ class UserRepository extends AbstractRepository
         ]);
     }
 
-    public function addVisit(int $userId): void
+    public function addVisit(User $user): void
     {
         $this->createQueryBuilder('q')
-            ->update('users')
-            ->set('user_visits', 'user_visits + 1')
-            ->where('user_id = :userId')
-            ->setParameter('userId', $userId)
-            ->executeQuery();
+            ->update()
+            ->set('q.visits', 'q.visits + 1')
+            ->where('q.id = :user')
+            ->setParameter('user', $user)
+            ->getQuery()
+            ->execute();
     }
 
     /**
