@@ -1,17 +1,23 @@
-{% extends 'layout/game.html.twig' %}
-{% block content %}
+{% extends app.request.query.get('popup')
+    ? 'layout/base.html.twig'
+    : 'layout/game.html.twig' %}
+
+{% set currentContent %}
     <h1>Benutzerprofil</h1>
 
     <twig:Table title="Profil von {{ user.nick }}">
     {% block table_content %}
         {% if user.profileImage %}
-            <tr><td class="tblblack" colspan="2" style="text-align:center;background:#000;">
-                    <img src="{{ constant('EtoA\\User\\ProfileImage::IMAGE_PATH')~user.profileImage }}" alt="Profil" /></td>
+            <tr>
+                <td class="tblblack" colspan="2" style="text-align:center;background:#000;">
+                    <img src="{{ constant('EtoA\\User\\ProfileImage::IMAGE_PATH')~user.profileImage }}" alt="Profil" />
+                </td>
             </tr>    
         {% endif %}
         {% if user.profileText %}
             <tr>
-                <td colspan="2" style="text-align:center">{{ BBCodeToHTML(user.profileText)|raw }}</td></tr>
+                <td colspan="2" style="text-align:center">{{ BBCodeToHTML(user.profileText)|raw }}</td>
+            </tr>
         {% endif %}
         <tr>
             <th style="width:120px;">Punkte:</th>
@@ -19,7 +25,7 @@
         </tr>
         <tr>
             <th>Rasse:</th>
-            <td>{{ user.race.name}}</td>
+            <td>{{ user.race.name }}</td>
         </tr>
         {% if user.alliance %}
             <tr>
@@ -138,9 +144,17 @@
             Trümmerfelder: {{ formatNumber(user.resFromTf) }} t
         </twig:Box>
     {% endif %}
+{% endset %}
 
-    <input type="button" value="Nachricht senden" onclick="document.location='?page=messages&amp;mode=new&amp;message_user_to= intval(user.id) '" />
-    <a href="{{ path('game.stats.userdetail',{id:user.id}) }}">
-        <input type="button" value="Statistiken anzeigen"/>
-    </a>
-{% endblock %}
+{% if app.request.query.get('popup') %}
+    {% set bodyTopStuff %}
+        {{ currentContent }}
+    {% endset %}
+{% else %}
+    {% set content %}
+        {{ currentContent }}
+        <a href="{{ path('game.stats.userdetail',{id:user.id}) }}">
+            <input type="button" value="Profil anzeigen"/>
+        </a>
+    {% endset %}
+{% endif %}

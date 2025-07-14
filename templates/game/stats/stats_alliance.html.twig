@@ -43,7 +43,7 @@
                         {% set addClass = '' %}
                     {% endif %}
                     <tr>
-                        <td class="{{ addClass }}">
+                        <td {{ tm('Punkteverlauf', '<div><img src="'~path('images.alliance.stats',{id:stat.allianceId})~'" alt="Diagramm" style="width:600px;height:400px;background:#335 url('~asset('/build/images/loading335.gif')~') no-repeat 300px 200px;" /></div>')|raw }} class="{{ addClass }}">
                             {{ loop.index }}
                             {% if stat.currentRank < stat.lastRank %}
                                 <img src="{{ asset('build/images/stats/stat_down.gif') }}" alt="down" width="9" height="12"/>
@@ -54,7 +54,13 @@
                             {% endif %}
                         </td>
                         <td class="{{ addClass }}">{{ stat.allianceTag }}</td>
-                        <td class="{{ addClass }}">{{ stat.allianceName }}</td>
+                        <td class="{{ addClass }}">
+                            <div id="ttuser{{ stat.alliance.id }}" style="display:none;">
+                                <a href="{{ path('game.alliance.info',{id:stat.alliance.id, popup:1}) }}" onclick="window.open('{{ path('game.alliance.info',{id:stat.alliance.id, popup:1}) }}','popup','status=no,width=800,height=600,scrollbars=yes');return false;">Allianzseite</a> <br>
+                                <a href="{{ path('game.stats.alliancedetail',{id:stat.alliance.id, popup:1}) }}" onclick="window.open('{{ path('game.stats.alliancedetail',{id:stat.alliance.id, popup:1}) }}','popup','status=no,width=800,height=600,scrollbars=yes');return false;">Punkteverlauf</a> <br>
+                            </div>
+                            <a class="{{ addClass }}" href="#" onclick="showTT('{{ stat.allianceName }}','ttuser{{ stat.alliance.id }}',0,event,this);return false;">{{ stat.allianceName }}</a>
+                        </td>
                         <td class="{{ addClass }}">{{ formatNumber(stat.points) }}</td>
                         <td class="{{ addClass }}">{{ formatNumber(stat.userAverage) }}</td>
                         <td class="{{ addClass }}">{{ stat.count }}</td>

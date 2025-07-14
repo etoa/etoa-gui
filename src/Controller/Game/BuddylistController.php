@@ -58,20 +58,7 @@ class BuddylistController extends AbstractGameController
         if ($form->isSubmitted() && $form->isValid()) {
             /** @var User $user */
             $user = $this->userRepository->findOneBy(['nick'=>$form->get('user')->getData()]);
-            if ($user) {
-                $cu = $this->getUser()->getData();
-                if ($cu !== $user) {
-                    if (!$this->buddyListRepository->findBy(['buddy'=>$user,'user'=>$this->getUser()->getData()])) {
-                        $this->buddyListRepository->addBuddyRequest($cu, $user);
-                        $msg['success'] = "[b]" . $user->getNick() . "[/b] wurde zu deiner Liste hinzugefügt und ihm wurde eine Bestätigungsnachricht gesendet!";
-
-                        $this->messageRepository->createSystemMessage($user, $this->messageCategoryRepository->find(MessageCategoryId::MISC), "Buddylist-Anfrage von " . $cu->getNick(), "Der Spieler will dich zu seiner Freundesliste hinzuf&uuml;gen.\n\n[page buddylist]Anfrage bearbeiten[/page]");
-                    } else
-                        $msg['error'] = "Dieser Eintrag ist schon vorhanden!";
-                } else
-                    $msg['error'] = "Du kannst nicht dich selbst zur Buddyliste hinzufügen!";
-            } else
-                $msg['error'] = "Der Spieler [b]" . $form->get('user')->getData() . "[/b] konnte nicht gefunden werden!";
+            $msg = $this->addRequest($user);
         }
 
         return $this->render('game/buddy/buddy_overview.html.twig',[
@@ -182,5 +169,45 @@ class BuddylistController extends AbstractGameController
             'path' => $this->generateUrl('game.buddylist.overview'),
             'headline' => 'Buddylist'
         ]);
+    }
+
+    #[Route('/game/buddylist/add/{id}', name: 'game.buddylist.add')]
+    public function add(?User $user = null): Response
+    {
+        $msg = $this->addRequest($user);
+
+        if(array_key_exists('success',$msg)) {
+            return $this->render('game/success.html.twig', [
+                'msg' => $msg['success'],
+                'path' => $this->generateUrl('game.buddylist.overview'),
+                'headline' => 'Buddylist'
+            ]);
+        }
+
+        return $this->render('game/error.html.twig', [
+            'msg' => $msg['error'],
+            'path' => $this->generateUrl('game.buddylist.overview'),
+            'headline' => 'Buddylist'
+        ]);
+    }
+
+    private function addRequest(?User $user):array
+    {
+        if ($user) {
+            $cu = $this->getUser()->getData();
+            if ($cu !== $user) {
+                if (!$this->buddyListRepository->findBy(['buddy'=>$user,'user'=>$this->getUser()->getData()])) {
+                    $this->buddyListRepository->addBuddyRequest($cu, $user);
+                    $this->messageRepository->createSystemMessage($user, $this->messageCategoryRepository->find(MessageCategoryId::MISC), "Buddylist-Anfrage von " . $cu->getNick(), "Der Spieler will dich zu seiner Freundesliste hinzuf&uuml;gen.\n\n[page buddylist]Anfrage bearbeiten[/page]");
+
+                    $msg['success'] = "[b]" . $user->getNick() . "[/b] wurde zu deiner Liste hinzugefügt und ihm wurde eine Bestätigungsnachricht gesendet!";
+                } else
+                    $msg['error'] = "Dieser Eintrag ist schon vorhanden!";
+            } else
+                $msg['error'] = "Du kannst nicht dich selbst zur Buddyliste hinzufügen!";
+        } else
+            $msg['error'] = "Der Spieler konnte nicht gefunden werden!";
+
+        return $msg;
     }
 }

@@ -1,5 +1,8 @@
-{% extends 'layout/game.html.twig' %}
-{% block content %}
+{% extends app.request.query.get('popup')
+    ? 'layout/base.html.twig'
+    : 'layout/game.html.twig' %}
+
+{% set currentContent %}
     <twig:Table title="Statistiken für {{ user.nick }}">
     {% block table_content %}
         <tr>
@@ -41,4 +44,18 @@
         {% endif %}
     {% endblock %}
     </twig:Table>
-{% endblock %}
+{% endset %}
+
+{% if app.request.query.get('popup') %}
+    {% set bodyTopStuff %}
+        {{ currentContent }}
+    {% endset %}
+{% else %}
+    {% set content %}
+        {{ currentContent }}
+        <input type="button" value="Nachricht senden" onclick="document.location='?page=messages&amp;mode=new&amp;message_user_to= intval(user.id) '" />
+        <a href="{{ path('game.stats.userdetail',{id:user.id}) }}">
+            <input type="button" value="Statistiken anzeigen"/>
+        </a>
+    {% endset %}
+{% endif %}

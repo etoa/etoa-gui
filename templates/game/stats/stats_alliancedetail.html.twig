@@ -1,5 +1,8 @@
-{% extends 'layout/game.html.twig' %}
-{% block content %}
+{% extends app.request.query.get('popup')
+    ? 'layout/base.html.twig'
+    : 'layout/game.html.twig' %}
+
+{% set currentContent %}
     <h2>Punktedetails für [{{ BBCodeToHTML(alliance.tag) }}] {{ BBCodeToHTML(alliance.name) }}</h2>
     <b>Punkte aktuell:</b> {{ formatNumber(alliance.points) }}, <b>Rang aktuell:</b> {{ alliance.currentRank }} <br/><br/>
     <img src="{{ path('images.alliance.stats',{id:alliance.id}) }}" alt="Diagramm"/><br/><br/>
@@ -31,4 +34,20 @@
             {% endif %}
         {% endblock %}
     </twig:Table>
-{% endblock %}
+    <a href="{{ path('game.alliance.info',{id:alliance.id}) }}">
+        <input type="button" value="Allianzdetails anzeigen" />
+    </a>
+    <a href="{{ path('game.stats.alliances') }}">
+        <input type="button" value="Zurück"/>
+    </a>
+{% endset %}
+
+{% if app.request.query.get('popup') %}
+    {% set bodyTopStuff %}
+        {{ currentContent }}
+    {% endset %}
+{% else %}
+    {% set content %}
+        {{ currentContent }}
+    {% endset %}
+{% endif %}

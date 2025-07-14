@@ -1,7 +1,9 @@
-{% extends 'game/alliance/alliance.html.twig' %}
+{% extends app.request.query.get('popup')
+    ? 'layout/base.html.twig'
+    : 'layout/game.html.twig' %}
 {% import 'macros.html.twig' as macros %}
 
-{% block alliance %}
+{% set currentContent %}
     {% if infoAlliance %}
         <twig:Table title="{{ infoAlliance.toString }}">
             {% block table_content %}
@@ -188,4 +190,14 @@
         {{ macros.errorMessage('Diese Allianz existiert nicht!') }}
     {% endif %}
     <br/><br/><input type="button" onclick="history.back();" value="Zurück" />
-{% endblock %}
+{% endset %}
+
+{% if app.request.query.get('popup') %}
+    {% set bodyTopStuff %}
+        {{ currentContent }}
+    {% endset %}
+{% else %}
+    {% set content %}
+        {{ currentContent }}
+    {% endset %}
+{% endif %}
