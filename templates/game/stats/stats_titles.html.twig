@@ -14,8 +14,8 @@
                         </td>
                         <td class="tbldata" style="vertical-align:middle;padding-top:0;padding-left:15px;">
                             <span style="font-size:13pt;color:#ff0;">{{ title.result.0.nick }}</span><br><br>
-                            {{ formatNumber(title.result.0.points) }}Punkte<br><br>[
-                            <a href="?page=userinfo&amp;id=11">Profil</a>]
+                            {{ formatNumber(title.result.0.points) }} Punkte<br><br>
+                            [<a href="{{ path('game.userinfo',{id:title.result.0.id}) }}">Profil</a>]
                         </td>
                     </tr>
                 {% endfor %}
@@ -29,8 +29,8 @@
                         </td>
                         <td class="tbldata" style="vertical-align:middle;padding-top:0;padding-left:15px;">
                             <span style="font-size:13pt;color:#ff0;">{{ title.result.0.0.0.user.nick }}</span><br><br>
-                            {{ formatNumber(title.result.0.points) }}Punkte<br><br>[
-                            <a href="?page=userinfo&amp;id=11">Profil</a>]
+                            {{ formatNumber(title.result.0.points) }} Punkte<br><br>
+                            [<a href="{{ path('game.userinfo',{id:title.result.0.0.0.user.id}) }}">Profil</a>]
                         </td>
                     </tr>
                 {% endfor %}
@@ -49,8 +49,8 @@
                         </td>
                         <td class="tbldata" style="vertical-align:middle;padding-top:0;padding-left:15px;">
                             <span style="font-size:13pt;color:#ff0;">{{ title.0.nick }}</span><br><br>
-                            {{ formatNumber(title.0.points) }}<br><br>[
-                            <a href="?page=userinfo&amp;id=11">Profil</a>]
+                            {{ formatNumber(title.0.points) }} Punkte<br><br>
+                            [<a href="{{ path('game.userinfo',{id:title.0.id}) }}">Profil</a>]
                         </td>
                     </tr>
                 {% endif %}
