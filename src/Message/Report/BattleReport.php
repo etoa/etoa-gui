@@ -2,10 +2,8 @@
 
 namespace EtoA\Message\Report;
 
-use EtoA\Core\Database\PropertyAssign;
+use EtoA\Entity\BattleReportData;
 use EtoA\Entity\Report;
-use EtoA\Message\ReportContext;
-use EtoA\Message\ReportData\BattleReportData;
 
 class BattleReport extends Report implements ReportInterface
 {
@@ -31,21 +29,18 @@ class BattleReport extends Report implements ReportInterface
     ];
 
     public function __construct(
-        Report $report,
-        public BattleReportData $data,
-        public ReportContext $context
-    ) {
-        PropertyAssign::assign($report, $this);
-    }
+        private readonly Report $report,
+        public BattleReportData $data
+    ) {}
 
     public function getSubject(): string
     {
-        switch ($this->data->subtype) {
+        switch ($this->data->getSubtype()) {
             case 'battle':
                 $subject = "Kampfbericht (";
-                switch ($this->data->result) {
+                switch ($this->data->getResult()) {
                     case 1:
-                        if (in_array($this->getUserId(), $this->data->users, true)) {
+                        if (in_array($this->getUser()->getId(), $this->data->getUser(), true)) {
                             $subject .= 'Gewonnen';
                         } else {
                             $subject .= 'Verloren';
@@ -53,7 +48,7 @@ class BattleReport extends Report implements ReportInterface
 
                         break;
                     case 2:
-                        if (in_array($this->getUserId(), $this->data->users, true)) {
+                        if (in_array($this->getUser()->getId(), $this->data->getUser(), true)) {
                             $subject .= 'Verloren';
                         } else {
                             $subject .= 'Gewonnen';
@@ -64,9 +59,9 @@ class BattleReport extends Report implements ReportInterface
                         $subject .= 'Unentschieden';
                 }
 
-                return $subject . ') ' . $this->context->entities[$this->getEntity1Id()]->toString();
+                return $subject . ') ' . $this->report->getEntity1()->toString();
             default:
-                return self::SUB_TYPES[$this->data->subtype];
+                return self::SUB_TYPES[$this->data->getSubtype()];
         }
     }
 }

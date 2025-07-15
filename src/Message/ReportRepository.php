@@ -7,12 +7,12 @@ namespace EtoA\Message;
 use Doctrine\DBAL\ArrayParameterType;
 use Doctrine\Persistence\ManagerRegistry;
 use EtoA\Core\AbstractRepository;
+use EtoA\Entity\BattleReportData;
 use EtoA\Entity\MarketReportData;
+use EtoA\Entity\OtherReportData;
 use EtoA\Entity\Report;
+use EtoA\Entity\SpyReportData;
 use EtoA\Entity\User;
-use EtoA\Message\ReportData\BattleReportData;
-use EtoA\Message\ReportData\OtherReportData;
-use EtoA\Message\ReportData\SpyReportData;
 
 class ReportRepository extends AbstractRepository
 {

@@ -2,10 +2,8 @@
 
 namespace EtoA\Message\Report;
 
-use EtoA\Core\Database\PropertyAssign;
 use EtoA\Entity\MarketReportData;
 use EtoA\Entity\Report;
-use EtoA\Message\ReportContext;
 
 class MarketReport extends Report implements ReportInterface
 {
@@ -28,14 +26,11 @@ class MarketReport extends Report implements ReportInterface
 
     public function __construct(
         Report $report,
-        public MarketReportData $data,
-        public ReportContext $context
-    ) {
-        PropertyAssign::assign($report, $this);
-    }
+        public MarketReportData $data
+    ) {}
 
     public function getSubject(): string
     {
-        return self::SUB_TYPES[$this->data->subtype];
+        return self::SUB_TYPES[$this->data->getSubtype()];
     }
 }

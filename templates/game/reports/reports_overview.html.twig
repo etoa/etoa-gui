@@ -1,0 +1,45 @@
+{% extends 'game/reports/reports.html.twig' %}
+{% import 'macros.html.twig' as macros %}
+
+{% block reports %}
+    {% if msg.success is defined %}
+        {{ macros.successMessage(msg.success) }}
+    {% endif %}
+
+    {{ form_start(form) }}
+        <twig:Table title="{{ title }}">
+            {% block table_content %}
+                <tr>
+                    <th colspan="2">Nachricht:</th>
+                    {% if title == 'Neueste Berichte' %}
+                        <th style="width:100px;">Kategorie:</th>
+                    {% endif %}
+                    <th style="width:150px">Datum:</th>
+                    <th style="text-align:center;">
+                        <input type="button" id="selectBtn" value="X" onclick="xajax_reportSelectAll(this.value)"/>
+                    </th>
+                </tr>
+                <tr>
+                    <td class='messageCellIcon' style="width:16px">
+                        <img src=""/>
+                    </td>
+                    <td class='messageCellSubject' id="header" . rid . ">
+                        <a href="javascript:;" onclick="toggleBox('report" . rid . "');xajax_reportSetRead(" . rid . ")" >" . r.subject . "</a>
+                    </td>
+                    if (type == "all")
+                    <td class='messageCellCategory'><b>" . r.typeName() . "</b></td>
+                    <td class='messageCellDate'>" . StringUtils::formatDate(r.timestamp) . "</td>
+                    <td class='messageCellAction' id="del" . rid . "" style="width:2%;text-align:center;padding:0px;vertical-align:middle;">
+                    <input id="delreport[" . cnt . "]" type="checkbox" name="delreport[" . rid . "]" value="1" title="Report zum L&ouml;schen markieren" /></td></tr>
+                                                                                                                                                                                 <tr><td colspan="5" style="padding:10px;display:none;" id="report" . rid . "">
+                echo r;
+                <br /><br />
+                <input type="button" value="L&ouml;schen" onclick="toggleBox('report" . rid . "');xajax_reportSetDeleted(" . rid . ");" />&nbsp;
+                ticket_button('8', "Regelverstoss melden");
+                </td>
+                </tr>
+            {% endblock %}
+        </twig:Table>
+        {{ form_widget(form.submit) }}
+    {{ form_end(form) }}
+{% endblock %}

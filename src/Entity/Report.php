@@ -2,9 +2,16 @@
 
 namespace EtoA\Entity;
 
-use EtoA\Message\ReportData\SpyReportData;
-use EtoA\Message\ReportRepository;
 use Doctrine\ORM\Mapping as ORM;
+use EtoA\Message\Report\ExploreReport;
+use EtoA\Message\Report\ReportType;
+use EtoA\Message\ReportRepository;
+use EtoA\Message\Report\MarketReport;
+use EtoA\Message\Report\SpyReport;
+use EtoA\Message\Report\OtherReport;
+use EtoA\Message\Report\BattleReport;
+
+
 
 #[ORM\Entity(repositoryClass: ReportRepository::class)]
 #[ORM\Table(name: 'reports')]
@@ -60,6 +67,14 @@ class Report
     #[ORM\OneToOne(inversedBy: 'id', targetEntity: MarketReportData::class)]
     #[ORM\JoinColumn(name: 'id', referencedColumnName: 'id')]
     private MarketReportData $marketReportData;
+
+    #[ORM\OneToOne(inversedBy: 'id', targetEntity: BattleReportData::class)]
+    #[ORM\JoinColumn(name: 'id', referencedColumnName: 'id')]
+    private BattleReportData $battleReportData;
+
+    #[ORM\OneToOne(inversedBy: 'id', targetEntity: OtherReportData::class)]
+    #[ORM\JoinColumn(name: 'id', referencedColumnName: 'id')]
+    private OtherReportData $otherReportData;
 
     public static function createFromArray(array $data): Report
     {
@@ -251,5 +266,21 @@ class Report
         $this->marketReportData = $marketReportData;
 
         return $this;
+    }
+
+    /**
+     * Factory design pattern for getting instances
+     *
+     * @return OtherReport|MarketReport|ExploreReport|BattleReport|SpyReport New report object instance
+     */
+    public function createFactory(): OtherReport|MarketReport|ExploreReport|BattleReport|SpyReport
+    {
+        return match ($this->type) {
+            'market' => new MarketReport($this, $this->marketReportData),
+            'explore' => new ExploreReport($this),
+            'spy' => new SpyReport($this, $this->spyReportData),
+            'battle' => new BattleReport($this, $this->battleReportData),
+            default => new OtherReport($this, $this->otherReportData),
+        };
     }
 }

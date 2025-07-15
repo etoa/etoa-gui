@@ -3,9 +3,8 @@
 namespace EtoA\Message\Report;
 
 use EtoA\Core\Database\PropertyAssign;
+use EtoA\Entity\OtherReportData;
 use EtoA\Entity\Report;
-use EtoA\Message\ReportContext;
-use EtoA\Message\ReportData\OtherReportData;
 
 class OtherReport extends Report implements ReportInterface
 {
@@ -38,14 +37,11 @@ class OtherReport extends Report implements ReportInterface
 
     public function __construct(
         Report $report,
-        public OtherReportData $data,
-        public ReportContext $context
-    ) {
-        PropertyAssign::assign($report, $this);
-    }
+        public OtherReportData $data
+    ) {}
 
     public function getSubject(): string
     {
-        return self::SUB_TYPES[$this->data->subtype];
+        return self::SUB_TYPES[$this->data->getSubtype()];
     }
 }

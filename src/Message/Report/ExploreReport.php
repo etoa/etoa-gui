@@ -10,7 +10,6 @@ class ExploreReport extends Report implements ReportInterface
 {
     public function __construct(
         Report $report,
-        public ReportContext $context
     ) {
         PropertyAssign::assign($report, $this);
     }

@@ -1,0 +1,19 @@
+{% extends 'layout/game.html.twig' %}
+{% block content %}
+    <h1>Berichte</h1>
+
+    {% set tabs = {
+        "game.reports.all" : "Neuste Berichte",
+        "game.reports.battle" : "Kampf",
+        "game.reports.spy" : "Spionage",
+        "game.reports.explore" : "Erkundung",
+        "game.reports.market" : "Markt",
+        "game.reports.crypto" : "Krypto",
+        "game.reports.other" : "Sonstige",
+        "game.reports.archive" : "Archiv",
+    } %}
+    <twig:tabmenu data="{{ tabs }}" active="{{ app.request.attributes.get('_route') }}"/><br>
+
+    {% block reports %}
+    {% endblock %}
+{% endblock %}

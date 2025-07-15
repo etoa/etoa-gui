@@ -2,10 +2,8 @@
 
 namespace EtoA\Message\Report;
 
-use EtoA\Core\Database\PropertyAssign;
 use EtoA\Entity\Report;
-use EtoA\Message\ReportContext;
-use EtoA\Message\ReportData\SpyReportData;
+use EtoA\Entity\SpyReportData;
 
 class SpyReport extends Report implements ReportInterface
 {
@@ -19,22 +17,19 @@ class SpyReport extends Report implements ReportInterface
     ];
 
     public function __construct(
-        Report $report,
+        private readonly Report $report,
         public SpyReportData $data,
-        public ReportContext $context
-    ) {
-        PropertyAssign::assign($report, $this);
-    }
+    ) {}
 
     public function getSubject(): string
     {
-        switch ($this->data->subtype) {
+        switch ($this->data->getSubtype()) {
             case 'spy':
-                return 'Spionagebericht ' . $this->context->entities[$this->getEntity1Id()]->toString();
+                return 'Spionagebericht ' . $this->report->getEntity1()->toString();
             case 'spyfailed':
-                return 'Spionage fehlgeschlagen auf ' . $this->context->entities[$this->getEntity1Id()]->toString();
+                return 'Spionage fehlgeschlagen auf ' . $this->report->getEntity1()->toString();
             default:
-                return self::SUB_TYPES[$this->data->subtype];
+                return self::SUB_TYPES[$this->data->getSubtype()];
         }
     }
 }
