@@ -13,11 +13,13 @@ class MessageIgnore
     #[ORM\Column(name:"ignore_id")]
     private ?int $id = null;
 
-    #[ORM\Column(name:"ignore_owner_id")]
-    private ?int $ownerId = null;
+    #[ORM\JoinColumn(name: 'ignore_owner_id', referencedColumnName: 'user_id')]
+    #[ORM\ManyToOne(targetEntity: User::class)]
+    private ?User $owner = null;
 
-    #[ORM\Column(name:"ignore_target_id")]
-    private ?int $targetId = null;
+    #[ORM\JoinColumn(name: 'ignore_target_id', referencedColumnName: 'user_id')]
+    #[ORM\ManyToOne(targetEntity: User::class)]
+    private ?User $target = null;
 
     public function getId(): ?int
     {
@@ -31,26 +33,26 @@ class MessageIgnore
         return $this;
     }
 
-    public function getOwnerId(): ?int
+    public function getOwner(): ?User
     {
-        return $this->ownerId;
+        return $this->owner;
     }
 
-    public function setOwnerId(int $ownerId): static
+    public function setOwner(?User $owner): static
     {
-        $this->ownerId = $ownerId;
+        $this->owner = $owner;
 
         return $this;
     }
 
-    public function getTargetId(): ?int
+    public function getTarget(): ?User
     {
-        return $this->targetId;
+        return $this->target;
     }
 
-    public function setTargetId(int $targetId): static
+    public function setTarget(?User $target): static
     {
-        $this->targetId = $targetId;
+        $this->target = $target;
 
         return $this;
     }

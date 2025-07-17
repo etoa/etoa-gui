@@ -7,6 +7,7 @@ namespace EtoA\Message;
 use Doctrine\Persistence\ManagerRegistry;
 use EtoA\Core\AbstractRepository;
 use EtoA\Entity\MessageIgnore;
+use EtoA\Entity\User;
 
 class MessageIgnoreRepository extends AbstractRepository
 {
@@ -15,20 +16,9 @@ class MessageIgnoreRepository extends AbstractRepository
         parent::__construct($registry, MessageIgnore::class);
     }
 
-    public function isRecipientIgnoringSender(int $senderId, int $recipientId): bool
+    public function isRecipientIgnoringSender(User $sender, User $recipient): bool
     {
-        $data = (int) $this->createQueryBuilder('q')
-            ->select('COUNT(ignore_id)')
-            ->from('message_ignore')
-            ->where('ignore_owner_id = :recipient')
-            ->andWhere('ignore_target_id = :sender')
-            ->setParameters([
-                'sender' => $senderId,
-                'recipient' => $recipientId,
-            ])
-            ->fetchOne();
-
-        return $data > 0;
+        return $this->count(['owner'=>$recipient,'target'=>$sender]) > 0;
     }
 
     /**

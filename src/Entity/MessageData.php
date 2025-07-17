@@ -10,8 +10,9 @@ use EtoA\Message\MessageDataRepository;
 class MessageData
 {
     #[ORM\Id]
-    #[ORM\Column]
-    private ?int $id = null;
+    #[ORM\OneToOne(inversedBy: 'messageData', targetEntity: Message::class, cascade: ['persist', 'remove'])]
+    #[ORM\JoinColumn(name: 'id', referencedColumnName: 'message_id')]
+    private ?Message $message = null;
 
     #[ORM\Column(length: 200)]
     private ?string $subject = null;
@@ -26,18 +27,6 @@ class MessageData
     #[ORM\JoinColumn(name: 'fleet_id', referencedColumnName: 'id')]
     #[ORM\ManyToOne(targetEntity: Fleet::class)]
     private ?Fleet $fleet = null;
-
-    public function getId(): ?int
-    {
-        return $this->id;
-    }
-
-    public function setId(int $id): static
-    {
-        $this->id = $id;
-
-        return $this;
-    }
 
     public function getSubject(): ?string
     {

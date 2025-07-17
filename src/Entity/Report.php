@@ -4,7 +4,6 @@ namespace EtoA\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use EtoA\Message\Report\ExploreReport;
-use EtoA\Message\Report\ReportType;
 use EtoA\Message\ReportRepository;
 use EtoA\Message\Report\MarketReport;
 use EtoA\Message\Report\SpyReport;

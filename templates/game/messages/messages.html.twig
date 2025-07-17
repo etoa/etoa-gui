@@ -1,0 +1,18 @@
+{% extends 'layout/game.html.twig' %}
+{% block content %}
+    <h1>Nachrichten</h1>
+    <br style="clear:both;" />
+
+    {% set tabs = {
+        "game.messages.inbox" : "Posteingang",
+        "game.messages.new" : "Erstellen",
+        "game.messages.archive" : "Archiv",
+        "game.messages.sent" : "Gesendet",
+        "game.messages.deleted" : "Papierkorb",
+        "game.messages.ignore" : "Ignorierliste",
+    } %}
+    <twig:tabmenu data="{{ tabs }}" active="{{ app.request.attributes.get('_route') }}"/><br>
+
+    {% block messages %}
+    {% endblock %}
+{% endblock %}

@@ -1,0 +1,43 @@
+{% extends 'game/messages/messages.html.twig' %}
+{% import 'macros.html.twig' as macros %}
+
+{% block messages %}
+    {% if msg.success is defined %}
+        {{ macros.successMessage(msg.success) }}
+    {% endif %}
+
+    {% if msg.error is defined %}
+        {{ macros.errorMessage(msg.error) }}
+    {% endif %}
+
+    {% for error in form.vars.errors %}
+        {{ macros.errorMessage(error.message) }}
+    {% endfor %}
+
+    {{ form_start(form) }}
+        <twig:Table title="Nachricht verfassen">
+        {% block table_content %}
+            <tr>
+                <th>Empfänger:</th>
+                <td colspan="2">
+                    {{ form_widget(form.userTo) }}
+                    <br/>
+                </td>
+            </tr>
+            <tr>
+                <th>Betreff:</th>
+                <td colspan="2">
+                    {{ form_widget(form.messageData.subject) }}
+                </td>
+            </tr>
+            <tr>
+                <th>Text:</th>
+                <td>
+                    {{ form_widget(form.messageData.text) }}
+                </td>
+            </tr>
+        {% endblock %}
+        </twig:Table>
+        {{ form_widget(form.send) }}
+    {{ form_end(form) }}
+{% endblock %}

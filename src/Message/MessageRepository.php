@@ -140,8 +140,8 @@ class MessageRepository extends AbstractRepository
     /**
      * Sends a message from the system to ghe given user
      *
-     * @param integer $userId the recipient user ID
-     * @param integer $catId the message category ID
+     * @param User $user the recipient user ID
+     * @param MessageCategory $cat the message category ID
      * @param string $subject the subject
      * @param string $text the text
      * @return Message the newly created message
@@ -160,7 +160,6 @@ class MessageRepository extends AbstractRepository
         $msgData->setMessage($msg);
         $msgData->setSubject($subject);
         $msgData->setText($text);
-        $msgData->setId($msg->getId());
         $this->messageDataRepository->persist($msgData);
 
         $this->messageDataRepository->save();

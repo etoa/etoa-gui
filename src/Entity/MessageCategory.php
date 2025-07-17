@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace EtoA\Entity;
 
+use Doctrine\DBAL\Types\Types;
 use EtoA\Message\MessageCategoryRepository;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -21,6 +22,9 @@ class MessageCategory
 
     #[ORM\Column(name: "cat_desc")]
     private string $description;
+
+    #[ORM\Column(name: "cat_order", type: Types::SMALLINT)]
+    private int $order;
 
     #[ORM\Column(name: "cat_sender")]
     private string $sender;
@@ -74,6 +78,18 @@ class MessageCategory
     public function setSender(string $sender): static
     {
         $this->sender = $sender;
+
+        return $this;
+    }
+
+    public function getOrder(): ?int
+    {
+        return $this->order;
+    }
+
+    public function setOrder(int $order): static
+    {
+        $this->order = $order;
 
         return $this;
     }

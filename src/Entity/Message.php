@@ -16,7 +16,7 @@ class Message
     #[ORM\Column(name:"message_id", type: "integer")]
     private int $id;
 
-    #[ORM\OneToOne(inversedBy: 'message', targetEntity: MessageData::class)]
+    #[ORM\OneToOne(inversedBy: 'message', targetEntity: MessageData::class, cascade: ['persist', 'remove'])]
     #[ORM\JoinColumn(name: 'message_id', referencedColumnName: 'id')]
     private MessageData $messageData;
 
@@ -164,6 +164,7 @@ class Message
 
     public function setMessageData(?MessageData $messageData): static
     {
+        $messageData->setMessage($this);
         $this->messageData = $messageData;
 
         return $this;

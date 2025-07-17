@@ -1,0 +1,129 @@
+{% extends 'game/messages/messages.html.twig' %}
+{% import 'macros.html.twig' as macros %}
+
+{% block messages %}
+    {% if msg.success is defined %}
+        {{ macros.successMessage(msg.success) }}
+    {% endif %}
+
+    <twig:Table title="Nachrichten">
+        {% block table_content %}
+            <tr>
+                <th style="text-align:center;width:50%; {{ rColor }}">
+                    Gelesen: {{ readMessagesCount }} / {{ configValue('msg_max_store') }} Nachrichten
+                </th>
+                <th style="text-align:center;width:50%; {{ aColor }}">
+                    Archiviert: {{ archivedMessagesCount }} / {{ configValue('msg_max_store') }} Nachrichten
+                </th>
+            </tr>
+            <tr>
+                <td style="padding:0;height:10px;"><img src="{{ asset('/build/images/poll3.jpg') }}" style="height:10px;width:{{ percentRead }}%;" alt="poll" /></td>
+                <td style="padding:0;height:10px;"><img src="{{ asset('/build/images/poll2.jpg') }}" style="height:10px;width:{{ percentArchived }}%;" alt="poll" /></td>
+            </tr>
+        {% endblock %}
+    </twig:Table>
+
+    {{ form_start(form) }}
+        <twig:Table title="Kategorien">
+        {% block table_content %}
+            {% set messagesReadCount = 0 %}
+            {% for category,messages in form.children %}
+                {% if messages.children %}
+                    <tr>
+                        <th colspan="4"> {{ BBCodeToHTML(messageCat.find(category).name)|raw }} ({{ messages.children|length }} Nachrichten)</th>
+                        <th style="text-align:center;">
+                            <input type="button" id="selectBtn[ category.id ]" value="X" onclick="xajax_messagesSelectAllInCategory( category.id , count(messages) ,this.value)"/>
+                        </th>
+                    </tr>
+                    {% for message in messages.children %}
+                        {% if message.vars.data.read %}
+                            <tr id="msg_id_{{ message.vars.data.id }}">
+                            {% set messagesReadCount = messagesReadCount+1 %}
+                        {% else %}
+                            <tr>
+                        {% endif %}
+                            <td class='messageCellIcon' style="width:2%;">
+                                <img src="{{ message.vars.data.read?asset('/build/images/pm_normal.gif'):asset('/build/images/pm_new.gif') }}" alt="Mail" id="msgimg{{ message.vars.data.id }}" />
+                            </td>
+                            <td class='messageCellSubject' style="width:66%;"
+                                {% if app.user.data.userProperties.msgPreview %}
+                                    {{ tm(message.vars.data.messageData.subject?'<i>'~message.vars.data.messageData.subject~'</i>':'<i>Kein Titel</i>',BBCodeToHTML(message.vars.data.messageData.text))|raw }}
+                                {% endif %}
+                            >
+                                {% if message.vars.data.massMail %}
+                                    <b>[Rundmail]</b>
+                                {% endif %}
+                                {% if messagesReadCount >= configValue('msg_max_store') %}
+                                    <span style="color:red;">{{ message.vars.data.messageData.subject }}</span>
+                                {% else %}
+                                    {% if app.user.data.userProperties.msgPreview %}
+                                        <a href="javascript:;" onclick="toggleBox('msgtext{{ message.vars.data.id }}');xajax_messagesSetRead( message.id )">
+                                            {{ message.vars.data.messageData.subject }}
+                                        </a>
+                                    {% else %}
+                                        <a href="?page=page&amp;msg_id= message.id &amp;mode= mode ">{{ message.vars.data.messageData.subject }}</a>
+                                    {% endif %}
+                                {% endif %}
+                            </td>
+                            <td class='messageCellFrom' style="width:15%;">
+                                {% if message.vars.data.userFrom and message.vars.data.userFrom.id > 0 %}
+                                    <div id="ttuser{{ message.vars.data.userFrom.id }}" style="display:none;">
+                                        <a href="{{ path('game.userinfo',{id:message.vars.data.userFrom.id, popup:1}) }}" onclick="window.open('{{ path('game.userinfo',{id:message.vars.data.userFrom.id, popup:1}) }}','popup','status=no,width=800,height=600,scrollbars=yes');return false;">Profil anzeigen</a> <br>
+                                        <a href="{{ path('game.stats.userdetail',{id:message.vars.data.userFrom.id, popup:1}) }}" onclick="window.open('{{ path('game.stats.userdetail',{id:message.vars.data.userFrom.id, popup:1}) }}','popup','status=no,width=800,height=600,scrollbars=yes');return false;">Punkteverlauf</a> <br>
+                                    </div>
+                                    <a href="#" onclick="showTT('{{ message.vars.data.userFrom.nick }}','ttuser{{ message.vars.data.userFrom.id }}',0,event,this);return false;">{{ message.vars.data.userFrom.nick }}</a>
+                                {% elseif message.vars.data.userFrom and message.vars.data.userFrom.id == 0 %}
+                                    <i>System</i>
+                                {% else %}
+                                    <i>Unbekannt</i>
+                                {% endif %}
+                            </td>
+                            <td class='messageCellDate' style="width:15%;">
+                                {{ formatTimestamp(message.vars.data.timestamp) }}
+                            </td>
+                            <td class='messageCellAction' style="width:2%;text-align:center;padding:0;vertical-align:middle;">
+                                {{ form_widget(message) }}
+                            </td>
+                        </tr>
+                        {% if app.user.data.userProperties.msgPreview %}
+                            <tr style="display:none;" id="msgtext{{ message.vars.data.id }}">
+                                <td colspan="5" class="tbldata">
+                                    {{ BBCodeToHTML(message.vars.data.messageData.text)|raw }}
+                                    <br/><br/>
+                                    <input type="button" value="Weiterleiten" onclick="document.location='?page=page&mode=new&amp;message_subject= subject  msgadd '" name="remit" />&nbsp;
+                                    {% if app.user.data.userProperties.msgCopy %}
+                                        <input type="button" value="Antworten" name="answer" onclick="document.location='?page=page&mode=new&message_user_to= message.userFrom &amp;message_subject= subject  msgadd '" />&nbsp;
+                                    {% else %}
+                                        <input type="button" value="Antworten" name="answer" onclick="document.location='?page=page&mode=new&message_user_to= message.userFrom &amp;message_subject= subject '" />&nbsp;
+                                    {% endif %}
+                                    <input type="button" value="Absender ignorieren" onclick="document.location='?page= page &amp;mode=ignore&amp;add= message.userFrom '" />&nbsp;
+                                    <input type="button" value="Löschen" onclick="document.location='?page=page&mode=mode&del= message.id ';" />&nbsp;
+                                    {% if message.vars.data.userFrom %}
+                                        ticket_button('1', "Beleidigung melden", message.userFrom);
+                                    {% else %}
+                                        ticket_button('8', "Regelverstoss melden");
+                                    {% endif %}
+                                    <br/>
+                                </td>
+                            </tr>
+                        {% endif %}
+                    {% endfor %}
+                {% else %}
+                    {% if messageCat.find(category) %}
+                        <tr>
+                            <th colspan="5">{{ BBCodeToHTML(messageCat.find(category).name)|raw }}</th>
+                        </tr>
+                        <tr>
+                            <td colspan="5"><i>Keine Nachrichten vorhanden</i></td>
+                        </tr>
+                    {% endif %}
+                {% endif %}
+            {% endfor %}
+        {% endblock %}
+        </twig:Table>
+        {{ form_widget(form.delete) }}&nbsp;
+        {{ form_widget(form.deleteAll) }}&nbsp;
+        {{ form_widget(form.deleteSystem) }}&nbsp;
+        {{ form_widget(form.archive) }}&nbsp;
+    {{ form_end(form) }}
+{% endblock %}
