@@ -283,4 +283,28 @@ class Report
             default => new OtherReport($this, $this->otherReportData),
         };
     }
+
+    public function getBattleReportData(): ?BattleReportData
+    {
+        return $this->battleReportData;
+    }
+
+    public function setBattleReportData(?BattleReportData $battleReportData): static
+    {
+        $this->battleReportData = $battleReportData;
+
+        return $this;
+    }
+
+    public function getOtherReportData(): ?OtherReportData
+    {
+        return $this->otherReportData;
+    }
+
+    public function setOtherReportData(?OtherReportData $otherReportData): static
+    {
+        $this->otherReportData = $otherReportData;
+
+        return $this;
+    }
 }
