@@ -186,7 +186,7 @@ class AllianceExternalController extends AbstractGameController
 
             $form->handleRequest($request);
             if ($form->isSubmitted() && $form->isValid()) {
-                $this->messageRepository->createSystemMessage($alliance->getFounder(), $this->messageCategoryRepository->find(MessageCategoryId::ALLIANCE), "Bewerbung", "Der Spieler " . $this->getUser()->getUserIdentifier() . " hat sich bei deiner Allianz beworben. Gehe auf die [".$this->generateUrl('game.alliance.applications')."]Allianzseite[/page] für Details!");
+                $this->messageRepository->createSystemMessage($alliance->getFounder(), $this->messageCategoryRepository->find(MessageCategoryId::ALLIANCE), "Bewerbung", "Der Spieler " . $this->getUser()->getUserIdentifier() . " hat sich bei deiner Allianz beworben. Gehe auf die [page=".$this->generateUrl('game.alliance.applications')."]Allianzseite[/page] für Details!");
                 $this->allianceHistoryRepository->addEntry($alliance, "Der Spieler [b]" . $this->getUser()->getUserIdentifier() . "[/b] bewirbt sich sich bei der Allianz.");
 
                 $application->setAlliance($alliance);

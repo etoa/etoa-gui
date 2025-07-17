@@ -198,7 +198,7 @@ class BuddylistController extends AbstractGameController
             if ($cu !== $user) {
                 if (!$this->buddyListRepository->findBy(['buddy'=>$user,'user'=>$this->getUser()->getData()])) {
                     $this->buddyListRepository->addBuddyRequest($cu, $user);
-                    $this->messageRepository->createSystemMessage($user, $this->messageCategoryRepository->find(MessageCategoryId::MISC), "Buddylist-Anfrage von " . $cu->getNick(), "Der Spieler will dich zu seiner Freundesliste hinzuf&uuml;gen.\n\n[page buddylist]Anfrage bearbeiten[/page]");
+                    $this->messageRepository->createSystemMessage($user, $this->messageCategoryRepository->find(MessageCategoryId::MISC), "Buddylist-Anfrage von " . $cu->getNick(), "Der Spieler will dich zu seiner Freundesliste hinzuf&uuml;gen.\n\n[page=".$this->generateUrl('game.buddylist.overview')."]Anfrage bearbeiten[/page]");
 
                     $msg['success'] = "[b]" . $user->getNick() . "[/b] wurde zu deiner Liste hinzugefügt und ihm wurde eine Bestätigungsnachricht gesendet!";
                 } else

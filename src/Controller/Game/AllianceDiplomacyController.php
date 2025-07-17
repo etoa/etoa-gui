@@ -123,7 +123,7 @@ class AllianceDiplomacyController extends AbstractGameController
                         //Nachricht an den Leader der gegnerischen Allianz schreiben
                         $this->messageRepository->createSystemMessage($otherAlliance->getFounder(), $this->messageCategoryRepository->find(MessageCategoryId::ALLIANCE), 'Bündnisanfrage', "Die Allianz [b]" . $alliance->toString() . "[/b] fragt euch für ein Bündnis an.\n
                             [b]Text:[/b] " . addslashes($bnd->getText()) . "\n
-                            Geschrieben von [b]" . $this->getUser()->getData()->getNick() . "[/b].\n Gehe auf die [page=alliance]Allianzseite[/page] um die Anfrage zu bearbeiten!");
+                            Geschrieben von [b]" . $this->getUser()->getData()->getNick() . "[/b].\n Gehe auf die [page=".$this->generateUrl('game.alliance.overview')."]Allianzseite[/page] um die Anfrage zu bearbeiten!");
                     }
                 }
 
