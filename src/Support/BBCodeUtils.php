@@ -76,7 +76,7 @@ class BBCodeUtils
         $string = preg_replace('#\[list=I]([^\[]*)\[/list\]#i', '<ol style="list-style-type:upper-roman">\1</ol>', $string);
         $string = preg_replace('#\[list=i]([^\[]*)\[/list\]#i', '<ol style="list-style-type:upper-roman">\1</ol>', $string);
 
-        $string = preg_replace('#\[page=([^\[]*)\]([^\[]*)\[/page\]#i', '<a href="?page=\1">\2</a>', $string);
+        $string = preg_replace('#\[page=([^\[]*)\]([^\[]*)\[/page\]#i', '<a href="\1">\2</a>', $string);
 
         $string = str_replace('[list]', '<ul>', $string);
         $string = str_replace('[/list]', '</ul>', $string);
