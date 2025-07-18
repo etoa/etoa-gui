@@ -1,0 +1,70 @@
+{% extends 'game/messages/messages.html.twig' %}
+{% import 'macros.html.twig' as macros %}
+
+{% block messages %}
+    {% if msg.success is defined %}
+        {{ macros.successMessage(msg.success) }}
+    {% endif %}
+
+    <twig:Table title="Ignorierliste">
+        {% block table_content %}
+            <tr>
+                <th style="text-align:center;">
+                    Falls du von einem Benutzer belästigt wirst kannst du ihn hier ignorieren:
+                </th>
+            </tr>
+            <tr>
+                <td style="text-align:center;">
+                    <div>
+                        {{ form_start(form) }}
+                            {{ form_widget(form.nick) }}
+                            {{ form_widget(form.ignore) }}
+                        {{ form_end(form) }}
+                    </div>
+                </td>
+            </tr>
+        {% endblock %}
+    </twig:Table>
+
+    {% if targets %}
+        <twig:Table title="Ignorierliste">
+            {% block table_content %}
+                <tr>
+                    <th>Spieler</th>
+                    <th>Aktionen</th>
+                </tr>
+                {% for target in targets %}
+                    <tr>
+                        <td>{{ target.target.nick }}</td>
+                        <td>
+                            <a href="{{ path('game.messages.newTo',{id:target.target.id}) }}">Nachricht</a>
+                            <a href="{{ path('game.userinfo',{id:target.target.id}) }}">Profil</a>
+                            <a href="{{ path('game.messages.toggleIgnore',{id:target.target.id}) }}">Entfernen</a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            {% endblock %}
+        </twig:Table>
+    {% else %}
+        <twig:Box>
+            Keine ignorierten Spieler vorhanden!
+        </twig:Box>
+    {% endif %}
+
+    {% if owners %}
+        <br/><br/>Du wirst von folgenden Spielern ignoriert:<br/><br/>
+        <twig:Table>
+        {% block table_content %}
+            {% for owner in owners %}
+                <tr>
+                    <td>{{ owner.owner.nick }}</td>
+                    <td>
+                        <a href="{{ path('game.userinfo',{id:target.target.id}) }}">Profil</a>
+                        <a href="{{ path('game.messages.toggleIgnore',{id:target.target.id}) }}">Ebenfalls ignorieren</a>
+                    </td>
+                </tr>
+            {% endfor %}
+        {% endblock %}
+        </twig:Table>
+    {% endif %}
+{% endblock %}

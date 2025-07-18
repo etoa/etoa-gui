@@ -61,7 +61,9 @@
                                             {{ message.vars.data.messageData.subject }}
                                         </a>
                                     {% else %}
-                                        <a href="{{path('game.messages.detail',{id:message.vars.data.id})}}">{{ message.vars.data.messageData.subject }}</a>
+                                        <a href="{{path('game.messages.show',{id:message.vars.data.id})}}">
+                                            {{ message.vars.data.messageData.subject }}
+                                        </a>
                                     {% endif %}
                                 {% endif %}
                             </td>
@@ -88,19 +90,19 @@
                         {% if app.user.data.userProperties.msgPreview %}
                             <tr style="display:none;" id="msgtext{{ message.vars.data.id }}">
                                 <td colspan="5" class="tbldata">
-                                    {{ BBCodeToHTML(message.vars.data.messageData.text)|raw }}
+                                    {{ message.vars.data.messageData.text|raw }}
                                     <br/><br/>
                                     <a href="{{ path('game.messages.remit',{id:message.vars.data.id}) }}">
                                         <input type="button" value="Weiterleiten"/>&nbsp;
                                     </a>
-                                        {% if message.vars.data.userFrom and message.vars.data.userFrom.id > 0 %}
-                                            <a href="{{path('game.messages.reply',{id:message.vars.data.id})}}">
-                                                <input type="button" value="Antworten" name="answer" />&nbsp;
-                                            </a>
-                                            <a href="{{ path('game.messages.toggleIgnore',{id:message.vars.data.userFrom.id}) }}">
-                                                <input type="button" value="Absender ignorieren"/>&nbsp;
-                                            </a>
-                                        {% endif %}
+                                    {% if message.vars.data.userFrom and message.vars.data.userFrom.id > 0 %}
+                                        <a href="{{path('game.messages.reply',{id:message.vars.data.id})}}">
+                                            <input type="button" value="Antworten" name="answer" />&nbsp;
+                                        </a>
+                                        <a href="{{ path('game.messages.toggleIgnore',{id:message.vars.data.userFrom.id}) }}">
+                                            <input type="button" value="Absender ignorieren"/>&nbsp;
+                                        </a>
+                                    {% endif %}
                                     <a href="{{ path('game.messages.delete',{id:message.vars.data.id}) }}">
                                         <input type="button" value="Löschen"/>&nbsp;
                                     </a>
@@ -130,6 +132,5 @@
         {{ form_widget(form.delete) }}&nbsp;
         {{ form_widget(form.deleteAll) }}&nbsp;
         {{ form_widget(form.deleteSystem) }}&nbsp;
-        {{ form_widget(form.archive) }}&nbsp;
     {{ form_end(form) }}
 {% endblock %}

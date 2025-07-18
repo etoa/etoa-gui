@@ -35,7 +35,7 @@ class ValidUserConstraintValidator extends ConstraintValidator
             throw new UnexpectedValueException($value, 'string');
         }
 
-        $sitterUser = $this->userRepository->findUser(UserSearch::create()->notUser($this->security->getUser()->getId())->nick($value));
+        $sitterUser = $this->userRepository->findUser(UserSearch::create()->notUser($this->security->getUser()->getData())->nick($value));
         if(!$sitterUser)
             $this->context->addViolation('Benutzername ist ungültig!');
     }

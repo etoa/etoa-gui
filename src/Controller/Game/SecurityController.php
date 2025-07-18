@@ -28,6 +28,12 @@ class SecurityController extends AbstractController
         ]);
     }
 
+    #[Route("/game/login", methods: ['POST'])]
+    public function redirectLogin(AuthenticationUtils $authenticationUtils): Response
+    {
+        return $this->redirectToRoute('game.login');
+    }
+
     #[Route("/game/login/check", name: "game.login.check", methods: ['POST'])]
     public function loginCheck(): void
     {

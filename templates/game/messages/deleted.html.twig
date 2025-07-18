@@ -1,0 +1,54 @@
+{% extends 'game/messages/messages.html.twig' %}
+{% import 'macros.html.twig' as macros %}
+
+{% block messages %}
+    {% if msg.success is defined %}
+        {{ macros.successMessage(msg.success) }}
+    {% endif %}
+
+    <twig:Table>
+    {% block table_content %}
+        <tr>
+            <th colspan="5">Papierkorb</th>
+        </tr>
+        {% if deletedMessages %}
+            {% for message in deletedMessages %}
+                <tr>
+                    <td style="width:16px;">
+                        <a href="{{path('game.messages.show',{id:message.id})}}">
+                            <img src="{{ message.read?asset('/build/images/pm_normal.gif'):asset('/build/images/pm_new.gif') }}" style="border:none;width:16px;height:18px;">
+                        </a>
+                    </td>
+                    <td>
+                        <a href="{{path('game.messages.show',{id:message.id})}}">
+                            {% if message.messageData.subject %}
+                                {{ message.messageData.subject|raw }}
+                            {% else %}
+                                <i>Kein Titel</i>
+                            {% endif %}
+                        </a>
+                    </td>
+                    <td style="width:120px;">{{ message.cat.name }}</td>
+                    <td style="width:120px;">
+                        <div id="ttuser{{ message.userFrom.id }}" style="display:none;">
+                            <a href="{{ path('game.userinfo',{id:message.userFrom.id, popup:1}) }}" onclick="window.open('{{ path('game.userinfo',{id:message.userFrom.id, popup:1}) }}','popup','status=no,width=800,height=600,scrollbars=yes');return false;">Profil anzeigen</a> <br>
+                            <a href="{{ path('game.stats.userdetail',{id:message.userFrom.id, popup:1}) }}" onclick="window.open('{{ path('game.stats.userdetail',{id:message.userFrom.id, popup:1}) }}','popup','status=no,width=800,height=600,scrollbars=yes');return false;">Punkteverlauf</a> <br>
+                        </div>
+                        <a href="#" onclick="showTT('{{ message.userFrom.nick }}','ttuser{{ message.userFrom.id }}',0,event,this);return false;">{{ message.userFrom.nick }}</a>
+                    </td>
+                    <td style="width:120px;">
+                        {{ formatTimestamp(message.timestamp) }}
+                    </td>
+                </tr>
+            {% endfor %}
+        {% else %}
+        <tr>
+            <td colspan="4">
+                <i>Keine Nachrichten vorhanden</i>
+            </td>
+        </tr>
+        {% endif %}
+    {% endblock %}
+    </twig:Table>
+    <br/>Es werden nur die 30 neusten Nachrichten angezeigt.
+{% endblock %}

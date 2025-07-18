@@ -6,6 +6,8 @@ use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Entity\Message;
 use EtoA\Entity\MessageCategory;
 use EtoA\Entity\MessageData;
+use EtoA\Entity\MessageIgnore;
+use EtoA\Entity\User;
 use EtoA\Form\Type\Core\MessageDataType;
 use EtoA\Form\Type\Core\MessageType;
 use EtoA\Form\Validation\ValidUserConstraint;
@@ -15,7 +17,9 @@ use EtoA\Message\MessageDataRepository;
 use EtoA\Message\MessageIgnoreRepository;
 use EtoA\Message\MessageRepository;
 use EtoA\User\UserRepository;
+use EtoA\User\UserSearch;
 use Symfony\Component\Form\Event\PreSubmitEvent;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -33,7 +37,7 @@ class MessagesController extends AbstractGameController
         private readonly MessageCategoryRepository $messageCategoryRepository,
         private readonly MessageIgnoreRepository $messageIgnoreRepository,
         private readonly UserRepository $userRepository,
-        private readonly MessageDataRepository $messageDataRepository
+        private readonly MessageDataRepository $messageDataRepository,
     )
     {
     }
@@ -85,10 +89,6 @@ class MessagesController extends AbstractGameController
             ->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            if($form->get('delete')->isClicked()) {
-                $this->messageCategoryRepository->save();
-            }
-
             if($form->get('deleteAll')->isClicked()) {
                 foreach ($form->getData() as $data) {
                     foreach ($data as $message) {
@@ -113,11 +113,11 @@ class MessagesController extends AbstractGameController
                         if($message->isDeleted()) {
                             $message->setDeleted(false);
                             $message->setArchived(true);
-
                         }
                     }
                 }
             }
+            $this->messageCategoryRepository->save();
         }
 
         return $this->render('game/messages/inbox.html.twig', [
@@ -133,19 +133,19 @@ class MessagesController extends AbstractGameController
     }
 
     #[Route('/game/messages/new', name: 'game.messages.new')]
-    public function new(Request $request): Response {
-
+    public function new(Request $request, ?Message $message = new Message()): Response {
         $session = $request->getSession();
         if(!$session->get('messagesSent'))
             $session->set('messagesSent',[]);
 
         if($this->getUser()->getData()->getVerificationKey()) {
-            $message = new Message();
-            $messageData = new MessageData();
+            if(!$message->getMessageData()) {
+                $messageData = new MessageData();
+                $message->setMessageData($messageData);
+                $this->messageDataRepository->persist($messageData);
+            }
 
             $message->setUserFrom($this->getUser()->getData());
-            $message->setMessageData($messageData);
-
             $form = $this->createMessageForm($message);
 
             if ($form->isSubmitted() && $form->isValid()) {
@@ -164,13 +164,10 @@ class MessagesController extends AbstractGameController
                         $message->setCat($cat??$this->messageCategoryRepository->find(MessageCategoryId::USER));
                         $message->setTimestamp(time());
 
-                        $this->messageDataRepository->persist($messageData);
                         $this->messageDataRepository->save();
 
                         $this->messageRepository->persist($message);
                         $this->messageRepository->save();
-
-
 
                         $msg['success'] = "Nachricht wurde an <b>" . $message->getUserTo()->getNick() . "</b> gesendet!<br>";
                     }
@@ -190,36 +187,240 @@ class MessagesController extends AbstractGameController
         ]);
     }
 
+    #[Route('/game/messages/new/{id}', name: 'game.messages.newTo')]
+    public function newTo(Request $request, ?User $to): Response {
+        $message = new Message();
+        $message->setUserTo($to);
+
+        return $this->new($request, $message);
+    }
+
+    #[Route('/game/messages/reply/{id}', name: 'game.messages.reply')]
+    public function replyTo(Request $request, Message $message): Response {
+        if($message->getUserTo() === $this->getUser()->getData()) {
+            $replyMessage = new Message();
+            $replyMessageData = new MessageData();
+
+            $replyMessageData->setSubject('Re: '.$message->getMessageData()->getSubject());
+            $replyMessage->setUserTo($message->getUserFrom());
+
+            if($this->getUser()->getData()->getUserProperties()->isMsgCopy()) {
+                $replyMessageData->setText($message->getMessageData()->getText());
+            }
+
+            $replyMessage->setMessageData($replyMessageData);
+
+            return $this->new($request, $replyMessage);
+        }
+
+        return $this->redirectToRoute('game.messages.new');
+    }
+
     #[Route('/game/messages/archive', name: 'game.messages.archive')]
     public function archive(Request $request): Response {
+        $readMessagesCount = $this->messageRepository->count(['read'=>true,'deleted'=>false,'archived'=>false,'userTo'=>$this->getUser()->getData()]);
+        $archivedMessagesCount = $this->messageRepository->count(['deleted'=>false,'archived'=>true,'userTo'=>$this->getUser()->getData()]);
 
+        // Rechnet %-Werte für tabelle (1/2)
+        $percentRead = min(ceil($readMessagesCount / $this->configurationService->getInt('msg_max_store') * 100), 100);
+        $percentArchived = min(ceil($archivedMessagesCount / $this->configurationService->param1Int('msg_max_store') * 100), 100);
+
+        $r_color = ($percentRead >= 90) ? 'color:red;' : '';
+        $a_color = ($percentArchived >= 90) ? 'color:red;' : '';
+
+        /** @var MessageCategory[] $categories */
+        $categories = $this->messageCategoryRepository->findBy([],['order'=>'ASC']);
+
+        $categoriesWithMessages = [];
+
+        foreach ($categories as $category) {
+            $categoriesWithMessages[$category->getId()] = $this->messageRepository->findBy(['deleted'=>false,'archived'=>true,'userTo'=>$this->getUser()->getData(),'cat'=>$category]);
+        }
+
+        $form = $this->createFormBuilder($categoriesWithMessages);
+
+        foreach ($categoriesWithMessages as $key => $value) {
+            $form = $form->add($key, CollectionType::class, [
+                'entry_type' => MessageType::class,
+                'label' => false
+            ]);
+        }
+
+        $form = $form
+            ->add('delete', SubmitType::class, [
+                'label' => 'Markierte löschen'
+            ])
+            ->add('deleteAll', SubmitType::class, [
+                'label' => 'Alle löschen'
+            ])
+            ->add('deleteSystem', SubmitType::class, [
+                'label' => 'Systemnachrichten löschen'
+            ])
+            ->getForm()
+            ->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            if($form->get('delete')->isClicked()) {
+                $this->messageCategoryRepository->save();
+            }
+
+            if($form->get('deleteAll')->isClicked()) {
+                foreach ($form->getData() as $data) {
+                    foreach ($data as $message) {
+                        $message->setDeleted(true);
+                    }
+                }
+            }
+
+            if($form->get('deleteSystem')->isClicked()) {
+                foreach ($form->getData() as $data) {
+                    foreach ($data as $message) {
+                        if($message->getUserFrom() && $message->getUserFrom->getId() == 0) {
+                            $message->setDeleted(true);
+                        }
+                    }
+                }
+            }
+        }
+
+        return $this->render('game/messages/archive.html.twig', [
+            'rColor' => $r_color,
+            'aColor' => $a_color,
+            'readMessagesCount' => $readMessagesCount,
+            'archivedMessagesCount' => $archivedMessagesCount,
+            'percentRead' => $percentRead,
+            'percentArchived' => $percentArchived,
+            'form' => $form,
+            'messageCat' => $this->messageCategoryRepository
+        ]);
     }
 
     #[Route('/game/messages/sent', name: 'game.messages.sent')]
-    public function sent(Request $request): Response {
-
+    public function sent(): Response {
+        return $this->render('game/messages/sent.html.twig', [
+            'sentMessages' => $this->messageRepository->findBy(['userFrom'=>$this->getUser()->getData()],limit: 30),
+        ]);
     }
 
     #[Route('/game/messages/deleted', name: 'game.messages.deleted')]
-    public function deleted(Request $request): Response {
-
+    public function deleted(): Response {
+        return $this->render('game/messages/deleted.html.twig', [
+            'deletedMessages' => $this->messageRepository->findBy(['userTo'=>$this->getUser()->getData(),'deleted'=>true],limit: 30),
+        ]);
     }
 
     #[Route('/game/messages/ignore', name: 'game.messages.ignore')]
     public function ignore(Request $request): Response {
+        $search = UserSearch::create()->notUser($this->getUser()->getData());
+        $users = $this->userRepository->searchUsers($search);
 
+        $form = $this->createFormBuilder($users)
+            ->add('nick', ChoiceType::class, [
+                'label' => false,
+                'choices' => $users,
+                'choice_value' => 'id',
+                'choice_label' => 'nick'
+            ])
+            ->add('ignore', SubmitType::class, [
+                'label' => 'Nachrichten dieses Spielers ignorieren'
+            ])
+            ->getForm()
+            ->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $this->toggleIgnore($form->getData()['nick']);
+        }
+
+        return $this->render('game/messages/ignore.html.twig', [
+            'form' => $form,
+            'targets' => $this->messageIgnoreRepository->findBy(['owner'=>$this->getUser()->getData()]),
+            'owners' => $this->messageIgnoreRepository->findBy(['target'=>$this->getUser()->getData()]),
+        ]);
+    }
+
+    #[Route('/game/messages/ignore/{id}', name: 'game.messages.toggleIgnore')]
+    public function toggleIgnore(User $ignore): Response {
+        $target = $this->messageIgnoreRepository->findOneBy(['target'=>$ignore]);
+
+        if($target) {
+            $this->messageIgnoreRepository->remove($target);
+            $this->messageIgnoreRepository->save();
+        }
+        else {
+            $target = new MessageIgnore();
+            $target->setOwner($this->getUser()->getData());
+            $target->setTarget($ignore);
+
+            $this->messageIgnoreRepository->persist($target);
+            $this->messageIgnoreRepository->save();
+        }
+
+        return $this->redirectToRoute('game.messages.ignore');
+    }
+
+    #[Route('/game/messages/show/{id}', name: 'game.messages.show')]
+    public function show(Request $request, ?Message $message = null): Response {
+        if($message && ($message->getUserTo() === $this->getUser()->getData()||$message->getUserFrom() === $this->getUser()->getData())) {
+            $form = $this->createFormBuilder()
+                ->add('restore', SubmitType::class, [
+                    'label' => 'Wiederherstellen'
+                ])
+                ->getForm()
+                ->handleRequest($request);
+
+            if ($form->isSubmitted() && $form->isValid()) {
+                $message->setDeleted(false);
+                $this->messageRepository->save();
+                $msg['success'] = 'Nachricht wurde wiederhergestellt!';
+            }
+
+            return $this->render('game/messages/detail.html.twig', [
+                'message' => $message,
+                'form' => $form,
+                'msg' => $msg??null
+            ]);
+        }
+
+        return $this->render('game/error.html.twig',[
+            'msg' => 'Diese Nachricht existiert nicht!',
+            'path' => $this->generateUrl('game.messages.inbox'),
+            'headline' => 'Nachrichten'
+        ]);
+    }
+
+    #[Route('/game/messages/delete/{id}', name: 'game.messages.delete')]
+    public function delete(?Message $message = null): Response {
+        if($message && $message->getUserTo() === $this->getUser()->getData()) {
+            $message->setDeleted(true);
+            $this->messageRepository->save();
+        }
+
+        return $this->redirectToRoute('game.messages.inbox');
+    }
+
+    #[Route('/game/messages/remit/{id}', name: 'game.messages.remit')]
+    public function remit(Request $request, ?Message $message = null): Response {
+        if($message && $message->getUserTo() === $this->getUser()->getData()) {
+            $message->setForwarded(true);
+            $message->setUserTo(null);
+
+            return $this->new($request, $message);
+        }
+
+        return $this->redirectToRoute('game.messages.new');
     }
 
     private function createMessageForm(Message $message): FormInterface
     {
         $request = Request::createFromGlobals();
 
-        $form = $this->createFormBuilder($message)
+        return $this->createFormBuilder($message)
             ->add('userTo', TextType::class,[
                 'mapped'=>false,
                 'label' => false,
                 'constraints' => [new ValidUserConstraint()],
-                'error_bubbling' => true
+                'error_bubbling' => true,
+                'data' => $message->getUserTo()?->getNick()
             ])
             ->addEventListener(FormEvents::PRE_SUBMIT, function (PreSubmitEvent $event): void {
                 $form = $event->getForm();
@@ -234,7 +435,5 @@ class MessagesController extends AbstractGameController
             ])
             ->getForm()
             ->handleRequest($request);
-
-        return $form;
     }
 }

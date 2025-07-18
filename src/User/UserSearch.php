@@ -3,6 +3,7 @@
 namespace EtoA\User;
 
 use EtoA\Core\Database\AbstractSearch;
+use EtoA\Entity\User;
 
 class UserSearch extends AbstractSearch
 {
@@ -203,10 +204,10 @@ class UserSearch extends AbstractSearch
         return $this;
     }
 
-    public function notUser(int $userId): self
+    public function notUser(User $user): self
     {
-        $this->parts[] = "q.id <> :notUserId";
-        $this->parameters['notUserId'] = $userId;
+        $this->parts[] = "q.id <> :notUser";
+        $this->parameters['notUser'] = $user;
 
         return $this;
     }

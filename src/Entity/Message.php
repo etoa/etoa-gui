@@ -18,7 +18,7 @@ class Message
 
     #[ORM\OneToOne(inversedBy: 'message', targetEntity: MessageData::class, cascade: ['persist', 'remove'])]
     #[ORM\JoinColumn(name: 'message_id', referencedColumnName: 'id')]
-    private MessageData $messageData;
+    private ?MessageData $messageData = null;
 
     #[ORM\JoinColumn(name: 'message_cat_id', referencedColumnName: 'cat_id')]
     #[ORM\ManyToOne(targetEntity: MessageCategory::class)]
