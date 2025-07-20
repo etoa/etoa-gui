@@ -20,8 +20,9 @@ class TicketMessage
     #[ORM\Column(type: "integer")]
     private int $id;
 
-    #[ORM\Column(type: "integer")]
-    private int $ticketId;
+    #[ORM\JoinColumn(name: 'ticket_id', referencedColumnName: 'id')]
+    #[ORM\ManyToOne(targetEntity: Ticket::class)]
+    private ?Ticket $ticket = null;
 
     #[ORM\Column]
     private string $message;
@@ -29,11 +30,13 @@ class TicketMessage
     #[ORM\Column(type: "integer")]
     private int $timestamp;
 
-    #[ORM\Column(type: "integer")]
-    private ?int $userId;
+    #[ORM\JoinColumn(name: 'user_id', referencedColumnName: 'user_id')]
+    #[ORM\ManyToOne(targetEntity: User::class)]
+    private ?User $user = null;
 
-    #[ORM\Column(type: "integer")]
-    private ?int $adminId;
+    #[ORM\JoinColumn(name: 'admin_id', referencedColumnName: 'user_id')]
+    #[ORM\ManyToOne(targetEntity: AdminUser::class)]
+    private ?AdminUser $admin = null;
 
     public static function createFromArray(array $data): TicketMessage
     {
@@ -51,18 +54,6 @@ class TicketMessage
     public function getId(): ?int
     {
         return $this->id;
-    }
-
-    public function getTicketId(): ?int
-    {
-        return $this->ticketId;
-    }
-
-    public function setTicketId(int $ticketId): static
-    {
-        $this->ticketId = $ticketId;
-
-        return $this;
     }
 
     public function getMessage(): ?string
@@ -89,26 +80,38 @@ class TicketMessage
         return $this;
     }
 
-    public function getUserId(): ?int
+    public function getTicket(): ?Ticket
     {
-        return $this->userId;
+        return $this->ticket;
     }
 
-    public function setUserId(int $userId): static
+    public function setTicket(?Ticket $ticket): static
     {
-        $this->userId = $userId;
+        $this->ticket = $ticket;
 
         return $this;
     }
 
-    public function getAdminId(): ?int
+    public function getUser(): ?User
     {
-        return $this->adminId;
+        return $this->user;
     }
 
-    public function setAdminId(int $adminId): static
+    public function setUser(?User $user): static
     {
-        $this->adminId = $adminId;
+        $this->user = $user;
+
+        return $this;
+    }
+
+    public function getAdmin(): ?AdminUser
+    {
+        return $this->admin;
+    }
+
+    public function setAdmin(?AdminUser $admin): static
+    {
+        $this->admin = $admin;
 
         return $this;
     }

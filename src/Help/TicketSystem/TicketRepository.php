@@ -46,7 +46,7 @@ class TicketRepository extends AbstractRepository
     {
         $entity->setTimestamp(time());
 
-        $this->persist($entity);
+        parent::persist($entity);
         $this->save();
     }
 

@@ -1,0 +1,98 @@
+{% extends 'game/ticket/ticket.html.twig' %}
+{% import 'macros.html.twig' as macros %}
+
+{% block ticket %}
+    {% if msg.success is defined %}
+        {{ macros.successMessage(msg.success) }}
+    {% endif %}
+
+    <h2>Ticket-Details</h2>
+
+    <twig:Table title="Ticket {{ ticket.getIdString }}">
+        {% block table_content %}
+            <tr>
+                <th>Kategorie:</th>
+                <td colspan="3">
+                    {{ticket.cat.name}}
+                </td>
+            </tr>
+            <tr>
+                <th>User:</th>
+                <td>
+                    {{ ticket.user.nick }}
+                </td>
+            </tr>
+            {% if ticket.admin %}
+                <tr>
+                    <th>Zugeteilter Admin:</th>
+                    <td>
+                        {{ ticket.admin.nick }}
+                    </td>
+                </tr>
+            {% endif %}
+            <tr>
+                <th>Status:</th>
+                <td colspan="3">
+                    {{ ticket.getStatusName }}
+                </td>
+            </tr>
+        {% endblock %}
+    </twig:Table>
+
+    <twig:Table title="Nachrichten">
+        {% block table_content %}
+            <tr>
+                <th style="width:120px;">Datum</th>
+                <th style="width:150px;">Autor</th>
+                <th>Nachricht</th>
+            </tr>
+            {% for message in ticket.ticketMessages %}
+                <tr>
+                    <td>{{ formatTimestamp(message.timestamp) }}</td>
+                    <td>
+                        {% if message.user %}
+                            {{ message.user.nick }}
+                        {% endif %}
+                        {% if message.admin %}
+                            {{ message.admin.nick }}
+                        {% endif %}
+                    </td>
+                    <td>{{ BBCodeToHTML(message.message) }}</td>
+                </tr>
+            {% endfor %}
+        {% endblock %}
+    </twig:Table>
+
+    {{ form_start(form) }}
+        {% if ticket.status == 'closed' %}
+            <p>
+                <a href="{{ path('game.ticket.list') }}">
+                    <input type="button" value="Zur Übersicht"/>
+                </a>
+                {{ form_widget(form.reopen) }}
+            </p>
+        {% else %}
+            <twig:Table title="Neue Nachricht">
+                {% block table_content %}
+                    <tr>
+                        <th>Absender:</th>
+                        <td>
+                            {{ app.user.data.nick }}
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>Nachricht:</th>
+                        <td>
+                            {{ form_widget(form.message) }}
+                        </td>
+                    </tr>
+                {% endblock %}
+            </twig:Table>
+            {{ form_widget(form.send) }}
+            <a href="{{ path('game.ticket.list') }}">
+                <input type="button" value="Zur Übersicht"/>
+            </a>
+        {% endif %}
+    {{ form_widget(form._token) }}
+    {{ form_end(form,{render_rest:false}) }}
+{% endblock %}

@@ -147,7 +147,7 @@ class AllianceBoardController extends AbstractGameController
         echo "<a href='".$this->generateUrl('game.alliance.overview') ."'><input type=\"button\" value=\"Zur Allianzseite\"/></a><br/><br/>";
 
         //shows Bnd forums
-        $diplomacies = $this->allianceDiplomacyRepository->getDiplomacies($alliance->getId(), AllianceDiplomacyLevel::BND_CONFIRMED);
+        $diplomacies = $this->allianceDiplomacyRepository->getDiplomacies($alliance, AllianceDiplomacyLevel::BND_CONFIRMED);
         if (count($diplomacies) > 0) {
             $allianceBndIds = array_map(fn (AllianceDiplomacy $diplomacy) => $diplomacy->getId(), $diplomacies);
             $topicCounts = $this->allianceBoardTopicRepository->getBndTopicCounts($allianceBndIds);
