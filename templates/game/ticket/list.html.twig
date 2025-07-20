@@ -1,0 +1,65 @@
+{% extends 'game/ticket/ticket.html.twig' %}
+{% import 'macros.html.twig' as macros %}
+
+{% block ticket %}
+    <h2>Ticket-Details</h2>
+
+    {% if msg.success is defined %}
+        {{ macros.successMessage(msg.success) }}
+    {% endif %}
+
+    Über unser Benachrichtigungssystem kannst du einen Game-Administrator informieren, falls
+    du ein Problem mit dem Spiel hast oder einen Missbrauch der Spielregeln festgestellt hast. Bitte fülle folgendes Formular aus
+    um dein Anliegen zu beschreiben; je mehr Infos du uns gibst, desto besser können wir dir helfen:<br/><br/>
+
+    {{ form_start(form) }}
+        <twig:Table title="Neues Ticket">
+            {% block table_content %}
+                <tr>
+                    <th>Kategorie:</th>
+                    <td>
+                        {{ form_widget(form.cat) }}
+                    </td>
+                </tr>
+                <tr>
+                    <th>Beschreibung:</th>
+                    <td>
+                        {{ form_widget(form.ticketMessages.0.message) }}
+                    </td>
+                </tr>
+            {% endblock %}
+        </twig:Table>
+        {{ form_widget(form.submit) }}
+    {{ form_end(form) }}
+    
+    {%if tickets %}
+        <twig:Table title="Neues Ticket">
+        {% block table_content %}
+            <tr>
+                <th>ID</th>
+                <th>Kategorie</th>
+                <th>Status</th>
+                <th>Admin</th>
+                <th>Aktualisiert</th>
+                <th>Optionen</th>
+            </tr>
+            {% for ticket in tickets %}
+                <tr>
+                    <td>{{ ticket.getIdString }}</td>
+                    <td>{{ ticket.cat.name }}</td>
+                    <td>{{ ticket.getStatusName }}</td>
+                    <td>
+                        {% if ticket.admin %}
+                            <a href="?page=contact&rcpt=ticket->adminId">{{ ticket.admin.nick }}</a>
+                        {% endif %}
+                    </td>
+                    <td>{{ formatTimestamp(ticket.timestamp) }}</td>
+                    <td>
+                        <a href="{{path('game.ticket.view',{id:ticket.id})}}">Anzeigen</a>
+                    </td>
+                </tr>
+            {% endfor %}
+        {% endblock %}
+        </twig:Table>
+    {% endif %}
+{% endblock %}
