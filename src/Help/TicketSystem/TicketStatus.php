@@ -6,25 +6,20 @@ namespace EtoA\Help\TicketSystem;
 
 /**
  * Workflow status of a ticket
- *
- * @todo Once compatible with PHP 8.1, convert to Enum
  */
-class TicketStatus
+enum TicketStatus: string
 {
-    public const NEW = "new";
-    public const ASSIGNED = "assigned";
-    public const CLOSED = "closed";
+    case NEW = 'new';
+    case ASSIGNED = 'assigned';
+    case CLOSED = 'closed';
 
-    public static function label(string $status): string
+    public function label(): string
     {
-        if ($status == self::CLOSED) {
-            return "Abgeschlossen";
-        }
-        if ($status == self::ASSIGNED) {
-            return "Zugeteilt";
-        }
-
-        return 'Neu';
+        return match ($this) {
+            self::CLOSED => 'Abgeschlossen',
+            self::ASSIGNED => 'Zugeteilt',
+            self::NEW => 'Neu',
+        };
     }
 
     /**
@@ -32,10 +27,10 @@ class TicketStatus
      */
     public static function items(): array
     {
-        return [
-            self::NEW => self::label(self::NEW),
-            self::ASSIGNED => self::label(self::ASSIGNED),
-            self::CLOSED => self::label(self::CLOSED),
-        ];
+        $items = [];
+        foreach (self::cases() as $case) {
+            $items[$case->value] = $case->label();
+        }
+        return $items;
     }
 }
