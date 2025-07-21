@@ -1,0 +1,36 @@
+{% extends 'game/contact/contact.html.twig' %}
+
+{% block contact %}
+    <twig:Table title="Kontaktpersonen für die {{ configValue('roundname') }}">
+        {% block table_content %}
+            <tr>
+                <th>Name</th>
+                <th>Mail</th>
+                <th>Kontaktformular</th>
+                <th>Foren-Profil</th>
+            </tr>
+            {% for admin in admins %}
+                <tr>
+                    <td>{{ admin.nick }}</td>
+                    {% if constant('EtoA\\Entity\\AdminUser::CONTACT_REQUIRED_EMAIL_SUFFIX') in admin.email %}
+                        <td>
+                            <a href="mailto:{{ admin.email }}">{{ admin.email }}</a>
+                        </td>
+                    {% else %}
+                        <td>(nicht öffentlich)</td>
+                    {% endif %}
+                    <td>
+                        <a href="{{ path('game.contact.mail',{id:admin.id}) }}">Mail senden</a>
+                    </td>
+                    {% if admin.boardUrl %}
+                        <td>
+                            <a href="{{ admin.boardUrl }}" onclick="window.open('{{ admin.boardUrl }}');return false;">Profil</a>
+                        </td>
+                    {% else %}
+                        <td>-</td>
+                    {% endif %}
+                </tr>
+            {% endfor %}
+        {% endblock %}
+    </twig:Table>
+{% endblock %}

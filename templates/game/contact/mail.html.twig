@@ -1,0 +1,22 @@
+{% extends 'game/contact/contact.html.twig' %}
+
+{% block contact %}
+    {{ form_start(form) }}
+    <twig:Table title="Nachricht an {{ admin.nick }} senden">
+        {% block table_content %}
+            <tr>
+                <th>Titel:</th>
+                <td>
+                    {{ form_widget(form.subject) }}
+                </td>
+            </tr>
+            <tr>
+                <th>Text:</th>
+                <td>
+                    {{ form_widget(form.message) }}
+                </td>
+            </tr>
+        {% endblock %}
+    </twig:Table>
+    {{ form_end(form) }}
+{% endblock %}

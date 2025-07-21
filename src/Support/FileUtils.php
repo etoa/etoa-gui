@@ -18,6 +18,7 @@ class FileUtils
 {
     public function __construct(
         private readonly SluggerInterface $slugger,
+        private string $projectDir
     )
     {
     }
@@ -95,5 +96,40 @@ class FileUtils
             }
         }
         return $file;
+    }
+
+    /**
+     * Checks wether a given config file exists
+     */
+    public function configFileExists($file): bool
+    {
+        return file_exists($this->getConfigFilePath($file));
+    }
+
+    public function getConfigFilePath($file): string
+    {
+        return $this->projectDir.'/config/' . $file;
+    }
+
+    public function writeConfigFile($file, $contents)
+    {
+        file_put_contents($this->projectDir.'/config/' . $file, $contents);
+    }
+
+    /**
+     * Fetches the contents of a JSON config file and returns it as an associative array
+     * @throws Exception
+     */
+    public function fetchJsonConfig($file):array
+    {
+        $path = $this->getConfigFilePath($file);
+        if (!file_exists($path)) {
+            throw new Exception("Config file $file not found!");
+        }
+        $data = json_decode(file_get_contents($path), true);
+        if (json_last_error() != JSON_ERROR_NONE) {
+            throw new Exception("Failed to parse config file $file (JSON error " . json_last_error() . ")!");
+        }
+        return $data;
     }
 }

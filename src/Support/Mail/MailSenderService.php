@@ -7,6 +7,7 @@ namespace EtoA\Support\Mail;
 use EtoA\Core\AppName;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Support\ExternalUrl;
+use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\Address;
 use Symfony\Component\Mime\Email;
@@ -14,14 +15,15 @@ use Symfony\Component\Mime\Email;
 class MailSenderService
 {
     public function __construct(
-        private ConfigurationService $config,
-        private MailerInterface $mailer,
+        private readonly ConfigurationService $config,
+        private readonly MailerInterface      $mailer,
     ) {
     }
 
     /**
      * @param string|string[]|array<string,string> $recipients
      * @param null|string|string[]|array<string,string> $replyTo
+     * @throws TransportExceptionInterface
      */
     public function send(string $subject, string $text, $recipients, $replyTo = null): void
     {
@@ -43,10 +45,10 @@ class MailSenderService
     }
 
     /**
-     * @param null|string|string[]|array<string,string> $emails
+     * @param string|string[]|array<string,string>|null $emails
      * @return Address[]
      */
-    private function convertAddressArrays($emails, Address $default = null): array
+    private function convertAddressArrays(array|string|null $emails, Address $default = null): array
     {
         if ($emails === null && $default !== null) {
             return [$default];

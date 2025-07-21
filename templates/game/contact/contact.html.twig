@@ -1,0 +1,8 @@
+{% extends 'layout/game.html.twig' %}
+{% block content %}
+    <h1>Kontakt</h1>
+
+    {{ BBCodeToHTML(text)|raw }}
+    {% block contact %}
+    {% endblock %}
+{% endblock %}

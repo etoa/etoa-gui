@@ -4,20 +4,27 @@ declare(strict_types=1);
 
 namespace EtoA\Text;
 
-use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use EtoA\Core\AbstractRepository;
 use EtoA\Entity\Text;
+use EtoA\Support\FileUtils;
+use Exception;
 
 class TextRepository extends AbstractRepository
 {
     /** @var array<string, array<string, string>> */
     private array $textDef;
 
-    public function __construct(ManagerRegistry $registry, private readonly EntityManagerInterface $entityManager)
+    /**
+     * @throws Exception
+     */
+    public function __construct(
+        ManagerRegistry $registry,
+        readonly FileUtils $fileUtils
+    )
     {
         parent::__construct($registry, Text::class);
-        $this->textDef = fetchJsonConfig("texts.conf");
+        $this->textDef = $fileUtils->fetchJsonConfig("texts.json");
     }
 
     public function isValidTextId(string $id): bool
@@ -71,6 +78,22 @@ class TextRepository extends AbstractRepository
                 'id' => $id,
             ])
             ->executeQuery();
+    }
+
+    public function find($id, $lockMode = null, $lockVersion = null): ?object
+    {
+        $text = parent::find($id);
+
+        if (!$text && !$this->isValidTextId($id)) {
+            return null;
+        }
+
+        if(!$text || !$text->getContent()) {
+            $text = new Text();
+            $text->setContent($this->textDef[$id]['default']);
+        }
+
+        return $text;
     }
 
     public function getEnabledTextOrDefault(string $key, string $default = ''): string
