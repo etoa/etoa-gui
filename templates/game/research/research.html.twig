@@ -59,15 +59,15 @@
             <td>Eingestellte Arbeiter:</td>
             <td>
                 {{ formatNumber(researchBuilding.peopleWorking) }}
-                if (($building_something <> 1) && ($bid > 0) && ($bid <> 23)) {
-                &nbsp;<a id ="link" href="javascript:;" onclick="toggleBox(\'changePeople\');">[Ändern]</a>
-                }
+                {% if technology is defined and technology.technology.id != 23 and technology.buildType != 3 %}
+                    &nbsp;<a id ="link" href="javascript:;" onclick="toggleBox('changePeople');">[Ändern]</a>
+                {% endif %}
             </td>
             <td>
                 {{ genBuilding?formatNumber(genBuilding.peopleWorking):0 }}
-                if (($building_gen <> 1) && ($bid == 23)) {
-                &nbsp;<a id ="link" href="javascript:;" onclick="toggleBox(\'changePeople\');">[Ändern]</a>
-                }
+                {% if technology is defined and technology.technology.id == 23 and technology.buildType != 3 %}
+                    &nbsp;<a id ="link" href="javascript:;" onclick="toggleBox('changePeople');">[Ändern]</a>
+                {% endif %}
             </td>
         </tr>
         {% if genBuilding.peopleWorking > 0 or researchBuilding.peopleWorking > 0 %}
@@ -84,6 +84,52 @@
         {% endif %}
     {% endblock %}
     </twig:Table>
+
+    {% if technology is defined %}
+        <div id="changePeople" style="display:none;">
+            <twig:Table title="Arbeiter im Forschungslabor zuteilen">
+            {% block table_content %}
+                <tr>
+                    <th>Eingestellte Arbeiter</th>
+                    <td>
+                        <input 	type="text"
+                                  name="peopleWorking"
+                                  id="peopleWorking"
+                                  value="' . StringUtils::formatNumber($people) . '"
+                                  onkeyup="updatePeopleWorkingBox(this.value,'-1','-1');"/>
+                    </td>
+                </tr>
+                <tr>
+                    <th>Zeitreduktion</th>
+                    <td>
+                        <input	type="text"
+                                  name="timeReduction"
+                                  id="timeReduction"
+                                  value="' . StringUtils::formatTimespan($config->getInt('people_work_done') * $people) . '"
+                                  onkeyup="updatePeopleWorkingBox('-1',this.value,'-1');" />
+                    </td>
+                </tr>
+                <tr>
+                    <th>Nahrungsverbrauch</th>
+                    <td>
+                        <input	type="text"
+                                  name="foodUsing"
+                                  id="foodUsing"
+                                  value="' . StringUtils::formatNumber($config->getInt('people_food_require') * $people) . '"
+                                  onkeyup="updatePeopleWorkingBox('-1','-1',this.value);" />
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2" style="text-align:center;">
+                        <div id="changeWorkingPeopleError" style="display:none;">&nbsp;</div>
+                        <input type="submit" value="Speichern" name="' . $form_button . '" id="' . $form_button . '" />&nbsp;
+                        <input type="button" value="Optimieren" onclick="updatePeopleWorkingBox(' ','-1','^-1');">
+                    </td>
+                </tr>
+            {% endblock %}
+            </twig:Table>
+        </div>
+    {% endif %}
 
     {% block research %}
 

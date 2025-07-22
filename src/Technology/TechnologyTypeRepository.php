@@ -18,14 +18,11 @@ class TechnologyTypeRepository extends AbstractRepository
      */
     public function getTypes(): array
     {
-        $data = $this->createQueryBuilder('q')
-            ->select('*')
-            ->from('tech_types')
-            ->orderBy('type_order')
-            ->addOrderBy('type_name')
-            ->fetchAllAssociative();
-
-        return array_map(fn (array $row) => new TechnologyType($row), $data);
+        return $this->createQueryBuilder('q')
+            ->orderBy('q.order')
+            ->addOrderBy('q.order')
+            ->getQuery()
+            ->execute();
     }
 
     /**
