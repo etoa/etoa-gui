@@ -33,4 +33,9 @@ class MarketReport extends Report implements ReportInterface
     {
         return self::SUB_TYPES[$this->data->getSubtype()];
     }
+
+    public function getSubtype(): ?string
+    {
+        return $this->data->getSubtype();
+    }
 }

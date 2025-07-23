@@ -40,7 +40,7 @@ class BattleReport extends Report implements ReportInterface
                 $subject = "Kampfbericht (";
                 switch ($this->data->getResult()) {
                     case 1:
-                        if (in_array($this->getUser()->getId(), $this->data->getUser(), true)) {
+                        if (in_array($this->getUser(), $this->data->getUsers(), true)) {
                             $subject .= 'Gewonnen';
                         } else {
                             $subject .= 'Verloren';
@@ -48,7 +48,7 @@ class BattleReport extends Report implements ReportInterface
 
                         break;
                     case 2:
-                        if (in_array($this->getUser()->getId(), $this->data->getUser(), true)) {
+                        if (in_array($this->getUser()->getId(), $this->data->getUsers(), true)) {
                             $subject .= 'Verloren';
                         } else {
                             $subject .= 'Gewonnen';
@@ -63,5 +63,10 @@ class BattleReport extends Report implements ReportInterface
             default:
                 return self::SUB_TYPES[$this->data->getSubtype()];
         }
+    }
+
+    public function getSubtype(): ?string
+    {
+        return $this->data->getSubtype();
     }
 }

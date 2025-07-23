@@ -2,6 +2,7 @@
 
 namespace EtoA\Entity;
 
+use Doctrine\DBAL\Types\Types;
 use EtoA\Core\Database\DataTransformer;
 use EtoA\Message\Report\SpyReportRepository;
 use EtoA\Universe\Resources\BaseResources;
@@ -24,22 +25,22 @@ class SpyReportData
 
     private BaseResources $resources;
 
-    #[ORM\Column(name: "res_0", type: "int")]
+    #[ORM\Column(name: "res_0", type: Types::BIGINT)]
     private int $resMetal;
 
-    #[ORM\Column(name: "res_1", type: "int")]
+    #[ORM\Column(name: "res_1", type: Types::BIGINT)]
     private int $resCrystal;
 
-    #[ORM\Column(name: "res_2", type: "int")]
+    #[ORM\Column(name: "res_2", type: Types::BIGINT)]
     private int $resPlastic;
 
-    #[ORM\Column(name: "res_3", type: "int")]
+    #[ORM\Column(name: "res_3", type: Types::BIGINT)]
     private int $resFuel;
 
-    #[ORM\Column(name: "res_4", type: "int")]
+    #[ORM\Column(name: "res_4", type: Types::BIGINT)]
     private int $resFood;
 
-    #[ORM\Column(name: "res_5", type: "int")]
+    #[ORM\Column(name: "res_5", type: Types::BIGINT)]
     private int $resPeople;
 
     #[ORM\Column]
@@ -54,7 +55,7 @@ class SpyReportData
     #[ORM\Column]
     private string $technologies;
 
-    #[ORM\Column]
+    #[ORM\Column(name: "spydefense")]
     private int $spyDefense;
 
     #[ORM\Column]

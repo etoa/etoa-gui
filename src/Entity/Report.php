@@ -9,7 +9,7 @@ use EtoA\Message\Report\MarketReport;
 use EtoA\Message\Report\SpyReport;
 use EtoA\Message\Report\OtherReport;
 use EtoA\Message\Report\BattleReport;
-
+use EtoA\Message\ReportTypes;
 
 
 #[ORM\Entity(repositoryClass: ReportRepository::class)]
@@ -45,6 +45,9 @@ class Report
     private ?Alliance $alliance = null;
 
     #[ORM\Column(type: "string")]
+    private ?string $subject;
+
+    #[ORM\Column(type: "string")]
     private ?string $content;
 
     #[ORM\JoinColumn(name: 'entity1_id', referencedColumnName: 'id')]
@@ -59,19 +62,19 @@ class Report
     #[ORM\ManyToOne(targetEntity: User::class)]
     private ?User $opponent1 = null;
 
-    #[ORM\OneToOne(inversedBy: 'id', targetEntity: SpyReportData::class)]
+    #[ORM\OneToOne(mappedBy: 'id', targetEntity: SpyReportData::class)]
     #[ORM\JoinColumn(name: 'id', referencedColumnName: 'id')]
     private SpyReportData $spyReportData;
 
-    #[ORM\OneToOne(inversedBy: 'id', targetEntity: MarketReportData::class)]
+    #[ORM\OneToOne(mappedBy: 'id', targetEntity: MarketReportData::class)]
     #[ORM\JoinColumn(name: 'id', referencedColumnName: 'id')]
     private MarketReportData $marketReportData;
 
-    #[ORM\OneToOne(inversedBy: 'id', targetEntity: BattleReportData::class)]
+    #[ORM\OneToOne(mappedBy: 'id', targetEntity: BattleReportData::class)]
     #[ORM\JoinColumn(name: 'id', referencedColumnName: 'id')]
     private BattleReportData $battleReportData;
 
-    #[ORM\OneToOne(inversedBy: 'id', targetEntity: OtherReportData::class)]
+    #[ORM\OneToOne(mappedBy: 'id', targetEntity: OtherReportData::class)]
     #[ORM\JoinColumn(name: 'id', referencedColumnName: 'id')]
     private OtherReportData $otherReportData;
 
@@ -126,6 +129,11 @@ class Report
     public function getType(): ?string
     {
         return $this->type;
+    }
+
+    public function getTypeName():string
+    {
+        return ReportTypes::items()[$this->type];
     }
 
     public function setType(string $type): static
@@ -303,6 +311,18 @@ class Report
     public function setOtherReportData(?OtherReportData $otherReportData): static
     {
         $this->otherReportData = $otherReportData;
+
+        return $this;
+    }
+
+    public function getSubject(): ?string
+    {
+        return $this->subject;
+    }
+
+    public function setSubject(string $subject): static
+    {
+        $this->subject = $subject;
 
         return $this;
     }

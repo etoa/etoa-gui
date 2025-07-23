@@ -18,4 +18,9 @@ class ExploreReport extends Report implements ReportInterface
     {
         return 'Erkundung';
     }
+
+    public function getSubtype(): ?string
+    {
+        return 'other';
+    }
 }

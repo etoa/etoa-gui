@@ -6,31 +6,31 @@
     {{ report.context.userNicks[userId]|default('Niemand') }}
 {% endmacro %}
 
-{% macro userList(users, report) %}
-    {% for userId in users %}
-        {{ report.context.userNicks[userId]|default('Niemand') }}{% if not loop.last %},{% endif %}
+{% macro userList(users) %}
+    {% for user in users %}
+        {{ user.nick|default('Niemand') }}{% if not loop.last %},{% endif %}
     {% endfor %}
 {% endmacro %}
 
 {% macro startTargetTimeMission(report) %}
     {% import _self as macros %}
-    <strong>Ziel: </strong>{{ macros.entity(report.context.entities[report.entity1Id]) }}<br />
+    <strong>Ziel: </strong>{{ macros.entity(entity1) }}<br />
     <strong>Start: </strong>
     {% if report.type == 'other' and report.data.subtype == 'market' %}
         Marktplatz
     {% elseif report.type == 'other' and report.data.subtype == 'delivery' %}
         Allianzbasis
     {% else %}
-        {{ macros.entity(report.context.entities[report.entity2Id]) }}
+        {{ macros.entity(report.entity2) }}
     {% endif %}
     <br />
     <strong>Zeit: </strong>{{ formatTimestamp(report.timestamp) }}<br />
     <strong>Auftrag: </strong>{{ report.context.fleetActions[report.data.action] }} [{{ report.context.fleetStatus[report.data.status] }}]<br />
 {% endmacro %}
 
-{% macro resourceTable(resources, resourceNames) %}
+{% macro resourceTable(resources) %}
     <table>
-        {% for k, resource in resourceNames %}
+        {% for k, resource in resource %}
             <tr>
                 <td>{{ resource }}</td>
                 <td style="text-align:right;">{{ formatNumber(resources.get(k)) }} </td>
@@ -43,11 +43,11 @@
     </table>
 {% endmacro %}
 
-{% macro dataTable(entries, names) %}
+{% macro dataTable(entries) %}
     <table>
-        {% for id, count in entries %}
+        {% for ship, count in entries %}
             <tr>
-                <td>{{ names[id] }}</td>
+                <td>{{ ship.name }}</td>
                 <td style="text-align:right;">{{ formatNumber(count) }}</td>
             </tr>
         {% endfor %}
@@ -55,7 +55,7 @@
 {% endmacro %}
 
 {% macro marketLink(entity) %}
-    <a href="?page=market&mode=user_sell&change_entity={{ entity.id }}">Marktplatz<a>
+    <a href="?page=market&mode=user_sell&change_entity={{ entity.id }}">Marktplatz</a>
 {% endmacro %}
 
 {% macro marketResourceTable(report) %}

@@ -19,18 +19,21 @@ class ReportsController extends AbstractGameController
 
     #[Route('/game/reports/all', name: 'game.reports.all')]
     public function all(Request $request): Response {
-        $reports = $this->reportRepository->findBy(['deleted'=>false,'archived'=>false]);
+        $reports = $this->reportRepository->findBy(['deleted'=>false,'archived'=>false, 'user'=>$this->getUser()->getData()]);
 
         $currentPage = $request->query->getInt('page', 1);
 
         $paginator = new ArrayPaginator($reports, $currentPage, 20);
         $pagination = new SimplePagination($paginator);
 
-        dd($paginator->getPaginatedItems());
+        $form = $this->createFormBuilder()
+            ->getForm()
+            ->handleRequest($request);
 
-        return $this->render('game/stats/stats_default.html.twig', [
+        return $this->render('game/reports/reports_overview.html.twig', [
             'paginator' => $paginator,
             'pagination' => $pagination,
+            'title' => 'Neueste Berichte',
             'form' => $form
         ]);
     }

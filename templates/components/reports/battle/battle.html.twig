@@ -1,30 +1,30 @@
 {% import 'components/reports/macros.html.twig' as macros %}
 
-<strong>KAMPFBERICHT</strong><br />
-vom Planeten {{ macros.entity(report.context.entities[report.entity1Id]) }}<br />
-<strong>Zeit:</strong> {{ formatTimestamp(report.timestamp) }}<br /><br />
-<table class="battleTable" width="100%">
+<strong>KAMPFBERICHT</strong><br/>
+vom Planeten {{ macros.entity(report.entity1) }}<br/>
+<strong>Zeit:</strong> {{ formatTimestamp(report.timestamp) }}<br/><br/>
+<table class="battleTable">
     <tr>
         <td>
-            <strong>Angreifer:</strong>{{ macros.userList(report.data.users, report) }}
+            <strong>Angreifer:</strong>{{ macros.userList(report.battleReportData.users) }}
         </td>
         <td>
-            <strong>Verteidiger:</strong>{{ macros.userList(report.data.entityUsers, report) }}
+            <strong>Verteidiger:</strong>{{ macros.userList(report.battleReportData.entityUsers) }}
         </td>
     </tr>
     <tr>
         <td>
-            <strong>ANGREIFENDE FLOTTE</strong><br />
-            {% if report.data.ships %}
-                {{ macros.dataTable(report.data.ships, report.context.shipNames) }}
+            <strong>ANGREIFENDE FLOTTE</strong><br/>
+            {% if report.battleReportData.ships %}
+                {{ macros.dataTable(report.battleReportData.ships) }}
             {% else %}
                 <i>Nichts vorhanden!</i>
             {% endif %}
         </td>
         <td>
-            <strong>VERTEIDIGENDE FLOTTE</strong><br />
-            {% if report.data.entityShips %}
-                {{ macros.dataTable(report.data.entityShips, report.context.shipNames) }}
+            <strong>VERTEIDIGENDE FLOTTE</strong><br/>
+            {% if report.battleReportData.entityShips %}
+                {{ macros.dataTable(report.battleReportData.entityShips) }}
             {% else %}
                 <i>Nichts vorhanden!</i>
             {% endif %}
@@ -34,9 +34,9 @@ vom Planeten {{ macros.entity(report.context.entities[report.entity1Id]) }}<br /
         <td>
         </td>
         <td>
-            <strong>PLANETARE VERTEIDIGUNG</strong><br />
+            <strong>PLANETARE VERTEIDIGUNG</strong><br/>
             {% if report.data.entityDefense %}
-                {{ macros.dataTable(report.data.entityDefense, report.context.defenseNames) }}
+                {{ macros.dataTable(report.battleReportData.entityDefense) }}
             {% else %}
                 <i>Nichts vorhanden!</i>
             {% endif %}
@@ -44,64 +44,83 @@ vom Planeten {{ macros.entity(report.context.entities[report.entity1Id]) }}<br /
     </tr>
     <tr>
         <td>
-            <strong>DATEN DES ANGREIFERS</strong><br />
+            <strong>DATEN DES ANGREIFERS</strong><br/>
             <table>
                 <tr>
-                    <td>Schild ({{ report.data.shieldTech }}%):</td><td style="text-align:right;"> {{ formatNumber(report.data.shield) }}</td>
-                </tr><tr>
-                    <td>Struktur ({{ report.data.structureTech }}%):</td><td style="text-align:right;"> {{ formatNumber(report.data.structure) }}</td>
-                </tr><tr>
-                    <td>Waffen ({{ report.data.weaponTech }}%):</td><td style="text-align:right;"> {{ formatNumber(report.data.weapon[1]) }}</td>
-                </tr><tr>
-                    <td>Einheiten:</td><td style="text-align:right;"> {{ formatNumber(report.data.count[1]) }}</td>
+                    <td>Schild ({{ report.battleReportData.shieldTech }}%):</td>
+                    <td style="text-align:right;"> {{ formatNumber(report.battleReportData.shield) }}</td>
+                </tr>
+                <tr>
+                    <td>Struktur ({{ report.battleReportData.structureTech }}%):</td>
+                    <td style="text-align:right;"> {{ formatNumber(report.battleReportData.structure) }}</td>
+                </tr>
+                <tr>
+                    <td>Waffen ({{ report.battleReportData.weaponTech }}%):</td>
+                    <td style="text-align:right;"> {{ formatNumber(report.battleReportData.weapon[1]) }}</td>
+                </tr>
+                <tr>
+                    <td>Einheiten:</td>
+                    <td style="text-align:right;"> {{ formatNumber(report.data.count[1]) }}</td>
                 </tr>
             </table>
         </td>
         <td>
-            <strong>DATEN DES VERTEIDIGERS</strong><br />
+            <strong>DATEN DES VERTEIDIGERS</strong><br/>
             <table>
                 <tr>
-                    <td>Schild ({{ report.data.entityShieldTech }}%):</td><td style="text-align:right;"> {{ formatNumber(report.data.entityShield) }}</td>
-                </tr><tr>
-                    <td>Struktur ({{ report.data.entityStructureTech }}%):</td><td style="text-align:right;"> {{ formatNumber(report.data.entityStructure) }}</td>
-                </tr><tr>
-                    <td>Waffen ({{ report.data.entityWeaponTech }}%):</td><td style="text-align:right;"> {{ formatNumber(report.data.entityWeapon[1]) }}</td>
-                </tr><tr>
-                    <td>Einheiten:</td><td style="text-align:right;"> {{ report.data.entityCount[1] }}</td>
+                    <td>Schild ({{ report.battleReportData.entityShieldTech }}%):</td>
+                    <td style="text-align:right;"> {{ formatNumber(report.data.entityShield) }}</td>
+                </tr>
+                <tr>
+                    <td>Struktur ({{ report.battleReportData.entityStructureTech }}%):</td>
+                    <td style="text-align:right;"> {{ formatNumber(report.data.entityStructure) }}</td>
+                </tr>
+                <tr>
+                    <td>Waffen ({{ report.battleReportData.entityWeaponTech }}%):</td>
+                    <td style="text-align:right;"> {{ formatNumber(report.battleReportData.entityWeapon[1]) }}</td>
+                </tr>
+                <tr>
+                    <td>Einheiten:</td>
+                    <td style="text-align:right;"> {{ report.battleReportData.entityCount[1] }}</td>
                 </tr>
             </table>
-            <br /></td>
+            <br/>
+        </td>
     </tr>
     <tr>
         <td colspan="2">
-            {% set initShieldStructure = report.data.shield + report.data.structure %}
+            {% set initShieldStructure = report.battleReportData.shield + report.battleReportData.structure %}
             {% set shieldStructure = initShieldStructure %}
-            {% set entityInitShieldStructure = report.data.entityShield + report.data.entityStructure %}
+            {% set entityInitShieldStructure = report.battleReportData.entityShield + report.battleReportData.entityStructure %}
             {% set entityShieldStructure = entityInitShieldStructure %}
             {% set maxRound = 1 %}
             {% for round in range(1, 5) %}
-                {% if report.data.count[round] > 0 and report.data.entityCount[round] > 0 %}
+                {% if report.battleReportData.count[round] > 0 and report.battleReportData.entityCount[round] > 0 %}
                     {% set maxRound = round %}
 
-                    {% set shieldStructure = max(0, shieldStructure - report.data.entityWeapon[round]) %}
-                    {% set entityShieldStructure = max(0, entityShieldStructure - report.data.weapon[round]) %}
+                    {% set shieldStructure = max(0, shieldStructure - report.battleReportData.entityWeapon[round]) %}
+                    {% set entityShieldStructure = max(0, entityShieldStructure - report.battleReportData.weapon[round]) %}
 
-                    <br />{{ formatNumber(report.data.count[round]) }} Einheiten des Angreifers schiessen mit einer Stärke von {{ formatNumber(report.data.weapon[round]) }} auf den Verteidiger. Der Verteidiger hat danach noch {{ formatNumber(entityShieldStructure) }} Struktur- und Schildpunkte.<br /><br />
-                    {{ formatNumber(report.data.entityCount[round]) }} Einheiten des Verteidigers schiessen mit einer Stärke von {{ formatNumber(report.data.entityWeapon[round]) }} auf den Angreifer. Der Angreifer hat danach noch {{ formatNumber(shieldStructure) }} Struktur- und Schildpunkte.<br /><br />
+                    <br/>{{ formatNumber(report.battleReportData.count[round]) }} Einheiten des Angreifers schiessen mit einer Stärke von {{ formatNumber(report.battleReportData.weapon[round]) }} auf den Verteidiger. Der Verteidiger hat danach noch {{ formatNumber(entityShieldStructure) }} Struktur- und Schildpunkte.
+                    <br/><br/>
+                    {{ formatNumber(report.battleReportData.entityCount[round]) }} Einheiten des Verteidigers schiessen mit einer Stärke von {{ formatNumber(report.battleReportData.entityWeapon[round]) }} auf den Angreifer. Der Angreifer hat danach noch {{ formatNumber(shieldStructure) }} Struktur- und Schildpunkte.
+                    <br/><br/>
 
-                    {% if report.data.heal[round] > 0 and shieldStructure < initShieldStructure %}
+                    {% if report.battleReportData.heal[round] > 0 and shieldStructure < initShieldStructure %}
                         {% set shieldStructure = min(initShieldStructure, (shieldStructure + report.data.heal[round])) %}
-                        Die Einheiten des Angreifers heilen {{ formatNumber(report.data.heal[round]) }} Struktur- und Schildpunkte. Der Angreifer hat danach wieder {{ formatNumber(shieldStructure) }} Struktur- und Schildpunkte<br /><br />
+                        Die Einheiten des Angreifers heilen {{ formatNumber(report.battleReportData.heal[round]) }} Struktur- und Schildpunkte. Der Angreifer hat danach wieder {{ formatNumber(shieldStructure) }} Struktur- und Schildpunkte
+                        <br/><br/>
                     {% endif %}
 
-                    {% if report.data.entityHeal[round] > 0 and entityShieldStructure < entityInitShieldStructure %}
-                        {% set entityShieldStructure = min(entityInitShieldStructure, (entityShieldStructure + report.data.entityHeal[round])) %}
-                        Die Einheiten des Verteidiger heilen {{ formatNumber(report.data.entityHeal[round]) }} Struktur- und Schildpunkte. Der Verteidiger hat danach wieder {{ formatNumber(entityShieldStructure) }} Struktur- und Schildpunkte<br /><br />
+                    {% if report.battleReportData.entityHeal[round] > 0 and entityShieldStructure < entityInitShieldStructure %}
+                        {% set entityShieldStructure = min(entityInitShieldStructure, (entityShieldStructure + report.battleReportData.entityHeal[round])) %}
+                        Die Einheiten des Verteidigers heilen {{ formatNumber(report.battleReportData.entityHeal[round]) }} Struktur- und Schildpunkte. Der Verteidiger hat danach wieder {{ formatNumber(entityShieldStructure) }} Struktur- und Schildpunkte
+                        <br/><br/>
                     {% endif %}
                 {% endif %}
             {% endfor %}
 
-            Der Kampf dauerte {{ maxRound }} Runden!<br /><br />
+            Der Kampf dauerte {{ maxRound }} Runden!<br/><br/>
             {% if report.data.result == 1 %}
                 Der Angreifer hat den Kampf gewonnen!
             {% elseif report.data.result == 2 %}
@@ -111,84 +130,83 @@ vom Planeten {{ macros.entity(report.context.entities[report.entity1Id]) }}<br /
             {% else %}
                 Der Kampf endete unentschieden und die Flotten zogen sich zurück!
             {% endif %}
-            <br /><br />
+            <br/><br/>
         </td>
     </tr>
     <tr>
         <td>
-            <strong>BEUTE</strong><br />
-            {% if report.data.result == 1 %}
-                {{ macros.resourceTable(report.data.resources, report.context.resourceNames) }}
+            <strong>BEUTE</strong><br/>
+            {% if report.battleReportData.result == 1 %}
+                {{ macros.resourceTable(report.battleReportData.resources) }}
             {% endif %}
-            <br /><br />
+            <br/><br/>
         </td>
         <td>
-            <strong>TRÜMMERFELD</strong><br />
+            <strong>TRÜMMERFELD</strong><br/>
             <table>
                 {% for i in range(0, 2) %}
                     <tr>
                         <td>{{ report.context.resourceNames[i] }}</td>
-                        <td style="text-align:right;"> {{ formatNumber(report.data.wf.get(i)) }}</td>
+                        <td style="text-align:right;"> {{ formatNumber(report.battleReportData.wf.get(i)) }}</td>
                     </tr>
                 {% endfor %}
             </table>
             <br/>
-            <br /><br />
+            <br/><br/>
         </td>
     </tr>
     <tr>
         <td colspan="2">
-            Zustand nach dem Kampf:<br /><br />
+            Zustand nach dem Kampf:<br/><br/>
         </td>
     </tr>
     <tr>
         <td>
-            <strong>ANGREIFENDE FLOTTE</strong><br />
+            <strong>ANGREIFENDE FLOTTE</strong><br/>
             {% if report.data.shipsEnd %}
-                {{ macros.dataTable(report.data.shipsEnd, report.context.shipNames) }}
+                {{ macros.dataTable(report.battleReportData.shipsEnd) }}
             {% else %}
                 <i>Nichts vorhanden!</i>
             {% endif %}
         </td>
         <td>
-            <strong>VERTEIDIGENDE FLOTTE</strong><br />
-            {% if report.data.entityShipsEnd %}
-                {{ macros.dataTable(report.data.entityShipsEnd, report.context.shipNames) }}
-                {{ report.data.restoreCivilShips}}% der zivilen Schiffe werden wiederhergestellt!
+            <strong>VERTEIDIGENDE FLOTTE</strong><br/>
+            {% if report.battleReportData.entityShipsEnd %}
+                {{ macros.dataTable(report.battleReportData.entityShipsEnd) }}
+                {{ report.battleReportData.restoreCivilShips }}% der zivilen Schiffe werden wiederhergestellt!
             {% else %}
                 <i>Nichts vorhanden!</i>
             {% endif %}
-            <br />
+            <br/>
         </td>
     </tr>
     {% if report.data.exp > 0 or report.data.entityExp > 0 %}
         <tr>
             <td>
-                {% if report.data.exp > 0 %}
-                    Gewonnene EXP: {{ formatNumber(report.data.exp) }}
+                {% if report.battleReportData.exp > 0 %}
+                    Gewonnene EXP: {{ formatNumber(report.battleReportData.exp) }}
                 {% endif %}
             </td>
             <td>
-                {% if report.data.entityExp > 0 %}
-                    Gewonnene EXP: {{ formatNumber(report.data.entityExp) }}
+                {% if report.battleReportData.entityExp > 0 %}
+                    Gewonnene EXP: {{ formatNumber(report.battleReportData.entityExp) }}
                 {% endif %}
-                <br /><br />
+                <br/><br/>
             </td>
         </tr>
     {% endif %}
-
     <tr>
         <td>
         </td>
         <td>
-            <strong>PLANETARE VERTEIDIGUNG:</strong><br />
-            {% if report.data.entityDefenseEnd %}
-                {{ macros.dataTable(report.data.entityDefenseEnd, report.context.defenseNames) }}
-                {{ report.data.restore }}% der Verteidigungsanlagen werden repariert!
+            <strong>PLANETARE VERTEIDIGUNG:</strong><br/>
+            {% if report.battleReportData.entityDefenseEnd %}
+                {{ macros.dataTable(report.battleReportData.entityDefenseEnd) }}
+                {{ report.battleReportData.restore }}% der Verteidigungsanlagen werden repariert!
             {% else %}
                 <i>Nichts vorhanden!</i>
             {% endif %}
-            <br />
+            <br/>
         </td>
     </tr>
 </table>

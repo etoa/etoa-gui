@@ -2,21 +2,37 @@
 
 namespace EtoA\Message;
 
-class ReportTypes
+enum ReportTypes: string
 {
-    public const TYPE_BATTLE = 'battle';
-    public const TYPE_SPY = 'spy';
-    public const TYPE_EXPLORE = 'explore';
-    public const TYPE_MARKET = 'market';
-    public const TYPE_CRYPTO = 'crypto';
-    public const TYPE_OTHER = 'other';
+    case BATTLE = 'battle';
+    case SPY = 'spy';
+    case EXPLORE = 'explore';
+    case MARKET = 'market';
+    case CRYPTO = 'crypto';
+    case OTHER = 'other';
 
-    public const TYPES = [
-        self::TYPE_BATTLE => 'Kampf',
-        self::TYPE_SPY => 'Spionage',
-        self::TYPE_EXPLORE => 'Erkundung',
-        self::TYPE_MARKET => 'Markt',
-        self::TYPE_CRYPTO => 'Krypto',
-        self::TYPE_OTHER => 'Sonstige',
-    ];
+    public function label(): string
+    {
+        return match ($this) {
+            self::BATTLE => 'Kampf',
+            self::SPY => 'Spionage',
+            self::EXPLORE => 'Erkundung',
+            self::MARKET => 'Markt',
+            self::CRYPTO => 'Krypto',
+            self::OTHER => 'Sonstige',
+        };
+    }
+
+    /**
+     * @return array<string,string>
+     */
+    public static function items(): array
+    {
+        $items = [];
+        foreach (self::cases() as $case) {
+            $items[$case->value] = $case->label();
+        }
+        return $items;
+    }
 }
+

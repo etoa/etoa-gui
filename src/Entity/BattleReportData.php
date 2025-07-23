@@ -23,17 +23,17 @@ class BattleReportData
     #[ORM\ManyToOne(targetEntity: Fleet::class)]
     private ?Fleet $fleet = null;
 
-    #[ORM\Column]
-    private string $user;
+    #[ORM\Column(name: 'user')]
+    private string $users;
 
     #[ORM\Column]
     private string $entityUser;
 
     #[ORM\Column]
-    private string $ship;
+    private string $ships;
 
     #[ORM\Column]
-    private string $entityShip;
+    private string $entityShips;
 
     #[ORM\Column(name: 'entity_def')]
     private string $entityDefense;
@@ -47,19 +47,19 @@ class BattleReportData
     #[ORM\Column(type: Types::INTEGER)]
     private int $structureTech;
 
-    #[ORM\Column(type: Types::BIGINT)]
+    #[ORM\Column(name: 'weapon_1', type: Types::BIGINT)]
     private int $weapon1;
 
-    #[ORM\Column(type: Types::BIGINT)]
+    #[ORM\Column(name: 'weapon_2', type: Types::BIGINT)]
     private int $weapon2;
 
-    #[ORM\Column(type: Types::BIGINT)]
+    #[ORM\Column(name: 'weapon_3', type: Types::BIGINT)]
     private int $weapon3;
 
-    #[ORM\Column(type: Types::BIGINT)]
+    #[ORM\Column(name: 'weapon_4', type: Types::BIGINT)]
     private int $weapon4;
 
-    #[ORM\Column(type: Types::BIGINT)]
+    #[ORM\Column(name: 'weapon_5', type: Types::BIGINT)]
     private int $weapon5;
 
     #[ORM\Column(type: Types::BIGINT)]
@@ -68,34 +68,34 @@ class BattleReportData
     #[ORM\Column(type: Types::BIGINT)]
     private int $structure;
 
-    #[ORM\Column(type: Types::BIGINT)]
+    #[ORM\Column(name: 'heal_1', type: Types::BIGINT)]
     private int $heal1;
 
-    #[ORM\Column(type: Types::BIGINT)]
+    #[ORM\Column(name: 'heal_2', type: Types::BIGINT)]
     private int $heal2;
 
-    #[ORM\Column(type: Types::BIGINT)]
+    #[ORM\Column(name: 'heal_3', type: Types::BIGINT)]
     private int $heal3;
 
-    #[ORM\Column(type: Types::BIGINT)]
+    #[ORM\Column(name: 'heal_4', type: Types::BIGINT)]
     private int $heal4;
 
-    #[ORM\Column(type: Types::BIGINT)]
+    #[ORM\Column(name: 'heal_5', type: Types::BIGINT)]
     private int $heal5;
 
-    #[ORM\Column(type: Types::INTEGER)]
+    #[ORM\Column(name: 'count_1', type: Types::INTEGER)]
     private int $count1;
 
-    #[ORM\Column(type: Types::INTEGER)]
+    #[ORM\Column(name: 'count_2', type: Types::INTEGER)]
     private int $count2;
 
-    #[ORM\Column(type: Types::INTEGER)]
+    #[ORM\Column(name: 'count_3', type: Types::INTEGER)]
     private int $count3;
 
-    #[ORM\Column(type: Types::INTEGER)]
+    #[ORM\Column(name: 'count_4', type: Types::INTEGER)]
     private int $count4;
 
-    #[ORM\Column(type: Types::INTEGER)]
+    #[ORM\Column(name: 'count_5', type: Types::INTEGER)]
     private int $count5;
 
     #[ORM\Column(type: Types::INTEGER)]
@@ -110,19 +110,19 @@ class BattleReportData
     #[ORM\Column(type: Types::SMALLINT)]
     private int $entityStructureTech;
 
-    #[ORM\Column(type: Types::BIGINT)]
+    #[ORM\Column(name: 'entity_weapon_1', type: Types::BIGINT)]
     private int $entityWeapon1;
 
-    #[ORM\Column(type: Types::BIGINT)]
+    #[ORM\Column(name: 'entity_weapon_2', type: Types::BIGINT)]
     private int $entityWeapon2;
 
-    #[ORM\Column(type: Types::BIGINT)]
+    #[ORM\Column(name: 'entity_weapon_3', type: Types::BIGINT)]
     private int $entityWeapon3;
 
-    #[ORM\Column(type: Types::BIGINT)]
+    #[ORM\Column(name: 'entity_weapon_4', type: Types::BIGINT)]
     private int $entityWeapon4;
 
-    #[ORM\Column(type: Types::BIGINT)]
+    #[ORM\Column(name: 'entity_weapon_5', type: Types::BIGINT)]
     private int $entityWeapon5;
 
     #[ORM\Column(type: Types::BIGINT)]
@@ -131,34 +131,34 @@ class BattleReportData
     #[ORM\Column(type: Types::BIGINT)]
     private int $entityStructure;
 
-    #[ORM\Column(type: Types::BIGINT)]
+    #[ORM\Column(name: 'entity_heal_1', type: Types::BIGINT)]
     private int $entityHeal1;
 
-    #[ORM\Column(type: Types::BIGINT)]
+    #[ORM\Column(name: 'entity_heal_2', type: Types::BIGINT)]
     private int $entityHeal2;
 
-    #[ORM\Column(type: Types::BIGINT)]
+    #[ORM\Column(name: 'entity_heal_3', type: Types::BIGINT)]
     private int $entityHeal3;
 
-    #[ORM\Column(type: Types::BIGINT)]
+    #[ORM\Column(name: 'entity_heal_4', type: Types::BIGINT)]
     private int $entityHeal4;
 
-    #[ORM\Column(type: Types::BIGINT)]
+    #[ORM\Column(name: 'entity_heal_5', type: Types::BIGINT)]
     private int $entityHeal5;
 
-    #[ORM\Column(type: Types::BIGINT)]
+    #[ORM\Column(name: 'entity_count_1', type: Types::BIGINT)]
     private int $entityCount1;
 
-    #[ORM\Column(type: Types::BIGINT)]
+    #[ORM\Column(name: 'entity_count_2', type: Types::BIGINT)]
     private int $entityCount2;
 
-    #[ORM\Column(type: Types::BIGINT)]
+    #[ORM\Column(name: 'entity_count_3', type: Types::BIGINT)]
     private int $entityCount3;
 
-    #[ORM\Column(type: Types::BIGINT)]
+    #[ORM\Column(name: 'entity_count_4', type: Types::BIGINT)]
     private int $entityCount4;
 
-    #[ORM\Column(type: Types::BIGINT)]
+    #[ORM\Column(name: 'entity_count_5', type: Types::BIGINT)]
     private int $entityCount5;
 
     #[ORM\Column(type: Types::INTEGER)]
@@ -191,15 +191,6 @@ class BattleReportData
     #[ORM\Column(name: "wf_2", type: Types::BIGINT)]
     private int $wfPlastic;
 
-    #[ORM\Column(name: "wf_3", type: Types::BIGINT)]
-    private int $wfFuel;
-
-    #[ORM\Column(name: "wf_4", type: Types::BIGINT)]
-    private int $wfFood;
-
-    #[ORM\Column(name: "wf_5", type: Types::BIGINT)]
-    private int $wfPeople;
-
     private BaseResources $resources;
 
     private BaseResources $wf;
@@ -210,7 +201,7 @@ class BattleReportData
     #[ORM\Column(type: Types::TEXT)]
     private string $entityShipsEnd;
 
-    #[ORM\Column(type: Types::TEXT)]
+    #[ORM\Column(name: 'entity_def_end', type: Types::TEXT)]
     private string $entityDefenseEnd;
 
     #[ORM\Column(type: Types::SMALLINT)]
@@ -328,14 +319,14 @@ class BattleReportData
         return $this;
     }
 
-    public function getUser(): array
+    public function getUsers(): array
     {
-        return DataTransformer::userString($this->user);
+        return DataTransformer::userString($this->users);
     }
 
-    public function setUser(string $user): static
+    public function setUsers(string $users): static
     {
-        $this->user = $user;
+        $this->users = $users;
 
         return $this;
     }
@@ -352,33 +343,33 @@ class BattleReportData
         return $this;
     }
 
-    public function getShip(): array
+    public function getShips(): array
     {
-        return DataTransformer::dataString($this->ship);
+        return DataTransformer::dataString($this->ships,Ship::class);
     }
 
-    public function setShip(string $ship): static
+    public function setShips(string $ships): static
     {
-        $this->ship = $ship;
+        $this->ships = $ships;
 
         return $this;
     }
 
-    public function getEntityShip(): array
+    public function getEntityShips(): array
     {
-        return DataTransformer::dataString($this->entityShip);
+        return DataTransformer::dataString($this->entityShips, Ship::class);
     }
 
-    public function setEntityShip(string $entityShip): static
+    public function setEntityShip(string $entityShips): static
     {
-        $this->entityShip = $entityShip;
+        $this->entityShips = $entityShips;
 
         return $this;
     }
 
     public function getEntityDefense(): array
     {
-        return DataTransformer::dataString($this->entityDefense);
+        return DataTransformer::dataString($this->entityDefense, Defense::class);
     }
 
     public function setEntityDefense(string $entityDefense): static
@@ -1000,45 +991,9 @@ class BattleReportData
         return $this;
     }
 
-    public function getWfFuel(): int
-    {
-        return $this->wfFuel;
-    }
-
-    public function setWfFuel(int $wfFuel): static
-    {
-        $this->wfFuel = $wfFuel;
-
-        return $this;
-    }
-
-    public function getWfFood(): int
-    {
-        return $this->wfFood;
-    }
-
-    public function setWfFood(int $wfFood): static
-    {
-        $this->wfFood = $wfFood;
-
-        return $this;
-    }
-
-    public function getWfPeople(): int
-    {
-        return $this->wfPeople;
-    }
-
-    public function setWfPeople(int $wfPeople): static
-    {
-        $this->wfPeople = $wfPeople;
-
-        return $this;
-    }
-
     public function getShipsEnd(): array
     {
-        return DataTransformer::dataString($this->shipsEnd);
+        return DataTransformer::dataString($this->shipsEnd, Ship::class);
     }
 
     public function setShipsEnd(string $shipsEnd): static
@@ -1050,7 +1005,7 @@ class BattleReportData
 
     public function getEntityShipsEnd(): array
     {
-        return DataTransformer::dataString($this->entityShipsEnd);
+        return DataTransformer::dataString($this->entityShipsEnd,Ship::class);
     }
 
     public function setEntityShipsEnd(string $entityShipsEnd): static
@@ -1062,7 +1017,7 @@ class BattleReportData
 
     public function getEntityDefenseEnd(): array
     {
-        return DataTransformer::dataString($this->entityDefenseEnd);
+        return DataTransformer::dataString($this->entityDefenseEnd, Defense::class);
     }
 
     public function setEntityDefenseEnd(string $entityDefenseEnd): static

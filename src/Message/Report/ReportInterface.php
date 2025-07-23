@@ -5,4 +5,6 @@ namespace EtoA\Message\Report;
 interface ReportInterface
 {
     public function getSubject(): string;
+
+    public function getSubtype(): ?string;
 }
