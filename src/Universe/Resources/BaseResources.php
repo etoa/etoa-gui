@@ -87,8 +87,9 @@ class BaseResources
 
     /**
      * @param BaseResources|PreciseResources $available
+     * @return BaseResources
      */
-    public function missing($available): BaseResources
+    public function missing(BaseResources|PreciseResources $available): BaseResources
     {
         $resources = new BaseResources();
         $resources->metal = (int) ceil(max(0, $this->metal - $available->metal));
@@ -109,5 +110,16 @@ class BaseResources
     public function toString(): string
     {
         return $this->metal .','. $this->crystal .','. $this->plastic .','. $this->fuel .','. $this->food .','. $this->people;
+    }
+
+    public function toArray(): array
+    {
+        return [
+            ResourceNames::METAL => $this->metal,
+            ResourceNames::CRYSTAL => $this->crystal,
+            ResourceNames::PLASTIC => $this->plastic,
+            ResourceNames::FUEL => $this->fuel,
+            ResourceNames::FOOD => $this->food,
+        ];
     }
 }

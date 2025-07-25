@@ -11,10 +11,17 @@ class DataTransformer
      */
     public static function userString(string $string): array
     {
-        //TODO: refactor from static to use DI
+        //TODO: refactor from static to use DI or use container
         $userRepository = $GLOBALS['app']->getContainer()->get('doctrine')->getRepository(User::class);
 
-        return array_values(array_map(fn (int $user) => $userRepository->find((int) $user), array_filter(explode(',', $string))));
+        $data = [];
+        foreach (array_filter(explode(',', $string)) as $ele) {
+            $user = $userRepository->findOneBy(['id'=>$ele]);
+
+            if($user)
+                $data[] = $user;
+        }
+        return $data;
     }
 
     /**
@@ -22,15 +29,16 @@ class DataTransformer
      */
     public static function dataString(string $string, string $class): array
     {
-
         //TODO: refactor from static to use DI
         $repository = $GLOBALS['app']->getContainer()->get('doctrine')->getRepository($class);
         $entries = [];
-        $shipEntries = array_filter(explode(',', $string));
-        foreach ($shipEntries as $entry) {
+        $dataEntries = array_filter(explode(',', $string));
+        foreach ($dataEntries as $entry) {
             [$id, $count] = explode(":", $entry);
             if ($id > 0) {
-                $entries[$repository->find($id)] = (int) $count;
+                $data = $repository->find($id);
+                if($data)
+                    $entries[] = ['data'=>$data,'count'=>$count];
             }
         }
 

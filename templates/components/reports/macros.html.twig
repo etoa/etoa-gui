@@ -7,9 +7,13 @@
 {% endmacro %}
 
 {% macro userList(users) %}
-    {% for user in users %}
-        {{ user.nick|default('Niemand') }}{% if not loop.last %},{% endif %}
-    {% endfor %}
+    {% if users %}
+        {% for user in users %}
+            {{ user.nick }}{% if not loop.last %},{% endif %}
+        {% endfor %}
+    {% else %}
+        Niemand
+    {% endif %}
 {% endmacro %}
 
 {% macro startTargetTimeMission(report) %}
@@ -30,10 +34,10 @@
 
 {% macro resourceTable(resources) %}
     <table>
-        {% for k, resource in resource %}
+        {% for k, resource in resources.toArray %}
             <tr>
-                <td>{{ resource }}</td>
-                <td style="text-align:right;">{{ formatNumber(resources.get(k)) }} </td>
+                <td>{{ k }}</td>
+                <td style="text-align:right;">{{ formatNumber(resource) }} </td>
             </tr>
         {% endfor %}
         <tr>
@@ -45,10 +49,10 @@
 
 {% macro dataTable(entries) %}
     <table>
-        {% for ship, count in entries %}
+        {% for data in entries %}
             <tr>
-                <td>{{ ship.name }}</td>
-                <td style="text-align:right;">{{ formatNumber(count) }}</td>
+                <td>{{ data.data.name }}</td>
+                <td style="text-align:right;">{{ formatNumber(data.count) }}</td>
             </tr>
         {% endfor %}
     </table>

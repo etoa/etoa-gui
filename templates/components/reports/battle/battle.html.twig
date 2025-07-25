@@ -35,7 +35,7 @@ vom Planeten {{ macros.entity(report.entity1) }}<br/>
         </td>
         <td>
             <strong>PLANETARE VERTEIDIGUNG</strong><br/>
-            {% if report.data.entityDefense %}
+            {% if report.battleReportData.entityDefense %}
                 {{ macros.dataTable(report.battleReportData.entityDefense) }}
             {% else %}
                 <i>Nichts vorhanden!</i>
@@ -56,11 +56,11 @@ vom Planeten {{ macros.entity(report.entity1) }}<br/>
                 </tr>
                 <tr>
                     <td>Waffen ({{ report.battleReportData.weaponTech }}%):</td>
-                    <td style="text-align:right;"> {{ formatNumber(report.battleReportData.weapon[1]) }}</td>
+                    <td style="text-align:right;"> {{ formatNumber(report.battleReportData.weapon1) }}</td>
                 </tr>
                 <tr>
                     <td>Einheiten:</td>
-                    <td style="text-align:right;"> {{ formatNumber(report.data.count[1]) }}</td>
+                    <td style="text-align:right;"> {{ formatNumber(report.battleReportData.count1) }}</td>
                 </tr>
             </table>
         </td>
@@ -69,19 +69,19 @@ vom Planeten {{ macros.entity(report.entity1) }}<br/>
             <table>
                 <tr>
                     <td>Schild ({{ report.battleReportData.entityShieldTech }}%):</td>
-                    <td style="text-align:right;"> {{ formatNumber(report.data.entityShield) }}</td>
+                    <td style="text-align:right;"> {{ formatNumber(report.battleReportData.entityShield) }}</td>
                 </tr>
                 <tr>
                     <td>Struktur ({{ report.battleReportData.entityStructureTech }}%):</td>
-                    <td style="text-align:right;"> {{ formatNumber(report.data.entityStructure) }}</td>
+                    <td style="text-align:right;"> {{ formatNumber(report.battleReportData.entityStructure) }}</td>
                 </tr>
                 <tr>
                     <td>Waffen ({{ report.battleReportData.entityWeaponTech }}%):</td>
-                    <td style="text-align:right;"> {{ formatNumber(report.battleReportData.entityWeapon[1]) }}</td>
+                    <td style="text-align:right;"> {{ formatNumber(report.battleReportData.entityWeapon1) }}</td>
                 </tr>
                 <tr>
                     <td>Einheiten:</td>
-                    <td style="text-align:right;"> {{ report.battleReportData.entityCount[1] }}</td>
+                    <td style="text-align:right;"> {{ report.battleReportData.entityCount1 }}</td>
                 </tr>
             </table>
             <br/>
@@ -121,11 +121,11 @@ vom Planeten {{ macros.entity(report.entity1) }}<br/>
             {% endfor %}
 
             Der Kampf dauerte {{ maxRound }} Runden!<br/><br/>
-            {% if report.data.result == 1 %}
+            {% if report.battleReportData.result == 1 %}
                 Der Angreifer hat den Kampf gewonnen!
-            {% elseif report.data.result == 2 %}
+            {% elseif report.battleReportData.result == 2 %}
                 Der Verteidiger hat den Kampf gewonnen!
-            {% elseif report.data.result == 3 %}
+            {% elseif report.battleReportData.result == 3 %}
                 Der Kampf endete unentschieden, da sowohl die Einheiten des Angreifers als auch die Einheiten des Verteidigers alle zerstört wurden!
             {% else %}
                 Der Kampf endete unentschieden und die Flotten zogen sich zurück!
@@ -146,7 +146,7 @@ vom Planeten {{ macros.entity(report.entity1) }}<br/>
             <table>
                 {% for i in range(0, 2) %}
                     <tr>
-                        <td>{{ report.context.resourceNames[i] }}</td>
+                        <td>{{ report.createFactory.context.resourceNames[i] }}</td>
                         <td style="text-align:right;"> {{ formatNumber(report.battleReportData.wf.get(i)) }}</td>
                     </tr>
                 {% endfor %}
@@ -163,7 +163,7 @@ vom Planeten {{ macros.entity(report.entity1) }}<br/>
     <tr>
         <td>
             <strong>ANGREIFENDE FLOTTE</strong><br/>
-            {% if report.data.shipsEnd %}
+            {% if report.battleReportData.shipsEnd %}
                 {{ macros.dataTable(report.battleReportData.shipsEnd) }}
             {% else %}
                 <i>Nichts vorhanden!</i>
@@ -180,7 +180,7 @@ vom Planeten {{ macros.entity(report.entity1) }}<br/>
             <br/>
         </td>
     </tr>
-    {% if report.data.exp > 0 or report.data.entityExp > 0 %}
+    {% if report.battleReportData.exp > 0 or report.battleReportData.entityExp > 0 %}
         <tr>
             <td>
                 {% if report.battleReportData.exp > 0 %}

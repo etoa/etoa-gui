@@ -26,8 +26,8 @@ class BattleReportData
     #[ORM\Column(name: 'user')]
     private string $users;
 
-    #[ORM\Column]
-    private string $entityUser;
+    #[ORM\Column(name: 'entity_user')]
+    private string $entityUsers;
 
     #[ORM\Column]
     private string $ships;
@@ -331,14 +331,14 @@ class BattleReportData
         return $this;
     }
 
-    public function getEntityUser(): array
+    public function getEntityUsers(): array
     {
-        return DataTransformer::userString($this->entityUser);
+        return DataTransformer::userString($this->entityUsers);
     }
 
-    public function setEntityUser(string $entityUser): static
+    public function setEntityUsers(string $entityUsers): static
     {
-        $this->entityUser = $entityUser;
+        $this->entityUsers = $entityUsers;
 
         return $this;
     }
@@ -1077,6 +1077,8 @@ class BattleReportData
 
     public function getResources(): BaseResources
     {
+        $this->resources = new BaseResources();
+
         $this->resources->metal = $this->getResMetal();
         $this->resources->crystal = $this->getResCrystal();
         $this->resources->plastic = $this->getResPlastic();
@@ -1101,6 +1103,8 @@ class BattleReportData
 
     public function getWf(): BaseResources
     {
+        $this->wf = new BaseResources();
+
         $this->wf->metal = $this->getResMetal();
         $this->wf->crystal = $this->getResCrystal();
         $this->wf->plastic = $this->getResPlastic();
@@ -1121,5 +1125,71 @@ class BattleReportData
         $this->setResPeople($wf->people);
 
         $this->wf = $wf;
+    }
+
+    public function getCount():array
+    {
+        return [
+            1 => $this->getCount1(),
+            2 => $this->getCount2(),
+            3 => $this->getCount3(),
+            4 => $this->getCount4(),
+            5 => $this->getCount5(),
+        ];
+    }
+
+    public function getEntityCount():array
+    {
+        return [
+            1 => $this->getEntityCount1(),
+            2 => $this->getEntityCount2(),
+            3 => $this->getEntityCount3(),
+            4 => $this->getEntityCount4(),
+            5 => $this->getEntityCount5()
+        ];
+    }
+
+    public function getWeapon():array
+    {
+        return [
+            1 => $this->getWeapon1(),
+            2 => $this->getWeapon2(),
+            3 => $this->getWeapon3(),
+            4 => $this->getWeapon4(),
+            5 => $this->getWeapon5()
+        ];
+    }
+
+    public function getEntityWeapon():array
+    {
+        return [
+            1 => $this->getEntityWeapon1(),
+            2 => $this->getEntityWeapon2(),
+            3 => $this->getEntityWeapon3(),
+            4 => $this->getEntityWeapon4(),
+            5 => $this->getEntityWeapon5()
+        ];
+    }
+
+    public function getHeal():array
+    {
+        return [
+            1 => $this->getHeal1(),
+            2 => $this->getHeal2(),
+            3 => $this->getHeal3(),
+            4 => $this->getHeal4(),
+            5 => $this->getHeal5()
+        ];
+    }
+
+    public function getEntityHeal():array
+    {
+        return [
+            1 => $this->getEntityHeal1(),
+            2 => $this->getEntityHeal2(),
+            3 => $this->getEntityHeal3(),
+            4 => $this->getEntityHeal4(),
+            5 => $this->getEntityHeal5()
+        ];
     }
 }

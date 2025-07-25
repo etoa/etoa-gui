@@ -4,6 +4,7 @@ namespace EtoA\Message\Report;
 
 use EtoA\Entity\BattleReportData;
 use EtoA\Entity\Report;
+use EtoA\Message\ReportContext;
 
 class BattleReport extends Report implements ReportInterface
 {
@@ -28,10 +29,14 @@ class BattleReport extends Report implements ReportInterface
         'alliancefailed' => 'Allianzteilflotte abgebrochen',
     ];
 
+    public readonly ReportContext $context;
+
     public function __construct(
         private readonly Report $report,
         public BattleReportData $data
-    ) {}
+    ) {
+        $this->context = new ReportContext();
+    }
 
     public function getSubject(): string
     {
@@ -40,7 +45,7 @@ class BattleReport extends Report implements ReportInterface
                 $subject = "Kampfbericht (";
                 switch ($this->data->getResult()) {
                     case 1:
-                        if (in_array($this->getUser(), $this->data->getUsers(), true)) {
+                        if (in_array($this->report->getUser(), $this->data->getUsers(), true)) {
                             $subject .= 'Gewonnen';
                         } else {
                             $subject .= 'Verloren';
@@ -48,7 +53,7 @@ class BattleReport extends Report implements ReportInterface
 
                         break;
                     case 2:
-                        if (in_array($this->getUser()->getId(), $this->data->getUsers(), true)) {
+                        if (in_array($this->report->getUser(), $this->data->getUsers(), true)) {
                             $subject .= 'Verloren';
                         } else {
                             $subject .= 'Gewonnen';
