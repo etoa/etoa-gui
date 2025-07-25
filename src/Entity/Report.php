@@ -3,6 +3,7 @@
 namespace EtoA\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use EtoA\Core\Database\DataTransformer;
 use EtoA\Message\Report\ExploreReport;
 use EtoA\Message\ReportRepository;
 use EtoA\Message\Report\MarketReport;
@@ -100,13 +101,9 @@ class Report
     /**
      * @return int[]
      */
-    public function getTransformedDataFromContent(): array
+    public function getTransformedDataFromContent(string $class): array
     {
-        if ($this->content !== null) {
-            return array_map(fn (string $value) => (int) $value, explode(':', $this->content));
-        }
-
-        return [];
+        return DataTransformer::dataString($this->content,$class);
     }
 
     public function getId(): ?int

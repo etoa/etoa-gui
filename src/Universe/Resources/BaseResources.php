@@ -18,6 +18,9 @@ class BaseResources
     public int $people = 0;
     public int $time = 0;
 
+    /**
+     * @throws Exception
+     */
     public function get(int $index): int
     {
         if ($index == 0) {

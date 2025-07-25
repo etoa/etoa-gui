@@ -1,6 +1,6 @@
 {% import 'components/reports/macros.html.twig' as macros %}
 
-Eine Flotte vom Planeten {{ macros.entity(report.context.entities[report.entity2Id]) }} hat erfolglos versucht ein Gebäude des Planeten {{ macros.entity(report.context.entities[report.entity1Id]) }} zu deaktivieren.<br />
+Eine Flotte vom Planeten {{ macros.entity(report.entity2) }} hat erfolglos versucht ein Gebäude des Planeten {{ macros.entity(report.entity1) }} zu deaktivieren.<br />
 {% if report.content == 1 %}
     Hinweis: Der Spieler hat keine Gebäudeeinrichtungen, welche deaktiviert werden können!
 {% endif %}

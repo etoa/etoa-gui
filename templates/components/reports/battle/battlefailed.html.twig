@@ -1,15 +1,15 @@
 {% import 'components/reports/macros.html.twig' as macros %}
 
 <strong>KAMPFBERICHT</strong><br />
-vom Planeten {{ macros.entity(report.context.entities[report.entity1Id]) }}<br />
+vom Planeten {{ macros.entity(report.entity1) }}<br />
 <strong>Zeit:</strong> {{ formatTimestamp(report.timestamp) }}<br /><br />
-<table class="battleTable" width="100%">
+<table class="battleTable">
     <tr>
         <td>
-            <strong>Angreifer:</strong>{{ macros.userList(report.data.users, report) }}
+            <strong>Angreifer:</strong>{{ macros.userList(report.battleReportData.users) }}
         </td>
         <td>
-            <strong>Verteidiger:</strong>{{ macros.userList(report.data.entityUsers, report) }}
+            <strong>Verteidiger:</strong>{{ macros.userList(report.battleReportData.entityUsers) }}
         </td>
     </tr>
 </table>
