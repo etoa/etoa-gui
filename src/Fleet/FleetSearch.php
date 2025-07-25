@@ -59,7 +59,7 @@ class FleetSearch extends AbstractSearch
     {
         $this->parts[] = '(q.entityFrom = :controlledByEntity AND q.status = :departureState) OR (q.entityTo = :controlledByEntity AND q.status <> :departureState)';
         $this->parameters['controlledByEntity'] = $entityId;
-        $this->parameters['departureState'] = FleetStatus::DEPARTURE;
+        $this->parameters['departureState'] = FleetStatus::DEPARTURE->value;
 
         return $this;
     }

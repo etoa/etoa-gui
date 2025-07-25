@@ -99,16 +99,15 @@ class EntityRepository extends AbstractRepository
         return array_map(fn (array $arr) => new Entity($arr), $data);
     }
 
-    public function findIncludeCell(int $id): ?Entity
+    public function findIncludeCell(Entity $entity): ?Entity
     {
-        $data = $this->getEntityCoordinatesQueryBuilder()
-            ->where('e.id = :id')
+        return $this->getEntityCoordinatesQueryBuilder()
+            ->where('e.id = :entity')
             ->setParameters([
-                'id' => $id,
+                'entity' => $entity,
             ])
-            ->fetchAssociative();
-
-        return $data !== false ? new Entity($data) : null;
+            ->getQuery()
+            ->execute();
     }
 
     public function findByCellAndPosition(int $cellId, int $position): ?Entity

@@ -178,7 +178,7 @@ class FleetController extends AbstractAdminController
                     $sendShips->entityFrom,
                     $planet->id,
                     FleetAction::FLIGHT,
-                    FleetStatus::ARRIVAL,
+                    FleetStatus::ARRIVAL->value,
                     new BaseResources()
                 );
 

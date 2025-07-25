@@ -60,7 +60,7 @@ class FleetController extends AbstractGameController
             if ($this->allianceBuildListRepository->getLevel($alliance, AllianceBuildingId::FLEET_CONTROL) >= AllianceFleetControlLevel::SHOW) {
                 $userAlliancePermission = $this->allianceService->getUserAlliancePermissions($alliance, $cu);
                 $supportFleets = $this->fleetRepository->search(FleetSearch::create()->actionIn([FleetAction::SUPPORT])->userIn($this->userRepository->findBy(['alliance'=>$alliance])));
-                $allianceAttackFleets = $this->fleetRepository->search(FleetSearch::create()->actionIn([FleetAction::ALLIANCE])->nextId($cu->getAlliance()->getId())->status(FleetStatus::DEPARTURE)->isLeader());
+                $allianceAttackFleets = $this->fleetRepository->search(FleetSearch::create()->actionIn([FleetAction::ALLIANCE])->nextId($cu->getAlliance()->getId())->status(FleetStatus::DEPARTURE->value)->isLeader());
 
                 return $this->render('game/fleets/fleets_alliance.html.twig',[
                     'supportFleets' => $supportFleets,

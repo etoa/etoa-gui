@@ -87,7 +87,7 @@ class FleetLogRepository extends AbstractRepository
             'launchTime' => $launchTime,
             'landTime' => $landTime,
             'action' => $action,
-            'status' => FleetStatus::DEPARTURE,
+            'status' => FleetStatus::DEPARTURE->value,
             'fleetResStart' => "0:0:0:0:0:0:0,f,0:0:0:0:0:0:0",
             'fleetResEnd' => $fleetResEnd,
             'fleetShipStart' => '0',

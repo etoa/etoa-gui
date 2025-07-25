@@ -18,15 +18,12 @@ use EtoA\Universe\Entity\EntityRepository;
 use EtoA\Universe\Planet\PlanetRepository;
 use EtoA\Universe\Resources\ResourceNames;
 use EtoA\User\UserRepository;
-use phpDocumentor\Reflection\Types\This;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Validator\Constraints\NotNull;
-use Symfony\Component\Validator\Constraints\NotNullValidator;
-use function Symfony\Component\Translation\t;
 
 class EconomyController extends AbstractGameController
 {
@@ -34,7 +31,6 @@ class EconomyController extends AbstractGameController
         private readonly BuildingListItemRepository $buildingListItemRepository,
         private readonly EntityRepository $entityRepository,
         private readonly UserRepository $userRepository,
-        private readonly ConfigurationService $configurationService,
         private readonly SpecialistService $specialistService,
         private readonly PlanetRepository $planetRepository,
         private readonly SpecialistDataRepository $specialistDataRepository,
@@ -219,7 +215,7 @@ class EconomyController extends AbstractGameController
                     $fleets = $this->fleetRepository->findBy(['user'=>$cu]);
                     foreach ($fleets as $fleet) {
                         if ($fleet->getLaunchTime() > $inittime) {
-                            if ($fleet->getStatus() == FleetStatus::DEPARTURE) {
+                            if ($fleet->getStatus() == FleetStatus::DEPARTURE->value) {
                                 $inUse = true;
                                 break;
                             } else {

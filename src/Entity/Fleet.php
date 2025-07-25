@@ -158,7 +158,7 @@ class Fleet
 
     public function isStatusDeparture(): bool
     {
-        return $this->status === FleetStatus::DEPARTURE;
+        return $this->status === FleetStatus::DEPARTURE->value;
     }
 
     public static function empty(): Fleet

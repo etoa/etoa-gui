@@ -44,15 +44,15 @@ class UserHolidayService
     {
         $userId = $user->getId();
         // Prevent umode if user has any fleet in the air
-        if ($this->fleetRepository->exists(FleetSearch::create()->user($userId)) && !$force) {
+        if ($this->fleetRepository->exists(FleetSearch::create()->user($user)) && !$force) {
             return false;
         }
 
         // Prevent umode if foreign fleets are approaching one of the users planets
         $foreignFleetSearch = FleetSearch::create()
-            ->notUser($userId)
-            ->planetUser($userId)
-            ->status(FleetStatus::DEPARTURE)
+            ->notUser($user)
+            ->planetUser($user)
+            ->status(FleetStatus::DEPARTURE->value)
             ->actionNotIn([FleetAction::COLLECT_DEBRIS, FleetAction::EXPLORE, FleetAction::FLIGHT, FleetAction::CREATE_DEBRIS]);
         if ($this->fleetRepository->exists($foreignFleetSearch) && !$force) {
             return false;

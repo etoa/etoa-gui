@@ -223,7 +223,7 @@ class FleetRepository extends AbstractRepository
 
     public function promoteNewAllianceFleetLeader(Fleet $newLeader, Fleet $existingLeader, int $landTime): void
     {
-        $newLeader->setStatus(FleetStatus::DEPARTURE);
+        $newLeader->setStatus(FleetStatus::DEPARTURE->value);
         $newLeader->setLandTime($landTime);
 
         $existingLeader->setLeader($newLeader);

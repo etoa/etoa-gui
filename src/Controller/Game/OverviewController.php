@@ -97,7 +97,7 @@ class OverviewController extends AbstractGameController
             $allianceSupportFleetCount = $this->fleetRepository->countFleet(FleetSearch::create()->actionIn([FleetAction::SUPPORT])->userIn($this->userRepository->findBy(['alliance'=>$this->getUser()->getData()->getAlliance()])));
 
             // Allianzangriffs
-            $allianceAttackFleetCount = $this->fleetRepository->countFleet(FleetSearch::create()->actionIn([FleetAction::ALLIANCE])->nextId($this->getUser()->getData()->getAlliance()->getId())->status(FleetStatus::DEPARTURE)->isLeader());
+            $allianceAttackFleetCount = $this->fleetRepository->countFleet(FleetSearch::create()->actionIn([FleetAction::ALLIANCE])->nextId($this->getUser()->getData()->getAlliance()->getId())->status(FleetStatus::DEPARTURE->value)->isLeader());
 
             // Lädt forschende Allianztech
             $allianceTechnologyInProgress = $this->allianceTechnologyListRepository->getInProgress($this->getUser()->getData()->getAlliance()->getId());

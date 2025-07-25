@@ -22,42 +22,32 @@ class FleetService
         private readonly FleetLogRepository $fleetLogRepository
     ) {}
 
-    public function cancel(int $fleetId, bool $returning = false): void
+    public function cancel(Fleet $fleet, bool $returning = false): void
     {
-        $fleet = $this->fleetRepository->find($fleetId);
-        if ($fleet === null) {
-            throw new InvalidFleetParametersException('Invalid fleet.');
-        }
-
-        if ($fleet->status != FleetStatus::DEPARTURE) {
+        if ($fleet->getStatus() != FleetStatus::DEPARTURE->value) {
             throw new InvalidFleetParametersException('Cannot return or cancel non-departing fleet.');
         }
 
         $now = time();
-        $timeFlown = $now - $fleet->launchTime;
+        $timeFlown = $now - $fleet->getLaunchTime();
         $landtime = $now + $timeFlown;
-        $status = $returning ? FleetStatus::ARRIVAL : FleetStatus::CANCELLED;
+        $status = $returning ? FleetStatus::ARRIVAL->value : FleetStatus::CANCELLED->value;
 
-        $this->fleetRepository->update($fleetId, $now, $landtime, $fleet->entityTo, $fleet->entityFrom, $status);
+        $this->fleetRepository->update($fleet, $now, $landtime, $fleet->getEntityTo(), $fleet->getEntityFrom(), $status);
     }
 
-    public function land(int $fleetId): void
+    public function land(Fleet $fleet): void
     {
-        $fleet = $this->fleetRepository->find($fleetId);
-        if ($fleet === null) {
-            throw new InvalidFleetParametersException('Invalid fleet.');
-        }
-
-        $targetEntity = $this->entityRepository->findIncludeCell($fleet->entityTo);
-        if ($targetEntity === null || $targetEntity->code !== EntityType::PLANET) {
+        $targetEntity = $this->entityRepository->findIncludeCell($fleet->getEntityTo());
+        if ($targetEntity === null || $targetEntity->getCode() !== EntityType::PLANET) {
             throw new InvalidFleetParametersException('Invalid fleet target. Can only land on planets.');
         }
 
-        $planet = $this->planetRepository->find($targetEntity->id);
+        $planet = $this->planetRepository->find($targetEntity->getId());
         if ($planet->userId == 0) {
             throw new InvalidFleetParametersException('Cannot land on uninhabited planet.');
         }
-        if ($fleet->userId != 0 && $fleet->userId != $planet->userId) {
+        if ($fleet->getUser() && $fleet->getUser() != $planet->getUser()) {
             throw new InvalidFleetParametersException('Cannot land foreign fleet on planet.');
         }
 
@@ -75,12 +65,12 @@ class FleetService
 
         // Add halve of the resources used for the engines to the target,
         // if the action, for example, is colonize or position
-        if ($fleet->status == FleetStatus::ARRIVAL) {
+        if ($fleet->status == FleetStatus::ARRIVAL->value) {
             $this->planetRepository->addResources($planet->id, 0, 0, 0, $fleet->usageFuel / 2, $fleet->usageFood / 2);
             // Note: $fleet->usagePower is ignored for now as planets can not store power that way
         }
 
-        $this->fleetRepository->remove($fleetId);
+        $this->fleetRepository->remove($fleet);
     }
 
     /**
@@ -100,7 +90,7 @@ class FleetService
                                 $this->cancelFlight($fleetPart,false, true);
                             }
                         } else {
-                            $allianceFleets = $this->fleetRepository->search(FleetSearch::create()->leader($fleet->getId())->nextId($fleet->getNextId())->status(FleetStatus::WAITING));
+                            $allianceFleets = $this->fleetRepository->search(FleetSearch::create()->leader($fleet->getId())->nextId($fleet->getNextId())->status(FleetStatus::WAITING->value));
                             if (count($allianceFleets) > 0) {
                                 $newLeaderFleet = $allianceFleets[0];
                                 $this->fleetRepository->promoteNewAllianceFleetLeader($newLeaderFleet, $fleet, $fleet->getLandTime());

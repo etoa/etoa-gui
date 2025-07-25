@@ -2,7 +2,6 @@
 
 namespace EtoA\Controller\Game;
 
-use _PHPStan_70b6e53dc\Nette\Neon\Entity;
 use EtoA\Alliance\AllianceBuildingId;
 use EtoA\Alliance\AllianceBuildingRepository;
 use EtoA\Alliance\AllianceBuildListRepository;
@@ -12,10 +11,7 @@ use EtoA\Alliance\AllianceRights;
 use EtoA\Alliance\AllianceService;
 use EtoA\Alliance\AllianceSpendRepository;
 use EtoA\Alliance\Base\AllianceBase;
-use EtoA\Alliance\Base\AllianceItemBuildStatus;
-use EtoA\Alliance\Base\AllianceItemRequirementStatus;
 use EtoA\Core\Configuration\ConfigurationService;
-use EtoA\Entity\AllianceSpend;
 use EtoA\Fleet\FleetRepository;
 use EtoA\Fleet\FleetShipRepository;
 use EtoA\Fleet\FleetStatus;
@@ -28,11 +24,8 @@ use EtoA\Support\StringUtils;
 use EtoA\Universe\Entity\EntityRepository;
 use EtoA\Universe\Planet\PlanetRepository;
 use EtoA\Universe\Resources\BaseResources;
-use EtoA\Universe\Resources\ResourceNames;
 use EtoA\User\UserRepository;
-use phpDocumentor\Reflection\Types\This;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
-use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -398,7 +391,7 @@ class AllianceBaseController extends AbstractGameController
                         $launchtime = time(); // Startzeit
                         $duration = 3600; // Dauer 1h
                         $landtime = $launchtime + $duration; // Landezeit
-                        $fleet = $this->fleetRepository->add($cu, $launchtime, $landtime, $this->entityRepository->find($allianceMarketId), $this->entityRepository->find($request->getSession()->get('cpid')), \EtoA\Fleet\FleetAction::DELIVERY, FleetStatus::DEPARTURE, new BaseResources());
+                        $fleet = $this->fleetRepository->add($cu, $launchtime, $landtime, $this->entityRepository->find($allianceMarketId), $this->entityRepository->find($request->getSession()->get('cpid')), \EtoA\Fleet\FleetAction::DELIVERY, FleetStatus::DEPARTURE->value, new BaseResources());
 
                         // Speichert Schiffe in der Flotte
                         $log = "";
