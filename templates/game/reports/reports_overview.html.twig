@@ -42,7 +42,7 @@
                         {{ include('components/reports/' ~ report.type ~ '/'~report.createFactory.subtype~'.html.twig', { report: report }) }}
                         <br /><br />
                         <input type="button" value="L&ouml;schen" onclick="toggleBox('report rid');xajax_reportSetDeleted( rid);" />&nbsp;
-                        ticket_button('8', "Regelverstoss melden");
+                        <twig:ticketbutton cat="8" title="Regelverstoss melden"/>
                     </td>
                 </tr>
             {% endfor %}

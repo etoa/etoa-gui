@@ -3,6 +3,7 @@
 namespace EtoA\Controller\Game;
 
 use EtoA\Entity\Ticket;
+use EtoA\Entity\TicketCategory;
 use EtoA\Entity\TicketMessage;
 use EtoA\Form\Type\Core\TicketTextType;
 use EtoA\Help\TicketSystem\TicketCategoryRepository;
@@ -27,8 +28,13 @@ class TicketController extends AbstractGameController
     {
     }
 
+    #[Route('/game/ticket/list/{id}', name: 'game.ticket.list.category')]
+    public function categoryList(Request $request, ?TicketCategory $ticketCategory = null): Response {
+        return $this->list($request, $ticketCategory);
+    }
+
     #[Route('/game/ticket/list', name: 'game.ticket.list')]
-    public function list(Request $request): Response {
+    public function list(Request $request, ?TicketCategory $ticketCategory = null): Response {
 
         $categories = $this->ticketCategoryRepository->findBy([],['sort'=>'DESC']);
         $ticket = new Ticket();
@@ -42,7 +48,8 @@ class TicketController extends AbstractGameController
                 'label' => false,
                 'choices' => $categories,
                 'choice_value' => 'id',
-                'choice_label' => 'name'
+                'choice_label' => 'name',
+                'data' => $ticketCategory
             ])
             ->add('ticketMessages',CollectionType::class, [
                 'entry_type' => TicketTextType::class,

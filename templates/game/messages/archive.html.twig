@@ -107,9 +107,9 @@
                                         <input type="button" value="Löschen"/>&nbsp;
                                     </a>
                                     {% if message.vars.data.userFrom %}
-                                        ticket_button('1', "Beleidigung melden", message.userFrom);
+                                        <twig:ticketbutton cat="1" title="Beleidigung melden"/>
                                     {% else %}
-                                        ticket_button('8', "Regelverstoss melden");
+                                        <twig:ticketbutton cat="8" title="Regelverstoss melden"/>
                                     {% endif %}
                                     <br/>
                                 </td>
