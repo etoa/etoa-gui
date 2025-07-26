@@ -36,7 +36,7 @@
                                 <a href="{{ path('game.userinfo',{id:stat.id, popup:1}) }}" onclick="window.open('{{ path('game.userinfo',{id:stat.id, popup:1}) }}','popup','status=no,width=800,height=600,scrollbars=yes');return false;">Profil anzeigen</a> <br>
                                 <a href="{{ path('game.stats.userdetail',{id:stat.id, popup:1}) }}" onclick="window.open('{{ path('game.stats.userdetail',{id:stat.id, popup:1}) }}','popup','status=no,width=800,height=600,scrollbars=yes');return false;">Punkteverlauf</a> <br>
                                 {% if stat.id != app.user.id %}
-                                    <a href="?page=messages&amp;mode=new&amp;message_user_to=11">Nachricht senden</a> <br>
+                                    <a href="{{path('game.messages.newTo',{id:stat.id})}}">Nachricht senden</a> <br>
                                     <a href="{{ path('game.buddylist.add',{id:stat.id}) }}">Als Freund hinzufügen</a>
                                 {% endif %}
                             </div>
