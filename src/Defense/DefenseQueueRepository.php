@@ -6,6 +6,7 @@ use Doctrine\Persistence\ManagerRegistry;
 use EtoA\Core\AbstractRepository;
 use EtoA\Entity\DefenseQueueItem;
 use EtoA\Entity\Entity;
+use EtoA\Entity\User;
 
 class DefenseQueueRepository extends AbstractRepository
 {
@@ -137,6 +138,16 @@ class DefenseQueueRepository extends AbstractRepository
             ->delete()
             ->where('q.entity = :entity')
             ->setParameter('entity', $entity)
+            ->getQuery()
+            ->execute();
+    }
+
+    public function removeForUser(User $user): void
+    {
+        $this->createQueryBuilder('q')
+            ->delete()
+            ->where('q.user = :user')
+            ->setParameter('user', $user)
             ->getQuery()
             ->execute();
     }

@@ -78,12 +78,13 @@ class UserPointsRepository extends AbstractRepository
             ->execute();
     }
 
-    public function removeForUser(int $userId) : void
+    public function removeForUser(User $user) : void
     {
         $this->createQueryBuilder('q')
-            ->delete('user_points')
-            ->where('point_user_id = :userId')
-            ->setParameter('userId', $userId)
-            ->executeQuery();
+            ->delete()
+            ->where('q.user = :user')
+            ->setParameter('user', $user)
+            ->getQuery()
+            ->execute();
     }
 }

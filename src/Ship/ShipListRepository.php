@@ -404,4 +404,14 @@ class ShipListRepository extends AbstractRepository
             'exp' => (int) $arr['exp'],
         ], $data);
     }
+
+    public function removeForUser(User $user): void
+    {
+        $this->createQueryBuilder('q')
+            ->delete()
+            ->where('q.user = :user')
+            ->setParameter('user', $user)
+            ->getQuery()
+            ->execute();
+    }
 }

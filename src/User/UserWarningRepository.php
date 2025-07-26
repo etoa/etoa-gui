@@ -4,6 +4,7 @@ namespace EtoA\User;
 
 use Doctrine\Persistence\ManagerRegistry;
 use EtoA\Core\AbstractRepository;
+use EtoA\Entity\User;
 use EtoA\Entity\UserWarning;
 
 class UserWarningRepository extends AbstractRepository
@@ -77,13 +78,14 @@ class UserWarningRepository extends AbstractRepository
         return array_map(fn ($value) => (int) $value, $data);
     }
 
-    public function deleteAllUserEntries(int $userId): void
+    public function deleteAllUserEntries(User $user): void
     {
         $this->createQueryBuilder('q')
-            ->delete('user_warnings')
-            ->where('warning_user_id = :userId')
-            ->setParameter('userId', $userId)
-            ->executeQuery();
+            ->delete()
+            ->where('q.user = :user')
+            ->setParameter('user', $user)
+            ->getQuery()
+            ->execute();
     }
 
     public function addEntry(int $userId, string $text, int $adminId): void

@@ -161,17 +161,10 @@ class AllianceRepository extends AbstractRepository
             ->setParameter('id', $allianceId)
             ->fetchOne();
     }
-    public function setFounderId(int $allianceId, int $founder): void
+    public function setFounderId(Alliance $alliance, User $founder): void
     {
-        $this->createQueryBuilder('q')
-            ->update('alliances')
-            ->set('alliance_founder_id', ':founder')
-            ->where('alliance_id = :id')
-            ->setParameters([
-                'id' => $allianceId,
-                'founder' => $founder,
-            ])
-            ->executeQuery();
+        $alliance->setFounder($founder);
+        $this->save();
     }
 
     /**

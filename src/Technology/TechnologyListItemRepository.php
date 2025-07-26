@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace EtoA\Technology;
 
-use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use EtoA\Core\AbstractRepository;
 use EtoA\Entity\TechnologyListItem;
@@ -225,13 +224,14 @@ class TechnologyListItemRepository extends AbstractRepository
         ], $data);
    }
 
-    public function removeForUser(int $userId): void
+    public function removeForUser(User $user): void
     {
         $this->createQueryBuilder('q')
-            ->delete('techlist')
-            ->where('techlist_user_id = :userId')
-            ->setParameter('userId', $userId)
-            ->executeQuery();
+            ->delete()
+            ->where('q.user = :user')
+            ->setParameter('user', $user)
+            ->getQuery()
+            ->execute();
     }
 
     public function freezeConstruction(int $userId): void

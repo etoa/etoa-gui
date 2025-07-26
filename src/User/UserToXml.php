@@ -8,6 +8,7 @@ use EtoA\Alliance\AllianceRepository;
 use EtoA\Building\BuildingListItemRepository;
 use EtoA\Defense\DefenseDataRepository;
 use EtoA\Defense\DefenseRepository;
+use EtoA\Entity\User;
 use EtoA\Fleet\FleetRepository;
 use EtoA\Fleet\FleetSearchParameters;
 use EtoA\Race\RaceDataRepository;
@@ -75,13 +76,13 @@ class UserToXml
         return $dir;
     }
 
-    public function toCacheFile(int $userId): string
+    public function toCacheFile(User $user): string
     {
-        $filename = $userId . "_" . date("Y-m-d_H-i") . ".xml";
+        $filename = $user->getId() . "_" . date("Y-m-d_H-i") . ".xml";
         $file = $this->getDataDirectory() . "/" . $filename;
-        $xml = $this->generate($userId);
+        $xml = $this->generate($user->getId());
         if (!filled($xml)) {
-            throw new Exception("XML Export fehlgeschlagen. User " . $userId . " nicht gefunden!");
+            throw new Exception("XML Export fehlgeschlagen. User " . $user->getId() . " nicht gefunden!");
         }
         if (file_put_contents($file, $xml)) {
             return $filename;

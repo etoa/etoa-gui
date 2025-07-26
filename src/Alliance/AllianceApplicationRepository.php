@@ -6,6 +6,7 @@ use Doctrine\Persistence\ManagerRegistry;
 use EtoA\Core\AbstractRepository;
 use EtoA\Entity\Alliance;
 use EtoA\Entity\AllianceApplication;
+use EtoA\Entity\User;
 
 class AllianceApplicationRepository extends AbstractRepository
 {
@@ -91,15 +92,15 @@ class AllianceApplicationRepository extends AbstractRepository
         $this->save();
     }
 
-    public function deleteUserApplication(int $userId): bool
+    public function deleteUserApplication(User $user): void
     {
-        return (bool) $this->createQueryBuilder('q')
-            ->delete('alliance_applications')
-            ->where('user_id = :userId')
+         $this->createQueryBuilder('q')
+            ->delete()
+            ->where('q.user = :user')
             ->setParameters([
-                'userId' => $userId,
+                'user' => $user,
             ])
-            ->executeQuery()
-            ->rowCount();
+            ->getQuery()
+            ->execute();
     }
 }

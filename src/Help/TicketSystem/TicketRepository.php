@@ -8,6 +8,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use EtoA\Core\AbstractRepository;
 use EtoA\Entity\Ticket;
+use EtoA\Entity\User;
 
 class TicketRepository extends AbstractRepository
 {
@@ -84,13 +85,14 @@ class TicketRepository extends AbstractRepository
         return $qry->executeQuery()->rowCount();
     }
 
-    public function removeForUser(int $userId) : void
+    public function removeForUser(User $user) : void
     {
         $this->createQueryBuilder('q')
-            ->delete('tickets')
-            ->where('user_id = :userId')
-            ->setParameter('userId', $userId)
-            ->executeQuery();
+            ->delete()
+            ->where('q.user = :user')
+            ->setParameter('user', $user)
+            ->getQuery()
+            ->execute();
     }
 
     /**

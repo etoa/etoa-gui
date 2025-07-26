@@ -2,6 +2,8 @@
 
 namespace EtoA\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use EtoA\Alliance\AllianceImage;
 use EtoA\Alliance\AllianceRepository;
 use EtoA\Universe\Resources\BaseResources;
@@ -106,6 +108,15 @@ class Alliance
     #[ORM\OneToOne(mappedBy: "id", targetEntity: AllianceStats::class,cascade: ['remove'])]
     #[ORM\JoinColumn(name: 'alliance_id', referencedColumnName: 'alliance_id')]
     protected ?AllianceStats $allianceStats = null;
+
+    #[ORM\OneToMany(mappedBy: 'alliance', targetEntity: User::class)]
+    #[ORM\JoinColumn(name: 'alliance_id', referencedColumnName: 'user_id')]
+    private Collection $members;
+
+    public function __construct()
+    {
+        $this->members = new ArrayCollection();
+    }
 
     public function toString(): string
     {
@@ -482,6 +493,36 @@ class Alliance
     public function setAllianceStats(?AllianceStats $allianceStats): static
     {
         $this->allianceStats = $allianceStats;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, User>
+     */
+    public function getMembers(): Collection
+    {
+        return $this->members;
+    }
+
+    public function addMember(User $member): static
+    {
+        if (!$this->members->contains($member)) {
+            $this->members->add($member);
+            $member->setAlliance($this);
+        }
+
+        return $this;
+    }
+
+    public function removeMember(User $member): static
+    {
+        if ($this->members->removeElement($member)) {
+            // set the owning side to null (unless already changed)
+            if ($member->getAlliance() === $this) {
+                $member->setAlliance(null);
+            }
+        }
 
         return $this;
     }

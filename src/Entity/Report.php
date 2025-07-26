@@ -2,6 +2,7 @@
 
 namespace EtoA\Entity;
 
+use Doctrine\ORM\EntityNotFoundException;
 use Doctrine\ORM\Mapping as ORM;
 use EtoA\Core\Database\DataTransformer;
 use EtoA\Message\Report\ExploreReport;
@@ -238,7 +239,13 @@ class Report
 
     public function getOpponent1(): ?User
     {
-        return $this->opponent1;
+        try {
+            dd($this->opponent1);
+            return $this->opponent1 instanceof User ? $this->opponent1 : null;
+        } catch(EntityNotFoundException) {
+            dd('test');
+            return null;
+        }
     }
 
     public function setOpponent1(?User $opponent1): static

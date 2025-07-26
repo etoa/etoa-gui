@@ -189,4 +189,14 @@ class ShipQueueRepository extends AbstractRepository
             ->getQuery()
             ->execute();
     }
+
+    public function removeForUser(User $user): void
+    {
+        $this->createQueryBuilder('q')
+            ->delete()
+            ->where('q.user = :user')
+            ->setParameter('user', $user)
+            ->getQuery()
+            ->execute();
+    }
 }

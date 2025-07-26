@@ -5,6 +5,7 @@ namespace EtoA\User;
 use Doctrine\DBAL\ArrayParameterType;
 use Doctrine\Persistence\ManagerRegistry;
 use EtoA\Core\AbstractRepository;
+use EtoA\Entity\User;
 use EtoA\Entity\UserSurveillance;
 
 class UserSurveillanceRepository extends AbstractRepository
@@ -137,12 +138,13 @@ class UserSurveillanceRepository extends AbstractRepository
         return array_map(fn (array $row) => (int) $row['user_id'], $data);
     }
 
-    public function removeForUser(int $userId) : void
+    public function removeForUser(User $user) : void
     {
         $this->createQueryBuilder('q')
-            ->delete('user_surveillance')
-            ->where('user_id = :userId')
-            ->setParameter('userId', $userId)
-            ->executeQuery();
+            ->delete()
+            ->where('q.user = :user')
+            ->setParameter('user', $user)
+            ->getQuery()
+            ->execute();
     }
 }

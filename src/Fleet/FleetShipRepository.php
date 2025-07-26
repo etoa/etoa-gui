@@ -149,13 +149,14 @@ class FleetShipRepository extends AbstractRepository
             ->executeQuery();
     }
 
-    public function removeAllShipsFromFleet(int $fleetId): void
+    public function removeAllShipsFromFleet(Fleet $fleet): void
     {
         $this->createQueryBuilder('q')
-            ->delete('fleet_ships')
-            ->where('fs_fleet_id = :fleetId')
-            ->setParameter('fleetId', $fleetId)
-            ->executeQuery();
+            ->delete()
+            ->where('q.fleet = :fleet')
+            ->setParameter('fleet', $fleet)
+            ->getQuery()
+            ->execute();
     }
 
     public function getSpecialShipExperienceSumForUser(int $userId): int

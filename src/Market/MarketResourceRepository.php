@@ -5,6 +5,7 @@ namespace EtoA\Market;
 use Doctrine\Persistence\ManagerRegistry;
 use EtoA\Core\AbstractRepository;
 use EtoA\Entity\MarketResource;
+use EtoA\Entity\User;
 use EtoA\Universe\Resources\BaseResources;
 use EtoA\Universe\Resources\ResourceNames;
 
@@ -185,13 +186,14 @@ class MarketResourceRepository extends AbstractRepository
         return $data !== false ? new MarketResource($data) : null;
     }
 
-    public function deleteUserOffers(int $userId) : void
+    public function deleteUserOffers(User $user) : void
     {
         $this->createQueryBuilder('q')
-            ->delete('market_ressource')
-            ->where('user_id = :userId')
-            ->setParameter('userId', $userId)
-            ->executeQuery();
+            ->delete()
+            ->where('q.user = :user')
+            ->setParameter('user', $user)
+            ->getQuery()
+            ->execute();
     }
 
     public function delete(int $offerId) : void

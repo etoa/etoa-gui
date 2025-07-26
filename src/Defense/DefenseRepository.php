@@ -200,19 +200,14 @@ class DefenseRepository extends AbstractRepository
             ->execute();
     }
 
-    public function removeForUser(int $userId): void
+    public function removeForUser(User $user): void
     {
         $this->createQueryBuilder('q')
-            ->delete('def_queue')
-            ->where('queue_user_id = :userId')
-            ->setParameter('userId', $userId)
-            ->executeQuery();
-
-        $this->createQueryBuilder('q')
-            ->delete('deflist')
-            ->where('deflist_user_id = :userId')
-            ->setParameter('userId', $userId)
-            ->executeQuery();
+            ->delete()
+            ->where('q.user = :user')
+            ->setParameter('user', $user)
+            ->getQuery()
+            ->execute();
     }
 
     public function cleanupEmpty(): void

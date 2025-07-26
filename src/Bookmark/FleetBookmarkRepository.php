@@ -7,6 +7,7 @@ namespace EtoA\Bookmark;
 use Doctrine\Persistence\ManagerRegistry;
 use EtoA\Core\AbstractRepository;
 use EtoA\Entity\FleetBookmark;
+use EtoA\Entity\User;
 use EtoA\Universe\Resources\BaseResources;
 
 class FleetBookmarkRepository extends AbstractRepository
@@ -106,12 +107,13 @@ class FleetBookmarkRepository extends AbstractRepository
             ->executeQuery();
     }
 
-    public function removeForUser(int $userId) : void
+    public function removeForUser(User $user) : void
     {
         $this->createQueryBuilder('q')
-            ->delete('fleet_bookmarks')
-            ->where('user_id = :userId')
-            ->setParameter('userId', $userId)
-            ->executeQuery();
+            ->delete()
+            ->where('q.user = :user')
+            ->setParameter('user', $user)
+            ->getQuery()
+            ->execute();
     }
 }

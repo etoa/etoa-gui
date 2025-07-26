@@ -5,6 +5,7 @@ namespace EtoA\Market;
 use Doctrine\Persistence\ManagerRegistry;
 use EtoA\Core\AbstractRepository;
 use EtoA\Entity\MarketShip;
+use EtoA\Entity\User;
 use EtoA\Universe\Resources\BaseResources;
 
 class MarketShipRepository extends AbstractRepository
@@ -141,13 +142,14 @@ class MarketShipRepository extends AbstractRepository
         return $data !== false ? new MarketShip($data) : null;
     }
 
-    public function deleteUserOffers(int $userId) : void
+    public function deleteUserOffers(User $user) : void
     {
         $this->createQueryBuilder('q')
-            ->delete('market_ship')
-            ->where('user_id = :userId')
-            ->setParameter('userId', $userId)
-            ->executeQuery();
+            ->delete()
+            ->where('q.user = :user')
+            ->setParameter('user', $user)
+            ->getQuery()
+            ->execute();
     }
 
     public function delete(int $offerId) : void

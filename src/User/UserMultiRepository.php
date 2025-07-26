@@ -200,17 +200,14 @@ class UserMultiRepository extends AbstractRepository
             ->fetchOne();
     }
 
-    public function deleteUserEntries(int $userId): int
+    public function deleteUserEntries(User $user): void
     {
-        $qb = $this->createQueryBuilder('q');
-
-        return $qb
-            ->delete('user_multi')
-            ->where('user_id = :userId')
-            ->orWhere('multi_id = :userId')
-            ->setParameter('userId', $userId)
-            ->executeQuery()
-            ->rowCount();
+        $this->createQueryBuilder('q')
+            ->delete()
+            ->where('q.user = :user')
+            ->setParameter('user', $user)
+            ->getQuery()
+            ->execute();
     }
 
     public function deleteEntry(int $id): int

@@ -4,6 +4,7 @@ namespace EtoA\User;
 
 use Doctrine\Persistence\ManagerRegistry;
 use EtoA\Core\AbstractRepository;
+use EtoA\Entity\User;
 use EtoA\Entity\UserComment;
 
 class UserCommentRepository extends AbstractRepository
@@ -74,12 +75,13 @@ class UserCommentRepository extends AbstractRepository
             ->executeQuery();
     }
 
-    public function removeForUser(int $userId) : void
+    public function removeForUser(User $user) : void
     {
         $this->createQueryBuilder('q')
-            ->delete('user_comments')
-            ->where('comment_user_id = :userId')
-            ->setParameter('userId', $userId)
-            ->executeQuery();
+            ->delete()
+            ->where('q.user = :user')
+            ->setParameter('user', $user)
+            ->getQuery()
+            ->execute();
     }
 }

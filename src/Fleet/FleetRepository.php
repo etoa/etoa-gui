@@ -95,9 +95,7 @@ class FleetRepository extends AbstractRepository
      */
     public function findByParameters(FleetSearchParameters $parameters): array
     {
-        $qry = $this->createQueryBuilder('q')
-            ->select('f.*')
-            ->from('fleet', 'f');
+        $qry = $this->createQueryBuilder('q');
 
         if ($parameters->id !== null) {
             $qry->andWhere('id = :id')
@@ -105,33 +103,34 @@ class FleetRepository extends AbstractRepository
         }
 
         if ($parameters->entityFrom !== null) {
-            $qry->andWhere('entity_from = :entityFrom')
+            $qry->andWhere('q.from = :entityFrom')
                 ->setParameter('entityFrom', $parameters->entityFrom);
         }
 
         if ($parameters->entityTo !== null) {
-            $qry->andWhere('entity_to = :entityTo')
+            $qry->andWhere('q.to = :entityTo')
                 ->setParameter('entityTo', $parameters->entityTo);
         }
 
-        if ($parameters->userId !== null) {
-            $qry->andWhere('user_id = :userId')
-                ->setParameter('userId', $parameters->userId);
+        if ($parameters->user !== null) {
+            $qry->andWhere('q.user = :user')
+                ->setParameter('user', $parameters->user);
         }
 
         if ($parameters->action !== null) {
-            $qry->andWhere('action = :action')
+            $qry->andWhere('q.action = :action')
                 ->setParameter('action', $parameters->action);
         }
 
         if ($parameters->userNick !== null) {
-            $qry->leftJoin('f', 'users', 'u', 'f.user_id = u.user_id')
-                ->andWhere('u.user_nick LIKE :userNick')
+            $qry->leftJoin('App:User', 'u', 'WITH', 'q.user = u.id')
+                ->andWhere('u.nick LIKE :userNick')
                 ->setParameter('userNick', '%'.$parameters->userNick.'%');
         }
 
         $data = $qry->orderBy('landtime', 'ASC')
-            ->fetchAllAssociative();
+            ->getQuery()
+            ->execute();
 
         return array_map(fn ($arr) => new Fleet($arr), $data);
     }

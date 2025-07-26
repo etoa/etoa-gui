@@ -4,6 +4,7 @@ namespace EtoA\Missile;
 
 use Doctrine\Persistence\ManagerRegistry;
 use EtoA\Entity\MissileListItem;
+use EtoA\Entity\User;
 
 class MissileRepository extends \EtoA\Core\AbstractRepository
 {
@@ -143,13 +144,14 @@ class MissileRepository extends \EtoA\Core\AbstractRepository
             ])->executeQuery();
     }
 
-    public function removeForUser(int $userId): void
+    public function removeForUser(User $user): void
     {
         $this->createQueryBuilder('q')
-            ->delete('missilelist')
-            ->where('missilelist_user_id = :userId')
-            ->setParameter('userId', $userId)
-            ->executeQuery();
+            ->delete()
+            ->where('q.user = :user')
+            ->setParameter('user', $user)
+            ->getQuery()
+            ->execute();
     }
 
     public function deleteEmpty(): int

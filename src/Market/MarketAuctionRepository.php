@@ -5,6 +5,7 @@ namespace EtoA\Market;
 use Doctrine\Persistence\ManagerRegistry;
 use EtoA\Core\AbstractRepository;
 use EtoA\Entity\MarketAuction;
+use EtoA\Entity\User;
 use EtoA\Universe\Resources\BaseResources;
 
 class MarketAuctionRepository extends AbstractRepository
@@ -178,13 +179,14 @@ class MarketAuctionRepository extends AbstractRepository
         return $data !== false ? new MarketAuction($data) : null;
     }
 
-    public function deleteUserAuctions(int $userId) : void
+    public function deleteUserAuctions(User $user) : void
     {
         $this->createQueryBuilder('q')
-            ->delete('market_auction')
-            ->where('user_id = :userId')
-            ->setParameter('userId', $userId)
-            ->executeQuery();
+            ->delete()
+            ->where('q.user = :user')
+            ->setParameter('user', $user)
+            ->getQuery()
+            ->execute();
     }
 
     public function deleteAuction(int $auctionId) : void

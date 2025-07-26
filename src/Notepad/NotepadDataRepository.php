@@ -79,10 +79,13 @@ class NotepadDataRepository extends AbstractRepository
             );
     }
 
-    public function deleteAll(int $userId): void
+    public function deleteAll(User $user): void
     {
-        foreach ($this->findAll($userId) as $note) {
-            $this->delete($note->id, $userId);
-        }
+        $this->createQueryBuilder('q')
+            ->delete()
+            ->where('q.user = :user')
+            ->setParameter('user', $user)
+            ->getQuery()
+            ->execute();
     }
 }

@@ -4,7 +4,7 @@ namespace EtoA\Defense;
 
 use Doctrine\Persistence\ManagerRegistry;
 use EtoA\Core\AbstractRepository;
-use EtoA\Entity\User;
+use EtoA\Entity\DefenseCategory;
 
 class DefenseCategoryRepository extends AbstractRepository
 {

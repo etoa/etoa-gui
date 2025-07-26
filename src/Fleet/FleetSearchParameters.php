@@ -4,10 +4,12 @@ declare(strict_types=1);
 
 namespace EtoA\Fleet;
 
+use EtoA\Entity\User;
+
 class FleetSearchParameters
 {
     public ?int $id = null;
-    public ?int $userId = null;
+    public ?User $user = null;
     public ?string $userNick = null;
     public ?int $entityFrom = null;
     public ?int $entityTo = null;
@@ -25,9 +27,9 @@ class FleetSearchParameters
         return $this;
     }
 
-    public function userId(int $userId): FleetSearchParameters
+    public function user(User $user): FleetSearchParameters
     {
-        $this->userId = $userId;
+        $this->user = $user;
 
         return $this;
     }

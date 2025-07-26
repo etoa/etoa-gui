@@ -4,9 +4,9 @@ namespace EtoA\User;
 
 use Doctrine\DBAL\ArrayParameterType;
 use Doctrine\DBAL\Query\QueryBuilder;
-use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use EtoA\Core\AbstractRepository;
+use EtoA\Entity\User;
 use EtoA\Entity\UserSitting;
 use function Symfony\Component\Clock\now;
 
@@ -203,12 +203,13 @@ class UserSittingRepository extends AbstractRepository
         return false;
     }
 
-    public function deleteAllUserEntries(int $userId): void
+    public function deleteAllUserEntries(User $user): void
     {
         $this->createQueryBuilder('q')
-            ->delete('user_sitting')
-            ->where('user_id = :userId')
-            ->setParameter('userId', $userId)
-            ->executeQuery();
+            ->delete()
+            ->where('q.user = :user')
+            ->setParameter('user', $user)
+            ->getQuery()
+            ->execute();
     }
 }

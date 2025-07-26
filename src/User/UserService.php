@@ -14,11 +14,11 @@ use EtoA\BuddyList\BuddyListRepository;
 use EtoA\Building\BuildingListItemRepository;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Defense\DefenseRepository;
-use EtoA\Entity\Planet;
 use EtoA\Entity\User;
 use EtoA\Exceptions\RecordNotFoundException;
 use EtoA\Fleet\FleetRepository;
 use EtoA\Fleet\FleetSearchParameters;
+use EtoA\Fleet\FleetShipRepository;
 use EtoA\Help\TicketSystem\TicketRepository;
 use EtoA\Log\LogFacility;
 use EtoA\Log\LogRepository;
@@ -29,6 +29,8 @@ use EtoA\Market\MarketShipRepository;
 use EtoA\Missile\MissileRepository;
 use EtoA\Notepad\NotepadDataRepository;
 use EtoA\Security\Player\CurrentPlayer;
+use EtoA\Ship\ShipListRepository;
+use EtoA\Ship\ShipQueueRepository;
 use EtoA\Ship\ShipRepository;
 use EtoA\Support\Mail\MailSenderService;
 use EtoA\Technology\TechnologyListItemRepository;
@@ -81,6 +83,9 @@ class UserService
         private readonly UserPasswordHasherInterface   $passwordHasher,
         private readonly AllianceDiplomacyRepository   $allianceDiplomacyRepository,
         private readonly Security                      $security,
+        private readonly ShipListRepository            $shipListRepository,
+        private readonly ShipQueueRepository           $shipQueueRepository,
+        private readonly FleetShipRepository           $fleetShipRepository
     )
     {
     }
@@ -149,28 +154,23 @@ class UserService
         return $this->userRepository->getUser($userId);
     }
 
-    public function delete(int $userId, bool $self = false, string $from = ""): void
+    public function delete(User $user, bool $self = false, string $from = ""): void
     {
-        $user = $this->userRepository->getUser($userId);
-        if ($user === null) {
-            throw new Exception('Benutzer existiert nicht!');
-        }
-
         try {
-            $xmlfile = $this->userToXml->toCacheFile($userId);
+            $xmlfile = $this->userToXml->toCacheFile($user);
         } catch (Exception $ex) {
-            throw new Exception("Konnte UserXML für " . $userId . " nicht exportieren, User nicht gelöscht!", 0, $ex);
+            throw new Exception("Konnte UserXML für " . $user->getId() . " nicht exportieren, User nicht gelöscht!", 0, $ex);
         }
 
         // Delete fleets of user
         $userFleets = $this->fleetRepository->findByParameters((new FleetSearchParameters())
-            ->userId($userId));
+            ->user($user));
         foreach ($userFleets as $fleet) {
-            $this->fleetRepository->removeAllShipsFromFleet($fleet->getId());
-            $this->fleetRepository->remove($fleet->getId());
+            $this->fleetShipRepository->removeAllShipsFromFleet($fleet);
+            $this->fleetRepository->remove($fleet);
         }
 
-        $userPlanets = $this->planetRepository->getUserPlanets($userId);
+        $userPlanets = $user->getPlanets();
         foreach ($userPlanets as $planet) {
 
             // Delete market fleets to planet
@@ -181,58 +181,58 @@ class UserService
                 ->entityTo($planet->getId())
                 ->action($this->config->get('market_ship_action_ship')));
             foreach (array_merge($marketResFleets, $marketShipFleets) as $fleet) {
-                $this->fleetRepository->removeAllShipsFromFleet($fleet->id);
-                $this->fleetRepository->remove($fleet->id);
+                $this->fleetShipRepository->removeAllShipsFromFleet($fleet);
+                $this->fleetRepository->remove($fleet);
             }
 
-            $this->planetService->reset($planet->getId());
+            $this->planetService->reset($planet);
         }
 
         //
         // Allianz löschen (falls alleine) oder einen Nachfolger bestimmen
         //
-        if ($user->getAlliance()->getId() > 0) {
-            $alliance = $this->allianceRepository->getAlliance($user->getAllianceId());
-            if ($alliance !== null) {
-                $members = $this->allianceRepository->findUsers($alliance->getId());
-                if (count($members) == 1) {
-                    $this->allianceRepository->remove($alliance->getId());
-                } elseif ($alliance->getFounderId() == $user->getId()) {
-                    foreach ($members as $member) {
-                        if ($member['user_id'] != $alliance->getFounderId()) {
-                            $this->allianceRepository->setFounderId($alliance->getId(), (int)$member['user_id']);
+        if ($user->getAlliance()) {
+            $alliance = $user->getAlliance();
+            $members = $alliance->getMembers();
+            if (count($members) === 1) {
+                $this->allianceRepository->remove($alliance);
+            } elseif ($alliance->getFounder() === $user) {
+                foreach ($members as $member) {
+                    if ($member !== $alliance->getFounder()) {
+                        $this->allianceRepository->setFounderId($alliance, $member);
 
-                            break;
-                        }
+                        break;
                     }
                 }
             }
         }
 
-        $this->allianceApplicationRepository->deleteUserApplication($userId);
-        $this->shipRepository->removeForUser($userId);
-        $this->defenseRepository->removeForUser($userId);
-        $this->technologyRepository->removeForUser($userId);
-        $this->buildingRepository->removeForUser($userId);
-        $this->missileRepository->removeForUser($userId);
-        $this->buddyListRepository->removeForUser($userId);
-        $this->marketResourceRepository->deleteUserOffers($userId);
-        $this->marketShipRepository->deleteUserOffers($userId);
-        $this->marketAuctionRepository->deleteUserAuctions($userId);
-        $this->notepadRepository->deleteAll($userId);
-        $this->bookmarkRepository->removeForUser($userId);
-        $this->fleetBookmarkRepository->removeForUser($userId);
-        $this->userMultiRepository->deleteUserEntries($userId);
-        $this->userPointsRepository->removeForUser($userId);
-        $this->userWarningRepository->deleteAllUserEntries($userId);
-        $this->userSittingRepository->deleteAllUserEntries($userId);
-        $this->userPropertiesRepository->removeForUser($userId);
-        $this->userSurveillanceRepository->removeForUser($userId);
-        $this->userCommentRepository->removeForUser($userId);
-        $this->userRatingRepository->removeForUser($userId);
-        $this->ticketRepository->removeForUser($userId);
+        //TODO: let doctrine handle it
+        $this->allianceApplicationRepository->deleteUserApplication($user);
+        $this->shipListRepository->removeForUser($user);
+        $this->shipQueueRepository->removeForUser($user);
+        $this->defenseRepository->removeForUser($user);
+        $this->technologyRepository->removeForUser($user);
+        $this->buildingRepository->removeForUser($user);
+        $this->missileRepository->removeForUser($user);
+        $this->buddyListRepository->removeForUser($user);
+        $this->marketResourceRepository->deleteUserOffers($user);
+        $this->marketShipRepository->deleteUserOffers($user);
+        $this->marketAuctionRepository->deleteUserAuctions($user);
+        $this->notepadRepository->deleteAll($user);
+        $this->bookmarkRepository->removeForUser($user);
+        $this->fleetBookmarkRepository->removeForUser($user);
+        $this->userMultiRepository->deleteUserEntries($user);
+        $this->userPointsRepository->removeForUser($user);
+        $this->userWarningRepository->deleteAllUserEntries($user);
+        $this->userSittingRepository->deleteAllUserEntries($user);
+        $this->userPropertiesRepository->removeForUser($user);
+        $this->userSurveillanceRepository->removeForUser($user);
+        $this->userCommentRepository->removeForUser($user);
+        $this->userRatingRepository->removeForUser($user);
+        $this->ticketRepository->removeForUser($user);
 
-        $this->userRepository->remove($userId);
+        $this->userRepository->remove($user);
 
         //Log schreiben
         if ($self) {

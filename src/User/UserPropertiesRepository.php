@@ -7,6 +7,7 @@ namespace EtoA\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use EtoA\Core\AbstractRepository;
+use EtoA\Entity\User;
 use EtoA\Entity\UserProperties;
 
 class UserPropertiesRepository extends AbstractRepository
@@ -76,12 +77,13 @@ class UserPropertiesRepository extends AbstractRepository
             ->execute();
     }
 
-    public function removeForUser(int $userId) : void
+    public function removeForUser(User $user) : void
     {
         $this->createQueryBuilder('q')
-            ->delete('user_properties')
-            ->where('id = :userId')
-            ->setParameter('userId', $userId)
-            ->executeQuery();
+            ->delete()
+            ->where('q.id = :user')
+            ->setParameter('user', $user)
+            ->getQuery()
+            ->execute();
     }
 }

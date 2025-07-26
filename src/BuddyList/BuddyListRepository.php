@@ -183,13 +183,14 @@ class BuddyListRepository extends AbstractRepository
             ->execute();
     }
 
-    public function removeForUser(int $userId): void
+    public function removeForUser(User $user): void
     {
         $this->createQueryBuilder('q')
-            ->delete('buddylist')
-            ->where('bl_user_id = :userId')
-            ->orWhere('bl_buddy_id = :userId')
-            ->setParameter('userId', $userId)
-            ->executeQuery();
+            ->delete()
+            ->where('q.user = :user')
+            ->orWhere('q.buddy= :user')
+            ->setParameter('user', $user)
+            ->getQuery()
+            ->execute();
     }
 }
