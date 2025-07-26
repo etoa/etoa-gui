@@ -239,13 +239,7 @@ class Report
 
     public function getOpponent1(): ?User
     {
-        try {
-            dd($this->opponent1);
-            return $this->opponent1 instanceof User ? $this->opponent1 : null;
-        } catch(EntityNotFoundException) {
-            dd('test');
-            return null;
-        }
+        return $this->opponent1;
     }
 
     public function setOpponent1(?User $opponent1): static

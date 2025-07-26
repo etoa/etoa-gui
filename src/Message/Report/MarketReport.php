@@ -4,6 +4,7 @@ namespace EtoA\Message\Report;
 
 use EtoA\Entity\MarketReportData;
 use EtoA\Entity\Report;
+use EtoA\Message\ReportContext;
 
 class MarketReport extends Report implements ReportInterface
 {
@@ -24,10 +25,14 @@ class MarketReport extends Report implements ReportInterface
         'auctionfinished' => 'Auktion beendet',
     ];
 
+    public readonly ReportContext $context;
+
     public function __construct(
         Report $report,
         public MarketReportData $data
-    ) {}
+    ) {
+        $this->context = new ReportContext();
+    }
 
     public function getSubject(): string
     {

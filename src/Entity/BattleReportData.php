@@ -1192,4 +1192,11 @@ class BattleReportData
             5 => $this->getEntityHeal5()
         ];
     }
+
+    public function setEntityShips(string $entityShips): static
+    {
+        $this->entityShips = $entityShips;
+
+        return $this;
+    }
 }

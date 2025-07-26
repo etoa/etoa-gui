@@ -4,6 +4,7 @@ namespace EtoA\Entity;
 
 use EtoA\Message\MarketReportRepository;
 use Doctrine\ORM\Mapping as ORM;
+use EtoA\Universe\Resources\BaseResources;
 
 #[ORM\Entity(repositoryClass: MarketReportRepository::class)]
 #[ORM\Table(name: 'reports_market')]
@@ -76,6 +77,10 @@ class MarketReportData
 
     #[ORM\Column]
     private int $timestamp2;
+
+    private BaseResources $buy;
+
+    private BaseResources $sell;
 
     public static function createFromArray(array $row): MarketReportData
     {
@@ -348,5 +353,57 @@ class MarketReportData
         $this->ship = $ship;
 
         return $this;
+    }
+
+    public function getBuy(): BaseResources
+    {
+        $this->buy = new BaseResources();
+
+        $this->buy->metal = $this->getBuyMetal();
+        $this->buy->crystal = $this->getBuyCrystal();
+        $this->buy->plastic = $this->getBuyPlastic();
+        $this->buy->fuel = $this->getBuyFuel();
+        $this->buy->food = $this->getBuyFood();
+        $this->buy->people = $this->getBuyPeople();
+
+        return $this->buy;
+    }
+
+    public function setBuy(BaseResources $buy): void
+    {
+        $this->setBuyMetal($buy->metal);
+        $this->setBuyCrystal($buy->crystal);
+        $this->setBuyPlastic($buy->plastic);
+        $this->setBuyFuel($buy->fuel);
+        $this->setBuyFood($buy->food);
+        $this->setBuyPeople($buy->people);
+
+        $this->buy = $buy;
+    }
+
+    public function getSell(): BaseResources
+    {
+        $this->sell = new BaseResources();
+
+        $this->sell->metal = $this->getSellMetal();
+        $this->sell->crystal = $this->getSellCrystal();
+        $this->sell->plastic = $this->getSellPlastic();
+        $this->sell->fuel = $this->getSellFuel();
+        $this->sell->food = $this->getSellFood();
+        $this->sell->people = $this->getSellPeople();
+
+        return $this->sell;
+    }
+
+    public function setSell(BaseResources $sell): void
+    {
+        $this->setSellMetal($sell->metal);
+        $this->setSellCrystal($sell->crystal);
+        $this->setSellPlastic($sell->plastic);
+        $this->setSellFuel($sell->fuel);
+        $this->setSellFood($sell->food);
+        $this->setSellPeople($sell->people);
+
+        $this->sell = $sell;
     }
 }

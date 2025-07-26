@@ -1,7 +1,7 @@
 {% import 'components/reports/macros.html.twig' as macros %}
 
-Du hast folgendes Angebot (#{{ report.data.recordId }}) im {{ macros.marketLink(report.context.entities[report.entity1Id]) }}
-auf {{ macros.entity(report.context.entities[report.entity1Id]) }} an {{ macros.user(report.opponentId, report) }} verkauft:<br/><br/>
+Du hast folgendes Angebot (#{{ report.marketReportData.recordId }}) im {{ macros.marketLink(report.entity1) }}
+auf {{ macros.entity(report.entity1) }} an {{ macros.user(report.opponent1) }} verkauft:<br/><br/>
 
 {% if report.content %}
     {{ report.content }}<br/><br/>

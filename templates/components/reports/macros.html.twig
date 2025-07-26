@@ -2,8 +2,8 @@
     {{ entity.toString() }}
 {% endmacro %}
 
-{% macro user(userId, report) %}
-    {{ report.context.userNicks[userId]|default('Niemand') }}
+{% macro user(user) %}
+    {{ user?user.nick:'Niemand' }}
 {% endmacro %}
 
 {% macro userList(users) %}
@@ -69,12 +69,12 @@
             <th>Angebot:</th>
             <th>Preis:</th>
         </tr>
-        {% for k, resource in report.context.resourceNames %}
-            {% if report.data.sell.get(k) + report.data.buy.get(k) > 0 %}
+        {% for k, resource in report.createFactory.context.resourceNames %}
+            {% if report.marketReportData.sell.get(k) + report.marketReportData.buy.get(k) > 0 %}
                 <tr>
                     <td>{{ resource }}</td>
-                    <td>{{ formatNumber(report.data.sell.get(k)) }}</td>
-                    <td>{{ formatNumber(report.data.buy.get(k)) }}</td>
+                    <td>{{ formatNumber(report.marketReportData.sell.get(k)) }}</td>
+                    <td>{{ formatNumber(report.marketReportData.buy.get(k)) }}</td>
                 </tr>
             {% endif %}
         {% endfor %}
@@ -82,7 +82,7 @@
 {% endmacro %}
 
 {% macro fleet2Landing(report) %}
-    {% if report.context.fleets[report.data.fleetId2] is defined %}
-        Landung: {{ formatTimestamp(report.context.fleets[report.data.fleetId2].landTime) }}
+    {% if report.marketReportData.fleet2 is defined %}
+        Landung: {{ formatTimestamp(report.marketReportData.fleet2.landTime) }}
     {% endif %}
 {% endmacro %}

@@ -1,9 +1,9 @@
 {% import 'components/reports/macros.html.twig' as macros %}
 
-Du hast das Angebot #{{ report.data.recordId }} im {{ macros.marketLink(report.context.entities[report.entity1Id]) }}
-auf {{ macros.entity(report.context.entities[report.entity1Id]) }} abgebrochen!<br/><br/>
-{{ formatNumber(report.data.shipCount) }} <b>{{ report.context.shipNames[report.data.shipId] }}</b> <br/><br/>
+Du hast das Angebot #{{ report.marketReportData.recordId }} im {{ macros.marketLink(report.entity1) }}
+auf {{ macros.entity(report.entity1) }} abgebrochen!<br/><br/>
+{{ formatNumber(report.marketReportData.shipCount) }} <b>{{ report.marketReportData.ship.name }}</b> <br/><br/>
 zu einem Preis von: <br/><br/>
-{{ macros.resourceTable(report.data.buy, report.context.resourceNames) }}
+{{ macros.resourceTable(report.marketReportData.buy) }}
 
-{{ (report.data.shipCount * report.data.factor)|round(0, 'floor') }} Schiffe ({{ (report.data.factor * 100)|round }}%) wurden zurückerstattet.
+{{ (report.marketReportData.shipCount * report.marketReportData.factor)|round(0, 'floor') }} Schiffe ({{ (report.marketReportData.factor * 100)|round }}%) wurden zurückerstattet.

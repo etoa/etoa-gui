@@ -26,15 +26,14 @@ use EtoA\Log\LogSeverity;
 use EtoA\Market\MarketAuctionRepository;
 use EtoA\Market\MarketResourceRepository;
 use EtoA\Market\MarketShipRepository;
+use EtoA\Message\ReportRepository;
 use EtoA\Missile\MissileRepository;
 use EtoA\Notepad\NotepadDataRepository;
 use EtoA\Security\Player\CurrentPlayer;
 use EtoA\Ship\ShipListRepository;
 use EtoA\Ship\ShipQueueRepository;
-use EtoA\Ship\ShipRepository;
 use EtoA\Support\Mail\MailSenderService;
 use EtoA\Technology\TechnologyListItemRepository;
-use EtoA\Universe\Planet\PlanetRepository;
 use EtoA\Universe\Planet\PlanetService;
 use Exception;
 use Symfony\Bundle\SecurityBundle\Security;
@@ -51,7 +50,6 @@ class UserService
         private readonly UserRepository                $userRepository,
         private readonly UserRatingRepository          $userRatingRepository,
         private readonly UserPropertiesRepository      $userPropertiesRepository,
-        private readonly PlanetRepository              $planetRepository,
         private readonly BuildingListItemRepository    $buildingRepository,
         private readonly TechnologyListItemRepository  $technologyRepository,
         private readonly MailSenderService             $mailSenderService,
@@ -66,7 +64,6 @@ class UserService
         private readonly MarketShipRepository          $marketShipRepository,
         private readonly NotepadDataRepository         $notepadRepository,
         private readonly FleetRepository               $fleetRepository,
-        private readonly ShipRepository                $shipRepository,
         private readonly DefenseRepository             $defenseRepository,
         private readonly MissileRepository             $missileRepository,
         private readonly BuddyListRepository           $buddyListRepository,
@@ -85,7 +82,8 @@ class UserService
         private readonly Security                      $security,
         private readonly ShipListRepository            $shipListRepository,
         private readonly ShipQueueRepository           $shipQueueRepository,
-        private readonly FleetShipRepository           $fleetShipRepository
+        private readonly FleetShipRepository           $fleetShipRepository,
+        private readonly ReportRepository              $reportRepository
     )
     {
     }
@@ -231,8 +229,10 @@ class UserService
         $this->userCommentRepository->removeForUser($user);
         $this->userRatingRepository->removeForUser($user);
         $this->ticketRepository->removeForUser($user);
+        $this->reportRepository->removeForUser($user);
 
         $this->userRepository->remove($user);
+        $this->userRepository->save();
 
         //Log schreiben
         if ($self) {
@@ -283,7 +283,7 @@ die Spielleitung";
 
         $inactiveUsers = $this->userRepository->findInactive($registerTime, $onlineTime);
         foreach ($inactiveUsers as $user) {
-            $this->delete($user->getId());
+            $this->delete($user);
         }
 
         $this->logRepository->add(

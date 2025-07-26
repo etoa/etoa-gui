@@ -1,8 +1,8 @@
 {% import 'components/reports/macros.html.twig' as macros %}
 
-Du hast folgendes Angebot (#{{ report.data.recordId }}) von {{ macros.user(report.opponentId, report) }} ersteigert:<br/><br/>
+Du hast folgendes Angebot (#{{ report.marketReportData.recordId }}) von {{ macros.user(report.opponent1) }} ersteigert:<br/><br/>
 
 {{ macros.marketResourceTable(report) }}
 
 <br/>
-Die Auktion wird nach {{ report.context.config.getInt('market_auction_delay_time')}} Stunden gelöscht und die Waren werden in wenigen Minuten versendet.<br /><br />
+Die Auktion wird nach {{ configValue('market_auction_delay_time')}} Stunden gelöscht und die Waren werden in wenigen Minuten versendet.<br /><br />

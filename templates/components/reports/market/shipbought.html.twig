@@ -1,9 +1,9 @@
 {% import 'components/reports/macros.html.twig' as macros %}
 
-Du hast folgendes Angebot (#{{ report.data.recordId }}) von "{{ macros.user(report.opponentId, report) }} gekauft:<br/><br/>
-{{ formatNumber(report.data.shipCount) }} <b>{{ report.context.shipNames[report.data.shipId] }}</b> <br/><br/>
+Du hast folgendes Angebot (#{{ report.marketReportData.recordId }}) von "{{ macros.user(report.opponent1, report) }} gekauft:<br/><br/>
+{{ formatNumber(report.marketReportData.shipCount) }} <b>{{ report.marketReportData.ship.name }}</b> <br/><br/>
 zu einem Preis von: <br/><br/>
-{{ macros.resourceTable(report.data.buy, report.context.resourceNames) }}
+{{ macros.resourceTable(report.marketReportData.buy) }}
 
-Die Waren werden vom Marktplatz nach {{ macros.entity(report.context.entities[report.entity1Id]) }} geliefert.
+Die Waren werden vom Marktplatz nach {{ macros.entity(report.entity1) }} geliefert.
 {{ macros.fleet2Landing(report) }}

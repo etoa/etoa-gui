@@ -331,4 +331,22 @@ class ReportRepository extends AbstractRepository
 
         return $map;
     }
+
+    public function removeForUser(User $user) : void
+    {
+        $this->createQueryBuilder('q')
+            ->delete()
+            ->where('q.id = :user')
+            ->setParameter('user', $user)
+            ->getQuery()
+            ->execute();
+
+        $this->createQueryBuilder('q')
+            ->update()
+            ->set('q.opponent1',null)
+            ->where('q.opponent1 = :user')
+            ->setParameter('user', $user)
+            ->getQuery()
+            ->execute();
+    }
 }
