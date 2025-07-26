@@ -5,47 +5,74 @@
     {% if msg.success is defined %}
         {{ macros.successMessage(msg.success) }}
     {% endif %}
-    {{ form_start(form) }}
-        <table class="tb">
-            <caption>{{ title }}</caption>
-            <tr>
-                <th colspan="2">Nachricht:</th>
-                {% if title == 'Neueste Berichte' %}
-                    <th style="width:100px;">Kategorie:</th>
-                {% endif %}
-                <th style="width:150px">Datum:</th>
-                <th style="text-align:center;">
-                    <input type="button" id="selectBtn" value="X" onclick="xajax_reportSelectAll(this.value)"/>
-                </th>
-            </tr>
 
-            {% for report in paginator.getPaginatedItems %}
+    {% if form.children.reports.children|length > 0 %}
+        {{ form_start(form) }}
+            <table class="tb">
+                <caption>{{ title }}</caption>
                 <tr>
-                    <td class='messageCellIcon' style="width:16px">
-                        <img src="{{ report.isRead?asset('/build/images/pm_normal.gif'):asset('/build/images/pm_new.gif') }}"/>
-                    </td>
-                    <td class='messageCellSubject' id="header{{ report.id }}">
-                        <a href="javascript:;" onclick="toggleBox('report{{ report.id }}')">{{ report.createFactory.getSubject }}</a>
-                    </td>
+                    <th colspan="5">
+                        <div style="float:right;">
+                            {% if pagination.getNextPageNumber %}
+                                <a href="{{ app.request.pathInfo }}?{{ app.request.query.all|merge({page: pagination.getNextPageNumber})|url_encode }}">
+                                    <input type="button" value=">">
+                                </a>
+                                <a href="{{ app.request.pathInfo }}?{{ app.request.query.all|merge({page: pagination.getLastPageNumber})|url_encode }}">
+                                    <input type="button" value=">>">
+                                </a>
+                            {% endif %}
+                            {% if pagination.getPreviousPageNumber %}
+                                <a href="{{ app.request.pathInfo }}?{{ app.request.query.all|merge({page: pagination.getFirstPageNumber})|url_encode }}">
+                                    <input type="button" value="<<">
+                                </a>
+                                <a href="{{ app.request.pathInfo }}?{{ app.request.query.all|merge({page: pagination.getPreviousPageNumber})|url_encode }}">
+                                    <input type="button" value="<">
+                                </a>
+                            {%  endif %}
+                        </div>
+                    </th>
+                </tr>
+                <tr>
+                    <th colspan="2">Nachricht:</th>
                     {% if title == 'Neueste Berichte' %}
-                        <td class='messageCellCategory'>
-                            <b>{{ report.typeName }}</b>
-                        </td>
+                        <th style="width:100px;">Kategorie:</th>
                     {% endif %}
-                    <td class='messageCellDate'>{{ formatTimestamp(report.timestamp) }}</td>
-                    <td class='messageCellAction' id="del{{ report.id}}" style="width:2%;text-align:center;padding:0;vertical-align:middle;">
-                        <input id="delreport[cnt]" type="checkbox" name="delreport[rid]" value="1" title="Report zum L&ouml;schen markieren" />
-                    </td>
+                    <th style="width:150px">Datum:</th>
+                    <th style="text-align:center;">
+                        <input type="button" id="selectBtn" value="X" onclick="xajax_reportSelectAll(this.value)"/>
+                    </th>
                 </tr>
-                <tr>
-                    <td colspan="5" style="padding:10px;display:none;" id="report{{ report.id }}">
-                        {{ include('components/reports/' ~ report.type ~ '/'~report.createFactory.subtype~'.html.twig', { report: report }) }}
-                        <br /><br />
-                        <input type="button" value="L&ouml;schen" onclick="toggleBox('report rid');xajax_reportSetDeleted( rid);" />&nbsp;
-                        <twig:ticketbutton cat="8" title="Regelverstoss melden"/>
-                    </td>
-                </tr>
-            {% endfor %}
-        </table>
-    {{ form_end(form) }}
+
+                {% for report in form.children.reports.children %}
+                    <tr>
+                        <td class='messageCellIcon' style="width:16px">
+                            <img src="{{ report.vars.data.isRead?asset('/build/images/pm_normal.gif'):asset('/build/images/pm_new.gif') }}"/>
+                        </td>
+                        <td class='messageCellSubject' id="header{{ report.vars.data.id }}">
+                            <a href="javascript:" onclick="toggleBox('report{{ report.vars.data.id }}')">{{ report.vars.data.createFactory.getSubject }}</a>
+                        </td>
+                        {% if title == 'Neueste Berichte' %}
+                            <td class='messageCellCategory'>
+                                <b>{{ report.vars.data.typeName }}</b>
+                            </td>
+                        {% endif %}
+                        <td class='messageCellDate'>{{ formatTimestamp(report.vars.data.timestamp) }}</td>
+                        <td class='messageCellAction' id="del{{ report.vars.data.id}}" style="width:2%;text-align:center;padding:0;vertical-align:middle;">
+                            {{ form_widget(report.children.deleted) }}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="5" style="padding:10px;display:none;" id="report{{ report.vars.data.id }}">
+                            {{ include('components/reports/' ~ report.vars.data.type ~ '/'~report.vars.data.createFactory.subtype~'.html.twig', { report: report.vars.data }) }}
+                            <br /><br />
+                            {{ form_widget(report.children.deleteReport) }}
+                            <twig:ticketbutton cat="8" title="Regelverstoss melden"/>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </table>
+        {{ form_end(form) }}
+    {% else %}
+        {{ macros.errorMessage('Keine Berichte vorhanden') }}
+    {% endif %}
 {% endblock %}

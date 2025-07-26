@@ -30,11 +30,17 @@
                     </td>
                     <td style="width:120px;">{{ message.cat.name }}</td>
                     <td style="width:120px;">
-                        <div id="ttuser{{ message.userFrom.id }}" style="display:none;">
-                            <a href="{{ path('game.userinfo',{id:message.userFrom.id, popup:1}) }}" onclick="window.open('{{ path('game.userinfo',{id:message.userFrom.id, popup:1}) }}','popup','status=no,width=800,height=600,scrollbars=yes');return false;">Profil anzeigen</a> <br>
-                            <a href="{{ path('game.stats.userdetail',{id:message.userFrom.id, popup:1}) }}" onclick="window.open('{{ path('game.stats.userdetail',{id:message.userFrom.id, popup:1}) }}','popup','status=no,width=800,height=600,scrollbars=yes');return false;">Punkteverlauf</a> <br>
-                        </div>
-                        <a href="#" onclick="showTT('{{ message.userFrom.nick }}','ttuser{{ message.userFrom.id }}',0,event,this);return false;">{{ message.userFrom.nick }}</a>
+                        {% if message.userFrom and message.userFrom.id > 0 %}
+                            <div id="ttuser{{ message.userFrom.id }}" style="display:none;">
+                                <a href="{{ path('game.userinfo',{id:message.userFrom.id, popup:1}) }}" onclick="window.open('{{ path('game.userinfo',{id:message.userFrom.id, popup:1}) }}','popup','status=no,width=800,height=600,scrollbars=yes');return false;">Profil anzeigen</a> <br>
+                                <a href="{{ path('game.stats.userdetail',{id:message.userFrom.id, popup:1}) }}" onclick="window.open('{{ path('game.stats.userdetail',{id:message.userFrom.id, popup:1}) }}','popup','status=no,width=800,height=600,scrollbars=yes');return false;">Punkteverlauf</a> <br>
+                            </div>
+                            <a href="#" onclick="showTT('{{ message.userFrom.nick }}','ttuser{{ message.userFrom.id }}',0,event,this);return false;">{{ message.userFrom.nick }}</a>
+                        {% elseif message.userFrom and message.userFrom.id == 0 %}
+                            <i>System</i>
+                        {% else %}
+                            <i>Unbekannt</i>
+                        {% endif %}
                     </td>
                     <td style="width:120px;">
                         {{ formatTimestamp(message.timestamp) }}

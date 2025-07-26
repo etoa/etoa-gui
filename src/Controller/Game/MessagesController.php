@@ -100,7 +100,7 @@ class MessagesController extends AbstractGameController
             if($form->get('deleteSystem')->isClicked()) {
                 foreach ($form->getData() as $data) {
                     foreach ($data as $message) {
-                        if($message->getUserFrom() && $message->getUserFrom->getId() == 0) {
+                        if($message->getUserFrom() && $message->getUserFrom()->getId() == 0) {
                             $message->setDeleted(true);
                         }
                     }
@@ -275,12 +275,14 @@ class MessagesController extends AbstractGameController
             if($form->get('deleteSystem')->isClicked()) {
                 foreach ($form->getData() as $data) {
                     foreach ($data as $message) {
-                        if($message->getUserFrom() && $message->getUserFrom->getId() == 0) {
+                        if($message->getUserFrom() && $message->getUserFrom()->getId() == 0) {
                             $message->setDeleted(true);
                         }
                     }
                 }
             }
+
+            $this->messageCategoryRepository->save();
         }
 
         return $this->render('game/messages/archive.html.twig', [

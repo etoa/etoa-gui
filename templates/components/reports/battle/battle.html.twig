@@ -107,7 +107,7 @@ vom Planeten {{ macros.entity(report.entity1) }}<br/>
                     <br/><br/>
 
                     {% if report.battleReportData.heal[round] > 0 and shieldStructure < initShieldStructure %}
-                        {% set shieldStructure = min(initShieldStructure, (shieldStructure + report.data.heal[round])) %}
+                        {% set shieldStructure = min(initShieldStructure, (shieldStructure + report.battleReportData.heal[round])) %}
                         Die Einheiten des Angreifers heilen {{ formatNumber(report.battleReportData.heal[round]) }} Struktur- und Schildpunkte. Der Angreifer hat danach wieder {{ formatNumber(shieldStructure) }} Struktur- und Schildpunkte
                         <br/><br/>
                     {% endif %}
