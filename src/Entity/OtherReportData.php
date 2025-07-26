@@ -164,7 +164,7 @@ class OtherReportData
 
     public function getShips(): array
     {
-        return DataTransformer::dataString($this->ships);
+        return DataTransformer::dataString($this->ships,Ship::class);
     }
 
     public function setShips(string $ships): static
@@ -212,6 +212,8 @@ class OtherReportData
 
     public function getResources(): BaseResources
     {
+        $this->resources = new BaseResources();
+
         $this->resources->metal = $this->getResMetal();
         $this->resources->crystal = $this->getResCrystal();
         $this->resources->plastic = $this->getResPlastic();

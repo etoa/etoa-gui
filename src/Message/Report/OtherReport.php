@@ -2,9 +2,9 @@
 
 namespace EtoA\Message\Report;
 
-use EtoA\Core\Database\PropertyAssign;
 use EtoA\Entity\OtherReportData;
 use EtoA\Entity\Report;
+use EtoA\Message\ReportContext;
 
 class OtherReport extends Report implements ReportInterface
 {
@@ -23,7 +23,7 @@ class OtherReport extends Report implements ReportInterface
         'collectcrystalfailed' => 'Nebelfeldensammeln gescheitert',
         'supportreturn' => 'Supportflotte Rückflug',
         'support' => 'Supportflotte angekommen',
-        'supportfailed' => 'Supportflug fehlgeschlagen"',
+        'supportfailed' => 'Supportflug fehlgeschlagen',
         'supportoverflow' => 'Support nicht möglich',
         'transport' => 'Transport angekommen',
         'collectdebris' => 'Trümmer gesammelt',
@@ -35,10 +35,13 @@ class OtherReport extends Report implements ReportInterface
         'actionfailed' => 'Aktion gescheitert',
     ];
 
+    public readonly ReportContext $context;
+
     public function __construct(
-        Report $report,
         public OtherReportData $data
-    ) {}
+    ) {
+        $this->context = new ReportContext();
+    }
 
     public function getSubject(): string
     {

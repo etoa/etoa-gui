@@ -18,18 +18,18 @@
 
 {% macro startTargetTimeMission(report) %}
     {% import _self as macros %}
-    <strong>Ziel: </strong>{{ macros.entity(entity1) }}<br />
+    <strong>Ziel: </strong>{{ macros.entity(report.entity1) }}<br />
     <strong>Start: </strong>
-    {% if report.type == 'other' and report.data.subtype == 'market' %}
+    {% if report.type == 'other' and report.createFactory.subtype == 'market' %}
         Marktplatz
-    {% elseif report.type == 'other' and report.data.subtype == 'delivery' %}
+    {% elseif report.type == 'other' and report.createFactory.subtype == 'delivery' %}
         Allianzbasis
     {% else %}
         {{ macros.entity(report.entity2) }}
     {% endif %}
     <br />
     <strong>Zeit: </strong>{{ formatTimestamp(report.timestamp) }}<br />
-    <strong>Auftrag: </strong>{{ report.context.fleetActions[report.data.action] }} [{{ report.context.fleetStatus[report.data.status] }}]<br />
+    <strong>Auftrag: </strong>{{ report.createFactory.context.fleetActions[report.createFactory.data.action] }} [{{ report.createFactory.context.fleetStatus[report.createFactory.data.status] }}]<br />
 {% endmacro %}
 
 {% macro resourceTable(resources) %}

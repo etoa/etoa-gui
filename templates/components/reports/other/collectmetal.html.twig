@@ -1,10 +1,10 @@
 {% import 'components/reports/macros.html.twig' as macros %}
 
-Eine Flotte vom Planeten {{ macros.entity(report.context.entities[report.entity2Id]) }} hat das Ziel {{ macros.entity(report.context.entities[report.entity1Id]) }} um {{ formatTimestamp(report.timestamp) }} erreicht und Rohstoffe gesammelt.<br />
+Eine Flotte vom Planeten {{ macros.entity(report.entity2) }} hat das Ziel {{ macros.entity(report.entity1) }} um {{ formatTimestamp(report.timestamp) }} erreicht und Rohstoffe gesammelt.<br />
 <br /><strong>ROHSTOFFE:</strong><br />
-{{ macros.resourceTable(report.data.resources, report.context.resourceNames) }}
+{{ macros.resourceTable(report.otherReportData.resources) }}
 
-{% if report.data.ships %}
-    <br />Aufgrund einer Kolision mit einem Asteroiden sind einige deiner Schiffe zerstört worden:<br />
-    {{ macros.dataTable(report.data.ships, report.context.shipNames) }}
+{% if report.otherReportData.ships %}
+    <br />Aufgrund einer Kollision mit einem Asteroiden sind einige deiner Schiffe zerstört worden:<br />
+    {{ macros.dataTable(report.otherReportData.ships) }}
 {% endif %}

@@ -281,11 +281,11 @@ class Report
     public function createFactory(): OtherReport|MarketReport|ExploreReport|BattleReport|SpyReport
     {
         return match ($this->type) {
-            'market' => new MarketReport($this, $this->marketReportData),
+            'market' => new MarketReport($this->marketReportData),
             'explore' => new ExploreReport($this),
             'spy' => new SpyReport($this, $this->spyReportData),
             'battle' => new BattleReport($this, $this->battleReportData),
-            default => new OtherReport($this, $this->otherReportData),
+            default => new OtherReport($this->otherReportData),
         };
     }
 

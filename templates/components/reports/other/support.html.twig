@@ -4,5 +4,5 @@
 <br /><br />
 Eine Flotte hat ihr Ziel erreicht!<br /><br />
 {{ macros.startTargetTimeMission(report) }}
-<strong>Ende des Auftrages: </strong>{{ formatTimestamp(report.content) }}<br />
-<strong>Flottenbesitzer: </strong>{{ report.context.entities[report.opponentId] }}<br />
+<strong>Ende des Auftrages: </strong>{{ formatTimestamp(report.content|number_format(0, '', '')) }}<br />
+<strong>Flottenbesitzer: </strong>{{ report.opponent1.nick }}<br />

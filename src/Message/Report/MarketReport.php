@@ -28,7 +28,6 @@ class MarketReport extends Report implements ReportInterface
     public readonly ReportContext $context;
 
     public function __construct(
-        Report $report,
         public MarketReportData $data
     ) {
         $this->context = new ReportContext();

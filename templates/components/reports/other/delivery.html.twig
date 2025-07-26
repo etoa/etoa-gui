@@ -3,8 +3,8 @@
 Eine Flotte von der Allianzbasis hat folgendes Ziel erreicht!<br /><br />
 {{ macros.startTargetTimeMission(report) }}
 <strong>SCHIFFE</strong><br />
-{% if report.data.ships %}
-    {{ macros.dataTable(report.data.ships, report.context.shipNames) }}
+{% if report.otherReportData.ships %}
+    {{ macros.dataTable(report.otherReportData.ships) }}
 {% else %}
     <i>Nichts vorhanden!</i><br />
 {% endif %}

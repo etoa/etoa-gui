@@ -3,10 +3,10 @@
 Eine Flotte vom Handelsministerium hat folgendes Ziel erreicht!<br /><br />
 {{ macros.startTargetTimeMission(report) }}
 <br />Die gekauften Waren sind angekommen.<br />
-{% if report.data.ships %}
+{% if report.otherReportData.ships %}
     <br /><strong>SCHIFFE</strong><br />
-    {{ macros.dataTable(report.data.ships, report.context.shipNames) }}
+    {{ macros.dataTable(report.otherReportData.ships) }}
 {% endif %}
 
 <br /><strong>WAREN</strong><br />
-{{ macros.resourceTable(report.data.resources, report.context.resourceNames) }}
+{{ macros.resourceTable(report.otherReportData.resources) }}

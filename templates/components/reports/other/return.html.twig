@@ -6,11 +6,11 @@ Eine eurer Flotten hat ihr Ziel erreicht!<br /><br />
 <br />
 
 <strong>SCHIFFE</strong><br />
-{% if report.data.ships %}
-    {{ macros.dataTable(report.data.ships, report.context.shipNames) }}
+{% if report.otherReportData.ships %}
+    {{ macros.dataTable(report.otherReportData.ships) }}
 {% else %}
     <i>Nichts vorhanden!</i><br />
 {% endif %}
 
 <br /><strong>WAREN</strong><br />
-{{ macros.resourceTable(report.data.resources, report.context.resourceNames) }}
+{{ macros.resourceTable(report.otherReportData.resources) }}

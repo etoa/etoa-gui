@@ -195,11 +195,11 @@ class TwigExtension extends AbstractExtension
     }
 
     /**
-     * @param string|int $timestamp
+     * @param int|string $timestamp
      */
-    public function formatTimestamp($timestamp): string
+    public function formatTimestamp(int|string $timestamp): string
     {
-        return StringUtils::formatDate($timestamp);
+        return StringUtils::formatDate((int)$timestamp);
     }
 
     public function formatTimespan(int $timespan): string
