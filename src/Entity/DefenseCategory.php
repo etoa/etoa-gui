@@ -1,8 +1,9 @@
 <?php declare(strict_types=1);
 
-namespace EtoA\Defense;
+namespace EtoA\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use EtoA\Defense\DefenseCategoryRepository;
 
 #[ORM\Entity(repositoryClass: DefenseCategoryRepository::class)]
 #[ORM\Table(name: 'def_cat')]
