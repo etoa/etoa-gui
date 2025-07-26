@@ -1,4 +1,4 @@
 {% import 'components/reports/macros.html.twig' as macros %}
 
-Dein Versuch, den Planeten {{ macros.entity(report.context.entities[report.entity1Id]) }} auszuspionieren schlug fehl, da du entdeckt wurdest. Deine Sonden kehren ohne Ergebniss zurück!<br /><br />
-<strong>Spionageabwehr:</strong> {{ report.data.spyDefense }}%
+Dein Versuch, den Planeten {{ macros.entity(report.entity1) }} auszuspionieren schlug fehl, da du entdeckt wurdest. Deine Sonden kehren ohne Ergebnisse zurück!<br /><br />
+<strong>Spionageabwehr:</strong> {{ report.spyReportData.spyDefense }}%

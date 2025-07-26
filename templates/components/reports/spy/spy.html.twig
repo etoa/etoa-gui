@@ -1,49 +1,49 @@
 {% import 'components/reports/macros.html.twig' as macros %}
 
-<strong>Planet:</strong> {{ macros.entity(report.context.entities[report.entity1Id]) }}<br />
-<strong>Besitzer:</strong> {{ macros.user(report.opponentId, report) }}<br />
+<strong>Planet:</strong> {{ macros.entity(report.entity1) }}<br />
+<strong>Besitzer:</strong> {{ macros.user(report.opponent1) }}<br />
 
-{% if report.data.showBuildings %}
+{% if report.spyReportData.buildings %}
     <br /><strong>GEBÄUDE:</strong><br />
-    {% if report.data.buildings %}
-        {{ macros.dataTable(report.data.buildings, report.context.buildingNames) }}
+    {% if report.spyReportData.buildings %}
+        {{ macros.dataTable(report.spyReportData.buildings) }}
     {% else %}
         <i>Nichts vorhanden!</i><br />
     {% endif %}
 {% endif %}
 
-{% if report.data.showTechnologies %}
+{% if report.spyReportData.showTechnologies %}
     <br /><strong>TECHNOLOGIEN:</strong><br />
-    {% if report.data.technologies %}
-        {{ macros.dataTable(report.data.technologies, report.context.technologyNames) }}
+    {% if report.spyReportData.technologies %}
+        {{ macros.dataTable(report.spyReportData.technologies) }}
     {% else %}
         <i>Nichts vorhanden!</i><br />
     {% endif %}
 {% endif %}
 
-{% if report.data.showShips %}
+{% if report.spyReportData.showShips %}
     <br /><strong>SCHIFFE:</strong><br />
-    {% if report.data.ships %}
-        {{ macros.dataTable(report.data.ships, report.context.shipNames) }}
+    {% if report.spyReportData.ships %}
+        {{ macros.dataTable(report.spyReportData.ships) }}
     {% else %}
         <i>Nichts vorhanden!</i><br />
     {% endif %}
 {% endif %}
 
 
-{% if report.data.showDefense %}
+{% if report.spyReportData.showDefense %}
     <br /><strong>VERTEIDIGUNG:</strong><br />
-    {% if report.data.defense %}
-        {{ macros.dataTable(report.data.defense, report.context.defenseNames) }}
+    {% if report.spyReportData.defense %}
+        {{ macros.dataTable(report.spyReportData.defense) }}
     {% else %}
         <i>Nichts vorhanden!</i><br />
     {% endif %}
 {% endif %}
 
-{% if report.data.resources.sum > 0 %}
+{% if report.spyReportData.resources.sum > 0 %}
     <br /><strong>ROHSTOFFE:</strong><br />
-    {{ macros.resourceTable(report.data.resources, report.context.resourceNames) }}
+    {{ macros.resourceTable(report.spyReportData.resources) }}
 {% endif %}
 
-<br /><strong>Spionageabwehr:</strong> {{ report.data.spyDefense }}%<br />
-<strong>Tarnung:</strong> {{ report.data.coverage }}%
+<br /><strong>Spionageabwehr:</strong> {{ report.spyReportData.spyDefense }}%<br />
+<strong>Tarnung:</strong> {{ report.spyReportData.coverage }}%

@@ -13,7 +13,7 @@ class SpyReport extends Report implements ReportInterface
         'spyfailed' => 'Spionage fehlgeschlagen',
         'surveillancefailed' => 'Raumüberwachung (verhindert)',
         'analyze' => 'Ziel analysiert',
-        'analyzefailed' => 'Analyseversuch gescheitert',
+        'analyzefaild' => 'Analyseversuch gescheitert',
     ];
 
     public function __construct(
@@ -23,14 +23,11 @@ class SpyReport extends Report implements ReportInterface
 
     public function getSubject(): string
     {
-        switch ($this->data->getSubtype()) {
-            case 'spy':
-                return 'Spionagebericht ' . $this->report->getEntity1()->toString();
-            case 'spyfailed':
-                return 'Spionage fehlgeschlagen auf ' . $this->report->getEntity1()->toString();
-            default:
-                return self::SUB_TYPES[$this->data->getSubtype()];
-        }
+        return match ($this->data->getSubtype()) {
+            'spy' => 'Spionagebericht ' . $this->report->getEntity1()->toString(),
+            'spyfailed' => 'Spionage fehlgeschlagen auf ' . $this->report->getEntity1()->toString(),
+            default => self::SUB_TYPES[$this->data->getSubtype()],
+        };
     }
 
     public function getSubtype(): ?string

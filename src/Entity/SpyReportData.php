@@ -61,6 +61,14 @@ class SpyReportData
     #[ORM\Column]
     private int $coverage;
 
+    private bool $showShips;
+
+    private bool $showBuildings;
+
+    private bool $showTechnologies;
+
+    private bool $showDefense;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -152,7 +160,7 @@ class SpyReportData
 
     public function getShips(): array
     {
-        return DataTransformer::dataString($this->ships);
+        return DataTransformer::dataString($this->ships, Ship::class);
     }
 
     public function setShips(string $ships): static
@@ -164,7 +172,7 @@ class SpyReportData
 
     public function getDefense(): array
     {
-        return DataTransformer::dataString($this->defense);
+        return DataTransformer::dataString($this->defense, Defense::class);
     }
 
     public function setDefense(string $defense): static
@@ -176,7 +184,7 @@ class SpyReportData
 
     public function getBuildings(): array
     {
-        return DataTransformer::dataString($this->buildings);
+        return DataTransformer::dataString($this->buildings, Building::class);
     }
 
     public function setBuildings(string $buildings): static
@@ -188,7 +196,7 @@ class SpyReportData
 
     public function getTechnologies(): array
     {
-        return DataTransformer::dataString($this->technologies);
+        return DataTransformer::dataString($this->technologies, Technology::class);
     }
 
     public function setTechnologies(string $technologies): static
@@ -236,6 +244,7 @@ class SpyReportData
 
     public function getResources(): BaseResources
     {
+        $this->resources = new BaseResources();
         $this->resources->metal = $this->getResMetal();
         $this->resources->crystal = $this->getResCrystal();
         $this->resources->plastic = $this->getResPlastic();
@@ -256,5 +265,25 @@ class SpyReportData
         $this->setResPeople($resources->people);
 
         $this->resources = $resources;
+    }
+
+    public function isShowShips(): bool
+    {
+        return $this->ships != '';
+    }
+
+    public function isShowBuildings(): bool
+    {
+        return $this->buildings != '';
+    }
+
+    public function isShowTechnologies(): bool
+    {
+        return $this->technologies != '';
+    }
+
+    public function isShowDefense(): bool
+    {
+        return $this->defense != '';
     }
 }
