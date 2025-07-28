@@ -1,0 +1,7 @@
+{% extends 'layout/game.html.twig' %}
+
+{% block content %}
+    <h1>Allianzkryptocenter (Stufe {{ level }} ) der Allianz {{ app.user.data.alliance.toString }}</h1>
+    <twig:ResourceBox/>
+    <twig:Crypto userCooldownDifference="{{ userCooldownDifference }}" level="{{ level }}"/>
+{% endblock %}
