@@ -9,12 +9,16 @@ use EtoA\Alliance\AllianceBuildingCooldownRepository;
 class AllianceBuildingCooldown
 {
     #[ORM\Id]
-    #[ORM\Column]
+    #[ORM\Column(name: 'cooldown_user_id')]
     private ?int $userId = null;
 
-    #[ORM\Id]
-    #[ORM\Column]
-    private ?int $allianceBuildingId = null;
+    #[ORM\JoinColumn(name: 'cooldown_user_id', referencedColumnName: 'user_id')]
+    #[ORM\ManyToOne(targetEntity: User::class)]
+    private ?User $user = null;
+
+    #[ORM\JoinColumn(name: 'cooldown_alliance_building_id', referencedColumnName: 'alliance_building_id')]
+    #[ORM\ManyToOne(targetEntity: AllianceBuilding::class)]
+    private ?AllianceBuilding $allianceBuilding = null;
 
     #[ORM\Column]
     private ?int $cooldownEnd = null;
@@ -31,18 +35,6 @@ class AllianceBuildingCooldown
         return $this;
     }
 
-    public function getAllianceBuildingId(): ?int
-    {
-        return $this->allianceBuildingId;
-    }
-
-    public function setAllianceBuildingId(int $allianceBuildingId): static
-    {
-        $this->allianceBuildingId = $allianceBuildingId;
-
-        return $this;
-    }
-
     public function getCooldownEnd(): ?int
     {
         return $this->cooldownEnd;
@@ -51,6 +43,30 @@ class AllianceBuildingCooldown
     public function setCooldownEnd(int $cooldownEnd): static
     {
         $this->cooldownEnd = $cooldownEnd;
+
+        return $this;
+    }
+
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
+
+    public function setUser(?User $user): static
+    {
+        $this->user = $user;
+
+        return $this;
+    }
+
+    public function getAllianceBuilding(): ?AllianceBuilding
+    {
+        return $this->allianceBuilding;
+    }
+
+    public function setAllianceBuilding(?AllianceBuilding $allianceBuilding): static
+    {
+        $this->allianceBuilding = $allianceBuilding;
 
         return $this;
     }

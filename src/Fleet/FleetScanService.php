@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace EtoA\Fleet;
 
+use EtoA\Alliance\AllianceBuildingCooldownRepository;
 use EtoA\Alliance\AllianceBuildingId;
 use EtoA\Alliance\AllianceBuildingRepository;
 use EtoA\Alliance\AllianceHistoryRepository;
@@ -38,62 +39,31 @@ use EtoA\User\UserRepository;
  */
 class FleetScanService
 {
-    private ConfigurationService $config;
-    private UserRepository $userRepository;
-    private PlanetRepository $planetRepository;
-    private EntityRepository $entityRepository;
-    private FleetRepository $fleetRepository;
-    private EntityService $entityService;
-    private DefenseRepository $defenseRepository;
-    private TechnologyListItemRepository $technologyRepository;
-    private ShipDataRepository $shipDataRepository;
-    private MessageRepository $messageRepository;
-    private AllianceBuildingRepository $allianceBuildingRepository;
-    private AllianceTechnologyRepository $allianceTechnologyRepository;
-    private AllianceRepository $allianceRepository;
-    private AllianceHistoryRepository $allianceHistoryRepository;
-    private SpecialistDataRepository $specialistDataRepository;
-
     private const FLEET_DIRECTION_ARRIVING = 'arriving';
     private const FLEET_DIRECTION_DEPARTING = 'departing';
 
     public function __construct(
-        ConfigurationService         $config,
-        UserRepository               $userRepository,
-        PlanetRepository             $planetRepository,
-        EntityRepository             $entityRepository,
-        FleetRepository              $fleetRepository,
-        EntityService                $entityService,
-        DefenseRepository            $defenseRepository,
-        TechnologyListItemRepository $technologyRepository,
-        ShipDataRepository           $shipDataRepository,
-        MessageRepository            $messageRepository,
-        AllianceBuildingRepository   $allianceBuildingRepository,
-        AllianceTechnologyRepository $allianceTechnologyRepository,
-        AllianceRepository           $allianceRepository,
-        AllianceHistoryRepository    $allianceHistoryRepository,
-        SpecialistDataRepository     $specialistDataRepository
-    ) {
-        $this->config = $config;
-        $this->userRepository = $userRepository;
-        $this->planetRepository = $planetRepository;
-        $this->entityRepository = $entityRepository;
-        $this->fleetRepository = $fleetRepository;
-        $this->entityService = $entityService;
-        $this->defenseRepository = $defenseRepository;
-        $this->technologyRepository = $technologyRepository;
-        $this->shipDataRepository = $shipDataRepository;
-        $this->messageRepository = $messageRepository;
-        $this->allianceBuildingRepository = $allianceBuildingRepository;
-        $this->allianceTechnologyRepository = $allianceTechnologyRepository;
-        $this->allianceRepository = $allianceRepository;
-        $this->allianceHistoryRepository = $allianceHistoryRepository;
-        $this->specialistDataRepository = $specialistDataRepository;
-    }
+        private readonly ConfigurationService         $config,
+        private readonly UserRepository               $userRepository,
+        private readonly PlanetRepository             $planetRepository,
+        private readonly EntityRepository             $entityRepository,
+        private readonly FleetRepository              $fleetRepository,
+        private readonly EntityService                $entityService,
+        private readonly DefenseRepository            $defenseRepository,
+        private readonly TechnologyListItemRepository $technologyRepository,
+        private readonly ShipDataRepository           $shipDataRepository,
+        private readonly MessageRepository            $messageRepository,
+        private readonly AllianceBuildingRepository   $allianceBuildingRepository,
+        private readonly AllianceTechnologyRepository $allianceTechnologyRepository,
+        private readonly AllianceRepository           $allianceRepository,
+        private readonly AllianceHistoryRepository    $allianceHistoryRepository,
+        private readonly SpecialistDataRepository     $specialistDataRepository,
+        private readonly AllianceBuildingCooldownRepository $allianceBuildingCooldownRepository
+    ) {}
 
-    public function getUserCooldownDifference(int $userId): int
+    public function getUserCooldownDifference(User $user): int
     {
-        $userCooldown = $this->allianceBuildingRepository->getUserCooldown($userId, AllianceBuildingId::CRYPTO);
+        $userCooldown = $this->allianceBuildingCooldownRepository->getUserCooldown($user, AllianceBuildingId::CRYPTO);
         if ($userCooldown > time()) {
             return $userCooldown - time();
         }

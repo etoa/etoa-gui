@@ -7,7 +7,6 @@ namespace EtoA\Alliance;
 use Doctrine\Persistence\ManagerRegistry;
 use EtoA\Core\AbstractRepository;
 use EtoA\Entity\AllianceBuilding;
-use EtoA\Entity\AllianceBuildListItem;
 
 class AllianceBuildingRepository extends AbstractRepository
 {
@@ -23,42 +22,4 @@ class AllianceBuildingRepository extends AbstractRepository
     {
         return $this->fetchIdsWithNames('alliance_buildings', 'alliance_building_id', 'alliance_building_name', $orderById);
     }
-
-    public function getUserCooldown(int $userId, int $buildingId): int
-    {
-        return (int) $this->createQueryBuilder('q')
-            ->select('cooldown_end')
-            ->from('alliance_building_cooldown')
-            ->where('cooldown_user_id = :userId')
-            ->andWhere('cooldown_alliance_building_id = :buildingId')
-            ->setParameters([
-                'userId' => $userId,
-                'buildingId' => $buildingId,
-            ])
-            ->fetchOne();
-    }
-
-    public function setUserCooldown(int $userId, int $buildingId, int $cooldownEnd): void
-    {
-        $this->getConnection()->executeStatement(
-            "REPLACE INTO
-                alliance_building_cooldown
-            (
-                cooldown_user_id,
-                cooldown_alliance_building_id,
-                cooldown_end
-            ) VALUES (
-                :userId,
-                :buildingId,
-                :cooldownEnd
-            );",
-            [
-                'userId' => $userId,
-                'buildingId' => $buildingId,
-                'cooldownEnd' => $cooldownEnd,
-            ]
-        );
-    }
-
-
 }
