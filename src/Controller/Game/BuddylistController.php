@@ -46,7 +46,11 @@ class BuddylistController extends AbstractGameController
 
         $form = $this->createFormBuilder()
             ->add('user', TextType::class, [
-                'label' => false
+                'label' => false,
+                'attr' => [
+                    'data-live-action-param'=>"getCryptoDistance",
+                    'data-model' => 'debounce(500)|value',
+                ]
             ])
             ->add('submit', SubmitType::class, [
                 'label' => 'Freund hinzufügen'

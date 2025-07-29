@@ -88,10 +88,9 @@
         </twig:Table>
     {% endif %}
 
-    <h2>Füge einen Freund hinzu</h2>
+    <h2>Füge einen Freund hinzu:</h2>
     {{ form_start(form) }}
-        {{ form_widget(form.user) }}
+        <twig:UserNickSearch boxId="form_user" field="{{ form_widget(form.user) }}"/>
         {{ form_widget(form.submit) }}
     {{ form_end(form) }}
-    <br><br>
 {% endblock %}

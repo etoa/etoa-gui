@@ -662,12 +662,11 @@ class UserRepository extends AbstractRepository
     public function searchUserNicknames(UserSearch $search = null, int $limit = null): array
     {
         $qb = $this->createQueryBuilder('q')
-            ->select('user_id, user_nick')
-            ->from('users')
-            ->orderBy('user_nick');
+            ->orderBy('q.nick');
 
         return $this->applySearchSortLimit($qb, $search, null, $limit)
-            ->fetchAllKeyValue();
+            ->getQuery()
+            ->execute();
     }
 
     /**
