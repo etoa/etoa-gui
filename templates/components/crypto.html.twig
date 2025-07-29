@@ -1,57 +1,68 @@
+{% import 'macros.html.twig' as macros %}
+
 <div
     {{ attributes }}
     data-action="change->live#update"
 >
-    <twig:Table title="Kryptocenter-Infos">
-        {% block table_content %}
-            <tr>
-                <th>Aktuelle Reichweite:</th>
-                <td> {{ formatNumber(configValue('crypto_range_per_level') * outerScope.this.level) }} AE ~
-                    {{ (configValue('crypto_range_per_level') * outerScope.this.level / configValue('cell_length'))|round(0, 'floor') }} Systeme (+
-                    {{ configValue('crypto_range_per_level') }} pro Stufe)
-                </td>
-            </tr>
-            {% if outerScope.this.userCooldownDifference == 0 %}
+    {% if this.report or this.error %}
+        {% if this.report %}
+            <twig:Box title="Ergebnis der Analyse">
+                {{ BBCodeToHTML(outerScope.this.report)|raw }}
+            </twig:Box>
+        {% else %}
+            {{ macros.errorMessage(this.error) }}
+        {% endif %}
+    {% else %}
+        <twig:Table title="Kryptocenter-Infos">
+            {% block table_content %}
                 <tr>
-                    <th>Zielinfo:</th>
-                    <td id="targetinfo" style="{{ outerScope.this.targetInfo.style }}">
-                        {{ outerScope.this.targetInfo.text|raw }}
+                    <th>Aktuelle Reichweite:</th>
+                    <td> {{ formatNumber(configValue('crypto_range_per_level') * outerScope.this.level) }} AE ~
+                        {{ (configValue('crypto_range_per_level') * outerScope.this.level / configValue('cell_length'))|round(0, 'floor') }} Systeme (+
+                        {{ configValue('crypto_range_per_level') }} pro Stufe)
+                    </td>
+                </tr>
+                {% if outerScope.this.userCooldownDifference == 0 %}
+                    <tr>
+                        <th>Zielinfo:</th>
+                        <td id="targetinfo" style="{{ outerScope.this.targetInfo.style }}">
+                            {{ outerScope.this.targetInfo.text|raw }}
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>Entfernung:</th>
+                        <td id="distance" style="{{ outerScope.this.distance.style }}">
+                            {{ outerScope.this.distance.text|raw }}
+                        </td>
+                    </tr>
+                {% endif %}
+                <tr>
+                    <th>Kosten pro Scan:</th>
+                    <td> {{ formatNumber(configValue('crypto_fuel_costs_per_scan')) }} {{ constant('EtoA\\Universe\\Resources\\ResourceNames::FUEL') }} und
+                        {{ formatNumber(configValue('crypto_fuel_costs_per_scan')) }} {{ constant('EtoA\\Universe\\Resources\\ResourceNames::FUEL') }} Allianzrohstoffe
                     </td>
                 </tr>
                 <tr>
-                    <th>Entfernung:</th>
-                    <td id="distance" style="{{ outerScope.this.distance.style }}">
-                        {{ outerScope.this.distance.text|raw }}
+                    <th>Abklingzeit:</th>
+                    <td> {{ formatTimespan(outerScope.this.getCooldown) }} (-
+                        {{ formatTimespan(configValue("crypto_cooldown_reduction_per_level")) }} pro Stufe,
+                        minimal {{ formatTimespan(configValue("crypto_min_cooldown")) }})
                     </td>
                 </tr>
-            {% endif %}
-            <tr>
-                <th>Kosten pro Scan:</th>
-                <td> {{ formatNumber(configValue('crypto_fuel_costs_per_scan')) }} {{ constant('EtoA\\Universe\\Resources\\ResourceNames::FUEL') }} und
-                    {{ formatNumber(configValue('crypto_fuel_costs_per_scan')) }} {{ constant('EtoA\\Universe\\Resources\\ResourceNames::FUEL') }} Allianzrohstoffe
-                </td>
-            </tr>
-            <tr>
-                <th>Abklingzeit:</th>
-                <td> {{ formatTimespan(outerScope.this.getCooldown) }} (-
-                    {{ formatTimespan(configValue("crypto_cooldown_reduction_per_level")) }} pro Stufe,
-                    minimal {{ formatTimespan(configValue("crypto_min_cooldown")) }})
-                </td>
-            </tr>
-            <tr>
-                <th>Status:</th>
-                <td>
-                    {% if outerScope.this.userCooldownDifference > 0 %}
-                        Bereit in <span id="cdcd">{{formatTimespan(outerScope.this.userCooldownDifference)}}</span>
-                    {% else %}
-                        Bereit
-                    {% endif %}
-                </td>
-            </tr>
-        {% endblock %}
-    </twig:Table>
-    {%if this.userCooldownDifference == 0 %}
-        {{ form_start(form) }}
+                <tr>
+                    <th>Status:</th>
+                    <td>
+                        {% if outerScope.this.userCooldownDifference > 0 %}
+                            Bereit in <span id="cdcd">{{formatTimespan(outerScope.this.userCooldownDifference)}}</span>
+                        {% else %}
+                            Bereit
+                        {% endif %}
+                    </td>
+                </tr>
+            {% endblock %}
+        </twig:Table>
+        {%if this.userCooldownDifference == 0 %}
+            {{ form_start(form) }}
             <twig:box title="Ziel für Flottenanalyse wahlen:">
                 Koordinaten eingeben:
                 {{ form_widget(form.sx) }} /
@@ -69,15 +80,16 @@
                 {{ formatNumber(configValue('crypto_fuel_costs_per_scan')) }} {{ constant('EtoA\\Universe\\Resources\\ResourceNames::FUEL') }} benötigt,
                 {{ formatNumber(this.getCurrentTrit) }} vorhanden!
             {% endif %}
-        {{ form_end(form,{render_rest:false}) }}
-    {% else %}
-        <b>Diese Funktion wurde vor kurzem benutzt! <br/>
-        Du musst bis {{ formatTimestamp(this.getCooldown) }} warten, um die Funktion wieder zu benutzen!</b>
-        <script type="text/javascript">
-            if (document.getElementById('cdcd') != null) {
-                cnt["cdcd"] = 0;
-                setCountdown('cdcd', {{ 'now' | date('U') }}, {{ this.getCooldown }});
-            }
-        </script>
+            {{ form_end(form,{render_rest:false}) }}
+        {% else %}
+            <b>Diese Funktion wurde vor kurzem benutzt! <br/>
+                Du musst bis {{ formatTimestamp(this.userCooldown) }} warten, um die Funktion wieder zu benutzen!</b>
+            <script type="text/javascript">
+                if (document.getElementById('cdcd') != null) {
+                    cnt["cdcd"] = 0;
+                    setCountdown('cdcd', {{ 'now' | date('U') }}, {{ this.userCooldown }});
+                }
+            </script>
+        {% endif %}
     {% endif %}
 </div>

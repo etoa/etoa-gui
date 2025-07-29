@@ -149,18 +149,21 @@ class DefenseRepository extends AbstractRepository
             ->fetchOne();
     }
 
-    public function countJammingDevicesOnEntity(int $entityId): int
+    public function countJammingDevicesOnEntity(Planet $entity): ?int
     {
-        return (int) $this->createQueryBuilder('q')
-            ->select('dl.deflist_count')
-            ->from('deflist', 'dl')
-            ->where('dl.deflist_entity_id = :entityId')
-            ->andWhere('dl.deflist_count > 0')
-            ->innerJoin('dl', 'defense', 'd', 'dl.deflist_def_id = d.def_id AND def_jam = 1')
+        $data = $this->createQueryBuilder('q')
+            ->where('q.entity = :entity')
+            ->andWhere('q.count > 0')
+            ->andWhere('d.jam = 1')
+            ->innerJoin('App:Defense', 'd', 'WITH', 'q.defense = d.id')
             ->setParameters([
-                'entityId' => $entityId,
+                'entity' => $entity,
             ])
-            ->fetchOne();
+            ->getQuery()
+            ->setMaxResults(1)
+            ->getOneOrNullResult();
+
+        return $data?->getCount();
     }
 
     /**

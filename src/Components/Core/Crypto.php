@@ -2,12 +2,18 @@
 
 namespace EtoA\Components\Core;
 
+use EtoA\Alliance\AllianceBuildingCooldownRepository;
+use EtoA\Alliance\AllianceBuildingId;
 use EtoA\Controller\Game\AbstractGameController;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\DTO\CryptoDto;
 use EtoA\Entity\Entity;
 use EtoA\Entity\User;
+use EtoA\Fleet\Exception\FleetScanFailedException;
+use EtoA\Fleet\Exception\FleetScanPreconditionsNotMetException;
+use EtoA\Fleet\Exception\InvalidFleetScanParameterException;
 use EtoA\Fleet\FleetScanService;
+use EtoA\Support\BBCodeUtils;
 use EtoA\Support\StringUtils;
 use EtoA\Universe\Entity\EntityCoordinates;
 use EtoA\Universe\Entity\EntityRepository;
@@ -15,7 +21,7 @@ use EtoA\Universe\Entity\EntityService;
 use EtoA\Universe\Entity\EntityType;
 use EtoA\Universe\Planet\PlanetRepository;
 use EtoA\Universe\Resources\ResourceNames;
-use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\Extension\Core\Type\ButtonType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
@@ -47,8 +53,17 @@ class Crypto extends AbstractGameController
     #[LiveProp]
     public User|null $user = null;
 
+    #[LiveProp]
+    public int $userCooldown = 0;
+
     #[LiveProp(writable: ['sx','sy','cx','cy','pos'])]
     public CryptoDto $cryptoDto;
+
+    #[LiveProp]
+    public string $report = '';
+
+    #[LiveProp]
+    public string $error = '';
 
     public function __construct(
         private readonly FleetScanService $fleetScanService,
@@ -56,7 +71,8 @@ class Crypto extends AbstractGameController
         private readonly RequestStack $requestStack,
         private readonly ConfigurationService $configurationService,
         private readonly EntityRepository $entityRepository,
-        private readonly EntityService $entityService
+        private readonly EntityService $entityService,
+        private readonly AllianceBuildingCooldownRepository $allianceBuildingCooldownRepository
     )
     {
         $this->cryptoDto = new CryptoDto();
@@ -213,10 +229,36 @@ class Crypto extends AbstractGameController
                     'data-model'=>"cryptoDto.pos"
                 ]
             ])
-            ->add('submit', SubmitType::class, [
-                'label' => 'Analyse für ' . StringUtils::formatNumber($this->configurationService->getInt('crypto_fuel_costs_per_scan')) . ' ' . ResourceNames::FUEL . ' starten'
+            ->add('submit', ButtonType::class, [
+                'label' => 'Analyse für ' . StringUtils::formatNumber($this->configurationService->getInt('crypto_fuel_costs_per_scan')) . ' ' . ResourceNames::FUEL . ' starten',
+                'attr' => [
+                    'data-live-action-param'=>"scan",
+                    'data-action'=>"live#action"
+                ],
             ])
             ->getForm();
+    }
+
+    #[LiveAction]
+    public function scan():void
+    {
+        $targetCoordinates = new EntityCoordinates(
+            $this->cryptoDto->getSx(),
+            $this->cryptoDto->getSy(),
+            $this->cryptoDto->getcx(),
+            $this->cryptoDto->getCy(),
+            $this->cryptoDto->getPos()
+        );
+        $targetEntity = $this->entityRepository->findByCoordinates($targetCoordinates);
+
+        try {
+            $request = $this->requestStack->getCurrentRequest();
+            $out = $this->fleetScanService->scanFleets($this->user, $this->planetRepository->find($request->getSession()->get('cpid')), $this->level, $targetEntity);
+
+            $this->report = BBCodeUtils::toHTML($out);
+        } catch (FleetScanPreconditionsNotMetException | InvalidFleetScanParameterException | FleetScanFailedException $ex) {
+            $this->error = $ex->getMessage();
+        }
     }
 
     #[PreMount]
@@ -224,6 +266,8 @@ class Crypto extends AbstractGameController
     {
         $this->user = $this->getUser()->getData();
         $request = $this->requestStack->getCurrentRequest();
+
+        $this->userCooldown =  $this->allianceBuildingCooldownRepository->getUserCooldown($this->user, AllianceBuildingId::CRYPTO);
 
         $entity = $this->planetRepository->find($request->getSession()->get('cpid'))->getEntity();
         $cell = $entity->getCell();

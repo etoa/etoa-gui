@@ -5,6 +5,7 @@ namespace EtoA\Alliance;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use EtoA\Core\AbstractRepository;
+use EtoA\Entity\AllianceBuilding;
 use EtoA\Entity\AllianceBuildingCooldown;
 use EtoA\Entity\Building;
 use EtoA\Entity\User;
@@ -53,25 +54,22 @@ class AllianceBuildingCooldownRepository extends AbstractRepository
         return $this->findOneBy(['user'=>$user,'allianceBuilding'=>$building])?->getCooldownEnd();
     }
 
-    public function setUserCooldown(int $userId, int $buildingId, int $cooldownEnd): void
+    public function setUserCooldown(User $user, AllianceBuilding $building, int $cooldownEnd): void
     {
-        $this->getConnection()->executeStatement(
-            "REPLACE INTO
-                alliance_building_cooldown
-            (
-                cooldown_user_id,
-                cooldown_alliance_building_id,
-                cooldown_end
-            ) VALUES (
-                :userId,
-                :buildingId,
-                :cooldownEnd
-            );",
-            [
-                'userId' => $userId,
-                'buildingId' => $buildingId,
-                'cooldownEnd' => $cooldownEnd,
-            ]
-        );
+        $data = $this->findOneBy(['user'=>$user,'allianceBuilding'=>$building]);
+
+        if(!$data) {
+            $data = new AllianceBuildingCooldown();
+            $data->setUserId($user->getId());
+            $data->setUser($user);
+            $data->setAllianceBuilding($building);
+            $data->setCooldownEnd($cooldownEnd);
+
+            $this->persist($data);
+        } else {
+            $data->setCooldownEnd($cooldownEnd);
+        }
+
+        $this->save();
     }
 }

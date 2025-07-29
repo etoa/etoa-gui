@@ -98,17 +98,17 @@ class FleetRepository extends AbstractRepository
         $qry = $this->createQueryBuilder('q');
 
         if ($parameters->id !== null) {
-            $qry->andWhere('id = :id')
+            $qry->andWhere('q.id = :id')
                 ->setParameter('id', $parameters->id);
         }
 
         if ($parameters->entityFrom !== null) {
-            $qry->andWhere('q.from = :entityFrom')
+            $qry->andWhere('q.entityFrom = :entityFrom')
                 ->setParameter('entityFrom', $parameters->entityFrom);
         }
 
         if ($parameters->entityTo !== null) {
-            $qry->andWhere('q.to = :entityTo')
+            $qry->andWhere('q.entityTo = :entityTo')
                 ->setParameter('entityTo', $parameters->entityTo);
         }
 
@@ -128,11 +128,9 @@ class FleetRepository extends AbstractRepository
                 ->setParameter('userNick', '%'.$parameters->userNick.'%');
         }
 
-        $data = $qry->orderBy('landtime', 'ASC')
+        return $qry->orderBy('q.landTime', 'ASC')
             ->getQuery()
             ->execute();
-
-        return array_map(fn ($arr) => new Fleet($arr), $data);
     }
 
     public function add(User $user, int $launchTime, int $landTime, Entity $entityFrom, Entity $entityTo, string $action, int $status, BaseResources $resources, BaseResources $fetch = null, int $pilots = 0, int $fuelUsage = 0, int $foodUsage = 0, int $powerUsage = 0, User $leader = null, int $nextId = 0, int $nextActionTime = 0, int $supportFuelUsage = 0, int $supportFoodUsage = 0): Fleet

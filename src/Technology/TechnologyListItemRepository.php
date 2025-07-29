@@ -6,6 +6,7 @@ namespace EtoA\Technology;
 
 use Doctrine\Persistence\ManagerRegistry;
 use EtoA\Core\AbstractRepository;
+use EtoA\Entity\Technology;
 use EtoA\Entity\TechnologyListItem;
 use EtoA\Entity\User;
 use EtoA\Universe\Entity\EntityRepository;
@@ -80,17 +81,9 @@ class TechnologyListItemRepository extends AbstractRepository
         return array_map(fn ($value) => (int) $value, $data);
     }
 
-    public function getTechnologyLevel(int $userId, int $technologyId): int
+    public function getTechnologyLevel(User $user, Technology|int $technology): ?int
     {
-        return (int) $this->createQueryBuilder('q')
-            ->select('techlist_current_level')
-            ->where('techlist_tech_id = :technologyId')
-            ->andWhere('techlist_user_id = :userId')
-            ->setParameters([
-                'technologyId' => $technologyId,
-                'userId' => $userId,
-            ])
-            ->getFirstResult();
+        return $this->findOneBy(['user'=>$user,'technology'=>$technology])?->getCurrentLevel();
     }
 
     public function addTechnology(int $technologyId, int $level, int $userId, int $entityId): void

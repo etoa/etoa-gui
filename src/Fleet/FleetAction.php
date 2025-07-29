@@ -292,7 +292,7 @@ abstract class FleetAction
         return false;
     }
 
-    static function getAll($sorted = false)
+    static function getAll($sorted = false): array
     {
         // cleanup once reworked
         if (!defined('INVADE_ACTIVE_USER')) {
@@ -311,7 +311,7 @@ abstract class FleetAction
         return $arr;
     }
 
-    static function fleetActionCompare($a, $b)
+    static function fleetActionCompare($a, $b): int
     {
         return strcmp($a->name(), $b->name());
     }

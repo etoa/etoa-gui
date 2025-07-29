@@ -7,6 +7,7 @@ namespace EtoA\Alliance;
 use Doctrine\Persistence\ManagerRegistry;
 use EtoA\Core\AbstractRepository;
 use EtoA\Entity\Alliance;
+use EtoA\Entity\AllianceTechnology;
 use EtoA\Entity\AllianceTechnologyListItem;
 
 class AllianceTechnologyListRepository extends AbstractRepository
@@ -32,18 +33,10 @@ class AllianceTechnologyListRepository extends AbstractRepository
         return count($test) > 0;
     }
 
-    public function getLevel(int $allianceId, int $technologyId): int
+    public function getLevel(Alliance $alliance, AllianceTechnology|int $technology): ?int
     {
-        return (int) $this->createQueryBuilder('q')
-            ->select('alliance_techlist_current_level')
-            ->from('alliance_techlist')
-            ->where('alliance_techlist_alliance_id = :alliance')
-            ->andWhere('alliance_techlist_tech_id = :technologyId')
-            ->setParameters([
-                'alliance' => $allianceId,
-                'technologyId' => $technologyId,
-            ])
-            ->fetchOne();
+
+        return $this->findOneBy(['alliance'=>$alliance,'technology'=>$technology])?->getlevel();
     }
 
     /**

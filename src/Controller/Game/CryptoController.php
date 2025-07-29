@@ -4,6 +4,8 @@ namespace EtoA\Controller\Game;
 
 use EtoA\Alliance\AllianceBuildingId;
 use EtoA\Alliance\AllianceBuildListRepository;
+use EtoA\Alliance\AllianceRights;
+use EtoA\Alliance\AllianceService;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Fleet\FleetScanService;
 use Symfony\Component\HttpFoundation\Request;
@@ -16,6 +18,7 @@ class CryptoController extends AbstractGameController
         private readonly AllianceBuildListRepository $allianceBuildListRepository,
         private readonly ConfigurationService $configurationService,
         private readonly FleetScanService $fleetScanService,
+        private readonly AllianceService $allianceService
     )
     {
     }
@@ -29,7 +32,8 @@ class CryptoController extends AbstractGameController
         if ($this->configurationService->getBoolean('crypto_enable')) {
             // Prüfen ob Gebäude gebaut ist
             if ($cryptoCenterLevel > 0) {
-                if($this->userAlliancePermission->hasRights(AllianceRights::CRYPTO_MINISTER)) {
+                $userAlliancePermission = $this->allianceService->getUserAlliancePermissions($this->getUser()->getData()->getAlliance(), $this->getUser()->getData());
+                if($userAlliancePermission->hasRights(AllianceRights::CRYPTO_MINISTER)) {
                     return $this->render('game/crypto/crypto.html.twig',[
                         'level' => $cryptoCenterLevel,
                         'userCooldownDifference' => $this->fleetScanService->getUserCooldownDifference($this->getUser()->getData())
