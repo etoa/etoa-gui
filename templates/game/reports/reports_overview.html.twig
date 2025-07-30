@@ -49,7 +49,7 @@
                             <img src="{{ report.vars.data.isRead?asset('/build/images/pm_normal.gif'):asset('/build/images/pm_new.gif') }}"/>
                         </td>
                         <td class='messageCellSubject' id="header{{ report.vars.data.id }}">
-                            <a href="javascript:" onclick="toggleBox('report{{ report.vars.data.id }}')">{{ report.vars.data.createFactory.getSubject }}</a>
+                            <a href="javascript:" data-report="{{ report.vars.data.id }}" data-read="{{ report.vars.data.isRead }}" class="openReport" onclick="toggleBox('report{{ report.vars.data.id }}')">{{ report.vars.data.createFactory.getSubject }}</a>
                         </td>
                         {% if title == 'Neueste Berichte' %}
                             <td class='messageCellCategory'>

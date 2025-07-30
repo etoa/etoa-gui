@@ -36,6 +36,41 @@ function setCountdown(elem, time, diff, elemToSetEmpty) {
   }
 }
 
+$( document ).ready(function() {
+  let elements = document.querySelectorAll( '.openReport' );
+  elements.forEach((ele)=>{
+    ele.addEventListener('click',()=>{setReportRead(ele)})
+  })
+
+  elements = document.querySelectorAll( '.openMessage' );
+  elements.forEach((ele)=>{
+    ele.addEventListener('click',()=>{setMessageRead(ele)})
+  })
+})
+
+function setReportRead(ele) {
+  if(!ele.dataset.read) {
+    $.ajax({
+      url: '/game/reports/read/'+ele.dataset.report,
+      method: 'POST',
+      success: function (response) {
+        ele.dataset.read = '1'
+      },
+    });
+  }
+}
+
+function setMessageRead(ele) {
+  if(!ele.dataset.read) {
+    $.ajax({
+      url: '/game/messages/read/'+ele.dataset.message,
+      method: 'POST',
+      success: function (response) {
+        ele.dataset.read = '1'
+      },
+    });
+  }
+}
 
 function updateProgressBar(progresselem, startTime, endTime, cTime) {
   if (progresselem) {

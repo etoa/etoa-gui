@@ -57,7 +57,7 @@
                                     <span style="color:red;">{{ message.vars.data.messageData.subject }}</span>
                                 {% else %}
                                     {% if app.user.data.userProperties.msgPreview %}
-                                        <a href="javascript:;" onclick="toggleBox('msgtext{{ message.vars.data.id }}');xajax_messagesSetRead( message.id )">
+                                        <a href="javascript:;" data-message="{{ message.vars.data.id }}" data-read="{{ message.vars.data.isRead }}" class="openMessage" onclick="toggleBox('msgtext{{ message.vars.data.id }}')">
                                             {{ message.vars.data.messageData.subject }}
                                         </a>
                                     {% else %}

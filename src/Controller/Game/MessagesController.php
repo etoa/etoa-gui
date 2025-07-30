@@ -3,6 +3,7 @@
 namespace EtoA\Controller\Game;
 
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Core\TokenContext;
 use EtoA\Entity\Message;
 use EtoA\Entity\MessageCategory;
 use EtoA\Entity\MessageData;
@@ -437,5 +438,20 @@ class MessagesController extends AbstractGameController
             ])
             ->getForm()
             ->handleRequest($request);
+    }
+
+    #[Route("/game/messages/read/{id}", name: "game.messages.read", methods: "POST")]
+    public function read(TokenContext $context, ?Message $message = null): Response
+    {
+        $response = new Response();
+
+        if($message && $context->getCurrentUser() === $message->getUserTo() && !$message->isRead()) {
+            $message->setRead(true);
+            $this->messageRepository->save();
+
+            return $response->setStatusCode(200);
+        }
+
+        return $response->setStatusCode(500);
     }
 }

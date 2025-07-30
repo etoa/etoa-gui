@@ -2,6 +2,8 @@
 
 namespace EtoA\Controller\Game;
 
+use EtoA\Core\TokenContext;
+use EtoA\Entity\Report;
 use EtoA\Form\Type\Core\ReportType;
 use EtoA\Message\ReportRepository;
 use EtoA\Message\ReportTypes;
@@ -536,5 +538,20 @@ class ReportsController extends AbstractGameController
             'title' => 'Archiv',
             'form' => $form
         ]);
+    }
+
+    #[Route("/game/reports/read/{id}", name: "game.reports.read", methods: "POST")]
+    public function read(TokenContext $context, ?Report $report = null): Response
+    {
+        $response = new Response();
+
+        if($report && $context->getCurrentUser() === $report->getUser() && !$report->isRead()) {
+            $report->setRead(true);
+            $this->reportRepository->save();
+
+            return $response->setStatusCode(200);
+        }
+
+        return $response->setStatusCode(500);
     }
 }

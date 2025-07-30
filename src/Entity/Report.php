@@ -29,7 +29,7 @@ class Report
     #[ORM\Column(type: "string")]
     private string $type;
 
-    #[ORM\Column(type: "boolean")]
+    #[ORM\Column(name: '`read`',type: "boolean")]
     private bool $read;
 
     #[ORM\Column(type: "boolean")]
