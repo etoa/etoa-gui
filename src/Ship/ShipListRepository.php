@@ -77,31 +77,28 @@ class ShipListRepository extends AbstractRepository
      * @param ?int[] $shipIds
      * @return ShipListItem[]
      */
-    public function findForUser(int $userId, ?int $entityId = null, array $shipIds = null): array
+    public function findForUser(int|User $user, int|Planet $entity = null, array $ships = null): array
     {
         $qb = $this->createQueryBuilder('q')
-            ->select('*')
-            ->from('shiplist')
-            ->where('shiplist_user_id = :userId')
-            ->andWhere('shiplist_count > 0 OR shiplist_bunkered > 0')
-            ->setParameter('userId', $userId);
+            ->where('q.user = :user')
+            ->andWhere('q.count > 0 OR q.bunkered > 0')
+            ->setParameter('user', $user);
 
-        if ($entityId !== null) {
+        if ($entity) {
             $qb
-                ->andWhere('shiplist_entity_id = :entityId')
-                ->setParameter('entityId', $entityId);
+                ->andWhere('q.entity = :entity')
+                ->setParameter('entity', $entity);
         }
 
-        if ($shipIds !== null) {
+        if ($ships !== null) {
             $qb
-                ->andWhere('shiplist_ship_id IN (:shipIds)')
-                ->setParameter('shipIds', $shipIds, ArrayParameterType::INTEGER);
+                ->andWhere('q.ship IN (:ships)')
+                ->setParameter('ships', $ships);
         }
 
-        $data = $qb
-            ->fetchAllAssociative();
-
-        return array_map(fn ($row) => ShipListItem::createFromData($row), $data);
+        return $qb
+            ->getQuery()
+            ->execute();
     }
 
     /**

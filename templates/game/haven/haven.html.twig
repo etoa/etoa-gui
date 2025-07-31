@@ -1,0 +1,20 @@
+{% extends 'layout/game.html.twig' %}
+{% block content %}
+    <h1>Raumschiffhafen des Planeten ' . $planet->name . '</h1>
+    <twig:ResourceBox/>
+
+    {% set tabs = {
+        "game.haven.show" : "Flotten versenden",
+        "game.haven.transship" : "Mobile Anlagen umladen",
+    } %}
+    {% if hasMobileObjects %}
+        <twig:tabmenu data="{{ tabs }}" active="{{ app.request.attributes.get('_route') }}"/><br>
+    {% endif %}
+
+    {% if configValue('battleban') and param1('battleban_time') <= date().timestamp and param2('battleban_time') > date().timestamp %}
+        Es ist momentan nicht möglich andere Spieler anzugreifen. Grund: {{ BBCodeToHTML(param1("battleban"))|raw }}<br /> Die Sperre dauert von {{ formatTimestamp(param1('battleban_time')) }} bis {{ formatTimestamp(param2('battleban_time')) }}!
+    {% endif %}
+
+    {% block haven %}
+    {% endblock %}
+{% endblock %}

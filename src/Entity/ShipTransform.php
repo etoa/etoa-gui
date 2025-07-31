@@ -6,19 +6,21 @@ use EtoA\Ship\ShipTransformRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: ShipTransformRepository::class)]
-#[ORM\Table(name: 'obj_transform')]
+#[ORM\Table(name: 'obj_transforms')]
 class ShipTransform
 {
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: "AUTO")]
     #[ORM\Column(type: "integer")]
-    protected int $id;
+    private int $id;
 
-    #[ORM\Column(type: "integer")]
-    private int $shipId;
+    #[ORM\JoinColumn(name: 'ship_id', referencedColumnName: 'ship_id')]
+    #[ORM\ManyToOne(targetEntity: Ship::class)]
+    private Ship $ship;
 
-    #[ORM\Column(name:"def_id", type: "integer")]
-    private int $defenseId;
+    #[ORM\JoinColumn(name: 'def_id', referencedColumnName: 'def_id')]
+    #[ORM\ManyToOne(targetEntity: Defense::class)]
+    private Defense $defense;
 
     #[ORM\Column(name:"num_def", type: "integer")]
     private int $numberOfDefense;
@@ -50,30 +52,6 @@ class ShipTransform
         return $this->id;
     }
 
-    public function getShipId(): ?int
-    {
-        return $this->shipId;
-    }
-
-    public function setShipId(int $shipId): static
-    {
-        $this->shipId = $shipId;
-
-        return $this;
-    }
-
-    public function getDefenseId(): ?int
-    {
-        return $this->defenseId;
-    }
-
-    public function setDefenseId(int $defenseId): static
-    {
-        $this->defenseId = $defenseId;
-
-        return $this;
-    }
-
     public function getNumberOfDefense(): ?int
     {
         return $this->numberOfDefense;
@@ -82,6 +60,30 @@ class ShipTransform
     public function setNumberOfDefense(int $numberOfDefense): static
     {
         $this->numberOfDefense = $numberOfDefense;
+
+        return $this;
+    }
+
+    public function getShip(): ?Ship
+    {
+        return $this->ship;
+    }
+
+    public function setShip(?Ship $ship): static
+    {
+        $this->ship = $ship;
+
+        return $this;
+    }
+
+    public function getDefense(): ?Defense
+    {
+        return $this->defense;
+    }
+
+    public function setDefense(?Defense $defense): static
+    {
+        $this->defense = $defense;
 
         return $this;
     }

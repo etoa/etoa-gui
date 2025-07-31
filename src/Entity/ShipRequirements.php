@@ -23,7 +23,7 @@ class ShipRequirements
 
     #[ORM\JoinColumn(name: 'req_tech_id', referencedColumnName: 'tech_id')]
     #[ORM\ManyToOne(targetEntity: Technology::class)]
-    private ?string $tech = null;
+    private ?Technology $tech = null;
 
     #[ORM\Column(name: 'req_level')]
     private ?int $level = null;

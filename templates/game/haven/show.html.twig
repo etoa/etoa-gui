@@ -1,0 +1,126 @@
+{% extends 'game/haven/haven.html.twig' %}
+
+{% block haven %}
+    {{ form_start(form) }}
+        <twig:Table title="Hafen-Infos">
+            {% block table_content %}
+                <tr>
+                    <th>Aktive Flotten:</th>
+                    <td>
+                        {% if fleetLaunch.fleetSlotsUsed > 1 %}
+                            <b>{{ fleetLaunch.fleetSlotsUsed }} </b> Flotten dieses Planeten sind <a href="?page=fleets">unterwegs</a>.
+                        {% elseif fleetLaunch.fleetSlotsUsed == 1 %}
+                            <b>Eine</b> Flotte dieses Planeten ist <a href="?page=fleets">unterwegs</a>.
+                        {% else %}
+                            Es sind <b>keine</b> Flotten dieses Planeten unterwegs.
+                        {% endif %}
+                    </td>
+                </tr>
+                <tr>
+                    <th>Flottenstart:</th>
+                    <td>
+                        {% if fleetLaunch.possibleFleetStarts > 1 %}
+                            <b>{{ fleetLaunch.possibleFleetStarts }}</b> Flotten können von diesem Planeten starten!
+                        {% elseif fleetLaunch.possibleFleetStarts == 1 %}
+                            <b>Eine</b> Flotte kann von diesem Planeten starten!
+                        {% else %}
+                            Es können <b>keine</b> Flotten von diesem Planeten starten!
+                        {% endif %}
+                        (Flottenkontrolle Stufe {{ fleetLaunch.fleetControlLevel }}
+                        {% if app.user.data.specialist and app.user.data.specialist.fleetMax %}
+                            +{{ app.user.data.specialist.fleetMax }} Flotten durch {{ app.user.data.specialist.name }}
+                        {% endif %}
+                        )
+                    </td>
+                </tr>
+                {% if fleetLaunch.getAllianceSlots %}
+                    <th>Allianzflotten:</th>
+                    <td><b>{{ fleetLaunch.getAllianceSlots }}</b> Allianzflotten können mit <b>{{ fleetLaunch.getAllianceSlots+2 }}</b> Teilflotten pro Flotte starten!
+                        (Allianzflottenkontrolle Stufe {{ fleetLaunch.getAllianceSlots }})
+                    </td>
+                {% endif %}
+
+                <tr>
+                    <th>Piloten:</th>
+                    <td>
+                        {% if fleetLaunch.pilotsAvailable > 1 %}
+                            <b>{{ formatNumber(fleetLaunch.pilotsAvailable) }} </b> Piloten können eingesetzt werden.
+                        {% elseif fleetLaunch.pilotsAvailable == 1 %}
+                            <b>Ein</b> Pilot kann eingesetzt werden.
+                        {% else %}
+                            Es sind <b>keine</b> Piloten verfügbar.
+                        {% endif %}
+                    </td>
+                </tr>
+                {% if fleetLaunch.raceSpeedFactor != 1 %}
+                    <tr>
+                        <th>Rassenbonus:</th>
+                        <td>
+                            Die Schiffe fliegen aufgrund deiner Rasse <b>{{ fleetLaunch.ownerRaceName }}</b> mit
+                            {{ formatPercentString(fleetLaunch.raceSpeedFactor) }} Geschwindigkeit!
+                        </td>
+                    </tr>
+                {% endif %}
+                {% if fleetLaunch.owner.specialist and fleetLaunch.owner.specialist.fleetSpeed != 1 %}
+                    <tr>
+                        <th>Spezialistenbonus:</th>
+                        <td>
+                            Die Schiffe fliegen aufgrund des <b>{{ fleetLaunch.owner.specialist.name }}</b> mit
+                            {{ formatPercentString(fleetLaunch.owner.specialist.fleetSpeed) }} Geschwindigkeit!
+                        </td>
+                    </tr>
+                {% endif %}
+            {% endblock %}
+        </twig:Table>
+        <twig:Table title="Vorhandene Raumschiffe">
+        {% block table_content %}
+            <tr>
+                <th colspan="6">Schiffe wählen</th>
+            </tr>
+            <tr>
+                <th colspan="2">Typ</th>
+                <th>Speed</th>
+                <th>Piloten</th>
+                <th>Anzahl</th>
+                <th>Auswahl</th>
+            </tr>
+            {% for ship in form.ships %}
+                <tr>
+                    {% if ship.vars.data.ship.special %}
+                        <td style="width:40px;background:#000;">
+                            <a href="?page=ship_upgrade&amp;id=">
+                                <img src="{{ ship.vars.data.ship.getImagePath('small') }}" width="40" height="40" alt="Ship"/>
+                            </a>
+                        </td>
+                    {% else %}
+                        <td style="width:40px;background:#000;">
+                            <a href="?page=help&amp;site=shipyard&amp;id= $shipId">
+                                <img src="{{ ship.vars.data.ship.getImagePath('small') }}" width="40" height="40" alt="Ship"/>
+                            </a>
+                        </td>
+                    {% endif %}
+                    <td {{ tm(ship.vars.data.ship.name,
+                        "<img src=\""~ship.vars.data.ship.getImagePath('medium')~"\" style=\"float:left;margin-right:5px;\">"~
+                        BBCodeToHTML(ship.vars.data.ship.shortComment))|raw }} >
+                        {{ ship.vars.data.ship.name }} </td>
+                    <td> dummy </td>
+                    <td> dummy  </td>
+                    <td>{{ ship.vars.data.count }}</td>
+                    <td>
+                        {% if ship.vars.data.ship.launchable and fleetLaunch.pilotsAvailable >= ship.vars.data.ship.pilots %}
+                            {{ form_widget(ship.children.count) }}
+                            <br/>
+                            <a href="javascript:;" onclick="document.getElementById('{{ ship.children.count.vars.id }}').value={{ ship.vars.data.count }};document.getElementById('{{ship.children.count.vars.id}}').select()">Alle</a> &nbsp;
+                            <a href="javascript:;" onclick="document.getElementById('{{ ship.children.count.vars.id }}').value=0;">Keine</a>
+                        {% else %}
+                            -
+                        {% endif %}
+                    </td>
+                </tr>
+            {% endfor %}
+        {% endblock %}
+        </twig:Table>
+        {{ form_widget(form.submit) }}
+        {{ form_widget(form._token) }}
+    {{ form_end(form, {render_rest:false}) }}
+{% endblock %}

@@ -3,7 +3,7 @@
 namespace EtoA\Ship;
 
 use Doctrine\Persistence\ManagerRegistry;
-use EtoA\Entity\Race;
+use EtoA\Entity\Ship;
 use EtoA\Entity\ShipRequirements;
 use EtoA\Requirement\AbstractRequirementRepository;
 use EtoA\Technology\TechnologyTypeId;
@@ -16,23 +16,20 @@ class ShipRequirementRepository extends AbstractRequirementRepository
     }
 
     /**
-     * @return ShipRequiredTechnology[]
+     * @return ShipRequirements[]
      */
-    public function getRequiredSpeedTechnologies(int $shipId): array
+    public function getRequiredSpeedTechnologies(Ship $ship): array
     {
-        $data = $this->createQueryBuilder('q')
-            ->select('t.tech_id, t.tech_name, r.req_level')
-            ->from('ship_requirements', 'r')
-            ->innerJoin('r', 'technologies', 't', 'req_tech_id = tech_id')
-            ->where('r.obj_id = :shipId')
-            ->andWhere('t.tech_type_id = :speedCat')
+        return $this->createQueryBuilder('q')
+            ->innerJoin('App:Technology', 't', 'WITH', 'q.tech = t.id')
+            ->where('q.obj = :ship')
+            ->andWhere('t.type = :speedCat')
             ->setParameters([
-                'shipId' => $shipId,
+                'ship' => $ship,
                 'speedCat' => TechnologyTypeId::SPEED,
             ])
-            ->fetchAllAssociative();
-
-        return array_map(fn ($row) => ShipRequiredTechnology::createFromTech($row), $data);
+            ->getQuery()
+            ->execute();
     }
 
     /**

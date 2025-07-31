@@ -1,0 +1,33 @@
+{% extends 'game/haven/haven.html.twig' %}
+
+{% block haven %}
+    {{ form_start(form) }}
+        <twig:Table title="Schiffe">
+        {% block table_content %}
+            <tr>
+                <th>Anzahl</th>
+                <th>Typ</th>
+                <th>Piloten</th>
+                <th>Speed</th>
+                <th>Kosten / 100 AE</th>
+            </tr>
+            {% for sd in fleetLaunch.getShips %}
+                <tr>
+                    <td>{{ formatNumber(sd.count) }}</td>
+                    <td>{{ sd.name }}</td>
+                    <td>{{ formatNumber(sd.pilots) }}</td>
+                    <td>{{ (fleetLaunch.getSpeed / sd.speed * 100 / fleetLaunch.sBonusSpeed)|round }}%</td>
+                    <td>{{ formatNumber(sd.costs_per_ae) }} {{ constant('EtoA\\Universe\\Resources\\ResourceNames::FUEL') }}</td>
+                </tr>
+            {% endfor %}
+            {% if fleetLaunch.getShips %}
+                <tr>
+                    <td colspan="5">Schnellere Schiffe nehmen im Flottenverband automatisch die Geschwindigkeit des langsamsten Schiffes an, sie brauchen dafür aber auch entsprechend weniger Treibstoff!</td>
+                </tr>
+            {% endif %}
+        {% endblock %}
+        </twig:Table>
+        {{ form_widget(form.submit) }}
+        {{ form_widget(form._token) }}
+    {{ form_end(form, {render_rest:false}) }}
+{% endblock %}

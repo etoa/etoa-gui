@@ -412,22 +412,9 @@ class BuildingListItemRepository extends AbstractRepository
         return $data !== false ? BuildingListItem::createFromData($data) : null;
     }
 
-    public function getEntityBuilding(int $userId, int $entityId, int $buildingId): ?BuildingListItem
+    public function getEntityBuilding(User|int $user, Planet|int $entity, Building|int $building): ?BuildingListItem
     {
-        $data = $this->createQueryBuilder('q')
-            ->select('*')
-            ->from('buildlist')
-            ->where('buildlist_user_id = :userId')
-            ->andWhere('buildlist_entity_id = :entityId')
-            ->andWhere('buildlist_building_id = :buildingId')
-            ->setParameters([
-                'userId' => $userId,
-                'entityId' => $entityId,
-                'buildingId' => $buildingId,
-            ])
-            ->fetchAssociative();
-
-        return $data !== false ? BuildingListItem::createFromData($data) : null;
+        return $this->findOneBy(['user'=>$user,'entity'=>$entity,'building'=>$building]);
     }
 
     /**

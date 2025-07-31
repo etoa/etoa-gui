@@ -2,9 +2,10 @@
 
 namespace EtoA\Ship;
 
-use Doctrine\DBAL\Query\QueryBuilder;
+use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 use EtoA\Core\AbstractRepository;
+use EtoA\Entity\Planet;
 use EtoA\Entity\ShipTransform;
 use EtoA\Entity\User;
 
@@ -15,19 +16,21 @@ class ShipTransformRepository extends AbstractRepository
         parent::__construct($registry, ShipTransform::class);
     }
 
-    public function hasUserTransformableObjects(int $userId, int $entityId): bool
+    public function hasUserTransformableObjects(int|User $user, Planet|int $entity): bool
     {
-        $defense = (bool) $this->defenseQueryBuilder($userId, $entityId)
-            ->select('1')
-            ->fetchOne();
+        $defense = (bool) $this->defenseQueryBuilder($user, $entity)
+            ->setMaxResults(1)
+            ->getQuery()
+            ->getOneOrNullResult();
 
         if ($defense) {
             return true;
         }
 
-        return (bool) $this->shipQueryBuilder($userId, $entityId)
-            ->select('1')
-            ->fetchOne();
+        return (bool) $this->shipQueryBuilder($user, $entity)
+            ->setMaxResults(1)
+            ->getQuery()
+            ->getOneOrNullResult();
     }
 
     /**
@@ -80,31 +83,29 @@ class ShipTransformRepository extends AbstractRepository
         return $data !== false ? ShipTransform::createFromDefense($data) : null;
     }
 
-    private function shipQueryBuilder(int $userId, int $entityId): QueryBuilder
+    private function shipQueryBuilder(int|User $user, Planet|int $entity): QueryBuilder
     {
         return $this->createQueryBuilder('q')
-            ->from('obj_transforms')
-            ->innerJoin('obj_transforms', 'shiplist', 'l', 'l.shiplist_ship_id = ship_id')
-            ->where('l.shiplist_user_id = :userId')
-            ->andWhere('l.shiplist_entity_id = :entityId')
-            ->andWhere('l.shiplist_count > 0')
+            ->innerJoin('App:ShipListItem', 'l', 'WITH', 'l.id = q.ship')
+            ->where('l.user = :user')
+            ->andWhere('l.entity = :entity')
+            ->andWhere('l.count > 0')
             ->setParameters([
-                'userId' => $userId,
-                'entityId' => $entityId,
+                'user' => $user,
+                'entity' => $entity,
             ]);
     }
 
-    private function defenseQueryBuilder(int $userId, int $entityId): QueryBuilder
+    private function defenseQueryBuilder(int|User $user, Planet|int $entity): QueryBuilder
     {
         return $this->createQueryBuilder('q')
-            ->from('obj_transforms')
-            ->innerJoin('obj_transforms', 'deflist', 'l', 'l.deflist_def_id = def_id')
-            ->where('l.deflist_user_id = :userId')
-            ->andWhere('l.deflist_entity_id = :entityId')
-            ->andWhere('l.deflist_count > 0')
+            ->innerJoin('App:DefenseListItem', 'l', 'WITH', 'l.id = q.defense')
+            ->where('l.user = :user')
+            ->andWhere('l.entity = :entity')
+            ->andWhere('l.count > 0')
             ->setParameters([
-                'userId' => $userId,
-                'entityId' => $entityId,
+                'user' => $user,
+                'entity' => $entity,
             ]);
     }
 }
