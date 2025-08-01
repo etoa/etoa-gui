@@ -52,12 +52,12 @@
                         {% endif %}
                     </td>
                 </tr>
-                {% if fleetLaunch.raceSpeedFactor != 1 %}
+                {% if fleetLaunch.owner.race.fleetTime != 1 %}
                     <tr>
                         <th>Rassenbonus:</th>
                         <td>
-                            Die Schiffe fliegen aufgrund deiner Rasse <b>{{ fleetLaunch.ownerRaceName }}</b> mit
-                            {{ formatPercentString(fleetLaunch.raceSpeedFactor) }} Geschwindigkeit!
+                            Die Schiffe fliegen aufgrund deiner Rasse <b>{{ fleetLaunch.owner.race.name }}</b> mit
+                            {{ formatPercentString(fleetLaunch.owner.race.fleetTime) }} Geschwindigkeit!
                         </td>
                     </tr>
                 {% endif %}

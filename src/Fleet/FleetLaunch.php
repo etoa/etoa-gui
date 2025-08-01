@@ -2,70 +2,89 @@
 
 namespace EtoA\Fleet;
 
-use EtoA\Alliance\AllianceBuildingId;
-use EtoA\Alliance\AllianceBuildListRepository;
-use EtoA\Building\BuildingId;
-use EtoA\Building\BuildingListItemRepository;
-use EtoA\Core\Configuration\ConfigurationService;
-use EtoA\Entity\BuildingListItem;
+use EtoA\Entity\Entity;
 use EtoA\Entity\Planet;
-use EtoA\Entity\ShipListItem;
-use EtoA\Ship\ShipListRepository;
-use EtoA\Ship\ShipRequirementRepository;
-use EtoA\Support\StringUtils;
-use EtoA\Technology\TechnologyId;
-use EtoA\Technology\TechnologyListItemRepository;
-use EtoA\Universe\Planet\PlanetRepository;
-use Symfony\Component\HttpFoundation\RequestStack;
+use EtoA\Entity\User;
 
 class FleetLaunch
 {
-    public const FLEET_NOCONTROL_NUM = 1;
-
     //
     // Variable definitions
     //
-    public Planet $sourceEntity;
-    public ?Entity $targetEntity = null;
-    public $owner;
-    public ?Entity $wormholeEntryEntity = null;
-    public ?Entity $wormholeExitEntity = null;
-    var $ownerId;
+    private Planet $sourceEntity;
+    private ?Entity $targetEntity = null;
+    private User $owner;
+    private ?Entity $wormholeEntryEntity = null;
+    private ?Entity $wormholeExitEntity = null;
+    private array $ships = [];
+    private int $shipCount = 0;
+    private bool $shipsFixed = false;
+    private int $speed = 0;
+    private int $speed1 = 0;
+    private int $speedPercent = 100;
+    private int $speedPercent1 = 0;
+    private int $duration = 0;
+    private int $duration1 = 0;
+    private int $costsPerHundredAE = 0;
+    private int $costsPerHundredAE1 = 0;
+    private int $timeLaunchLand = 0;
+    private int $costsLaunchLand = 0;
+    private int $pilots = 0;
+    private int $capacityTotal = 0;
+    private int $capacityFuelUsed = 0;
+    private int $capacityPeopleTotal = 0;
+    private int $capacityPeopleLoaded = 0;
 
-    var $ships;
-    var $shipCount;
-    var $shipsFixed;
+    private int $distance = 0;
+    private int $distance1 = 0;
 
-    var $speed;
-    var $speed1;
-    var $speedPercent;
-    var $speedPercent1;
-    var $duration;
-    var $duration1;
-    var $costsPerHundredAE;
-    var $costsPerHundredAE1;
-    var $timeLaunchLand;
-    var $costsLaunchLand;
-    var $pilots;
-    var $capacityTotal;
-    var $capacityResUses;
-    var $capacityFuelUsed;
-    var $capacityPeopleTotal;
-    var $capacityPeopleLoaded;
-
-    var $distance;
-    var $distance1;
-
-    private $action;
-    private $error;
-    public $sBonusSpeed;
-    public $wormholeEnable;
-    /** @var \EtoA\Fleet\Fleet[] */
+    private string $action = '';
+    private string $error = '';
+    private int $sBonusSpeed = 1;
+    private bool $wormholeEnable = false;
     public array $aFleets = [];
-    /** @var int[] */
     private array $supportedAllianceEntities = [];
-    public $allianceSlots;
-    private string $entityResourceLogStart;
+    private int $allianceSlots = 0;
+    private string $entityResourceLogStart = '';
+    private int $possibleFleetStarts = 0;
+    private int $fleetSlotsUsed = 0;
+    private int $fleetControlLevel = 0;
+    private int $sBonusReadiness = 1;
+    private int $pilotsAvailable = 0;
+    private int $capacityResLoaded = 0;
+    private int $sBonusPilots = 1;
+    private int $sBonusCapacity = 1;
+    /**
+     * @var array|int[]
+     */
+    private array $res = [0,0,0,0,0,0];
+    /**
+     * @var array|int[]
+     */
+    private array $fetch = [0,0,0,0,0,0];
+    private int $costs = 0;
+    private int $costsFood = 0;
+    private int $costsPower = 0;
+    private int $supportTime = 0;
+    private int $supportCostsFood = 0;
+    private int $supportCostsFuel = 0;
+    private int $supportCostsFuelPerSec = 0;
+    private int $supportCostsFoodPerSec = 0;
+    private int $fakeId = 0;
+    private array $shipActions = [];
+    private array $factoredShipActions = [];
+    /**
+     * @var false
+     */
+    private bool $havenOk = false;
+    /**
+     * @var false
+     */
+    private bool $targetOk = false;
+    /**
+     * @var false
+     */
+    private bool $actionOk = false;
 
     /**
      * The constructor
@@ -73,79 +92,8 @@ class FleetLaunch
      * >> Step 1 <<
      */
     public function __construct(
-        private readonly ConfigurationService $configurationService,
-        private readonly BuildingListItemRepository $buildingListItemRepository,
-        private readonly FleetRepository $fleetRepository,
-        private readonly PlanetRepository $planetRepository,
-        private readonly AllianceBuildListRepository $allianceBuildListRepository,
-        private readonly TechnologyListItemRepository $technologyListItemRepository,
-        private readonly RequestStack $requestStack,
-        private readonly ShipRequirementRepository $shipRequirementRepository
-
-
     )
     {
-        $request = $this->requestStack->getCurrentRequest();
-
-        /** @var Planet $sourceEnt */
-        $sourceEnt = $this->planetRepository->find($request->getSession()->get('cpid'));
-        $race = $sourceEnt->getUser()->getRace();
-
-        $this->sourceEntity = $sourceEnt;
-        $this->owner = $sourceEnt->getUser();
-        $this->ownerId = $sourceEnt->getUser()->getId();
-        $this->ownerRaceName = $race->getName();
-        $this->raceSpeedFactor = $race->getFleetTime();
-        $this->possibleFleetStarts = 0;
-        $this->fleetSlotsUsed = 0;
-        $this->fleetControlLevel = 0;
-
-        $this->ships = array();
-        $this->speedPercent = 100;
-        $this->speed = 0;
-        $this->speed1 = 0;
-        $this->sBonusSpeed = 1;
-        $this->sBonusReadiness = 1;
-        $this->duration = 0;
-        $this->action = '';
-        $this->costsPerHundredAE = 0;
-        $this->costsPerHundredAE1 = 0;
-        $this->timeLaunchLand = 0;
-        $this->costsLaunchLand = 0;
-        $this->pilots = 0;
-        $this->pilotsAvailable = 0;
-        $this->sBonusPilots = 1;
-        $this->capacityTotal = 0;
-        $this->capacityResLoaded = 0;
-        $this->capacityFuelUsed = 0;
-        $this->capacityPeopleTotal = 0;
-        $this->capacityPeopleLoaded = 0;
-        $this->sBonusCapacity = 1;
-        $this->shipCount = 0;
-        $this->distance = 0;
-        $this->res = array(0, 0, 0, 0, 0, 0);
-        $this->fetch = array(0, 0, 0, 0, 0, 0, 0);
-        $this->costs = 0;
-        $this->costsFood = 0;
-        $this->costsPower = 0;
-        $this->supportTime = 0;
-        $this->supportCostsFood = 0;
-        $this->supportCostsFuel = 0;
-        $this->supportCostsFuelPerSec = 0;
-        $this->supportCostsFoodPerSec = 0;
-        $this->leaderId = 0;
-        $this->fakeId = 0;
-
-        $this->shipActions = array();
-
-        $this->havenOk = false;
-        $this->shipsFixed = false;
-        $this->targetOk = false;
-        $this->actionOk = false;
-
-        $this->error = "";
-        $this->entityResourceLogStart = $this->sourceEntity->getResourceLog();
-
         /*
         //Create targetentity
         if (isset($_SESSION['haven']['targetId'])) {
@@ -155,389 +103,7 @@ class FleetLaunch
         }
 */
         //Wormhole enable?
-        $this->wormholeEnable = $this->technologyListItemRepository->getTechnologyLevel($this->owner, TechnologyId::WORMHOLE) > 0;
-
-        if ($this->owner->getAlliance() && $this->allianceBuildListRepository->getLevel($this->owner->getAlliance(), AllianceBuildingId::MAIN) > 0) {
-            $flvl = $this->allianceBuildListRepository->getLevel($this->owner->getAlliance(), AllianceBuildingId::FLEET_CONTROL);
-            $this->setAllianceSlots($flvl);
-        }
     }
-
-    //
-    // Main workflow
-    //
-
-    /**
-     * Checks main conditions on source planet and
-     * returns true if they are ok.
-     * The conditions are: Disabled flightban, enabled fleetcontrol, a free fleet slot
-     *
-     * >> Step 2 <<
-     */
-    public function checkHaven():bool
-    {
-        $this->havenOk = false;
-
-        // Check if flights are possible
-        if (
-            !$this->configurationService->getBoolean('flightban')
-            || $this->configurationService->param1Int('flightban_time') > time()
-            || $this->configurationService->param2Int('flightban_time') < time()
-        ) {
-
-            /** @var BuildingListItem $fleetControl */
-            $fleetControl = $this->buildingListItemRepository->getEntityBuilding($this->owner, $this->sourceEntity, BuildingId::FLEET_CONTROL);
-            // Check if haven is out of order
-            if (!$fleetControl || $fleetControl->getCurrentLevel() === 0) {
-                $this->error = "Der Raumschiffhafen ist noch nicht gebaut.";
-            } elseif ($fleetControl->isDeactivated()) {
-                $this->error = "Dieser Raumschiffhafen ist bis " . StringUtils::formatDate($fleetControl->getDeactivated()) . " deaktiviert.";
-            } else {
-                $this->fleetSlotsUsed = $this->fleetRepository->count(['user' => $this->owner, 'entityFrom' => $this->sourceEntity->getEntity()]);
-
-                $this->fleetControlLevel = $fleetControl->getCurrentLevel();
-                $totalSlots = self::FLEET_NOCONTROL_NUM + $this->fleetControlLevel;
-
-                $specialist = $this->owner->getSpecialist();
-                if ($specialist) {
-                    $totalSlots += $specialist->getFleetMax();
-                }
-
-                $this->possibleFleetStarts = $totalSlots - $this->fleetSlotsUsed;
-                if ($this->possibleFleetStarts > 0) {
-                    $this->pilotsAvailable = max(0, floor($this->sourceEntity->getPeople() - $this->buildingListItemRepository->getTotalPeopleWorking($this->sourceEntity)));
-                    $this->havenOk = true;
-                } else {
-                    $this->error = "Von hier können keine weiteren Flotten starten, alle Slots (" . $totalSlots . ") sind belegt!";
-                }
-            }
-        } else {
-            $this->error = "Wegen einer Flottensperre können bis " . StringUtils::formatDate($this->configurationService->param2Int('flightban_time')) . " keine Flotten gestartet werden! " . $this->configurationService->param1('flightban');
-        }
-        return $this->havenOk;
-    }
-    /**
-     * Adds $cnt items of ship $sid to the fleet.
-     * Returns the effective number of added ships or false if no ship
-     * of that type was on the source entity
-     *
-     * >> Step 3 <<
-     */
-    public function addShip(ShipListItem $shipListItem, int $cnt)
-    {
-        if ($this->havenOk) {
-            if (!$this->shipsFixed) {
-                if ($shipListItem->getCount() > 0) {
-                    $ship = $shipListItem->getShip();
-                    $specialist = $this->owner->getSpecialist();
-
-                    $timefactor = $this->raceSpeedFactor() + ($specialist?$specialist->getFleetSpeed() : 1) - 1;
-
-                    $requirements = $this->shipRequirementRepository->getRequiredSpeedTechnologies($ship);
-                    if (count($requirements) > 0) {
-                        foreach ($requirements as $requirement) {
-                            $level = $this->technologyListItemRepository->findOneBy(['user'=>$this->owner,'technology'=>$requirement->getTech()])?->getCurrentLevel() ?? 0;
-                            if ($level - $requirement->getLevel() <= 0) {
-                                $timefactor += 0;
-                            } else {
-                                $timefactor += max(0, ($level - $requirement->getLevel()) * 0.1);
-                            }
-                        }
-                    }
-                    $cnt = min(StringUtils::parseFormattedNumber($cnt), $shipListItem->getCount());
-                    $factorF = $this->configurationService->getFloat('flight_flight_time');
-                    $factorS = $this->configurationService->getFloat('flight_start_time');
-                    $factorL = $this->configurationService->getFloat('flight_land_time');
-
-                    $this->ships[$ship->getId()] = array(
-                        "count" => $cnt,
-                        "speed" => ($ship->getSpeed() / $factorF) * $timefactor,
-                        "fuel_use" => $ship->getFuelUse() * $cnt,
-                        "fake" => strpos($ship->getActions(), "fakeattack"),
-                        "name" => $ship->getName(),
-                        "pilots" => $ship->getPilots() * $cnt,
-                        "special" => $ship->isSpecial(),
-                        "actions" => array_filter(explode(",", $ship->getActions())),
-                        'item' => $shipListItem,
-                    );
-
-                    if ($ship->isSpecial()) {
-                        $this->sBonusSpeed += $shipListItem->getSpecialShipBonusSpeed() * $ship->getSpecialBonusSpeed();
-                        $this->sBonusReadiness += $shipListItem->getSpecialShipBonusReadiness() * $ship->getSpecialBonusReadiness();
-                        $this->sBonusPilots = max(0, $this->sBonusPilots - $shipListItem->getSpecialShipBonusPilots() * $ship->getSpecialBonusPilots());
-                        $this->sBonusCapacity += $shipListItem->getSpecialShipBonusCapacity() * $ship->getSpecialBonusCapacity();
-                    }
-
-                    $this->shipActions = array_merge($this->shipActions, explode(",", $ship->getActions()));
-                    $this->shipActions = array_unique($this->shipActions);
-
-                    // Set global speed
-                    if ($this->speed <= 0) {
-                        $this->speed = ($ship->getSpeed() / $factorF) * $timefactor;
-                    } else {
-                        $this->speed = min($this->speed, ($ship->getSpeed() / $factorF) * $timefactor);
-                    }
-
-                    $this->timeLaunchLand = max($this->timeLaunchLand, $ship->getTimeToLand() / $factorS + $ship->getTimeToStart() / $factorL);
-                    $this->costsLaunchLand += 2 * ($ship->getFuelUseLaunch() + $ship->getFuelUseLanding()) * $cnt;
-                    $this->pilots += $ship->getPilots() * $cnt;
-                    $this->capacityTotal += $ship->getCapacity() * $cnt;
-                    $this->capacityPeopleTotal += $ship->getPeopleCapacity() * $cnt;
-                    $this->shipCount += $cnt;
-
-                    return $cnt;
-                } else
-                    $this->error = "Dieses Schiff ist hier nicht vorhanden!";
-            } else
-                $this->error = "Kann kein Schiff hinzufügen, die Flotte wurde bereits fertig zusammengestellt!";
-        } else
-            $this->error = "Kann kein Schiff hinzufügen, es liegt noch ein Problem mit der Flottenkontrolle vor.";
-        return false;
-    }
-
-    /**
-     * Fix ships, prevents the user from adding more ships
-     * and calculates the final costs per ae
-     *
-     * >> Step 4 <<
-     */
-    public function fixShips(): bool
-    {
-        if ($this->shipsFixed) {
-            $this->costsPerHundredAE = 0;
-            $this->shipsFixed = false;
-        }
-
-        if ($this->shipCount > 0) {
-            if ($this->pilotsAvailable() >= $this->getPilots()) {
-
-                // Calc Costs for all ships, based on regulated speed
-                foreach ($this->ships as $sid => $sd) {
-                    $cpae = $sd['fuel_use'] * $this->speed / $sd['speed'];
-                    $this->ships[$sid]['costs_per_ae'] = $cpae;
-                    $this->costsPerHundredAE += $cpae;
-                }
-                $this->shipsFixed = true;
-                $this->error = "";
-                return $this->shipsFixed;
-            } else
-                $this->error = "Es sind zuwenig Piloten für diese Flotte vorhanden.(" . $this->pilotsAvailable() . " verfügbar, " . $this->getPilots() . " benötigt)";
-        } else
-            $this->error = "Kann Schiffauswahl nicht fertigstellen, es wurde keine Schiffe zur Flotte hinzugefügt.";
-
-        return false;
-    }
-
-    /**
-     * Set the wormhole entity
-     *
-     * >> Step 5.1
-     */
-    function setWormhole(&$ent, $speedPercent = 100)
-    {
-        if ($this->wormholeEnable) {
-            if (is_array($ent->getFleetTargetForwarder())) {
-                $this->wormholeEntryEntity = $ent;
-                $this->wormholeExitEntity = Entity::createFactoryById($this->wormholeEntryEntity->targetId());
-                $this->costsPerHundredAE1 = $this->costsPerHundredAE;
-                $this->speed1 = $this->speed;
-                $this->duration1 = $this->duration - $this->getTimeLaunchLand();
-                $this->speedPercent1 = $this->speedPercent;
-                return true;
-            } else
-                $this->error = "Ungültiges Zielobjekt";
-        } else
-            $this->error = "Wurmlochforschung noch nicht erforscht";
-        return false;
-    }
-
-    /**
-     * Sets the target entity
-     *
-     * >> Step 5 <<
-     */
-    function setTarget(&$ent, $speedPercent = 100)
-    {
-        global $app;
-
-        /** @var EntityService $entityService */
-        $entityService = $app[EntityService::class];
-
-        if ($this->shipsFixed) {
-            if ($ent->isValid()) {
-                $this->targetEntity = $ent;
-                if ($this->wormholeEntryEntity != NULL) {
-                    $this->distance = $entityService->distanceByCoords($this->wormholeExitEntity->getEntityCoordinates(), $this->targetEntity->getEntityCoordinates());
-                    $this->distance1 = $entityService->distanceByCoords($this->sourceEntity->getEntityCoordinates(), $this->wormholeEntryEntity->getEntityCoordinates());
-                } else {
-                    $this->distance = $entityService->distanceByCoords($this->sourceEntity->getEntityCoordinates(), $this->targetEntity->getEntityCoordinates());
-                    $this->distance1 = 0;
-                }
-
-                $this->setSpeedPercent($speedPercent);
-
-                return true;
-            } else
-                $this->error = "Ungültiges Zielobjekt";
-        } else
-            $this->error = "Flotte nicht fertig zusammengestellt";
-        return false;
-    }
-
-
-    /**
-     * Check if fleet can fly to this target
-     *
-     * >> Step 6 <<
-     */
-    function checkTarget()
-    {
-        if ($this->sourceEntity->resFuel() >= $this->getCosts()) {
-            if ($this->sourceEntity->resFood() >= $this->getCostsFood()) {
-                if ($this->getCapacity() >= 0) {
-                    $this->targetOk = true;
-                    return $this->targetOk;
-                } else
-                    $this->error = "Zu wenig Laderaum für soviel Treibstoff und Nahrung (" . StringUtils::formatNumber(abs($this->getCapacity())) . " zuviel)!";
-            } else
-                $this->error = "Zuwenig Nahrung! " . StringUtils::formatNumber($this->sourceEntity->resFood()) . " t " . ResourceNames::FOOD . " vorhanden, " . StringUtils::formatNumber($this->getCostsFood()) . " t benötigt.";
-        } else
-            $this->error = "Zuwenig Treibstoff! " . StringUtils::formatNumber($this->sourceEntity->resFuel()) . " t " . ResourceNames::FUEL . " vorhanden, " . StringUtils::formatNumber($this->getCosts()) . " t benötigt.";
-        return false;
-    }
-
-    /**
-     * Set the desired action
-     *
-     * >> Step 7 <<
-     */
-    function setAction($actionCode)
-    {
-        if ($this->targetOk) {
-            $actions = $this->getAllowedActions();
-            if (isset($actions[$actionCode])) {
-                $this->action = $actionCode;
-
-                $this->actionOk = true;
-                return true;
-            }
-        }
-        $this->error = "Es befindet sich kein Schiff in der Flotte, welches die Aktion ausführen kann.";
-        return false;
-    }
-
-
-    function launch()
-    {
-        global $app;
-
-        /** @var FleetRepository $fleetRepository */
-        $fleetRepository = $app[FleetRepository::class];
-        /** @var PlanetRepository $planetRepository */
-        $planetRepository = $app[PlanetRepository::class];
-
-        if ($this->actionOk) {
-            if ($this->checkHaven()) {
-                $time = time();
-                $this->landTime = ($time + $this->getDuration());
-
-                // Subtract ships from source
-                /** @var ShipRepository $shipRepository */
-                $shipRepository = $app[ShipRepository::class];
-                $addcnt = 0;
-                foreach ($this->ships as $sid => $sda) {
-                    $this->ships[$sid]['count'] = $shipRepository->removeShips((int) $sid, (int) $sda['count'], (int) $this->ownerId, (int) $this->sourceEntity->id());
-                    $addcnt += $this->ships[$sid]['count'];
-                }
-
-                if ($addcnt > 0) {
-
-                    // Load resource (is needed because of the xajax use)
-                    // subtracts payload ressources from source
-                    $this->finalLoadResource();
-
-                    // Subtract flight and support costs from source
-                    $planetRepository->addResources($this->sourceEntity->id(), 0, 0, 0, -$this->getCosts() - $this->getSupportFuel(), -$this->getCostsFood() - $this->getSupportFood(), - ($this->getPilots() + $this->capacityPeopleLoaded));
-                    $this->sourceEntity->reloadRes();
-
-                    if ($this->action == "alliance" && $this->leaderId != 0) {
-                        $status = 3;
-                        $nextId = $this->sourceEntity->ownerAlliance();
-                    } elseif ($this->action == "support") {
-                        $status = 0;
-                        $nextId = $this->sourceEntity->id();
-                    } else {
-                        $status = 0;
-                        $nextId = 0;
-                    }
-
-                    // Create fleet record
-                    $resources = new BaseResources();
-                    $resources->metal = $this->res[1];
-                    $resources->crystal = $this->res[2];
-                    $resources->plastic = $this->res[3];
-                    $resources->fuel = $this->res[4];
-                    $resources->food = $this->res[5];
-                    $resources->people = $this->capacityPeopleLoaded;
-
-                    $fetch = new BaseResources();
-                    $fetch->metal = $this->fetch[1];
-                    $fetch->crystal = $this->fetch[2];
-                    $fetch->plastic = $this->fetch[3];
-                    $fetch->fuel = $this->fetch[4];
-                    $fetch->food = $this->fetch[5];
-                    $fetch->people = $this->fetch[6];
-
-                    $fid = $fleetRepository->add($this->ownerId, $time, $this->landTime, $this->sourceEntity->id(), $this->targetEntity->id(), $this->action, $status, $resources, $fetch, $this->getPilots(), $this->getCosts(), $this->getCostsFood(), $this->getCostsPower(), $this->leaderId, $nextId, $this->supportTime, $this->supportCostsFuel, $this->supportCostsFood);
-
-                    $shipLog = "";
-                    foreach ($this->ships as $sid => $sda) {
-                        $shipLog .= $sid . ":" . $sda['count'] . ",";
-                        if ($sda['special']) {
-                            $fleetRepository->addSpecialShipsToFleet($fid, $sid, $sda['count'], $sda['item']);
-                        } elseif ($sda['fake'] !== false) {
-                            $fleetRepository->addShipsToFleet($fid, $sid, $sda['count'], $this->fakeId);
-                        } else {
-                            $fleetRepository->addShipsToFleet($fid, $sid, $sda['count']);
-                        }
-                    }
-
-                    //add all the cool stuff to the fleetLog
-                    $resources = new BaseResources();
-                    $resources->metal = $this->res[1];
-                    $resources->crystal = $this->res[2];
-                    $resources->plastic = $this->res[3];
-                    $resources->fuel = $this->res[4];
-                    $resources->food = $this->res[5];
-                    $resources->people = $this->capacityPeopleLoaded;
-
-                    $fetch = new BaseResources();
-                    $fetch->metal = $this->fetch[1];
-                    $fetch->crystal = $this->fetch[2];
-                    $fetch->plastic = $this->fetch[3];
-                    $fetch->fuel = $this->fetch[4];
-                    $fetch->food = $this->fetch[5];
-                    $fetch->people = $this->fetch[6];
-
-                    /** @var FleetLogRepository $fleetLogRepository */
-                    $fleetLogRepository = $app[FleetLogRepository::class];
-                    $fleetLogRepository->addLaunch($fid, $this->ownerId, $this->sourceEntity->id, $this->targetEntity->id(), $time, $this->landTime, $this->action, $this->getPilots(), $this->getCosts() + $this->supportCostsFuel, $this->getCostsFood() + $this->supportCostsFood, $resources, $fetch, $shipLog, $this->entityResourceLogStart, $this->sourceEntity->getResourceLog());
-
-                    if ($this->action === \EtoA\Fleet\FleetAction::ALLIANCE && $this->leaderId == 0) {
-                        $fleetRepository->markAsLeader($fid, $this->sourceEntity->ownerAlliance());
-                    }
-                    return $fid;
-                } else {
-                    $this->error = "Konnte keine Schiffe zur Flotte hinzufügen da keine vorhanden sind!";
-                }
-            }
-        } else {
-            $this->error = "Aktion nocht nicht festgelegt!";
-        }
-        return false;
-    }
-
-
 
     //
     // Helpers
@@ -548,13 +114,12 @@ class FleetLaunch
      * This can be used in the haven when revising
      * the ship selection
      */
-    function resetShips()
+    public function resetShips(): void
     {
         $this->ships = array();
         $this->shipActions = array();
         $this->res = array(0, 0, 0, 0, 0, 0);
-        $this->fetch = array(0, 0, 0, 0, 0, 0, 0);
-        $this->shipsFixed = false;
+        $this->fetch = array(0, 0, 0, 0, 0, 0);
         $this->speed = 0;
         $this->duration = 0;
         $this->costsPerHundredAE = 0;
@@ -575,7 +140,7 @@ class FleetLaunch
         $this->sBonusReadiness = 1;
     }
 
-    function unsetWormhole()
+    public function unsetWormhole(): void
     {
         $this->wormholeEntryEntity = NULL;
         $this->wormholeExitEntity = NULL;
@@ -585,161 +150,64 @@ class FleetLaunch
         $this->speedPercent1 = 0;
     }
 
-    /**
-     *
-     */
-    function getAllowedActions()
-    {
-        global $app;
 
-        /** @var ConfigurationService $config */
-        $config = $app[ConfigurationService::class];
-        /** @var AllianceDiplomacyRepository $allianceDiplomacyRepository */
-        $allianceDiplomacyRepository = $app[AllianceDiplomacyRepository::class];
 
-        $this->error = '';
-
-        //$allowed =  ($this->sFleets && count($this->sFleets) && ( $this->leaderId>0 || in_array($this->targetEntity->id,$this->sFleets))) ? true : false;
-        $allowed = true;
-        // Get possible actions by intersecting ship actions and allowed target actions
-        $actions = array_intersect($this->shipActions, $this->targetEntity->allowedFleetActions());
-        $actionObjs = array();
-
-        $battleban = false;
-        if ($config->getBoolean("battleban") && $config->param1Int("battleban_time") <= time() && $config->param2Int("battleban_time") > time()) {
-            $this->error = "Kampfsperre von " . StringUtils::formatDate($config->param1Int("battleban_time")) . " bis " . StringUtils::formatDate($config->param2Int("battleban_time")) . ". " . $config->param1("battleban");
-            $battleban = true;
-        }
-
-        if ($config->getBoolean("flightban") && $config->param1Int("flightban_time") <= time() && $config->param2Int("flightban_time") > time()) {
-            $this->error = "Flottensperre von " . StringUtils::formatDate($config->param1Int("flightban_time")) . " bis " . StringUtils::formatDate($config->param2Int("flightban_time")) . ". " . $config->param1("flightban");
-        } else {
-            $noobProtectionErrorAdded = false;
-
-            // Test each possible action
-            foreach ($actions as $i) {
-                // variable to check whether a support overflow error message should be printed
-                $supportPossible = true;
-
-                $ai = FleetAction::createFactory($i);
-
-                // Skip this action if it is an alliance action and ABS is disabled
-                // and if the owner of the target planet is not the same user (support)
-                // or if alliance battle system is only allowed for alliances at war
-                // and the source's and target's alliances aren't at war against each other
-                if (
-                    $this->sourceEntity->ownerId() != $this->targetEntity->ownerId() &&
-                    $ai->allianceAction && (
-                        // alliance battle system is disabled
-                        !$config->getBoolean("abs_enabled") || (
-                            // or abs is enabled for alliances at war only
-                            $config->param1Boolean("abs_enabled") && (
-                                (
-                                    // and it is an agressive action
-                                    $ai->attitude() == 3 &&
-                                    // and the two alliances are not at war against each other
-                                    !$allianceDiplomacyRepository->isAtWar($this->sourceEntity->owner->allianceId(), $this->targetEntity->ownerAlliance())) || (
-                                    // or it is a defensive action
-                                    $ai->attitude() == 1 &&
-                                    // and the user's alliance is not at war
-                                    !$allianceDiplomacyRepository->isAtWar($this->owner->allianceId())))))
-                ) {
-                    continue;
-                }
-
-                // Permission checks
-                if (
-                    // Action is allowed if:
-                    (
-                        // * Source and target are the same and the action allows that
-                        ($this->sourceEntity->id() == $this->targetEntity->id() && $ai->allowSourceEntity()) ||
-                        // * source and target are different but belong to the same user and the action is possible for the same user (e.g. ok for transport, not ok for attack)
-                        ($this->sourceEntity->ownerId() == $this->targetEntity->ownerId() && $this->sourceEntity->id() != $this->targetEntity->id() && $ai->allowOwnEntities()) ||
-                        // * source and target are from different users and target belongs to an user (so it's not a nebula for example) and the action allows any other player's planet as target
-                        ($this->sourceEntity->ownerId() != $this->targetEntity->ownerId() && $this->targetEntity->ownerId() > 0 && $ai->allowPlayerEntities()) ||
-                        // * target doesn't belong to an user and action allows that (e.g. crystal collection from nebulas)
-                        ($this->targetEntity->ownerId() == 0 && $ai->allowNpcEntities()) ||
-                        // * action allows only same-alliance users and source and target user belong to the same alliance (alliance >0 -> they have an alliance) OR same user for no alliance
-                        //   this is used only for support, so in case different user there is also a check whether there are available support slots on the planet (checkDefNum)
-                        ($ai->allowAllianceEntities && $this->sourceEntity->ownerAlliance() == $this->targetEntity->ownerAlliance() && ($this->sourceEntity->ownerId() == $this->targetEntity->ownerId() || ($this->sourceEntity->ownerAlliance() > 0 && ($supportPossible = $this->checkDefNum()))))) &&
-                    (!$ai->allianceAction || $this->getAllianceSlots() > 0 || $allowed) //this last check, checks for every AllianceAction support, alliance if there is a empty slot
-                ) {
-                    //Check for exclusive Actions
-                    $exclusiceAllowed = true;
-                    if ($ai->exclusive()) {
-                        foreach ($this->getShips() as $ship) {
-                            if (!(in_array($ai->code(), $ship['actions'], true) || $ship['special'])) {
-                                $exclusiceAllowed = false;
-                                break;
-                            }
-                        }
-                    }
-                    if ($exclusiceAllowed) {
-                        if ($this->targetEntity->ownerId() > 0) {
-                            if (!$this->targetEntity->ownerHoliday() || $ai->allowOnHoliday()) {
-                                if ($ai->attitude() > 1) {
-                                    if (!$battleban) {
-                                        if (
-                                            $ai->allowActivePlayerEntities()
-                                            || $this->targetEntity->owner->isInactivLong()
-                                            || ($this->ownerId == $this->sourceEntity->lastUserCheck())
-                                        ) {
-                                            if ($this->owner->canAttackPlanet($this->targetEntity)) {
-                                                if (strpos($ai, 'Bombardierung')) {
-                                                    if ($allianceDiplomacyRepository->isAtWar($this->sourceEntity->owner->allianceId(), $this->targetEntity->ownerAlliance()))
-                                                        $actionObjs[$i] = $ai;
-                                                } else
-                                                    $actionObjs[$i] = $ai;
-                                            } else if (!$noobProtectionErrorAdded) {
-                                                $this->error .= 'Der Besitzer des Ziels steht unter Anfängerschutz! '
-                                                    . 'Die Punkte des Users müssen zwischen ' . (USER_ATTACK_PERCENTAGE * 100) . '% und '
-                                                    . (100 / USER_ATTACK_PERCENTAGE) . '% von deinen Punkten liegen.<br />'
-                                                    . 'Ausserdem müssen beide Spieler mindestens ' . (USER_ATTACK_MIN_POINTS)
-                                                    . ' Punkte haben.<br />';
-                                                // only add error message once, not for every action
-                                                $noobProtectionErrorAdded = true;
-                                            }
-                                        } // if ($ai->allowActivePlayerEntities() || ($this->targetEntity->owner->isInactiv() && !$ai->allowActivePlayerEntities()))
-                                    } // if (!$battleban)
-                                } // if ($ai->attitude() > 1)
-                                else {
-                                    $actionObjs[$i] = $ai;
-                                }
-                            } // if (!$this->targetEntity->ownerHoliday() || $ai->allowOnHoliday())
-                            else {
-                                $this->error .= "Der Besitzer des Ziels ist im Urlaub; viele Aktionen sind deshalb nicht möglich!<br />";
-                            }
-                        } // if($this->targetEntity->ownerId()>0)
-                        else {
-                            $actionObjs[$i] = $ai;
-                        }
-                    } // if ($exclusiceAllowed)
-                } // Permission checks
-                // print error message if support slots check failed
-                if (!$supportPossible) {
-                    // Meldung ausgeben, dass Support nicht möglich ist
-                    $this->error .= 'Support nicht m&ouml;glich, die Maximalzahl von ' .
-                        $config->param1Int('alliance_fleets_max_players') .
-                        ' Verteidigern ist auf diesem Planet bereits erreicht.<br />';
-                    $supportPossible = true;
-                }
-            } // foreach ($actions as $i)
-        } // else Flottensperre
-        //echo dump($actionObjs);
-        return $actionObjs;
-    }
-
-    function getSpeed()
+    function getSpeed(): float|int
     {
         return $this->speed * $this->sBonusSpeed * $this->speedPercent / 100;
     }
 
-    function getShips()
+    function getShips(): array
     {
         return $this->ships;
     }
 
-    function getCosts()
+    public function setShips(array $ships): void
+    {
+        $this->ships = $ships;
+    }
+
+    public function setSpeed(int $speed): void
+    {
+        $this->speed = $speed;
+    }
+
+    public function setDuration(int $duration): void
+    {
+        $this->duration = $duration;
+    }
+
+    public function setCostsPerHundredAE(int $costsPerHundredAE): void
+    {
+        $this->costsPerHundredAE = $costsPerHundredAE;
+    }
+
+    public function setTimeLaunchLand(int $timeLaunchLand): void
+    {
+        $this->timeLaunchLand = $timeLaunchLand;
+    }
+
+    public function setCostsLaunchLand(int $costsLaunchLand): void
+    {
+        $this->costsLaunchLand = $costsLaunchLand;
+    }
+
+    public function setCosts(int $costs): void
+    {
+        $this->costs = $costs;
+    }
+
+    public function setCostsFood(int $costsFood): void
+    {
+        $this->costsFood = $costsFood;
+    }
+
+    public function setCostsPower(int $costsPower): void
+    {
+        $this->costsPower = $costsPower;
+    }
+
+    function getCosts(): int
     {
         $this->costs = ceil($this->costsPerHundredAE / 100 * $this->distance * $this->speedPercent / 100) + ceil($this->costsPerHundredAE1 / 100 * $this->distance1 * $this->speedPercent1 / 100);
         $this->costs += $this->costsLaunchLand;
@@ -747,32 +215,24 @@ class FleetLaunch
         return $this->costs;
     }
 
-    function getCostsFood()
-    {
-        global $app;
-        /** @var ConfigurationService $config */
-        $config = $app[ConfigurationService::class];
 
-        $this->costsFood = ceil($this->getPilots() * $config->getInt('people_food_require') / 3600 * $this->getDuration());
-        return $this->costsFood;
-    }
 
-    function getCostsPower()
+    function getCostsPower(): int
     {
         return $this->costsPower;
     }
 
-    function getDuration()
+    function getDuration(): int
     {
         return $this->duration + $this->duration1;
     }
 
-    function getSpeedPercent()
+    function getSpeedPercent(): int
     {
         return $this->speedPercent;
     }
 
-    function setSpeedPercent($perc)
+    function setSpeedPercent($perc): void
     {
         $this->speedPercent = max(1, min(100, $perc));
         $this->duration = $this->distance / $this->getSpeed();    // Calculate duration
@@ -781,42 +241,42 @@ class FleetLaunch
         $this->duration = ceil($this->duration);
     }
 
-    function getCostsPerHundredAE()
+    function getCostsPerHundredAE(): float
     {
         return ceil($this->costsPerHundredAE * $this->speedPercent / 100);
     }
 
-    function getTimeLaunchLand()
+    function getTimeLaunchLand(): float
     {
         return ceil($this->timeLaunchLand * (2 - $this->sBonusReadiness));
     }
 
-    function getCostsLaunchLand()
+    function getCostsLaunchLand(): int
     {
         return $this->costsLaunchLand;
     }
 
-    function getCapacity()
+    function getCapacity(): float|int
     {
         return $this->getTotalCapacity() - $this->capacityResLoaded - $this->capacityFuelUsed - $this->costsFood - $this->supportCostsFood - $this->supportCostsFuel;
     }
 
-    function getTotalCapacity()
+    function getTotalCapacity(): float|int
     {
         return $this->capacityTotal * $this->sBonusCapacity;
     }
 
-    function getPeopleCapacity()
+    function getPeopleCapacity(): int
     {
         return $this->capacityPeopleTotal - $this->capacityPeopleLoaded;
     }
 
-    function getTotalPeopleCapacity()
+    function getTotalPeopleCapacity(): int
     {
         return $this->capacityPeopleTotal;
     }
 
-    private function calcResLoaded()
+    private function calcResLoaded(): void
     {
         $this->capacityResLoaded = 0;
         foreach ($this->res as $i) {
@@ -829,7 +289,7 @@ class FleetLaunch
         return ($this->res[$id] > 0) ? $this->res[$id] : 0;
     }
 
-    function loadResource($id, $ammount, $finalize = 0)
+    function loadResource($id, $ammount, $finalize = 0): float
     {
         // $ammount = max(0,$ammount);
         $this->res[$id] = 0;
@@ -857,50 +317,9 @@ class FleetLaunch
         return $loaded;
     }
 
-    // subtracts the payload ress (not support/flight fuel and food)
-    function finalLoadResource()
-    {
-        global $app;
 
-        /** @var PlanetRepository $planetRepository */
-        $planetRepository = $app[PlanetRepository::class];
 
-        $this->sourceEntity->reloadRes();
-        $resources = new BaseResources();
-
-        foreach (ResourceNames::NAMES as $rk => $rn) {
-            $id = $rk + 1;
-            if ($this->res[$id] >= 0) {
-                $ammount = $this->res[$id];
-            } else {
-                if ($id == 4) {
-                    $ammount = max(0, $this->sourceEntity->getRes($id) + $this->res[$id] - $this->getSupportFuel() - $this->getCosts());
-                } elseif ($id == 5) {
-                    $ammount = max(0, $this->sourceEntity->getRes($id) + $this->res[$id] - $this->getSupportFood() - $this->getCostsFood());
-                } else
-                    $ammount = max(0, $this->sourceEntity->getRes($id) + $this->res[$id]);
-            }
-
-            $this->res[$id] = 0;
-            $this->calcResLoaded();
-            if ($id == 4) {
-                $loaded = (int) floor(min($ammount, $this->getCapacity(), $this->sourceEntity->getRes($id) - $this->getSupportFuel() - $this->getCosts()));
-            } elseif ($id == 5) {
-                $loaded = (int) floor(min($ammount, $this->getCapacity(), $this->sourceEntity->getRes($id) - $this->getSupportFood() - $this->getCostsFood()));
-            } else {
-                $loaded = (int) floor(min($ammount, $this->getCapacity(), $this->sourceEntity->getRes($id)));
-            }
-            $this->res[$id] = $loaded;
-            $resources->set($rk, $loaded);
-        }
-
-        $this->calcResLoaded();
-
-        $planetRepository->removeResources($this->sourceEntity->id(), $resources);
-        $this->sourceEntity->reloadRes();
-    }
-
-    function loadPeople($ammount)
+    function loadPeople($ammount): float|int
     {
         $ammount = max(0, $ammount);
         $this->capacityPeopleLoaded = floor(min($ammount, $this->capacityPeopleTotal, ($this->pilotsAvailable() - $this->getPilots())));
@@ -909,7 +328,7 @@ class FleetLaunch
     }
 
 
-    function fetchResource($id, $ammount)
+    function fetchResource($id, $ammount): float
     {
         $ammount = max(0, $ammount);
         $this->fetch[$id] = 0;
@@ -921,19 +340,19 @@ class FleetLaunch
         return $loaded;
     }
 
-    function resetSupport()
+    function resetSupport(): void
     {
         $this->supportTime = 0;
         $this->supportCostsFood = 0;
         $this->supportCostsFuel = 0;
     }
 
-    function getSupportTime()
+    function getSupportTime(): int
     {
         return $this->supportTime;
     }
 
-    function setSupportTime($time)
+    function setSupportTime($time): void
     {
         $this->supportTime = $time;
 
@@ -941,83 +360,34 @@ class FleetLaunch
         $this->supportCostsFuel = ceil($time * $this->supportCostsFuelPerSec);
     }
 
-    function getSupportFood()
+    function getSupportFood(): int
     {
         return $this->supportCostsFood;
     }
 
-    function getSupportFuel()
+    function getSupportFuel(): int
     {
         return $this->supportCostsFuel;
     }
 
-    function getSupportMaxTime()
-    {
-        global $app;
-        /** @var ConfigurationService $config */
-        $config = $app[ConfigurationService::class];
 
-        $this->supportCostsFuel = 0;
-        $this->supportCostsFood = 0;
 
-        $this->supportCostsFoodPerSec = $this->pilots * $config->getInt('people_food_require') / 36000;
-        $this->supportCostsFuelPerSec = $this->costsPerHundredAE * $this->getSpeed() / $this->getSpeedPercent() / 3600000;
-
-        $maxTime = $this->getCapacity() / ($this->supportCostsFuelPerSec + $this->supportCostsFoodPerSec);
-
-        $supportTimeFuel = ($this->sourceEntity->getRes(4) - $this->getLoadedRes(4) - $this->getCosts()) / $this->supportCostsFuelPerSec;
-
-        if ($this->supportCostsFoodPerSec > 0)
-            $supportTimeFood = ($this->sourceEntity->getRes(5) - $this->getLoadedRes(5) - $this->getCostsFood()) / $this->supportCostsFoodPerSec;
-        else
-            $supportTimeFood = $supportTimeFuel;
-
-        if ($supportTimeFuel > 0)
-            $maxTime = min($maxTime, min($supportTimeFuel, $supportTimeFood));
-        else
-            $maxTime = min($maxTime, $supportTimeFood);
-
-        return floor($maxTime);
-    }
-
-    function getSupport()
+    function getSupport(): string
     {
         return "Supportkosten";
     }
 
-    function setLeader($id)
+    function setLeader($id): void
     {
         $this->leaderId = $id;
     }
 
-    function setFakeId($id)
+    function setFakeId($id): void
     {
         $this->fakeId = $id;
     }
 
-    function loadAllianceFleets()
-    {
-        global $app;
-
-        $this->supportedAllianceEntities = array();
-        $this->aFleets = array();
-        if ($this->sourceEntity->ownerAlliance()) {
-            /** @var FleetRepository $fleetRepository */
-            $fleetRepository = $app[FleetRepository::class];
-            $this->aFleets = array_reverse($fleetRepository->search(FleetSearch::create()->isLeader()->actionIn([\EtoA\Fleet\FleetAction::ALLIANCE])->nextId($this->sourceEntity->ownerAlliance())->status(FleetStatus::DEPARTURE)));
-
-            $this->supportedAllianceEntities = $fleetRepository->getEntityToIds(FleetSearch::create()->actionIn([\EtoA\Fleet\FleetAction::SUPPORT])->statusIn([FleetStatus::DEPARTURE, FleetStatus::WAITING])->allianceId($this->sourceEntity->ownerAlliance()));
-        }
-    }
-
-    function setAllianceSlots($num)
-    {
-        $this->allianceSlots = $num + 1;
-
-        $this->loadAllianceFleets();
-    }
-
-    function getAllianceSlots()
+    function getAllianceSlots(): int
     {
         if ($this->sourceEntity->getUser()->getAlliance() && isset($this->allianceSlots)) {
             return $this->allianceSlots - count($this->aFleets) - count($this->supportedAllianceEntities);
@@ -1025,104 +395,437 @@ class FleetLaunch
         return 0;
     }
 
-    // Alliance attack already confirmed
-    function checkAttNum($leaderid)
-    {
-        global $app;
-        /** @var ConfigurationService $config */
-        $config = $app[ConfigurationService::class];
-
-        if (!$config->getBoolean('alliance_fleets_max_players')) {
-            return true;
-        }
-        // Check number of users participating in the alliance attack
-        /** @var FleetRepository $fleetRepository */
-        $fleetRepository = $app[FleetRepository::class];
-        $participatingUsers = $fleetRepository->getUserIds(FleetSearch::create()->leader($leaderid));
-        if (count($participatingUsers) < $config->param1Int('alliance_fleets_max_players')) {
-            return true;
-        }
-
-        return in_array((int) $this->ownerId, $participatingUsers, true);
-    }
-
-    function checkDefNum()
-    {
-        global $app;
-        /** @var ConfigurationService $config */
-        $config = $app[ConfigurationService::class];
-
-        if (!$config->getBoolean('alliance_fleets_max_players')) {
-            return true;
-        }
-
-        // check the number of supporters on that planet
-        /** @var FleetRepository $fleetRepository */
-        $fleetRepository = $app[FleetRepository::class];
-        $participatingUsers = $fleetRepository->getUserIds(FleetSearch::create()->actionIn([\EtoA\Fleet\FleetAction::SUPPORT])->statusIn([FleetStatus::DEPARTURE, FleetStatus::WAITING])->entityTo($this->targetEntity->id())->notUser($this->targetEntity->ownerId()));
-        // user id is guaranteed to not be the target owner, so the number is reduced
-        // by one, because we always have one slot reserved for the planet's owner
-        if (count($participatingUsers) < ($config->param1Int('alliance_fleets_max_players') - 1)) {
-            return true;
-        }
-        // if the maximum of user slots is already reached, we check whether there
-        // is already a support fleet from the same user
-
-        // if the user already supports this planet with one fleet, he can
-        // send even more fleets to support the same planet
-        return in_array((int) $this->ownerId, $participatingUsers, true);
-    }
-
-
     //
-    // Getters
+    // Getters and Setters
     //
-    function ownerId()
+
+    public function getSourceEntity(): Planet
     {
-        return $this->ownerId;
-    }
-    function error()
-    {
-        return $this->error;
-    }
-    function raceSpeedFactor()
-    {
-        return $this->raceSpeedFactor;
-    }
-    function pilotsAvailable()
-    {
-        return $this->pilotsAvailable;
-    }
-    function possibleFleetStarts()
-    {
-        return $this->possibleFleetStarts;
-    }
-    function fleetSlotsUsed()
-    {
-        return $this->fleetSlotsUsed;
-    }
-    function fleetControlLevel()
-    {
-        return $this->fleetControlLevel;
+        return $this->sourceEntity;
     }
 
-    function getDistance()
+    public function setSourceEntity(Planet $sourceEntity): void
     {
-        return $this->distance + $this->distance1;
+        $this->sourceEntity = $sourceEntity;
     }
 
-    function getShipCount()
+    public function getTargetEntity(): ?Entity
+    {
+        return $this->targetEntity;
+    }
+
+    public function setTargetEntity(?Entity $targetEntity): void
+    {
+        $this->targetEntity = $targetEntity;
+    }
+
+    public function getOwner(): User
+    {
+        return $this->owner;
+    }
+
+    public function setOwner(User $owner): void
+    {
+        $this->owner = $owner;
+    }
+
+    public function getWormholeEntryEntity(): ?Entity
+    {
+        return $this->wormholeEntryEntity;
+    }
+
+    public function setWormholeEntryEntity(?Entity $wormholeEntryEntity): void
+    {
+        $this->wormholeEntryEntity = $wormholeEntryEntity;
+    }
+
+    public function getWormholeExitEntity(): ?Entity
+    {
+        return $this->wormholeExitEntity;
+    }
+
+    public function setWormholeExitEntity(?Entity $wormholeExitEntity): void
+    {
+        $this->wormholeExitEntity = $wormholeExitEntity;
+    }
+
+    public function getShipCount(): int
     {
         return $this->shipCount;
     }
 
-    function getPilots()
+    public function setShipCount(int $shipCount): void
     {
-        return $this->pilots * $this->sBonusPilots;
+        $this->shipCount = $shipCount;
     }
 
-    function getLeader()
+    public function isShipsFixed(): bool
     {
-        return $this->leaderId;
+        return $this->shipsFixed;
+    }
+
+    public function setShipsFixed(bool $shipsFixed): void
+    {
+        $this->shipsFixed = $shipsFixed;
+    }
+
+    public function getSpeed1(): int
+    {
+        return $this->speed1;
+    }
+
+    public function setSpeed1(int $speed1): void
+    {
+        $this->speed1 = $speed1;
+    }
+
+    public function getSpeedPercent1(): int
+    {
+        return $this->speedPercent1;
+    }
+
+    public function setSpeedPercent1(int $speedPercent1): void
+    {
+        $this->speedPercent1 = $speedPercent1;
+    }
+
+    public function getDuration1(): int
+    {
+        return $this->duration1;
+    }
+
+    public function setDuration1(int $duration1): void
+    {
+        $this->duration1 = $duration1;
+    }
+
+    public function getCostsPerHundredAE1(): int
+    {
+        return $this->costsPerHundredAE1;
+    }
+
+    public function setCostsPerHundredAE1(int $costsPerHundredAE1): void
+    {
+        $this->costsPerHundredAE1 = $costsPerHundredAE1;
+    }
+
+    public function getPilots(): int
+    {
+        return $this->pilots;
+    }
+
+    public function setPilots(int $pilots): void
+    {
+        $this->pilots = $pilots;
+    }
+
+    public function getCapacityTotal(): int
+    {
+        return $this->capacityTotal;
+    }
+
+    public function setCapacityTotal(int $capacityTotal): void
+    {
+        $this->capacityTotal = $capacityTotal;
+    }
+
+    public function getCapacityFuelUsed(): int
+    {
+        return $this->capacityFuelUsed;
+    }
+
+    public function setCapacityFuelUsed(int $capacityFuelUsed): void
+    {
+        $this->capacityFuelUsed = $capacityFuelUsed;
+    }
+
+    public function getCapacityPeopleTotal(): int
+    {
+        return $this->capacityPeopleTotal;
+    }
+
+    public function setCapacityPeopleTotal(int $capacityPeopleTotal): void
+    {
+        $this->capacityPeopleTotal = $capacityPeopleTotal;
+    }
+
+    public function getCapacityPeopleLoaded(): int
+    {
+        return $this->capacityPeopleLoaded;
+    }
+
+    public function setCapacityPeopleLoaded(int $capacityPeopleLoaded): void
+    {
+        $this->capacityPeopleLoaded = $capacityPeopleLoaded;
+    }
+
+    public function getDistance(): int
+    {
+        return $this->distance;
+    }
+
+    public function setDistance(int $distance): void
+    {
+        $this->distance = $distance;
+    }
+
+    public function getDistance1(): int
+    {
+        return $this->distance1;
+    }
+
+    public function setDistance1(int $distance1): void
+    {
+        $this->distance1 = $distance1;
+    }
+
+    public function getError(): string
+    {
+        return $this->error;
+    }
+
+    public function setError(string $error): void
+    {
+        $this->error = $error;
+    }
+
+    public function getSBonusSpeed(): int
+    {
+        return $this->sBonusSpeed;
+    }
+
+    public function setSBonusSpeed(int $sBonusSpeed): void
+    {
+        $this->sBonusSpeed = $sBonusSpeed;
+    }
+
+    public function isWormholeEnable(): bool
+    {
+        return $this->wormholeEnable;
+    }
+
+    public function setWormholeEnable(bool $wormholeEnable): void
+    {
+        $this->wormholeEnable = $wormholeEnable;
+    }
+
+    public function getAFleets(): array
+    {
+        return $this->aFleets;
+    }
+
+    public function setAFleets(array $aFleets): void
+    {
+        $this->aFleets = $aFleets;
+    }
+
+    public function getSupportedAllianceEntities(): array
+    {
+        return $this->supportedAllianceEntities;
+    }
+
+    public function setSupportedAllianceEntities(array $supportedAllianceEntities): void
+    {
+        $this->supportedAllianceEntities = $supportedAllianceEntities;
+    }
+
+    public function getEntityResourceLogStart(): string
+    {
+        return $this->entityResourceLogStart;
+    }
+
+    public function setEntityResourceLogStart(string $entityResourceLogStart): void
+    {
+        $this->entityResourceLogStart = $entityResourceLogStart;
+    }
+
+    public function getPossibleFleetStarts(): int
+    {
+        return $this->possibleFleetStarts;
+    }
+
+    public function setPossibleFleetStarts(int $possibleFleetStarts): void
+    {
+        $this->possibleFleetStarts = $possibleFleetStarts;
+    }
+
+    public function getFleetSlotsUsed(): int
+    {
+        return $this->fleetSlotsUsed;
+    }
+
+    public function setFleetSlotsUsed(int $fleetSlotsUsed): void
+    {
+        $this->fleetSlotsUsed = $fleetSlotsUsed;
+    }
+
+    public function getFleetControlLevel(): int
+    {
+        return $this->fleetControlLevel;
+    }
+
+    public function setFleetControlLevel(int $fleetControlLevel): void
+    {
+        $this->fleetControlLevel = $fleetControlLevel;
+    }
+
+    public function getSBonusReadiness(): int
+    {
+        return $this->sBonusReadiness;
+    }
+
+    public function setSBonusReadiness(int $sBonusReadiness): void
+    {
+        $this->sBonusReadiness = $sBonusReadiness;
+    }
+
+    public function getPilotsAvailable(): int
+    {
+        return $this->pilotsAvailable;
+    }
+
+    public function setPilotsAvailable(int $pilotsAvailable): void
+    {
+        $this->pilotsAvailable = $pilotsAvailable;
+    }
+
+    public function getCapacityResLoaded(): int
+    {
+        return $this->capacityResLoaded;
+    }
+
+    public function setCapacityResLoaded(int $capacityResLoaded): void
+    {
+        $this->capacityResLoaded = $capacityResLoaded;
+    }
+
+    public function getSBonusPilots(): int
+    {
+        return $this->sBonusPilots;
+    }
+
+    public function setSBonusPilots(int $sBonusPilots): void
+    {
+        $this->sBonusPilots = $sBonusPilots;
+    }
+
+    public function getSBonusCapacity(): int
+    {
+        return $this->sBonusCapacity;
+    }
+
+    public function setSBonusCapacity(int $sBonusCapacity): void
+    {
+        $this->sBonusCapacity = $sBonusCapacity;
+    }
+
+    public function getRes(): array
+    {
+        return $this->res;
+    }
+
+    public function setRes(array $res): void
+    {
+        $this->res = $res;
+    }
+
+    public function getFetch(): array
+    {
+        return $this->fetch;
+    }
+
+    public function setFetch(array $fetch): void
+    {
+        $this->fetch = $fetch;
+    }
+
+    public function getSupportCostsFood(): int
+    {
+        return $this->supportCostsFood;
+    }
+
+    public function setSupportCostsFood(int $supportCostsFood): void
+    {
+        $this->supportCostsFood = $supportCostsFood;
+    }
+
+    public function getSupportCostsFuel(): int
+    {
+        return $this->supportCostsFuel;
+    }
+
+    public function setSupportCostsFuel(int $supportCostsFuel): void
+    {
+        $this->supportCostsFuel = $supportCostsFuel;
+    }
+
+    public function getSupportCostsFuelPerSec(): int
+    {
+        return $this->supportCostsFuelPerSec;
+    }
+
+    public function setSupportCostsFuelPerSec(int $supportCostsFuelPerSec): void
+    {
+        $this->supportCostsFuelPerSec = $supportCostsFuelPerSec;
+    }
+
+    public function getSupportCostsFoodPerSec(): int
+    {
+        return $this->supportCostsFoodPerSec;
+    }
+
+    public function setSupportCostsFoodPerSec(int $supportCostsFoodPerSec): void
+    {
+        $this->supportCostsFoodPerSec = $supportCostsFoodPerSec;
+    }
+
+    public function getShipActions(): array
+    {
+        return $this->shipActions;
+    }
+
+    public function setShipActions(array $shipActions): void
+    {
+        $this->shipActions = $shipActions;
+    }
+
+    public function isHavenOk(): bool
+    {
+        return $this->havenOk;
+    }
+
+    public function setHavenOk(bool $havenOk): void
+    {
+        $this->havenOk = $havenOk;
+    }
+
+    public function isTargetOk(): bool
+    {
+        return $this->targetOk;
+    }
+
+    public function setTargetOk(bool $targetOk): void
+    {
+        $this->targetOk = $targetOk;
+    }
+
+    public function isActionOk(): bool
+    {
+        return $this->actionOk;
+    }
+
+    public function setActionOk(bool $actionOk): void
+    {
+        $this->actionOk = $actionOk;
+    }
+
+    public function getFactoredShipActions(): array
+    {
+        return $this->factoredShipActions;
+    }
+
+    public function setFactoredShipActions(array $factoredShipActions): void
+    {
+        $this->factoredShipActions = $factoredShipActions;
     }
 }

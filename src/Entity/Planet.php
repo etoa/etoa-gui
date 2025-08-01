@@ -235,16 +235,6 @@ class Planet extends AbstractEntity implements ObjectWithImage
         $this->id = $id;
     }
 
-    public function getUserId(): int
-    {
-        return $this->userId;
-    }
-
-    public function setUserId(int $userId): void
-    {
-        $this->userId = $userId;
-    }
-
     public function isMainPlanet(): bool
     {
         return $this->mainPlanet;
@@ -283,16 +273,6 @@ class Planet extends AbstractEntity implements ObjectWithImage
     public function setName(?string $name): void
     {
         $this->name = $name;
-    }
-
-    public function getTypeId(): int
-    {
-        return $this->typeId;
-    }
-
-    public function setTypeId(int $typeId): void
-    {
-        $this->typeId = $typeId;
     }
 
     public function getFields(): int

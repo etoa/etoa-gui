@@ -112,7 +112,7 @@ class UserProperties
         return $this;
     }
 
-    public function getPlanetCircleWidth()
+    public function getPlanetCircleWidth(): int
     {
         return $this->planetCircleWidth;
     }
@@ -256,18 +256,6 @@ class UserProperties
         return $this;
     }
 
-    public function getSpyShipId()
-    {
-        return $this->spyShipId;
-    }
-
-    public function setSpyShipId($spyShipId): static
-    {
-        $this->spyShipId = $spyShipId;
-
-        return $this;
-    }
-
     public function getSpyShipCount()
     {
         return $this->spyShipCount;
@@ -280,18 +268,6 @@ class UserProperties
         return $this;
     }
 
-    public function getAnalyzeShipId()
-    {
-        return $this->analyzeShipId;
-    }
-
-    public function setAnalyzeShipId($analyzeShipId): static
-    {
-        $this->analyzeShipId = $analyzeShipId;
-
-        return $this;
-    }
-
     public function getAnalyzeShipCount()
     {
         return $this->analyzeShipCount;
@@ -300,18 +276,6 @@ class UserProperties
     public function setAnalyzeShipCount($analyzeShipCount): static
     {
         $this->analyzeShipCount = $analyzeShipCount;
-
-        return $this;
-    }
-
-    public function getExploreShipId()
-    {
-        return $this->exploreShipId;
-    }
-
-    public function setExploreShipId($exploreShipId): static
-    {
-        $this->exploreShipId = $exploreShipId;
 
         return $this;
     }

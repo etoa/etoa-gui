@@ -1,8 +1,7 @@
 {% extends 'game/haven/haven.html.twig' %}
 
 {% block haven %}
-    {{ form_start(form) }}
-        <twig:Table title="Schiffe">
+    <twig:Table title="Schiffe">
         {% block table_content %}
             <tr>
                 <th>Anzahl</th>
@@ -22,12 +21,119 @@
             {% endfor %}
             {% if fleetLaunch.getShips %}
                 <tr>
-                    <td colspan="5">Schnellere Schiffe nehmen im Flottenverband automatisch die Geschwindigkeit des langsamsten Schiffes an, sie brauchen dafür aber auch entsprechend weniger Treibstoff!</td>
+                    <td colspan="5">Schnellere Schiffe nehmen im Flottenverband automatisch die Geschwindigkeit des
+                        langsamsten Schiffes an, sie brauchen dafür aber auch entsprechend weniger Treibstoff!
+                    </td>
                 </tr>
             {% endif %}
+            <tr>
+                <td colspan="5">
+                    Mögliche Aktionen:
+                    {% for action in fleetLaunch.getFactoredShipActions %}
+                        {{ action|raw }}{% if not loop.last %},{% endif %}
+                    {% endfor %}
+                </td>
+            </tr>
         {% endblock %}
-        </twig:Table>
-        {{ form_widget(form.submit) }}
-        {{ form_widget(form._token) }}
+    </twig:Table>
+    {{ form_start(form) }}
+    <twig:Table title="Zielwahl">
+        {% block table_content %}
+            <tr>
+                <th><b>Startplanet:</b></th>
+                <td style="padding:2px 2px 3px 6px;background:#000;color:#fff;height:47px;">
+                    <img src="{{ fleetLaunch.sourceEntity.imagePath }}" style="float:left;">
+                    <br/>&nbsp;&nbsp; {{ fleetLaunch.sourceEntity.displayName }} ({{ fleetLaunch.sourceEntity.entityCodeString }} , Besitzer:
+                    {{ fleetLaunch.owner.nick }})
+                </td>
+            </tr>
+            <tr id="manuelselect">
+                <th>Manuelle Eingabe:</th>
+                <td>
+                    {{ form_widget(form.csx) }}&nbsp;/&nbsp;
+                    {{ form_widget(form.csy) }}&nbsp;&nbsp;:&nbsp;&nbsp;
+                    {{ form_widget(form.ccx) }}&nbsp;/&nbsp;
+                    {{ form_widget(form.ccy) }}&nbsp;&nbsp;:&nbsp;&nbsp;
+                    {{ form_widget(form.psp) }}</td>
+            </tr>
+            <tr id="bookmarkselect">
+                <th>Zielfavoriten:</th>
+                <td>
+                    {{ form_widget(form.bookmark) }}
+                </td>
+            </tr>
+            <tr id="speedselect">
+                <th>Speedfaktor:</th>
+                <td>
+                    <select name="speed_percent"
+                            id="duration_percent"
+                            onchange="showLoader('submitbutton');showLoader('duration');xajax_havenTargetInfo(xajax.getFormValues('targetForm'))"
+                            tabindex="6"
+                    >
+                        {% for number in 100..1 %}
+                            <option value="{{ number }}"> {{ number }}
+                            </option>
+                        {% endfor %}
+                    </select> %
+                </td>
+            </tr>
+            <tr>
+                <th id="targettitle"><b>Ziel-Informationen:</b></th>
+                <td id="targetinfo" style="padding:2px 2px 3px 6px;background:#000;color:#fff;height:47px;">
+                    <img src="images/loading.gif" alt="Loading"/> Lade Daten...
+                </td>
+            </tr>
+            <tr>
+                <th>Entfernung:</th>
+                <td id="distance">-</td>
+            </tr>
+            <tr>
+                <th>Kosten/100 AE:</th>
+                <td id="costae">{{ formatNumber(fleetLaunch.getCostsPerHundredAE) }} t {{ constant('EtoA\\Universe\\Resources\\ResourceNames::FUEL') }}</td>
+            </tr>
+            <tr>
+                <th>Geschwindigkeit:</th>
+                <td id="speed">{{ formatNumber(fleetLaunch.getSpeed) }} AE/h
+                    {% if fleetLaunch.sBonusSpeed > 1 %}
+                        (inkl. {{ formatPercentString(fleetLaunch.sBonusSpeed) }} Mysticum-Bonus)
+                    {% endif %}
+                </td>
+            </tr>
+            <tr>
+                <th>Dauer:</th>
+                <td><span id="duration" style="font-weight:bold;">-</span> (inkl. Start- und Landezeit von
+                    {{ formatTimespan(fleetLaunch.getTimeLaunchLand) }} )
+                </td>
+            </tr>
+            <tr>
+                <th>Treibstoff:</th>
+                <td><span id="costs" style="font-weight:bold;">-</span> (inkl. Start- und Landeverbrauch von
+                    {{ formatNumber(fleetLaunch.getCostsLaunchLand) }} {{ constant('EtoA\\Universe\\Resources\\ResourceNames::FUEL') }} )
+                </td>
+            </tr>
+            <tr>
+                <th>Nahrung:</th>
+                <td><span id="food" style="font-weight:bold;">-</span></td>
+            </tr>
+            <tr>
+                <th>Piloten:</th>
+                <td>{{ formatNumber(fleetLaunch.getPilots) }}
+                    {% if fleetLaunch.sBonusPilots != 1 %}
+                        (inkl. {{ formatPercentString(fleetLaunch.sBonusPilots) }} Mysticum-Bonus)
+                    {% endif %}
+                </td>
+            </tr>
+            <tr>
+                <th>Bemerkungen:</th>
+                <td id="comment">-</td>
+            </tr>
+            <tr id="allianceAttacks" style="display: none;">
+                <th>Allianzangriffe:</th>
+                <td id="alliance">-</td>
+            </tr>
+        {% endblock %}
+    </twig:Table>
+    {{ form_widget(form.submit) }}
+    {{ form_widget(form._token) }}
     {{ form_end(form, {render_rest:false}) }}
 {% endblock %}

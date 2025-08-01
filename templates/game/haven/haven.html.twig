@@ -7,7 +7,7 @@
         "game.haven.show" : "Flotten versenden",
         "game.haven.transship" : "Mobile Anlagen umladen",
     } %}
-    {% if hasMobileObjects %}
+    {% if hasMobileObjects is defined and hasMobileObjects %}
         <twig:tabmenu data="{{ tabs }}" active="{{ app.request.attributes.get('_route') }}"/><br>
     {% endif %}
 
