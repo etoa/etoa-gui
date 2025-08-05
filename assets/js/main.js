@@ -217,15 +217,15 @@ function loadingMsgPrepend(trg, msg) {
 
 
 function showLoader(elem) {
-  document.getElementById(elem).innerHTML = '<div style=\"text-align:center;padding:10px;\"><img src="images/loading.gif" /></div>';
+  document.getElementById(elem).innerHTML = '<div style=\"text-align:center;padding:10px;\"><img src="/build/images/loading.gif" /></div>';
 }
 
 function showLoaderPrepend(elem) {
-  document.getElementById(elem).innerHTML = '<div style=\"text-align:center;padding:10px;\"><img src="images/loading.gif" /></div>' + document.getElementById(elem).innerHTML;
+  document.getElementById(elem).innerHTML = '<div style=\"text-align:center;padding:10px;\"><img src="/build/images/loading.gif" /></div>' + document.getElementById(elem).innerHTML;
 }
 
 function showLoaderInline(elem) {
-  document.getElementById(elem).innerHTML = '<span style=\"text-align:center;padding:10px;\"><img src="images/loading.gif" /></span>';
+  document.getElementById(elem).innerHTML = '<span style=\"text-align:center;padding:10px;\"><img src="/build/images/loading.gif" /></span>';
 }
 
 function toggleBox(elemId) {

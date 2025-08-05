@@ -124,133 +124,15 @@ class HavenController extends AbstractGameController
             $this->fleetLaunchService->setFleetLaunch(unserialize($session->get('fleetLaunch')));
 
         if($this->fleetLaunchService->getFleetLaunch()->isShipsFixed()) {
-            if ($this->fleetLaunchService->getFleetLaunch()->getTargetEntity()) {
-                //TODO: make symfony serializer work and refactor
-                $entity = $this->planetRepository->find($this->fleetLaunchService->getFleetLaunch()->getTargetEntity()->getId());
-                /*$csx = $this->fleetLaunchService->getFleetLaunch()->getTargetEntity()->getCell()->getSx();
-                $csy = $this->fleetLaunchService->getFleetLaunch()->getTargetEntity()->getCell()->getSy();
-                $ccx = $this->fleetLaunchService->getFleetLaunch()->getTargetEntity()->getCell()->getCx();
-                $ccy = $this->fleetLaunchService->getFleetLaunch()->getTargetEntity()->getCell()->getCy();
-                $psp = $this->fleetLaunchService->getFleetLaunch()->getTargetEntity()->getPos();*/
-                $csx = $entity->getEntity()->getCell()->getSx();
-                $csy = $entity->getEntity()->getCell()->getSy();
-                $ccx = $entity->getEntity()->getCell()->getCx();
-                $ccy = $entity->getEntity()->getCell()->getCy();
-                $psp = $entity->getEntity()->getPos();
-            } else {
-                $entity = $this->entityRepository->find($this->fleetLaunchService->getFleetLaunch()->getSourceEntity()->getId());
-                /*$csx = $this->fleetLaunchService->getFleetLaunch()->getSourceEntity()->getEntity()->getCell()->getSx();
-                $csy = $this->fleetLaunchService->getFleetLaunch()->getSourceEntity()->getEntity()->getCell()->getSy();
-                $ccx = $this->fleetLaunchService->getFleetLaunch()->getSourceEntity()->getEntity()->getCell()->getCx();
-                $ccy = $this->fleetLaunchService->getFleetLaunch()->getSourceEntity()->getEntity()->getCell()->getCy();
-                $psp = $this->fleetLaunchService->getFleetLaunch()->getSourceEntity()->getEntity()->getPos();*/
-                $csx = $entity->getCell()->getSx();
-                $csy = $entity->getCell()->getSy();
-                $ccx = $entity->getCell()->getCx();
-                $ccy = $entity->getCell()->getCy();
-                $psp = $entity->getPos();
-            }
 
-            $obj = $this;
-            $form = $this->createFormBuilder()
-                ->add(
-                    'csx',TextType::class, [
-                    'label' => false,
-                    'attr' => [
-                        'onkeydown'=> "return nurZahlen(event);detectChangeRegister(this,'t2');",
-                        'size'=>"1",
-                        'maxlength'=>"1",
-                        'title'=>"Sektor X-Koordinate",
-                        'onkeyup'=>"if (detectChangeTest(this,'t2')) { showLoader('targetinfo');}"
-                    ],
-                    'mapped' => false,
-                    'data' => $csx
-                ])
-                ->add(
-                    'csy',TextType::class, [
-                    'label' => false,
-                    'attr' => [
-                        'onkeydown'=> "return nurZahlen(event);detectChangeRegister(this,'t2')",
-                        'size'=>"1",
-                        'maxlength'=>"1",
-                        'title'=>"Sektor X-Koordinate",
-                        'onkeyup'=>"if (detectChangeTest(this,'t2')) {showLoader('targetinfo')}"
-                    ],
-                    'mapped' => false,
-                    'data' => $csy
-                ])
-                ->add(
-                    'ccx',TextType::class, [
-                    'label' => false,
-                    'attr' => [
-                        'onkeydown'=> "return nurZahlen(event);detectChangeRegister(this,'t2');",
-                        'size'=>"1",
-                        'maxlength'=>"1",
-                        'title'=>"Sektor X-Koordinate",
-                        'onkeyup'=>"if (detectChangeTest(this,'t2')) {showLoader('targetinfo')}"
-                    ],
-                    'mapped' => false,
-                    'data' => $ccx
-                ])
-                ->add(
-                    'ccy',TextType::class, [
-                    'label' => false,
-                    'attr' => [
-                        'onkeydown'=> "return nurZahlen(event);detectChangeRegister(this,'t2');",
-                        'size'=>"1",
-                        'maxlength'=>"1",
-                        'title'=>"Sektor X-Koordinate",
-                        'onkeyup'=>"if (detectChangeTest(this,'t2')) {showLoader('targetinfo')}"
-                    ],
-                    'mapped' => false,
-                    'data' => $ccy
-                ])
-                ->add(
-                    'psp',TextType::class, [
-                    'label' => false,
-                    'attr' => [
-                        'onkeydown'=> "return nurZahlen(event);detectChangeRegister(this,'t2');",
-                        'size'=>"1",
-                        'maxlength'=>"1",
-                        'title'=>"Sektor X-Koordinate",
-                        'onkeyup'=>"if (detectChangeTest(this,'t2')) { showLoader('submitbutton');showLoader('targetinfo');}"
-                    ],
-                    'mapped' => false,
-                    'data' => $psp
-                ])
-                ->add('bookmark', ChoiceType::class, [
-                    'choice_loader' => new CallbackChoiceLoader(static function () use ($obj): array {
-                        $choices = [];
-                        foreach ($obj->planetRepository->findBy(['user'=>$obj->fleetLaunchService->getFleetLaunch()->getOwner()]) as $planet) {
-                            $choices['Eigene Planeten'][] = $planet->getEntity();
-                        }
-                        foreach ($obj->bookmarkRepository->findBy(['user'=>$obj->fleetLaunchService->getFleetLaunch()->getOwner()]) as $bookmark) {
-                            $choices['Favoriten'][] = $bookmark->getEntity();
-                        }
-
-                        return $choices;
-                    }),
-                    'choice_label' => function (?Entity $entity): string {
-                        return $entity->toString();
-                    },
-                    'choice_value' => 'id',
-                    'placeholder' => 'Wählen...',
-                    'required' => false
-                ])
-                ->add('submit', SubmitType::class, [
-                    'label' => 'Weiter zur Aktionsauswahl >>>',
-                ])
-
-                ->getForm()
-                ->handleRequest($request);
-
+/*
             if ($form->isSubmitted() && $form->isValid()) {
                 //dd($this->fleetLaunchService->getFleetLaunch());
             }
-
+*/
             return $this->render('game/haven/target.html.twig',[
                 'fleetLaunch' => $this->fleetLaunchService->getFleetLaunch(),
-                'form' => $form
+                'serializedFleetLaunch' => serialize($this->fleetLaunchService->getFleetLaunch())
             ]);
         }
 

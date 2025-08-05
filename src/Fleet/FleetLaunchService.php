@@ -8,12 +8,15 @@ use EtoA\Building\BuildingId;
 use EtoA\Building\BuildingListItemRepository;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Entity\BuildingListItem;
+use EtoA\Entity\Entity;
 use EtoA\Entity\Planet;
 use EtoA\Entity\ShipListItem;
 use EtoA\Ship\ShipRequirementRepository;
 use EtoA\Support\StringUtils;
 use EtoA\Technology\TechnologyId;
 use EtoA\Technology\TechnologyListItemRepository;
+use EtoA\Universe\Entity\EntityCoordinates;
+use EtoA\Universe\Entity\EntityService;
 use EtoA\Universe\Planet\PlanetRepository;
 use EtoA\Universe\Resources\ResourceNames;
 use Symfony\Bundle\SecurityBundle\Security;
@@ -33,7 +36,8 @@ class FleetLaunchService
         private readonly TechnologyListItemRepository $technologyListItemRepository,
         private readonly RequestStack $requestStack,
         private readonly PlanetRepository $planetRepository,
-        private readonly AllianceBuildListRepository $allianceBuildListRepository
+        private readonly AllianceBuildListRepository $allianceBuildListRepository,
+        private readonly EntityService $entityService
     )
     {
     }
@@ -73,7 +77,7 @@ class FleetLaunchService
 
         if ($this->fleetLaunch->getOwner()->getAlliance() && $this->allianceBuildListRepository->getLevel($this->fleetLaunch->getOwner()->getAlliance(), AllianceBuildingId::MAIN) > 0) {
             $flvl = $this->allianceBuildListRepository->getLevel($this->fleetLaunch->getOwner()->getAlliance(), AllianceBuildingId::FLEET_CONTROL);
-            $this->fleetLaunch->setAllianceSlots($flvl);
+            $this->setAllianceSlots($flvl);
         }
 
         // Check if flights are possible
@@ -157,11 +161,9 @@ class FleetLaunchService
                         "pilots" => $ship->getPilots() * $cnt,
                         "special" => $ship->isSpecial(),
                         "actions" => array_filter(explode(",", $ship->getActions())),
-                        'item' => $shipListItem,
                     );
 
                     $this->fleetLaunch->setShips($ships);
-
 
                     if ($ship->isSpecial()) {
                         $this->fleetLaunch->setSBonusSpeed($shipListItem->getSpecialShipBonusSpeed() * $ship->getSpecialBonusSpeed()+$this->fleetLaunch->getSBonusSpeed());
@@ -264,31 +266,22 @@ class FleetLaunchService
      *
      * >> Step 5 <<
      */
-    public function setTarget(&$ent, $speedPercent = 100): bool
+    public function setTarget(Entity $ent, $speedPercent = 100): bool
     {
-        global $app;
+        if ($this->fleetLaunch->isShipsFixed()) {
+            $this->fleetLaunch->setTargetEntity($ent);
+            if ($this->fleetLaunch->getWormholeEntryEntity()) {
+                $this->fleetLaunch->setDistance($this->entityService->distanceByCoords($this->fleetLaunch->getWormholeExitEntity()->getCoordinates(), $this->fleetLaunch->getTargetEntity()->getCoordinates()));
+                $this->fleetLaunch->setDistance1($this->entityService->distanceByCoords($this->fleetLaunch->getSourceEntity()->getEntity()->getCoordinates(), $this->fleetLaunch->getWormholeEntryEntity()->getCoordinates()));
+            } else {
+                $this->fleetLaunch->setDistance($this->entityService->distanceByCoords($this->fleetLaunch->getSourceEntity()->getEntity()->getCoordinates(), $this->fleetLaunch->getTargetEntity()->getCoordinates()));
+                $this->fleetLaunch->setDistance1(0);
+            }
 
-        /** @var EntityService $entityService */
-        $entityService = $app[EntityService::class];
+            $this->fleetLaunch->setSpeedPercent($speedPercent);
 
-        if ($this->shipsFixed) {
-            if ($ent->isValid()) {
-                $this->targetEntity = $ent;
-                if ($this->wormholeEntryEntity != NULL) {
-                    $this->distance = $entityService->distanceByCoords($this->wormholeExitEntity->getEntityCoordinates(), $this->targetEntity->getEntityCoordinates());
-                    $this->distance1 = $entityService->distanceByCoords($this->sourceEntity->getEntityCoordinates(), $this->wormholeEntryEntity->getEntityCoordinates());
-                } else {
-                    $this->distance = $entityService->distanceByCoords($this->sourceEntity->getEntityCoordinates(), $this->targetEntity->getEntityCoordinates());
-                    $this->distance1 = 0;
-                }
-
-                $this->setSpeedPercent($speedPercent);
-
-                return true;
-            } else
-                $this->error = "Ungültiges Zielobjekt";
-        } else
-            $this->error = "Flotte nicht fertig zusammengestellt";
+            return true;
+        }
         return false;
     }
 
@@ -723,7 +716,7 @@ class FleetLaunchService
 
     function setAllianceSlots($num): void
     {
-        $this->allianceSlots = $num + 1;
+        $this->fleetLaunch->setAllianceSlots($num + 1);
 
         $this->loadAllianceFleets();
     }
@@ -774,5 +767,279 @@ class FleetLaunchService
         // if the user already supports this planet with one fleet, he can
         // send even more fleets to support the same planet
         return in_array((int) $this->ownerId, $participatingUsers, true);
+    }
+
+    /**
+    * Verify wormhole and show target selector
+    */
+    function havenShowWormhole($form)
+    {
+        // TODO
+        global $app;
+
+        /** @var ConfigurationService $config */
+        $config = $app[ConfigurationService::class];
+        /** @var EntityRepository $entityRepository */
+        $entityRepository = $app[EntityRepository::class];
+        /** @var PlanetRepository $planetRepository */
+        $planetRepository = $app[PlanetRepository::class];
+        /** @var UserUniverseDiscoveryService $userUniverseDiscoveryService */
+        $userUniverseDiscoveryService = $app[UserUniverseDiscoveryService::class];
+        /** @var LogRepository $logRepository */
+        $logRepository = $app[LogRepository::class];
+        /** @var BookmarkRepository $bookmarkRepository */
+        $bookmarkRepository = $app[BookmarkRepository::class];
+
+        /** @var UserRepository $userRepository */
+        $userRepository = $app[UserRepository::class];
+
+        $response = new xajaxResponse();
+
+        // Do some checks
+        if (count($form) > 0) {
+            // Get fleet object
+            /** @var FleetLaunch $fleet */
+            if ($this->fleetLaunch->getWormholeEntryEntity()) {
+                $owner = $this->fleetLaunch->getOwner();
+                $absX = (($form['csx'] - 1) * $config->param1Int('num_of_cells')) + $form['ccx'];
+                $absY = (($form['csy'] - 1) * $config->param2Int('num_of_cells')) + $form['ccy'];
+                $code = $userUniverseDiscoveryService->discovered($owner, $absX, $absY) == 0 ? 'u' : '';
+
+                $entity = $entityRepository->findByCoordinates(new EntityCoordinates($form['csx'], $form['csy'], $form['ccx'], $form['ccy'], $form['psp']));
+                if ($entity) {
+                    //Info Feld des ersten Teiles des Fluges, Tabelle muss vor setWormhole stehen!!
+                    ob_start();
+                    tableStart("Flug bis zum Wurmloch");
+                    echo "<tr><th width=\"25%\"><b>Startplanet:</b></th>
+                            <td style=\"padding:2px 2px 3px 6px;background:#000;color:#fff;height:47px;\">
+                                <img src=\"" . $fleet->sourceEntity->imagePath() . "\" style=\"float:left;\" >
+                                <br/>&nbsp;&nbsp; " . $fleet->sourceEntity . " (" . $fleet->sourceEntity->entityCodeString() . ", Besitzer: " . $fleet->sourceEntity->owner() . ")
+                            </td></tr>
+                        <tr><th width=\"25%\"><b>Wurmloch-Eintrittspunkt:</b></th>
+                            <td style=\"padding:2px 2px 3px 6px;background:#000;color:#fff;height:47px;\">
+                                <img src=\"" . $fleet->targetEntity->imagePath() . "\" style=\"float:left;\" >
+                                <br/>&nbsp;&nbsp; " . $fleet->targetEntity . " (" . $fleet->targetEntity->entityCodeString() . ", Besitzer: " . $fleet->targetEntity->owner() . ")
+                            </td></tr>
+                        <tr><th width=\"25%\"><b>Entfernung:</b></th><td>" . StringUtils::formatNumber($fleet->getDistance()) . " AE" . "</td>
+                        <tr><th width=\"25%\"><b>Kosten/100 AE:</b></th><td>" . StringUtils::formatNumber($fleet->getCostsPerHundredAE()) . " t " . ResourceNames::FUEL . "</td>";
+                    $speedString = StringUtils::formatNumber($fleet->getSpeed()) . " AE/h";
+                    if ($fleet->sBonusSpeed > 1)
+                        $speedString .= " (inkl. " . StringUtils::formatPercentString($fleet->sBonusSpeed, true) . " Mysticum-Bonus)";
+                    echo "<tr><th width=\"25%\"><b>Geschwindigkeit:</b></th><td>" . $speedString . "</td>
+                        <tr><th width=\"25%\"><b>Dauer:</b></th><td>" . StringUtils::formatTimespan($fleet->getDuration()) . " (inkl. Start- und Landezeit von " . StringUtils::formatTimespan($fleet->getTimeLaunchLand()) . ")</td>
+                        <tr><th width=\"25%\"><b>Treibstoff:</b></th><td>" . StringUtils::formatNumber($fleet->getCosts()) . " t " . ResourceNames::FUEL . "  (inkl. Start- und Landeverbrauch von " . StringUtils::formatNumber($fleet->getCostsLaunchLand()) . " " . ResourceNames::FUEL . ")</td>
+                        <tr><th width=\"25%\"><b>Nahrung:</b></th><td>" . StringUtils::formatNumber($fleet->getCostsFood()) . " t " . ResourceNames::FOOD . "</td>
+                        <tr><th width=\"25%\"><b>Piloten:</b></th><td>" . StringUtils::formatNumber($fleet->getPilots()) . "</td>";
+
+                    $response->assign("havenContentTarget", "innerHTML", ob_get_contents());
+
+                    ob_end_clean();
+
+                    if ($this->setWormhole($ent, $form['speed'])) {
+                        ob_start();
+                        echo "<form id=\"targetForm\" onsubmit=\"xajax_havenShowAction(xajax.getFormValues('targetForm'));return false;\" >";
+                        tableStart("Zielwahl nach dem Wurmlochsprung wählen");
+
+                        $csx = $this->fleetLaunch->getSourceEntity()->getEntity()->getCell()->getSx();
+                        $csy = $this->fleetLaunch->getSourceEntity()->getEntity()->getCell()->getSy();
+                        $ccx = $this->fleetLaunch->getSourceEntity()->getEntity()->getCell()->getCx();
+                        $ccy = $this->fleetLaunch->getSourceEntity()->getEntity()->getCell()->getCy();
+                        $psp = $this->fleetLaunch->getSourceEntity()->getEntity()->getPos();
+
+                        //Wurmlochaustritt
+                        echo "<tr><th width=\"25%\"><b>Wurmloch-Austrittspunkt:</b></th>
+                                <td style=\"padding:2px 2px 3px 6px;background:#000;color:#fff;height:47px;\">
+                                    <img src=\"" . $fleet->wormholeExitEntity->imagePath() . "\" style=\"float:left;\" >
+                                    <br/>&nbsp;&nbsp; " . $fleet->wormholeExitEntity . " (" . $fleet->wormholeExitEntity->entityCodeString() . ", Besitzer: " . $fleet->wormholeExitEntity->owner() . ")
+                                </td></tr>";
+                        // Manuelle Auswahl
+                        echo "<tr><th width=\"25%\">Manuelle Eingabe:</th><td width=\"75%\">";
+                        echo "<input type=\"text\"
+                                                    id=\"man_sx\"
+                                                    name=\"man_sx\"
+                                                    size=\"1\"
+                                                    maxlength=\"1\"
+                                                    value=\"$csx\"
+                                                    title=\"Sektor X-Koordinate\"
+                                                    tabindex=\"1\"
+                                                    autocomplete=\"off\"
+                                                    onfocus=\"this.select()\"
+                                                    onclick=\"this.select()\"
+                                                    onkeydown=\"detectChangeRegister(this,'t1');\"
+                                                    onkeyup=\"if (detectChangeTest(this,'t1')) { showLoader('submitbutton');showLoader('targetinfo');xajax_havenTargetInfo(xajax.getFormValues('targetForm')); }\"
+                                                    onkeypress=\"return nurZahlen(event)\"
+                        />&nbsp;/&nbsp;";
+                        echo "<input type=\"text\"
+                                                    id=\"man_sy\"
+                                                    name=\"man_sy\"
+                                                    size=\"1\"
+                                                    maxlength=\"1\"
+                                                    value=\"$csy\"
+                                                    title=\"Sektor Y-Koordinate\"
+                                                    tabindex=\"2\"
+                                                    autocomplete=\"off\"
+                                                    onfocus=\"this.select()\"
+                                                    onclick=\"this.select()\"
+                                                    onkeydown=\"detectChangeRegister(this,'t2');\"
+                                                    onkeyup=\"if (detectChangeTest(this,'t2')) { showLoader('submitbutton');showLoader('targetinfo');xajax_havenTargetInfo(xajax.getFormValues('targetForm')); }\"
+                                                    onkeypress=\"return nurZahlen(event)\"
+                        />&nbsp;&nbsp;:&nbsp;&nbsp;";
+                        echo "<input type=\"text\"
+                                                    id=\"man_cx\"
+                                                    name=\"man_cx\"
+                                                    size=\"2\"
+                                                    maxlength=\"2\"
+                                                    value=\"$ccx\"
+                                                    title=\"Zelle X-Koordinate\"
+                                                    tabindex=\"3\"
+                                                    autocomplete=\"off\"
+                                                    onfocus=\"this.select()\"
+                                                    onclick=\"this.select()\"
+                                                    onkeydown=\"detectChangeRegister(this,'t3');\"
+                                                    onkeyup=\"if (detectChangeTest(this,'t3')) { showLoader('submitbutton');showLoader('targetinfo');xajax_havenTargetInfo(xajax.getFormValues('targetForm')); }\"
+                                                    onkeypress=\"return nurZahlen(event)\"
+                        />&nbsp;/&nbsp;";
+                        echo "<input type=\"text\"
+                                                    id=\"man_cy\"
+                                                    name=\"man_cy\"
+                                                    size=\"2\"
+                                                    maxlength=\"2\"
+                                                    value=\"$ccy\"
+                                                    tabindex=\"4\"
+                                                    autocomplete=\"off\"
+                                                    onfocus=\"this.select()\"
+                                                    onclick=\"this.select()\"
+                                                    onkeydown=\"detectChangeRegister(this,'t4');\"
+                                                    onkeyup=\"if (detectChangeTest(this,'t4')) { showLoader('submitbutton');showLoader('targetinfo');xajax_havenTargetInfo(xajax.getFormValues('targetForm')); }\"
+                                                    onkeypress=\"return nurZahlen(event)\"
+                        />&nbsp;&nbsp;:&nbsp;&nbsp;";
+                        echo "<input type=\"text\"
+                                                    id=\"man_p\"
+                                                    name=\"man_p\"
+                                                    size=\"2\"
+                                                    maxlength=\"2\"
+                                                    value=\"$psp\"
+                                                    title=\"Position des Planeten im Sonnensystem\"
+                                                    tabindex=\"5\"
+                                                    autocomplete=\"off\"
+                                                    onfocus=\"this.select()\"
+                                                    onclick=\"this.select()\"
+                                                    onkeydown=\"detectChangeRegister(this,'t5');\"
+                                                    onkeyup=\"if (detectChangeTest(this,'t5')) { showLoader('submitbutton');showLoader('targetinfo');xajax_havenTargetInfo(xajax.getFormValues('targetForm')); }\"
+                                                    onkeypress=\"return nurZahlen(event)\"
+                        /></td></tr>";
+
+                        echo "<tr id=\"bookmarkselect\"><th width=\"25%\">Zielfavoriten:</th><td width=\"75%\" align=\"left\">";
+                        echo "<select name=\"bookmarks\"
+                                                id=\"bookmarks\"
+                                                onchange=\"showLoader('submitbutton');xajax_havenBookmark(xajax.getFormValues('targetForm'));\"
+                                                tabindex=\"6\"
+                                >\n";
+                        echo "<option value=\"0\"";
+                        echo ">Wählen...</option>";
+
+                        $userPlanets = $planetRepository->getUserPlanetsWithCoordinates($fleet->ownerId());
+                        foreach ($userPlanets as $userPlanet) {
+                            echo "<option value=\"" . $userPlanet->id . "\"";
+                            echo ">Eigener Planet: " . $userPlanet->toString() . "</option>\n";
+                        }
+
+                        $bookmarkedEntities = $bookmarkRepository->getBookmarkedEntities($fleet->ownerId());
+                        if (count($bookmarkedEntities) > 0) {
+                            echo "<option value=\"0\"";
+                            echo ">-------------------------------</option>\n";
+
+                            foreach ($bookmarkedEntities as $bookmarkedEntity) {
+                                echo "<option value=\"" . $bookmarkedEntity->id . "\"";
+                                echo ">" . $bookmarkedEntity->toString() . "</option>\n";
+                            }
+                        }
+                        echo "</select>";
+
+                        echo "</td></tr>";
+
+                        // Speedfaktor
+                        echo "<tr id=\"speedselect\">
+                            <th width=\"25%\">Speedfaktor:</th>
+                            <td width=\"75%\" align=\"left\">";
+                        echo "<select name=\"speed_percent\"
+                                                id=\"duration_percent\"
+                                                onchange=\"showLoader('submitbutton');showLoader('duration');xajax_havenTargetInfo(xajax.getFormValues('targetForm'))\"
+                                                tabindex=\"6\"
+                                >\n";
+                        for ($x = 100; $x > 0; $x -= 1) {
+                            echo "<option value=\"$x\"";
+                            if ($fleet->getSpeedPercent() == $x) echo " selected=\"selected\"";
+                            echo ">" . $x . "</option>\n";
+                        }
+                        echo "</select> %";
+
+                        echo "</td></tr>";
+
+                        // Daten anzeigen
+                        echo "<tr><th id=\"targettitle\" width=\"25%\"><b>Ziel-Informationen:</b></th>
+                            <td id=\"targetinfo\" style=\"padding:2px 2px 3px 6px;background:#000;color:#fff;height:47px;\">
+                                <img src=\"images/loading.gif\" alt=\"Loading\" /> Lade Daten...
+                            </td></tr>";
+                        echo "<tr><th>Entfernung:</th>
+                            <td id=\"distance\">-</td></tr>";
+                        echo "<tr><th width=\"25%\">Kosten/100 AE:</th>
+                            <td id=\"costae\">" . StringUtils::formatNumber($fleet->getCostsPerHundredAE()) . " t " . ResourceNames::FUEL . "</td></tr>";
+                        echo "<tr><th>Geschwindigkeit:</th>
+                            <td id=\"speed\">" . StringUtils::formatNumber($fleet->getSpeed()) . " AE/h";
+                        if ($fleet->sBonusSpeed > 1)
+                            echo " (inkl. " . StringUtils::formatPercentString($fleet->sBonusSpeed, true) . " Mysticum-Bonus)";
+                        echo "</td></tr>";
+                        echo "<tr><th>Dauer:</th>
+                            <td><span id=\"duration\" style=\"font-weight:bold;\">-</span> (inkl. Start- und Landezeit von " . StringUtils::formatTimespan($fleet->getTimeLaunchLand()) . ")</td></tr>";
+                        echo "<tr><th>Treibstoff:</th>
+                            <td><span id=\"costs\" style=\"font-weight:bold;\">-</span> (inkl. Start- und Landeverbrauch von " . StringUtils::formatNumber($fleet->getCostsLaunchLand()) . " " . ResourceNames::FUEL . ")</td></tr>";
+                        echo "<tr><th>Nahrung:</th>
+                            <td><span id=\"food\"  style=\"font-weight:bold;\">-</span></td></tr>";
+                        echo "<tr><th>Piloten:</th>
+                            <td>" . StringUtils::formatNumber($fleet->getPilots());
+                        if ($fleet->sBonusPilots != 1)
+                            echo " (inkl. " . StringUtils::formatPercentString($fleet->sBonusPilots, true, true) . " Mysticum-Bonus)";
+                        echo "</td></tr>";
+                        echo "<tr><th>Bemerkungen:</th>
+                            <td id=\"comment\">-</td></tr>";
+                        echo "<tr id=\"allianceAttacks\" style=\"display: none;\"><th>Allianzangriffe:</th><td id=\"alliance\">-</td></tr>";
+                        tableEnd();
+
+                        echo "<div id=\"submitbutton\"></div>
+                                </form>";
+
+
+                        $response->assign("havenContentWormhole", "innerHTML", ob_get_contents());
+                        $response->assign("havenContentWormhole", "style.display", '');
+
+                        $response->script("document.getElementById('man_sx').focus();");
+                        $response->script("xajax_havenTargetInfo(xajax.getFormValues('targetForm'))");
+
+                        ob_end_clean();
+                    } else {
+                        $response->alert($fleet->error());
+                    }
+                } else {
+                    $response->alert("Ungültiges Ziel!");
+                }
+            } else {
+                include_once(getcwd() . '/inc/bootstrap.inc.php');
+                $logRepository->add(
+                    LogFacility::ILLEGALACTION,
+                    LogSeverity::INFO,
+                    'Der User ' . $_SESSION['user_nick'] . ' versuchte, ein zweites Wurmloch zu &ouml;ffnen' . "\n"
+                    . 'Bereits gesetztes Wurmloch: ' . $fleet->wormholeEntryEntity . ' mit Austrittspunkt ' . $fleet->wormholeExitEntity . "\n"
+                    . 'Zweites Wumloch: ' . $form['man_sx'] . ' / ' . $form['man_sy'] . ' : ' . $form['man_cx'] . ' / ' . $form['man_cy'] . ' : ' . $form['man_p'] . '.'
+                );
+                $response->alert("Wurmloch wurde bereits gesetzt!");
+            }
+
+
+            $_SESSION['haven']['fleetObj'] = serialize($fleet);
+        } else {
+            $response->alert("Fehler! Es wurden keine Ziel gewählt!");
+        }
+        return $response;
     }
 }

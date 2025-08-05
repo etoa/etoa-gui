@@ -1,0 +1,99 @@
+{% import 'macros.html.twig' as macros %}
+
+<div
+    {{ attributes }}
+    data-action="change->live#update"
+>
+    {{ form_start(form) }}
+        <twig:Table title="Zielwahl">
+            {% block table_content %}
+                <tr>
+                    <th><b>Startplanet:</b></th>
+                    <td style="padding:2px 2px 3px 6px;background:#000;color:#fff;height:47px;">
+                        <img src="{{ outerScope.this.fleetLaunch.sourceEntity.imagePath }}" style="float:left;">
+                        <br/>&nbsp;&nbsp; {{ outerScope.this.fleetLaunch.sourceEntity.displayName }} ({{ outerScope.this.fleetLaunch.sourceEntity.entityCodeString }} , Besitzer:
+                        {{ outerScope.this.fleetLaunch.owner.nick }})
+                    </td>
+                </tr>
+                <tr id="manuelselect">
+                    <th>Manuelle Eingabe:</th>
+                    <td>
+                        {{ form_widget(outerScope.form.csx) }}&nbsp;/&nbsp;
+                        {{ form_widget(outerScope.form.csy) }}&nbsp;&nbsp;:&nbsp;&nbsp;
+                        {{ form_widget(outerScope.form.ccx) }}&nbsp;/&nbsp;
+                        {{ form_widget(outerScope.form.ccy) }}&nbsp;&nbsp;:&nbsp;&nbsp;
+                        {{ form_widget(form.psp) }}</td>
+                </tr>
+                <tr id="bookmarkselect">
+                    <th>Zielfavoriten:</th>
+                    <td>
+                        {{ form_widget(outerScope.form.bookmark) }}
+                    </td>
+                </tr>
+                <tr id="speedselect">
+                    <th>Speedfaktor:</th>
+                    <td>
+                        {{ form_widget(outerScope.form.speed) }}%
+                    </td>
+                </tr>
+                <tr>
+                    <th id="targettitle"><b>Ziel-Informationen:</b></th>
+                    <td id="targetinfo" style="padding:2px 2px 3px 6px;background:#000;color:#fff;height:47px;">
+                        <img src="{{ outerScope.this.fleetLaunch.targetEntity.imagePath }}"/>
+                    </td>
+                </tr>
+                <tr>
+                    <th>Entfernung:</th>
+                    <td id="distance">-</td>
+                </tr>
+                <tr>
+                    <th>Kosten/100 AE:</th>
+                    <td id="costae">{{ formatNumber(outerScope.this.fleetLaunch.getCostsPerHundredAE) }} t {{ constant('EtoA\\Universe\\Resources\\ResourceNames::FUEL') }}</td>
+                </tr>
+                <tr>
+                    <th>Geschwindigkeit:</th>
+                    <td id="speed">{{ formatNumber(outerScope.this.fleetLaunch.getSpeed) }} AE/h
+                        {% if outerScope.this.fleetLaunch.sBonusSpeed > 1 %}
+                            (inkl. {{ formatPercentString(outerScope.this.fleetLaunch.sBonusSpeed) }} Mysticum-Bonus)
+                        {% endif %}
+                    </td>
+                </tr>
+                <tr>
+                    <th>Dauer:</th>
+                    <td><span id="duration" style="font-weight:bold;">-</span> (inkl. Start- und Landezeit von
+                        {{ formatTimespan(outerScope.this.fleetLaunch.getTimeLaunchLand) }} )
+                    </td>
+                </tr>
+                <tr>
+                    <th>Treibstoff:</th>
+                    <td><span id="costs" style="font-weight:bold;">-</span> (inkl. Start- und Landeverbrauch von
+                        {{ formatNumber(outerScope.this.fleetLaunch.getCostsLaunchLand) }} {{ constant('EtoA\\Universe\\Resources\\ResourceNames::FUEL') }} )
+                    </td>
+                </tr>
+                <tr>
+                    <th>Nahrung:</th>
+                    <td><span id="food" style="font-weight:bold;">-</span></td>
+                </tr>
+                <tr>
+                    <th>Piloten:</th>
+                    <td>{{ formatNumber(outerScope.this.fleetLaunch.getPilots) }}
+                        {% if outerScope.this.fleetLaunch.sBonusPilots != 1 %}
+                            (inkl. {{ formatPercentString(outerScope.this.fleetLaunch.sBonusPilots) }} Mysticum-Bonus)
+                        {% endif %}
+                    </td>
+                </tr>
+                <tr>
+                    <th>Bemerkungen:</th>
+                    <td id="comment">-</td>
+                </tr>
+                <tr id="allianceAttacks" style="display: none;">
+                    <th>Allianzangriffe:</th>
+                    <td id="alliance">-</td>
+                </tr>
+            {% endblock %}
+        </twig:Table>
+    {{ this.havenTargetInfo }}
+    {{ form_widget(form.submit) }}
+    {{ form_widget(form._token) }}
+    {{ form_end(form, {render_rest:false}) }}
+</div>

@@ -85,6 +85,15 @@ class FleetLaunch
      * @var false
      */
     private bool $actionOk = false;
+    private float $capacity = 0;
+    private float $totalCapacity = 0;
+    private float $peopleCapacity = 0;
+    private float $totalPeopleCapacity = 0;
+    private int $supportFood = 0;
+    private int $supportFuel = 0;
+    private string $support = '';
+    private ?User $leader = null;
+
 
     /**
      * The constructor
@@ -256,9 +265,44 @@ class FleetLaunch
         return $this->costsLaunchLand;
     }
 
-    function getCapacity(): float|int
+    public function getCapacity(): float|int
     {
         return $this->getTotalCapacity() - $this->capacityResLoaded - $this->capacityFuelUsed - $this->costsFood - $this->supportCostsFood - $this->supportCostsFuel;
+    }
+
+    public function setCapacity(float|int $capacity): void
+    {
+        $this->capacity = $capacity;
+    }
+
+    public function setPeopleCapacity(float $peopleCapacity): void
+    {
+        $this->peopleCapacity = $peopleCapacity;
+    }
+
+    public function setTotalPeopleCapacity(float $totalPeopleCapacity): void
+    {
+        $this->totalPeopleCapacity = $totalPeopleCapacity;
+    }
+
+    public function setSupportFood(int $supportFood): void
+    {
+        $this->supportFood = $supportFood;
+    }
+
+    public function setSupportFuel(int $supportFuel): void
+    {
+        $this->supportFuel = $supportFuel;
+    }
+
+    public function setSupport(string $support): void
+    {
+        $this->support = $support;
+    }
+
+    public function setTotalCapacity(int $totalCapacity): void
+    {
+        $this->totalCapacity = $totalCapacity;
     }
 
     function getTotalCapacity(): float|int
@@ -284,10 +328,7 @@ class FleetLaunch
         }
     }
 
-    function getLoadedRes($id)
-    {
-        return ($this->res[$id] > 0) ? $this->res[$id] : 0;
-    }
+
 
     function loadResource($id, $ammount, $finalize = 0): float
     {
@@ -377,11 +418,6 @@ class FleetLaunch
         return "Supportkosten";
     }
 
-    function setLeader($id): void
-    {
-        $this->leaderId = $id;
-    }
-
     function setFakeId($id): void
     {
         $this->fakeId = $id;
@@ -393,6 +429,11 @@ class FleetLaunch
             return $this->allianceSlots - count($this->aFleets) - count($this->supportedAllianceEntities);
         }
         return 0;
+    }
+
+    function setAllianceSlots(int $slots): void
+    {
+        $this->allianceSlots = $slots;
     }
 
     //
@@ -827,5 +868,35 @@ class FleetLaunch
     public function setFactoredShipActions(array $factoredShipActions): void
     {
         $this->factoredShipActions = $factoredShipActions;
+    }
+
+    public function getAction(): string
+    {
+        return $this->action;
+    }
+
+    public function getCostsFood(): int
+    {
+        return $this->costsFood;
+    }
+
+    public function getFakeId(): int
+    {
+        return $this->fakeId;
+    }
+
+    public function setAction(string $action): void
+    {
+        $this->action = $action;
+    }
+
+    public function getLeader(): ?User
+    {
+        return $this->leader;
+    }
+
+    public function setLeader(?User $leader): void
+    {
+        $this->leader = $leader;
     }
 }
