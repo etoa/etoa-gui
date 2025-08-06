@@ -4,14 +4,12 @@ declare(strict_types=1);
 
 namespace EtoA\Core\Configuration;
 
+use EtoA\Entity\Config;
 use Exception;
 use RuntimeException;
 
 class ConfigurationService
 {
-    /** @var array<string,ConfigItem> */
-    private ?array $_items = null;
-
     public function __construct(
         private readonly ConfigurationRepository            $repository,
         private readonly ConfigurationDefinitionsRepository $definitions,
@@ -19,52 +17,55 @@ class ConfigurationService
     {
     }
 
-    private function ensureLoaded(bool $reload = false): void
-    {
-        if ($this->_items === null || $reload) {
-            $this->_items = $this->repository->findAll();
-        }
-    }
-
-    public function reload(): void
-    {
-        $this->ensureLoaded(true);
-    }
-
     /**
-     * @param int|bool|string|float $value
-     * @param int|bool|string|float $param1
-     * @param int|bool|string|float $param2
+     * @param string $name
+     * @param float|bool|int|string $value
+     * @param float|bool|int|string $param1
+     * @param float|bool|int|string $param2
      */
-    public function set(string $name, $value, $param1 = "", $param2 = ""): void
+    public function set(string $name, float|bool|int|string $value, float|bool|int|string $param1 = "", float|bool|int|string $param2 = ""): void
     {
-        $this->ensureLoaded();
-        $this->_items[$name] = new ConfigItem($value, $param1, $param2);
-        $this->repository->save($name, $this->_items[$name]);
+        $elem = $this->repository->findOneBy(['name'=>$name]);
+        if($elem) {
+            $elem->setValue($value);
+            $elem->setParam1($param1);
+            $elem->setParam2($param2);
+        }
+        else {
+            $elem = new Config();
+            $elem->setName($name);
+            $elem->setValue($value);
+            $elem->setParam1($param1);
+            $elem->setParam2($param2);
+
+            $this->repository->persist($elem);
+        }
+
+        $this->repository->save();
     }
 
     public function forget(string $name): void
     {
-        $this->ensureLoaded();
-        $this->repository->remove($name);
-        unset($this->_items[$name]);
+        $elem = $this->repository->findOneBy(['name'=>$name]);
+        if($elem) {
+            $this->repository->remove($elem);
+            $this->repository->save();
+        }
     }
 
     /**
-     * @return array<string,ConfigItem>
+     * @return array<string,Config>
      */
     public function all(): array
     {
-        $this->ensureLoaded();
-
-        return $this->_items;
+        return $this->repository->findAll();
     }
 
     public function get(string $key): int|bool|string|float
     {
-        $this->ensureLoaded();
-        if (isset($this->_items[$key])) {
-            return $this->_items[$key]->value;
+        $elem = $this->repository->findOneBy(['name'=>$key]);
+        if ($elem) {
+            return $elem->getValue();
         }
         $elem = $this->definitions->getItem($key);
         if ($elem !== null) {
@@ -91,9 +92,9 @@ class ConfigurationService
 
     public function param1(string $key): int|bool|string|float
     {
-        $this->ensureLoaded();
-        if (isset($this->_items[$key])) {
-            return $this->_items[$key]->param1;
+        $elem = $this->repository->findOneBy(['name'=>$key]);
+        if ($elem) {
+            return $elem->getParam1();
         }
         $elem = $this->definitions->getItem($key);
         if ($elem !== null) {
@@ -120,12 +121,13 @@ class ConfigurationService
 
     /**
      * @return int|bool|string|float
+     * @throws Exception
      */
     public function param2(string $key)
     {
-        $this->ensureLoaded();
-        if (isset($this->_items[$key])) {
-            return $this->_items[$key]->param2;
+        $elem = $this->repository->findOneBy(['name'=>$key]);
+        if ($elem) {
+            return $elem->getParam2();
         }
         $elem = $this->definitions->getItem($key);
         if ($elem !== null) {
@@ -152,9 +154,7 @@ class ConfigurationService
 
     public function has(string $name): bool
     {
-        $this->ensureLoaded();
-
-        return isset($this->_items[$name]);
+        return (bool) $this->repository->findOneBy(['name'=>$name]);
     }
 
     public function filled(string $name): bool
@@ -168,14 +168,18 @@ class ConfigurationService
         $this->repository->truncate();
         $cnt = 0;
         foreach ($xml->items->item as $itemDefinition) {
-            $item = new ConfigItem(
-                (string)($itemDefinition->v ?? ''),
-                (string)($itemDefinition->p1 ?? ''),
-                (string)($itemDefinition->p2 ?? '')
-            );
-            $this->repository->save((string)$itemDefinition['name'], $item);
+            $item = new Config();
+            $item->setName($itemDefinition->name);
+            $item->setValue($itemDefinition->v ?? '');
+            $item->setParam1($itemDefinition->p1 ?? '');
+            $item->setParam2($itemDefinition->p2 ?? '');
+
+            $this->repository->persist($item);
+
             $cnt++;
         }
+
+        $this->repository->save();
 
         return $cnt;
     }

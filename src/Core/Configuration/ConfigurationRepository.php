@@ -15,22 +15,9 @@ class ConfigurationRepository extends AbstractRepository
         parent::__construct($registry, Config::class);
     }
 
-    /**
-     * @return array<string,ConfigItem>
-     */
-    public function findAll(): array
-    {
-        $data = parent::findAll();
-        return array_map(fn ($value) => new ConfigItem(
-            $value->getValue(),
-            $value->getParam1(),
-            $value->getParam2()
-        ), $data);
-    }
-
     public function truncate(): void
     {
-        $this->getConnection()
-            ->executeStatement("TRUNCATE TABLE config;");
+        $this->createQueryBuilder('q')
+            ->delete();
     }
 }
