@@ -29,7 +29,7 @@ class CurrentAdmin implements UserInterface, PasswordAuthenticatedUserInterface,
 
     public function getPassword(): string
     {
-        return $this->adminUser->getPasswordString();
+        return $this->adminUser->getPassword();
     }
 
     public function eraseCredentials(): void

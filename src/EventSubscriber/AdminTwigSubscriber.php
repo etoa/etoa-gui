@@ -41,10 +41,10 @@ class AdminTwigSubscriber implements EventSubscriberInterface
         $request = $event->getRequest();
 
         $this->twig->addGlobal('navMenu', $this->createNavMenu($adminUser, $request));
-        $this->twig->addGlobal('userRoles', $adminUser->getData()->roles);
+        $this->twig->addGlobal('userRoles', $adminUser->getData()->getRoles());
         $this->twig->addGlobal('page', $request->query->get('page', 'overview'));
         $this->twig->addGlobal('sub', $request->query->get('sub'));
-        $this->twig->addGlobal('numTickets', $this->ticketRepository->countAssigned($adminUser->getId()) + $this->ticketRepository->countNew());
+        $this->twig->addGlobal('numTickets', $this->ticketRepository->countAssigned($adminUser->getData()) + $this->ticketRepository->countNew());
         $this->twig->addGlobal('numNotes', $this->notesRepository->countForAdmin($adminUser->getId()));
     }
 
@@ -58,7 +58,7 @@ class AdminTwigSubscriber implements EventSubscriberInterface
     private function createNavMenu(CurrentAdmin $adminUser, Request $request): array
     {
         $navTree = require($this->projectDir . '/config/admin_menu.php');
-        $userRoles = $adminUser->getData()->roles;
+        $userRoles = $adminUser->getData()->getRoles();
         $currentRouteName = $request->attributes->get('_route');
         $page = $request->query->get('page', 'overview');
 

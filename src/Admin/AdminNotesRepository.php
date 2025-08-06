@@ -6,6 +6,8 @@ namespace EtoA\Admin;
 
 use Doctrine\Persistence\ManagerRegistry;
 use EtoA\Core\AbstractRepository;
+use EtoA\Entity\AdminNote;
+use EtoA\Entity\AdminUser;
 
 class AdminNotesRepository extends AbstractRepository
 {
@@ -13,14 +15,9 @@ class AdminNotesRepository extends AbstractRepository
     {
         parent::__construct($registry, AdminNote::class);
     }
-    public function countForAdmin(int $adminId): int
+    public function countForAdmin(int|AdminUser $admin): int
     {
-        return (int) $this->createQueryBuilder('q')
-            ->select("COUNT(*)")
-            ->from('admin_notes')
-            ->where('admin_id = :adminId')
-            ->setParameter('adminId', $adminId)
-            ->fetchOne();
+        return $this->count(['admin'=>$admin]);
     }
 
     /**

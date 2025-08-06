@@ -7,6 +7,7 @@ namespace EtoA\Help\TicketSystem;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use EtoA\Core\AbstractRepository;
+use EtoA\Entity\AdminUser;
 use EtoA\Entity\Ticket;
 use EtoA\Entity\User;
 
@@ -19,28 +20,12 @@ class TicketRepository extends AbstractRepository
 
     public function countNew(): int
     {
-        return (int) $this->createQueryBuilder('q')
-            ->select("COUNT(*)")
-            ->from('tickets')
-            ->where("status = :status")
-            ->setParameter('status', TicketStatus::NEW)
-            ->fetchOne();
+        return $this->count(['status'=>TicketStatus::NEW]);
     }
 
-    public function countAssigned(int $adminId): int
+    public function countAssigned(AdminUser $admin): int
     {
-        if ($adminId == 0) {
-            return 0;
-        }
-
-        return (int) $this->createQueryBuilder('q')
-            ->select("COUNT(*)")
-            ->from('tickets')
-            ->where("status = :status")
-            ->andWhere('admin_id = :admin_id')
-            ->setParameter('admin_id', $adminId)
-            ->setParameter('status', TicketStatus::ASSIGNED)
-            ->fetchOne();
+        return $this->count(['status'=>TicketStatus::ASSIGNED,'admin'=>$admin]);
     }
 
     public function persist(Object $entity): void

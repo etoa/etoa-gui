@@ -6,6 +6,8 @@ namespace EtoA\Admin;
 
 use Doctrine\Persistence\ManagerRegistry;
 use EtoA\Core\AbstractRepository;
+use EtoA\Entity\AdminSession;
+use EtoA\Entity\AdminUser;
 
 class AdminSessionRepository extends AbstractRepository
 {
@@ -17,11 +19,11 @@ class AdminSessionRepository extends AbstractRepository
     public function countActiveSessions(int $timeout): int
     {
         return (int) $this->createQueryBuilder('q')
-            ->select('COUNT(*)')
-            ->from('admin_user_sessions')
-            ->where('time_action > :timeout')
+            ->select('COUNT(q)')
+            ->where('q.timeAction > :timeout')
             ->setParameter('timeout', time() - $timeout)
-            ->fetchOne();
+            ->getQuery()
+            ->getSingleScalarResult();
     }
 
     /**
@@ -52,69 +54,52 @@ class AdminSessionRepository extends AbstractRepository
         return array_map(fn (array $row) => new AdminSession($row), $data);
     }
 
-    public function exists(string $id, int $userId, string $userAgent): bool
+    public function exists(string $id, int|AdminUser $user, string $userAgent): bool
     {
-        return (bool) $this->createQueryBuilder('q')
-            ->select("COUNT(*)")
-            ->from('admin_user_sessions')
-            ->where('id = :id')
-            ->andWhere('user_id = :user_id')
-            ->andWhere('user_agent = :user_agent')
-            ->setParameters([
-                'id' => $id,
-                'user_id' => $userId,
-                'user_agent' => $userAgent,
-            ])
-            ->fetchOne();
+        return (bool) $this->findOneBy(['id'=>$id,'user'=>$user,'userAgent'=>$userAgent]);
     }
 
-    public function create(string $id, int $userId, string $ipAddr, string $userAgent, int $timeLogin): void
+    public function create(string $id, AdminUser $user, string $ipAddr, string $userAgent, int $timeLogin): void
     {
-        $this->createQueryBuilder('q')
-            ->insert('admin_user_sessions')
-            ->values([
-                'id' => ':id',
-                'user_id' => ':user_id',
-                'ip_addr' => ':ip_addr',
-                'user_agent' => ':user_agent',
-                'time_login' => ':time_login',
-            ])
-            ->setParameters([
-                'id' => $id,
-                'user_id' => $userId,
-                'ip_addr' => $ipAddr,
-                'user_agent' => $userAgent,
-                'time_login' => $timeLogin,
-            ])
-            ->executeQuery();
+        $session = new AdminSession();
+        $session->setUser($user);
+        $session->setId($id);
+        $session->setIpAddr($ipAddr);
+        $session->setUserAgent($userAgent);
+        $session->setTimeLogin($timeLogin);
+
+        $this->persist($session);
+        $this->save();
     }
 
-    public function update(string $id, int $userId, int $time, string $ipAddress): void
+    public function update(string $id, int|AdminUser $user, int $time, string $ipAddress): void
     {
         $this->createQueryBuilder('q')
-            ->update('admin_user_sessions')
-            ->set('time_action', ':time')
-            ->set('ip_addr', ':ip_addr')
-            ->where('id = :id')
-            ->andWhere('user_id = :userId')
+            ->update()
+            ->set('q.timeAction', ':time')
+            ->set('q.ipAddr', ':ip_addr')
+            ->where('q.id = :id')
+            ->andWhere('q.user = :user')
             ->setParameters([
                 'id' => $id,
-                'userId' => $userId,
+                'user' => $user,
                 'time' => $time,
                 'ip_addr' => $ipAddress,
             ])
-            ->executeQuery();
+            ->getQuery()
+            ->execute();
     }
 
-    public function removeByUserOrId(string $id, int $userId): void
+    public function removeByUserOrId(string $id, int|AdminUser $user): void
     {
         $this->createQueryBuilder('q')
-            ->delete('admin_user_sessions')
-            ->where('id = :id')
-            ->orWhere('user_id = :user_id')
+            ->delete()
+            ->where('q.id = :id')
+            ->orWhere('q.user = :user')
             ->setParameter('id', $id)
-            ->setParameter('user_id', $userId)
-            ->executeQuery();
+            ->setParameter('user', $user)
+            ->getQuery()
+            ->execute();
     }
 
     public function countSessionLog(): int

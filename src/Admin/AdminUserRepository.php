@@ -11,17 +11,9 @@ use EtoA\Entity\AdminUser;
 
 class AdminUserRepository extends AbstractRepository
 {
-    public function __construct(ManagerRegistry $registry, private readonly EntityManagerInterface $entityManager)
+    public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, AdminUser::class);
-    }
-
-    public function count(array $criteria = []): int
-    {
-        return (int)$this->createQueryBuilder('q')
-            ->select("COUNT(*)")
-            ->from('admin_users')
-            ->fetchOne();
     }
 
     /**
@@ -52,16 +44,7 @@ class AdminUserRepository extends AbstractRepository
 
     public function findOneByNickAndEmail(string $nick, string $email): ?AdminUser
     {
-        $data = $this->createQueryBuilder('q')
-            ->select("*")
-            ->from('admin_users')
-            ->where('LCASE(user_nick) = LCASE(:nick)')
-            ->where('user_email = :email')
-            ->setParameter('nick', $nick)
-            ->setParameter('email', $email)
-            ->fetchAssociative();
-
-        return $data !== false ? AdminUser::createFromArray($data) : null;
+        return $this->findOneBy(['nick'=>$nick,'email'=>$email]);
     }
 
     /**
@@ -106,20 +89,10 @@ class AdminUserRepository extends AbstractRepository
 
     public function setPassword(AdminUser $adminUser, string $newHashedPassword, bool $forceChange = false): void
     {
-        $this->createQueryBuilder('q')
-            ->update('admin_users')
-            ->set('user_password', ':password')
-            ->set('user_force_pwchange', ':pwchange')
-            ->where('user_id = :id')
-            ->setParameters([
-                'id' => $adminUser->id,
-                'password' => $newHashedPassword,
-                'pwchange' => $forceChange ? 1 : 0,
-            ])
-            ->executeQuery();
+        $adminUser->setPassword($newHashedPassword);
+        $adminUser->setForcePasswordChange($forceChange);
 
-        $adminUser->passwordString = $newHashedPassword;
-        $adminUser->forcePasswordChange = $forceChange;
+        $this->save();
     }
 
     public function setTfaSecret(AdminUser $adminUser, string $secret): void

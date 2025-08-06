@@ -13,7 +13,7 @@ class AllianceSearch extends AbstractSearch
 
     public function nameOrTagLike(string $search): self
     {
-        $this->parts[] = 'alliance_name LIKE :nameOrTag OR alliance_tag LIKE :nameOrTag';
+        $this->parts[] = 'q.name LIKE :nameOrTag OR q.tag LIKE :nameOrTag';
         $this->parameters['nameOrTag'] = '%' . $search . '%';
 
         return $this;

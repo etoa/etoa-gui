@@ -12,6 +12,7 @@ use EtoA\Log\LogFacility;
 use EtoA\Log\LogRepository;
 use EtoA\Log\LogSeverity;
 use EtoA\Security\Admin\CurrentAdmin;
+use EtoA\Support\GameUtils;
 use EtoA\Support\Mail\MailSenderService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -36,7 +37,7 @@ class SecurityController extends AbstractController
     #[Route("/admin/login", name: "admin.login", methods: ['GET'])]
     public function login(AuthenticationUtils $authenticationUtils): Response
     {
-        if ($this->adminUserRepository->count() === 0) {
+        if ($this->adminUserRepository->count([]) === 0) {
             return $this->redirectToRoute('admin.login.setup');
         }
 
@@ -44,6 +45,12 @@ class SecurityController extends AbstractController
             'error' => $authenticationUtils->getLastAuthenticationError(),
             'lastUsername' => $authenticationUtils->getLastUsername(),
         ]);
+    }
+
+    #[Route("/admin/login", methods: ['POST'])]
+    public function redirectLogin(): Response
+    {
+        return $this->redirectToRoute('admin.login');
     }
 
     #[Route("/admin/login/reset", name: "admin.login.reset", methods: ['GET', 'POST'])]
@@ -55,18 +62,17 @@ class SecurityController extends AbstractController
     {
         // TODO: Use instead https://symfony.com/doc/current/security/reset_password.html
 
-        $admin = new AdminUser();
-        $form = $this->createForm(ResetPasswordType::class, $admin);
+        $form = $this->createForm(ResetPasswordType::class);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
 
-            $user = $this->adminUserRepository->findOneByNickAndEmail($admin->getNick(), $admin->getEmail());
-            if ($user === null) {
+            $user = $this->adminUserRepository->findOneByNickAndEmail($form->get('name')->getData(), $form->get('email')->getData());
+            if (!$user) {
                 $this->addFlash('error', 'Dieser Benutzer existiert nicht!');
                 return $this->redirectToRoute('admin.login.reset');
             }
 
-            $newPassword = generatePasswort();
+            $newPassword = GameUtils::generatePasswort();
             $this->adminUserRepository->setPassword($user, $passwordHasher->hashPassword(new CurrentAdmin($user), $newPassword), true);
 
             $emailText = $twig->render('email/admin/new-password.txt.twig', [
@@ -89,9 +95,9 @@ class SecurityController extends AbstractController
     }
 
     #[Route("/admin/login/setup", name: "admin.login.setup", methods: ['GET', 'POST'])]
-    public function setupFirstUser(Request $request, UserPasswordHasherInterface $passwordHasher): Response
+    public function setupFirstUser(Request $request): Response
     {
-        if ($this->adminUserRepository->count() !== 0) {
+        if ($this->adminUserRepository->count([]) !== 0) {
             return $this->redirectToRoute('admin.login');
         }
 
@@ -99,12 +105,10 @@ class SecurityController extends AbstractController
         $form = $this->createForm(FirstAdminUserType::class, $newAdmin);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            $newAdmin->setNick($newAdmin->getName());
             $newAdmin->setRoles(['master']);
-            $this->adminUserRepository->save($newAdmin);
 
-            $hashPassword = $passwordHasher->hashPassword(new CurrentAdmin($newAdmin), $newAdmin->getPasswordString());
-            $this->adminUserRepository->setPassword($newAdmin, $hashPassword);
+            $this->adminUserRepository->persist($newAdmin);
+            $this->adminUserRepository->save();
 
             $this->addFlash('success', 'User erstellt');
             return $this->redirectToRoute('admin.index');

@@ -6,10 +6,11 @@ namespace EtoA\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use EtoA\Admin\AdminUserRepository;
+use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 
 #[ORM\Entity(repositoryClass: AdminUserRepository::class)]
 #[ORM\Table(name: 'admin_users')]
-class AdminUser
+class AdminUser implements PasswordAuthenticatedUserInterface
 {
     public const CONTACT_REQUIRED_EMAIL_SUFFIX = "@etoa.ch";
 
@@ -19,7 +20,7 @@ class AdminUser
     private ?int $id = null;
 
     #[ORM\Column(name: "user_password", type: "string")]
-    private ?string $passwordString;
+    private ?string $password;
 
     #[ORM\Column(name: "user_force_pwchange", type: "boolean")]
     private bool $forcePasswordChange = false;
@@ -61,7 +62,7 @@ class AdminUser
     {
         $adminUser = new AdminUser();
         $adminUser->id = (int)$data['user_id'];
-        $adminUser->passwordString = $data['user_password'];
+        $adminUser->password = $data['user_password'];
         $adminUser->nick = $data['user_nick'];
         $adminUser->forcePasswordChange = (bool)$data['user_force_pwchange'];
         $adminUser->name = $data['user_name'];
@@ -83,14 +84,14 @@ class AdminUser
         return $this->id;
     }
 
-    public function getPasswordString(): ?string
+    public function getPassword(): ?string
     {
-        return $this->passwordString;
+        return $this->password;
     }
 
-    public function setPasswordString(string $passwordString): static
+    public function setPassword(string $password): static
     {
-        $this->passwordString = $passwordString;
+        $this->password = $password;
 
         return $this;
     }
@@ -227,14 +228,14 @@ class AdminUser
         return $this;
     }
 
-    public function getRoles(): string
+    public function getRoles(): array
     {
-        return $this->roles;
+        return blank($this->roles) ? [] : explode(",", $this->roles);
     }
 
-    public function setRoles(string $roles): static
+    public function setRoles(array $roles): static
     {
-        $this->roles = $roles;
+        $this->roles = implode(',',$roles);
 
         return $this;
     }

@@ -93,15 +93,15 @@ class AllianceRepository extends AbstractRepository
     public function getAllianceNamesWithTags(AllianceSearch $search = null, int $limit = null): array
     {
         $rows = $this->applySearchSortLimit($this->createQueryBuilder('q'), $search, null, $limit)
-            ->select("alliance_id, alliance_name, alliance_tag")
-            ->from('alliances')
-            ->orderBy('alliance_name')
-            ->addOrderBy('alliance_tag')
-            ->fetchAllAssociative();
+            ->select("q.id, q.name, q.tag")
+            ->orderBy('q.name')
+            ->addOrderBy('q.tag')
+            ->getQuery()
+            ->execute();
 
         $result = [];
         foreach ($rows as $row) {
-            $result[(int) $row['alliance_id']] = sprintf('[%s] %s', $row['alliance_tag'], $row['alliance_name']);
+            $result[(int) $row['id']] = sprintf('[%s] %s', $row['tag'], $row['name']);
         }
 
         return $result;

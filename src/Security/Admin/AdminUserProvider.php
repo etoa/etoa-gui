@@ -40,7 +40,7 @@ class AdminUserProvider implements UserProviderInterface, PasswordUpgraderInterf
 
     public function loadUserByIdentifier(string $identifier): CurrentAdmin
     {
-        $user = $this->adminUserRepository->findOneByNick($identifier);
+        $user = $this->adminUserRepository->findOneBy(['nick'=>$identifier]);
 
         if (null === $user) {
             $e = new UserNotFoundException(sprintf('User "%s" not found.', $identifier));

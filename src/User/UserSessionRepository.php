@@ -76,11 +76,11 @@ class UserSessionRepository extends AbstractRepository
     public function countActiveSessions(int $timeout): int
     {
         return (int) $this->createQueryBuilder('q')
-            ->select('COUNT(*)')
-            ->from('user_sessions')
-            ->where('time_action > :timeout')
+            ->select('COUNT(q)')
+            ->where('q.timeAction > :timeout')
             ->setParameter('timeout', time() - $timeout)
-            ->fetchOne();
+            ->getQuery()
+            ->getSingleScalarResult();
     }
 
     public function findLog(string $sessionId): ?UserSessionLog

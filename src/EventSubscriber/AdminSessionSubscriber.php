@@ -5,9 +5,11 @@ namespace EtoA\EventSubscriber;
 use EtoA\Admin\AdminSessionManager;
 use EtoA\Admin\AdminSessionRepository;
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Entity\AdminUser;
 use EtoA\Security\Admin\CurrentAdmin;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
@@ -36,12 +38,12 @@ class AdminSessionSubscriber implements EventSubscriberInterface
         if ($event->getAuthenticatedToken()->getUser() instanceof CurrentAdmin) {
             $time = time();
             $session = $event->getRequest()->getSession();
-            /** @var CurrentAdmin $user */
-            $user = $event->getAuthenticatedToken()->getUser();
-            $this->adminSessionRepository->removeByUserOrId($session->getId(), $user->getId());
+            /** @var AdminUser $user */
+            $user = $event->getAuthenticatedToken()->getUser()->getData();
+            $this->adminSessionRepository->removeByUserOrId($session->getId(), $user);
             $this->adminSessionRepository->create(
                 $session->getId(),
-                $user->getId(),
+                $user,
                 $event->getRequest()->getClientIp(),
                 $event->getRequest()->headers->get('User-Agent'),
                 $time,
@@ -72,7 +74,7 @@ class AdminSessionSubscriber implements EventSubscriberInterface
                 }
             }
 
-            $event->setResponse(new RedirectResponse($this->urlGenerator->generate('admin.logout'), RedirectResponse::HTTP_TEMPORARY_REDIRECT));
+            $event->setResponse(new RedirectResponse($this->urlGenerator->generate('admin.logout'), Response::HTTP_TEMPORARY_REDIRECT));
         }
     }
 

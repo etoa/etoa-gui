@@ -45,4 +45,9 @@ class GameUtils
         }
         return false;
     }
+
+    public static function generatePasswort():string
+    {
+        return substr(sha1((string)mt_rand()), 0, 8);
+    }
 }

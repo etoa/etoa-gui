@@ -56,7 +56,7 @@ class EntityLabelSearch extends EntitySearch
 
     public function likePlanetName(string $planetName): self
     {
-        $this->parts[] = 'planets.planet_name LIKE :likePlanetName';
+        $this->parts[] = 'planets.name LIKE :likePlanetName';
         $this->parameters['likePlanetName'] = '%' . $planetName . '%';
 
         return $this;

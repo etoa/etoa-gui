@@ -14,7 +14,7 @@ class FirstAdminUserType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('name', TextType::class, [
+            ->add('nick', TextType::class, [
                 'label' => 'Benutzername',
                 'required' => true,
                 'attr' => [
@@ -27,6 +27,8 @@ class FirstAdminUserType extends AbstractType
                 'attr' => [
                     'autocomplete' => 'new-password',
                 ],
+                'hash_property_path' => 'password',
+                'mapped' => false,
             ])
             ->add('email', EmailType::class, [
                 'label' => 'E-Mail',
