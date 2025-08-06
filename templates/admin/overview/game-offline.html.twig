@@ -7,19 +7,19 @@
     {% if isOffline %}
         <twig:alert type="warning">Das Spiel ist offline!</twig:alert>
 
-        {% for row in form %}
-            {{ form_row(row) }}
-        {% endfor %}
+        {{ form_row(form.offline_ips_allow) }}
+        {{ form_row(form.offline_message) }}
 
         <div>
-            <input type="submit" value="Änderungen speichern" name="save"/>
-            <input type="submit" value="Spiel online stellen" name="online"/>
+            {{ form_widget(form.save) }}
+            {{ form_widget(form.online) }}
         </div>
     {% else %}
         <twig:alert type="success">Das Spiel ist online!</twig:alert>
         <div>
-            <input type="submit" value="Spiel offline nehmen" name="offline"/>
+            {{ form_widget(form.offline) }}
         </div>
     {% endif %}
-    {{ form_end(form) }}
+    {{ form_widget(form._token) }}
+    {{ form_end(form,{render_rest:false}) }}
 {% endblock %}

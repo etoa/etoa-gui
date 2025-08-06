@@ -9,13 +9,13 @@ use EtoA\Alliance\AllianceRepository;
 use EtoA\Alliance\AllianceSearch;
 use EtoA\Backend\EventHandlerManager;
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Entity\Entity;
 use EtoA\Form\Type\Admin\GameOfflineType;
 use EtoA\Help\TicketSystem\TicketRepository;
 use EtoA\Ranking\GameStatsGenerator;
 use EtoA\Support\DB\DatabaseManagerRepository;
 use EtoA\Text\TextRepository;
 use EtoA\Universe\Cell\CellRepository;
-use EtoA\Universe\Entity\EntityLabel;
 use EtoA\Universe\Entity\EntityLabelSearch;
 use EtoA\Universe\Entity\EntityRepository;
 use EtoA\User\UserRepository;
@@ -101,21 +101,21 @@ class OverviewController extends AbstractAdminController
 
         return $this->render('admin/overview/overview.html.twig', [
             'welcomeMessage' => 'Hallo <b>' . $admin->getUsername() . '</b>, willkommen im Administrationsmodus! Deine Rolle(n): <b>' . $this->roleManager->getRolesStr($admin->getData()) . '.</b>',
-            'hasTfa' => (bool)$admin->getData()->tfaSecret,
-            'didBigBangHappen' => $this->cellRepository->count() !== 0,
-            'forcePasswordChange' => $admin->getData()->forcePasswordChange,
+            'hasTfa' => (bool)$admin->getData()->getTfaSecret(),
+            'didBigBangHappen' => $this->cellRepository->count([]) !== 0,
+            'forcePasswordChange' => $admin->getData()->isForcePasswordChange(),
             'numNewTickets' => $this->ticketRepository->countNew(),
-            'numOpenTickets' => $this->ticketRepository->countAssigned($admin->getId()),
+            'numOpenTickets' => $this->ticketRepository->countAssigned($admin->getData()),
             'fleetBanText' => $fleetBanText,
             'fleetBanTitle' => $fleetBanTitle,
             'adminInfo' => $this->textRepository->getEnabledTextOrDefault('admininfo'),
             'systemMessage' => $this->textRepository->getEnabledTextOrDefault('system_message'),
             'dbSizeInMB' => $this->databaseManager->getDatabaseSize(),
             'usersOnline' => $this->userSessionRepository->countActiveSessions($this->config->getInt('user_timeout')),
-            'usersCount' => $this->userRepository->count(),
+            'usersCount' => $this->userRepository->count([]),
             'usersAllowed' => $this->config->getInt('enable_register'),
             'adminsOnline' => $this->adminSessionRepository->countActiveSessions($this->config->getInt('admin_timeout')),
-            'adminsCount' => $this->adminUserRepository->count(),
+            'adminsCount' => $this->adminUserRepository->count([]),
             'eventHandlerPid' => $eventHandlerPid ?? null,
         ]);
     }
@@ -148,24 +148,30 @@ class OverviewController extends AbstractAdminController
     #[IsGranted('ROLE_ADMIN_GAME-ADMIN')]
     public function gameOffline(Request $request): Response
     {
-        if ($request->isMethod('POST')) {
-            if ($request->request->has('offline')) {
-                $this->config->set('offline', 1);
-            } elseif ($request->request->has('online')) {
-                $this->config->set('offline', 0);
-            } elseif ($request->request->has('save')) {
-                $this->config->set('offline_ips_allow', $request->request->get('offline_ips_allow', ''));
-                $this->config->set('offline_message', $request->request->get('offline_message', ''));
-            }
-        }
-
         $form = $this->createForm(GameOfflineType::class, [
             'offline_ips_allow' => $this->config->get('offline_ips_allow'),
             'offline_message' => $this->config->get('offline_message'),
-        ], ['isOffline' => $this->config->getBoolean('offline')]);
+        ])
+            ->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            if($form->has('offline') && $form->get('offline')->isClicked()) {
+                $this->config->set('offline', '1');
+            }
+
+            if($form->has('save') && $form->get('save')->isClicked()) {
+                $this->config->set('offline_ips_allow', $form->get('offline_ips_allow')->getData());
+                $this->config->set('offline_message', $form->get('offline_message')->getData());
+            }
+
+            if($form->has('online') && $form->get('online')->isClicked()) {
+                $this->config->set('offline', '0');
+            }
+        }
+
 
         return $this->render('admin/overview/game-offline.html.twig', [
-            'form' => $form->createView(),
+            'form' => $form,
             'isOffline' => $this->config->getBoolean('offline'),
         ]);
     }
@@ -179,7 +185,7 @@ class OverviewController extends AbstractAdminController
         $choices = [
             $this->choiceGroup($users, 1, 'Spieler', 'admin.alliances.edit'),
             $this->choiceGroup($alliances, 2, 'Allianzen', 'admin.alliances.edit'),
-            $this->choiceGroup(array_map(fn(EntityLabel $label) => $label->toString(), $entities), 3, 'Planeten', 'admin.universe.entity'),
+            $this->choiceGroup(array_map(fn(Entity $label) => $label->toString(), $entities), 3, 'Planeten', 'admin.universe.entity'),
         ];
 
         return new JsonResponse($choices);
