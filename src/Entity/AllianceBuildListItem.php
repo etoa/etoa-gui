@@ -13,7 +13,7 @@ class AllianceBuildListItem
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: "AUTO")]
     #[ORM\Column(name: "alliance_buildlist_id", type: "integer")]
-    public int $id;
+    private int $id;
 
     #[ORM\JoinColumn(name: 'alliance_buildlist_alliance_id', referencedColumnName: 'alliance_id')]
     #[ORM\ManyToOne(targetEntity: Alliance::class)]

@@ -30,23 +30,23 @@ class StatsController extends AbstractAdminController
     {
         $shipsStats = [];
         foreach ($this->userStatsRepository->searchStats(UserStatSearch::ships()) as $stat) {
-            $shipsStats[$stat->getId()] = $stat;
+            $shipsStats[$stat['id']] = $stat;
         }
         $technologyStats = [];
         foreach ($this->userStatsRepository->searchStats(UserStatSearch::technologies()) as $stat) {
-            $technologyStats[$stat->getId()] = $stat;
+            $technologyStats[$stat['id']] = $stat;
         }
         $buildingStats = [];
         foreach ($this->userStatsRepository->searchStats(UserStatSearch::buildings()) as $stat) {
-            $buildingStats[$stat->getId()] = $stat;
+            $buildingStats[$stat['id']] = $stat;
         }
         $expStats = [];
         foreach ($this->userStatsRepository->searchStats(UserStatSearch::exp()) as $stat) {
-            $expStats[$stat->getId()] = $stat;
+            $expStats[$stat['id']] = $stat;
         }
         $pointsStats = [];
         foreach ($this->userStatsRepository->searchStats(UserStatSearch::points()) as $stat) {
-            $pointsStats[$stat->getId()] = $stat;
+            $pointsStats[$stat['id']] = $stat;
         }
 
         /** @var UserStat[][] $sorts */
@@ -63,7 +63,7 @@ class StatsController extends AbstractAdminController
 
         $userOrder = [];
         foreach ($sorts[$sort] as $entry) {
-            $userOrder[$entry->getId()] = $entry->getShift();
+            $userOrder[$entry['id']] = $entry['shift'];
         }
 
         if ($order === 'ASC') {
@@ -83,50 +83,35 @@ class StatsController extends AbstractAdminController
     #[Route("/admin/stats/alliances", name: 'admin.stats.alliances')]
     public function alliances(Request $request): Response
     {
-        $sorts = [
-            'points' => 'points',
-            'average' => 'uavg',
-            'user' => 'cnt',
-            'buildings' => 'bpoints',
-            'tech' => 'tpoints',
-            'ships' => 'spoints',
-            'base' => 'apoints',
-        ];
-        $sort = isset($sorts[$request->query->getAlnum('sort')]) ? $request->query->getAlnum('sort') : 'points';
-        $order = $request->query->get('order') === 'ASC' ? 'ASC' : 'DESC';
+        $sort = $request->query->getAlnum('sort')?$request->query->getAlnum('sort'):'points';
+        $order = $request->query->get('order') === 'ASC'?'ASC':'DESC';
 
         return $this->render('admin/stats/alliance.html.twig', [
-            'allianceStats' => $this->allianceStatsRepository->getStats(AllianceStatsSort::create()->withSort($sorts[$sort], $order)),
+            'allianceStats' => $this->allianceStatsRepository->findBy([],[$sort=>$order])
         ]);
     }
 
     #[Route("/admin/stats/battles", name: 'admin.stats.battles')]
     public function battles(): Response
     {
-        $ratings = $this->userRatingRepository->getBattleRating();
-
         return $this->render('admin/stats/battles.html.twig', [
-            'ratings' => array_filter($ratings, fn(UserRating $rating) => $rating->rating > 0),
+            'ratings' => $this->userRatingRepository->findBy([],['battleRating'=>'DESC'])
         ]);
     }
 
     #[Route("/admin/stats/trade", name: 'admin.stats.trade')]
     public function trade(): Response
     {
-        $ratings = $this->userRatingRepository->getTradeRating();
-
         return $this->render('admin/stats/trade.html.twig', [
-            'ratings' => array_filter($ratings, fn(UserRating $rating) => $rating->rating > 0),
+            'ratings' =>  $this->userRatingRepository->findBy([],['tradeRating'=>'DESC'])
         ]);
     }
 
     #[Route("/admin/stats/diplomacy", name: 'admin.stats.diplomacy')]
     public function diplomacy(): Response
     {
-        $ratings = $this->userRatingRepository->getDiplomacyRating();
-
         return $this->render('admin/stats/diplomacy.html.twig', [
-            'ratings' => array_filter($ratings, fn(UserRating $rating) => $rating->rating > 0),
+            'ratings' => $this->userRatingRepository->findBy([],['diplomacyRating'=>'DESC'])
         ]);
     }
 

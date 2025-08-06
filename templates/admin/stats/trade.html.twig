@@ -19,12 +19,14 @@
         {% for rating in ratings %}
             <tr>
                 <td>{{ loop.index }}</td>
-                <td>{{ rating.userNick }}</td>
-                <td>{{ rating.raceName }}</td>
-                <td>{{ rating.allianceTag }}</td>
+                <td>{{ rating.user.nick }}</td>
+                <td>{{ rating.user.race.name }}</td>
+                <td>{% if rating.user.alliance %}
+                        {{ rating.user.alliance.tag }}
+                    {% endif %}</td>
                 <td>{{ formatNumber(rating.tradesBuy) }}</td>
                 <td>{{ formatNumber(rating.tradesSell) }}</td>
-                <td>{{ formatNumber(rating.rating) }}</td>
+                <td>{{ formatNumber(rating.tradeRating) }}</td>
             </tr>
         {% else %}
             <tr>
