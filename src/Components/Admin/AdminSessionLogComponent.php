@@ -2,8 +2,8 @@
 
 namespace EtoA\Components\Admin;
 
-use EtoA\Admin\AdminSessionLog;
 use EtoA\Admin\AdminSessionRepository;
+use EtoA\Entity\AdminSessionLog;
 use EtoA\Form\Request\Admin\AdminSessionLogRequest;
 use EtoA\Form\Type\Admin\AdminSessionLogType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;

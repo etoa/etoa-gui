@@ -7,6 +7,7 @@ namespace EtoA\Admin;
 use Doctrine\Persistence\ManagerRegistry;
 use EtoA\Core\AbstractRepository;
 use EtoA\Entity\AdminSession;
+use EtoA\Entity\AdminSessionLog;
 use EtoA\Entity\AdminUser;
 
 class AdminSessionRepository extends AbstractRepository
@@ -108,32 +109,6 @@ class AdminSessionRepository extends AbstractRepository
             ->select("COUNT(*)")
             ->from("admin_user_sessionlog")
             ->fetchOne();
-    }
-
-    public function addSessionLog(AdminSession $adminSession, ?int $logoutTime): void
-    {
-        // TODO: Introduce admin session class for $adminSession and set it as type
-
-        $this->createQueryBuilder('q')
-            ->insert('admin_user_sessionlog')
-            ->values([
-                'session_id' => ':id',
-                'user_id' => ':user_id',
-                'ip_addr' => ':ip_addr',
-                'user_agent' => ':user_agent',
-                'time_login' => ':time_login',
-                'time_action' => ':time_action',
-                'time_logout' => $logoutTime ?? time(),
-            ])
-            ->setParameters([
-                'id' => $adminSession->id,
-                'user_id' => $adminSession->userId,
-                'ip_addr' => $adminSession->ipAddr,
-                'user_agent' => $adminSession->userAgent,
-                'time_login' => $adminSession->timeLogin,
-                'time_action' => $adminSession->timeAction,
-            ])
-            ->executeQuery();
     }
 
     public function removeSessionLogs(int $timestamp): int

@@ -11,19 +11,12 @@ use EtoA\Log\LogSeverity;
 
 class AdminSessionManager
 {
-    private AdminSessionRepository $repository;
-    private ConfigurationService $config;
-    private LogRepository $logRepository;
-
     public function __construct(
-        AdminSessionRepository $repository,
-        ConfigurationService $config,
-        LogRepository $logRepository
-    ) {
-        $this->repository = $repository;
-        $this->config = $config;
-        $this->logRepository = $logRepository;
-    }
+        private readonly AdminSessionRepository $repository,
+        private readonly ConfigurationService $config,
+        private readonly LogRepository $logRepository,
+        private readonly AdminSessionLogRepository $adminSessionLogRepository
+    ) {}
 
     /**
      * Removes old session logs from the database
@@ -62,9 +55,10 @@ class AdminSessionManager
     public function unregisterSession(string $sid, bool $logoutPressed = true): void
     {
         $adminSession = $this->repository->find($sid);
-        if ($adminSession !== null) {
-            $this->repository->addSessionLog($adminSession, $logoutPressed ? time() : 0);
-            $this->repository->remove($sid);
+        if ($adminSession) {
+            $this->adminSessionLogRepository->addSessionLog($adminSession, $logoutPressed ? time() : 0);
+            $this->repository->remove($adminSession);
+            $this->repository->save();
         }
     }
 
