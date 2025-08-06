@@ -32,8 +32,8 @@ class AdminProfileController extends AbstractAdminController
         $profileForm = $this->createForm(ProfileType::class, $userData);
         $profileForm->handleRequest($request);
         if ($profileForm->isSubmitted() && $profileForm->isValid()) {
-            $this->adminUserRepository->save($userData);
-            $this->logRepository->add(LogFacility::ADMIN, LogSeverity::INFO, $userData->nick . " ändert seine Daten");
+            $this->adminUserRepository->save();
+            $this->logRepository->add(LogFacility::ADMIN, LogSeverity::INFO, $userData->getNick() . " ändert seine Daten");
 
             $this->addFlash('success', 'Die Daten wurden geändert!');
         }

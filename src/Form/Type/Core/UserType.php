@@ -13,7 +13,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 class UserType extends AbstractType
 {
     public function __construct(
-        private UserRepository $userRepository,
+        private readonly UserRepository $userRepository,
     ) {
     }
 
@@ -33,14 +33,16 @@ class UserType extends AbstractType
                         $search = UserSearch::create();
                     }
 
-                    $choices = array_flip($this->userRepository->searchUserNicknames($search));
-                    if ((bool) $options['with_system']) {
+                    $choices = $this->userRepository->searchUserNicknames($search);
+                    if ($options['with_system']) {
                         $choices['System'] = 0;
                     }
 
                     return $choices;
                 });
             },
+            'choice_value' => 'id',
+            'choice_label' => 'nick',
         ]);
     }
 

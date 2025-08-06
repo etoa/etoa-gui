@@ -37,8 +37,9 @@ class AdminUser implements PasswordAuthenticatedUserInterface
     #[ORM\Column(type: "string")]
     private string $tfaSecret = "";
 
-    #[ORM\Column(type: "integer")]
-    private int $playerId = 0;
+    #[ORM\JoinColumn(name: 'player_id', referencedColumnName: 'user_id')]
+    #[ORM\ManyToOne(targetEntity: User::class)]
+    protected ?User $player = null;
 
     #[ORM\Column(name: "user_board_url", type: "string")]
     private ?string $boardUrl = "";
@@ -156,14 +157,14 @@ class AdminUser implements PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function getPlayerId(): ?int
+    public function getPlayer(): ?User
     {
-        return $this->playerId;
+        return $this->player;
     }
 
-    public function setPlayerId(int $playerId): static
+    public function setPlayer(?User $player): static
     {
-        $this->playerId = $playerId;
+        $this->player = $player;
 
         return $this;
     }

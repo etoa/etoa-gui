@@ -44,7 +44,7 @@ class ProfileType extends AbstractType
                     'Nein' => false,
                 ],
             ])
-            ->add('playerId', UserType::class, [
+            ->add('player', UserType::class, [
                 'label' => 'Spieler-Account',
                 'placeholder' => '(Niemand)',
             ])
