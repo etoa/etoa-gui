@@ -23,17 +23,9 @@ class AdminNotesRepository extends AbstractRepository
     /**
      * @return AdminNote[]
      */
-    public function findAllForAdmin(int $adminId): array
+    public function findAllForAdmin(AdminUser $admin): array
     {
-        $data = $this->createQueryBuilder('q')
-            ->select("*")
-            ->from('admin_notes')
-            ->where('admin_id = :adminId')
-            ->setParameter('adminId', $adminId)
-            ->orderBy('date', 'DESC')
-            ->fetchAllAssociative();
-
-        return array_map(fn (array $row) => new AdminNote($row), $data);
+        return $this->findBy(['admin'=>$admin],['date'=>'DESC']);
     }
 
     public function findForAdmin(int $id, int $adminId): ?AdminNote

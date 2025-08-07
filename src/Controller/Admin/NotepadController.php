@@ -2,8 +2,8 @@
 
 namespace EtoA\Controller\Admin;
 
-use EtoA\Admin\AdminNote;
 use EtoA\Admin\AdminNotesRepository;
+use EtoA\Entity\AdminNote;
 use EtoA\Form\Type\Admin\NotepadType;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -24,20 +24,23 @@ class NotepadController extends AbstractAdminController
         $user = $this->getUser();
 
         return $this->render('admin/notepad/index.html.twig', [
-            'notes' => $this->adminNotesRepository->findAllForAdmin($user->getId()),
+            'notes' => $this->adminNotesRepository->findAllForAdmin($user->getData()),
         ]);
     }
 
     #[Route("/admin/notepad/new", name: "admin.notepad.new")]
     public function new(Request $request): Response
     {
-        $user = $this->getUser();
-
-        $note = AdminNote::new($user->getId());
+        $note = new AdminNote();
         $form = $this->createForm(NotepadType::class, $note);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->adminNotesRepository->create($note);
+            $note->setAdmin($this->getUser()->getData());
+            $note->setDate(time());
+
+            $this->adminNotesRepository->persist($note);
+            $this->adminNotesRepository->save();
+
             $this->addFlash('success', 'Notiz gespeichert');
             return $this->redirectToRoute('admin.notepad');
         }
@@ -48,12 +51,9 @@ class NotepadController extends AbstractAdminController
     }
 
     #[Route("/admin/notepad/{id}/edit", name: "admin.notepad.edit")]
-    public function edit(Request $request, int $id): Response
+    public function edit(Request $request, ?AdminNote $note = null): Response
     {
-        $user = $this->getUser();
-
-        $note = $this->adminNotesRepository->findForAdmin($id, $user->getId());
-        if ($note === null) {
+        if (!$note) {
             $this->addFlash('error', 'Notiz nicht gefunden');
             return $this->redirectToRoute('admin.notepad');
         }
@@ -61,25 +61,22 @@ class NotepadController extends AbstractAdminController
         $form = $this->createForm(NotepadType::class, $note);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->adminNotesRepository->update($note);
+            $this->adminNotesRepository->save();
             $this->addFlash('success', 'Notiz aktualisiert');
             return $this->redirectToRoute('admin.notepad');
         }
 
         return $this->render('admin/notepad/edit.html.twig', [
             'form' => $form->createView(),
-            'note' => $note,
         ]);
     }
 
     #[Route("/admin/notepad/{id}/delete", name: "admin.notepad.delete")]
-    public function delete(int $id): RedirectResponse
+    public function delete(?AdminNote $note = null): RedirectResponse
     {
-        $user = $this->getUser();
-
-        $note = $this->adminNotesRepository->findForAdmin($id, $user->getId());
         if ($note !== null) {
-            $this->adminNotesRepository->remove($id);
+            $this->adminNotesRepository->remove($note);
+            $this->adminNotesRepository->save();
 
             $this->addFlash('success', "Notiz gelöscht");
         }
