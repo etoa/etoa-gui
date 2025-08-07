@@ -21,10 +21,10 @@ class TicketMessageRepository extends AbstractRepository
     public function countsByTicket(): array
     {
         return $this->createQueryBuilder('q')
-            ->select("ticket_id, COUNT(*)")
-            ->from('ticket_msg')
-            ->groupBy('ticket_id')
-            ->fetchAllKeyValue();
+            ->select("q.id, COUNT(q)")
+            ->groupBy('q.id')
+            ->getQuery()
+            ->execute();
     }
 
     /**

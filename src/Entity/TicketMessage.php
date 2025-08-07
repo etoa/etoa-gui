@@ -25,10 +25,10 @@ class TicketMessage
     private ?Ticket $ticket = null;
 
     #[ORM\Column]
-    private string $message;
+    private string $message = '';
 
     #[ORM\Column(type: "integer")]
-    private int $timestamp;
+    private int $timestamp = 0;
 
     #[ORM\JoinColumn(name: 'user_id', referencedColumnName: 'user_id')]
     #[ORM\ManyToOne(targetEntity: User::class)]
@@ -37,19 +37,6 @@ class TicketMessage
     #[ORM\JoinColumn(name: 'admin_id', referencedColumnName: 'user_id')]
     #[ORM\ManyToOne(targetEntity: AdminUser::class)]
     private ?AdminUser $admin = null;
-
-    public static function createFromArray(array $data): TicketMessage
-    {
-        $message = new TicketMessage();
-        $message->id = (int) $data['id'];
-        $message->ticketId = (int) $data['ticket_id'];
-        $message->userId = (int) $data['user_id'];
-        $message->adminId = (int) $data['admin_id'];
-        $message->timestamp = (int) $data['timestamp'];
-        $message->message = $data['message'];
-
-        return $message;
-    }
 
     public function getId(): ?int
     {
@@ -114,5 +101,17 @@ class TicketMessage
         $this->admin = $admin;
 
         return $this;
+    }
+
+    public function getAuthor():string
+    {
+        if ($this->getUser()) {
+            return $this->getUser()->getNick();
+        }
+        if ($this->getAdmin()) {
+            return $this->getAdmin()->getNick() . " (Admin)";
+        }
+
+        return "System";
     }
 }

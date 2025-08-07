@@ -4,29 +4,29 @@
     <h3>Ticket Details</h3>
 
     <div id="ttuser" style="display:none;">
-        <a href="{{ path('admin.users.view', {id: ticket.userId}) }}">Daten anzeigen</a><br/>
-        <a href="{{ path('admin.messages.send', {userId: ticket.userId}) }}">Nachricht senden</a><br/>
+        <a href="{{ path('admin.users.view', {id: ticket.user.id}) }}">Daten anzeigen</a><br/>
+        <a href="{{ path('admin.messages.send', {userId: ticket.user.id}) }}">Nachricht senden</a><br/>
     </div>
 
-    <form method="post">
+    {{ form_start(form) }}
         <h3>Ticket {{ ticket.getIdString() }}</h3>
         <table>
             <tr>
                 <th style="width:150px">Kategorie:</th>
-                <td>{{ ticketCategories[ticket.catId] }}</td>
+                <td>{{ ticket.cat.name }}</td>
             </tr>
             <tr>
                 <th>Status:</th>
-                <td>{{ ticket.getStatusName() }}</td>
+                <td>{{ ticket.getStatusName }}</td>
             </tr>
             <tr>
                 <th>User:</th>
-                <td><a href="javascript:;" {{ cTT(userNick, "ttuser") }}>{{ userNick }}</a></td>
+                <td><a href="javascript:;" {{ cTT(ticket.user.nick, "ttuser") }}>{{ ticket.user.nick }}</a></td>
             </tr>
-            {% if ticket.adminId > 0 %}
+            {% if ticket.admin %}
                 <tr>
                     <th>Zugeteilter Admin:</th>
-                    <td>{{ adminNick }}</td>
+                    <td>{{ ticket.admin.nick }}</td>
                 </tr>
             {% endif %}
             <tr>
@@ -36,10 +36,9 @@
             <tr>
                 <th>Admin-Kommentar:</th>
                 <td colspan="3">
-                    <textarea name="admin_comment" style="color:#00008B" rows="4"
-                              cols="60">{{ ticket.adminComment }}</textarea>
-                    <input type="submit" name="submit_admin_comment" value="Speichern"/> (wird auch beim Senden einer
-                    neuen Nachricht gespeichert)
+                    {{ form_widget(form.adminComment) }}
+                    {{ form_widget(form.submitAdminComment) }}
+                    (wird auch beim Senden einer neuen Nachricht gespeichert)
                 </td>
             </tr>
         </table>
@@ -51,10 +50,10 @@
                 <th style="width:130px">Autor</th>
                 <th>Nachricht</th>
             </tr>
-            {% for message in messages %}
+            {% for message in ticket.ticketMessages %}
                 <tr>
                     <td>{{ formatTimestamp(message.timestamp) }}</td>
-                    <td>{{ messageAuthor[message.id] }}</td>
+                    <td>{{ message.getAuthor }}</td>
                     <td>{{ BBCodeToHTML(message.message)|raw }}</td>
                 </tr>
             {% endfor %}
@@ -69,22 +68,21 @@
                 </tr>
                 <tr>
                     <th>Nachricht:</th>
-                    <td><textarea name="message" rows="8" cols="60"></textarea></td>
+                    <td>
+                        {{ form_widget(form.ticketMessages) }}
+                    </td>
                 </tr>
             </table>
 
             <p>
-                <input type="submit" name="submit_new_post" value="Senden"/> &nbsp;
-                <input type="checkbox" name="should_close" id="should_close" value="1"/>
-                <label for="should_close">Ticket abschliessen als</label>
-                <select id="should_close" name="close_solution">
-                    {% for value,label in ticketSolutions %}
-                        <option value="{{ value }}" {{ value == 'solved' ? 'selected=selected' : '' }}>{{ label }}</option>
-                    {% endfor %}
-                </select>
+                {{ form_widget(form.submitNewPost) }}
+                {{ form_widget(form.shouldClose) }}&nbsp;
+                <label for="form_solution">Ticket abschliessen als</label>
+                {{ form_widget(form.solution) }}
             </p>
         {% endif %}
-    </form>
+    {{ form_widget(form._token) }}
+    {{ form_end(form,{render_rest:false}) }}
 
     <input type="button" value="Zur Übersicht" onclick="document.location='{{ path('admin.overview') }}'"/>
 

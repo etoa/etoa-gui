@@ -18,17 +18,17 @@
             <tbody>
             {% for ticket in newTickets %}
                 <div id="tt{{ ticket.id }}" style="display:none;">
-                    <a href="{{ path('admin.users.view', {id: ticket.userId}) }}">Daten anzeigen</a><br/>
-                    <a href="{{ path('admin.messages.send', {userId: ticket.userId}) }}">Nachricht senden</a><br/>
+                    <a href="{{ path('admin.users.view', {id: ticket.user.id}) }}">Daten anzeigen</a><br/>
+                    <a href="{{ path('admin.messages.send', {userId: ticket.user.id}) }}">Nachricht senden</a><br/>
                 </div>
                 <tr>
                     <td>
                         <a href="{{ path('admin.ticket.details', {id: ticket.id}) }}">{{ ticket.idString }}</a>
                     </td>
                     <td>{{ ticket.statusName }}</td>
-                    <td>{{ ticketCategories[ticket.catId] }}</td>
+                    <td>{{ ticket.cat.name }}</td>
                     <td>
-                        <a href="javascript:;" {{ cTT(userNicks[ticket.userId], "tt" ~ ticket.id)|raw }}>{{ userNicks[ticket.userId] }}</a>
+                        <a href="javascript:;" {{ cTT(ticket.user.nick, "tt" ~ ticket.id)|raw }}>{{ ticket.user.nick }}</a>
                     </td>
                     <td>{{ formatTimestamp(ticket.timestamp) }}</td>
                 </tr>
@@ -56,10 +56,10 @@
                     <td>
                         <a href="{{ path('admin.ticket.edit', {id: ticket.id}) }}">{{ ticket.idString }}</a>
                     </td>
-                    <td>{{ ticket.statusName }}: <b>{{ adminNicks[ticket.adminId] }}</b></td>
-                    <td>{{ ticketCategories[ticket.catId] }}</td>
-                    <td>{{ userNicks[ticket.userId] }}</td>
-                    <td>{{ messageCounts[ticket.id]|default(0) }}</td>
+                    <td>{{ ticket.statusName }}: <b>{{ ticket.admin.nick }}</b></td>
+                    <td>{{ ticket.cat.name }}</td>
+                    <td>{{ ticket.user.nick }}</td>
+                    <td>{{ ticket.ticketMessages|length }}</td>
                     <td>{{ formatTimestamp(ticket.timestamp) }}</td>
                 </tr>
             {% endfor %}

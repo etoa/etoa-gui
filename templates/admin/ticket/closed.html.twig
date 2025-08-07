@@ -22,10 +22,10 @@
                     <tr>
                         <td><a href="{{ path('admin.ticket.details', {id: ticket.id}) }}">{{ ticket.idString }}</a></td>
                         <td>{{ ticket.statusName }}</td>
-                        <td>{{ adminNicks[ticket.adminId] }}</td>
-                        <td>{{ userNicks[ticket.userId] }}</td>
-                        <td>{{ adminNicks[ticket.adminId] }}</td>
-                        <td>{{ messageCounts[ticket.id] }}</td>
+                        <td>{{ ticket.cat.name }}</td>
+                        <td>{{ ticket.user.nick }}</td>
+                        <td>{{ ticket.admin.nick }}</td>
+                        <td>{{ ticket.ticketMessages|length }}</td>
                         <td>{{ formatTimestamp(ticket.timestamp) }}</td>
                     </tr>
                {% endfor %}

@@ -18,7 +18,8 @@ class TicketTextType extends AbstractType
                     'rows' => 10,
                     'cols' => 60
                 ],
-                'label' => false
+                'label' => false,
+                'empty_data' => ''
             ]);
     }
 

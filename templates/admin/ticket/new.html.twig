@@ -2,40 +2,31 @@
 
 {% block ticketContent %}
     <h3>Ticket erstellen</h3>
-
-    {% if users|length > 0 %}
-        <form method="post">
+    {% if form.user.vars.choices|length > 0 %}
+        {{ form_start(form) }}
             <table>
                 <tr>
                     <th>User:</th>
                     <td>
-                        <select name="user_id">
-                            {% for userId,userNick in users %}
-                                <option value="{{ userId }}">{{ userNick }}</option>';
-                            {% endfor %}
-                        </select>
+                        {{ form_widget(form.user)}}
                     </td>
                 </tr>
                 <tr>
                     <th>Kategorie:</th>
                     <td>
-                        <select name="cat_id">
-                            {% for categoryId,name in ticketCategories %}
-                                <option value="{{ categoryId }}">{{ name }}</option>';
-                            {% endfor %}
-                        </select>
+                        {{ form_widget(form.cat) }}
                     </td>
                 </tr>
                 <tr>
                     <th>Problembeschreibung:</th>
                     <td>
-                        <textarea name="message" rows="8" cols="60"></textarea>
+                        {{ form_widget(form.ticketMessages) }}
                     </td>
                 </tr>
             </table>
             <p>
-                <input type="submit" name="submit_new" value="Speichern" />
+                {{ form_widget(form.submit) }}
             </p>
-        </form>
+        {{ form_end(form) }}
     {% endif %}
 {% endblock %}

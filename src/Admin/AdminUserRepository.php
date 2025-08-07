@@ -67,12 +67,11 @@ class AdminUserRepository extends AbstractRepository
     public function searchNicknames(): array
     {
         $qb = $this->createQueryBuilder('q')
-            ->select('user_id, user_nick')
-            ->from('admin_users')
-            ->orderBy('user_nick');
+            ->orderBy('q.nick');
 
-        return $this->applySearchSortLimit($qb, null, null, null)
-            ->fetchAllKeyValue();
+        return $this->applySearchSortLimit($qb)
+            ->getQuery()
+            ->execute();
     }
 
     /**
