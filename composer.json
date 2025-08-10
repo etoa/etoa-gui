@@ -28,7 +28,7 @@
         "twig/extra-bundle": "^3.0",
         "symfony/yaml": "^5.4",
         "symfony/security-bundle": "^5.4",
-        "doctrine/annotations": "^1.13",
+        "doctrine/annotations": "^2.0",
         "symfony/translation": "^5.4",
         "scheb/2fa": "^6.0",
         "symfony/mime": "^5.4",
