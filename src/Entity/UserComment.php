@@ -20,8 +20,9 @@ class UserComment
     #[ORM\Column(name: "comment_timestamp")]
     private int $timestamp;
 
-    #[ORM\Column(name: "comment_admin_id")]
-    private int $adminId;
+    #[ORM\ManyToOne(targetEntity: User::class)]
+    #[ORM\JoinColumn(name: 'comment_user_id', referencedColumnName: 'user_id')]
+    private User $user;
 
     #[ORM\ManyToOne(targetEntity: AdminUser::class)]
     #[ORM\JoinColumn(name: 'comment_admin_id', referencedColumnName: 'user_id')]
@@ -56,18 +57,6 @@ class UserComment
         return $this;
     }
 
-    public function getAdminId(): ?int
-    {
-        return $this->adminId;
-    }
-
-    public function setAdminId(int $adminId): static
-    {
-        $this->adminId = $adminId;
-
-        return $this;
-    }
-
     public function getAdmin(): ?AdminUser
     {
         return $this->admin;
@@ -76,6 +65,18 @@ class UserComment
     public function setAdmin(?AdminUser $admin): static
     {
         $this->admin = $admin;
+
+        return $this;
+    }
+
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
+
+    public function setUser(?User $user): static
+    {
+        $this->user = $user;
 
         return $this;
     }

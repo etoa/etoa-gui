@@ -19,11 +19,10 @@ class SpecialistDataRepository extends AbstractRepository
     public function getSpecialistNames(): array
     {
         return $this->createQueryBuilder('q')
-            ->select('s.specialist_id, s.specialist_name')
-            ->from('specialists', 's')
-            ->andWhere('s.specialist_enabled = 1')
-            ->orderBy('s.specialist_name')
-            ->fetchAllKeyValue();
+            ->where('q.enabled = 1')
+            ->orderBy('q.name')
+            ->getQuery()
+            ->execute();
     }
 
     public function getSpecialist(int $specialistId): ?Specialist

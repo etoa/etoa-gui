@@ -10,7 +10,7 @@ use Symfony\Component\Validator\Constraints\NotNull;
 class RaceType extends AbstractType
 {
     public function __construct(
-        private RaceDataRepository $raceDataRepository,
+        private readonly RaceDataRepository $raceDataRepository,
     ) {
     }
 

@@ -14,6 +14,7 @@ use EtoA\BuddyList\BuddyListRepository;
 use EtoA\Building\BuildingListItemRepository;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Defense\DefenseRepository;
+use EtoA\Entity\Race;
 use EtoA\Entity\User;
 use EtoA\Exceptions\RecordNotFoundException;
 use EtoA\Fleet\FleetRepository;
@@ -29,10 +30,10 @@ use EtoA\Market\MarketShipRepository;
 use EtoA\Message\ReportRepository;
 use EtoA\Missile\MissileRepository;
 use EtoA\Notepad\NotepadDataRepository;
-use EtoA\Security\Player\CurrentPlayer;
 use EtoA\Ship\ShipListRepository;
 use EtoA\Ship\ShipQueueRepository;
 use EtoA\Support\Mail\MailSenderService;
+use EtoA\Support\ValidationUtils;
 use EtoA\Technology\TechnologyListItemRepository;
 use EtoA\Universe\Planet\PlanetService;
 use Exception;
@@ -93,29 +94,29 @@ class UserService
         string $email,
         string $nick,
         string $password,
-        ?int   $race = 0,
+        ?Race   $race = null,
         bool   $ghost = false,
         bool   $forceVerified = false
     ): User
     {
         // Validate required data is not empty
-        if (!filled($name) || !filled($email) || !filled($nick) || !filled($password)) {
+        if (ValidationUtils::blank($name) || ValidationUtils::blank($email) || ValidationUtils::blank($nick) || ValidationUtils::blank($password)) {
             throw new Exception("Nicht alle Felder sind ausgefüllt!");
         }
 
         // Validate email
-        if (!checkEmail($email)) {
+        if (!ValidationUtils::checkEmail($email)) {
             throw new Exception("Diese E-Mail-Adresse scheint ungültig zu sein. Prüfe nach, ob dein E-Mail-Server online ist und die Adresse im korrekten Format vorliegt!");
         }
 
         // Validate name
-        if (!checkValidName($name)) {
+        if (!ValidationUtils::checkValidName($name)) {
             throw new Exception("Du hast ein unerlaubtes Zeichen im vollständigen Namen!");
         }
 
         // Validate nickname
         $nick = trim($nick);
-        if (!checkValidNick($nick)) {
+        if (!ValidationUtils::checkValidNick($nick)) {
             throw new Exception("Du hast ein unerlaubtes Zeichen im Benutzernamen!");
         }
         if ($nick == '') {
@@ -137,19 +138,16 @@ class UserService
         }
 
         // Add new record
-        $userId = $this->userRepository->create($nick, $name, $email, $password, (int)$race, $ghost);
-        $user = $this->userRepository->getUser($userId);
-        $hashedPassword = $this->passwordHasher->hashPassword(new CurrentPlayer($user), $password);
-        $this->userRepository->updatePassword($userId, $hashedPassword, true);
+        $user = $this->userRepository->create($nick, $name, $email, $password, $race, $ghost);
 
-        $this->userRepository->setSittingDays($userId, $this->config->getInt('user_sitting_days'));
-        $this->userRatingRepository->addBlank($userId);
-        $this->userPropertiesRepository->addBlank($userId);
+        $this->userRepository->setSittingDays($user, $this->config->getInt('user_sitting_days'));
+        $this->userRatingRepository->addBlank($user);
+        $this->userPropertiesRepository->addBlank($user);
 
         $verificationRequired = $this->config->getBoolean('email_verification_required');
-        $this->userRepository->setVerified($userId, !$verificationRequired || $forceVerified);
+        $this->userRepository->setVerified($user, !$verificationRequired || $forceVerified);
 
-        return $this->userRepository->getUser($userId);
+        return $user;
     }
 
     public function delete(User $user, bool $self = false, string $from = ""): void
@@ -332,7 +330,7 @@ die Spielleitung";
     {
         $deletedUsers = $this->userRepository->findDeleted();
         foreach ($deletedUsers as $user) {
-            $this->delete($user->getId());
+            $this->delete($user);
         }
 
         $this->logRepository->add(

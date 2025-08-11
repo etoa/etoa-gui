@@ -12,30 +12,22 @@ use EtoA\Entity\UserProperties;
 
 class UserPropertiesRepository extends AbstractRepository
 {
-    public function __construct(ManagerRegistry $registry, private readonly EntityManagerInterface $entityManager)
+    public function __construct(
+        ManagerRegistry $registry,
+        private readonly EntityManagerInterface $entityManager,
+        private readonly UserRepository $userRepository
+    )
     {
         parent::__construct($registry, UserProperties::class);
     }
 
-    public function addBlank(int $id): void
+    public function addBlank(User $user): void
     {
-        $this->createQueryBuilder('q')
-            ->delete('user_properties')
-            ->where('id = :id')
-            ->setParameters([
-                'id' => $id,
-            ])
-            ->executeQuery();
+        $userProperties = new UserProperties();
 
-        $this->createQueryBuilder('q')
-            ->insert('user_properties')
-            ->values([
-                'id' => ':id',
-            ])
-            ->setParameters([
-                'id' => $id,
-            ])
-            ->executeQuery();
+        $user->setUserProperties($userProperties);
+
+        $this->userRepository->save();
     }
 
     public function getOrCreateProperties(int $userId): UserProperties

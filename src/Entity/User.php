@@ -6,6 +6,7 @@ namespace EtoA\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use EtoA\User\UserInterface;
 use EtoA\User\UserRepository;
@@ -24,7 +25,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     protected int $id;
 
     #[ORM\JoinColumn(name: 'user_id', referencedColumnName: 'id')]
-    #[ORM\OneToOne(targetEntity: UserProperties::class)]
+    #[ORM\OneToOne(inversedBy: 'user', targetEntity: UserProperties::class, cascade: ['persist', 'remove'])]
     protected UserProperties $userProperties;
 
     #[ORM\Column(name: "user_name", type: 'string', length: 180)]
@@ -40,19 +41,19 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     protected ?string $passwordTemp;
 
     #[ORM\Column(name: "user_last_login", type: "integer")]
-    protected int $lastLogin;
+    protected int $lastLogin = 0;
 
     #[ORM\Column(name: "user_last_online", type: "integer")]
-    protected int $lastOnline;
+    protected int $lastOnline = 0;
 
     #[ORM\Column(name: "user_logintime", type: "integer")]
-    protected int $loginTime;
+    protected int $loginTime = 0;
 
     #[ORM\Column(name: "user_acttime", type: "integer")]
-    protected int $actionTime;
+    protected int $actionTime = 0;
 
     #[ORM\Column(name: "user_logouttime", type: "integer")]
-    protected int $logoutTime;
+    protected int $logoutTime = 0;
 
     #[ORM\Column(name: "user_session_key", type: "string")]
     protected ?string $sessionKey;
@@ -70,29 +71,26 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     protected ?string $hostname;
 
     #[ORM\Column(name: "user_blocked_from", type: "integer")]
-    protected int $blockedFrom;
+    protected int $blockedFrom = 0;
 
     #[ORM\Column(name: "user_blocked_to", type: "integer")]
-    protected int $blockedTo;
+    protected int $blockedTo = 0;
 
     #[ORM\Column(name: "user_ban_reason", type: "string")]
     protected ?string $banReason;
 
     #[ORM\Column(name: "user_attack_bans", type: "integer")]
-    protected int $attackBans;
+    protected int $attackBans = 0;
 
     #[ORM\JoinColumn(name: 'user_ban_admin_id', referencedColumnName: 'user_id')]
     #[ORM\ManyToOne(targetEntity: AdminUser::class)]
     protected ?AdminUser $banAdmin = null;
 
     #[ORM\Column(name: "user_hmode_from", type: "integer")]
-    protected int $hmodFrom;
+    protected int $hmodFrom = 0;
 
     #[ORM\Column(name: "user_hmode_to", type: "integer")]
-    protected int $hmodTo;
-
-    #[ORM\Column(name: "user_race_id", type: "integer")]
-    protected int $raceId;
+    protected int $hmodTo = 0;
 
     #[ORM\JoinColumn(name: 'user_race_id', referencedColumnName: 'race_id')]
     #[ORM\ManyToOne(targetEntity: Race::class)]
@@ -103,54 +101,54 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     protected ?Alliance $alliance = null;
 
     #[ORM\Column(name: "user_alliance_shippoints", type: "integer")]
-    protected int $allianceShipPoints;
+    protected int $allianceShipPoints = 0;
 
     #[ORM\Column(name: "user_alliance_shippoints_used", type: "integer")]
-    protected int $allianceShipPointsUsed;
+    protected int $allianceShipPointsUsed = 0;
 
     #[ORM\Column(name: "user_alliance_leave", type: "integer")]
-    protected int $allianceLeave;
+    protected int $allianceLeave = 0;
 
     #[ORM\Column(name: "user_sitting_days", type: "integer")]
-    protected int $sittingDays;
+    protected int $sittingDays = 20;
 
     #[ORM\Column(name: "user_multi_delets", type: "integer")]
-    protected int $multiDelets;
+    protected int $multiDelets = 0;
 
     #[ORM\Column(name: "user_setup", type: "boolean")]
-    protected bool $setup;
+    protected bool $setup = false;
 
 
     #[ORM\Column(name: "user_points", type: "integer")]
-    protected int $points;
+    protected int $points = 0;
 
     #[ORM\Column(name: "user_rank", type: "integer")]
-    protected int $rank;
+    protected int $rank = 0;
 
     #[ORM\Column(name: "user_rank_highest", type: "integer")]
-    protected int $rankHighest;
+    protected int $rankHighest = 0;
 
     #[ORM\JoinColumn(name: 'user_alliance_rank_id', referencedColumnName: 'rank_id')]
     #[ORM\ManyToOne(targetEntity: AllianceRank::class)]
     protected ?AllianceRank $allianceRank = null;
 
     #[ORM\Column(name: "user_registered", type: "integer")]
-    protected int $registered;
+    protected int $registered = 1097597003;
 
     #[ORM\Column(name: "user_profile_text", type: "string")]
     protected ?string $profileText;
 
     #[ORM\Column(name: "user_ghost", type: "boolean")]
-    protected bool $ghost;
+    protected bool $ghost = false;
 
     #[ORM\Column(type: "integer")]
-    protected int $admin;
+    protected int $admin = 0;
 
     #[ORM\Column(name: "user_chatadmin", type: "integer")]
-    protected int $chatAdmin;
+    protected int $chatAdmin = 0;
 
     #[ORM\Column(name: "user_visits", type: "integer")]
-    protected int $visits;
+    protected int $visits = 0;
 
     #[ORM\Column(name: "user_avatar", type: "string")]
     protected ?string $avatar;
@@ -162,19 +160,19 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     protected ?string $client;
 
     #[ORM\Column(name: "user_res_from_raid", type: "integer")]
-    protected int $resFromRaid;
+    protected int $resFromRaid = 0;
 
     #[ORM\Column(name: "user_res_from_tf", type: "integer")]
-    protected int $resFromTf;
+    protected int $resFromTf = 0;
 
     #[ORM\Column(name: "user_res_from_asteroid", type: "integer")]
-    protected int $resFromAsteroid;
+    protected int $resFromAsteroid = 0;
 
     #[ORM\Column(name: "user_res_from_nebula", type: "integer")]
-    protected int $resFromNebula;
+    protected int $resFromNebula = 0;
 
-    #[ORM\Column(type: "integer")]
-    protected int $userMainPlanetChanged;
+    #[ORM\Column(type: Types::BOOLEAN)]
+    protected bool $userMainPlanetChanged = false;
 
     #[ORM\Column(name: "user_profile_board_url", type: "string")]
     protected ?string $profileBoardUrl;
@@ -183,38 +181,38 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     protected ?string $profileImage;
 
     #[ORM\Column(name: "user_profile_img_check", type: "boolean")]
-    protected bool $profileImageCheck;
+    protected bool $profileImageCheck = false;
 
     #[ORM\ManyToOne(targetEntity: Specialist::class)]
     #[ORM\JoinColumn(name: 'user_specialist_id', referencedColumnName: 'specialist_id')]
     protected ?Specialist $specialist = null;
 
     #[ORM\Column(name: "user_specialist_time", type: "integer")]
-    protected int $specialistTime;
+    protected int $specialistTime = 0;
 
     #[ORM\Column(name: "user_deleted", type: "integer")]
-    protected int $deleted;
+    protected int $deleted = 0;
 
     #[ORM\Column(name: "user_observe", type: "string")]
     protected ?string $observe;
 
     #[ORM\Column(name: "lastinvasion", type: "integer")]
-    protected int $lastInvasion;
+    protected int $lastInvasion = 0;
 
     #[ORM\Column(name: "spyattack_counter", type: "integer")]
-    protected int $spyAttackCounter;
+    protected int $spyAttackCounter = 0;
 
     #[ORM\Column(name: "discoverymask", type: "string")]
     protected ?string $discoveryMask;
 
     #[ORM\Column(name: "discoverymask_last_updated", type: "integer")]
-    protected int $discoveryMaskLastUpdated;
+    protected int $discoveryMaskLastUpdated = 0;
 
     #[ORM\Column(type: "float")]
-    protected float $boostBonusProduction;
+    protected float $boostBonusProduction = 0;
 
     #[ORM\Column(type: "float")]
-    protected float $boostBonusBuilding;
+    protected float $boostBonusBuilding = 0;
 
     #[ORM\Column(type: "string")]
     protected ?string $dualEmail;
@@ -225,13 +223,13 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(type: "string")]
     protected ?string $verificationKey;
 
-    #[ORM\Column(type: "integer")]
-    protected int $npc;
+    #[ORM\Column(type: Types::BOOLEAN)]
+    protected bool $npc = false;
 
     #[ORM\Column(type: "boolean")]
-    protected bool $userChangedMainPlanet;
+    protected bool $userChangedMainPlanet = false;
 
-    #[ORM\OneToOne(mappedBy: "id", targetEntity: UserRating::class)]
+    #[ORM\OneToOne(mappedBy: "id", targetEntity: UserRating::class, cascade: ['persist', 'remove'])]
     #[ORM\JoinColumn(name: 'user_id', referencedColumnName: 'id')]
     protected ?UserRating $userRating = null;
 
@@ -239,19 +237,24 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\JoinColumn(name: 'user_id', referencedColumnName: 'planet_user_id')]
     private Collection $planets;
 
-    #[ORM\OneToMany(mappedBy: 'user', targetEntity: TechnologyListItem::class)]
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: TechnologyListItem::class, cascade: ['persist', 'remove'])]
     #[ORM\JoinColumn(name: 'user_id', referencedColumnName: 'techlist_user_id')]
     private Collection $techlist;
 
-    #[ORM\OneToMany(mappedBy: 'user', targetEntity: UserLog::class)]
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: UserLog::class, cascade: ['persist', 'remove'])]
     #[ORM\JoinColumn(name: 'user_id', referencedColumnName: 'user_id')]
     private Collection $logs;
+
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: UserComment::class, cascade: ['persist', 'remove'])]
+    #[ORM\JoinColumn(name: 'user_id', referencedColumnName: 'comment_user_id')]
+    private Collection $comments;
 
     public function __construct()
     {
         $this->planets = new ArrayCollection();
         $this->techlist = new ArrayCollection();
         $this->logs = new ArrayCollection();
+        $this->comments = new ArrayCollection();
     }
 
     public function __toString() {
@@ -503,18 +506,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function getRaceId(): ?int
-    {
-        return $this->raceId;
-    }
-
-    public function setRaceId(int $raceId): static
-    {
-        $this->raceId = $raceId;
-
-        return $this;
-    }
-
     public function getAllianceShipPoints(): ?int
     {
         return $this->allianceShipPoints;
@@ -659,30 +650,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function getAdmin(): ?int
-    {
-        return $this->admin;
-    }
-
-    public function setAdmin(int $admin): static
-    {
-        $this->admin = $admin;
-
-        return $this;
-    }
-
-    public function getChatAdmin(): ?int
-    {
-        return $this->chatAdmin;
-    }
-
-    public function setChatAdmin(int $chatAdmin): static
-    {
-        $this->chatAdmin = $chatAdmin;
-
-        return $this;
-    }
-
     public function getVisits(): ?int
     {
         return $this->visits;
@@ -775,18 +742,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setResFromNebula(int $resFromNebula): static
     {
         $this->resFromNebula = $resFromNebula;
-
-        return $this;
-    }
-
-    public function getUserMainPlanetChanged(): ?int
-    {
-        return $this->userMainPlanetChanged;
-    }
-
-    public function setUserMainPlanetChanged(int $userMainPlanetChanged): static
-    {
-        $this->userMainPlanetChanged = $userMainPlanetChanged;
 
         return $this;
     }
@@ -971,18 +926,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function getNpc(): ?int
-    {
-        return $this->npc;
-    }
-
-    public function setNpc(int $npc): static
-    {
-        $this->npc = $npc;
-
-        return $this;
-    }
-
     public function isUserChangedMainPlanet(): ?bool
     {
         return $this->userChangedMainPlanet;
@@ -1026,6 +969,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function setUserProperties(?UserProperties $userProperties): static
     {
+        $userProperties->setUser($this);
         $this->userProperties = $userProperties;
 
         return $this;
@@ -1062,6 +1006,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function setUserRating(?UserRating $userRating): static
     {
+        $userRating->setUser($this);
+
         $this->userRating = $userRating;
 
         return $this;
@@ -1165,6 +1111,84 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
                 $log->setUser(null);
             }
         }
+
+        return $this;
+    }
+
+    public function isUserMainPlanetChanged(): ?bool
+    {
+        return $this->userMainPlanetChanged;
+    }
+
+    public function setUserMainPlanetChanged(bool $userMainPlanetChanged): static
+    {
+        $this->userMainPlanetChanged = $userMainPlanetChanged;
+
+        return $this;
+    }
+
+    public function isNpc(): ?bool
+    {
+        return $this->npc;
+    }
+
+    public function setNpc(bool $npc): static
+    {
+        $this->npc = $npc;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, UserComment>
+     */
+    public function getComments(): Collection
+    {
+        return $this->comments;
+    }
+
+    public function addComment(UserComment $comment): static
+    {
+        if (!$this->comments->contains($comment)) {
+            $this->comments->add($comment);
+            $comment->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeComment(UserComment $comment): static
+    {
+        if ($this->comments->removeElement($comment)) {
+            // set the owning side to null (unless already changed)
+            if ($comment->getUser() === $this) {
+                $comment->setUser(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function getAdmin(): ?int
+    {
+        return $this->admin;
+    }
+
+    public function setAdmin(int $admin): static
+    {
+        $this->admin = $admin;
+
+        return $this;
+    }
+
+    public function getChatAdmin(): ?int
+    {
+        return $this->chatAdmin;
+    }
+
+    public function setChatAdmin(int $chatAdmin): static
+    {
+        $this->chatAdmin = $chatAdmin;
 
         return $this;
     }

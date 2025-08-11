@@ -133,12 +133,12 @@ class UserMultiRepository extends AbstractRepository
     /**
      * @return UserMulti[]
      */
-    public function getUserEntries(int $userId, bool $active = null): array
+    public function getUserEntries(User $user, bool $active = null): array
     {
-        $constraints = [];
+        $constraints = ['user'=>$user];
 
         if ($active)
-            $constraints = ['active'=>true];
+            $constraints['active'] = true;
 
         return $this->findBy($constraints,['id'=>'DESC']);
 

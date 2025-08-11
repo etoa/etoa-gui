@@ -10,39 +10,36 @@ use Doctrine\ORM\Mapping as ORM;
 class UserRating
 {
     #[ORM\Id]
-    #[ORM\Column(name: "id", type: "integer")]
-    private int $userId;
-
-    #[ORM\OneToOne(mappedBy: "userRating", targetEntity: User::class)]
+    #[ORM\OneToOne(inversedBy: "user", targetEntity: User::class, cascade: ['persist'])] //TODO: check if cascade: ['remove'] can be added
     #[ORM\JoinColumn(name: 'id', referencedColumnName: 'user_id')]
     private User $user;
 
     #[ORM\Column]
-    private ?int $battlesFought;
+    private ?int $battlesFought = 0;
 
     #[ORM\Column]
-    private ?int $battlesWon;
+    private ?int $battlesWon = 0;
 
     #[ORM\Column]
-    private ?int $battlesLost;
+    private ?int $battlesLost = 0;
 
     #[ORM\Column]
-    private ?int $battleRating;
+    private ?int $battleRating = 0;
 
     #[ORM\Column]
-    private ?int $tradesSell;
+    private ?int $tradesSell = 0;
 
     #[ORM\Column]
-    private ?int $tradesBuy;
+    private ?int $tradesBuy = 0;
 
     #[ORM\Column]
-    private ?int $tradeRating;
+    private ?int $tradeRating = 0;
 
     #[ORM\Column]
-    private ?int $diplomacyRating;
+    private ?int $diplomacyRating = 0;
 
     #[ORM\Column]
-    private ?int $elorating;
+    private ?int $elorating = 0;
 
     public function getBattlesFought(): ?int
     {

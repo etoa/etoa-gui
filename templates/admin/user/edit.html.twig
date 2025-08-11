@@ -5,13 +5,13 @@
 {% block breadcrumbs %}
     {{ component('breadcrumbs', { items: [
         { label: 'Spielersuche', url: path('admin.users') },
-        { label: user.nick, url: path('admin.users.view', {id: user.id}) },
-        { label: 'Spieler bearbeiten', url: path('admin.users.edit', {id: user.id}) },
+        { label: form.vars.data.nick, url: path('admin.users.view', {id: form.vars.data.id}) },
+        { label: 'Spieler bearbeiten', url: path('admin.users.edit', {id: form.vars.data.id}) },
     ]}) }}
 {% endblock %}
 
 {% block content %}
-    <form action="{{ path('admin.users.edit', {id: user.id}) }}" method="post">
+    {{ form_start(form) }}
         <input type="hidden" id="tabactive" name="tabactive" value=""/>
         <div class="tabs" id="user_edit_tabs">
             <ul>
@@ -31,78 +31,63 @@
                     <tr>
                         <th><label for="user_nick">Nick</label></th>
                         <td>
-                            <input type="text" name="user_nick" id="user_nick" value="{{ user.nick }}" size="35"
-                                   maxlength="250"/>
+                            {{ form_widget(form.nick) }}
                         </td>
                         <td>Eine Nickänderung ist grundsätzlich nicht erlaubt</td>
                     </tr>
                     <tr>
                         <th><label for="user_email">E-Mail</label></th>
                         <td>
-                            <input type="email" name="user_email" id="user_email" value="{{ user.email }}" size="35"
-                                   maxlength="250"/>
+                            {{ form_widget(form.email) }}
                         </td>
                         <td>Rundmails gehen an diese Adresse</td>
                     </tr>
                     <tr>
                         <th><label for="user_name">Name</label></th>
                         <td>
-                            <input type="text" name="user_name" id="user_name" value="{{ user.name }}" size="35"
-                                   maxlength="250"/>
+                            {{ form_widget(form.name) }}
                         </td>
                         <td>Bei Accountübergabe anpassen</td>
                     </tr>
                     <tr>
                         <th><label for="user_email_fix">E-Mail fix</label></th>
                         <td>
-                            <input type="email" name="user_email_fix" id="user_email_fix"
-                                   value="{{ user.emailFix }}" size="35" maxlength="250"/>
+                            {{ form_widget(form.emailFix) }}
                         </td>
                         <td>Bei Accountübergabe anpassen</td>
                     </tr>
                     <tr>
                         <th><label for="dual_name">Name Dual</label></th>
                         <td>
-                            <input type="text" name="dual_name" id="dual_name" value="{{ user.dualName }}" size="35"
-                                   maxlength="250"/>
+                            {{ form_widget(form.dualName) }}
                         </td>
                         <td>Bei Dualänderung anpassen</td>
                     </tr>
                     <tr>
                         <th><label for="dual_email">E-Mail Dual</label></th>
                         <td>
-                            <input type="email" name="dual_email" id="dual_email" value="{{ user.dualEmail }}" size="35"
-                                   maxlength="250"/>
+                            {{ form_widget(form.dualEmail) }}
                         </td>
                         <td>Bei Dualänderung anpassen</td>
                     </tr>
                     <tr>
                         <th><label for="user_password">Passwort</label></th>
                         <td>
-                            <input type="text" name="user_password" id="user_password" value="" size="35"
-                                   maxlength="250"/>
+                            {{ form_widget(form.password) }}
                         </td>
                         <td>Leerlassen um altes Passwort beizubehalten</td>
                     </tr>
                     <tr>
-                        <th><label for="user_password_temp">Temporäres Passwort</label></th>
-                        <td>
-                            <input type="text" name="user_password_temp" id="user_password_temp"
-                                   value="{{ user.passwordTemp }}" size="30" maxlength="30"/>
-                        </td>
-                        <td>Nur dieses wird verwendet, falls ausgefüllt</td>
-                    </tr>
-                    <tr>
                         <th>Geist</th>
                         <td>
-                            {{ component('forms:radio_button_list', { name: 'user_ghost', options: { 1: 'Ja', 0: 'Nein' }, value: user.ghost ? 1 : 0 }) }}
+                            {{ form_widget(form.ghost) }}
                         </td>
                         <td>Legt fest ob der Spieler in der Rangliste ausgeblendet wird</td>
                     </tr>
                     <tr>
                         <th>Chat-Admin</th>
                         <td>
-                            {{ component('forms:radio_button_list', { name: 'user_chatadmin', options: { 1: 'Ja', 0: 'Nein', 2: 'Leiter Team Community', 3: 'Entwickler mit Adminrechten' }, value: user.chatAdmin }) }}
+                            {{ form_widget(form.chatAdmin) }}
                         </td>
                         <td>Der Spieler hat Adminrechte im Chat und einen silbernen Stern für Chatadmin,
                             einen grünen Stern für Leiter Team Community bzw. einen cyanfarbenen Stern für
@@ -113,7 +98,7 @@
                     <tr>
                         <th>Admin</th>
                         <td>
-                            {{ component('forms:radio_button_list', { name: 'admin', options: { 1: 'Ja', 0: 'Nein', 2: 'Entwickler ohne Adminrechte' }, value: user.admin }) }}
+                            {{ form_widget(form.admin) }}
                         </td>
                         <td>
                             Admin: Der Spieler wird in der Raumkarte als Game-Admin markiert.<br/>
@@ -123,45 +108,38 @@
                     <tr>
                         <th>NPC</th>
                         <td>
-                            {{ component('forms:radio_button_list', { name: 'npc', options: { 1: 'Ja', 0: 'Nein' }, value: user.npc }) }}
+                            {{ form_widget(form.npc) }}
                         </td>
                         <td>Spieler wird als NPC markiert</td>
                     </tr>
                     <tr>
                         <th>Sperren</th>
                         <td>
-                            {{ component('forms:radio_button_list', { name: 'ban_enable', options: { 0: 'Nein', 1: 'Ja' }, value: user.blockedFrom > 0 ? 1 : 0, onclick: "this.value == 1 ? $('#ban_options').show() : $('#ban_options').hide()" }) }}
+                            {{ form_widget(form.blocked) }}
                             {% if isNoLongerBlocked %}<i><b>Diese Sperre ist abgelaufen!</b></i>{% endif %}
                             <table id="ban_options">
                                 <tr>
                                     <td><label for="user_blocked_from">Von</label></td>
                                     <td>
-                                        <twig:forms:date_time_input name="user_blocked_from"
-                                                                    :value="user.blockedFrom > 0 ? user.blockedFrom : date().timestamp"
-                                                                    :min="iso8601date(date().timestamp)"/>
+                                        {{ form_widget(form.blockedFrom) }}
                                     </td>
                                 </tr>
                                 <tr>
                                     <td><label for="user_blocked_to">Bis</label></td>
                                     <td>
-                                        <twig:forms:date_time_input name="user_blocked_to"
-                                                                    :value="user.blockedFrom > 0 ? user.blockedTo : userBlockedDefaultTime"
-                                                                    :min="iso8601date(date().timestamp)"/>
+                                        {{ form_widget(form.blockedTo) }}
                                     </td>
                                 </tr>
                                 <tr>
                                     <td><label for="user_ban_admin_id">Admin</label></td>
                                     <td>
-                                        <twig:forms:select_input name="user_ban_admin_id" :options="adminUserNicks"
-                                                                 :value="user.banAdminId" :emptyValue="0"
-                                                                 emptyLabel="(niemand)"/>
+                                        {{ form_widget(form.banAdmin) }}
                                     </td>
                                 </tr>
                                 <tr>
                                     <td><label for="user_ban_reason">Grund</label></td>
                                     <td>
-                                        <textarea name="user_ban_reason" id="user_ban_reason" cols="45"
-                                                  rows="2">{{ user.banReason }}</textarea>
+                                        {{ form_widget(form.banReason) }}
                                     </td>
                                 </tr>
                             </table>
@@ -171,23 +149,19 @@
                     <tr>
                         <th>U-Mod</th>
                         <td>
-                            {{ component('forms:radio_button_list', { name: 'umod_enable', options: { 0: 'Nein', 1: 'Ja' }, value: user.hmodFrom > 0 ? 1 : 0, onclick: "this.value == 1 ? $('#umod_options').show() : $('#umod_options').hide()" }) }}
+                            {{ form_widget(form.hmode) }}
                             {% if holidayModeExpired %}<i><b>Dieser Urlaubsmodus ist abgelaufen!</b></i>{% endif %}
                             <table id="umod_options">
                                 <tr>
                                     <td><label for="user_hmode_from">Von</label></td>
                                     <td>
-                                        <twig:forms:date_time_input name="user_hmode_from"
-                                                                    :value="user.hmodFrom > 0 ? user.hmodFrom : date().timestamp"
-                                                                    :min="iso8601date(date().timestamp)"/>
+                                        {{ form_widget(form.hmodFrom) }}
                                     </td>
                                 </tr>
                                 <tr>
                                     <td><label for="user_hmode_to">Bis</label></td>
                                     <td>
-                                        <twig:forms:date_time_input name="user_hmode_to"
-                                                                    :value="user.hmodTo > 0 ? user.hmodTo : userHolidayModeDefaultTime"
-                                                                    :min="iso8601date(date().timestamp)"/>
+                                        {{ form_widget(form.hmodTo) }}
                                     </td>
                                 </tr>
                             </table>
@@ -206,90 +180,71 @@
                     <tr>
                         <th><label for="user_race_id">Rasse</label></th>
                         <td>
-                            <twig:forms:select_input name="user_race_id" :options="raceNames" :value="user.raceId"
-                                                     :emptyValue="0" emptyLabel="(Keine)"/>
+                            {{ form_widget(form.race) }}
                         </td>
                     </tr>
                     <tr>
                         <th><label for="user_specialist_id">Spezialist</label></th>
                         <td>
-                            <twig:forms:select_input name="user_specialist_id" :options="specialistNames"
-                                                     :value="user.specialistId" :emptyValue="0" emptyLabel="(Keiner)"
-                                                     onchange="let spt=$('#spt'); this.value > 0 ? spt.show() : spt.hide()"/>
+                            {{ form_widget(form.specialist) }}
                             <span id="spt">
-                                Bis: <twig:forms:date_time_input name="user_specialist_time"
-                                                                 :value="user.specialistTime > 0 ? user.specialistTime : date().timestamp"
-                                                                 :min="iso8601date(date().timestamp)"/>
+                                Bis: {{ form_widget(form.specialistTime) }}
                             </span>
                         </td>
                     </tr>
                     <tr>
                         <th><label for="user_alliance_id">Allianz</label></th>
                         <td>
-                            {{ component('admin_user_alliance_selector', { name: 'user_alliance_id', rankName: 'user_alliance_rank_id', userAllianceId: user.allianceId, userAllianceRankId: user.allianceRankId }) }}
+                            {{ form_widget(form.alliance) }}
                         </td>
                     </tr>
                     <tr>
                         <th><label for="spyship_count">Spionagesonden für Direktscan</label></th>
                         <td>
-                            {% if spyShipNames is not empty %}
-                                <input type="text" name="spyship_count" id="spyship_count" maxlength="5" size="5"
-                                       value="{{ properties.spyShipCount }}">
-                                <twig:forms:select_input name="spyship_id" :options="spyShipNames"
-                                                         :value="properties.spyShipId" :emptyValue="0"
-                                                         emptyLabel="(keines)"/>
-                            {% else %}
-                                Momentan steht kein Schiff zur Auswahl!
-                            {% endif %}
+                            {{ form_widget(form.userProperties.spyShip) }}
                         </td>
                     </tr>
                     <tr>
                         <th><label for="analyzeship_count">Analysatoren für Quickanalyse</label></th>
                         <td>
-                            {% if analyzeShipNames is not empty %}
-                                <input type="text" name="analyzeship_count" id="analyzeship_count" maxlength="5"
-                                       size="5" value="{{ properties.analyzeShipCount }}">
-                                <twig:forms:select_input name="analyzeship_id" :options="analyzeShipNames"
-                                                         :value="properties.analyzeShipId" :emptyValue="0"
-                                                         emptyLabel="(keines)"/>
-                            {% else %}
-                                Momentan steht kein Schiff zur Auswahl!
-                            {% endif %}
+                            {{ form_widget(form.userProperties.analyzeShip) }}
+                        </td>
+                    </tr>
+                    <tr>
+                        <th><label for="exploreship_count">Schiffe für Erkundung</label></th>
+                        <td>
+                            {{ form_widget(form.userProperties.exploreShip) }}
+                        </td>
                     </tr>
                     <tr>
                         <th><label for="user_alliace_shippoints">Verfügbare Allianzschiffteile</label>
                         </th>
                         <td>
-                            <input type="text" name="user_alliace_shippoints" id="user_alliace_shippoints"
-                                   value="{{ user.allianceShipPoints }}" size="10" maxlength="10"/>
+                            {{ form_widget(form.allianceShipPoints) }}
                         </td>
                     </tr>
                     <tr>
                         <th><label for="user_alliace_shippoints_used">Verbaute Allianzschiffteile</label></th>
                         <td>
-                            <input type="text" name="user_alliace_shippoints_used" id="user_alliace_shippoints_used"
-                                   value="{{ user.allianceShipPointsUsed }}" size="10" maxlength="10"/>
+                            {{ form_widget(form.allianceShipPointsUsed) }}
                         </td>
                     </tr>
                     <tr>
                         <th><label for="user_multi_delets">Gelöschte Multis</label></th>
                         <td>
-                            <input type="text" name="user_multi_delets" id="user_multi_delets"
-                                   value="{{ user.multiDelets }}" size="3"
-                                   maxlength="3"/>
+                            {{ form_widget(form.multiDelets) }}
                         </td>
                     </tr>
                     <tr>
                         <th><label for="user_sitting_days">Sittertage</label></th>
                         <td>
-                            <input type="text" name="user_sitting_days" id="user_sitting_days"
-                                   value="{{ user.sittingDays }}" size="3" maxlength="3"/>
+                            {{ form_widget(form.sittingDays) }}
                         </td>
                     </tr>
                     <tr>
                         <th>Hauptplanet geändert</th>
                         <td>
-                            {{ component('forms:radio_button_list', { name: 'user_changed_main_planet', options: { 1: 'Ja', 0: 'Nein' }, value: user.userChangedMainPlanet ? 1 : 0 }) }}
+                            {{ form_widget(form.userChangedMainPlanet) }}
                         </td>
                     </tr>
                 </table>
@@ -304,22 +259,21 @@
                     <tr>
                         <th><label for="user_profile_text">Profil-Text</label></th>
                         <td>
-                            <textarea name="user_profile_text" id="user_profile_text" cols="60"
-                                      rows="8">{{ user.profileText }}</textarea>
+                            {{ form_widget(form.profileText) }}
                         </td>
                     </tr>
                     <tr>
                         <th>Profil-Bild</th>
                         <td>
-                            {% if user.profileImage %}
-                                {% if user.profileImageCheck %}
+                            {% if form.vars.data.profileImage %}
+                                {% if form.vars.data.profileImageCheck %}
                                     <input type="checkbox" value="0" name="user_profile_img_check"
                                            id="user_profile_img_check">
                                     <label for="user_profile_img_check">Bild-Verifikation bestätigen</label><br/>
                                 {% endif %}
-                                <img src="{{ user.getProfileImageUrl }}" alt="Profil"/><br/>
-                                <input type="checkbox" value="1" name="profile_img_del" id="profile_img_del">
-                                <label for="profile_img_del">Bild löschen</label><br/>
+                                <img src="{{ form.vars.data.userProperties.getProfileImageUrl }}" alt="Profil"/><br/>
+                                {{ form_widget(form.imageDel) }}
+                                <label for="form_imageDel">Bild löschen</label><br/>
                             {% else %}
                                 <i>Keines</i>
                             {% endif %}
@@ -328,17 +282,16 @@
                     <tr>
                         <th><label for="user_signature">Board-Signatur</label></th>
                         <td>
-                            <textarea name="user_signature" id="user_signature" cols="60"
-                                      rows="8">{{ user.signature }}</textarea>
+                            {{ form_widget(form.signature) }}
                         </td>
                     </tr>
                     <tr>
                         <th>Avatarpfad</th>
                         <td>
-                            {% if user.avatar %}
-                                <img src="{{ user.getAvatarUrl }}" alt="Profil"/><br/>
-                                <input type="checkbox" value="1" name="avatar_img_del" id="avatar_img_del">
-                                <label for="avatar_img_del">Bild löschen</label><br/>
+                            {% if form.vars.data.avatar %}
+                                <img src="{{ form.vars.data.avatar }}" alt="Profil"/><br/>
+                                {{ form_widget(form.avatarDel) }}
+                                <label for="form_avatarDel">Bild löschen</label><br/>
                             {% else %}
                                 <i>Keines</i>
                             {% endif %}
@@ -347,8 +300,7 @@
                     <tr>
                         <th><label for="user_profile_board_url">Öffentliches Foren-Profil</label></th>
                         <td>
-                            <input type="url" name="user_profile_board_url" id="user_profile_board_url" maxlength="200"
-                                   size="50" value="{{ user.profileBoardUrl }}">
+                            {{ form_widget(form.profileBoardUrl) }}
                         </td>
                     </tr>
                 </table>
@@ -363,45 +315,37 @@
                     <tr>
                         <th><label for="css_style">Design</label></th>
                         <td>
-                            <input type="text" name="css_style" id="css_style" size="45" maxlength="250"
-                                   value="{{ properties.cssStyle }}">
-                            &nbsp; <input type="button" onclick="document.getElementById('css_style').value =
-                            document.getElementById('designSelector').options[document.getElementById('designSelector').selectedIndex].value"
-                                          value="&lt;&lt;"/> &nbsp;
-                            <twig:forms:select_input name="designSelector" :options="designNames"
-                                                     :value="properties.cssStyle" :emptyValue="''"
-                                                     emptyLabel="(Bitte wählen)"/>
+                            {{ form_widget(form.userProperties.cssStyle) }}
                         </td>
                     </tr>
                     <tr>
                         <th>Planetenkreisgrösse</th>
                         <td>
-                            <twig:forms:select_input name="planet_circle_width" :options="planetCircleOptions"
-                                                     :value="properties.planetCircleWidth" :keysAsLabel="true"/>
+                            {{ form_widget(form.userProperties.planetCircleWidth) }}
                         </td>
                     </tr>
                     <tr>
                         <th>Schiff/Def Ansicht</th>
                         <td>
-                            {{ component('forms:radio_button_list', { name: 'item_show', options: { 'full': 'Volle Ansicht', 'small': 'Einfache Ansicht' }, value: properties.itemShow }) }}
+                            {{ form_widget(form.userProperties.itemShow) }}
                         </td>
                     </tr>
                     <tr>
                         <th>Bildfilter</th>
                         <td>
-                            {{ component('forms:radio_button_list', { name: 'image_filter', options: { 1: 'An', 0: 'Aus' }, value: properties.imageFilter }) }}
+                            {{ form_widget(form.userProperties.imageFilter) }}
                         </td>
                     </tr>
                     <tr>
                         <th>Vertausche Buttons in Hafen-Schiffsauswahl</th>
                         <td>
-                            {{ component('forms:radio_button_list', { name: 'havenships_buttons', options: { 1: 'Aktiviert', 0: 'Deaktiviert' }, value: properties.havenShipsButtons }) }}
+                            {{ form_widget(form.userProperties.havenShipsButtons) }}
                         </td>
                     </tr>
                     <tr>
                         <th>Werbung anzeigen</th>
                         <td>
-                            {{ component('forms:radio_button_list', { name: 'show_adds', options: { 1: 'Aktiviert', 0: 'Deaktiviert' }, value: properties.showAdds }) }}
+                            {{ form_widget(form.userProperties.showAdds) }}
                         </td>
                     </tr>
                 </table>
@@ -416,81 +360,71 @@
                     <tr>
                         <th><label for="msgsignature">Nachrichten-Signatur</label></th>
                         <td>
-                            <textarea name="msgsignature" id="msgsignature" cols="60"
-                                      rows="8">{{ properties.msgSignature }}</textarea>
+                            {{ form_widget(form.userProperties.msgSignature) }}
                         </td>
                     </tr>
                     <tr>
                         <th>Nachrichtenvorschau (Neue/Archiv)</th>
                         <td>
-                            {{ component('forms:radio_button_list', { name: 'msg_preview', options: { 1: 'Aktiviert', 0: 'Deaktiviert' }, value: properties.msgPreview }) }}
+                            {{ form_widget(form.userProperties.msgPreview) }}
                         </td>
                     </tr>
                     <tr>
                         <th>Nachrichtenvorschau (Erstellen)</th>
                         <td>
-                            {{ component('forms:radio_button_list', { name: 'msgcreation_preview', options: { 1: 'Aktiviert', 0: 'Deaktiviert' }, value: properties.msgCreationPreview }) }}
+                            {{ form_widget(form.userProperties.msgCreationPreview) }}
                         </td>
                     </tr>
                     <tr>
                         <th>Blinkendes Nachrichtensymbol</th>
                         <td>
-                            {{ component('forms:radio_button_list', { name: 'msg_blink', options: { 1: 'Aktiviert', 0: 'Deaktiviert' }, value: properties.msgBlink }) }}
+                            {{ form_widget(form.userProperties.msgBlink) }}
                         </td>
                     </tr>
                     <tr>
                         <th>Text bei Antwort/Weiterleiten kopieren</th>
                         <td>
-                            {{ component('forms:radio_button_list', { name: 'msg_copy', options: { 1: 'Aktiviert', 0: 'Deaktiviert' }, value: properties.msgCopy }) }}
+                            {{ form_widget(form.userProperties.msgCopy) }}
                     </tr>
-
                     <tr>
                         <th>Nachricht bei Transport-/Spionagerückkehr</th>
                         <td>
-                            {{ component('forms:radio_button_list', { name: 'fleet_rtn_msg', options: { 1: 'Aktiviert', 0: 'Deaktiviert' }, value: properties.fleetRtnMsg }) }}
+                            {{ form_widget(form.userProperties.fleetRtnMsg) }}
                         </td>
                     </tr>
                 </table>
             </div>
-
         </div>
+        <p>
+            {{ form_widget(form.save) }} &nbsp;
+        </p>
+        <hr/>
 
         <p>
-            <input type="submit" name="save" value="Änderungen &uuml;bernehmen" class="positive"/> &nbsp;
+            {% if form.vars.data.deleted != 0 %}
+                {{ form_widget(form.cancelDelete)}}
+            {% else %}
+                {{ form_widget(form.requestDelete)}}
+            {% endif %}
+            {{ form_widget(form.delete)}}
         </p>
-    </form>
-    <hr/>
 
-    <p>
-        {% if user.deleted != 0 %}
-    <form action="{{ path('admin.users.cancel_delete', {id: user.id}) }}" method="post" class="form-inline">
-        <input type="submit" value="Löschantrag aufheben" class="userDeletedColor"/>
-    </form> &nbsp;
-    {% else %}
-        <form action="{{ path('admin.users.request_delete', {id: user.id}) }}" method="post" class="form-inline">
-            <input type="submit" value="Löschantrag erteilen" class="userDeletedColor"/>
-        </form> &nbsp;
-    {% endif %}
-    <form action="{{ path('admin.users.delete', {id: user.id}) }}" method="post" class="form-inline">
-        <input type="submit" name="delete_user" value="User löschen" class="remove"
-               onclick="return confirm('Soll dieser User endgültig gelöscht werden?');"/>
-    </form>
-    </p>
+        <script>
+            $(function () {
+                {% if form.vars.data.blockedFrom == 0 %}
+                $('#ban_options').hide();
+                {% endif %}
 
-    <script>
-        $(function () {
-            {% if user.blockedFrom == 0 %}
-            $('#ban_options').hide();
-            {% endif %}
+                {% if form.vars.data.hmodFrom == 0 %}
+                $('#umod_options').hide();
+                {% endif %}
 
-            {% if user.hmodFrom == 0 %}
-            $('#umod_options').hide();
-            {% endif %}
-
-            {% if user.specialistId == 0 %}
-            $('#spt').hide();
-            {% endif %}
-        });
-    </script>
+                {% if not form.vars.data.specialist %}
+                $('#spt').hide();
+                {% endif %}
+            });
+        </script>
+        {{ form_widget(form._token) }}
+    {{ form_end(form,{render_rest:false}) }}
 {% endblock %}
 

@@ -10,340 +10,336 @@
 {% endblock %}
 
 {% block content %}
-
-    <div class="row">
-        <div class="col">
-            <h2>Basisdaten</h2>
-            <table class="table">
-                <tr>
-                    <th>ID</th>
-                    <td colspan="2">{{ user.id }}</td>
-                </tr>
-                <tr>
-                    <th>Nick</th>
-                    <td colspan="2">{{ user.nick }}</td>
-                </tr>
-                <tr>
-                    <th>Name</th>
-                    <td colspan="2">{{ user.name }}</td>
-                </tr>
-                <tr>
-                    <th>E-Mail</th>
-                    <td colspan="2">
-                        <a href="mailto:{{ user.email }}">{{ user.email }}</a>
-                    </td>
-                </tr>
-                {% if user.dualName or user.dualName %}
+    {{ form_start(form) }}
+        <div class="row">
+            <div class="col">
+                <h2>Basisdaten</h2>
+                <table class="table">
                     <tr>
-                        <th>Dual</th>
-                        <td>
-                            {{ user.dualName }} ({{ user.dualEmail }}
-                        </td>
+                        <th>ID</th>
+                        <td colspan="2">{{ user.id }}</td>
                     </tr>
-                {% endif %}
-                <tr>
-                    <th>Registrierdatum</th>
-                    <td colspan="2">{{ formatTimestamp(user.registered) }}</td>
-                </tr>
-                <tr>
-                    <th>Zuletzt online</th>
-                    <td colspan="2">
-                        {% if user.timeAction != null %}
-                            <span style="color:#0f0;">online mit {{ agent }}</span>
-                        {% elseif user.timeLog > 0 %}
-                            {{ formatTimestamp(user.timeLog) }} mit {{ agent }}
-                        {% else %}
-                            Noch nicht eingeloggt!
-                        {% endif %}
-                    </td>
-                </tr>
-                {% if user.ipAddr is not null %}
                     <tr>
-                        <th>IP/Host</th>
+                        <th>Nick</th>
+                        <td colspan="2">{{ user.nick }}</td>
+                    </tr>
+                    <tr>
+                        <th>Name</th>
+                        <td colspan="2">{{ user.name }}</td>
+                    </tr>
+                    <tr>
+                        <th>E-Mail</th>
                         <td colspan="2">
-                            <a href="{{ path('admin.users.ips') }}?ip={{ user.ipAddr }}">{{ user.ipAddr }}</a>
-                            <a href="{{ path('admin.users.ips') }}?host={{ host }}">{{ host }}</a>
+                            <a href="mailto:{{ user.email }}">{{ user.email }}</a>
                         </td>
                     </tr>
-                {% endif %}
-                <tr>
-                    <th>Rasse</th>
-                    <td colspan="2">
-                        {{ user.raceId != 0 ? raceNames[user.raceId] : '-' }}
-                    </td>
-                </tr>
-                <tr>
-                    <th>Allianz</th>
-                    <td colspan="2">
-                        {% if user.allianceId != 0 %}
-                            <a href="{{ path('admin.alliances.view', {'id': user.allianceId}) }}">
-                                {{ allianceNamesWithTags[user.allianceId] }}
-                            </a>
-                        {% else %}
-                            -
-                        {% endif %}
-                    </td>
-                </tr>
-                <tr>
-                    <th>Spezialist</th>
-                    <td colspan="2">
-                        {{ user.specialistId != 0 ? specialistNames[user.specialistId] : '-' }}
-                    </td>
-                </tr>
-                {% if user.observe != '' %}
+                    {% if user.dualName or user.dualName %}
+                        <tr>
+                            <th>Dual</th>
+                            <td>
+                                {{ user.dualName }} ({{ user.dualEmail }}
+                            </td>
+                        </tr>
+                    {% endif %}
                     <tr>
-                        <th>Beobachtung</th>
-                        <td>
-                            Benutzer steht unter <b>Beobachtung</b>: {{ user.observe }} &nbsp;
-                        </td>
-                        <td>
-                            <a href="{{ path('admin.users.observer.details', {id: user.id}) }}"
-                               class="button">Ändern</a>
-                        </td>
+                        <th>Registrierdatum</th>
+                        <td colspan="2">{{ formatTimestamp(user.registered) }}</td>
                     </tr>
-                {% endif %}
-                {% if user.deleted != 0 %}
                     <tr>
-                        <th>Löschantrag</th>
-                        <td class="userDeletedColor">
-                            Dieser Account ist zur Löschung am {{ formatTimestamp(user.deleted) }} vorgemerkt
-                        </td>
-                        <td>
-                            {% if user.deleted != 0 %}
-                                <form action="{{ path('admin.users.cancel_delete', {id: user.id}) }}" method="post"
-                                      class="form-inline">
-                                    <input type="submit" value="Aufheben"/>
-                                </form> &nbsp;
+                        <th>Zuletzt online</th>
+                        <td colspan="2">
+                            {% if session and session.timeAction != null %}
+                                <span style="color:#0f0;">online mit {{ agent }}</span>
+                            {% elseif session and session.timeLogin > 0 %}
+                                {{ formatTimestamp(session.timeLogin) }} mit {{ agent }}
+                            {% else %}
+                                Noch nicht eingeloggt!
                             {% endif %}
                         </td>
                     </tr>
-                {% endif %}
-                {% if user.hmodFrom > 0 %}
+                    {% if session and session.ipAddr is not null %}
+                        <tr>
+                            <th>IP/Host</th>
+                            <td colspan="2">
+                                <a href="{{ path('admin.users.ips') }}?ip={{ session.ipAddr }}">{{ session.ipAddr }}</a>
+                                <a href="{{ path('admin.users.ips') }}?host={{ host }}">{{ host }}</a>
+                            </td>
+                        </tr>
+                    {% endif %}
                     <tr>
-                        <th>Urlaub</th>
-                        <td>
-                            <div class="userHolidayColor">Dieser Account ist im Urlaubsmodus
-                                seit {{ formatTimestamp(user.hmodFrom) }} bis
-                                mindestens {{ formatTimestamp(user.hmodTo) }}
-                            </div>
-                        </td>
-                        <td></td>
-                    </tr>
-                {% endif %}
-                {% if isBlocked %}
-                    <tr>
-                        <th>Sperre</th>
-                        <td>
-                            <div class="userLockedColor">
-                                Dieser Account ist im gesperrt von {{ formatTimestamp(user.blockedFrom) }}
-                                bis {{ formatTimestamp(user.blockedTo) }}.
-                                {% if user.banReason != '' %}Grund: {{ user.banReason }}{% endif %}
-                            </div>
-                        </td>
-                        <td></td>
-                    </tr>
-                {% endif %}
-                {% if user.admin != 0 %}
-                    <tr>
-                        <th>Admin</th>
-                        <td>
-                            <div class="adminColor">Dies ist ein Admin-Account!</div>
-                        </td>
-                        <td></td>
-                    </tr>
-                {% endif %}
-                {% if user.ghost %}
-                    <tr>
-                        <th>Geist</th>
-                        <td>
-                            <div class="userGhostColor">
-                                Dies ist ein Geist-Account. Er wird nicht in der Statistik angezeigt!
-                            </div>
-                        </td>
-                        <td></td>
-                    </tr>
-                {% endif %}
-                {% if user.npc %}
-                    <tr>
-                        <th>NPC</th>
-                        <td>
-                            <div class="userGhostColor">
-                                Dies ist ein NPC-Account.
-                            </div>
-                        </td>
-                        <td></td>
-                    </tr>
-                {% endif %}
-                {% if user.chatAdmin != 0 %}
-                    <tr>
-                        <th>Chat-Admin</th>
-                        <td>
-                            <div>Dieser User ist ein Chat-Admin.</div>
-                        </td>
-                        <td></td>
-                    </tr>
-                {% endif %}
-                {% if user.verificationKey != '' %}
-                    <tr>
-                        <th>Verifikation</th>
-                        <td>
-                            Die E-Mail-Adresse {{ user.email }} ist noch nicht bestätigt.
-                        </td>
-                        <td>
-                            <form action="{{ path('admin.users.set_verified', {id: user.id}) }}" method="post"
-                                  class="form-inline">
-                                <button type="submit" class="button">Freischalten</button>
-                            </form>
-                        </td>
-                    </tr>
-                {% endif %}
-
-                {# Kommentare #}
-                {% if commentInfo.count > 0 %}
-                    <tr>
-                        <th>Kommentare</th>
-                        <td>
-                            <b>{{ commentInfo.count }} Kommentare</b> vorhanden, neuster Kommentar
-                            von {{ formatTimestamp(commentInfo.latest) }}
-                        </td>
-                        <td>
-                            <a href="{{ path('admin.users.comments', {id: user.id}) }}" class="button">Zeigen</a>
-                        </td>
-                    </tr>
-                {% endif %}
-
-                {# Tickets #}
-                {% if numberOfNewTickets + numberOfAssignedTickets > 0 %}
-                    <tr>
-                        <th>Tickets</th>
-                        <td>
-                            <b>{{ numberOfNewTickets }} neue Tickets</b> und <b> {{ numberOfAssignedTickets }}
-                                zugewiesene Tickets</b> vorhanden.
-                        </td>
-                        <td>
-                            <a href="{{ path('admin.users.tickets', {id: user.id}) }}" class="button">Zeigen</a>
-                        </td>
-                    </tr>
-                {% endif %}
-
-                {# Verwarnungen #}
-                {% if warning.count > 0 %}
-                    <tr>
-                        <th>Verwarnungen</th>
-                        <td>
-                            <b>{{ warning.count }} Verwarnungen</b> vorhanden, neuste
-                            von {{ formatTimestamp(warning.max) }}.
-                        </td>
-                        <td>
-                            <a href="{{ path('admin.users.warnings') }}" class="button">Zeigen</a>
-                        </td>
-                    </tr>
-                {% endif %}
-
-                {% if activeMultisCount > 0 %}
-                    <tr>
-                        <th>Multis</th>
-                        <td>
-                            {{ activeMultisCount }} Multis registriert
-                        </td>
-                        <td>
-                            <a href="{{ path('admin.users.user_multi', {id: user.id}) }}" class="button">Zeigen</a>
-                        </td>
-                    </tr>
-                {% endif %}
-                {% if activeSitting is not null %}
-                    <tr>
-                        <th>Sitting</th>
-                        <td>
-                            Wird gesitted von {{ activeSitting.sitterNick }}
-                        </td>
-                        <td><a href="{{ path('admin.users.user_sitting', {id: user.id}) }}" class="button">Zeigen</a>
-                        </td>
-                    </tr>
-                {% endif %}
-                {% if bannerPath %}
-                    <tr>
-                        <th>Banner</th>
+                        <th>Rasse</th>
                         <td colspan="2">
-                            <img src="{{ bannerPath }}" alt="Banner"><br>
-                            Generiert: {{ formatTimestamp(bannerTime) }}<br/>
-                            <textarea readonly="readonly" rows="3" cols="80">&lt;a href="{{ userBannerWebsiteLink }}"&gt;&lt;img src="{{ userBannerLink }}" width="468" height="60" alt="EtoA Online-Game" border="0" /&gt;&lt;/a&gt;</textarea>
-                            <br>
-                            <textarea readonly="readonly" rows="3"
-                                      cols="80">[url={{ userBannerWebsiteLink }}][img]{{ userBannerLink }}[/img][/url]</textarea>
+                            {{ user.race?user.race.name:'-' }}
                         </td>
                     </tr>
-                {% endif %}
-            </table>
-        </div>
+                    <tr>
+                        <th>Allianz</th>
+                        <td colspan="2">
+                            {% if user.alliance %}
+                                <a href="{{ path('admin.alliances.view', {'id': user.alliance.id}) }}">
+                                    {{ user.alliance.toString }}
+                                </a>
+                            {% else %}
+                                -
+                            {% endif %}
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>Spezialist</th>
+                        <td colspan="2">
+                            {{ user.specialist?user.specialist.name:'-' }}
+                        </td>
+                    </tr>
+                    {% if user.observe != '' %}
+                        <tr>
+                            <th>Beobachtung</th>
+                            <td>
+                                Benutzer steht unter <b>Beobachtung</b>: {{ user.observe }} &nbsp;
+                            </td>
+                            <td>
+                                <a href="{{ path('admin.users.observer.details', {id: user.id}) }}"
+                                   class="button">Ändern</a>
+                            </td>
+                        </tr>
+                    {% endif %}
+                    {% if user.deleted != 0 %}
+                        <tr>
+                            <th>Löschantrag</th>
+                            <td class="userDeletedColor">
+                                Dieser Account ist zur Löschung am {{ formatTimestamp(user.deleted) }} vorgemerkt
+                            </td>
+                            <td>
+                                {% if user.deleted != 0 %}
+                                    {{ form_widget(form.cancelDelete) }} &nbsp;
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endif %}
+                    {% if user.hmodFrom > 0 %}
+                        <tr>
+                            <th>Urlaub</th>
+                            <td>
+                                <div class="userHolidayColor">Dieser Account ist im Urlaubsmodus
+                                    seit {{ formatTimestamp(user.hmodFrom) }} bis
+                                    mindestens {{ formatTimestamp(user.hmodTo) }}
+                                </div>
+                            </td>
+                            <td></td>
+                        </tr>
+                    {% endif %}
+                    {% if isBlocked %}
+                        <tr>
+                            <th>Sperre</th>
+                            <td>
+                                <div class="userLockedColor">
+                                    Dieser Account ist im gesperrt von {{ formatTimestamp(user.blockedFrom) }}
+                                    bis {{ formatTimestamp(user.blockedTo) }}.
+                                    {% if user.banReason != '' %}Grund: {{ user.banReason }}{% endif %}
+                                </div>
+                            </td>
+                            <td></td>
+                        </tr>
+                    {% endif %}
+                    {% if user.admin %}
+                        <tr>
+                            <th>Admin</th>
+                            <td>
+                                <div class="adminColor">Dies ist ein Admin-Account!</div>
+                            </td>
+                            <td></td>
+                        </tr>
+                    {% endif %}
+                    {% if user.ghost %}
+                        <tr>
+                            <th>Geist</th>
+                            <td>
+                                <div class="userGhostColor">
+                                    Dies ist ein Geist-Account. Er wird nicht in der Statistik angezeigt!
+                                </div>
+                            </td>
+                            <td></td>
+                        </tr>
+                    {% endif %}
+                    {% if user.npc %}
+                        <tr>
+                            <th>NPC</th>
+                            <td>
+                                <div class="userGhostColor">
+                                    Dies ist ein NPC-Account.
+                                </div>
+                            </td>
+                            <td></td>
+                        </tr>
+                    {% endif %}
+                    {% if user.chatAdmin %}
+                        <tr>
+                            <th>Chat-Admin</th>
+                            <td>
+                                <div>Dieser User ist ein Chat-Admin.</div>
+                            </td>
+                            <td></td>
+                        </tr>
+                    {% endif %}
+                    {% if user.verificationKey %}
+                        <tr>
+                            <th>Verifikation</th>
+                            <td>
+                                Die E-Mail-Adresse {{ user.email }} ist noch nicht bestätigt.
+                            </td>
+                            <td>
+                                {{ form_widget(form.verify) }}
+                            </td>
+                        </tr>
+                    {% endif %}
 
-        <div class="col">
-            <h2>Statistik</h2>
-            <table class="table">
-                <tr>
-                    <th>Punkte</th>
-                    <td>
-                        {{ formatNumber(user.points) }}
-                    </td>
-                </tr>
-                <tr>
-                    <th>Punkteverlauf</th>
-                    <td>
-                        <a href="{{ path('admin.users.points', {id: user.id}) }}">
-                            <img src="{{ path('admin.images.stats', {user: user.id}) }}?width=300" alt="Diagramm"
-                                 style="width:300px;height:200px"/>
-                        </a>
-                    </td>
-                </tr>
-                <tr>
-                    <th>Rang</th>
-                    <td>
-                        {{ formatNumber(user.rank) }}
-                    </td>
-                </tr>
-                <tr>
-                    <th>Höchster Rang</th>
-                    <td>
-                        {{ formatNumber(user.rankHighest) }}
-                    </td>
-                </tr>
-                {% if battleRating is not null %}
+                    {# Kommentare #}
+                    {% if commentInfo.0.count > 0 %}
+                        <tr>
+                            <th>Kommentare</th>
+                            <td>
+                                <b>{{ commentInfo.0.count }} Kommentare</b> vorhanden, neuster Kommentar
+                                von {{ formatTimestamp(commentInfo.0.latest) }}
+                            </td>
+                            <td>
+                                <a href="{{ path('admin.users.comments', {id: user.id}) }}" class="button">Zeigen</a>
+                            </td>
+                        </tr>
+                    {% endif %}
+
+                    {# Tickets #}
+                    {% if numberOfNewTickets + numberOfAssignedTickets > 0 %}
+                        <tr>
+                            <th>Tickets</th>
+                            <td>
+                                <b>{{ numberOfNewTickets }} neue Tickets</b> und <b> {{ numberOfAssignedTickets }}
+                                    zugewiesene Tickets</b> vorhanden.
+                            </td>
+                            <td>
+                                <a href="{{ path('admin.users.tickets', {id: user.id}) }}" class="button">Zeigen</a>
+                            </td>
+                        </tr>
+                    {% endif %}
+
+                    {# Verwarnungen #}
+                    {% if warning.0.count > 0 %}
+                        <tr>
+                            <th>Verwarnungen</th>
+                            <td>
+                                <b>{{ warning.0.count }} Verwarnungen</b> vorhanden, neuste
+                                von {{ formatTimestamp(warning.0.max) }}.
+                            </td>
+                            <td>
+                                <a href="{{ path('admin.users.warnings') }}" class="button">Zeigen</a>
+                            </td>
+                        </tr>
+                    {% endif %}
+
+                    {% if activeMultisCount > 0 %}
+                        <tr>
+                            <th>Multis</th>
+                            <td>
+                                {{ activeMultisCount }} Multis registriert
+                            </td>
+                            <td>
+                                <a href="{{ path('admin.users.user_multi', {id: user.id}) }}" class="button">Zeigen</a>
+                            </td>
+                        </tr>
+                    {% endif %}
+                    {% if activeSitting is not null %}
+                        <tr>
+                            <th>Sitting</th>
+                            <td>
+                                Wird gesitted von {{ activeSitting.sitterNick }}
+                            </td>
+                            <td><a href="{{ path('admin.users.user_sitting', {id: user.id}) }}" class="button">Zeigen</a>
+                            </td>
+                        </tr>
+                    {% endif %}
+                    {% if bannerPath %}
+                        <tr>
+                            <th>Banner</th>
+                            <td colspan="2">
+                                <img src="{{ bannerPath }}" alt="Banner"><br>
+                                Generiert: {{ formatTimestamp(bannerTime) }}<br/>
+                                <textarea readonly="readonly" rows="3" cols="80">&lt;a href="{{ userBannerWebsiteLink }}"&gt;&lt;img src="{{ userBannerLink }}" width="468" height="60" alt="EtoA Online-Game" border="0" /&gt;&lt;/a&gt;</textarea>
+                                <br>
+                                <textarea readonly="readonly" rows="3"
+                                          cols="80">[url={{ userBannerWebsiteLink }}][img]{{ userBannerLink }}[/img][/url]</textarea>
+                            </td>
+                        </tr>
+                    {% endif %}
+                </table>
+            </div>
+
+            <div class="col">
+                <h2>Statistik</h2>
+                <table class="table">
                     <tr>
-                        <th>Kampfpunkte</th>
+                        <th>Punkte</th>
                         <td>
-                            {{ battleRating.rating }}
-                            ({{ battleRating.battlesWon }} gewonnen / {{ battleRating.battlesLost }} verloren
-                            / {{ battleRating.battlesFought }} total)
+                            {{ formatNumber(user.points) }}
                         </td>
                     </tr>
-                {% endif %}
-                {% if tradeRating is not null %}
                     <tr>
-                        <th>Handelspunkte</th>
+                        <th>Punkteverlauf</th>
                         <td>
-                            {{ tradeRating.rating }}
-                            ({{ tradeRating.tradesBuy }} Einkäufe / {{ tradeRating.tradesSell }} Verkäufe)
+                            <a href="{{ path('admin.users.points', {id: user.id}) }}">
+                                <img src="{{ path('admin.images.stats', {user: user.id}) }}?width=300" alt="Diagramm"
+                                     style="width:300px;height:200px"/>
+                            </a>
                         </td>
                     </tr>
-                {% endif %}
-                {% if diplomacyRating is not null %}
                     <tr>
-                        <th>Diplomatiepunkte</th>
-                        <td>{{ diplomacyRating.rating }}</td>
+                        <th>Rang</th>
+                        <td>
+                            {{ formatNumber(user.rank) }}
+                        </td>
                     </tr>
-                {% endif %}
-                <tr>
-                    <th>Rohstoffe von...</th>
-                    <td>
-                        Raids: {{ formatNumber(user.resFromRaid) }} t<br/>
-                        Asteroiden: {{ formatNumber(user.resFromAsteroid) }} t<br/>
-                        Nebelfelder: {{ formatNumber(user.resFromNebula) }} t<br/>
-                        Trümmerfelder: {{ user.resFromTf }} t
-                    </td>
-                </tr>
-            </table>
+                    <tr>
+                        <th>Höchster Rang</th>
+                        <td>
+                            {{ formatNumber(user.rankHighest) }}
+                        </td>
+                    </tr>
+                    {% if battleRating is not null %}
+                        <tr>
+                            <th>Kampfpunkte</th>
+                            <td>
+                                {{ battleRating.rating }}
+                                ({{ battleRating.battlesWon }} gewonnen / {{ battleRating.battlesLost }} verloren
+                                / {{ battleRating.battlesFought }} total)
+                            </td>
+                        </tr>
+                    {% endif %}
+                    {% if tradeRating is not null %}
+                        <tr>
+                            <th>Handelspunkte</th>
+                            <td>
+                                {{ tradeRating.rating }}
+                                ({{ tradeRating.tradesBuy }} Einkäufe / {{ tradeRating.tradesSell }} Verkäufe)
+                            </td>
+                        </tr>
+                    {% endif %}
+                    {% if diplomacyRating is not null %}
+                        <tr>
+                            <th>Diplomatiepunkte</th>
+                            <td>{{ diplomacyRating.rating }}</td>
+                        </tr>
+                    {% endif %}
+                    <tr>
+                        <th>Rohstoffe von...</th>
+                        <td>
+                            Raids: {{ formatNumber(user.resFromRaid) }} t<br/>
+                            Asteroiden: {{ formatNumber(user.resFromAsteroid) }} t<br/>
+                            Nebelfelder: {{ formatNumber(user.resFromNebula) }} t<br/>
+                            Trümmerfelder: {{ user.resFromTf }} t
+                        </td>
+                    </tr>
+                </table>
+            </div>
         </div>
-    </div>
+    {{ form_widget(form._token) }}
+    {{ form_end(form,{render_rest:false}) }}
 
     <hr>
     <ul class="list-unstyled list-horizontal">

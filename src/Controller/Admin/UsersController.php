@@ -42,7 +42,7 @@ class UsersController extends AbstractAdminController
     {
         return $this->render('admin/user/list.html.twig', [
             'form' => $this->createForm(UserSearchType::class, $request->query->all()),
-            'total' => $this->userRepository->count(),
+            'total' => $this->userRepository->count([]),
         ]);
     }
 

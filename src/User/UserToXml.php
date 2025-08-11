@@ -4,67 +4,30 @@ declare(strict_types=1);
 
 namespace EtoA\User;
 
-use EtoA\Alliance\AllianceRepository;
 use EtoA\Building\BuildingListItemRepository;
-use EtoA\Defense\DefenseDataRepository;
 use EtoA\Defense\DefenseRepository;
 use EtoA\Entity\User;
 use EtoA\Fleet\FleetRepository;
 use EtoA\Fleet\FleetSearchParameters;
-use EtoA\Race\RaceDataRepository;
-use EtoA\Ship\ShipDataRepository;
-use EtoA\Ship\ShipRepository;
-use EtoA\Technology\TechnologyDataRepository;
-use EtoA\Technology\TechnologyListItemRepository;
+use EtoA\Fleet\FleetShipRepository;
+use EtoA\Ship\ShipListRepository;
 use EtoA\Universe\Planet\PlanetRepository;
 use EtoA\Universe\Planet\PlanetTypeRepository;
 use Exception;
 
 class UserToXml
 {
-    private UserRepository $userRepository;
-    private RaceDataRepository $raceDataRepository;
-    private PlanetRepository $planetRepository;
-    private PlanetTypeRepository $planetTypeRepository;
-    private BuildingListItemRepository $buildingRepository;
-    private TechnologyListItemRepository $technologyRepository;
-    private TechnologyDataRepository $technologyDataRepository;
-    private ShipRepository $shipRepository;
-    private ShipDataRepository $shipDataRepository;
-    private FleetRepository $fleetRepository;
-    private DefenseRepository $defenseRepository;
-    private DefenseDataRepository $defenseDataRepository;
-    private string $cacheDir;
-
     public function __construct(
-        UserRepository               $userRepository,
-        RaceDataRepository           $raceDataRepository,
-        PlanetRepository             $planetRepository,
-        PlanetTypeRepository         $planetTypeRepository,
-        BuildingListItemRepository   $buildingRepository,
-        TechnologyListItemRepository $technologyRepository,
-        TechnologyDataRepository     $technologyDataRepository,
-        ShipRepository               $shipRepository,
-        ShipDataRepository           $shipDataRepository,
-        FleetRepository              $fleetRepository,
-        DefenseRepository            $defenseRepository,
-        DefenseDataRepository        $defenseDataRepository,
-        string                       $cacheDir
-    ) {
-        $this->userRepository = $userRepository;
-        $this->raceDataRepository = $raceDataRepository;
-        $this->planetRepository = $planetRepository;
-        $this->planetTypeRepository = $planetTypeRepository;
-        $this->buildingRepository = $buildingRepository;
-        $this->technologyRepository = $technologyRepository;
-        $this->technologyDataRepository = $technologyDataRepository;
-        $this->shipRepository = $shipRepository;
-        $this->shipDataRepository = $shipDataRepository;
-        $this->fleetRepository = $fleetRepository;
-        $this->defenseRepository = $defenseRepository;
-        $this->defenseDataRepository = $defenseDataRepository;
-        $this->cacheDir = $cacheDir;
-    }
+        private readonly UserRepository               $userRepository,
+        private readonly PlanetRepository             $planetRepository,
+        private readonly PlanetTypeRepository         $planetTypeRepository,
+        private readonly BuildingListItemRepository   $buildingRepository,
+        private readonly FleetRepository              $fleetRepository,
+        private readonly DefenseRepository            $defenseRepository,
+        private string                                $cacheDir,
+        private readonly ShipListRepository           $shipListRepository,
+        private readonly FleetShipRepository          $fleetShipRepository,
+    ) {}
 
     public function getDataDirectory(): string
     {
@@ -99,7 +62,7 @@ class UserToXml
         }
 
         $alliance = $user->getAlliance();
-        $race = $user->getRaceId() !== 0 ? $this->raceDataRepository->getRace($user->getRaceId()) : null;
+        $race = $user->getRace();
 
         $xml = "<userbackup>
     <export date=\"" . date("d.m.Y, H:i") . "\" timestamp=\"" . time() . "\" />
@@ -113,8 +76,8 @@ class UserToXml
         <online>" . date("d.m.Y, H:i", $user->getLogoutTime()) . "</online>
         <ip>" . $user->getIp() . "</ip>
         <host>" . $user->getHostname() . "</host>
-        <alliance id=\"" . $user->getAlliance()->getId() . "\" tag=\"" . ($alliance !== null ? $alliance->getTag() : '') . "\">" . ($alliance !== null ? $alliance->getName() : '') . "</alliance>
-        <race id=\"" . $user->getRaceId() . "\">" . ($race !== null ? $race->getName() : '') . "</race>
+        <alliance id=\"" . $user->getAlliance()?->getId() . "\" tag=\"" . ($alliance !== null ? $alliance->getTag() : '') . "\">" . ($alliance !== null ? $alliance->getName() : '') . "</alliance>
+        <race id=\"" . $user->getRace()?->getId() . "\">" . ($race !== null ? $race->getName() : '') . "</race>
     </account>";
 
         $xml .= "<planets>";
@@ -127,7 +90,7 @@ class UserToXml
             }
             $xml .= "
         <planet id=\"" . $planet->getId() . "\" name=\"" . $planet->getName() . "\" main=\"" . (int) $planet->isMainPlanet() . "\">
-            <type id=\"" . $planet->getTypeId() . "\">" . $types[$planet->getTypeId()] . "</type>
+            <type id=\"" . $planet->getPlanetType()->getId() . "\">" . $types[$planet->getPlanetType()->getId()] . "</type>
             <metal>" . $planet->getResMetal() . "</metal>
             <crystal>" . $planet->getResCrystal() . "</crystal>
             <plastic>" . $planet->getResPlastic() . "</plastic>
@@ -138,54 +101,51 @@ class UserToXml
         }
         $xml .= "</planets>";
 
-        $xml .= $this->getBuildings($userId);
-        $xml .= $this->getTechnologies($userId);
-        $xml .= $this->getShips($userId, $mainPlanet);
-        $xml .= $this->getDefenses($userId);
+        $xml .= $this->getBuildings($user);
+        $xml .= $this->getTechnologies($user);
+        $xml .= $this->getShips($user, $mainPlanet);
+        $xml .= $this->getDefenses($user);
         $xml .= "</userbackup>";
 
         return $xml;
     }
 
-    private function getBuildings(int $userId): string
+    private function getBuildings(User $user): string
     {
         $xml = "<buildings>";
-        $buildings = $this->buildingRepository->buildingNames();
-        $buildListItems = $this->buildingRepository->findForUser($userId);
+        $buildListItems = $this->buildingRepository->findForUser($user);
         foreach ($buildListItems as $item) {
-            $xml .= "<building planet=\"" . $item->getEntity()->getId() . "\" id=\"" . $item->getBuildingId() . "\" level=\"" . $item->getCurrentLevel() . "\">" . $buildings[$item->getBuildingId()] . "</building>";
+            $xml .= "<building planet=\"" . $item->getEntity()->getId() . "\" id=\"" . $item->getBuilding()->getId(). "\" level=\"" . $item->getCurrentLevel() . "\">" . $item->getBuilding()->getName() . "</building>";
         }
         $xml .= "</buildings>";
 
         return $xml;
     }
 
-    private function getTechnologies(int $userId): string
+    private function getTechnologies(User $user): string
     {
         $xml = "<technologies>";
-        $technologies = $this->technologyDataRepository->getTechnologyNames(true);
-        $techListItems = $this->technologyRepository->findForUser($userId);
+        $techListItems = $user->getTechlist();
         foreach ($techListItems as $item) {
-            $xml .= "<technology id=\"" . $item->getTechnology()->getId() . "\" level=\"" . $item->getCurrentLevel() . "\">" . $technologies[$item->getTechnologyId()] . "</technology>";
+            $xml .= "<technology id=\"" . $item->getTechnology()->getId() . "\" level=\"" . $item->getCurrentLevel() . "\">" . $item->getTechnology()->getName() . "</technology>";
         }
         $xml .= "</technologies>";
 
         return $xml;
     }
 
-    private function getShips(int $userId, int $mainPlanet): string
+    private function getShips(User $user, int $mainPlanet): string
     {
         $xml = "<ships>";
-        $ships = $this->shipDataRepository->getShipNames(true);
-        $shipListItems = $this->shipRepository->findForUser($userId);
+        $shipListItems = $this->shipListRepository->findForUser($user);
         foreach ($shipListItems as $item) {
-            $xml .= "<ship planet=\"" . $item->entityId . "\" id=\"" . $item->shipId . "\" count=\"" . $item->count . "\">" . $ships[$item->shipId] . "</ship>";
+            $xml .= "<ship planet=\"" . $item->getEntity()->getId() . "\" id=\"" . $item->getShip()->getId() . "\" count=\"" . $item->getCount() . "\">" . $item->getShip()->getName() . "</ship>";
         }
-        $fleets = $this->fleetRepository->findByParameters((new FleetSearchParameters())->userId($userId));
+        $fleets = $this->fleetRepository->findByParameters((new FleetSearchParameters())->user($user));
         foreach ($fleets as $fleet) {
-            $shipsInFleet = $this->fleetRepository->findAllShipsInFleet($fleet->getId());
+            $shipsInFleet = $this->fleetShipRepository->findAllShipsInFleet($fleet);
             foreach ($shipsInFleet as $entry) {
-                $xml .= "<ship planet=\"" . $mainPlanet . "\" id=\"" . $entry->shipId . "\" count=\"" . $entry->count . "\">" . $ships[$entry->shipId] . "</ship>";
+                $xml .= "<ship planet=\"" . $mainPlanet . "\" id=\"" . $entry->getShip()->getId() . "\" count=\"" . $entry->getCount() . "\">" . $entry->getShip()->getName() . "</ship>";
             }
         }
         $xml .= "</ships>";
@@ -193,13 +153,12 @@ class UserToXml
         return $xml;
     }
 
-    private function getDefenses(int $userId): string
+    private function getDefenses(User $user): string
     {
         $xml = "<defenses>";
-        $defenses = $this->defenseDataRepository->getDefenseNames(true);
-        $defenseItems = $this->defenseRepository->findForUser($userId);
+        $defenseItems = $this->defenseRepository->findForUser($user);
         foreach ($defenseItems as $item) {
-            $xml .= "<defense planet=\"" . $item->getEntity()->getId() . "\" id=\"" . $item->getDefenseId() . "\" count=\"" . $item->getCount() . "\">" . $defenses[$item->getDefenseId()] . "</defense>";
+            $xml .= "<defense planet=\"" . $item->getEntity()->getId() . "\" id=\"" . $item->getDefense()->getId() . "\" count=\"" . $item->getCount() . "\">" . $item->getDefense()->getName() . "</defense>";
         }
         $xml .= "</defenses>";
 

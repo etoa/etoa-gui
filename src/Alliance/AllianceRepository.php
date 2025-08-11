@@ -40,15 +40,14 @@ class AllianceRepository extends AbstractRepository
     }
 
     /**
-     * @return array<int, string>
+     * @return array<Alliance>
      */
     public function getAllianceNames(AllianceSearch $search = null, int $limit = null): array
     {
         return $this->applySearchSortLimit($this->createQueryBuilder('q'), $search, null, $limit)
-            ->select("alliance_id, alliance_name")
-            ->from('alliances')
-            ->orderBy('alliance_name')
-            ->fetchAllKeyValue();
+            ->orderBy('q.name')
+            ->getQuery()
+            ->execute();
     }
 
     /**

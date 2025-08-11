@@ -3,6 +3,7 @@
 namespace EtoA\User;
 
 use EtoA\Core\Database\AbstractSearch;
+use EtoA\Entity\User;
 
 class UserRatingSearch extends AbstractSearch
 {
@@ -19,10 +20,10 @@ class UserRatingSearch extends AbstractSearch
         return $this;
     }
 
-    public function id(int $userId): self
+    public function user(User $user): self
     {
-        $this->parts[] = 'u.id LIKE :id';
-        $this->parameters['id'] = $userId . '%';
+        $this->parts[] = 'u.id LIKE :user';
+        $this->parameters['user'] = $user . '%';
 
         return $this;
     }

@@ -22,25 +22,22 @@ class DefenseRepository extends AbstractRepository
     /**
      * @return DefenseListItem[]
      */
-    public function findForUser(int $userId, ?int $entityId = null): array
+    public function findForUser(User $user, ?Planet $entity = null): array
     {
         $qb = $this->createQueryBuilder('q')
-            ->select('*')
-            ->from('deflist')
-            ->where('deflist_user_id = :userId')
-            ->andWhere('deflist_count > 0')
-            ->setParameter('userId', $userId);
+            ->where('q.user = :user')
+            ->andWhere('q.count > 0')
+            ->setParameter('user', $user);
 
-        if ($entityId !== null) {
+        if ($entity) {
             $qb
-                ->andWhere('deflist_entity_id = :entityId')
-                ->setParameter('entityId', $entityId);
+                ->andWhere('q.entity = :entity')
+                ->setParameter('entity', $entity);
         }
 
-        $data = $qb
-            ->fetchAllAssociative();
-
-        return array_map(fn ($row) => DefenseListItem::createFromData($row), $data);
+        return $qb
+            ->getQuery()
+            ->execute();
     }
 
     public function getItem(int $id): ?DefenseListItem

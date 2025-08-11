@@ -17,16 +17,14 @@ class UserCommentRepository extends AbstractRepository
     /**
      * @return array{count: int, latest: int}
      */
-    public function getCommentInformation(int $userId): array
+    public function getCommentInformation(User $user): array
     {
-        $data = $this->createQueryBuilder('q')
-            ->select('COUNT(comment_id) count, MAX(comment_timestamp) latest')
-            ->from('user_comments')
-            ->where('comment_user_id = :userId')
-            ->setParameter('userId', $userId)
-            ->fetchAssociative();
-
-        return array_map(fn ($value) => (int) $value, $data);
+        return $this->createQueryBuilder('q')
+            ->select('COUNT(q.id) as count, MAX(q.timestamp) as latest')
+            ->where('q.user = :user')
+            ->setParameter('user', $user)
+            ->getQuery()
+            ->execute();
     }
 
     /**

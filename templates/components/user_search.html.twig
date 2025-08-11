@@ -42,12 +42,12 @@
 
             <td>{{ formatNumber(user.points) }}</td>
 
-            {% if user.allianceId > 0 %}
-                <td title="{{ this.alliances[user.allianceId] }}">{{ this.alliances[user.allianceId]|u.truncate(15, '...') }}</td>
+            {% if user.alliance %}
+                <td title="{{ user.alliance.name }}">{{ user.alliance.name|u.truncate(15, '...') }}</td>
             {% else %}
                 <td>-</td>
             {% endif %}
-            <td>{{ user.raceId > 0 ? this.races[user.raceId] : '-' }}</td>
+            <td>{{ user.race ? user.race.name : '-' }}</td>
             <td>
                 <a href="{{ path('admin.users.view', {id: user.id}) }}">Info</a>
                 <a href="{{ path('admin.users.edit', {id: user.id}) }}">Bearbeiten</a>

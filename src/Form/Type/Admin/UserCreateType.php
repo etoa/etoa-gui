@@ -27,8 +27,10 @@ class UserCreateType extends AbstractType
                 'attr' => [
                     'autocomplete' => 'new-password',
                 ],
+                'hash_property_path' => 'password',
+                'mapped' => false,
             ])
-            ->add('raceId', RaceType::class, [
+            ->add('race', RaceType::class, [
                 'placeholder' => 'Keine',
                 'label' => 'Rasse',
             ])

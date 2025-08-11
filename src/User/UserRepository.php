@@ -8,6 +8,7 @@ use Doctrine\Persistence\ManagerRegistry;
 use EtoA\Core\AbstractRepository;
 use EtoA\Entity\Alliance;
 use EtoA\Entity\AllianceRank;
+use EtoA\Entity\Race;
 use EtoA\Entity\User;
 
 class UserRepository extends AbstractRepository
@@ -397,30 +398,20 @@ class UserRepository extends AbstractRepository
      */
     public function findDeleted(): array
     {
-        $data = $this->createQueryBuilder('q')
-            ->select('*')
-            ->from('users')
-            ->where('user_deleted > 0')
-            ->andWhere('user_deleted < :time')
+        return $this->createQueryBuilder('q')
+            ->where('q.deleted > 0')
+            ->andWhere('q.deleted < :time')
             ->setParameters([
                 'time' => time(),
             ])
-            ->fetchAllAssociative();
-
-        return array_map(fn($row) => new User($row), $data);
+            ->getQuery()
+            ->execute();
     }
 
-    public function markDeleted(int $userId, int $timestamp): void
+    public function markDeleted(User $user, int $timestamp): void
     {
-        $this->createQueryBuilder('q')
-            ->update('users')
-            ->set('user_deleted', ':timestamp')
-            ->where('user_id = :userId')
-            ->setParameters([
-                'userId' => $userId,
-                'timestamp' => $timestamp,
-            ])
-            ->executeQuery();
+        $user->setDeleted($timestamp);
+        $this->save();
     }
 
     /**
@@ -500,30 +491,15 @@ class UserRepository extends AbstractRepository
             ->executeQuery();
     }
 
-    public function setSittingDays(int $userId, int $days): void
+    public function setSittingDays(User $user, int $days): void
     {
-        $this->createQueryBuilder('q')
-            ->update('users')
-            ->set('user_sitting_days', ':days')
-            ->where('user_id = :userId')
-            ->setParameters([
-                'userId' => $userId,
-                'days' => $days,
-            ])
-            ->executeQuery();
+        $user->setSittingDays($days);
+        $this->save();
     }
 
-    public function setVerified(int $userId, bool $verified): void
+    public function setVerified(User $user, bool $verified): void
     {
-        $this->createQueryBuilder('q')
-            ->update('users')
-            ->set('verification_key', ':verificationKey')
-            ->where('user_id = :userId')
-            ->setParameters([
-                'userId' => $userId,
-                'verificationKey' => $verified ? '' : generateRandomString(64),
-            ])
-            ->executeQuery();
+        $user->setVerificationKey($verified ? '' : generateRandomString(64));
     }
 
     /**
@@ -569,38 +545,29 @@ class UserRepository extends AbstractRepository
     public function exists(UserSearch $search): bool
     {
         return (bool)$this->applySearchSortLimit($this->createQueryBuilder('q'), $search)
-            ->select("1")
-            ->from('users')
             ->setMaxResults(1)
-            ->fetchOne();
+            ->getQuery()
+            ->execute();
     }
 
-    public function create(string $nick, string $name, string $email, string $password, int $race = 0, bool $ghost = false): int
+    public function create(string $nick, string $name, string $email, string $password, ?Race $race = null, bool $ghost = false): User
     {
-        $this->createQueryBuilder('q')
-            ->insert('users')
-            ->values([
-                'user_nick' => ':nick',
-                'user_name' => ':name',
-                'user_email' => ':email',
-                'user_email_fix' => ':email',
-                'user_password' => ':password',
-                'user_race_id' => ':race',
-                'user_ghost' => ':ghost',
-                'user_logouttime' => 'UNIX_TIMESTAMP()',
-                'user_registered' => 'UNIX_TIMESTAMP()',
-            ])
-            ->setParameters([
-                'nick' => $nick,
-                'name' => $name,
-                'email' => $email,
-                'race' => $race,
-                'password' => saltPasswort($password),
-                'ghost' => $ghost ? 1 : 0,
-            ])
-            ->executeQuery();
+        $user = new User();
 
-        return (int)$this->getConnection()->lastInsertId();
+        $user->setNick($nick);
+        $user->setName($name);
+        $user->setEmail($email);
+        $user->setEmailFix($email);
+        $user->setPassword($password);
+        $user->setRace($race);
+        $user->setGhost($ghost);
+        $user->setLogoutTime(time());
+        $user->setRegistered(time());
+
+        $this->persist($user);
+        $this->save();
+
+        return $user;
     }
 
     public function updatePassword(int $userId, string $password, bool $isHashedPassword = false): string

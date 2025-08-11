@@ -12,9 +12,9 @@ use Doctrine\ORM\Mapping as ORM;
 class UserProperties
 {
     #[ORM\Id]
-    #[ORM\GeneratedValue(strategy: "AUTO")]
-    #[ORM\Column(type: "integer")]
-    private int $id;
+    #[ORM\OneToOne(inversedBy: 'userProperties', targetEntity: User::class, cascade: ['persist', 'remove'])]
+    #[ORM\JoinColumn(name: 'id', referencedColumnName: 'user_id')]
+    private ?User $user = null;
 
     #[ORM\Column(type: "string")]
     private ?string $cssStyle;
@@ -268,7 +268,7 @@ class UserProperties
         return $this;
     }
 
-    public function getAnalyzeShipCount()
+    public function getAnalyzeShipCount(): int
     {
         return $this->analyzeShipCount;
     }
@@ -280,7 +280,7 @@ class UserProperties
         return $this;
     }
 
-    public function getExploreShipCount()
+    public function getExploreShipCount(): int
     {
         return $this->exploreShipCount;
     }
@@ -388,11 +388,6 @@ class UserProperties
         return $this;
     }
 
-    public function getId(): ?int
-    {
-        return $this->id;
-    }
-
     public function getSpyShip(): ?Ship
     {
         return $this->spyShip;
@@ -425,6 +420,18 @@ class UserProperties
     public function setExploreShip(?Ship $exploreShip): static
     {
         $this->exploreShip = $exploreShip;
+
+        return $this;
+    }
+
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
+
+    public function setUser(?User $user): static
+    {
+        $this->user = $user;
 
         return $this;
     }

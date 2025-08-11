@@ -12,7 +12,7 @@ use EtoA\Entity\UserRating;
 
 class UserRatingRepository extends AbstractRepository
 {
-    public function __construct(ManagerRegistry $registry)
+    public function __construct(ManagerRegistry $registry, private readonly UserRepository $userRepository)
     {
         parent::__construct($registry, UserRating::class);
     }
@@ -56,7 +56,7 @@ class UserRatingRepository extends AbstractRepository
     private function createSpecialRatingQueryBuilder(UserRatingSearch $search = null, UserRatingSort $sort = null, int $limit = null, int $offset = null): QueryBuilder
     {
         return $this->applySearchSortLimit($this->createQueryBuilder('r'), $search, $sort, $limit, $offset)
-            ->innerJoin('App:User', 'u', 'WITH', 'r.userId = u.id')
+            ->innerJoin('App:User', 'u', 'WITH', 'r.user = u.id')
             ->innerJoin('App:Race', 'ra', 'WITH', 'ra.id = u.race')
             ->leftJoin('App:Alliance', 'a', 'WITH', 'u.alliance = a.id');
     }
@@ -93,25 +93,14 @@ class UserRatingRepository extends AbstractRepository
             ->execute();
     }
 
-    public function addBlank(int $id): void
+    public function addBlank(User $user): void
     {
-        $this->createQueryBuilder('q')
-            ->delete('user_ratings')
-            ->where('id = :id')
-            ->setParameters([
-                'id' => $id,
-            ])
-            ->executeQuery();
+        $rating = new UserRating();
 
-        $this->createQueryBuilder('q')
-            ->insert('user_ratings')
-            ->values([
-                'id' => ':id',
-            ])
-            ->setParameters([
-                'id' => $id,
-            ])
-            ->executeQuery();
+        $rating->setUser($user);
+        $user->setUserRating($rating);
+
+        $this->userRepository->save();
     }
 
     public function removeForUser(User $user) : void

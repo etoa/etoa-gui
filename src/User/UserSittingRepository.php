@@ -37,14 +37,14 @@ class UserSittingRepository extends AbstractRepository
         return array_map(fn(array $row) => new UserSitting($row), $data);
     }
 
-    public function getActiveUserEntry(int $userId): ?UserSitting
+    public function getActiveUserEntry(User $user): ?UserSitting
     {
         return $this->createQueryBuilder('q')
-            ->where('q.userId = :userId')
+            ->where('q.user = :user')
             ->andWhere('q.dateFrom < :time')
             ->andWhere('q.dateTo > :time')
             ->setParameter('time', time())
-            ->setParameter('userId', $userId)
+            ->setParameter('user', $user)
             ->getQuery()
             ->setMaxResults(1)
             ->getOneOrNullResult();

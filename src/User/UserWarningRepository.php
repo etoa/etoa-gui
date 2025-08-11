@@ -66,16 +66,14 @@ class UserWarningRepository extends AbstractRepository
     /**
      * @return array{count: int, max: int}
      */
-    public function getCountAndLatestWarning(int $userId): array
+    public function getCountAndLatestWarning(User $user): array
     {
-        $data = $this->createQueryBuilder('q')
-            ->select('COUNT(warning_id) count, MAX(warning_date) max')
-            ->from('user_warnings')
-            ->where('warning_user_id = :userId')
-            ->setParameter('userId', $userId)
-            ->fetchAssociative();
-
-        return array_map(fn ($value) => (int) $value, $data);
+        return $this->createQueryBuilder('q')
+            ->select('COUNT(q.id) as count, MAX(q.date) as max')
+            ->where('q.user = :user')
+            ->setParameter('user', $user)
+            ->getQuery()
+            ->execute();
     }
 
     public function deleteAllUserEntries(User $user): void
