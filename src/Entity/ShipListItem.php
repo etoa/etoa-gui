@@ -17,14 +17,14 @@ class ShipListItem
     private int $id;
 
     #[ORM\JoinColumn(name: 'shiplist_user_id', referencedColumnName: 'user_id')]
-    #[ORM\ManyToOne(targetEntity: User::class)]
+    #[ORM\ManyToOne(targetEntity: User::class, cascade: ['persist'], inversedBy:'shipList')]
     private ?User $user = null;
 
     #[ORM\JoinColumn(name: 'shiplist_ship_id', referencedColumnName: 'ship_id')]
     #[ORM\ManyToOne(targetEntity: Ship::class)]
     private ?Ship $ship = null;
 
-    #[ORM\ManyToOne(targetEntity: Planet::class)]
+    #[ORM\ManyToOne(targetEntity: Planet::class, inversedBy:'shiplist')]
     #[ORM\JoinColumn(name: 'shiplist_entity_id', referencedColumnName: 'id')]
     private Planet $entity;
 

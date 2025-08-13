@@ -17,8 +17,8 @@ class FleetShip
     #[ORM\Column(name: "fs_id")]
     private int $id;
 
-    #[ORM\JoinColumn(name: 'fs_fleet_id', referencedColumnName: 'id')]
-    #[ORM\ManyToOne(targetEntity: Fleet::class)]
+    #[ORM\JoinColumn(name: 'fs_fleet_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
+    #[ORM\ManyToOne(targetEntity: Fleet::class, inversedBy: 'fleetShips')]
     private ?Fleet $fleet = null;
 
     #[ORM\JoinColumn(name: 'fs_ship_id', referencedColumnName: 'ship_id')]

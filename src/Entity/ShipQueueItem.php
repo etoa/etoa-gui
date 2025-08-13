@@ -17,7 +17,7 @@ class ShipQueueItem
     private int $id;
 
     #[ORM\JoinColumn(name: 'queue_user_id', referencedColumnName: 'user_id')]
-    #[ORM\ManyToOne(targetEntity: User::class)]
+    #[ORM\ManyToOne(targetEntity: User::class, cascade: ['persist'], inversedBy:'shipQueue')]
     private ?User $user = null;
 
     #[ORM\JoinColumn(name: 'queue_ship_id', referencedColumnName: 'ship_id')]

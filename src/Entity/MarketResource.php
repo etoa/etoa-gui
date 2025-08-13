@@ -17,41 +17,41 @@ class MarketResource
     private int $id;
 
     #[ORM\JoinColumn(name: 'user_id', referencedColumnName: 'user_id')]
-    #[ORM\ManyToOne(targetEntity: User::class)]
+    #[ORM\ManyToOne(targetEntity: User::class, cascade: ['persist'], inversedBy:'marketResources')]
     private ?User $user = null;
 
     #[ORM\JoinColumn(name: 'entity_id', referencedColumnName: 'id')]
     #[ORM\ManyToOne(targetEntity: Entity::class)]
     private Entity $entity;
 
-    #[ORM\Column(type: "integer")]
+    #[ORM\Column(name: 'sell_0', type: "integer")]
     private int $sell0;
 
-    #[ORM\Column(type: "integer")]
+    #[ORM\Column('sell_1', type: "integer")]
     private int $sell1;
 
-    #[ORM\Column(type: "integer")]
+    #[ORM\Column('sell_2', type: "integer")]
     private int $sell2;
 
-    #[ORM\Column(type: "integer")]
+    #[ORM\Column('sell_3', type: "integer")]
     private int $sell3;
 
-    #[ORM\Column(type: "integer")]
+    #[ORM\Column('sell_4', type: "integer")]
     private int $sell4;
 
-    #[ORM\Column(type: "integer")]
+    #[ORM\Column('buy_0', type: "integer")]
     private int $buy0;
 
-    #[ORM\Column(type: "integer")]
+    #[ORM\Column('buy_1', type: "integer")]
     private int $buy1;
 
-    #[ORM\Column(type: "integer")]
+    #[ORM\Column('buy_2', type: "integer")]
     private int $buy2;
 
-    #[ORM\Column(type: "integer")]
+    #[ORM\Column('buy_3', type: "integer")]
     private int $buy3;
 
-    #[ORM\Column(type: "integer")]
+    #[ORM\Column('buy_4', type: "integer")]
     private int $buy4;
 
     #[ORM\JoinColumn(name: 'buyer_id', referencedColumnName: 'user_id')]
@@ -76,7 +76,7 @@ class MarketResource
     #[ORM\Column]
     private string $text;
 
-    #[ORM\Column(type: "integer")]
+    #[ORM\Column(name: "datum", type: "integer")]
     private int $date;
 
     public function getSellResources(): BaseResources

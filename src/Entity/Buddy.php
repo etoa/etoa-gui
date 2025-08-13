@@ -15,7 +15,7 @@ class Buddy
     private int $id;
 
     #[ORM\JoinColumn(name: 'bl_user_id', referencedColumnName: 'user_id')]
-    #[ORM\ManyToOne(targetEntity: User::class)]
+    #[ORM\ManyToOne(targetEntity: User::class, cascade: ['persist'], inversedBy:'buddyList')]
     private ?User $user = null;
 
     #[ORM\JoinColumn(name: 'bl_buddy_id', referencedColumnName: 'user_id')]

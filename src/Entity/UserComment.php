@@ -20,7 +20,7 @@ class UserComment
     #[ORM\Column(name: "comment_timestamp")]
     private int $timestamp;
 
-    #[ORM\ManyToOne(targetEntity: User::class)]
+    #[ORM\ManyToOne(targetEntity: User::class, cascade: ['persist'], inversedBy:'comments')]
     #[ORM\JoinColumn(name: 'comment_user_id', referencedColumnName: 'user_id')]
     private User $user;
 

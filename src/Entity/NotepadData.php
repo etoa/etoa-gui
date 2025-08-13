@@ -9,8 +9,9 @@ use Doctrine\ORM\Mapping as ORM;
 class NotepadData
 {
     #[ORM\Id]
-    #[ORM\Column(type: "integer")]
-    private int $id;
+    #[ORM\OneToOne(inversedBy: 'data', targetEntity: Notepad::class, cascade: ['persist', 'remove'])]
+    #[ORM\JoinColumn(name: 'id', referencedColumnName: 'id')]
+    private ?Notepad $notepad = null;
 
     #[ORM\Column]
     private string $subject;
@@ -50,6 +51,18 @@ class NotepadData
     public function setText(string $text): static
     {
         $this->text = $text;
+
+        return $this;
+    }
+
+    public function getNotepad(): ?Notepad
+    {
+        return $this->notepad;
+    }
+
+    public function setNotepad(?Notepad $notepad): static
+    {
+        $this->notepad = $notepad;
 
         return $this;
     }

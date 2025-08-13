@@ -13,8 +13,8 @@ class UserSession
     #[ORM\Column(type: "string")]
     private string $id;
 
-    #[ORM\OneToOne(mappedBy: "session", targetEntity: User::class)]
-    #[ORM\JoinColumn(name: 'user_id', referencedColumnName: 'user_id')]
+    #[ORM\OneToOne(inversedBy: "session", targetEntity: User::class)]
+    #[ORM\JoinColumn(name: 'user_id', referencedColumnName: 'user_id', onDelete: 'CASCADE')]
     private User $user;
 
     #[ORM\Column]

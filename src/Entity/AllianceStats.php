@@ -9,9 +9,6 @@ use Doctrine\ORM\Mapping as ORM;
 class AllianceStats
 {
     #[ORM\Id]
-    #[ORM\Column]
-    private int $allianceId;
-
     #[ORM\OneToOne(mappedBy: "allianceStats", targetEntity: Alliance::class)]
     #[ORM\JoinColumn(name: 'alliance_id', referencedColumnName: 'alliance_id')]
     private Alliance $alliance;
@@ -51,18 +48,6 @@ class AllianceStats
 
     #[ORM\Column(name: "alliance_rank_last")]
     private int $lastRank;
-
-    public function getAllianceId(): ?int
-    {
-        return $this->allianceId;
-    }
-
-    public function setAllianceId(int $allianceId): static
-    {
-        $this->allianceId = $allianceId;
-
-        return $this;
-    }
 
     public function getAllianceTag(): ?string
     {

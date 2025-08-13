@@ -13,11 +13,12 @@ use Doctrine\ORM\Mapping as ORM;
 class BattleReportData
 {
     #[ORM\Id]
-    #[ORM\Column(type: "integer")]
-    private int $id;
+    #[ORM\OneToOne(inversedBy: 'battleReportData', targetEntity: Report::class, cascade: ['persist', 'remove'])]
+    #[ORM\JoinColumn(name: 'id', referencedColumnName: 'id')]
+    private ?Report $report = null;
 
     #[ORM\Column]
-    private string $subtype;
+    private string $subtype = 'other';
 
     #[ORM\JoinColumn(name: 'fleet_id', referencedColumnName: 'id')]
     #[ORM\ManyToOne(targetEntity: Fleet::class)]
@@ -1196,6 +1197,18 @@ class BattleReportData
     public function setEntityShips(string $entityShips): static
     {
         $this->entityShips = $entityShips;
+
+        return $this;
+    }
+
+    public function getReport(): ?Report
+    {
+        return $this->report;
+    }
+
+    public function setReport(?Report $report): static
+    {
+        $this->report = $report;
 
         return $this;
     }

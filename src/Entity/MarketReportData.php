@@ -11,12 +11,12 @@ use EtoA\Universe\Resources\BaseResources;
 class MarketReportData
 {
     #[ORM\Id]
-    #[ORM\GeneratedValue(strategy: "AUTO")]
-    #[ORM\Column]
-    private int $id;
+    #[ORM\OneToOne(inversedBy: 'marketReportData', targetEntity: Report::class, cascade: ['persist', 'remove'])]
+    #[ORM\JoinColumn(name: 'id', referencedColumnName: 'id')]
+    private ?Report $report = null;
 
     #[ORM\Column]
-    private string $subtype;
+    private string $subtype = 'other';
 
     #[ORM\Column]
     private int $recordId;
@@ -405,5 +405,17 @@ class MarketReportData
         $this->setSellPeople($sell->people);
 
         $this->sell = $sell;
+    }
+
+    public function getReport(): ?Report
+    {
+        return $this->report;
+    }
+
+    public function setReport(?Report $report): static
+    {
+        $this->report = $report;
+
+        return $this;
     }
 }

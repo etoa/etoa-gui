@@ -14,11 +14,8 @@ class UserWarning
     #[ORM\Column(name: "warning_id", type: "integer")]
     private int $id;
 
-    #[ORM\Column(name: "warning_user_id", type: "integer")]
-    private int $userId;
-
     #[ORM\JoinColumn(name: 'warning_user_id', referencedColumnName: 'user_id')]
-    #[ORM\ManyToOne(targetEntity: User::class)]
+    #[ORM\ManyToOne(targetEntity: User::class, cascade: ['persist'], inversedBy:'userWarnings')]
     private User $user;
 
     #[ORM\Column(name: "warning_date", type: "integer")]
@@ -27,9 +24,6 @@ class UserWarning
     #[ORM\Column(name: "warning_text", type: "string")]
     private string $text;
 
-    #[ORM\Column(name: "warning_admin_id", type: "integer")]
-    private int $adminId;
-
     #[ORM\JoinColumn(name: 'warning_admin_id', referencedColumnName: 'user_id')]
     #[ORM\ManyToOne(targetEntity: AdminUser::class)]
     private ?AdminUser $admin;
@@ -37,18 +31,6 @@ class UserWarning
     public function getId(): ?int
     {
         return $this->id;
-    }
-
-    public function getUserId(): ?int
-    {
-        return $this->userId;
-    }
-
-    public function setUserId(int $userId): static
-    {
-        $this->userId = $userId;
-
-        return $this;
     }
 
     public function getDate(): ?int
@@ -71,18 +53,6 @@ class UserWarning
     public function setText(string $text): static
     {
         $this->text = $text;
-
-        return $this;
-    }
-
-    public function getAdminId(): ?int
-    {
-        return $this->adminId;
-    }
-
-    public function setAdminId(int $adminId): static
-    {
-        $this->adminId = $adminId;
 
         return $this;
     }

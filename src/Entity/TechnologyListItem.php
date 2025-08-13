@@ -16,8 +16,8 @@ class TechnologyListItem
     #[ORM\Column(name: "techlist_id", type: "integer")]
     private int $id;
 
-    #[ORM\JoinColumn(name: 'techlist_user_id', referencedColumnName: 'user_id')]
-    #[ORM\ManyToOne(targetEntity: User::class)]
+    #[ORM\JoinColumn(name: 'techlist_user_id', referencedColumnName: 'user_id', onDelete: 'CASCADE')]
+    #[ORM\ManyToOne(targetEntity: User::class, inversedBy:'techlist')]
     private ?User $user = null;
 
     #[ORM\JoinColumn(name: 'techlist_tech_id', referencedColumnName: 'tech_id')]

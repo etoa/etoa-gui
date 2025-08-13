@@ -513,7 +513,7 @@ class UserController extends AbstractAdminController
                 } catch (Exception $ex) {
                     $this->addFlash('error', $ex->getMessage());
                 }
-                return $this->redirectToRoute('admin.users.view', ['id' => $user->getId()]);
+                return $this->redirectToRoute('admin.users');
             }
 
             if($form->get('requestDelete')->isClicked()) {
@@ -715,16 +715,15 @@ class UserController extends AbstractAdminController
 */
     #[Route('/admin/users/{id}/economy', name: 'admin.users.economy')]
     #[IsGranted('ROLE_ADMIN_TRIAL-ADMIN')]
-    public function economy(int $id): Response
+    public function economy(?User $user = null): Response
     {
-        $user = $this->userRepository->getUser($id);
         if ($user === null) {
             $this->addFlash('error', 'Benutzer nicht vorhanden!');
             return $this->redirectToRoute('admin.users');
         }
 
-        // Sucht alle Planet IDs des Users
-        $userPlanets = $this->planetRepository->getUserPlanetsWithCoordinates($id);
+        //dd($user->getPlanets());
+        $userPlanets = $user->getPlanets();
 
         // Rohstoffe/Bewohner und Speicher
 

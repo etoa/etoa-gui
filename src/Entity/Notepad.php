@@ -11,16 +11,16 @@ class Notepad
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    private ?int $id = null;
+    private int $id;
 
     #[ORM\JoinColumn(name: 'user_id', referencedColumnName: 'user_id')]
-    #[ORM\ManyToOne(targetEntity: User::class)]
+    #[ORM\ManyToOne(targetEntity: User::class, cascade: ['persist'], inversedBy:'notes')]
     private ?User $user = null;
 
     #[ORM\Column]
     private ?int $timestamp = null;
 
-    #[ORM\OneToOne(mappedBy: "id", targetEntity: NotepadData::class, cascade: ['persist', 'remove'])]
+    #[ORM\OneToOne(mappedBy: "notepad", targetEntity: NotepadData::class, cascade: ['persist', 'remove'])]
     #[ORM\JoinColumn(name: 'id', referencedColumnName: 'id')]
     private ?NotepadData $data = null;
 

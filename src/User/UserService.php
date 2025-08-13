@@ -158,14 +158,6 @@ class UserService
             throw new Exception("Konnte UserXML für " . $user->getId() . " nicht exportieren, User nicht gelöscht!", 0, $ex);
         }
 
-        // Delete fleets of user
-        $userFleets = $this->fleetRepository->findByParameters((new FleetSearchParameters())
-            ->user($user));
-        foreach ($userFleets as $fleet) {
-            $this->fleetShipRepository->removeAllShipsFromFleet($fleet);
-            $this->fleetRepository->remove($fleet);
-        }
-
         $userPlanets = $user->getPlanets();
         foreach ($userPlanets as $planet) {
 
@@ -177,10 +169,9 @@ class UserService
                 ->entityTo($planet->getId())
                 ->action($this->config->get('market_ship_action_ship')));
             foreach (array_merge($marketResFleets, $marketShipFleets) as $fleet) {
-                $this->fleetShipRepository->removeAllShipsFromFleet($fleet);
                 $this->fleetRepository->remove($fleet);
+                $this->fleetRepository->save();
             }
-
             $this->planetService->reset($planet);
         }
 
@@ -195,42 +186,13 @@ class UserService
             } elseif ($alliance->getFounder() === $user) {
                 foreach ($members as $member) {
                     if ($member !== $alliance->getFounder()) {
-                        $this->allianceRepository->setFounderId($alliance, $member);
+                        $this->allianceRepository->setFounder($alliance, $member);
 
                         break;
                     }
                 }
             }
         }
-
-        //TODO: let doctrine handle it
-        $this->allianceApplicationRepository->deleteUserApplication($user);
-        $this->shipListRepository->removeForUser($user);
-        $this->shipQueueRepository->removeForUser($user);
-        $this->defenseRepository->removeForUser($user);
-        $this->technologyRepository->removeForUser($user);
-        $this->buildingRepository->removeForUser($user);
-        $this->missileRepository->removeForUser($user);
-        $this->buddyListRepository->removeForUser($user);
-        $this->marketResourceRepository->deleteUserOffers($user);
-        $this->marketShipRepository->deleteUserOffers($user);
-        $this->marketAuctionRepository->deleteUserAuctions($user);
-        $this->notepadRepository->deleteAll($user);
-        $this->bookmarkRepository->removeForUser($user);
-        $this->fleetBookmarkRepository->removeForUser($user);
-        $this->userMultiRepository->deleteUserEntries($user);
-        $this->userPointsRepository->removeForUser($user);
-        $this->userWarningRepository->deleteAllUserEntries($user);
-        $this->userSittingRepository->deleteAllUserEntries($user);
-        $this->userPropertiesRepository->removeForUser($user);
-        $this->userSurveillanceRepository->removeForUser($user);
-        $this->userCommentRepository->removeForUser($user);
-        $this->userRatingRepository->removeForUser($user);
-        $this->ticketRepository->removeForUser($user);
-        $this->reportRepository->removeForUser($user);
-
-        $this->userRepository->remove($user);
-        $this->userRepository->save();
 
         //Log schreiben
         if ($self) {
@@ -250,6 +212,9 @@ Mit freundlichen Grüssen,
 die Spielleitung";
 
         $this->mailSenderService->send("Accountlöschung", $text, $user->getEmail());
+
+        $this->userRepository->remove($user);
+        $this->userRepository->save();
     }
 
     public function deleteRequest(int $userId, string $password): bool

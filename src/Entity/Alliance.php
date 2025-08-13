@@ -105,7 +105,7 @@ class Alliance
     #[ORM\Column(name: "alliance_objects_for_members")]
     protected int $objectsForMembers = 1;
 
-    #[ORM\OneToOne(mappedBy: "id", targetEntity: AllianceStats::class,cascade: ['remove'])]
+    #[ORM\OneToOne(inversedBy: "alliance", targetEntity: AllianceStats::class,cascade: ['remove'])]
     #[ORM\JoinColumn(name: 'alliance_id', referencedColumnName: 'alliance_id')]
     protected ?AllianceStats $allianceStats = null;
 
@@ -492,6 +492,7 @@ class Alliance
 
     public function setAllianceStats(?AllianceStats $allianceStats): static
     {
+        $allianceStats->setAlliance($this);
         $this->allianceStats = $allianceStats;
 
         return $this;

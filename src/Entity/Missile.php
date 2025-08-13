@@ -2,6 +2,7 @@
 
 namespace EtoA\Entity;
 
+use Doctrine\DBAL\Types\Types;
 use EtoA\Core\ObjectWithImage;
 use EtoA\Missile\MissileDataRepository;
 use Doctrine\ORM\Mapping as ORM;
@@ -54,7 +55,7 @@ class Missile implements ObjectWithImage
     #[ORM\Column(name: "missile_def", type: "integer")]
     private int $def;
 
-    #[ORM\Column(name: "missile_launchable", type: "integer")]
+    #[ORM\Column(name: "missile_launchable", type: Types::BOOLEAN)]
     private bool $launchable;
 
     #[ORM\Column(name: "missile_show", type: "boolean")]
@@ -233,12 +234,7 @@ class Missile implements ObjectWithImage
         return $this;
     }
 
-    public function getLaunchable(): ?int
-    {
-        return $this->launchable;
-    }
-
-    public function setLaunchable(int $launchable): static
+    public function setLaunchable(bool $launchable): static
     {
         $this->launchable = $launchable;
 
@@ -255,5 +251,10 @@ class Missile implements ObjectWithImage
         $this->show = $show;
 
         return $this;
+    }
+
+    public function isLaunchable(): ?bool
+    {
+        return $this->launchable;
     }
 }

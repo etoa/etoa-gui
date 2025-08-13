@@ -160,7 +160,7 @@ class AllianceRepository extends AbstractRepository
             ->setParameter('id', $allianceId)
             ->fetchOne();
     }
-    public function setFounderId(Alliance $alliance, User $founder): void
+    public function setFounder(Alliance $alliance, User $founder): void
     {
         $alliance->setFounder($founder);
         $this->save();

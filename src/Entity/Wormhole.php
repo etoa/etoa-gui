@@ -23,7 +23,7 @@ class Wormhole extends AbstractEntity implements ObjectWithImage
     #[ORM\JoinColumn(name: 'id', referencedColumnName: 'id')]
     private Entity $entity;
 
-    #[ORM\OneToOne(mappedBy: "wormhole", targetEntity: Entity::class)]
+    #[ORM\ManyToOne(targetEntity: Entity::class)]
     #[ORM\JoinColumn(name: 'target_id', referencedColumnName: 'id')]
     private Entity $target;
 

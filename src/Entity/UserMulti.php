@@ -14,11 +14,11 @@ class UserMulti
     private int $id;
 
     #[ORM\JoinColumn(name: 'user_id', referencedColumnName: 'user_id')]
-    #[ORM\OneToOne(targetEntity: User::class)]
+    #[ORM\ManyToOne(targetEntity: User::class, cascade: ['persist'], inversedBy: 'userMultis')]
     private User $user;
 
     #[ORM\JoinColumn(name: 'multi_id', referencedColumnName: 'user_id')]
-    #[ORM\OneToOne(targetEntity: User::class)]
+    #[ORM\ManyToOne(targetEntity: User::class)]
     private User $multiUser;
 
     #[ORM\Column(name: 'connection')]

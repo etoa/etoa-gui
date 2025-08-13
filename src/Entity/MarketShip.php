@@ -15,7 +15,7 @@ class MarketShip
     private int $id;
 
     #[ORM\JoinColumn(name: 'user_id', referencedColumnName: 'user_id')]
-    #[ORM\ManyToOne(targetEntity: User::class)]
+    #[ORM\ManyToOne(targetEntity: User::class, cascade: ['persist'], inversedBy:'marketShips')]
     private ?User $user = null;
 
     #[ORM\JoinColumn(name: 'entity_id', referencedColumnName: 'id')]
@@ -29,19 +29,19 @@ class MarketShip
     #[ORM\Column(type: "integer")]
     private int $count;
 
-    #[ORM\Column(type: "integer")]
+    #[ORM\Column(name: "costs_0", type: "integer")]
     private int $costs0;
 
-    #[ORM\Column(type: "integer")]
+    #[ORM\Column(name: "costs_1", type: "integer")]
     private int $costs1;
 
-    #[ORM\Column(type: "integer")]
+    #[ORM\Column(name: "costs_2", type: "integer")]
     private int $costs2;
 
-    #[ORM\Column(type: "integer")]
+    #[ORM\Column(name: "costs_3", type: "integer")]
     private int $costs3;
 
-    #[ORM\Column(type: "integer")]
+    #[ORM\Column(name: "costs_4", type: "integer")]
     private int $costs4;
 
     #[ORM\JoinColumn(name: 'buyer_id', referencedColumnName: 'user_id')]
@@ -66,7 +66,7 @@ class MarketShip
     #[ORM\Column]
     private string $text;
 
-    #[ORM\Column(type: "integer")]
+    #[ORM\Column(name: "datum", type: "integer")]
     private int $date;
 
     public function getCosts(): BaseResources

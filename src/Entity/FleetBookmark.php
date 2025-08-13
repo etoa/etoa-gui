@@ -18,7 +18,7 @@ class FleetBookmark
     private int $id;
 
     #[ORM\JoinColumn(name: 'user_id', referencedColumnName: 'user_id')]
-    #[ORM\ManyToOne(targetEntity: User::class)]
+    #[ORM\ManyToOne(targetEntity: User::class, cascade: ['persist'], inversedBy:'fleetBookmarks')]
     private ?User $user = null;
 
     #[ORM\Column]

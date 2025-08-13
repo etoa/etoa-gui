@@ -21,7 +21,7 @@ class TicketMessage
     private int $id;
 
     #[ORM\JoinColumn(name: 'ticket_id', referencedColumnName: 'id')]
-    #[ORM\ManyToOne(targetEntity: Ticket::class)]
+    #[ORM\ManyToOne(targetEntity: Ticket::class, inversedBy:'ticketMessages')]
     private ?Ticket $ticket = null;
 
     #[ORM\Column]

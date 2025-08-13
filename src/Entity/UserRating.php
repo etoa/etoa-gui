@@ -10,8 +10,8 @@ use Doctrine\ORM\Mapping as ORM;
 class UserRating
 {
     #[ORM\Id]
-    #[ORM\OneToOne(inversedBy: "user", targetEntity: User::class, cascade: ['persist'])] //TODO: check if cascade: ['remove'] can be added
-    #[ORM\JoinColumn(name: 'id', referencedColumnName: 'user_id')]
+    #[ORM\OneToOne(inversedBy: "userRating", targetEntity: User::class)]
+    #[ORM\JoinColumn(name: 'id', referencedColumnName: 'user_id', onDelete: 'CASCADE')]
     private User $user;
 
     #[ORM\Column]

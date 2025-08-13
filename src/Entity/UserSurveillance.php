@@ -16,8 +16,9 @@ class UserSurveillance
     #[ORM\Column]
     private int $timestamp;
 
-    #[ORM\Column]
-    private int $userId;
+    #[ORM\JoinColumn(name: 'user_id', referencedColumnName: 'user_id')]
+    #[ORM\ManyToOne(targetEntity: User::class, cascade: ['persist'], inversedBy:'userSurveillances')]
+    private User $user;
 
     #[ORM\Column]
     private string $page;
@@ -47,18 +48,6 @@ class UserSurveillance
     public function setTimestamp(int $timestamp): static
     {
         $this->timestamp = $timestamp;
-
-        return $this;
-    }
-
-    public function getUserId(): ?int
-    {
-        return $this->userId;
-    }
-
-    public function setUserId(int $userId): static
-    {
-        $this->userId = $userId;
 
         return $this;
     }
@@ -119,6 +108,18 @@ class UserSurveillance
     public function setSession(string $session): static
     {
         $this->session = $session;
+
+        return $this;
+    }
+
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
+
+    public function setUser(?User $user): static
+    {
+        $this->user = $user;
 
         return $this;
     }

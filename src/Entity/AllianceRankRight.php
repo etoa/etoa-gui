@@ -15,7 +15,7 @@ class AllianceRankRight
     private ?int $id = null;
 
     #[ORM\JoinColumn(name: 'rr_rank_id', referencedColumnName: 'rank_id')]
-    #[ORM\ManyToOne(targetEntity: AllianceRank::class)]
+    #[ORM\ManyToOne(targetEntity: AllianceRank::class, inversedBy:'rankRights')]
     protected ?AllianceRank $rank;
 
     #[ORM\JoinColumn(name: 'rr_right_id', referencedColumnName: 'right_id')]

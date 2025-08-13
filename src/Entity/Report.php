@@ -39,7 +39,7 @@ class Report
     private bool $archived;
 
     #[ORM\JoinColumn(name: 'user_id', referencedColumnName: 'user_id')]
-    #[ORM\ManyToOne(targetEntity: User::class)]
+    #[ORM\ManyToOne(targetEntity: User::class, cascade: ['persist'], inversedBy:'reports')]
     private ?User $user = null;
 
     #[ORM\JoinColumn(name: 'alliance_id', referencedColumnName: 'alliance_id')]
@@ -64,19 +64,19 @@ class Report
     #[ORM\ManyToOne(targetEntity: User::class)]
     private ?User $opponent1 = null;
 
-    #[ORM\OneToOne(mappedBy: 'id', targetEntity: SpyReportData::class)]
+    #[ORM\OneToOne(mappedBy: 'report', targetEntity: SpyReportData::class)]
     #[ORM\JoinColumn(name: 'id', referencedColumnName: 'id')]
     private SpyReportData $spyReportData;
 
-    #[ORM\OneToOne(mappedBy: 'id', targetEntity: MarketReportData::class)]
+    #[ORM\OneToOne(mappedBy: 'report', targetEntity: MarketReportData::class)]
     #[ORM\JoinColumn(name: 'id', referencedColumnName: 'id')]
     private MarketReportData $marketReportData;
 
-    #[ORM\OneToOne(mappedBy: 'id', targetEntity: BattleReportData::class)]
+    #[ORM\OneToOne(mappedBy: 'report', targetEntity: BattleReportData::class)]
     #[ORM\JoinColumn(name: 'id', referencedColumnName: 'id')]
     private BattleReportData $battleReportData;
 
-    #[ORM\OneToOne(mappedBy: 'id', targetEntity: OtherReportData::class)]
+    #[ORM\OneToOne(mappedBy: 'report', targetEntity: OtherReportData::class)]
     #[ORM\JoinColumn(name: 'id', referencedColumnName: 'id')]
     private OtherReportData $otherReportData;
 
@@ -256,6 +256,7 @@ class Report
 
     public function setSpyReportData(?SpyReportData $spyReportData): static
     {
+        $spyReportData->setReport($this);
         $this->spyReportData = $spyReportData;
 
         return $this;
@@ -268,6 +269,7 @@ class Report
 
     public function setMarketReportData(?MarketReportData $marketReportData): static
     {
+        $marketReportData->setReport($this);
         $this->marketReportData = $marketReportData;
 
         return $this;
@@ -296,6 +298,7 @@ class Report
 
     public function setBattleReportData(?BattleReportData $battleReportData): static
     {
+        $battleReportData->setReport($this);
         $this->battleReportData = $battleReportData;
 
         return $this;
@@ -308,6 +311,7 @@ class Report
 
     public function setOtherReportData(?OtherReportData $otherReportData): static
     {
+        $otherReportData->setReport($this);
         $this->otherReportData = $otherReportData;
 
         return $this;

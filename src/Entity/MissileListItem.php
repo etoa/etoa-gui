@@ -12,14 +12,14 @@ class MissileListItem
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: "AUTO")]
     #[ORM\Column(name: "missilelist_id", type: "integer")]
-    private int $id = 0;
+    private int $id;
 
     #[ORM\JoinColumn(name: 'missilelist_user_id', referencedColumnName: 'user_id')]
-    #[ORM\ManyToOne(targetEntity: User::class)]
+    #[ORM\ManyToOne(targetEntity: User::class, cascade: ['persist'], inversedBy:'missiles')]
     private ?User $user = null;
 
     #[ORM\JoinColumn(name: 'missilelist_entity_id', referencedColumnName: 'id')]
-    #[ORM\ManyToOne(targetEntity: User::class)]
+    #[ORM\ManyToOne(targetEntity: Planet::class)]
     private ?Planet $entity = null;
 
     #[ORM\JoinColumn(name: 'missilelist_missile_id', referencedColumnName: 'missile_id')]

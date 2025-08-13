@@ -90,7 +90,7 @@ class UserToXml
             }
             $xml .= "
         <planet id=\"" . $planet->getId() . "\" name=\"" . $planet->getName() . "\" main=\"" . (int) $planet->isMainPlanet() . "\">
-            <type id=\"" . $planet->getPlanetType()->getId() . "\">" . $types[$planet->getPlanetType()->getId()] . "</type>
+            <type id=\"" . $planet->getPlanetType()->getId() . "\">" . $planet->getPlanetType()->getName() . "</type>
             <metal>" . $planet->getResMetal() . "</metal>
             <crystal>" . $planet->getResCrystal() . "</crystal>
             <plastic>" . $planet->getResPlastic() . "</plastic>

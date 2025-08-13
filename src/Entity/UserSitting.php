@@ -15,7 +15,7 @@ class UserSitting implements PasswordAuthenticatedUserInterface
     private int $id;
 
     #[ORM\JoinColumn(name: 'user_id', referencedColumnName: 'user_id')]
-    #[ORM\ManyToOne(targetEntity: User::class)]
+    #[ORM\ManyToOne(targetEntity: User::class, cascade: ['persist'], inversedBy:'userSittings')]
     private User $user;
     
     #[ORM\JoinColumn(name: 'sitter_id', referencedColumnName: 'user_id')]

@@ -17,14 +17,14 @@ class DefenseListItem
     private int $id;
 
     #[ORM\JoinColumn(name: 'deflist_user_id', referencedColumnName: 'user_id')]
-    #[ORM\ManyToOne(targetEntity: User::class)]
+    #[ORM\ManyToOne(targetEntity: User::class, cascade: ['persist'], inversedBy:'defenseList')]
     private ?User $user = null;
 
     #[ORM\JoinColumn(name: 'deflist_def_id', referencedColumnName: 'def_id')]
     #[ORM\ManyToOne(targetEntity: Defense::class)]
     private ?Defense $defense = null;
 
-    #[ORM\ManyToOne(targetEntity: Planet::class)]
+    #[ORM\ManyToOne(targetEntity: Planet::class, inversedBy:'deflist')]
     #[ORM\JoinColumn(name: 'deflist_entity_id', referencedColumnName: 'id')]
     private Planet $entity;
 

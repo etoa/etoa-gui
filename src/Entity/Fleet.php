@@ -120,8 +120,7 @@ class Fleet
 
     protected int $capacity = 0;
 
-    #[ORM\OneToMany(mappedBy: 'fleet', targetEntity: FleetShip::class)]
-    #[ORM\JoinColumn(name: 'id', referencedColumnName: 'fs_fleet_id')]
+    #[ORM\OneToMany(mappedBy: 'fleet', targetEntity: FleetShip::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
     protected Collection $fleetShips;
 
     protected FleetAction $fleetAction;

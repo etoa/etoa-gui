@@ -27,7 +27,7 @@ class Planet extends AbstractEntity implements ObjectWithImage
     private Entity $entity;
 
     #[ORM\JoinColumn(name: 'planet_user_id', referencedColumnName: 'user_id')]
-    #[ORM\ManyToOne(targetEntity: User::class)]
+    #[ORM\ManyToOne(targetEntity: User::class, inversedBy:'planets')]
     private User|null $user = null;
 
     #[ORM\Column(name: "planet_user_main", type: "boolean")]

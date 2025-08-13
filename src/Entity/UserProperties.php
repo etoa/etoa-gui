@@ -12,8 +12,8 @@ use Doctrine\ORM\Mapping as ORM;
 class UserProperties
 {
     #[ORM\Id]
-    #[ORM\OneToOne(inversedBy: 'userProperties', targetEntity: User::class, cascade: ['persist', 'remove'])]
-    #[ORM\JoinColumn(name: 'id', referencedColumnName: 'user_id')]
+    #[ORM\OneToOne(inversedBy: 'userProperties', targetEntity: User::class)]
+    #[ORM\JoinColumn(name: 'id', referencedColumnName: 'user_id', onDelete: 'CASCADE')]
     private ?User $user = null;
 
     #[ORM\Column(type: "string")]

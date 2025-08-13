@@ -15,35 +15,35 @@ class MarketAuction
     private int $id;
 
     #[ORM\JoinColumn(name: 'user_id', referencedColumnName: 'user_id')]
-    #[ORM\ManyToOne(targetEntity: User::class)]
+    #[ORM\ManyToOne(targetEntity: User::class, cascade: ['persist'], inversedBy:'marketAuctions')]
     private ?User $user = null;
 
     #[ORM\JoinColumn(name: 'entity_id', referencedColumnName: 'id')]
     #[ORM\ManyToOne(targetEntity: Entity::class)]
     private Entity $entity;
 
-    #[ORM\Column(type: "integer")]
+    #[ORM\Column(name: "date_start", type: "integer")]
     private int $dateStart;
 
-    #[ORM\Column(type: "integer")]
+    #[ORM\Column(name: "date_end", type: "integer")]
     private int $dateEnd;
 
-    #[ORM\Column(type: "integer")]
+    #[ORM\Column(name: "date_delete", type: "integer")]
     private int $deleted;
 
-    #[ORM\Column(type: "integer")]
+    #[ORM\Column('sell_0', type: "integer")]
     private int $sell0;
 
-    #[ORM\Column(type: "integer")]
+    #[ORM\Column('sell_1', type: "integer")]
     private int $sell1;
 
-    #[ORM\Column(type: "integer")]
+    #[ORM\Column('sell_2', type: "integer")]
     private int $sell2;
 
-    #[ORM\Column(type: "integer")]
+    #[ORM\Column('sell_3', type: "integer")]
     private int $sell3;
 
-    #[ORM\Column(type: "integer")]
+    #[ORM\Column('sell_4', type: "integer")]
     private int $sell4;
 
     #[ORM\Column(type: "integer")]
@@ -55,19 +55,19 @@ class MarketAuction
     #[ORM\Column]
     private string $text;
 
-    #[ORM\Column(type: "integer")]
+    #[ORM\Column('currency_0', type: "integer")]
     private int $currency0;
 
-    #[ORM\Column(type: "integer")]
+    #[ORM\Column('currency_1', type: "integer")]
     private int $currency1;
 
-    #[ORM\Column(type: "integer")]
+    #[ORM\Column('currency_2', type: "integer")]
     private int $currency2;
 
-    #[ORM\Column(type: "integer")]
+    #[ORM\Column('currency_3', type: "integer")]
     private int $currency3;
 
-    #[ORM\Column(type: "integer")]
+    #[ORM\Column('currency_4', type: "integer")]
     private int $currency4;
 
     #[ORM\JoinColumn(name: 'current_buyer_id', referencedColumnName: 'user_id')]
@@ -81,22 +81,22 @@ class MarketAuction
     #[ORM\Column(type: "integer")]
     private int $currentBuyerDate;
 
-    #[ORM\Column(type: "integer")]
+    #[ORM\Column('buy_0', type: "integer")]
     private int $buy0;
 
-    #[ORM\Column(type: "integer")]
+    #[ORM\Column('buy_1', type: "integer")]
     private int $buy1;
 
-    #[ORM\Column(type: "integer")]
+    #[ORM\Column('buy_2', type: "integer")]
     private int $buy2;
 
-    #[ORM\Column(type: "integer")]
+    #[ORM\Column('buy_3', type: "integer")]
     private int $buy3;
 
-    #[ORM\Column(type: "integer")]
+    #[ORM\Column('buy_4', type: "integer")]
     private int $buy4;
 
-    #[ORM\Column(type: "integer")]
+    #[ORM\Column('bidcount', type: "integer")]
     private int $bidCount;
 
     #[ORM\Column(type: "boolean")]

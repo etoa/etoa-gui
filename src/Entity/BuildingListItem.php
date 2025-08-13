@@ -18,14 +18,14 @@ class BuildingListItem
     private int $id;
 
     #[ORM\JoinColumn(name: 'buildlist_user_id', referencedColumnName: 'user_id')]
-    #[ORM\ManyToOne(targetEntity: User::class)]
+    #[ORM\ManyToOne(targetEntity: User::class, cascade: ['persist'], inversedBy:'buildingList')]
     private ?User $user = null;
 
     #[ORM\JoinColumn(name: 'buildlist_building_id', referencedColumnName: 'building_id')]
     #[ORM\ManyToOne(targetEntity: Building::class)]
     private ?Building $building = null;
 
-    #[ORM\ManyToOne(targetEntity: Planet::class)]
+    #[ORM\ManyToOne(targetEntity: Planet::class, inversedBy:'buildlist')]
     #[ORM\JoinColumn(name: 'buildlist_entity_id', referencedColumnName: 'id')]
     private Planet $entity;
 
@@ -42,7 +42,7 @@ class BuildingListItem
     private int $buildType;
 
     #[ORM\Column(name: "buildlist_prod_percent", type: "decimal")]
-    private int $prodPercent = 1;
+    private string $prodPercent = '1';
 
     #[ORM\Column(name: "buildlist_people_working", type: "integer")]
     private int $peopleWorking = 0;
@@ -55,46 +55,6 @@ class BuildingListItem
 
     #[ORM\Column(name: "buildlist_cooldown", type: "integer")]
     private int $cooldown = 0;
-
-    public static function createFromData(array $data): BuildingListItem
-    {
-        $item = new BuildingListItem();
-        $item->id = (int) $data['buildlist_id'];
-        $item->userId = (int) $data['buildlist_user_id'];
-        $item->buildingId = (int) $data['buildlist_building_id'];
-        $item->entityId = (int) $data['buildlist_entity_id'];
-        $item->currentLevel = (int) $data['buildlist_current_level'];
-        $item->startTime = (int) $data['buildlist_build_start_time'];
-        $item->endTime = (int) $data['buildlist_build_end_time'];
-        $item->buildType = (int) $data['buildlist_build_type'];
-        $item->prodPercent = (int) $data['buildlist_prod_percent'];
-        $item->peopleWorking = (int) $data['buildlist_people_working'];
-        $item->peopleWorkingStatus = (int) $data['buildlist_people_working_status'];
-        $item->deactivated = (int) $data['buildlist_deactivated'];
-        $item->cooldown = (int) $data['buildlist_cooldown'];
-
-        return $item;
-    }
-
-    public static function empty(): BuildingListItem
-    {
-        $item = new BuildingListItem();
-        $item->id = 0;
-        $item->userId = 0;
-        $item->buildingId = 0;
-        $item->entityId = 0;
-        $item->currentLevel = 0;
-        $item->startTime = 0;
-        $item->endTime = 0;
-        $item->buildType = 0;
-        $item->prodPercent = 0;
-        $item->peopleWorking = 0;
-        $item->peopleWorkingStatus = 0;
-        $item->deactivated = 0;
-        $item->cooldown = 0;
-
-        return $item;
-    }
 
     public function isDeactivated(): bool
     {
@@ -159,12 +119,12 @@ class BuildingListItem
         return $this;
     }
 
-    public function getProdPercent(): ?int
+    public function getProdPercent(): ?string
     {
         return $this->prodPercent;
     }
 
-    public function setProdPercent(int $prodPercent): static
+    public function setProdPercent(string $prodPercent): static
     {
         $this->prodPercent = $prodPercent;
 
