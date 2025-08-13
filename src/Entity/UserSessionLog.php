@@ -18,7 +18,7 @@ class UserSessionLog
     private string $sessionId;
 
     #[ORM\JoinColumn(name: 'user_id', referencedColumnName: 'user_id')]
-    #[ORM\ManyToOne(targetEntity: User::class)]
+    #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'sessionLogs')]
     private ?User $user = null;
 
     #[ORM\Column]

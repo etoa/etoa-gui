@@ -20,11 +20,11 @@ class Fleet
     protected int $id;
 
     #[ORM\JoinColumn(name: 'user_id', referencedColumnName: 'user_id')]
-    #[ORM\ManyToOne(targetEntity: User::class)]
+    #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'fleets')]
     protected User $user;
 
     #[ORM\JoinColumn(name: 'leader_id', referencedColumnName: 'id')]
-    #[ORM\ManyToOne(targetEntity: Fleet::class)]
+    #[ORM\ManyToOne(targetEntity: Fleet::class, inversedBy: 'fleetsLeader')]
     protected ?Fleet $leader = null;
 
     #[ORM\JoinColumn(name: 'entity_from', referencedColumnName: 'id')]

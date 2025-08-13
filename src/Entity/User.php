@@ -311,6 +311,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(mappedBy: 'leader', targetEntity: Fleet::class, cascade: ['persist', 'remove'])]
     private Collection $fleetsLeader;
 
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: UserSessionLog::class, cascade: ['persist', 'remove'])]
+    private Collection $sessionLogs;
+
     public function __construct()
     {
         $this->planets = new ArrayCollection();
@@ -339,6 +342,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->reports = new ArrayCollection();
         $this->fleets = new ArrayCollection();
         $this->fleetsLeader = new ArrayCollection();
+        $this->sessionLogs = new ArrayCollection();
     }
 
     public function __toString()
@@ -1976,6 +1980,36 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             // set the owning side to null (unless already changed)
             if ($fleetsLeader->getLeader() === $this) {
                 $fleetsLeader->setLeader(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, UserSessionLog>
+     */
+    public function getSessionLogs(): Collection
+    {
+        return $this->sessionLogs;
+    }
+
+    public function addSessionLog(UserSessionLog $sessionLog): static
+    {
+        if (!$this->sessionLogs->contains($sessionLog)) {
+            $this->sessionLogs->add($sessionLog);
+            $sessionLog->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeSessionLog(UserSessionLog $sessionLog): static
+    {
+        if ($this->sessionLogs->removeElement($sessionLog)) {
+            // set the owning side to null (unless already changed)
+            if ($sessionLog->getUser() === $this) {
+                $sessionLog->setUser(null);
             }
         }
 

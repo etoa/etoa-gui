@@ -2,13 +2,14 @@
 
 namespace EtoA\Controller\Admin;
 
+use EtoA\Entity\User;
+use EtoA\Entity\UserSessionLog;
 use EtoA\Form\Request\Admin\UserObserveRequest;
 use EtoA\Form\Type\Admin\EditUserObserverType;
 use EtoA\Form\Type\Admin\UserObserveType;
 use EtoA\User\UserRepository;
 use EtoA\User\UserSearch;
 use EtoA\User\UserSessionRepository;
-use EtoA\User\UserSessionSearch;
 use EtoA\User\UserSurveillanceRepository;
 use EtoA\User\UserSurveillanceSearch;
 use Symfony\Component\HttpFoundation\Request;
@@ -52,27 +53,25 @@ class UserObserverController extends AbstractAdminController
 
     #[Route('/admin/users/observer/{id}/details', name: 'admin.users.observer.details')]
     #[IsGranted('ROLE_ADMIN_GAME-ADMIN')]
-    public function details(int $id): Response
+    public function details(?User $user = null): Response
     {
-        $user = $this->userRepository->getUser($id);
         if ($user === null) {
             $this->addFlash('error', 'User existiert nicht');
 
             return $this->redirectToRoute('admin.users.observer');
         }
 
-        $sessionActionCounts = $this->userSurveillanceRepository->countPerSession(UserSurveillanceSearch::create()->userId($id));
-        $sessionTimestamps = $this->userSurveillanceRepository->timestampsPerSession(UserSurveillanceSearch::create()->userId($id));
-        $sessionLogs = $this->userSessionRepository->getSessionLogs(UserSessionSearch::create()->userId($id));
-        $sessions = $this->userSessionRepository->getActiveUserSessions($id);
+        $sessionActionCounts = $this->userSurveillanceRepository->countPerSession(UserSurveillanceSearch::create()->user($user));
+        $sessionTimestamps = $this->userSurveillanceRepository->timestampsPerSession(UserSurveillanceSearch::create()->user($user));
+        $sessionLogs = $user->getSessionLogs();
+        $currentSession = $user->getSession();
 
         $availableSessions = [];
         foreach ($sessionLogs as $session) {
-            $availableSessions[$session->sessionId] = $session;
+            $availableSessions[$session->getSessionId()] = $session;
         }
-        foreach ($sessions as $session) {
-            $availableSessions[$session->id] = $session;
-        }
+        if($currentSession)
+            $availableSessions[$currentSession->getId()] = $currentSession;
 
         return $this->render('admin/user-observer/details.html.twig', [
             'sessionTimestamps' => $sessionTimestamps,
@@ -84,24 +83,26 @@ class UserObserverController extends AbstractAdminController
 
     #[Route('/admin/users/observer/{id}/details/{sessionId}', name: 'admin.users.observer.details.session')]
     #[IsGranted('ROLE_ADMIN_GAME-ADMIN')]
-    public function sessionDetails(int $id, string $sessionId): Response
+    public function sessionDetails(?User $user = null, ?UserSessionLog $session = null): Response
     {
-        $user = $this->userRepository->getUser($id);
         if ($user === null) {
             $this->addFlash('error', 'User existiert nicht');
 
             return $this->redirectToRoute('admin.users.observer');
         }
 
-        $session = $this->userSessionRepository->findLog($sessionId);
         if ($session === null) {
-            $session = $this->userSessionRepository->find($sessionId);
+            $session = $this->userSessionRepository->find($session);
+            $id = $session->getId();
+        }
+        else {
+            $id = $session->getSessionId();
         }
 
         return $this->render('admin/user-observer/session-details.html.twig', [
-            'entries' => $this->userSurveillanceRepository->search(UserSurveillanceSearch::create()->session($sessionId)),
+            'entries' => $this->userSurveillanceRepository->search(UserSurveillanceSearch::create()->session($id)),
             'session' => $session,
-            'sessionId' => $sessionId,
+            'sessionId' => $id,
             'user' => $user,
         ]);
     }

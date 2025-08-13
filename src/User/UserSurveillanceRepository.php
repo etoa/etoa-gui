@@ -20,13 +20,10 @@ class UserSurveillanceRepository extends AbstractRepository
      */
     public function search(UserSurveillanceSearch $search): array
     {
-        $data = $this->applySearchSortLimit($this->createQueryBuilder('q'), $search)
-            ->select('*')
-            ->from('user_surveillance')
-            ->orderBy('timestamp', 'DESC')
-            ->fetchAllAssociative();
-
-        return array_map(fn (array $row) => new UserSurveillance($row), $data);
+        return $this->applySearchSortLimit($this->createQueryBuilder('q'), $search)
+            ->orderBy('q.timestamp', 'DESC')
+            ->getQuery()
+            ->execute();
     }
 
     /**
@@ -35,12 +32,17 @@ class UserSurveillanceRepository extends AbstractRepository
     public function countPerSession(UserSurveillanceSearch $search): array
     {
         $data = $this->applySearchSortLimit($this->createQueryBuilder('q'), $search)
-            ->select('session, COUNT(id)')
-            ->from('user_surveillance')
-            ->groupBy('session')
-            ->fetchAllKeyValue();
+            ->select('q.session, COUNT(q.id) as count')
+            ->groupBy('q.session')
+            ->getQuery()
+            ->execute();
 
-        return array_map(fn ($value) => (int) $value, $data);
+        $result = [];
+        foreach ($data as $row) {
+            $result[(string)$row['session']] = (int)$row['count'];
+        }
+
+        return $result;
     }
 
     /**
@@ -49,17 +51,18 @@ class UserSurveillanceRepository extends AbstractRepository
     public function timestampsPerSession(UserSurveillanceSearch $search): array
     {
         $data = $this->applySearchSortLimit($this->createQueryBuilder('q'), $search)
-            ->select('session, MAX(timestamp) max, MIN(timestamp) min')
-            ->from('user_surveillance')
-            ->groupBy('session')
-            ->orderBy('MAX(timestamp)', 'DESC')
-            ->fetchAllAssociative();
+            ->select('q.session, MAX(q.timestamp) as max, MIN(q.timestamp) as min')
+            ->groupBy('q.session')
+            ->orderBy('MAX(q.timestamp)', 'DESC')
+            ->getQuery()
+            ->execute();
 
         $result = [];
+
         foreach ($data as $row) {
-            $result[(string) $row['session']] = [
-                'min' => (int) $row['min'],
-                'max' => (int) $row['max'],
+            $result[(string)$row['session']] = [
+                'min' => (int)$row['min'],
+                'max' => (int)$row['max'],
             ];
         }
 
@@ -86,7 +89,7 @@ class UserSurveillanceRepository extends AbstractRepository
 
         $counts = [];
         foreach ($data as $userId => $count) {
-            $counts[(int) $userId] = (int) $count;
+            $counts[(int)$userId] = (int)$count;
         }
 
         return $counts;
@@ -135,10 +138,10 @@ class UserSurveillanceRepository extends AbstractRepository
             ->groupBy('s.user_id')
             ->fetchAllAssociative();
 
-        return array_map(fn (array $row) => (int) $row['user_id'], $data);
+        return array_map(fn(array $row) => (int)$row['user_id'], $data);
     }
 
-    public function removeForUser(User $user) : void
+    public function removeForUser(User $user): void
     {
         $this->createQueryBuilder('q')
             ->delete()

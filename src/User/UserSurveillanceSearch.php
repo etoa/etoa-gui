@@ -3,6 +3,7 @@
 namespace EtoA\User;
 
 use EtoA\Core\Database\AbstractSearch;
+use EtoA\Entity\User;
 
 class UserSurveillanceSearch extends AbstractSearch
 {
@@ -11,17 +12,17 @@ class UserSurveillanceSearch extends AbstractSearch
         return new UserSurveillanceSearch();
     }
 
-    public function userId(int $userId): self
+    public function user(int|User $user): self
     {
-        $this->parts[] = 'user_id = :userId';
-        $this->parameters['userId'] = $userId;
+        $this->parts[] = 'q.user = :user';
+        $this->parameters['user'] = $user;
 
         return $this;
     }
 
     public function session(string $session): self
     {
-        $this->parts[] = 'session = :session';
+        $this->parts[] = 'q.session = :session';
         $this->parameters['session'] = $session;
 
         return $this;
