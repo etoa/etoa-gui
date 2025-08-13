@@ -722,11 +722,9 @@ class UserController extends AbstractAdminController
             return $this->redirectToRoute('admin.users');
         }
 
-        //dd($user->getPlanets());
         $userPlanets = $user->getPlanets();
 
         // Rohstoffe/Bewohner und Speicher
-
         if (count($userPlanets) > 0) {
             $max_res = array(0, 0, 0, 0, 0, 0);
             $min_res = array(9999999999, 9999999999, 9999999999, 9999999999, 9999999999, 9999999999);
@@ -862,14 +860,10 @@ class UserController extends AbstractAdminController
             $tot_prod[5] += $val_prod[$planet->getId()][5];
         }
 
-        $buildLogs = $this->gameLogRepository->searchLogs(GameLogSearch::create()->userId($id)->facility(GameLogFacility::BUILD), 5);
-        $buildingNames = $this->buildingRepository->getBuildingNames(true);
-        $techLogs = $this->gameLogRepository->searchLogs(GameLogSearch::create()->userId($id)->facility(GameLogFacility::TECH), 5);
-        $technologyNames = $this->techRepository->getTechnologyNames(true);
-        $shipLogs = $this->gameLogRepository->searchLogs(GameLogSearch::create()->userId($id)->facility(GameLogFacility::SHIP), 5);
-        $shipNames = $this->shipRepository->getShipNames(true);
-        $defLogs = $this->gameLogRepository->searchLogs(GameLogSearch::create()->userId($id)->facility(GameLogFacility::DEF), 5);
-        $defenseNames = $this->defenseRepository->getDefenseNames(true);
+        $buildLogs = $this->gameLogRepository->searchLogs(GameLogSearch::create()->user($user)->facility(GameLogFacility::BUILD), 5);
+        $techLogs = $this->gameLogRepository->searchLogs(GameLogSearch::create()->user($user)->facility(GameLogFacility::TECH), 5);
+        $shipLogs = $this->gameLogRepository->searchLogs(GameLogSearch::create()->user($user)->facility(GameLogFacility::SHIP), 5);
+        $defLogs = $this->gameLogRepository->searchLogs(GameLogSearch::create()->user($user)->facility(GameLogFacility::DEF), 5);
 
         return $this->render('admin/user/economy.html.twig', [
             'user' => $user,
@@ -890,8 +884,8 @@ class UserController extends AbstractAdminController
                 'message' => $log->getMessage(),
                 'severity' => LogSeverity::SEVERITIES[$log->getSeverity()],
                 'ip' => $log->getIp(),
-                'te' => ($log->entityId > 0) ? Entity::createFactoryById($log->entityId) : "-",
-                'ob' => $buildingNames[$log->objectId] . " " . ($log->getLevel() > 0 ? $log->getLevel() : ''),
+                'te' => $log->getEntity() ? $log->getEntity()->toString() : "-",
+                'ob' => $log->getBuilding()->getName() ." " . ($log->getLevel() > 0 ? $log->getLevel() : ''),
                 'obStatus' => match ($log->getStatus()) {
                     1 => "Ausbau abgebrochen",
                     2 => "Abriss abgebrochen",
@@ -906,8 +900,8 @@ class UserController extends AbstractAdminController
                 'message' => $log->getMessage(),
                 'severity' => LogSeverity::SEVERITIES[$log->getSeverity()],
                 'ip' => $log->getIp(),
-                'te' => ($log->entityId > 0) ? Entity::createFactoryById($log->entityId) : "-",
-                'ob' => $technologyNames[$log->objectId] . " " . ($log->getLevel() > 0 ? $log->getLevel() : ''),
+                'te' => $log->getEntity() ? $log->getEntity()->toString() : "-",
+                'ob' => $log->getTechnology()->getName() . " " . ($log->getLevel() > 0 ? $log->getLevel() : ''),
                 'obStatus' => match ($log->getStatus()) {
                     3 => "Erforschung",
                     0 => "Erforschung abgebrochen",
@@ -920,8 +914,8 @@ class UserController extends AbstractAdminController
                 'message' => $log->getMessage(),
                 'severity' => LogSeverity::SEVERITIES[$log->getSeverity()],
                 'ip' => $log->getIp(),
-                'te' => ($log->entityId > 0) ? Entity::createFactoryById($log->entityId) : "-",
-                'ob' => $shipNames[$log->objectId] . " " . ($log->getLevel() > 0 ? $log->getLevel() : ''),
+                'te' => $log->getEntity() ? $log->getEntity()->toString() : "-",
+                'ob' => $log->getShip()->getName() . " " . ($log->getLevel() > 0 ? $log->getLevel() : ''),
                 'obStatus' => match ($log->getStatus()) {
                     1 => "Bau",
                     0 => "Bau abgebrochen",
@@ -934,8 +928,8 @@ class UserController extends AbstractAdminController
                 'message' => $log->getMessage(),
                 'severity' => LogSeverity::SEVERITIES[$log->getSeverity()],
                 'ip' => $log->getIp(),
-                'te' => ($log->entityId > 0) ? Entity::createFactoryById($log->entityId) : "-",
-                'ob' => $defenseNames[$log->objectId] . " " . ($log->getLevel() > 0 ? $log->getLevel() : ''),
+                'te' => $log->getEntity() ? $log->getEntity()->toString() : "-",
+                'ob' => $log->getShip()->getName() . " " . ($log->getLevel() > 0 ? $log->getLevel() : ''),
                 'obStatus' => match ($log->getStatus()) {
                     1 => "Bau",
                     0 => "Bau abgebrochen",

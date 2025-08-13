@@ -2,6 +2,7 @@
 
 namespace EtoA\Entity;
 
+use EtoA\Log\GameLogFacility;
 use EtoA\Log\GameLogRepository;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -20,8 +21,8 @@ class GameLog
     #[ORM\Column(type: "integer")]
     private int $facility;
 
-    #[ORM\Column(type: "integer")]
-    private int $objectId;
+    #[ORM\Column(name:'object_id', type: "integer")]
+    private int $object;
 
     #[ORM\Column(type: "integer")]
     private int $level;
@@ -32,14 +33,33 @@ class GameLog
     #[ORM\Column(type: "integer")]
     private int $status;
 
-    #[ORM\Column(type: "integer")]
-    private int $entityId;
+    #[ORM\JoinColumn(name: 'id', referencedColumnName: 'id')]
+    #[ORM\ManyToOne(targetEntity: Entity::class)]
+    private ?Entity $entity = null;
 
-    #[ORM\Column(type: "integer")]
-    private int $userId;
+    #[ORM\JoinColumn(name: 'user_id', referencedColumnName: 'user_id')]
+    #[ORM\ManyToOne(targetEntity: User::class)]
+    private ?User $user = null;
 
-    #[ORM\Column(type: "integer")]
-    private int $allianceId;
+    #[ORM\JoinColumn(name: 'alliance_id', referencedColumnName: 'alliance_id')]
+    #[ORM\ManyToOne(targetEntity: Alliance::class)]
+    private ?Alliance $alliance = null;
+
+    #[ORM\JoinColumn(name: 'object_id', referencedColumnName: 'building_id')]
+    #[ORM\ManyToOne(targetEntity: Building::class)]
+    private ?Building $building = null;
+
+    #[ORM\JoinColumn(name: 'object_id', referencedColumnName: 'tech_id')]
+    #[ORM\ManyToOne(targetEntity: Technology::class)]
+    private ?Technology $technology = null;
+
+    #[ORM\JoinColumn(name: 'object_id', referencedColumnName: 'ship_id')]
+    #[ORM\ManyToOne(targetEntity: Ship::class)]
+    private ?Ship $ship= null;
+
+    #[ORM\JoinColumn(name: 'object_id', referencedColumnName: 'def_id')]
+    #[ORM\ManyToOne(targetEntity: Defense::class)]
+    private ?Defense $defense = null;
 
     #[ORM\Column]
     private string $ip;
@@ -72,18 +92,6 @@ class GameLog
     public function setFacility(int $facility): static
     {
         $this->facility = $facility;
-
-        return $this;
-    }
-
-    public function getObjectId(): ?int
-    {
-        return $this->objectId;
-    }
-
-    public function setObjectId(int $objectId): static
-    {
-        $this->objectId = $objectId;
 
         return $this;
     }
@@ -124,42 +132,6 @@ class GameLog
         return $this;
     }
 
-    public function getEntityId(): ?int
-    {
-        return $this->entityId;
-    }
-
-    public function setEntityId(int $entityId): static
-    {
-        $this->entityId = $entityId;
-
-        return $this;
-    }
-
-    public function getUserId(): ?int
-    {
-        return $this->userId;
-    }
-
-    public function setUserId(int $userId): static
-    {
-        $this->userId = $userId;
-
-        return $this;
-    }
-
-    public function getAllianceId(): ?int
-    {
-        return $this->allianceId;
-    }
-
-    public function setAllianceId(int $allianceId): static
-    {
-        $this->allianceId = $allianceId;
-
-        return $this;
-    }
-
     public function getIp(): ?string
     {
         return $this->ip;
@@ -180,6 +152,108 @@ class GameLog
     public function setTimestamp(int $timestamp): static
     {
         $this->timestamp = $timestamp;
+
+        return $this;
+    }
+
+    public function getObject(): Technology|Building|ship|Defense|null
+    {
+        return match ($this->facility) {
+            GameLogFacility::BUILD => $this->building,
+            GameLogFacility::TECH => $this->technology,
+            GameLogFacility::SHIP => $this->ship,
+            GameLogFacility::DEF => $this->defense,
+            default => null,
+        };
+    }
+
+    public function setObject(int $object): static
+    {
+        $this->object = $object;
+
+        return $this;
+    }
+
+    public function getEntity(): ?Entity
+    {
+        return $this->entity;
+    }
+
+    public function setEntity(?Entity $entity): static
+    {
+        $this->entity = $entity;
+
+        return $this;
+    }
+
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
+
+    public function setUser(?User $user): static
+    {
+        $this->user = $user;
+
+        return $this;
+    }
+
+    public function getAlliance(): ?Alliance
+    {
+        return $this->alliance;
+    }
+
+    public function setAlliance(?Alliance $alliance): static
+    {
+        $this->alliance = $alliance;
+
+        return $this;
+    }
+
+    public function getBuilding(): ?Building
+    {
+        return $this->building;
+    }
+
+    public function setBuilding(?User $building): static
+    {
+        $this->building = $building;
+
+        return $this;
+    }
+
+    public function getTechnology(): ?Technology
+    {
+        return $this->technology;
+    }
+
+    public function setTechnology(?Technology $technology): static
+    {
+        $this->technology = $technology;
+
+        return $this;
+    }
+
+    public function getShip(): ?Ship
+    {
+        return $this->ship;
+    }
+
+    public function setShip(?Ship $ship): static
+    {
+        $this->ship = $ship;
+
+        return $this;
+    }
+
+    public function getDefense(): ?Defense
+    {
+        return $this->defense;
+    }
+
+    public function setDefense(?Defense $defense): static
+    {
+        $this->defense = $defense;
 
         return $this;
     }

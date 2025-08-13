@@ -228,10 +228,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(type: "boolean")]
     private bool $userChangedMainPlanet = false;
 
-    #[ORM\OneToOne(mappedBy: "user", targetEntity: UserRating::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
+    #[ORM\OneToOne(mappedBy: "user", targetEntity: UserRating::class, orphanRemoval: true)]
     private ?UserRating $userRating;
 
-    #[ORM\OneToOne(mappedBy: "user", targetEntity: UserSession::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
+    #[ORM\OneToOne(mappedBy: "user", targetEntity: UserSession::class, orphanRemoval: true)]
     private ?UserSession $session;
 
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: Planet::class)]

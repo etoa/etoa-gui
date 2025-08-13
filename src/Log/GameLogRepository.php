@@ -19,13 +19,10 @@ class GameLogRepository extends AbstractRepository
      */
     public function searchLogs(GameLogSearch $search, int $limit = null, int $offset = null): array
     {
-        $data = $this->applySearchSortLimit($this->createQueryBuilder('q'), $search, null, $limit, $offset)
-            ->select('logs_game.*')
-            ->from('logs_game')
-            ->orderBy('timestamp', 'DESC')
-            ->fetchAllAssociative();
-
-        return array_map(fn (array $row) => new GameLog($row), $data);
+        return $this->applySearchSortLimit($this->createQueryBuilder('q'), $search, null, $limit, $offset)
+            ->orderBy('q.timestamp', 'DESC')
+            ->getQuery()
+            ->execute();
     }
 
     public function add(int $facility, int $severity, string $message, int $userId, int $allianceId, int $entityId, int $objectId = 0, int $status = 0, int $level = 0): void

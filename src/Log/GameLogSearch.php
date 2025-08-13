@@ -3,6 +3,9 @@
 namespace EtoA\Log;
 
 use EtoA\Core\Database\AbstractSearch;
+use EtoA\Entity\Alliance;
+use EtoA\Entity\Entity;
+use EtoA\Entity\User;
 
 class GameLogSearch extends AbstractSearch
 {
@@ -13,7 +16,7 @@ class GameLogSearch extends AbstractSearch
 
     public function messageLike(string $message): self
     {
-        $this->parts[] = 'message LIKE :message';
+        $this->parts[] = 'q.message LIKE :message';
         $this->parameters['message'] = '%' . $message . '%';
 
         return $this;
@@ -21,7 +24,7 @@ class GameLogSearch extends AbstractSearch
 
     public function severity(int $severity): self
     {
-        $this->parts[] = 'severity >= :severity';
+        $this->parts[] = 'q.severity >= :severity';
         $this->parameters['severity'] = $severity;
 
         return $this;
@@ -29,32 +32,32 @@ class GameLogSearch extends AbstractSearch
 
     public function facility(int $facility): self
     {
-        $this->parts[] = 'facility = :facility';
+        $this->parts[] = 'q.facility = :facility';
         $this->parameters['facility'] = $facility;
 
         return $this;
     }
 
-    public function userId(int $userId): self
+    public function user(User $user): self
     {
-        $this->parts[] = 'user_id = :userId';
-        $this->parameters['userId'] = $userId;
+        $this->parts[] = 'q.user = :user';
+        $this->parameters['user'] = $user;
 
         return $this;
     }
 
-    public function allianceId(int $allianceId): self
+    public function allianceId(int|Alliance $alliance): self
     {
-        $this->parts[] = 'alliance_id = :allianceId';
-        $this->parameters['allianceId'] = $allianceId;
+        $this->parts[] = 'q.alliance = :allianceId';
+        $this->parameters['alliance'] = $alliance;
 
         return $this;
     }
 
-    public function entityId(int $entityId): self
+    public function entity(int|Entity $entity): self
     {
-        $this->parts[] = 'entity_id = :entityId';
-        $this->parameters['entityId'] = $entityId;
+        $this->parts[] = 'q.entity = :entity';
+        $this->parameters['entity'] = $entity;
 
         return $this;
     }

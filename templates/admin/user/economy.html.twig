@@ -40,7 +40,7 @@
                 {% for planet in userPlanets %}
                     <tr>
                         <td>
-                            <a href="{{ path('admin.universe.entity', { id: planet.id }) }}">{{ planet.toString }}</a>
+                            <a href="{{ path('admin.universe.entity', { id: planet.id }) }}">{{ planet.entity.toString }}</a>
                         </td>
                         {% for x in range(0,5) %}
                             <td
@@ -104,7 +104,7 @@
                 {% for planet in userPlanets %}
                     <tr>
                         <td>
-                            <a href="{{ path('admin.universe.entity', { id: planet.id }) }}">{{ planet.toString }}</a>
+                            <a href="{{ path('admin.universe.entity', { id: planet.id }) }}">{{ planet.entity.toString }}</a>
                         </td>
                         {% for x in range(0,5) %}
                             <td
