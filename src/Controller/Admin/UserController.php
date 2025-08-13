@@ -1062,26 +1062,16 @@ class UserController extends AbstractAdminController
 
     #[Route('/admin/users/{id}/tickets', name: 'admin.users.tickets', methods: ['GET'])]
     #[IsGranted('ROLE_ADMIN_TRIAL-ADMIN')]
-    public function tickets(int $id): Response
+    public function tickets(?User $user = null): Response
     {
-        $user = $this->userRepository->getUser($id);
         if ($user === null) {
             $this->addFlash('error', 'Benutzer nicht vorhanden!');
             return $this->redirectToRoute('admin.users');
         }
 
-        $tickets = $this->ticketRepo->findBy(['user_id' => $id]);
-
         return $this->render('admin/user/tickets.html.twig', [
             'user' => $user,
-            'tickets' => array_map(fn(Ticket $ticket) => [
-                'id' => $ticket->getId(),
-                'idString' => $ticket->getIdString(),
-                'statusName' => $ticket->getStatusName(),
-                'categoryName' => $this->ticketRepo->getCategoryName($ticket->getCatId()),
-                'adminName' => ($ticket->getAdminId() > 0 ? $this->adminUserRepo->getNick($ticket->getAdminId()) : null),
-                'timestamp' => $ticket->getTimestamp(),
-            ], $tickets),
+            'tickets' => $user->getTickets(),
         ]);
     }
 

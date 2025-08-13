@@ -30,8 +30,8 @@
                         <a href="{{ path('admin.ticket.details', { id: ticket.id }) }}">{{ ticket.idString }}</a>
                     </td>
                     <td>{{ ticket.statusName }}</td>
-                    <td>{{ ticket.categoryName }}</td>
-                    <td>{{ ticket.adminName|default('-') }}</td>
+                    <td>{{ ticket.cat.name }}</td>
+                    <td>{{ ticket.admin?ticket.admin.name:'-' }}</td>
                     <td>{{ formatTimestamp(ticket.timestamp) }}</td>
                 </tr>
             {% endfor %}
