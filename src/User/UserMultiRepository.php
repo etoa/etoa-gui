@@ -11,8 +11,7 @@ use EtoA\Entity\UserMulti;
 class UserMultiRepository extends AbstractRepository
 {
     public function __construct(
-        ManagerRegistry $registry,
-        private readonly UserMultiRepository $userMultiRepository
+        ManagerRegistry $registry
     )
     {
         parent::__construct($registry, UserMulti::class);
@@ -21,7 +20,7 @@ class UserMultiRepository extends AbstractRepository
     public function addOrUpdateEntry(UserMulti $userMulti): void
     {
 
-        $entry = $this->userMultiRepository->findOneBy(['user'=>$userMulti->getUser(),'multiUser'=>$userMulti->getMultiUser()]);
+        $entry = $this->findOneBy(['user'=>$userMulti->getUser(),'multiUser'=>$userMulti->getMultiUser()]);
 
         if ($entry) {
             $entry->setActive(true);
@@ -30,10 +29,10 @@ class UserMultiRepository extends AbstractRepository
             $userMulti->setActive(true);
             $userMulti->setTimestamp(time());
 
-            $this->userMultiRepository->persist($userMulti);
+            $this->persist($userMulti);
         }
 
-        $this->userMultiRepository->save();
+        $this->save();
     }
 
     public function addEmptyEntry(int $userId): void
