@@ -9,7 +9,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 class AdminType extends AbstractType
 {
     public function __construct(
-        private AdminUserRepository $userRepository,
+        private readonly AdminUserRepository $userRepository,
     ) {
     }
 
@@ -20,7 +20,9 @@ class AdminType extends AbstractType
         $resolver->setDefaults([
             'required' => false,
             'placeholder' => '',
-            'choices' => array_flip($this->userRepository->searchNicknames()),
+            'choices' => $this->userRepository->findAll(),
+            'choice_value' => 'id',
+            'choice_label' => 'nick',
         ]);
     }
 

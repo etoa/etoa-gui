@@ -35,42 +35,6 @@ class UserMulti
         return $this->id;
     }
 
-    public function getUserId(): ?int
-    {
-        return $this->userId;
-    }
-
-    public function setUserId(int $userId): static
-    {
-        $this->userId = $userId;
-
-        return $this;
-    }
-
-    public function getMultiUserId(): ?int
-    {
-        return $this->multiUserId;
-    }
-
-    public function setMultiUserId(int $multiUserId): static
-    {
-        $this->multiUserId = $multiUserId;
-
-        return $this;
-    }
-
-    public function getMultiUserNick(): ?string
-    {
-        return $this->multiUserNick;
-    }
-
-    public function setMultiUserNick(string $multiUserNick): static
-    {
-        $this->multiUserNick = $multiUserNick;
-
-        return $this;
-    }
-
     public function getReason(): ?string
     {
         return $this->reason;

@@ -17,16 +17,16 @@
         </thead>
         {% for userWarnings in warnings %}
             <tr>
-                <td>{{ formatTimestamp(userWarnings[0].date) }}</td>
+                <td>{{ formatTimestamp(userWarnings.date) }}</td>
                 <td>
-                    <a href="{{ path('admin.users.view', {id: userWarnings[0].userId}) }}">{{ userWarnings[0].userNick }}</a>
+                    <a href="{{ path('admin.users.view', {id: userWarnings.user.id}) }}">{{ userWarnings.user.nick }}</a>
                 </td>
                 <td><a href="#"
-                       onclick="toggleBox('w{{ userWarnings[0].userId }}')">{{ formatNumber(userWarnings|length) }}
+                       onclick="toggleBox('w{{ userWarnings.id }}')">{{ formatNumber(userWarnings|length) }}
                         Verwarnungen</a></td>
             </tr>
             <tr>
-                <td colspan="99" id="w{{ userWarnings[0].userId }}" style="display:none;">
+                <td colspan="99" id="w{{ userWarnings.id }}" style="display:none;">
                     <table>
                         <tr>
                             <th style="">Text</th>
@@ -34,18 +34,16 @@
                             <th>Verwarnt von</th>
                             <th>Optionen</th>
                         </tr>
-                        {% for warning in userWarnings %}
-                            <tr>
-                                <td>{{ warning.text|nl2br }}</td>
-                                <td>{{ formatTimestamp(warning.date) }}</td>
-                                <td>{{ warning.adminNick }}</td>
-                                <td>
-                                    <a href="{{ path('admin.users.warnings.edit', {id: warning.id}) }}">Bearbeiten</a>
-                                    <a href="{{ path('admin.users.warnings.delete', {id: warning.id}) }}"
-                                       onclick="return confirm('Verwarnung löschen?')">Löschen</a>
-                                </td>
-                            </tr>
-                        {% endfor %}
+                        <tr>
+                            <td>{{ userWarnings.text|nl2br }}</td>
+                            <td>{{ formatTimestamp(userWarnings.date) }}</td>
+                            <td>{{ userWarnings.admin.nick }}</td>
+                            <td>
+                                <a href="{{ path('admin.users.warnings.edit', {id: userWarnings.id}) }}">Bearbeiten</a>
+                                <a href="{{ path('admin.users.warnings.delete', {id: userWarnings.id}) }}"
+                                   onclick="return confirm('Verwarnung löschen?')">Löschen</a>
+                            </td>
+                        </tr>
                     </table>
                 </td>
             </tr>
@@ -55,5 +53,4 @@
             </tr>
         {% endfor %}
     </table>
-
 {% endblock %}

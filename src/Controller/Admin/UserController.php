@@ -10,14 +10,15 @@ use EtoA\Building\BuildingDataRepository;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Defense\DefenseDataRepository;
 use EtoA\Design\DesignsService;
-use EtoA\Entity\Ticket;
 use EtoA\Entity\User;
+use EtoA\Entity\UserMulti;
 use EtoA\Entity\UserSitting;
 use EtoA\Form\Request\Admin\UserCreateRequest;
 use EtoA\Form\Request\Admin\UserLogEntryRequest;
 use EtoA\Form\Type\Admin\ManualUserLogEntryType;
 use EtoA\Form\Type\Admin\UserCreateType;
 use EtoA\Form\Type\Core\UserPropertiesType;
+use EtoA\Form\Type\Core\UserType;
 use EtoA\Help\TicketSystem\TicketRepository;
 use EtoA\Help\TicketSystem\TicketStatus;
 use EtoA\HostCache\NetworkNameService;
@@ -1125,18 +1126,47 @@ class UserController extends AbstractAdminController
 
     #[Route('/admin/users/{id}/multi', name: 'admin.users.user_multi')]
     #[IsGranted('ROLE_ADMIN_TRIAL-ADMIN')]
-    public function multi(int $id): Response
+    public function multi(Request $request, ?User $user = null): Response
     {
-        $user = $this->userRepository->getUser($id);
         if ($user === null) {
             $this->addFlash('error', 'Benutzer nicht vorhanden!');
             return $this->redirectToRoute('admin.users');
         }
 
+        $multi = new UserMulti();
+
+        $form = $this->createFormBuilder($multi)
+            ->add('multiUser', UserType::class, [
+                'label' => false
+            ])
+            ->add('reason', TextType::class, [
+                'label' => false,
+                'attr' => [
+                    'maxlength'=>"20",
+                    'size'=>"20"
+                ],
+                'constraints' => [new NotBlank()],
+            ])
+            ->add('submit', SubmitType::class, [
+                'label' => 'Speichern',
+            ])
+            ->getForm()->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            // Prüfe ob der eigene Nick eingetragen ist
+            if ($multi->getMultiUser() === $user) {
+                $this->addFlash('error', "Man kann nicht den selben Nick als Multi eintragen!");
+            } else {
+                $this->userMultiRepository->addOrUpdateEntry($multi);
+                $this->addFlash('success', "Neuer Multi User angelegt!");
+            }
+        }
+
         return $this->render('admin/user/user_multi.html.twig', [
             'user' => $user,
-            'multiEntries' => $this->userMultiRepository->getUserEntries($user->getId(), true),
-            'deletedMultiEntries' => $this->userMultiRepository->getUserEntries($user->getId(), false),
+            'multiEntries' => $this->userMultiRepository->getUserEntries($user, true),
+            'deletedMultiEntries' => $this->userMultiRepository->getUserEntries($user, false),
+            'form' => $form
         ]);
     }
 

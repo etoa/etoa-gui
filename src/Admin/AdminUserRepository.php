@@ -52,13 +52,7 @@ class AdminUserRepository extends AbstractRepository
      */
     public function findAll(): array
     {
-        $data = $this->createQueryBuilder('q')
-            ->select("*")
-            ->from('admin_users')
-            ->orderBy('user_nick')
-            ->fetchAllAssociative();
-
-        return array_map(fn(array $arr) => AdminUser::createFromArray($arr), $data);
+        return $this->findBy([],['nick'=>'ASC']);
     }
 
     /**

@@ -10,58 +10,30 @@ use EtoA\Entity\UserMulti;
 
 class UserMultiRepository extends AbstractRepository
 {
-    public function __construct(ManagerRegistry $registry)
+    public function __construct(
+        ManagerRegistry $registry,
+        private readonly UserMultiRepository $userMultiRepository
+    )
     {
         parent::__construct($registry, UserMulti::class);
     }
 
-    public function addOrUpdateEntry(int $userId, int $multiId, string $reason): void
+    public function addOrUpdateEntry(UserMulti $userMulti): void
     {
-        $exists = (bool) $this
-            ->createQueryBuilder()
-            ->select('1')
-            ->from('user_multi')
-            ->where('user_id = :userId')
-            ->andWhere('multi_id = :multiId')
-            ->setParameters([
-                'userId' => $userId,
-                'multiId' => $multiId,
-            ])
-            ->fetchOne();
 
-        if ($exists) {
-            $this->createQueryBuilder('q')
-                ->update('user_multi')
-                ->set('activ', ':active')
-                ->set('connection', ':reason')
-                ->set('timestamp', ':now')
-                ->where('user_id = :userId')
-                ->andWhere('multi_id = :multiId')
-                ->setParameters([
-                    'userId' => $userId,
-                    'multiId' => $multiId,
-                    'active' => 1,
-                    'now' => time(),
-                    'reason' => $reason,
-                ])
-                ->executeQuery();
+        $entry = $this->userMultiRepository->findOneBy(['user'=>$userMulti->getUser(),'multiUser'=>$userMulti->getMultiUser()]);
+
+        if ($entry) {
+            $entry->setActive(true);
+            $entry->setTimestamp(time());
         } else {
-            $this->createQueryBuilder('q')
-                ->insert('user_multi')
-                ->values([
-                    'connection' => ':reason',
-                    'user_id' => ':userId',
-                    'multi_id' => ':multiId',
-                    'timestamp' => ':now',
-                ])
-                ->setParameters([
-                    'userId' => $userId,
-                    'multiId' => $multiId,
-                    'now' => time(),
-                    'reason' => $reason,
-                ])
-                ->executeQuery();
+            $userMulti->setActive(true);
+            $userMulti->setTimestamp(time());
+
+            $this->userMultiRepository->persist($userMulti);
         }
+
+        $this->userMultiRepository->save();
     }
 
     public function addEmptyEntry(int $userId): void
