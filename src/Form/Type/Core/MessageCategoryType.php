@@ -9,7 +9,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 class MessageCategoryType extends AbstractType
 {
     public function __construct(
-        private MessageCategoryRepository $messageCategoryRepository
+        private readonly MessageCategoryRepository $messageCategoryRepository
     ) {
     }
 
@@ -18,9 +18,10 @@ class MessageCategoryType extends AbstractType
         parent::configureOptions($resolver);
 
         $resolver->setDefaults([
-            'required' => true,
             'placeholder' => '(Alle)',
-            'choices' => array_flip($this->messageCategoryRepository->getNames()),
+            'choices' => $this->messageCategoryRepository->findBy([],['order'=>'DESC']),
+            'choice_value' => 'id',
+            'choice_label' => 'name',
         ]);
     }
 

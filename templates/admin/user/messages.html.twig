@@ -44,14 +44,14 @@
                 <tr>
                     <td>{{ formatTimestamp(message.timestamp) }}</td>
                     <td>
-                        {% if message.userFrom > 0 %}
-                            {{ component('admin_user_info_link', {id: message.userFrom}) }}
+                        {% if message.userFrom %}
+                            {{ component('admin_user_info_link', {user: message.userFrom}) }}
                         {% else %}
                             System
                         {% endif %}
                     </td>
-                    <td>{{ message.subject }}</td>
-                    <td>{{ BBCodeToHTML(message.text)|raw }}</td>
+                    <td>{{ message.messageData.subject }}</td>
+                    <td>{{ BBCodeToHTML(message.messageData.text)|raw }}</td>
                     <td>{{ message.read ? "Ja" : "Nein" }}</td>
                     <td><a href="{{ path('admin.messages') }}#message-{{ message.id }}">Details</a>
                     </td>

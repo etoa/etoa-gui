@@ -942,9 +942,8 @@ class UserController extends AbstractAdminController
 
     #[Route('/admin/users/{id}/messages', name: 'admin.users.messages', methods: ['GET'])]
     #[IsGranted('ROLE_ADMIN_TRIAL-ADMIN')]
-    public function messages(int $id, Request $request): Response
+    public function messages(Request $request, ?User $user = null): Response
     {
-        $user = $this->userRepository->getUser($id);
         if ($user === null) {
             $this->addFlash('error', 'Benutzer nicht vorhanden!');
             return $this->redirectToRoute('admin.users');
@@ -954,7 +953,7 @@ class UserController extends AbstractAdminController
 
         return $this->render('admin/user/messages.html.twig', [
             'user' => $user,
-            'messages' => $this->messageRepository->findBy(['user_to_id' => $id,],null, $limit),
+            'messages' => $this->messageRepository->findBy(['userTo' => $user],null, $limit),
             'limit' => $limit,
         ]);
     }
@@ -1134,6 +1133,7 @@ class UserController extends AbstractAdminController
         }
 
         $multi = new UserMulti();
+        $multi->setUser($user);
 
         $form = $this->createFormBuilder($multi)
             ->add('multiUser', UserType::class, [

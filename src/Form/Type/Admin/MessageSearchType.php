@@ -14,9 +14,7 @@ class MessageSearchType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('sender', UserType::class, [
-                'with_system' => true,
-            ])
+            ->add('sender', UserType::class)
             ->add('recipient', UserType::class, [
                 'label' => 'Empfänger',
             ])

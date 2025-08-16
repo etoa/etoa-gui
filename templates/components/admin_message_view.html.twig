@@ -9,7 +9,6 @@
 {% endif %}
 <tbody
     {{ attributes }}
-    data-original-data="{}" {# Hack to prevent issue with symfony/ux #}
 >
 <tr
     data-controller="toggle"
@@ -18,25 +17,25 @@
     <td>{{ formatTimestamp(this.message.timestamp) }}</td>
     <td>{{ this.userFrom }}</td>
     <td>{{ this.userTo }}</td>
-    <td>{{ this.message.subject }}</td>
+    <td>{{ this.message.messageData.subject }}</td>
     <td>{{ this.category }}</td>
     <td>
         <a href="#message-{{ this.message.id }}" data-action="click->toggle#onClick">Details</a>
         {% if this.message.deleted %}
-            <a href="#message-{{ this.message.id }}" data-action="live#action" data-action-name="prevent|undelete">Wiederherstellen</a>
+            <a href="#message-{{ this.message.id }}" data-action="live#action" data-live-action-param="prevent|undelete">Wiederherstellen</a>
         {% else %}
-            <a href="#message-{{ this.message.id }}" data-action="live#action" data-action-name="prevent|delete">Löschen</a>
+            <a href="#message-{{ this.message.id }}" data-action="live#action" data-live-action-param="prevent|delete">Löschen</a>
         {% endif %}
     </td>
 </tr>
 <tr id="message-{{ this.message.id }}" data-toggle-target="target" class="hide">
     <td colspan="3">
         <p><b>Text</b></p>
-        {{ BBCodeToHTML(this.message.text)|raw }}
+        {{ BBCodeToHTML(this.message.messageData.text)|raw }}
     </td>
     <td colspan="3">
         <p><b>Quelltext</b></p>
-        <textarea rows="5" style="width: 90%;height: 100%" readonly="readonly">{{ this.message.text }}</textarea>
+        <textarea rows="5" style="width: 90%;height: 100%" readonly="readonly">{{ this.message.messageData.text }}</textarea>
     </td>
 </tr>
 </tbody>

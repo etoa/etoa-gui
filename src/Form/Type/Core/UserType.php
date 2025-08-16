@@ -25,7 +25,6 @@ class UserType extends AbstractType
             'required' => false,
             'placeholder' => '(Alle)',
             'search' => null,
-            'with_system' => false,
             'choice_loader' => function (Options $options): ChoiceLoader {
                 return ChoiceList::lazy($this, function () use ($options): array {
                     $search = $options->offsetGet('search');
@@ -33,12 +32,7 @@ class UserType extends AbstractType
                         $search = UserSearch::create();
                     }
 
-                    $choices = $this->userRepository->searchUserNicknames($search);
-                    if ($options['with_system']) {
-                        $choices['System'] = 0;
-                    }
-
-                    return $choices;
+                    return $this->userRepository->searchUserNicknames($search);
                 });
             },
             'choice_value' => 'id',

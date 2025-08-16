@@ -3,6 +3,8 @@
 namespace EtoA\Message;
 
 use EtoA\Core\Database\AbstractSearch;
+use EtoA\Entity\MessageCategory;
+use EtoA\Entity\User;
 
 class MessageSearch extends AbstractSearch
 {
@@ -13,24 +15,24 @@ class MessageSearch extends AbstractSearch
 
     public function id(int $id): self
     {
-        $this->parts[] = 'm.message_id = :id';
+        $this->parts[] = 'q.id = :id';
         $this->parameters['id'] = $id;
 
         return $this;
     }
 
-    public function fromUser(int $id): self
+    public function fromUser(int|User $user): self
     {
-        $this->parts[] = 'm.message_user_from = :fromUser';
-        $this->parameters['fromUser'] = $id;
+        $this->parts[] = 'q.userFrom = :fromUser';
+        $this->parameters['fromUser'] = $user;
 
         return $this;
     }
 
-    public function toUser(int $id): self
+    public function toUser(int|User $user): self
     {
-        $this->parts[] = 'm.message_user_to = :toUser';
-        $this->parameters['toUser'] = $id;
+        $this->parts[] = 'q.userTo = :toUser';
+        $this->parameters['toUser'] = $user;
 
         return $this;
     }
@@ -51,42 +53,42 @@ class MessageSearch extends AbstractSearch
         return $this;
     }
 
-    public function category(int $id): self
+    public function category(int|MessageCategory $category): self
     {
-        $this->parts[] = 'm.message_cat_id = :category';
-        $this->parameters['category'] = $id;
+        $this->parts[] = 'q.cat = :category';
+        $this->parameters['category'] = $category;
 
         return $this;
     }
 
     public function read(bool $read): self
     {
-        $this->parts[] = 'm.message_read = :read';
-        $this->parameters['read'] = (int) $read;
+        $this->parts[] = 'q.read = :read';
+        $this->parameters['read'] = $read;
 
         return $this;
     }
 
     public function massmail(bool $massmail): self
     {
-        $this->parts[] = 'm.message_massmail = :massmail';
-        $this->parameters['massmail'] = (int) $massmail;
+        $this->parts[] = 'q.massMail = :massmail';
+        $this->parameters['massmail'] = $massmail;
 
         return $this;
     }
 
     public function deleted(bool $deleted): self
     {
-        $this->parts[] = 'm.message_deleted = :deleted';
-        $this->parameters['deleted'] = (int) $deleted;
+        $this->parts[] = 'q.deleted = :deleted';
+        $this->parameters['deleted'] = $deleted;
 
         return $this;
     }
 
     public function archived(bool $archived): self
     {
-        $this->parts[] = 'm.message_archived = :archived';
-        $this->parameters['archived'] = (int) $archived;
+        $this->parts[] = 'q.archived = :archived';
+        $this->parameters['archived'] = $archived;
 
         return $this;
     }

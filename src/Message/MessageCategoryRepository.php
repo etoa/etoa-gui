@@ -22,10 +22,9 @@ class MessageCategoryRepository extends AbstractRepository
     public function getNames(): array
     {
         return $this->createQueryBuilder('q')
-            ->select('cat_id', 'cat_name')
-            ->from('message_cat')
-            ->orderBy('cat_order')
-            ->fetchAllKeyValue();
+            ->orderBy('q.order')
+            ->getQuery()
+            ->execute();
     }
 
     /**

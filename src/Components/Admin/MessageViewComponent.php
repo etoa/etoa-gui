@@ -15,47 +15,30 @@ class MessageViewComponent
     use DefaultActionTrait;
 
     #[LiveProp]
-    public int $messageId;
-    #[LiveProp]
     public string $userFrom;
     #[LiveProp]
     public string $userTo;
     #[LiveProp]
     public string $category;
-    private ?Message $message = null;
-
-    public function mount(Message $message = null): void
-    {
-        $this->message = $message;
-        if ($message !== null) {
-            $this->messageId = $message->id;
-        }
-    }
+    #[LiveProp]
+    public ?Message $message = null;
 
     public function __construct(
-        private MessageRepository $messageRepository
-    ) {
-    }
+        private readonly MessageRepository $messageRepository
+    ) {}
 
     #[LiveAction]
     public function delete(): void
     {
-        $this->messageRepository->setRead($this->messageId);
-        $this->messageRepository->setDeleted($this->messageId);
+        $this->message->setRead(true);
+        $this->message->setDeleted(true);
+        $this->messageRepository->save();
     }
 
     #[LiveAction]
     public function undelete(): void
     {
-        $this->messageRepository->setDeleted($this->messageId, false);
-    }
-
-    public function getMessage(): Message
-    {
-        if ($this->message === null) {
-            $this->message = $this->messageRepository->find($this->messageId);
-        }
-
-        return $this->message;
+        $this->message->setDeleted(false);
+        $this->messageRepository->save();
     }
 }

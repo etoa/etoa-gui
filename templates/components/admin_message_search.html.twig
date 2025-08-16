@@ -16,9 +16,10 @@
     {% for message in search.entries %}
         {{ component('admin_message_view', {
             message: message,
-            userFrom: this.users[message.userFrom]|default('-'),
-            userTo: this.users[message.userTo]|default('-'),
-            category: this.categories[message.catId]|default('')
+            userFrom: message.userFrom?message.userFrom.nick:('-'),
+            userTo: message.userTo?message.userTo.nick:('-'),
+            category: message.cat?message.cat.name:'',
+            id: 'message-'~message.id
         }) }}
     {% endfor %}
 {% endblock %}

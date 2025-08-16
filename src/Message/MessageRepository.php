@@ -28,15 +28,12 @@ class MessageRepository extends AbstractRepository
      */
     public function search(MessageSearch $search, int $limit = null, int $offset = null): array
     {
-        $data = $this->applySearchSortLimit($this->createQueryBuilder('q'), $search, null, $limit, $offset)
-            ->select('m.*', 'd.*')
-            ->from('messages', 'm')
-            ->innerJoin('m', 'message_data', 'd', 'd.id = m.message_id')
-            ->orderBy('m.message_read', 'ASC')
-            ->addOrderBy('m.message_timestamp', 'DESC')
-            ->fetchAllAssociative();
-
-        return array_map(fn (array $row) => Message::createFromArray($row), $data);
+        return $this->applySearchSortLimit($this->createQueryBuilder('q'), $search, null, $limit, $offset)
+            ->innerJoin('App:MessageData', 'd', 'WITH', 'd.message = q.id')
+            ->orderBy('q.read', 'ASC')
+            ->addOrderBy('q.timestamp', 'DESC')
+            ->getQuery()
+            ->execute();
     }
 
     public function countNotArchived(): int
@@ -55,6 +52,16 @@ class MessageRepository extends AbstractRepository
             ->from('messages')
             ->where('message_deleted = 1')
             ->fetchOne();
+    }
+
+    public function countBySearch(MessageSearch $search = null): int
+    {
+        return (int) $this->applySearchSortLimit($this->createQueryBuilder('q'), $search)
+            ->select('COUNT(q)')
+            ->innerJoin('App:MessageData', 'd', 'WITH', 'd.message = q.id')
+            ->setMaxResults(1)
+            ->getQuery()
+            ->getOneOrNullResult();
     }
 
     public function countNewForUser(int $userId): int

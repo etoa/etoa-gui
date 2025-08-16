@@ -32,7 +32,7 @@ class MessageController extends AbstractAdminController
     {
         return $this->render('admin/message/search.html.twig', [
             'form' => $this->createForm(MessageSearchType::class, $request->query->all()),
-            'total' => $this->messageRepository->count(),
+            'total' => $this->messageRepository->count([]),
         ]);
     }
 

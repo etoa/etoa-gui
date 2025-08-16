@@ -26,9 +26,9 @@ class MessageSearchComponent extends AbstractController
     private MessageSearchRequest $request;
 
     public function __construct(
-        private MessageRepository $messageRepository,
-        private MessageCategoryRepository $messageCategoryRepository,
-        private UserRepository $userRepository
+        private readonly MessageRepository         $messageRepository,
+        private readonly MessageCategoryRepository $messageCategoryRepository,
+        private readonly UserRepository $userRepository
     ) {
         $this->request = new MessageSearchRequest();
     }
@@ -71,8 +71,7 @@ class MessageSearchComponent extends AbstractController
         if ($this->request->massmail !== null) {
             $search->massmail($this->request->massmail);
         }
-
-        $total = $this->messageRepository->count($search);
+        $total = $this->messageRepository->countBySearch($search);
 
         $limit = $this->getLimit($total);
 
@@ -80,7 +79,6 @@ class MessageSearchComponent extends AbstractController
 
         if ($total > 0) {
             $this->users = $this->userRepository->searchUserNicknames();
-            $this->users[0] = 'System';
             $this->categories = $this->messageCategoryRepository->getNames();
         }
 
