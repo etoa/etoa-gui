@@ -116,9 +116,9 @@ class UserSearch extends AbstractSearch
     public function inHolidays(?bool $active = true): self
     {
         if ($active === true) {
-            $this->parts[] = "q.hmodeFrom > 0";
+            $this->parts[] = "q.hmodFrom > 0";
         } elseif ($active === false) {
-            $this->parts[] = "q.hmodeFrom = 0";
+            $this->parts[] = "q.hmodFrom = 0";
         }
 
         return $this;
@@ -141,7 +141,7 @@ class UserSearch extends AbstractSearch
 
     public function inHmode(): self
     {
-        $this->parts[] = "(q.hmodeFrom < :now AND q.hmodeTo > :now)";
+        $this->parts[] = "(q.hmodFrom < :now AND q.hmodTo > :now)";
         $this->parameters['now'] = time();
 
         return $this;
@@ -149,7 +149,7 @@ class UserSearch extends AbstractSearch
 
     public function notInHmode(): self
     {
-        $this->parts[] = "q.hmodeTo < :now";
+        $this->parts[] = "q.hmodTo < :now";
         $this->parameters['now'] = time();
 
         return $this;
