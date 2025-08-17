@@ -36,30 +36,6 @@ class UserSitting implements PasswordAuthenticatedUserInterface
         return $this->password;
     }
 
-    public function getUserId(): ?int
-    {
-        return $this->userId;
-    }
-
-    public function setUserId(int $userId): static
-    {
-        $this->userId = $userId;
-
-        return $this;
-    }
-
-    public function getSitterId(): ?int
-    {
-        return $this->sitterId;
-    }
-
-    public function setSitterId(int $sitterId): static
-    {
-        $this->sitterId = $sitterId;
-
-        return $this;
-    }
-
     public function setPassword(string $password): static
     {
         $this->password = $password;

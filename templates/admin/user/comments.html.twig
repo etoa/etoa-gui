@@ -13,13 +13,13 @@
 {% block content %}
     <h2>Neuer Kommentar</h2>
     <div class="card">
-        <form action="{{ path('admin.users.comments.add', { id: user.id}) }}" method="POST">
+        {{ form_start(form) }}
             <p>
                 <label for="text">Kommentar</label><br>
-                <textarea rows="4" cols="70" id="text" name="text" placeholder="Neuer Kommentar"></textarea>
+                {{ form_widget(form.text) }}
             </p>
-            <input type="submit" value="Speichern"/>
-        </form>
+            {{ form_widget(form.submit) }}
+        {{ form_end(form) }}
     </div>
 
     <h2>Gespeicherte Kommentare</h2>
@@ -42,10 +42,10 @@
                 <tr>
                     <td>{{ BBCodeToHTML(comment.text)|raw }}</td>
                     <td>
-                        {{ formatTimestamp(comment.timestamp) }} von {{ comment.adminNick }}
+                        {{ formatTimestamp(comment.timestamp) }} von {{ comment.admin.nick }}
                     </td>
                     <td>
-                        <form action="{{ path('admin.users.comments.delete', { id: user.id, comment: comment.id }) }}"
+                        <form action="{{ path('admin.users.comments.delete', {comment: comment.id }) }}"
                               method="post" class="form-inline">
                             <button type="submit" onclick="return confirm('Wirklich löschen?')">Löschen</button>
                         </form>

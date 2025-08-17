@@ -30,19 +30,9 @@ class UserCommentRepository extends AbstractRepository
     /**
      * @return UserComment[]
      */
-    public function getComments(int $userId): array
+    public function getComments(User|int $user): array
     {
-        $data = $this->createQueryBuilder('q')
-            ->select('c.*')
-            ->addSelect('a.user_nick')
-            ->from('user_comments', 'c')
-            ->leftJoin('c', 'admin_users', 'a', 'c.comment_admin_id = a.user_id')
-            ->where('comment_user_id = :userId')
-            ->setParameter('userId', $userId)
-            ->orderBy('comment_timestamp', 'DESC')
-            ->fetchAllAssociative();
-
-        return array_map(fn (array $row) => new UserComment($row), $data);
+        return $this->findBy(['user'=>$user],['timestamp'=>'DESC']);
     }
 
     public function addComment(int $userId, int $adminUserId, string $text): void

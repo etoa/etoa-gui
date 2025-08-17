@@ -313,7 +313,7 @@ die Spielleitung";
         $replace = array($user->getNick(), $user->getNick());
         $message = str_replace($search, $replace, $message);
 
-        $this->userLogRepository->add($user->getId(), $zone, $message, gethostbyname($_SERVER['REMOTE_ADDR']), $public);
+        $this->userLogRepository->add($user, $zone, $message, gethostbyname($_SERVER['REMOTE_ADDR']), $public);
     }
 
     /**

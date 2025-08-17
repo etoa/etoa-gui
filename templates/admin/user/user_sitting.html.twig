@@ -27,7 +27,7 @@
             {% for sittedEntry in sittedEntries %}
                 <tr>
                     <td>
-                        <a href="{{ path('admin.users.view', { id: sittedEntry.sitterId }) }}">{{ sittedEntry.sitterNick }}</a>
+                        <a href="{{ path('admin.users.view', { id: sittedEntry.sitter.id }) }}">{{ sittedEntry.sitter.nick }}</a>
                     </td>
                     <td>
                         {{ formatTimestamp(sittedEntry.dateFrom) }}
@@ -37,7 +37,7 @@
                     </td>
                     {% if sittedEntry.dateTo > date().timestamp %}
                         <td>
-                            <form action="{{ path('admin.users.deleteSitting', {id: user.id, sitter: sittedEntry.id }) }}"
+                            <form action="{{ path('admin.users.deleteSitting', {userSitting: sittedEntry.id }) }}"
                                   method="post" class="form-inline">
                                 <button type="submit" class="button">Löschen</button>
                             </form>
@@ -65,7 +65,7 @@
             {% for sittingEntry in sittingEntries %}
                 <tr>
                     <td>
-                        <a href="{{ path('admin.users.view', { id: sittingEntry.userId }) }}">{{ sittingEntry.userNick }}</a>
+                        <a href="{{ path('admin.users.view', { id: sittingEntry.user.id }) }}">{{ sittingEntry.user.nick }}</a>
                     </td>
                     <td>
                         {{ formatTimestamp(sittingEntry.dateTo) }}
@@ -80,7 +80,7 @@
     {% endif %}
 
     <h2>Sitting einrichten</h2>
-    <form action="{{ path('admin.users.addSitting', {id: user.id}) }}" method="post">
+    {{ form_start(form) }}
         <table>
             <tr>
                 <td><label>Übrige Tage</label></td>
@@ -91,38 +91,37 @@
             <tr>
                 <td><label for="sitter_nick">Sitter</label></td>
                 <td>
-                    <input type="text" maxlength="20" size="20" name="sitter_nick" id="sitter_nick">
+                    {{ form_errors(form.sitter) }}
+                    {{ form_widget(form.sitter) }}
                 </td>
             </tr>
             <tr>
                 <td><label for="sitter_password1">Passwort</label></td>
                 <td>
-                    <input type="text" maxlength="20" size="20" name="sitter_password1" id="sitter_password1">
+                    {{ form_errors(form.plainPassword.first) }}
+                    {{ form_widget(form.plainPassword.first) }}
                 </td>
             </tr>
             <tr>
                 <td><label for="sitter_password2">Passwort wiederholen</label></td>
                 <td>
-                    <input type="text" maxlength="20" size="20" name="sitter_password2" id="sitter_password2">
+                    {{ form_widget(form.plainPassword.second) }}
                 </td>
             </tr>
             <tr>
                 <td><label for="sitting_time_from">Von</label></td>
                 <td>
-                    <twig:forms:date_time_input name="sitting_time_from" :value="date().timestamp"
-                                                :min="iso8601date(date().timestamp)"/>
+                    {{ form_widget(form.dateFrom) }}
                 </td>
             </tr>
             <tr>
                 <td><label for="sitting_time_to">Bis</label></td>
                 <td>
-                    <twig:forms:date_time_input name="sitting_time_to" :value="date().timestamp"
-                                                :min="iso8601date(date().timestamp)"/>
+                    {{ form_widget(form.dateTo) }}
                 </td>
             </tr>
         </table>
         <br>
-        <button type="submit">Speichern</button>
-    </form>
-
+        {{ form_widget(form.submit) }}
+    {{ form_end(form) }}
 {% endblock %}

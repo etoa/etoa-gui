@@ -75,22 +75,17 @@ class UserSittingRepository extends AbstractRepository
     /**
      * @return UserSitting[]
      */
-    public function getWhereUser(int $userId): array
+    public function getWhereUser(int|User $user): array
     {
-        return $this->findBy(['userId'=>$userId]);
+        return $this->findBy(['user'=>$user]);
     }
 
     /**
      * @return UserSitting[]
      */
-    public function getWhereSitter(int $userId): array
+    public function getWhereSitter(User $sitter): array
     {
-        $data = $this->createSitterQueryBuilder()
-            ->where('s.sitter_id = :userId')
-            ->setParameter('userId', $userId)
-            ->fetchAllAssociative();
-
-        return array_map(fn(array $row) => new UserSitting($row), $data);
+        return $this->findBy(['sitter'=>$sitter]);
     }
 
     public function existsEntry(int $userId, string $password): bool
@@ -145,14 +140,10 @@ class UserSittingRepository extends AbstractRepository
             ->orderBy('s.date_from', 'DESC');
     }
 
-    public function cancelEntry(int $id): void
+    public function cancelEntry(UserSitting $userSitting): void
     {
-        $this->createQueryBuilder('q')
-            ->update('user_sitting')
-            ->set('date_to', 'UNIX_TIMESTAMP()')
-            ->where('id = :id')
-            ->setParameter('id', $id)
-            ->executeQuery();
+        $userSitting->setDateTo(time());
+        $this->save();
     }
 
     public function cancelUserEntry(int $id, int $userId): bool

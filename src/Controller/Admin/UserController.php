@@ -3,7 +3,6 @@
 namespace EtoA\Controller\Admin;
 
 use DateTime;
-use Entity;
 use EtoA\Admin\AdminUserRepository;
 use EtoA\Alliance\AllianceRepository;
 use EtoA\Building\BuildingDataRepository;
@@ -11,6 +10,7 @@ use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Defense\DefenseDataRepository;
 use EtoA\Design\DesignsService;
 use EtoA\Entity\User;
+use EtoA\Entity\UserComment;
 use EtoA\Entity\UserMulti;
 use EtoA\Entity\UserSitting;
 use EtoA\Form\Request\Admin\UserCreateRequest;
@@ -54,10 +54,13 @@ use EtoA\User\UserSessionRepository;
 use EtoA\User\UserSittingRepository;
 use EtoA\User\UserWarningRepository;
 use Exception;
+use Symfony\Component\Form\CallbackTransformer;
+use Symfony\Component\Form\Exception\TransformationFailedException;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
+use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -155,9 +158,9 @@ class UserController extends AbstractAdminController
         $bannerPath = $this->userBannerService->getUserBannerPath($user->getId());
 
         $ratingSearch = UserRatingSearch::create()->user($user);
-        $userSession = $this->userSessionRepository->findOneBy(['user'=>$user]);
-        if(!$userSession) {
-            $userSession = $this->userSessionLogRepository->findOneBy(['user'=>$user],['id'=>'DESC']);
+        $userSession = $this->userSessionRepository->findOneBy(['user' => $user]);
+        if (!$userSession) {
+            $userSession = $this->userSessionLogRepository->findOneBy(['user' => $user], ['id' => 'DESC']);
         }
 
         $form = $this->createFormBuilder($user)
@@ -176,12 +179,12 @@ class UserController extends AbstractAdminController
             ->getForm()->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            if($form->get('cancelDelete')->isClicked()) {
+            if ($form->get('cancelDelete')->isClicked()) {
                 $this->userRepository->markDeleted($user, 0);
                 $this->addFlash('success', "Löschantrag aufgehoben!");
             }
 
-            if($form->get('verify')->isClicked()) {
+            if ($form->get('verify')->isClicked()) {
                 $this->userRepository->setVerified($user, true);
                 $this->addFlash('success', "Account freigeschaltet!");
             }
@@ -220,67 +223,67 @@ class UserController extends AbstractAdminController
         }
 
         $form = $this->createFormBuilder($user)
-            ->add('nick',TextType::class, [
-                'label' =>false,
+            ->add('nick', TextType::class, [
+                'label' => false,
                 'attr' => [
-                    'size'=>35,
-                    'maxlength'=>250
+                    'size' => 35,
+                    'maxlength' => 250
                 ],
                 'constraints' => new NotBlank(
                     ['message' => 'Du musst einen Nick eingeben!']
                 ),
             ])
-            ->add('email',TextType::class, [
-                'label' =>false,
+            ->add('email', TextType::class, [
+                'label' => false,
                 'attr' => [
-                    'size'=>35,
-                    'maxlength'=>250
+                    'size' => 35,
+                    'maxlength' => 250
                 ],
                 'constraints' => new NotBlank(
                     ['message' => 'Du musst eine Email eingeben!']
                 ),
             ])
-            ->add('name',TextType::class, [
-                'label' =>false,
+            ->add('name', TextType::class, [
+                'label' => false,
                 'attr' => [
-                    'size'=>35,
-                    'maxlength'=>250
+                    'size' => 35,
+                    'maxlength' => 250
                 ],
                 'constraints' => new NotBlank(
                     ['message' => 'Du musst einen Namen eingeben!']
                 ),
             ])
-            ->add('emailFix',TextType::class, [
-                'label' =>false,
+            ->add('emailFix', TextType::class, [
+                'label' => false,
                 'attr' => [
-                    'size'=>35,
-                    'maxlength'=>250
+                    'size' => 35,
+                    'maxlength' => 250
                 ],
                 'constraints' => new NotBlank(
                     ['message' => 'Du musst eine Email eingeben!']
                 ),
             ])
-            ->add('dualName',TextType::class, [
-                'label' =>false,
+            ->add('dualName', TextType::class, [
+                'label' => false,
                 'attr' => [
-                    'size'=>35,
-                    'maxlength'=>250
+                    'size' => 35,
+                    'maxlength' => 250
                 ],
                 'required' => false
             ])
-            ->add('dualEmail',TextType::class, [
-                'label' =>false,
+            ->add('dualEmail', TextType::class, [
+                'label' => false,
                 'attr' => [
-                    'size'=>35,
-                    'maxlength'=>250
+                    'size' => 35,
+                    'maxlength' => 250
                 ],
                 'required' => false
             ])
-            ->add('profileBoardUrl',TextType::class, [
-                'label' =>false,
+            ->add('profileBoardUrl', TextType::class, [
+                'label' => false,
                 'attr' => [
-                    'size'=>35,
-                    'maxlength'=>250
+                    'size' => 35,
+                    'maxlength' => 250
                 ],
                 'required' => false
             ])
@@ -288,54 +291,54 @@ class UserController extends AbstractAdminController
                 'mapped' => false,
                 'hash_property_path' => 'password',
                 'required' => false,
-                'label' =>false
+                'label' => false
             ])
             ->add('ghost', ChoiceType::class, [
-                'choices'  => [
+                'choices' => [
                     'Ja' => true,
                     'Nein' => false,
                 ],
                 'expanded' => true,
-                'label' =>false
+                'label' => false
             ])
             ->add('chatAdmin', ChoiceType::class, [
-                'choices'  => [
+                'choices' => [
                     'Ja' => 1,
                     'Nein' => 0,
                     'Leiter Team Community' => 2,
                     'Entwickler mit Adminrechten' => 3
                 ],
                 'expanded' => true,
-                'label' =>false
+                'label' => false
             ])
             ->add('admin', ChoiceType::class, [
-                'choices'  => [
+                'choices' => [
                     'Ja' => 1,
                     'Nein' => 0,
                     'Entwickler ohne Adminrechte' => 2
                 ],
                 'expanded' => true,
-                'label' =>false,
+                'label' => false,
             ])
             ->add('npc', ChoiceType::class, [
-                'choices'  => [
+                'choices' => [
                     'Ja' => true,
                     'Nein' => false,
                 ],
                 'expanded' => true,
-                'label' =>false,
+                'label' => false,
             ])
             ->add('blocked', ChoiceType::class, [
-                'choices'  => [
+                'choices' => [
                     'Ja' => 1,
                     'Nein' => 0,
                 ],
                 'expanded' => true,
                 'mapped' => false,
                 'choice_attr' => function () {
-                    return ['onclick'=> "this.value == 1 ? $('#ban_options').show() : $('#ban_options').hide()"];
+                    return ['onclick' => "this.value == 1 ? $('#ban_options').show() : $('#ban_options').hide()"];
                 },
-                'label' =>false,
+                'label' => false,
                 'data' => !$user->getBlockedFrom() == 0
             ])
             ->add('blockedFrom', DateTimeType::class, [
@@ -346,11 +349,11 @@ class UserController extends AbstractAdminController
                 'widget' => 'single_text',
                 'input' => 'timestamp'
             ])
-            ->add('banReason',TextareaType::class, [
-                'label' =>false,
+            ->add('banReason', TextareaType::class, [
+                'label' => false,
                 'attr' => [
-                    'rows'=>2,
-                    'cols'=>45,
+                    'rows' => 2,
+                    'cols' => 45,
                 ],
                 'required' => false
             ])
@@ -363,14 +366,14 @@ class UserController extends AbstractAdminController
                 'required' => false
             ])
             ->add('hmode', ChoiceType::class, [
-                'choices'  => [
+                'choices' => [
                     'Ja' => 1,
                     'Nein' => 0,
                 ],
                 'expanded' => true,
                 'mapped' => false,
                 'choice_attr' => function () {
-                    return ['onclick'=> "this.value == 1 ? $('#umod_options').show() : $('#umod_options').hide()"];
+                    return ['onclick' => "this.value == 1 ? $('#umod_options').show() : $('#umod_options').hide()"];
                 },
                 'label' => false,
                 'data' => !$user->getHmodFrom() == 0
@@ -395,10 +398,10 @@ class UserController extends AbstractAdminController
             ])
             ->add('avatarDel', CheckboxType::class, [
                 'mapped' => false,
-                'label' =>false,
+                'label' => false,
             ])
             ->add('imageDel', CheckboxType::class, [
-                'label' =>false,
+                'label' => false,
                 'mapped' => false
             ])
             ->add('specialist', ChoiceType::class, [
@@ -409,7 +412,7 @@ class UserController extends AbstractAdminController
                 'placeholder' => '(Keiner)',
                 'label' => false,
                 'attr' => [
-                    'onchange'=>"let spt=$('#spt'); this.value > 0 ? spt.show() : spt.hide()"
+                    'onchange' => "let spt=$('#spt'); this.value > 0 ? spt.show() : spt.hide()"
                 ],
             ])
             ->add('specialistTime', DateTimeType::class, [
@@ -425,51 +428,51 @@ class UserController extends AbstractAdminController
                 'label' => false,
             ])
             ->add('userProperties', UserPropertiesType::class, ['label' => false])
-            ->add('allianceShipPoints',TextType::class, [
-                'label' =>false,
+            ->add('allianceShipPoints', TextType::class, [
+                'label' => false,
                 'attr' => [
-                    'size'=>35,
-                    'maxlength'=>250
+                    'size' => 35,
+                    'maxlength' => 250
                 ],
                 'required' => false
             ])
-            ->add('allianceShipPointsUsed',TextType::class, [
-                'label' =>false,
+            ->add('allianceShipPointsUsed', TextType::class, [
+                'label' => false,
                 'attr' => [
-                    'size'=>35,
-                    'maxlength'=>250
+                    'size' => 35,
+                    'maxlength' => 250
                 ],
                 'required' => false
             ])
-            ->add('multiDelets',TextType::class, [
-                'label' =>false,
+            ->add('multiDelets', TextType::class, [
+                'label' => false,
                 'attr' => [
-                    'size'=>35,
-                    'maxlength'=>250
+                    'size' => 35,
+                    'maxlength' => 250
                 ],
                 'required' => false
             ])
-            ->add('sittingDays',TextType::class, [
-                'label' =>false,
+            ->add('sittingDays', TextType::class, [
+                'label' => false,
                 'attr' => [
-                    'size'=>35,
-                    'maxlength'=>250
+                    'size' => 35,
+                    'maxlength' => 250
                 ],
                 'required' => false
             ])
             ->add('userChangedMainPlanet', ChoiceType::class, [
-                'choices'  => [
+                'choices' => [
                     'Ja' => 1,
                     'Nein' => 0,
                 ],
                 'expanded' => true,
-                'label' =>false,
+                'label' => false,
             ])
-            ->add('profileText',TextareaType::class, [
-                'label' =>false,
+            ->add('profileText', TextareaType::class, [
+                'label' => false,
                 'attr' => [
-                    'rows'=>2,
-                    'cols'=>45,
+                    'rows' => 2,
+                    'cols' => 45,
                 ],
                 'required' => false
             ])
@@ -500,14 +503,14 @@ class UserController extends AbstractAdminController
             ->getForm()->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            if($form->get('cancelDelete')->isClicked()) {
+            if ($form->get('cancelDelete')->isClicked()) {
                 $this->userRepository->markDeleted($user, 0);
                 $this->addFlash('success', "Löschantrag aufgehoben!");
 
                 return $this->redirectToRoute('admin.users.view', ['id' => $user->getId()]);
             }
 
-            if($form->get('delete')->isClicked()) {
+            if ($form->get('delete')->isClicked()) {
                 try {
                     $this->userService->delete($user, false, $this->getUser()->getUserIdentifier());
                     $this->addFlash('success', 'Löschung erfolgreich!');
@@ -517,7 +520,7 @@ class UserController extends AbstractAdminController
                 return $this->redirectToRoute('admin.users');
             }
 
-            if($form->get('requestDelete')->isClicked()) {
+            if ($form->get('requestDelete')->isClicked()) {
                 $t = time() + ($this->config->getInt('user_delete_days') * 3600 * 24);
                 $this->userRepository->markDeleted($user, $t);
                 $this->addFlash('success', "Löschantrag gespeichert!");
@@ -526,8 +529,8 @@ class UserController extends AbstractAdminController
             }
 
             $changeset = $this->userRepository->getChangeset($user);
-            if (array_key_exists('nick',$changeset)) {
-                $this->userService->addToUserLog($user, "settings", $changeset['nick'][0]. "hat seinen Namen zu " . $changeset['nick'][0] . " geändert.");
+            if (array_key_exists('nick', $changeset)) {
+                $this->userService->addToUserLog($user, "settings", $changeset['nick'][0] . "hat seinen Namen zu " . $changeset['nick'][0] . " geändert.");
             }
 
             // Handle profile image
@@ -550,7 +553,7 @@ class UserController extends AbstractAdminController
             }
 
             // Handle password
-            if (array_key_exists('password',$changeset)) {
+            if (array_key_exists('password', $changeset)) {
                 $this->addFlash('success', "Das Passwort wurde geändert!");
 
                 $this->logRepository->add(LogFacility::ADMIN, LogSeverity::INFO, $this->getUser()->getUserIdentifier() . " ändert das Passwort von " . $user->getNick());
@@ -569,151 +572,6 @@ class UserController extends AbstractAdminController
         ]);
     }
 
-    /*
-    #[Route('/admin/users/{id}/edit', name: 'admin.users.update', methods: ['POST'])]
-    #[IsGranted('ROLE_ADMIN_TRIAL-ADMIN')]
-    public function update(
-        Request $request,
-        int $id,
-        UserPasswordHasherInterface $passwordHasher,
-    ): Response
-    {
-        $user = $this->userRepository->getUser($id);
-
-        if ($user->getNick() !== $request->get('user_nick')) {
-            $this->userService->addToUserLog($user, "settings", "{nick} hat seinen Namen zu " . $request->get('user_nick') . " geändert.");
-        }
-
-        $user->setName($request->request->get('user_name'));
-        $user->setNpc($request->request->getInt('npc'));
-        $user->setNick($request->request->get('user_nick'));
-        $user->setEmail($request->request->get('user_email'));
-        $user->setPasswordTemp($request->request->get('user_password_temp'));
-        $user->setEmailFix($request->request->get('user_email_fix'));
-        $user->setDualName($request->request->get('dual_name'));
-        $user->setDualEmail($request->request->get('dual_email'));
-        $user->setRaceId($request->request->getInt('user_race_id'));
-        $user->setAllianceId($request->request->getInt('user_alliance_id'));
-        $user->setProfileText($request->request->get('user_profile_text'));
-        $user->setSignature($request->request->get('user_signature'));
-        $user->setMultiDelets($request->request->getInt('user_multi_delets'));
-        $user->setSittingDays($request->request->getInt('user_sitting_days'));
-        $user->setChatAdmin($request->request->getInt('user_chatadmin'));
-        $user->setAdmin($request->request->getInt('admin'));
-        $user->setGhost($request->request->getBoolean('user_ghost'));
-        $user->setUserChangedMainPlanet($request->request->getBoolean('user_changed_main_planet'));
-        $user->setProfileBoardUrl($request->request->get('user_profile_board_url'));
-        $user->setAllianceShipPoints($request->request->getInt('user_alliace_shippoints'));
-        $user->setAllianceShipPointsUsed($request->request->getInt('user_alliace_shippoints_used'));
-
-        if ($request->request->has('user_alliance_rank_id')) {
-            $user->setAllianceRankId($request->request->getInt('user_alliance_rank_id'));
-        } else {
-            $user->setAllianceRank(null);
-        }
-        if ($request->request->has('user_profile_img_check')) {
-            $user->setProfileImageCheck(false);
-        }
-
-        // Handle specialist decision
-        if ($request->request->getInt('user_specialist_id') > 0 && $request->request->get('user_specialist_time') > 0) {
-            $user->setSpecialistTime(strtotime($request->request->get('user_specialist_time')));
-            $user->setSpecialistId($request->request->getInt('user_specialist_id'));
-        } else {
-            $user->setSpecialistTime(0);
-            $user->setSpecialistId(0);
-        }
-
-        // Handle profile image
-        if ($request->request->has('profile_img_del')) {
-            $existingProfileImage = $this->projectDir . $this->userService->buildProfileImageUrl($user->getProfileImage());
-            if (file_exists($existingProfileImage)) {
-                unlink($existingProfileImage);
-            }
-
-            $user->setProfileImage('');
-        }
-
-        // Handle avatar
-        if ($request->request->has('avatar_img_del')) {
-            $existingAvatarPath = $this->projectDir . $this->userService->buildAvatarUrl($user->getAvatar());
-            if (file_exists($existingAvatarPath)) {
-                unlink($existingAvatarPath);
-            }
-            $user->setAvatar('');
-        }
-
-        // Handle password
-        if ($request->request->has('user_password') && filled($request->request->get('user_password'))) {
-            $user->setPassword($passwordHasher->hashPassword(new CurrentPlayer($user) , $request->request->get('user_password')));
-            $this->addFlash('success', "Das Passwort wurde geändert!");
-
-            $this->logRepository->add(LogFacility::ADMIN, LogSeverity::INFO, $this->getUser()->getUserIdentifier() . " ändert das Passwort von " . $request->request->get('user_nick'));
-        }
-
-        // Handle ban
-        if ($request->request->getInt('ban_enable') == 1) {
-            $ban_from = $this->parseDatePicker($request->request->get('user_blocked_from'));
-            $ban_to = $this->parseDatePicker($request->request->get('user_blocked_to'));
-
-            $user->setBlockedFrom($ban_from);
-            $user->setBlockedTo($ban_to);
-            $user->setBanAdminId($request->request->getInt('user_ban_admin_id'));
-            $user->setBanReason( $request->request->get('user_ban_reason'));
-
-            $adminUserNicks = $this->adminUserRepo->findAllAsList();
-            $adminUserNick = $adminUserNicks[$request->request->getInt('user_ban_admin_id')] ?? '';
-            $this->userService->addToUserLog($user, "account", "{nick} wird von [b]" . date("d.m.Y H:i", $ban_from) . "[/b] bis [b]" . date("d.m.Y H:i", $ban_to) . "[/b] gesperrt.\n[b]Grund:[/b] " . addslashes($request->request->get('user_ban_reason')) . "\n[b]Verantwortlich: [/b] " . $adminUserNick);
-        } else {
-            $user->setBlockedFrom(0);
-            $user->setBlockedTo(0);
-            $user->setBanAdminId(0);
-            $user->setBanReason('');
-        }
-
-        // Handle holiday mode
-        if ($request->request->getInt('umod_enable') == 1) {
-            $this->userHolidayService->activateHolidayMode($user, true);
-            $user->setHmodFrom($this->parseDatePicker($request->request->get('user_hmode_from')));
-            $user->setHmodTo($this->parseDatePicker($request->request->get('user_hmode_to')));
-        } else {
-            $this->userHolidayService->deactivateHolidayMode($user, true);
-            $user->setHmodFrom(0);
-            $user->setHmodTo(0);
-        }
-
-        // Perform query
-        $this->userRepository->save($user);
-
-        //
-        // Speichert User einstellungen
-        //
-
-        $properties = $this->userPropertiesRepository->getOrCreateProperties($id);
-        $properties->setCssStyle(filled($request->request->get('css_style')) ? $request->request->get('css_style') : null);
-        $properties->setPlanetCircleWidth($request->request->getInt('planet_circle_width'));
-        $properties->setItemShow($request->request->get('item_show'));
-        $properties->setImageFilter($request->request->getInt('image_filter') == 1);
-        $properties->setMsgSignature(filled($request->request->get('msgsignature')) ? $request->request->get('msgsignature') : null);
-        $properties->setMsgCreationPreview($request->request->getInt('msgcreation_preview') == 1);
-        $properties->setMsgPreview($request->request->getInt('msgcreation_preview') == 1);
-        $properties->setMsgCopy($request->request->getInt('msg_copy') == 1);
-        $properties->setMsgBlink($request->request->getInt('msg_blink') == 1);
-        $properties->setSpyShipId($request->request->getInt('spyship_id'));
-        $properties->setSpyShipCount($request->request->getInt('spyship_count'));
-        $properties->setAnalyzeShipId($request->request->getInt('analyzeship_id'));
-        $properties->setAnalyzeShipCount($request->request->getInt('analyzeship_count'));
-        $properties->setHavenShipsButtons($request->request->getInt('havenships_buttons') == 1);
-        $properties->setShowAdds($request->request->getInt('show_adds') == 1);
-        $properties->setFleetRtnMsg( $request->request->getInt('fleet_rtn_msg') == 1);
-
-        $this->userPropertiesRepository->storeProperties($properties);
-
-        $this->addFlash('success', "Änderungen wurden übernommen!");
-
-        return $this->redirectToRoute('admin.users.view', ['id' => $id]);
-    }
-*/
     #[Route('/admin/users/{id}/economy', name: 'admin.users.economy')]
     #[IsGranted('ROLE_ADMIN_TRIAL-ADMIN')]
     public function economy(?User $user = null): Response
@@ -886,7 +744,7 @@ class UserController extends AbstractAdminController
                 'severity' => LogSeverity::SEVERITIES[$log->getSeverity()],
                 'ip' => $log->getIp(),
                 'te' => $log->getEntity() ? $log->getEntity()->toString() : "-",
-                'ob' => $log->getBuilding()->getName() ." " . ($log->getLevel() > 0 ? $log->getLevel() : ''),
+                'ob' => $log->getBuilding()->getName() . " " . ($log->getLevel() > 0 ? $log->getLevel() : ''),
                 'obStatus' => match ($log->getStatus()) {
                     1 => "Ausbau abgebrochen",
                     2 => "Abriss abgebrochen",
@@ -953,7 +811,7 @@ class UserController extends AbstractAdminController
 
         return $this->render('admin/user/messages.html.twig', [
             'user' => $user,
-            'messages' => $this->messageRepository->findBy(['userTo' => $user],null, $limit),
+            'messages' => $this->messageRepository->findBy(['userTo' => $user], null, $limit),
             'limit' => $limit,
         ]);
     }
@@ -973,70 +831,75 @@ class UserController extends AbstractAdminController
             return $this->redirectToRoute('admin.users.messages', ['id' => $id]);
         }
 
-        $this->messageRepository->createSystemMessage($user,  $this->messageCategoryRepository->find(MessageCategoryId::USER), $request->get('subject'), $request->get('message'));
+        $this->messageRepository->createSystemMessage($user, $this->messageCategoryRepository->find(MessageCategoryId::USER), $request->get('subject'), $request->get('message'));
 
         $this->addFlash('success', 'Nachricht gesendet');
         return $this->redirectToRoute('admin.users.messages', ['id' => $id]);
     }
 
-    #[Route('/admin/users/{id}/comments', name: 'admin.users.comments', methods: ['GET'])]
+    #[Route('/admin/users/{id}/comments', name: 'admin.users.comments')]
     #[IsGranted('ROLE_ADMIN_TRIAL-ADMIN')]
-    public function comments(int $id): Response
+    public function comments(Request $request, ?User $user = null): Response
     {
-        $user = $this->userRepository->getUser($id);
         if ($user === null) {
             $this->addFlash('error', 'Benutzer nicht vorhanden!');
             return $this->redirectToRoute('admin.users');
+        }
+
+        $userComment = new UserComment();
+
+        $form = $this->createFormBuilder($userComment)
+            ->add('text', TextareaType::class, [
+                'label' => false,
+                'attr' => [
+                    "rows" => 4,
+                    "cols" => 70,
+                    "placeholder" => "Neuer Kommentar"
+                ],
+                'constraints' => new NotBlank(
+                    ['message' => 'Du musst einen Text eingeben!']
+                ),
+            ])
+            ->add('submit', SubmitType::class, [
+                'label' => 'Speichern'
+            ])
+            ->getForm()
+            ->handleRequest($request);
+
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $userComment->setUser($user);
+            $userComment->setAdmin($this->getUser()->getData());
+            $userComment->setTimestamp(time());
+
+            $this->userCommentRepository->persist($userComment);
+            $this->userCommentRepository->save();
+
+            $this->addFlash('success', 'Kommentar hinzugefügt');
         }
 
         return $this->render('admin/user/comments.html.twig', [
             'user' => $user,
-            'comments' => $this->userCommentRepository->getComments($id),
+            'comments' => $this->userCommentRepository->getComments($user),
+            'form' => $form
         ]);
     }
 
-    #[Route('/admin/users/{id}/comments', name: 'admin.users.comments.add', methods: ['POST'])]
+    #[Route('/admin/users/comments/{comment}/delete', name: 'admin.users.comments.delete', methods: ['POST'])]
     #[IsGranted('ROLE_ADMIN_TRIAL-ADMIN')]
-    public function addComment(int $id, Request $request): Response
+    public function deleteComment(UserComment $comment): Response
     {
-        $user = $this->userRepository->getUser($id);
-        if ($user === null) {
-            $this->addFlash('error', 'Benutzer nicht vorhanden!');
-            return $this->redirectToRoute('admin.users');
-        }
-
-        if (blank($request->get('text'))) {
-            $this->addFlash('error', 'Text fehlt!');
-            return $this->redirectToRoute('admin.users.comments', ['id' => $id]);
-        }
-
-        $this->userCommentRepository->addComment($id, $this->getUser()->getId(), $request->get('text'));
-
-        $this->addFlash('success', 'Kommentar hinzugefügt');
-        return $this->redirectToRoute('admin.users.comments', ['id' => $id]);
-    }
-
-    #[Route('/admin/users/{id}/comments/{comment}/delete', name: 'admin.users.comments.delete', methods: ['POST'])]
-    #[IsGranted('ROLE_ADMIN_TRIAL-ADMIN')]
-    public function deleteComment(int $id, int $comment): Response
-    {
-        $user = $this->userRepository->getUser($id);
-        if ($user === null) {
-            $this->addFlash('error', 'Benutzer nicht vorhanden!');
-            return $this->redirectToRoute('admin.users');
-        }
-
-        $this->userCommentRepository->deleteComment($comment);
+        $this->userCommentRepository->remove($comment);
+        $this->userCommentRepository->save();
 
         $this->addFlash('success', 'Kommentar gelöscht');
-        return $this->redirectToRoute('admin.users.comments', ['id' => $id]);
+        return $this->redirectToRoute('admin.users.comments', ['id' => $comment->getUser()->getId()]);
     }
 
     #[Route('/admin/users/{id}/logs', name: 'admin.users.logs')]
     #[IsGranted('ROLE_ADMIN_TRIAL-ADMIN')]
-    public function logs(int $id, Request $request): Response
+    public function logs(Request $request, ?User $user = null): Response
     {
-        $user = $this->userRepository->getUser($id);
         if ($user === null) {
             $this->addFlash('error', 'Benutzer nicht vorhanden!');
             return $this->redirectToRoute('admin.users');
@@ -1048,14 +911,14 @@ class UserController extends AbstractAdminController
         if ($form->isSubmitted() && $form->isValid()) {
             $this->userService->addToUserLog($user, "settings", $userLogEntryRequest->message);
             $this->addFlash('success', 'Log hinzugefügt');
-            return $this->redirectToRoute('admin.users.logs', ['id' => $id]);
+            return $this->redirectToRoute('admin.users.logs', ['id' => $user->getId()]);
         }
 
         $limit = $request->query->getInt('limit', 100);
 
         return $this->render('admin/user/logs.html.twig', [
             'user' => $user,
-            'logs' => $this->userLogRepository->getUserLogs($id, $limit),
+            'logs' => $this->userLogRepository->getUserLogs($user, $limit),
             'form' => $form->createView(),
         ]);
     }
@@ -1077,9 +940,8 @@ class UserController extends AbstractAdminController
 
     #[Route('/admin/users/{id}/points', name: 'admin.users.points', methods: ['GET'])]
     #[IsGranted('ROLE_ADMIN_TRIAL-ADMIN')]
-    public function points(int $id, Request $request): Response
+    public function points(Request $request, ?User $user = null): Response
     {
-        $user = $this->userRepository->getUser($id);
         if ($user === null) {
             $this->addFlash('error', 'Benutzer nicht vorhanden!');
             return $this->redirectToRoute('admin.users');
@@ -1096,7 +958,7 @@ class UserController extends AbstractAdminController
 
         return $this->render('admin/user/points.html.twig', [
             'user' => $user,
-            'userPoints' => $this->userPointsRepository->getPoints($id, $limit, $start, $end),
+            'userPoints' => $this->userPointsRepository->getPoints($user, $limit, $start, $end),
             'limit' => $limit,
             'start' => $start,
             'end' => $end,
@@ -1142,8 +1004,8 @@ class UserController extends AbstractAdminController
             ->add('reason', TextType::class, [
                 'label' => false,
                 'attr' => [
-                    'maxlength'=>"20",
-                    'size'=>"20"
+                    'maxlength' => "20",
+                    'size' => "20"
                 ],
                 'constraints' => [new NotBlank()],
             ])
@@ -1222,22 +1084,106 @@ class UserController extends AbstractAdminController
 
     #[Route('/admin/users/{id}/sitting', name: 'admin.users.user_sitting')]
     #[IsGranted('ROLE_ADMIN_TRIAL-ADMIN')]
-    public function sitting(int $id): Response
+    public function sitting(Request $request, ?User $user = null): Response
     {
-        $user = $this->userRepository->getUser($id);
         if ($user === null) {
             $this->addFlash('error', 'Benutzer nicht vorhanden!');
             return $this->redirectToRoute('admin.users');
         }
 
-        $userSittings = $this->userSittingRepository->getWhereUser($user->getId());
+        $userSitting = new UserSitting();
+
+        $form = $this->createFormBuilder($userSitting)
+            ->add('sitter', TextType::class, [
+                'label' => false,
+                'invalid_message' => 'Kein gültiger User!'
+            ])
+            ->add('dateFrom', DateTimeType::class, [
+                'widget' => 'single_text',
+                'input' => 'timestamp',
+                'data' => time(),
+                'attr' => [
+                    'min' => time()
+                ]
+            ])
+            ->add('dateTo', DateTimeType::class, [
+                'widget' => 'single_text',
+                'input' => 'timestamp',
+                'data' => time(),
+                'attr' => [
+                    'min' => time()
+                ]
+            ])
+            ->add('plainPassword', RepeatedType::class, [
+                'type' => PasswordType::class,
+                'options' => [
+                    'attr' => [
+                        'autocomplete' => 'off',
+                        'maxlength' => "20",
+                        'size' => "20",
+                    ]
+                ],
+                'required' => true,
+                'first_options' => [
+                    'hash_property_path' => 'password',
+                ],
+                'mapped' => false,
+            ])
+            ->add('submit', SubmitType::class, [
+                'label' => 'Speichern',
+            ]);
+
+        $form = $form->add($form->get('sitter')->addModelTransformer(new CallbackTransformer(
+            function (?User $user): string {
+                return $user ? $user->getNick() : '';
+            },
+            function (?string $nick) {
+                $user = $this->userRepository->findOneBy(['nick'=>$nick]);
+
+                if (!$user) {
+                    throw new TransformationFailedException(sprintf('Ein Benutzer mit dem Nickname "%s" wurde nicht gefunden.', $nick));
+                }
+
+                return $user;
+
+            }
+        )))
+            ->getForm()->handleRequest($request);
+
+        $userSittings = $this->userSittingRepository->getWhereUser($user);
         $used_days = array_reduce($userSittings, fn($carry, UserSitting $entry) => $carry + (($entry->getDateTo() - $entry->getDateFrom()) / 86400), 0);
+        $availableDays = floor($user->getSittingDays() - $used_days);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $diff = ceil(($userSitting->getDateTo() - $userSitting->getDateFrom()) / 86400);
+
+            if ($diff <= 0) {
+                $this->addFlash('error', "Enddatum muss größer als Startdatum sein!");
+                return $this->redirectToRoute('admin.users.user_sitting', ['id' => $user->getId()]);
+            }
+
+            if ($diff > $availableDays) {
+                $this->addFlash('error', "So viele Tage sind nicht mehr vorhanden!");
+                return $this->redirectToRoute('admin.users.user_sitting', ['id' => $user->getId()]);
+            }
+
+            if($user === $userSitting->getSitter()) {
+                $this->addFlash('error', "Man kann nicht den selben Nick im Sitting eintragen!");
+                return $this->redirectToRoute('admin.users.user_sitting', ['id' => $user->getId()]);
+            }
+
+            $userSitting->setUser($user);
+            $this->userSittingRepository->addEntry($userSitting);
+            $this->userSittingRepository->save();
+            $this->addFlash('success', "Sitting eingerichtet!");
+        }
 
         return $this->render('admin/user/user_sitting.html.twig', [
             'user' => $user,
             'sittedEntries' => $userSittings,
-            'sittingEntries' => $this->userSittingRepository->getWhereSitter($user->getId()),
-            'availableDays' => floor($user->getSittingDays() - $used_days),
+            'sittingEntries' => $this->userSittingRepository->getWhereSitter($user),
+            'availableDays' => $availableDays,
+            'form' => $form
         ]);
     }
 
@@ -1291,20 +1237,14 @@ class UserController extends AbstractAdminController
         return $this->redirectToRoute('admin.users.user_sitting', ['id' => $id]);
     }
 
-    #[Route('/admin/users/{id}/deleteSitting/{sitter}', name: 'admin.users.deleteSitting', methods: ['POST'])]
+    #[Route('/admin/users/deleteSitting/{userSitting}', name: 'admin.users.deleteSitting', methods: ['POST'])]
     #[IsGranted('ROLE_ADMIN_TRIAL-ADMIN')]
-    public function deleteSitting(int $id, int $sitter): Response
+    public function deleteSitting(UserSitting $userSitting): Response
     {
-        $user = $this->userRepository->getUser($id);
-        if ($user === null) {
-            $this->addFlash('error', 'Benutzer nicht vorhanden!');
-            return $this->redirectToRoute('admin.users');
-        }
-
-        $this->userSittingRepository->cancelEntry($sitter);
+        $this->userSittingRepository->cancelEntry($userSitting);
         $this->addFlash('success', "Eintrag gelöscht!");
 
-        return $this->redirectToRoute('admin.users.user_sitting', ['id' => $id]);
+        return $this->redirectToRoute('admin.users.user_sitting', ['id' => $userSitting->getUser()->getId()]);
     }
 
     /**

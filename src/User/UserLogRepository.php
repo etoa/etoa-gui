@@ -14,11 +14,11 @@ class UserLogRepository extends AbstractRepository
         parent::__construct($registry, UserLog::class);
     }
 
-    public function add(int $userId, string $zone, string $message, string $host, bool $public): void
+    public function add(User $user, string $zone, string $message, string $host, bool $public): void
     {
 
         $userLog = new UserLog();
-        $userLog->setUserId($userId);
+        $userLog->setUser($user);
         $userLog->setTimestamp(time());
         $userLog->setZone($zone);
         $userLog->setMessage($message);
