@@ -53,16 +53,16 @@ class PlanetService
      * Existing buildings will be transferred to the new owner,
      * but ships and defense will be deleted.
      */
-    public function changeOwner(int $id, int $newUserId): void
+    public function changeOwner(Planet $planet): void
     {
-        $this->repository->changeUser($id, $newUserId, 'Unbenannt');
-        if ($newUserId > 0) {
-            $this->buildingRepository->updateUserForEntity($newUserId, $id);
+        $this->repository->changeUser($planet, $planet->getUser(), 'Unbenannt');
+        if ($planet->getUser()) {
+            $this->buildingRepository->updateUserForEntity($planet->getUser(), $planet);
         } else {
-            $this->buildingRepository->removeForEntity($id);
+            $this->buildingRepository->removeForEntity($planet);
         }
-        $this->shipRepository->removeForEntity($id);
-        $this->defenseRepository->removeForEntity($id);
+        $this->shipListRepository->removeForEntity($planet);
+        $this->defenseRepository->removeForEntity($planet);
     }
 
     public function setDefaultResources(Planet $planet): void

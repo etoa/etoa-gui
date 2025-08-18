@@ -79,10 +79,8 @@ class UserController extends AbstractAdminController
         private readonly UserService                $userService,
         private readonly LogRepository              $logRepository,
         private readonly UserRepository             $userRepository,
-        private readonly UserPropertiesRepository   $userPropertiesRepository,
         private readonly UserMultiRepository        $userMultiRepository,
         private readonly UserSittingRepository      $userSittingRepository,
-        private readonly UserHolidayService         $userHolidayService,
         private readonly UserWarningRepository      $userWarningRepository,
         private readonly AdminUserRepository        $adminUserRepo,
         private readonly NetworkNameService         $networkNameService,
@@ -91,17 +89,10 @@ class UserController extends AbstractAdminController
         private readonly RaceDataRepository         $raceRepository,
         private readonly SpecialistDataRepository   $specialistRepository,
         private readonly AllianceRepository         $allianceRepository,
-        private readonly ShipDataRepository         $shipDateRepository,
         private readonly UserBannerService          $userBannerService,
-        private readonly DesignsService             $designsService,
         private readonly UserLoginFailureRepository $userLoginFailureRepository,
         private readonly UserRatingRepository       $userRatingRepository,
-        private readonly PlanetRepository           $planetRepository,
         private readonly GameLogRepository          $gameLogRepository,
-        private readonly BuildingDataRepository     $buildingRepository,
-        private readonly TechnologyDataRepository   $techRepository,
-        private readonly ShipDataRepository         $shipRepository,
-        private readonly DefenseDataRepository      $defenseRepository,
         private readonly MessageRepository          $messageRepository,
         private readonly UserLogRepository          $userLogRepository,
         private readonly UserPointsRepository       $userPointsRepository,
@@ -1032,39 +1023,6 @@ class UserController extends AbstractAdminController
         ]);
     }
 
-    #[Route('/admin/users/{id}/addMulti', name: 'admin.users.addMulti', methods: ['POST'])]
-    #[IsGranted('ROLE_ADMIN_TRIAL-ADMIN')]
-    public function addMulti(int $id, Request $request): Response
-    {
-        $user = $this->userRepository->getUser($id);
-        if ($user === null) {
-            $this->addFlash('error', 'Benutzer nicht vorhanden!');
-            return $this->redirectToRoute('admin.users');
-        }
-
-        if (!filled($request->request->get('new_multi')) || !filled($request->request->get('multi_reason'))) {
-            $this->addFlash('error', 'Multi Name oder Beziehung fehlt!');
-            return $this->redirectToRoute('admin.users.user_multi', ['id' => $id]);
-        }
-
-        $newMultiUserId = $this->userRepository->getUserIdByNick($request->request->get('new_multi'));
-        if ($newMultiUserId === null) {
-            $this->addFlash('error', "Dieser User existiert nicht!");
-            return $this->redirectToRoute('admin.users.user_multi', ['id' => $id]);
-        }
-
-        // Prüfe ob der eigene Nick eingetragen ist
-        if ($newMultiUserId == $id) {
-            $this->addFlash('error', "Man kann nicht den selben Nick als Multi eintragen!");
-            return $this->redirectToRoute('admin.users.user_multi', ['id' => $id]);
-        }
-
-        $this->userMultiRepository->addOrUpdateEntry($id, $newMultiUserId, $request->request->get('multi_reason'));
-        $this->addFlash('success', "Neuer Multi User angelegt!");
-
-        return $this->redirectToRoute('admin.users.user_multi', ['id' => $id]);
-    }
-
     #[Route('/admin/users/{id}/deleteMulti/{multi}', name: 'admin.users.deleteMulti', methods: ['POST'])]
     #[IsGranted('ROLE_ADMIN_TRIAL-ADMIN')]
     public function deleteMulti(int $id, int $multi): Response
@@ -1185,56 +1143,6 @@ class UserController extends AbstractAdminController
             'availableDays' => $availableDays,
             'form' => $form
         ]);
-    }
-
-    #[Route('/admin/users/{id}/addSitting', name: 'admin.users.addSitting', methods: ['POST'])]
-    #[IsGranted('ROLE_ADMIN_TRIAL-ADMIN')]
-    public function addSitting(int $id, Request $request): Response
-    {
-        $user = $this->userRepository->getUser($id);
-        if ($user === null) {
-            $this->addFlash('error', 'Benutzer nicht vorhanden!');
-            return $this->redirectToRoute('admin.users');
-        }
-
-        if (!filled($request->request->get('sitter_nick')) || !filled($request->request->get('sitter_password1'))) {
-            $this->addFlash('error', 'Sitter Name oder Passwort fehlt!');
-            return $this->redirectToRoute('admin.users.user_sitting', ['id' => $id]);
-        }
-
-        if ($request->request->get('sitter_password1') != $request->request->get('sitter_password2')) {
-            $this->addFlash('error', 'Sitter Passwörter stimmen nicht überein!');
-            return $this->redirectToRoute('admin.users.user_sitting', ['id' => $id]);
-        }
-
-        $sitting_from = $this->parseDatePicker($request->request->get('sitting_time_from'));
-        $sitting_to = $this->parseDatePicker($request->request->get('sitting_time_to'));
-        $diff = ceil(($sitting_to - $sitting_from) / 86400);
-        $pw = saltPasswort($request->request->get('sitter_password1'));
-        $sitterId = $this->userRepository->getUserIdByNick($request->request->get('sitter_nick'));
-
-        if ($sitterId == $id) {
-            $this->addFlash('error', "Man kann nicht den selben Nick im Sitting eintragen!");
-            return $this->redirectToRoute('admin.users.user_sitting', ['id' => $id]);
-        }
-
-        if ($diff <= 0) {
-            $this->addFlash('error', "Enddatum muss größer als Startdatum sein!");
-            return $this->redirectToRoute('admin.users.user_sitting', ['id' => $id]);
-        }
-        if ($sitterId === null) {
-            $this->addFlash('error', "Dieser Sitternick existiert nicht!");
-            return $this->redirectToRoute('admin.users.user_sitting', ['id' => $id]);
-        }
-
-        if ($diff > $user->getSittingDays()) {
-            $this->addFlash('error', "So viele Tage sind nicht mehr vorhanden!!");
-            return $this->redirectToRoute('admin.users.user_sitting', ['id' => $id]);
-        }
-
-        $this->userSittingRepository->addEntry($id, $sitterId, $pw, $sitting_from, $sitting_to);
-        $this->addFlash('success', "Sitting eingerichtet!");
-        return $this->redirectToRoute('admin.users.user_sitting', ['id' => $id]);
     }
 
     #[Route('/admin/users/deleteSitting/{userSitting}', name: 'admin.users.deleteSitting', methods: ['POST'])]

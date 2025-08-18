@@ -238,11 +238,13 @@ class EntityRepository extends AbstractRepository
     public function countEntityLabels(EntityLabelSearch $search = null): int
     {
         return (int) $this->getEntityCoordinatesQueryBuilder($search)
-            ->select('COUNT(*)')
-            ->leftJoin('e', 'planets', 'planets', 'e.id = planets.id')
-            ->leftJoin('planets', 'users', 'users', 'users.user_id = planets.planet_user_id')
-            ->leftJoin('e', 'stars', 'stars', 'e.id = stars.id')
-            ->fetchOne();
+            ->select('COUNT(q)')
+            ->leftJoin('App:Planet', 'planets', 'WITH', 'q.id = planets.id')
+            ->leftJoin('App:User', 'users', 'WITH', 'users.id = planets.user')
+            ->leftJoin('App:Star', 'stars', 'WITH', 'q.id = stars.id')
+            ->setMaxResults(1)
+            ->getQuery()
+            ->getOneOrNullResult();
     }
 
     private function getEntityCoordinatesQueryBuilder(EntitySearch $search = null, AbstractSort $sort = null, int $limit = null, int $offset = null): QueryBuilder

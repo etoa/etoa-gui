@@ -11,7 +11,7 @@ class EntityLabelSearch extends EntitySearch
 
     public function planetUserId(int $planetUserId): self
     {
-        $this->parts[] = 'planets.planet_user_id = :planetUserId';
+        $this->parts[] = 'planets.user = :planetUserId';
         $this->parameters['planetUserId'] = $planetUserId;
 
         return $this;
@@ -19,15 +19,15 @@ class EntityLabelSearch extends EntitySearch
 
     public function planetUserIdNotNull(): self
     {
-        $this->parts[] = 'planets.planet_user_id > 0';
+        $this->parts[] = 'planets.user IS NOT NULL';
 
         return $this;
     }
 
     public function planetUserMain(bool $main): self
     {
-        $this->parts[] = 'planets.planet_user_main = :planetUserMain';
-        $this->parameters['planetUserMain'] = (int) $main;
+        $this->parts[] = 'planets.mainPlanet = :planetUserMain';
+        $this->parameters['planetUserMain'] = $main;
 
         return $this;
     }
@@ -35,9 +35,9 @@ class EntityLabelSearch extends EntitySearch
     public function planetDebris(bool $debris): self
     {
         if ($debris) {
-            $this->parts[] = 'planets.planet_wf_metal > 0 OR planets.planet_wf_crystal > 0 OR planets.planet_wf_plastic > 0';
+            $this->parts[] = 'planets.wfMetal > 0 OR planets.wfCrystal > 0 OR planets.pwfPlastic > 0';
         } else {
-            $this->parts[] = 'planets.planet_wf_metal = 0 AND planets.planet_wf_crystal = 0 AND planets.planet_wf_plastic = 0';
+            $this->parts[] = 'planets.wfMetal = 0 AND planets.wfCrystal = 0 AND planets.wfPlastic = 0';
         }
 
         return $this;
@@ -46,9 +46,9 @@ class EntityLabelSearch extends EntitySearch
     public function planetHasDescription(bool $description): self
     {
         if ($description) {
-            $this->parts[] = "p.planet_desc <> ''";
+            $this->parts[] = "p.description <> ''";
         } else {
-            $this->parts[] = "p.planet_desc = ''";
+            $this->parts[] = "p.description = ''";
         }
 
         return $this;
@@ -64,7 +64,7 @@ class EntityLabelSearch extends EntitySearch
 
     public function likePlanetUserNick(string $userNick): self
     {
-        $this->parts[] = 'users.user_nick LIKE :userNick';
+        $this->parts[] = 'users.nick LIKE :userNick';
         $this->parameters['userNick'] = '%' . $userNick . '%';
 
         return $this;

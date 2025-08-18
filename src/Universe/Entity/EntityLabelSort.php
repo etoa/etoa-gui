@@ -13,11 +13,11 @@ class EntityLabelSort extends AbstractSort
 
     public static function planetName(): EntityLabelSort
     {
-        return new EntityLabelSort(['planets.planet_name' => null]);
+        return new EntityLabelSort(['planets.name' => null]);
     }
 
     public static function userNick(): EntityLabelSort
     {
-        return new EntityLabelSort(['users.user_nick' => null]);
+        return new EntityLabelSort(['users.nick' => null]);
     }
 }

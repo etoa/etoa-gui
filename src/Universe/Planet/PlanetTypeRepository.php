@@ -16,9 +16,9 @@ class PlanetTypeRepository extends AbstractRepository
     }
 
     /**
-     * Returns an array of planet types names indexed by their id.
+     * Returns an array of planet types indexed by their id.
      *
-     * @return array<int, string>
+     * @return array<int, PlanetType>
      */
     public function getPlanetTypeNames(bool $showAll = false): array
     {

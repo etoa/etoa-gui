@@ -344,27 +344,18 @@ class PlanetRepository extends AbstractRepository
         $this->save();
     }
 
-    public function changeUser(int $id, int $userId, ?string $name = null): bool
+    public function changeUser(Planet $planet, ?User $user, ?string $name = null): void
     {
-        $qry = $this->createQueryBuilder('q')
-            ->update('planets')
-            ->set('planet_user_id', ':userId')
-            ->set('planet_user_changed', 'UNIX_TIMESTAMP()')
-            ->set('planet_user_main', (string) 0)
-            ->where('id = :id')
-            ->setParameters([
-                'id' => $id,
-                'userId' => $userId,
-            ]);
+        if($planet->getUser() !== $user)
+            $planet->setUser($user);
+        $planet->setUserChanged(time());
+        $planet->setMainPlanet(false);
 
-        if ($name !== null) {
-            $qry->set('planet_name', ':name')
-                ->setParameter('name', $name);
+        if ($name) {
+            $planet->setName($name);
         }
 
-        $affected = $qry->executeQuery()->rowCount();
-
-        return $affected > 0;
+        $this->save();
     }
 
     public function setNameAndComment(int $id, string $name, string $comment): void
@@ -458,37 +449,28 @@ class PlanetRepository extends AbstractRepository
             ->execute();
     }
 
-    public function setMain(Planet $planet, User $user): void
+    public function setMain(Planet $planet): void
     {
         $this->createQueryBuilder('q')
             ->update()
             ->set('q.mainPlanet',0)
             ->where('q.user = :user')
             ->setParameters([
-                'user' => $user,
+                'user' => $planet->getUser(),
             ])
             ->getQuery()
             ->execute();
 
         $planet->setMainPlanet(true);
-        $user->setUserChangedMainPlanet(true);
+        $planet->getUser()->setUserChangedMainPlanet(true);
 
         $this->save();
     }
 
-    public function unsetMain(int $id): bool
+    public function unsetMain(Planet $planet): void
     {
-        $affected = $this->createQueryBuilder('q')
-            ->update('planets')
-            ->set('planet_user_main', (string) 0)
-            ->where('id = :id')
-            ->setParameters([
-                'id' => $id,
-            ])
-            ->executeQuery()
-            ->rowCount();
-
-        return $affected > 0;
+        $planet->setMainPlanet(false);
+        $this->save();
     }
 
     public function freezeProduction(int $userId): void

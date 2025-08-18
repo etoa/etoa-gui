@@ -20,7 +20,7 @@ class EditWormholeType extends AbstractType
                 'disabled' => 'disabled',
                 'input' => 'timestamp',
             ])
-            ->add('targetId', EntityType::class, [
+            ->add('target', EntityType::class, [
                 'label' => 'Ziel',
                 'disabled' => 'disabled',
                 'search' => EntityLabelSearch::create()->codeIn([\EtoA\Universe\Entity\EntityType::WORMHOLE]),

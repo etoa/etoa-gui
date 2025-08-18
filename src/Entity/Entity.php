@@ -253,4 +253,13 @@ class Entity
             default => 'Niemand',
         };
     }
+
+    public function getOwner(): ?User
+    {
+        if($this->getCode() === EntityType::PLANET && $this->planet->getUser()) {
+            return $this->planet->getUser();
+        }
+
+        return null;
+    }
 }

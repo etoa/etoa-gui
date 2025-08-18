@@ -32,11 +32,11 @@ class EditPlanetType extends AbstractType
                 'label' => 'Beschreibung',
                 'required' => false,
             ])
-            ->add('typeId', PlanetTypeType::class, [
+            ->add('planetType', PlanetTypeType::class, [
                 'label' => 'Type',
                 'show_all' => true,
             ])
-            ->add('userId', UserType::class, [
+            ->add('user', UserType::class, [
                 'label' => 'Besitzer',
             ])
             ->add('mainPlanet', CheckboxType::class, [
@@ -46,7 +46,7 @@ class EditPlanetType extends AbstractType
             ->add('userChanged', DateTimeType::class, [
                 'required' => false,
                 'input' => 'timestamp',
-                'label' => 'Letzer Besitzerwechsel',
+                'label' => 'Letzter Besitzerwechsel',
                 'disabled' => 'disabled',
             ])
             ->add('resetUserChanged', CheckboxType::class, [

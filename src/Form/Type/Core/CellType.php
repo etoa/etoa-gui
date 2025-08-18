@@ -20,7 +20,7 @@ class CellType extends AbstractType
         $cells = $this->cellRepository->findAllCoordinates();
         $choices = [];
         foreach ($cells as $cell) {
-            $choices[$cell->toString()] = $cell->id;
+            $choices[$cell->toString()] = $cell->getId();
         }
 
         $resolver->setDefaults([

@@ -3,6 +3,7 @@
 namespace EtoA\Controller\Admin;
 
 use EtoA\Backend\BackendMessageService;
+use EtoA\Entity\Entity;
 use EtoA\Form\Type\Admin\EditAsteroidType;
 use EtoA\Form\Type\Admin\EditEmptySpaceType;
 use EtoA\Form\Type\Admin\EditNebualType;
@@ -14,10 +15,6 @@ use EtoA\Log\LogFacility;
 use EtoA\Log\LogRepository;
 use EtoA\Log\LogSeverity;
 use EtoA\Universe\Asteroid\AsteroidRepository;
-use EtoA\Universe\EmptySpace\EmptySpaceRepository;
-use EtoA\Universe\Entity\EntityLabel;
-use EtoA\Universe\Entity\EntityRepository;
-use EtoA\Universe\Entity\EntitySearch;
 use EtoA\Universe\Entity\EntityType;
 use EtoA\Universe\Nebula\NebulaRepository;
 use EtoA\Universe\Planet\PlanetRepository;
@@ -33,9 +30,7 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 class EntityController extends AbstractAdminController
 {
     public function __construct(
-        private readonly EntityRepository      $entityRepository,
         private readonly StarRepository        $starRepository,
-        private readonly EmptySpaceRepository  $emptySpaceRepository,
         private readonly WormholeRepository    $wormholeRepository,
         private readonly AsteroidRepository    $asteroidRepository,
         private readonly NebulaRepository      $nebulaRepository,
@@ -73,9 +68,8 @@ class EntityController extends AbstractAdminController
 
     #[Route('/admin/universe/entities/{id}', name: 'admin.universe.entity')]
     #[IsGranted('ROLE_ADMIN_MASTER')]
-    public function edit(Request $request, int $id): Response
+    public function edit(Request $request, ?Entity $entity = null): Response
     {
-        $entity = $this->entityRepository->searchEntityLabel(EntitySearch::create()->id($id));
         if ($entity === null) {
             $this->addFlash('error', 'Entity nicht vorhanden');
 
@@ -83,7 +77,7 @@ class EntityController extends AbstractAdminController
         }
 
         $form = null;
-        switch ($entity->code) {
+        switch ($entity->getCode()) {
             case EntityType::STAR:
                 $form = $this->handleStar($request, $entity);
 
@@ -117,13 +111,13 @@ class EntityController extends AbstractAdminController
         ]);
     }
 
-    private function handleStar(Request $request, EntityLabel $entity): FormInterface
+    private function handleStar(Request $request, Entity $entity): FormInterface
     {
-        $star = $this->starRepository->find($entity->id);
+        $star = $entity->getStar();
         $form = $this->createForm(EditStartType::class, $star);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->starRepository->update($star->id, $star->name, $star->typeId);
+            $this->starRepository->save();
 
             $this->addFlash('success', 'Änderungen übernommen');
         }
@@ -131,20 +125,20 @@ class EntityController extends AbstractAdminController
         return $form;
     }
 
-    private function handleEmptySpace(EntityLabel $entity): FormInterface
+    private function handleEmptySpace(Entity $entity): FormInterface
     {
-        $emptySpace = $this->emptySpaceRepository->find($entity->id);
+        $emptySpace = $entity->getEmptySpace();
 
         return $this->createForm(EditEmptySpaceType::class, $emptySpace);
     }
 
-    private function handleWormhole(Request $request, EntityLabel $entity): FormInterface
+    private function handleWormhole(Request $request, Entity $entity): FormInterface
     {
-        $wormhole = $this->wormholeRepository->find($entity->id);
+        $wormhole = $entity->getWormhole();
         $form = $this->createForm(EditWormholeType::class, $wormhole);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->wormholeRepository->setPersistent($wormhole->id, $wormhole->persistent);
+            $this->wormholeRepository->save();
 
             $this->addFlash('success', 'Änderungen übernommen');
         }
@@ -152,79 +146,71 @@ class EntityController extends AbstractAdminController
         return $form;
     }
 
-    private function handleAsteroid(Request $request, EntityLabel $entity): FormInterface
+    private function handleAsteroid(Request $request, Entity $entity): FormInterface
     {
-        $asteroid = $this->asteroidRepository->find($entity->id);
+        $asteroid = $entity->getAsteroid();
         $form = $this->createForm(EditAsteroidType::class, $asteroid);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->asteroidRepository->update($asteroid->id, $asteroid->resMetal, $asteroid->resCrystal, $asteroid->resPlastic, $asteroid->resFuel, $asteroid->resFood, $asteroid->resPower);
+            $this->asteroidRepository->save();
 
             $this->addFlash('success', 'Änderungen übernommen');
-
-            $form = $this->createForm(EditAsteroidType::class, $asteroid); // Recreate form to refresh resource values
         }
 
         return $form;
     }
 
-    private function handleNebula(Request $request, EntityLabel $entity): FormInterface
+    private function handleNebula(Request $request, Entity $entity): FormInterface
     {
-        $nebula = $this->nebulaRepository->find($entity->id);
+        $nebula = $entity->getNebula();
         $form = $this->createForm(EditNebualType::class, $nebula);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->nebulaRepository->update($nebula->id, $nebula->resMetal, $nebula->resCrystal, $nebula->resPlastic, $nebula->resFuel, $nebula->resFood, $nebula->resPower);
+            $this->nebulaRepository->save();
 
             $this->addFlash('success', 'Änderungen übernommen');
-
-            $form = $this->createForm(EditNebualType::class, $nebula); // Recreate form to refresh resource values
         }
 
         return $form;
     }
 
-    private function handlePlanet(Request $request, EntityLabel $entity): FormInterface
+    private function handlePlanet(Request $request, Entity $entity): FormInterface
     {
-        $planet = $this->planetRepository->find($entity->id);
-        $wasMainPlanet = $planet->mainPlanet;
-        $previousPlanetUserId = $planet->userId;
+        $planet = $entity->getPlanet();
         $form = $this->createForm(EditPlanetType::class, $planet);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->planetRepository->update($planet);
-            if ((bool)$form->get('resetUserChanged')->getData()) {
-                $this->planetRepository->resetUserChanged($planet->id);
+            if ($form->get('resetUserChanged')->getData()) {
+                $planet->setUserChanged(0);
             }
 
-            if ($wasMainPlanet && !$planet->mainPlanet) {
-                if ($this->planetRepository->setMain($planet->id, $planet->userId)) {
-                    $this->addFlash('success', "Hauptplanet gesetzt; ursprüngliche Hautpplanet-Zuordnung entfernt!");
-                }
-            } elseif (!$wasMainPlanet && $planet->mainPlanet) {
-                if ($this->planetRepository->unsetMain($planet->id)) {
-                    $this->addFlash('success', "Hauptplanet-Zuordnung entfernt. Denke daran, einen neuen Hautplanet festzulegen!");
-                }
+            $changeset = $this->planetRepository->getChangeset($planet);
+
+            if (array_key_exists('mainPlanet',$changeset) && $planet->isMainPlanet()) {
+                $this->planetRepository->setMain($planet);
+                $this->addFlash('success', "Hauptplanet gesetzt; ursprüngliche Hautpplanet-Zuordnung entfernt!");
+
+            } elseif (array_key_exists('mainPlanet',$changeset) && !$planet->isMainPlanet()) {
+                $this->planetRepository->unsetMain($planet);
+                $this->addFlash('success', "Hauptplanet-Zuordnung entfernt. Denke daran, einen neuen Hautplanet festzulegen!");
             }
 
-            if ($planet->userId !== $previousPlanetUserId) {
-                $this->planetService->changeOwner($planet->id, $planet->userId);
+            if (array_key_exists('user',$changeset)) {
+                $this->planetService->changeOwner($planet);
 
-                if ($planet->userId === 0) {
-                    $this->planetRepository->reset($planet->id);
+                if (!$planet->getUser()) {
+                    $this->planetRepository->reset($planet);
                 }
 
                 //Log Schreiben
-                $this->logRepository->add(LogFacility::GALAXY, LogSeverity::INFO, $this->getUser()->getUsername() . " wechselt den Besitzer vom Planeten: [page galaxy sub=edit id=" . $planet->id . "][B]" . $planet->id . "[/B][/page]
-Alter Besitzer: [page user sub=edit user_id=" . $previousPlanetUserId . "][B]" . $previousPlanetUserId . "[/B][/page]
-Neuer Besitzer: [page user sub=edit user_id=" . $planet->userId . "][B]" . $planet->userId . "[/B][/page]");
+                $this->logRepository->add(LogFacility::GALAXY, LogSeverity::INFO, $this->getUser()->getUsername() . " wechselt den Besitzer vom Planeten: [page galaxy sub=edit id=" . $planet->getId() . "][B]" . $planet->getId() . "[/B][/page]
+Alter Besitzer: [page=".$this->generateUrl('admin.users.edit',['id'=>$changeset['user'][0]?->getId()])."][B]" . $changeset['user'][0]?->getId() . "[/B][/page]
+Neuer Besitzer: [page=".$this->generateUrl('admin.users.edit',['id'=>$planet->getUser()?->getId()])."][B]" . $planet->getUser()?->getId() . "[/B][/page]");
 
-                $this->addFlash('success', "Der Planet wurde dem User mit der ID: " . $planet->userId . " übergeben!");
+                $this->addFlash('success', "Der Planet wurde dem User mit der ID: " . $planet->getUser()->getId() . " übergeben!");
             }
-
+            $this->planetRepository->save();
             $this->addFlash('success', 'Änderungen übernommen');
-
-            $form = $this->createForm(EditPlanetType::class, $planet); // Recreate form to refresh resource values
         }
 
         return $form;

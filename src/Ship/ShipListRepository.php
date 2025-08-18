@@ -172,7 +172,7 @@ class ShipListRepository extends AbstractRepository
         return $count > 0;
     }
 
-    public function removeForEntity(Entity $entity): void
+    public function removeForEntity(Planet $entity): void
     {
         $this->createQueryBuilder('q')
             ->delete()

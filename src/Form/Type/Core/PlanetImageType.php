@@ -27,12 +27,13 @@ class PlanetImageType extends AbstractType
             'placeholder' => false,
             'choice_loader' => function (Options $options): ChoiceLoader {
                 return ChoiceList::lazy($this, function (): array {
-                    $typeNames = $this->planetTypeRepository->getPlanetTypeNames(true);
+                    $planetTypes = $this->planetTypeRepository->getPlanetTypeNames(true);
                     $choices = [];
                     $max = $this->config->getInt('num_planet_images');
-                    foreach ($typeNames as $typeId => $typeName) {
+
+                    foreach ($planetTypes as $type) {
                         for ($x = 1; $x <= $max; $x++) {
-                            $choices[$typeName . ' ' . $x] = $typeId . '_' . $x;
+                            $choices[$type->getName() . ' ' . $x] = $type->getId() . '_' . $x;
                         }
                     }
 

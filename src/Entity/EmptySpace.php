@@ -24,7 +24,7 @@ class EmptySpace extends AbstractEntity implements ObjectWithImage
     #[ORM\JoinColumn(name: 'id', referencedColumnName: 'id')]
     private Entity $entity;
 
-    #[ORM\Column(type: "integer")]
+    #[ORM\Column(name: 'lastvisited', type: "integer")]
     private int $lastVisited;
 
     public function getEntityCodeString(): string

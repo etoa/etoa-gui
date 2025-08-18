@@ -69,18 +69,6 @@ class Star extends AbstractEntity implements ObjectWithImage
         return $this;
     }
 
-    public function getTypeId(): ?int
-    {
-        return $this->typeId;
-    }
-
-    public function setTypeId(int $typeId): static
-    {
-        $this->typeId = $typeId;
-
-        return $this;
-    }
-
     public function getSolarType(): ?SolarType
     {
         return $this->solarType;

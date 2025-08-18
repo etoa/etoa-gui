@@ -73,18 +73,7 @@ class CellRepository extends AbstractRepository
      */
     public function findAllCoordinates(): array
     {
-        $data = $this->createQueryBuilder('q')
-            ->select(
-                "id",
-                "sx",
-                "sy",
-                "cx",
-                "cy"
-            )
-            ->from('cells')
-            ->fetchAllAssociative();
-
-        return array_map(fn (array $arr) => new Cell($arr), $data);
+        return $this->findAll();
     }
 
     public function create(int $sx, int $sy, int $cx, int $cy): int

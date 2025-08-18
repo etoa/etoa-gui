@@ -278,7 +278,7 @@ class DefenseRepository extends AbstractRepository
         return array_map(fn ($row) => DefenseListItem::createFromData($row), $data);
     }
 
-    public function removeForEntity(Entity $entity): void
+    public function removeForEntity(Planet $entity): void
     {
         $this->createQueryBuilder('q')
             ->delete()

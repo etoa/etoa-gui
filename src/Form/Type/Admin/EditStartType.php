@@ -14,7 +14,7 @@ class EditStartType extends AbstractType
     {
         $builder
             ->add('name', TextType::class)
-            ->add('typeId', SolarTypeType::class, [
+            ->add('solarType', SolarTypeType::class, [
                 'label' => 'Type',
                 'show_all' => true,
                 'required' => true,
