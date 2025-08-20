@@ -15,15 +15,16 @@ class AddBuildingItemType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('buildingId', BuildingType::class, [
+            ->add('building', BuildingType::class, [
                 'label' => 'Gebäude',
                 'placeholder' => false,
                 'required' => true,
             ])
-            ->add('entityId', EntityType::class, [
+            ->add('entity', EntityType::class, [
                 'label' => 'Entity',
                 'placeholder' => false,
                 'required' => true,
+                'get_type' => true,
                 'search' => EntitySearch::create()->codeIn([\EtoA\Universe\Entity\EntityType::PLANET]),
             ])
             ->add('currentLevel', IntegerType::class, [

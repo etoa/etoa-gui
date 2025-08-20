@@ -2,10 +2,14 @@
 
 namespace EtoA\Form\Request\Admin;
 
+use EtoA\Entity\Building;
+use EtoA\Entity\Planet;
+use EtoA\Entity\User;
+
 class BuildingSearchRequest
 {
-    public ?int $userId = null;
-    public ?int $entityId = null;
-    public ?int $buildingId = null;
+    public ?User $user = null;
+    public ?Planet $entity = null;
+    public ?Building $building = null;
     public ?int $buildType = null;
 }

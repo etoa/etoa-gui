@@ -3,6 +3,9 @@
 namespace EtoA\Building;
 
 use EtoA\Core\Database\AbstractSearch;
+use EtoA\Entity\Building;
+use EtoA\Entity\Planet;
+use EtoA\Entity\User;
 
 class BuildingListItemSearch extends AbstractSearch
 {
@@ -11,33 +14,33 @@ class BuildingListItemSearch extends AbstractSearch
         return new BuildingListItemSearch();
     }
 
-    public function userId(int $userId): self
+    public function user(User|int $user): self
     {
-        $this->parts[] = 'buildlist_user_id = :userId';
-        $this->parameters['userId'] = $userId;
+        $this->parts[] = 'q.user = :user';
+        $this->parameters['user'] = $user;
 
         return $this;
     }
 
-    public function entityId(int $entityId): self
+    public function entity(Planet|int $entity): self
     {
-        $this->parts[] = 'buildlist_entity_id = :entityId';
-        $this->parameters['entityId'] = $entityId;
+        $this->parts[] = 'q.entity = :entity';
+        $this->parameters['entity'] = $entity;
 
         return $this;
     }
 
-    public function buildingId(int $buildingId): self
+    public function building(Building|int $building): self
     {
-        $this->parts[] = 'buildlist_building_id = :buildingId';
-        $this->parameters['buildingId'] = $buildingId;
+        $this->parts[] = 'q.building = :building';
+        $this->parameters['building'] = $building;
 
         return $this;
     }
 
     public function buildType(int $buildType): self
     {
-        $this->parts[] = 'buildlist_build_type = :buildType';
+        $this->parts[] = 'q.buildType = :buildType';
         $this->parameters['buildType'] = $buildType;
 
         return $this;

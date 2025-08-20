@@ -20,7 +20,9 @@ class BuildingType extends AbstractType
         $resolver->setDefaults([
             'required' => false,
             'placeholder' => '(Alle)',
-            'choices' => array_flip($this->buildingDataRepository->getBuildingNames()),
+            'choices' => $this->buildingDataRepository->getBuildingNames(),
+            'choice_value' => 'id',
+            'choice_label' => 'name',
         ]);
     }
 

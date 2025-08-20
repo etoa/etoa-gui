@@ -68,8 +68,7 @@ class BuildingDataRepository extends AbstractRepository
     public function getBuildingNames(bool $showAll = false, BuildingSort $orderBy = null): array
     {
         $orderBy = $orderBy ?? BuildingSort::name();
-        $qb = $this->applySearchSortLimit($this->createQueryBuilder('q'), null, $orderBy)
-            ->select('q.id', 'q.name');
+        $qb = $this->applySearchSortLimit($this->createQueryBuilder('q'), null, $orderBy);
 
         if (!$showAll) {
             $qb->where('q.show = 1');

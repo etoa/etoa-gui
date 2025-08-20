@@ -7,6 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 use EtoA\Building\BuildingTypeDataRepository;
 
 #[ORM\Entity(repositoryClass: BuildingTypeDataRepository::class)]
+#[ORM\Table(name: 'building_types')]
 class BuildingType
 {
     #[ORM\Id]

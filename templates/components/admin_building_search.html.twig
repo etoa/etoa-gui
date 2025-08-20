@@ -15,9 +15,7 @@
     {% for item in search.entries %}
         {{ component('admin_building_view', {
             item: item,
-            user: this.users[item.userId],
-            building: this.buildingNames[item.buildingId],
-            entity: this.entities[item.entityId]
+            id: 'item-'~item.id
         }) }}
     {% else %}
         <tr><td colspan="9999"><i>Keine Einträge vorhanden</i></td></tr>

@@ -39,7 +39,7 @@ class BuildingListItem
     private int $endTime = 0;
 
     #[ORM\Column(name: "buildlist_build_type", type: "smallint")]
-    private int $buildType;
+    private int $buildType = 0;
 
     #[ORM\Column(name: "buildlist_prod_percent", type: "decimal")]
     private string $prodPercent = '1';

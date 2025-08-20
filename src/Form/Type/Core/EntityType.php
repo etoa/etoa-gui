@@ -14,7 +14,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 class EntityType extends AbstractType
 {
     public function __construct(
-        private EntityRepository $entityRepository,
+        private readonly EntityRepository $entityRepository,
     ) {
     }
 
@@ -26,6 +26,7 @@ class EntityType extends AbstractType
             'required' => false,
             'search' => null,
             'with_code_string' => true,
+            'get_type' => false,
             'placeholder' => '(Alle)',
             'choice_loader' => function (Options $options): ChoiceLoader {
                 return ChoiceList::lazy($this, function () use ($options): array {
@@ -37,8 +38,9 @@ class EntityType extends AbstractType
                     $entries = $this->entityRepository->searchEntityLabels($search);
                     $choices = [];
                     foreach ($entries as $entry) {
-                        $labelPrefix = (bool) $options['with_code_string'] ? $entry->codeString() . ' ' : '';
-                        $choices[$labelPrefix . $entry->toStringWithOwner()] = $entry->id;
+                        $labelPrefix = $options['with_code_string'] ? $entry->codeString() . ' ' : '';
+
+                        $choices[$labelPrefix . $entry->toString() .' '. $entry->displayName()] = $options['get_type'] ? $entry->getType():$entry;
                     }
 
                     return $choices;

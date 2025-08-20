@@ -229,20 +229,21 @@ class BuildingListItemRepository extends AbstractRepository
         return $affected > 0;
     }
 
-    public function updateUserForEntity(int $newUserId, int $entityId): void
+    public function updateUserForEntity(User $newUser, Planet $entity): void
     {
         $this->createQueryBuilder('q')
-            ->update('buildlist')
-            ->set('buildlist_user_id', ':newUserId')
-            ->where('buildlist_entity_id = :entityId')
+            ->update()
+            ->set('q.user', ':newUser')
+            ->where('q.entity = :entity')
             ->setParameters([
-                'newUserId' => $newUserId,
-                'entityId' => $entityId,
+                'newUser' => $newUser,
+                'entity' => $entity,
             ])
-            ->executeQuery();
+            ->getQuery()
+            ->execute();
     }
 
-    public function removeForEntity(Entity $entity): void
+    public function removeForEntity(Planet $entity): void
     {
         $this->createQueryBuilder('q')
             ->delete()
@@ -364,12 +365,9 @@ class BuildingListItemRepository extends AbstractRepository
      */
     public function search(BuildingListItemSearch $search, int $limit = null, int $offset = null): array
     {
-        $data = $this->applySearchSortLimit($this->createQueryBuilder('q'), $search, null, $limit, $offset)
-            ->select('*')
-            ->from('buildlist')
-            ->fetchAllAssociative();
-
-        return array_map(fn($row) => BuildingListItem::createFromData($row), $data);
+        return $this->applySearchSortLimit($this->createQueryBuilder('q'), $search, null, $limit, $offset)
+            ->getQuery()
+            ->execute();
     }
 
     /**
@@ -693,5 +691,14 @@ class BuildingListItemRepository extends AbstractRepository
             ])
             ->getQuery()
             ->execute();
+    }
+
+    public function countBySearch(BuildingListItemSearch $search = null): int
+    {
+        return (int) $this->applySearchSortLimit($this->createQueryBuilder('q'), $search)
+            ->select('COUNT(q)')
+            ->setMaxResults(1)
+            ->getQuery()
+            ->getOneOrNullResult();
     }
 }

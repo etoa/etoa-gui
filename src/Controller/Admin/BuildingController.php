@@ -27,8 +27,7 @@ class BuildingController extends AbstractAdminController
         private readonly BuildingPointRepository       $buildingPointRepository,
         private readonly RankingService                $rankingService,
         private readonly BuildingRequirementRepository $buildingRequirementRepository,
-        private readonly BuildingListItemRepository    $buildingRepository,
-        private readonly PlanetRepository              $planetRepository,
+        private readonly BuildingListItemRepository    $buildingRepository
     )
     {
     }
@@ -41,7 +40,9 @@ class BuildingController extends AbstractAdminController
         $addForm = $this->createForm(AddBuildingItemType::class, $addItem);
         $addForm->handleRequest($request);
         if ($addForm->isSubmitted() && $addForm->isValid()) {
-            $this->buildingRepository->addBuilding($addItem);
+            $addItem->setUser($addForm->get('entity')->getData()->getUser());
+            $this->buildingRepository->persist($addItem);
+            $this->buildingRepository->save();
 
             $this->addFlash('success', 'Gebäude hinzugefügt');
         }
@@ -49,7 +50,7 @@ class BuildingController extends AbstractAdminController
         return $this->render('admin/building/search.html.twig', [
             'addForm' => $addForm->createView(),
             'form' => $this->createForm(BuildingSearchType::class, $request->query->all()),
-            'total' => $this->buildingRepository->count(),
+            'total' => $this->buildingRepository->count([]),
         ]);
     }
 
