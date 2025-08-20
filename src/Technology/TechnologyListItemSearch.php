@@ -3,6 +3,9 @@
 namespace EtoA\Technology;
 
 use EtoA\Core\Database\AbstractSearch;
+use EtoA\Entity\Entity;
+use EtoA\Entity\Technology;
+use EtoA\Entity\User;
 
 class TechnologyListItemSearch extends AbstractSearch
 {
@@ -11,7 +14,7 @@ class TechnologyListItemSearch extends AbstractSearch
         return new TechnologyListItemSearch();
     }
 
-    public function userId(int $userId): self
+    public function userId(User|int $userId): self
     {
         $this->parts[] = 'q.user = :userId';
         $this->parameters['userId'] = $userId;
@@ -21,15 +24,15 @@ class TechnologyListItemSearch extends AbstractSearch
 
     public function likeUserNick(string $userNick): self
     {
-        $this->parts[] = 'users.user_nick LIKE :likeUserNick';
+        $this->parts[] = 'users.nick LIKE :likeUserNick';
         $this->parameters['likeUserNick'] = '%' . $userNick . '%';
 
         return $this;
     }
 
-    public function entityId(int $entityId): self
+    public function entityId(Entity|int $entityId): self
     {
-        $this->parts[] = 'techlist_entity_id = :entityId';
+        $this->parts[] = 'q.entity = :entityId';
         $this->parameters['entityId'] = $entityId;
 
         return $this;
@@ -37,13 +40,13 @@ class TechnologyListItemSearch extends AbstractSearch
 
     public function likePlanetName(string $planetName): self
     {
-        $this->parts[] = 'planets.planet_name LIKE :likePlanetName';
+        $this->parts[] = 'planets.name LIKE :likePlanetName';
         $this->parameters['likePlanetName'] = '%' . $planetName . '%';
 
         return $this;
     }
 
-    public function technologyId(int $technologyId): self
+    public function technologyId(int|Technology $technologyId): self
     {
         $this->parts[] = 'q.technology = :technologyId';
         $this->parameters['technologyId'] = $technologyId;

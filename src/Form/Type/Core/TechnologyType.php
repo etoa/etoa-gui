@@ -9,7 +9,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 class TechnologyType extends AbstractType
 {
     public function __construct(
-        private TechnologyDataRepository $technologyDataRepository,
+        private readonly TechnologyDataRepository $technologyDataRepository,
     ) {
     }
 
@@ -20,7 +20,9 @@ class TechnologyType extends AbstractType
         $resolver->setDefaults([
             'required' => false,
             'placeholder' => '',
-            'choices' => array_flip($this->technologyDataRepository->getTechnologyNames()),
+            'choices' => $this->technologyDataRepository->getTechnologyNames(),
+            'choice_value' => 'id',
+            'choice_label' => 'name',
         ]);
     }
 

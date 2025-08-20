@@ -36,10 +36,10 @@ class TechnologySearchComponent extends AbstractController
     public array $technologyNames = [];
 
     public function __construct(
-        private TechnologyListItemRepository $technologyRepository,
-        private TechnologyDataRepository     $technologyDataRepository,
-        private UserRepository               $userRepository,
-        private EntityRepository             $entityRepository,
+        private readonly TechnologyListItemRepository $technologyRepository,
+        private readonly TechnologyDataRepository     $technologyDataRepository,
+        private readonly UserRepository               $userRepository,
+        private readonly EntityRepository             $entityRepository,
     ) {
         $this->buildTypes = TechnologyBuildType::all();
         $this->request = new TechnologySearchRequest();
@@ -48,16 +48,16 @@ class TechnologySearchComponent extends AbstractController
     public function getSearch(): SearchResult
     {
         $search = TechnologyListItemSearch::create();
-        if ($this->request->userId > 0) {
-            $search->userId($this->request->userId);
+        if ($this->request->user) {
+            $search->userId($this->request->user);
         }
 
-        if ($this->request->techId > 0) {
-            $search->technologyId($this->request->techId);
+        if ($this->request->technology) {
+            $search->technologyId($this->request->technology);
         }
 
-        if ($this->request->entityId > 0) {
-            $search->entityId($this->request->entityId);
+        if ($this->request->entity) {
+            $search->entityId($this->request->entity);
         }
 
         if ($this->request->buildType > 0) {
@@ -69,12 +69,6 @@ class TechnologySearchComponent extends AbstractController
         $limit = $this->getLimit($total);
 
         $entries = $this->technologyRepository->search($search, $this->perPage, $limit);
-        if ($total > 0) {
-            $this->userNicks = $this->userRepository->searchUserNicknames();
-            $this->technologyNames = $this->technologyDataRepository->getTechnologyNames(true);
-            $entityIds = array_map(fn (TechnologyListItem $item) => $item->getEntityId(), $entries);
-            $this->entities = array_map(fn (EntityLabel $label) => $label->toString(), $this->entityRepository->searchEntityLabels(EntitySearch::create()->ids($entityIds)));
-        }
 
         return new SearchResult($entries, $limit, $total, $this->perPage);
     }

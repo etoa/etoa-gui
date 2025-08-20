@@ -41,16 +41,18 @@ class TechnologyController extends AbstractAdminController
         $addForm = $this->createForm(AddTechnologyItemType::class, $addItem);
         $addForm->handleRequest($request);
         if ($addForm->isSubmitted() && $addForm->isValid()) {
-            $userId = $this->planetRepository->getPlanetUserId($addItem->getEntityId());
-            if ((bool)$addForm->get('all')->getData()) {
-                $techIds = array_keys($this->technologyDataRepository->getTechnologyNames(true));
-                foreach ($techIds as $techId) {
-                    $this->technologyRepository->addTechnology($techId, $addItem->getCurrentLevel(), $userId, $addItem->getEntityId());
+            $user = $addForm->get('entity')->getData()->getPlanet()->getUser();
+            $addItem->setUser($user);
+
+            if ($addForm->get('all')->getData()) {
+                $techs = $this->technologyDataRepository->findAll();
+                foreach ($techs as $tech) {
+                    $this->technologyRepository->addTechnology($tech, $addItem->getCurrentLevel(), $user, $addItem->getEntity());
                 }
 
-                $this->addFlash('success', count($techIds) . ' Forschungen hinzugefügt');
+                $this->addFlash('success', count($techs) . ' Forschungen hinzugefügt');
             } else {
-                $this->technologyRepository->addTechnology($addItem->getTechnologyId(), $addItem->getCurrentLevel(), $userId, $addItem->getEntityId());
+                $this->technologyRepository->addTechnology($addForm->get('technology')->getData(), $addItem->getCurrentLevel(), $user, $addForm->get('entity')->getData());
 
                 $this->addFlash('success', 'Forschung hinzugefügt');
             }
@@ -59,7 +61,7 @@ class TechnologyController extends AbstractAdminController
         return $this->render('admin/technology/search.html.twig', [
             'addForm' => $addForm->createView(),
             'form' => $this->createForm(TechnologySearchType::class, $request->request->all()),
-            'total' => $this->technologyRepository->count(),
+            'total' => $this->technologyRepository->count([]),
         ]);
     }
 

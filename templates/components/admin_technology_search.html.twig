@@ -15,9 +15,7 @@
     {% for item in search.entries %}
         {{ component('admin_technology_view', {
             item: item,
-            user: this.userNicks[item.userId],
-            technology: this.technologyNames[item.technologyId],
-            entity: this.entities[item.entityId]
+            id: 'item'~item.id
         }) }}
     {% else %}
         <tr><td colspan="9999"><i>Keine Einträge vorhanden</i></td></tr>

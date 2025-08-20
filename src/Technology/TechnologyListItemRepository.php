@@ -6,6 +6,7 @@ namespace EtoA\Technology;
 
 use Doctrine\Persistence\ManagerRegistry;
 use EtoA\Core\AbstractRepository;
+use EtoA\Entity\Entity;
 use EtoA\Entity\Technology;
 use EtoA\Entity\TechnologyListItem;
 use EtoA\Entity\User;
@@ -86,22 +87,21 @@ class TechnologyListItemRepository extends AbstractRepository
         return $this->findOneBy(['user'=>$user,'technology'=>$technology])?->getCurrentLevel();
     }
 
-    public function addTechnology(int $technologyId, int $level, int $userId, int $entityId): void
+    public function addTechnology(Technology $technology, int $level, User $user, Entity $entity): void
     {
-        $item = $this->findOneBy(['userId'=>$userId,'technologyId'=>$technologyId,'entityId'=>$entityId]);
+        $item = $this->findOneBy(['user'=>$user,'technology'=>$technology,'entity'=>$entity]);
 
         if(!$item) {
             $item = new TechnologyListItem();
-            $item->setUserId($userId);
-            $item->setEntityId($entityId);
-            $item->setEntity($this->entityRepository->findOneBy(['id'=>$entityId]));
-            $item->setTechnologyId($technologyId);
+            $this->persist($item);
         }
 
+        $item->setUser($user);
+        $item->setEntity($entity);
+        $item->setTechnology($technology);
         $item->setCurrentLevel(max(0, $level));
 
-        $this->getEntityManager()->persist($item);
-        $this->getEntityManager()->flush();
+        $this->save();
     }
 
     public function updateBuildStatus(int $userId, int $entityId, int $technologyId, int $status, int $startTime, int $endTime): bool
@@ -260,11 +260,8 @@ class TechnologyListItemRepository extends AbstractRepository
      */
     public function search(TechnologyListItemSearch $search, int $limit = null, int $offset = null): array
     {
-        $data = $this->applySearchSortLimit($this->createQueryBuilder('q'), $search, null, $limit, $offset)
-            ->select('techlist.*')
-            ->from('techlist')
-            ->fetchAllAssociative();
-
-        return array_map(fn ($row) => TechnologyListItem::createFromData($row), $data);
+        return $this->applySearchSortLimit($this->createQueryBuilder('q'), $search, null, $limit, $offset)
+            ->getQuery()
+            ->execute();
     }
 }

@@ -17,16 +17,16 @@ class TechnologySort
 
     public static function id(): TechnologySort
     {
-        return new TechnologySort(['t.tech_id']);
+        return new TechnologySort(['q.id']);
     }
 
     public static function name(): TechnologySort
     {
-        return new TechnologySort(['t.tech_name']);
+        return new TechnologySort(['q.name']);
     }
 
     public static function type(): TechnologySort
     {
-        return new TechnologySort(['tt.order', 't.order', 't.name']);
+        return new TechnologySort(['tt.order', 'q.order', 'q.name']);
     }
 }

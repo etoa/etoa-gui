@@ -15,14 +15,14 @@ class TechnologySearchType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('userId', UserType::class, [
+            ->add('user', UserType::class, [
                 'label' => 'Spieler',
             ])
-            ->add('entityId', EntityType::class, [
+            ->add('entity', EntityType::class, [
                 'label' => 'Planet',
                 'search' => EntitySearch::create()->codeIn([\EtoA\Universe\Entity\EntityType::PLANET]),
             ])
-            ->add('techId', TechnologyType::class, [
+            ->add('technology', TechnologyType::class, [
                 'placeholder' => '(Alle)',
                 'label' => 'Technology',
             ])

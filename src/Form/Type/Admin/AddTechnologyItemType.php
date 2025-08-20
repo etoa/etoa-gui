@@ -16,7 +16,7 @@ class AddTechnologyItemType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('technologyId', TechnologyType::class, [
+            ->add('technology', TechnologyType::class, [
                 'label' => 'Forschung',
                 'placeholder' => false,
                 'required' => true,
@@ -26,7 +26,7 @@ class AddTechnologyItemType extends AbstractType
                 'required' => false,
                 'mapped' => false,
             ])
-            ->add('entityId', EntityType::class, [
+            ->add('entity', EntityType::class, [
                 'label' => 'Entity',
                 'placeholder' => false,
                 'required' => true,
