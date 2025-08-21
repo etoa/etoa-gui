@@ -17,8 +17,8 @@
             <tbody>
             {% for entry in entries %}
                 <tr>
-                    <td><a href="{{ path('admin.users.view', {id: entry.userId}) }}">{{ entry.userNick }}</a></td>
-                    <td><a href="{{ path('admin.users.view', {id: entry.sitterId}) }}">{{ entry.sitterNick }}</a></td>
+                    <td><a href="{{ path('admin.users.view', {id: entry.user.id}) }}">{{ entry.user.nick }}</a></td>
+                    <td><a href="{{ path('admin.users.view', {id: entry.sitter.id}) }}">{{ entry.sitter.nick }}</a></td>
                     <td>{{ formatTimestamp(entry.dateFrom) }}</td>
                     <td>{{ formatTimestamp(entry.dateTo) }}</td>
                 </tr>

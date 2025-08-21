@@ -28,13 +28,12 @@ class UserSittingRepository extends AbstractRepository
      */
     public function getActiveSittingEntries(): array
     {
-        $data = $this->createSitterQueryBuilder()
-            ->where('s.date_from < :time')
-            ->andWhere('s.date_to > :time')
+        return $this->createSitterQueryBuilder()
+            ->where('q.dateFrom < :time')
+            ->andWhere('q.dateTo > :time')
             ->setParameter('time', time())
-            ->fetchAllAssociative();
-
-        return array_map(fn(array $row) => new UserSitting($row), $data);
+            ->getQuery()
+            ->execute();
     }
 
     public function getActiveUserEntry(User $user): ?UserSitting
