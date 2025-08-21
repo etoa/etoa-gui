@@ -24,7 +24,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(name: "user_id", type: "integer")]
     private int $id;
 
-    #[ORM\OneToOne(mappedBy: 'user', targetEntity: UserProperties::class)]
+    #[ORM\OneToOne(mappedBy: 'user', targetEntity: UserProperties::class, cascade: ['persist', 'remove'])]
     private ?UserProperties $userProperties;
 
     #[ORM\Column(name: "user_name", type: 'string', length: 180)]
@@ -228,7 +228,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(type: "boolean")]
     private bool $userChangedMainPlanet = false;
 
-    #[ORM\OneToOne(mappedBy: "user", targetEntity: UserRating::class, orphanRemoval: true)]
+    #[ORM\OneToOne(mappedBy: "user", targetEntity: UserRating::class, cascade: ['persist'], orphanRemoval: true)]
     private ?UserRating $userRating;
 
     #[ORM\OneToOne(mappedBy: "user", targetEntity: UserSession::class, orphanRemoval: true)]

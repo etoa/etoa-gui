@@ -7,6 +7,7 @@ use EtoA\Components\Helper\SearchResult;
 use EtoA\Form\Request\Admin\UserSessionLogRequest;
 use EtoA\Form\Type\Admin\UserSessionLogType;
 use EtoA\User\UserRepository;
+use EtoA\User\UserSessionLogRepository;
 use EtoA\User\UserSessionRepository;
 use EtoA\User\UserSessionSearch;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -25,6 +26,7 @@ class UserSessionLogComponent extends AbstractController
     public function __construct(
         private UserSessionRepository $userSessionRepository,
         private UserRepository $userRepository,
+        private readonly UserSessionLogRepository $userSessionLogRepository
     ) {
         $this->request = new UserSessionLogRequest();
     }
@@ -32,23 +34,23 @@ class UserSessionLogComponent extends AbstractController
     public function getSearch(): SearchResult
     {
         $search = UserSessionSearch::create();
-        if ($this->request->userId !== null) {
-            $search->userId($this->request->userId);
+        if ($this->request->user) {
+            $search->userId($this->request->user);
         }
 
-        if ($this->request->ip !== null) {
+        if ($this->request->ip) {
             $search->ipLike($this->request->ip);
         }
 
-        if ($this->request->client !== null) {
+        if ($this->request->client) {
             $search->userAgentLike($this->request->client);
         }
 
-        $total = $this->userSessionRepository->countLogs($search);
+        $total = $this->userSessionLogRepository->countLogs($search);
 
         $limit = $this->getLimit($total);
 
-        $entries = $this->userSessionRepository->getSessionLogs($search, $this->perPage, $limit);
+        $entries = $this->userSessionLogRepository->getSessionLogs($search, $this->perPage, $limit);
         $this->users = $this->userRepository->searchUserNicknames();
 
         return new SearchResult($entries, $limit, $total, $this->perPage);

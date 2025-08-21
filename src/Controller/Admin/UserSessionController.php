@@ -5,6 +5,7 @@ namespace EtoA\Controller\Admin;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Form\Type\Admin\UserSessionLogType;
 use EtoA\User\UserRepository;
+use EtoA\User\UserSessionLogRepository;
 use EtoA\User\UserSessionManager;
 use EtoA\User\UserSessionRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -21,6 +22,7 @@ class UserSessionController extends AbstractController
         private readonly UserRepository        $userRepository,
         private readonly ConfigurationService  $config,
         private readonly UserSessionManager    $userSessionManager,
+        private readonly UserSessionLogRepository $userSessionLogRepository
     )
     {
     }
@@ -67,7 +69,7 @@ class UserSessionController extends AbstractController
     {
         return $this->render('admin/user/session-log.html.twig', [
             'form' => $this->createForm(UserSessionLogType::class, $request->query->all()),
-            'total' => $this->userSessionRepository->countLogs(),
+            'total' => $this->userSessionLogRepository->countLogs(),
         ]);
     }
 }

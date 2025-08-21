@@ -12,7 +12,7 @@ class UserSessionLogType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('userId', UserType::class, [
+            ->add('user', UserType::class, [
                 'label' => 'Spieler',
             ])
             ->add('ip', TextType::class)

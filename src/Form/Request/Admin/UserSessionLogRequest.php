@@ -2,9 +2,11 @@
 
 namespace EtoA\Form\Request\Admin;
 
+use EtoA\Entity\User;
+
 class UserSessionLogRequest
 {
-    public ?int $userId = null;
+    public ?User $user = null;
     public ?string $ip = null;
     public ?string $client = null;
 }
