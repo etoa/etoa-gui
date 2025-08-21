@@ -120,13 +120,10 @@ class UserSessionRepository extends AbstractRepository
      */
     public function getSessions(UserSessionSearch $search = null): array
     {
-        $data = $this->applySearchSortLimit($this->createQueryBuilder('q'), $search)
-            ->select('*')
-            ->from('user_sessions', 's')
-            ->orderBy('s.time_action', 'DESC')
-            ->fetchAllAssociative();
-
-        return array_map(fn (array $row) => new UserSession($row), $data);
+        return $this->applySearchSortLimit($this->createQueryBuilder('q'), $search)
+            ->orderBy('q.timeAction', 'DESC')
+            ->getQuery()
+            ->execute();
     }
 
     /**

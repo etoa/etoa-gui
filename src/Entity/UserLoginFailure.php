@@ -23,9 +23,6 @@ class UserLoginFailure
     #[ORM\Column(name: "failure_host")]
     private ?string $host;
 
-    #[ORM\Column(name: "failure_user_id")]
-    private int $userId;
-
     #[ORM\ManyToOne(targetEntity: User::class)]
     #[ORM\JoinColumn(name: 'failure_user_id', referencedColumnName: 'user_id')]
     protected User $user;
@@ -69,30 +66,6 @@ class UserLoginFailure
     public function setHost(string $host): static
     {
         $this->host = $host;
-
-        return $this;
-    }
-
-    public function getUserId(): ?int
-    {
-        return $this->userId;
-    }
-
-    public function setUserId(int $userId): static
-    {
-        $this->userId = $userId;
-
-        return $this;
-    }
-
-    public function getUserNick(): ?string
-    {
-        return $this->userNick;
-    }
-
-    public function setUserNick(string $userNick): static
-    {
-        $this->userNick = $userNick;
 
         return $this;
     }

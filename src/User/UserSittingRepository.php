@@ -3,7 +3,7 @@
 namespace EtoA\User;
 
 use Doctrine\DBAL\ArrayParameterType;
-use Doctrine\DBAL\Query\QueryBuilder;
+use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 use EtoA\Core\AbstractRepository;
 use EtoA\Entity\User;
@@ -57,12 +57,13 @@ class UserSittingRepository extends AbstractRepository
     public function getActiveUsersEntry(array $userIds): array
     {
         $data = $this->createSitterQueryBuilder()
-            ->where('s.user_id IN (:userIds)')
-            ->andWhere('s.date_from < :time')
-            ->andWhere('s.date_to > :time')
+            ->where('q.user IN (:userIds)')
+            ->andWhere('q.dateFrom < :time')
+            ->andWhere('q.dateTo > :time')
             ->setParameter('time', time())
             ->setParameter('userIds', $userIds, ArrayParameterType::INTEGER)
-            ->fetchAllAssociative();
+            ->getQuery()
+            ->execute();
 
         $entries = [];
         foreach ($data as $row) {
@@ -133,11 +134,9 @@ class UserSittingRepository extends AbstractRepository
     private function createSitterQueryBuilder(): QueryBuilder
     {
         return $this->createQueryBuilder('q')
-            ->select('s.*', 'u.user_nick as user_nick', 'us.user_nick as sitter_nick')
-            ->from('user_sitting', 's')
-            ->leftJoin('s', 'users', 'u', 'u.user_id = s.user_id')
-            ->leftJoin('s', 'users', 'us', 'us.user_id = s.sitter_id')
-            ->orderBy('s.date_from', 'DESC');
+            ->leftJoin('App:User', 'u', 'WITH', 'u.id = q.user')
+            ->leftJoin('App:user', 'us', 'WITH', 'us.id = q.sitter')
+            ->orderBy('q.dateFrom', 'DESC');
     }
 
     public function cancelEntry(UserSitting $userSitting): void

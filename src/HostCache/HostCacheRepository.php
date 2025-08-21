@@ -2,6 +2,7 @@
 
 namespace EtoA\HostCache;
 
+use Doctrine\ORM\AbstractQuery;
 use Doctrine\Persistence\ManagerRegistry;
 use EtoA\Core\AbstractRepository;
 use EtoA\Entity\HostnameCache;
@@ -16,16 +17,16 @@ class HostCacheRepository extends AbstractRepository
     public function getAddr(string $host): ?string
     {
         $data = $this->createQueryBuilder('q')
-            ->select('addr')
-            ->from('hostname_cache')
-            ->where('host = :host')
-            ->andWhere('timestamp > :time')
+            ->select('q.addr')
+            ->where('q.host = :host')
+            ->andWhere('q.timestamp > :time')
             ->setParameters([
                 'host' => $host,
                 'time' => time() - 86400,
             ])
             ->setMaxResults(1)
-            ->fetchOne();
+            ->getQuery()
+            ->getOneOrNullResult(AbstractQuery::HYDRATE_SINGLE_SCALAR);
 
         return $data !== false ? $data : null;
     }

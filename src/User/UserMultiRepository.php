@@ -125,21 +125,13 @@ class UserMultiRepository extends AbstractRepository
             return [];
         }
 
-        $data = $this->createQueryBuilder('q')
-            ->select('m.*, u.user_nick as multi_nick')
-            ->from('user_multi', 'm')
-            ->leftJoin('m', 'users', 'u', 'u.user_id = m.multi_id')
-            ->where('m.user_id IN (:userIds)')
+        return $this->createQueryBuilder('q')
+            ->leftJoin('App:User', 'u', 'WITH', 'u.id = q.multiUser')
+            ->where('q.user IN (:userIds)')
             ->setParameter('userIds', $userIds, ArrayParameterType::INTEGER)
-            ->orderBy('m.id', 'DESC')
-            ->fetchAllAssociative();
-
-        $entries = [];
-        foreach ($data as $row) {
-            $entries[(int) $row['user_id']][] = new UserMulti($row);
-        }
-
-        return $entries;
+            ->orderBy('q.id', 'DESC')
+            ->getQuery()
+            ->execute();
     }
 
     public function getUserEntry(int $userId, int $id): ?UserMulti

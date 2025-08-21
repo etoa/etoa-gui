@@ -23,7 +23,6 @@ class MissileController extends AbstractAdminController
 {
     public function __construct(
         private readonly MissileRepository            $missileRepository,
-        private readonly PlanetRepository             $planetRepository,
         private readonly MissileDataRepository        $missileDataRepository,
         private readonly MissileRequirementRepository $missileRequirementRepository,
     )

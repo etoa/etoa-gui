@@ -46,17 +46,7 @@ class UserLoginFailureRepository extends AbstractRepository
      */
     public function getIpLoginFailures(string $ip): array
     {
-        $data = $this->createQueryBuilder('q')
-            ->select('l.*')
-            ->addSelect('u.user_nick')
-            ->from('login_failures', 'l')
-            ->leftJoin('l', 'users', 'u', 'u.user_id = l.failure_user_id')
-            ->where('l.failure_ip = :ip')
-            ->setParameter('ip', $ip)
-            ->orderBy('l.failure_time', 'DESC')
-            ->fetchAllAssociative();
-
-        return array_map(fn (array $row) => new UserLoginFailure($row), $data);
+        return $this->findBy(['ip'=>$ip],['time'=>'DESC']);
     }
 
     public function countLoginFailuresSince(int $userId, int $since): int

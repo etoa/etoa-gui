@@ -11,6 +11,7 @@ use EtoA\User\UserLoginFailureRepository;
 use EtoA\User\UserMultiRepository;
 use EtoA\User\UserRepository;
 use EtoA\User\UserSearch;
+use EtoA\User\UserSessionLogRepository;
 use EtoA\User\UserSessionRepository;
 use EtoA\User\UserSessionSearch;
 use EtoA\User\UserSittingRepository;
@@ -28,6 +29,7 @@ class UsersController extends AbstractAdminController
         private readonly UserLoginFailureRepository $loginFailureRepository,
         private readonly UserBannerService          $userBannerService,
         private readonly UserSessionRepository      $userSessionRepository,
+        private readonly UserSessionLogRepository   $userSessionLogRepository,
         private readonly UserMultiRepository        $userMultiRepository,
         private readonly UserLoginFailureRepository $userLoginFailureRepository,
         private readonly NetworkNameService         $networkNameService,
@@ -190,14 +192,14 @@ class UsersController extends AbstractAdminController
         }
 
         $sessions = $this->userSessionRepository->getSessions(UserSessionSearch::create()->ip($ip));
-        $sessionLogs = $this->userSessionRepository->getSessionLogs(UserSessionSearch::create()->ip($ip));
+        $sessionLogs = $this->userSessionLogRepository->getSessionLogs(UserSessionSearch::create()->ip($ip));
 
         $userIds = [];
         foreach ($sessions as $session) {
-            $userIds[] = $session->userId;
+            $userIds[] = $session->getUser()->getId();
         }
         foreach ($sessionLogs as $log) {
-            $userIds[] = $log->userId;
+            $userIds[] = $log->getUser()->getId();
         }
         $userIds = array_unique($userIds);
 

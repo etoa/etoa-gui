@@ -28,15 +28,15 @@
             {% for session in sessions %}
                 <tr>
                     <td>
-                        <a href="?page=$page&amp;sub=$sub&amp;user={{ session.userId }}">{{ users[session.userId]|default('-') }}</a>
+                        <a href="{{ path('admin.users.view',{id:session.user.id}) }}">{{ session.user.nick }}</a>
                     </td>
                     <td>{{ formatTimestamp(session.timeAction) }}</td>
                     <td>{{ session.ipAddr }} / {{ ipGetHost(session.ipAddr) }}</td>
                     <td title="{{ session.userAgent }}">{{ browser(session.userAgent).toString() }}</td>
                     <td>
-                        {% for multi in multiEntries[session.userId]|default([]) %}
+                        {% for multi in multiEntries %}
                         <span title="{{ multi.reason }}">
-                            <a href="{{ path('admin.users.view', {id: multi.multiUserId}) }}">{{ multi.multiUserNick }}</a>
+                            <a href="{{ path('admin.users.view', {id: multi.multiUser.id}) }}">{{ multi.multiUser.nick }}</a>
                             </span>{% if not loop.last %}, {% endif %}
                         {% else %}
                             -
@@ -74,23 +74,23 @@
             {% for log in sessionLogs %}
                 <tr>
                     <td>
-                        <a href="?page=$page&amp;sub=$sub&amp;user={{ log.userId }}">{{ users[log.userId]|default('-') }}</a>
+                        <a href="{{ path('admin.users.view',{id:log.user.id}) }}">{{ log.user.nick }}</a>
                     </td>
                     <td>{{ formatTimestamp(log.timeAction) }}</td>
                     <td>{{ log.ipAddr }} / {{ ipGetHost(log.ipAddr) }}</td>
                     <td title="{{ log.userAgent }}">{{ browser(log.userAgent).toString() }}</td>
                     <td>
-                        {% for multi in multiEntries[log.userId]|default([]) %}
+                        {% for multi in multiEntries %}
                         <span title="{{ multi.reason }}">
-                            <a href="{{ path('admin.users.view', {id: multi.multiUserId}) }}">{{ multi.multiUserNick }}</a>
+                            <a href="{{ path('admin.users.view', {id: multi.multiUser.id}) }}">{{ multi.multiUser.nick }}</a>
                             </span>{% if not loop.last %}, {% endif %}
                         {% else %}
                             -
                         {% endfor %}
                     </td>
                     <td>
-                        {% if sittingEntries[log.userId] is defined %}
-                            {{ sittingEntries[log.userId].sitterNick }}
+                        {% if sittingEntries[log.user.id] is defined %}
+                            {{ sittingEntries[log.user.id].sitterNick }}
                         {% else %}
                             -
                         {% endif %}
@@ -120,23 +120,23 @@
             {% for failure in loginFailures %}
                 <tr>
                     <td>
-                        <a href="?page=user&amp;sub=$sub&amp;user={{ failure.userId }}">{{ failure.userNick }}</a>
+                        <a href="{{ path('admin.users.view',{id:failure.user.id}) }}">{{ failure.user.nick }}</a>
                     </td>
                     <td>{{ formatTimestamp(failure.time) }}</td>
                     <td>{{ failure.ip }} / {{ ipGetHost(failure.ip) }}</td>
                     <td title="{{ failure.client }}">{{ browser(failure.client).toString() }}</td>
                     <td>
-                        {% for multi in multiEntries[failure.userId]|default([]) %}
+                        {% for multi in multiEntries %}
                         <span title="{{ multi.reason }}">
-                            <a href="{{ path('admin.users.view', {id: multi.multiUserId}) }}">{{ multi.multiUserNick }}</a>
+                            <a href="{{ path('admin.users.view', {id: multi.multiUser.id}) }}">{{ multi.multiUser.nick }}</a>
                             </span>{% if not loop.last %}, {% endif %}
                         {% else %}
                             -
                         {% endfor %}
                     </td>
                     <td>
-                        {% if sittingEntries[failure.userId] is defined %}
-                            {{ sittingEntries[failure.userId].sitterNick }}
+                        {% if sittingEntries[failure.user.id] is defined %}
+                            {{ sittingEntries[failure.user.id].sitterNick }}
                         {% else %}
                             -
                         {% endif %}
