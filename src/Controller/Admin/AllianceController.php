@@ -12,6 +12,7 @@ use EtoA\Alliance\AllianceRepository;
 use EtoA\Alliance\AllianceService;
 use EtoA\Alliance\AllianceTechnologyRepository;
 use EtoA\Alliance\InvalidAllianceParametersException;
+use EtoA\Entity\Alliance;
 use EtoA\Entity\AllianceBuildListItem;
 use EtoA\Entity\AllianceTechnologyListItem;
 use EtoA\Form\Type\Admin\AllianceBuildingAddType;
@@ -21,7 +22,6 @@ use EtoA\Form\Type\Admin\AllianceEditType;
 use EtoA\Form\Type\Admin\AllianceSearchType;
 use EtoA\Form\Type\Admin\AllianceTechnologyAddType;
 use EtoA\Support\StringUtils;
-use EtoA\User\UserRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -38,7 +38,6 @@ class AllianceController extends AbstractAdminController
         private readonly AllianceImageStorage         $allianceImageStorage,
         private readonly AllianceDiplomacyRepository  $allianceDiplomacyRepository,
         private readonly AllianceRankRepository       $allianceRankRepository,
-        private readonly UserRepository               $userRepository,
     )
     {
     }
@@ -49,7 +48,7 @@ class AllianceController extends AbstractAdminController
     {
         return $this->render('admin/alliance/list.html.twig', [
             'form' => $this->createForm(AllianceSearchType::class, $request->query->all()),
-            'total' => $this->allianceRepository->count(),
+            'total' => $this->allianceRepository->count([]),
         ]);
     }
 
@@ -84,9 +83,8 @@ class AllianceController extends AbstractAdminController
 
     #[Route('/admin/alliances/{id}', name: 'admin.alliances.view')]
     #[IsGranted('ROLE_ADMIN_TRIAL-ADMIN')]
-    public function view(int $id): Response
+    public function view(?Alliance $alliance = null): Response
     {
-        $alliance = $this->allianceRepository->getAlliance($id);
         if ($alliance === null) {
             $this->addFlash('error', 'Allianz nicht gefunden!');
 
@@ -95,17 +93,13 @@ class AllianceController extends AbstractAdminController
 
         return $this->render('admin/alliance/view.html.twig', [
             'alliance' => $alliance,
-            'founder' => $this->userRepository->getUser($alliance->founderId),
-            'members' => $this->allianceRepository->findUsers($id),
-            'ranks' => $this->allianceRankRepository->getRanks($id),
         ]);
     }
 
     #[Route('/admin/alliances/{id}/edit', name: 'admin.alliances.edit')]
     #[IsGranted('ROLE_ADMIN_TRIAL-ADMIN')]
-    public function edit(Request $request, int $id): Response
+    public function edit(Request $request, ?Alliance $alliance = null): Response
     {
-        $alliance = $this->allianceRepository->getAlliance($id);
         if ($alliance === null) {
             $this->addFlash('error', 'Allianz nicht gefunden!');
 
@@ -115,27 +109,19 @@ class AllianceController extends AbstractAdminController
         $form = $this->createForm(AllianceEditType::class, $alliance);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            if ($form->has('deleteImage') && (bool)$form->get('deleteImage')->getData()) {
-                if ((bool)$alliance->image) {
-                    $this->allianceImageStorage->delete($alliance->image);
-                    $this->allianceRepository->clearPicture($alliance->id);
+            if ($form->has('deleteImage') && $form->get('deleteImage')->getData()) {
+                if ($alliance->getImage()) {
+                    $this->allianceImageStorage->delete($alliance->getImage());
+                    $this->allianceRepository->clearPicture($alliance);
 
                     $this->addFlash('success', 'Bild entfernt!');
                 }
             }
 
-            $this->allianceRepository->update(
-                $alliance->id,
-                $alliance->tag,
-                $alliance->name,
-                $alliance->text,
-                $alliance->applicationTemplate,
-                $alliance->url,
-                $alliance->founderId
-            );
+            $this->allianceRepository->save();
 
             $this->addFlash('success', 'Allianzdaten aktualisiert!');
-            return $this->redirectToRoute('admin.alliances.view', ['id' => $id]);
+            return $this->redirectToRoute('admin.alliances.view', ['id' => $alliance->getId()]);
         }
 
         return $this->render('admin/alliance/edit.html.twig', [
@@ -363,9 +349,8 @@ class AllianceController extends AbstractAdminController
 
     #[Route('/admin/alliances/{id}/delete', name: 'admin.alliances.delete')]
     #[IsGranted('ROLE_ADMIN_TRIAL-ADMIN')]
-    public function delete(Request $request, int $id): Response
+    public function delete(Request $request, ?Alliance $alliance = null): Response
     {
-        $alliance = $this->allianceRepository->getAlliance($id);
         if ($alliance === null) {
             $this->addFlash('error', 'Allianz nicht gefunden!');
 
@@ -383,8 +368,7 @@ class AllianceController extends AbstractAdminController
         }
 
         return $this->render('admin/alliance/delete.html.twig', [
-            'alliance' => $alliance,
-            'allianceUsers' => $this->allianceRepository->findUsers($alliance->id),
+            'alliance' => $alliance
         ]);
     }
 }

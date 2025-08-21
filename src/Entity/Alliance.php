@@ -25,10 +25,10 @@ class Alliance
     protected string $name;
 
     #[ORM\Column(name: "alliance_text")]
-    protected ?string $text;
+    protected ?string $text = '';
 
     #[ORM\Column(name: "alliance_img")]
-    protected ?string $image;
+    protected ?string $image = null;
 
     #[ORM\Column(name: "alliance_img_check")]
     protected bool $imageCheck = false;
@@ -190,7 +190,7 @@ class Alliance
         return $this->image;
     }
 
-    public function setImage(string $image): static
+    public function setImage(?string $image): static
     {
         $this->image = $image;
 

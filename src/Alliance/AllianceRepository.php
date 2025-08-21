@@ -51,27 +51,16 @@ class AllianceRepository extends AbstractRepository
     }
 
     /**
-     * @return array<int, AllianceWithMemberCount>
+     * @return array<int, Alliance>
      */
     public function searchAlliances(AllianceSearch $search = null, int $limit = null): array
     {
-        $data = $this->applySearchSortLimit($this->createQueryBuilder('q'), $search, null, $limit)
-            ->select("a.*")
-            ->addSelect('COUNT(u.user_id) as member_count')
-            ->from('alliances', 'a')
-            ->leftJoin('a', 'users', 'u', 'u.user_alliance_id=a.alliance_id')
-            ->groupBy('a.alliance_id')
-            ->orderBy('a.alliance_name')
-            ->addOrderBy('a.alliance_tag')
-            ->fetchAllAssociative();
-
-        $result = [];
-        foreach ($data as $row) {
-            $alliance = new AllianceWithMemberCount($row);
-            $result[$alliance->id] = $alliance;
-        }
-
-        return $result;
+        return $this->applySearchSortLimit($this->createQueryBuilder('q'), $search, null, $limit)
+            ->groupBy('q.id')
+            ->orderBy('q.name')
+            ->addOrderBy('q.tag')
+            ->getQuery()
+            ->execute();
     }
 
     /**
@@ -304,22 +293,12 @@ class AllianceRepository extends AbstractRepository
             ->fetchOne();
     }
 
-    public function clearPicture(int $allianceId): bool
+    public function clearPicture(Alliance $alliance): void
     {
-        $affected = $this->createQueryBuilder('q')
-            ->update('alliances')
-            ->set('alliance_img', ':image')
-            ->set('alliance_img_check', ':check')
-            ->where('alliance_id = :allianceId')
-            ->setParameters([
-                'allianceId' => $allianceId,
-                'check' => 0,
-                'image' => '',
-            ])
-            ->executeQuery()
-            ->rowCount();
+        $alliance->setImage(null);
+        $alliance->setImageCheck(false);
 
-        return $affected > 0;
+        $this->save();
     }
 
     public function markPictureChecked(int $allianceId): bool

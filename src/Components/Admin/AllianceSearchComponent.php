@@ -50,7 +50,6 @@ class AllianceSearchComponent extends AbstractController
         if (count($alliances) > 0) {
             $this->users = $this->userRepository->searchUserNicknames();
         }
-
         return new SearchResult($alliances, 0, count($alliances), $this->perPage);
     }
 

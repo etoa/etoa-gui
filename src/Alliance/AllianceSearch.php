@@ -3,6 +3,7 @@
 namespace EtoA\Alliance;
 
 use EtoA\Core\Database\AbstractSearch;
+use EtoA\Entity\Alliance;
 
 class AllianceSearch extends AbstractSearch
 {
@@ -21,7 +22,7 @@ class AllianceSearch extends AbstractSearch
 
     public function tagLike(string $search): self
     {
-        $this->parts[] = 'alliance_tag LIKE :tag';
+        $this->parts[] = 'q.tag LIKE :tag';
         $this->parameters['tag'] = '%' . $search . '%';
 
         return $this;
@@ -29,7 +30,7 @@ class AllianceSearch extends AbstractSearch
 
     public function nameLike(string $search): self
     {
-        $this->parts[] = 'alliance_name LIKE :name';
+        $this->parts[] = 'q.name LIKE :name';
         $this->parameters['name'] = '%' . $search . '%';
 
         return $this;
@@ -37,23 +38,23 @@ class AllianceSearch extends AbstractSearch
 
     public function textLike(string $search): self
     {
-        $this->parts[] = 'alliance_text LIKE :text';
+        $this->parts[] = 'q.text LIKE :text';
         $this->parameters['text'] = '%' . $search . '%';
 
         return $this;
     }
 
-    public function motherId(int $motherAllianceId): self
+    public function motherId(int|Alliance $motherAllianceId): self
     {
-        $this->parts[] = 'alliance_mother = :motherAllianceId';
+        $this->parts[] = 'q.mother = :motherAllianceId';
         $this->parameters['motherAllianceId'] = $motherAllianceId;
 
         return $this;
     }
 
-    public function motherRequestAllianceId(int $motherRequestAllianceId): self
+    public function motherRequestAllianceId(int|Alliance $motherRequestAllianceId): self
     {
-        $this->parts[] = 'alliance_mother_request = :motherRequestAllianceId';
+        $this->parts[] = 'q.motherRequest = :motherRequestAllianceId';
         $this->parameters['motherRequestAllianceId'] = $motherRequestAllianceId;
 
         return $this;

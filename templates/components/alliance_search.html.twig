@@ -14,12 +14,12 @@
     {% for alliance in search.entries %}
         <tr>
             <td>{{ alliance.id }}</td>
-            <td><a href="{{ path('admin.alliances.view', {id: alliance.id}) }}">{{ alliance.nameWithTag }}</a></td>
-            <td>{{ this.users[alliance.founderId]|default('Niemand') }}</td>
+            <td><a href="{{ path('admin.alliances.view', {id: alliance.id}) }}">{{ alliance.toString }}</a></td>
+            <td>{{ alliance.founder?alliance.founder.nick:'Niemand' }}</td>
             <td>{{ formatTimestamp(alliance.foundationTimestamp) }}</td>
             <td>{{ alliance.currentRank }}</td>
             <td>{{ alliance.points }}</td>
-            <td>{{ alliance.memberCount }}</td>
+            <td>{{ alliance.members|length }}</td>
             <td>
                 <a href="{{ path('admin.alliances.edit', {id: alliance.id}) }}">Bearbeiten</a>
                 <a href="{{ path('admin.alliances.delete', {id: alliance.id}) }}">Löschen</a>

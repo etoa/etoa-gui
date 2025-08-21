@@ -1,11 +1,11 @@
-{% set title="Allianz " ~ alliance.nameWithTag %}
+{% set title="Allianz " ~ alliance.toString %}
 
 {% extends 'admin/layout/admin.html.twig' %}
 
 {% block breadcrumbs %}
     {{ component('breadcrumbs', { items: [
         { label: 'Allianzsuche', url: path('admin.alliances') },
-        { label: alliance.nameWithTag, url: path('admin.alliances.view', {id: alliance.id}) },
+        { label: alliance.toString, url: path('admin.alliances.view', {id: alliance.id}) },
     ]}) }}
 {% endblock %}
 
@@ -30,8 +30,8 @@
                 <tr>
                     <th>Gründer</th>
                     <td>
-                        {% if founder is not null %}
-                            <a href="{{ path('admin.users.view', {'id': founder.id}) }}">{{ founder.nick }}</a>
+                        {% if alliance.founder is not null %}
+                            <a href="{{ path('admin.users.view', {'id': alliance.founder.id}) }}">{{ alliance.founder.nick }}</a>
                         {% else %}
                             (Niemand)
                         {% endif %}
@@ -51,7 +51,7 @@
                 </tr>
                 <tr>
                     <th>Mitglieder</th>
-                    <td>{{ alliance.memberCount }}</td>
+                    <td>{{ alliance.members|length }}</td>
                 </tr>
                 <tr>
                     <th>Rohstoffe</th>
@@ -77,14 +77,14 @@
                 </tr>
                 </thead>
                 <tbody>
-                {% for member in members %}
+                {% for member in alliance.members %}
                     <tr>
                         <td>
-                            <a href="{{ path('admin.users.view', {id: member.user_id}) }}">{{ member.user_nick }}</a>
+                            <a href="{{ path('admin.users.view', {id: member.id}) }}">{{ member.nick }}</a>
                         </td>
-                        <td>{{ formatNumber(member.user_points) }}</td>
+                        <td>{{ formatNumber(member.points) }}</td>
                         <td>
-                            {{ ranks|filter(rank => member.user_alliance_rank_id == rank.id)|join(', ') }}
+                            {{ member.allianceRank.name }}
                         </td>
                     </tr>
                 {% else %}

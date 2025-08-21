@@ -3,6 +3,7 @@
 namespace EtoA\Form\Type\Admin;
 
 use EtoA\Alliance\AllianceWithMemberCount;
+use EtoA\Entity\Alliance;
 use EtoA\Form\Type\Core\UserType;
 use EtoA\User\UserSearch;
 use Symfony\Component\Form\AbstractType;
@@ -17,7 +18,7 @@ class AllianceEditType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
-        /** @var AllianceWithMemberCount $data */
+        /** @var Alliance $data */
         $data = $options['data'];
         $builder
             ->add('tag', TextType::class, [
@@ -28,11 +29,11 @@ class AllianceEditType extends AbstractType
                 'label' => 'Name',
                 'required' => true,
             ])
-            ->add('founderId', UserType::class, [
+            ->add('founder', UserType::class, [
                 'label' => 'Gründer',
                 'required' => true,
                 'placeholder' => false,
-                'search' => UserSearch::create()->allianceId($data->id),
+                'search' => UserSearch::create()->allianceId($data),
             ])
             ->add('text', TextareaType::class, [
                 'label' => 'Beschreibung',
@@ -47,7 +48,7 @@ class AllianceEditType extends AbstractType
                 'required' => false,
             ]);
 
-        if ((bool)$data->image) {
+        if ($data->getImage()) {
             $builder
                 ->add('deleteImage', CheckboxType::class, [
                     'label' => 'Bild entfernen',

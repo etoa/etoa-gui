@@ -194,6 +194,8 @@ class AllianceService
     public function delete(Alliance $alliance, User $user = null): bool
     {
         if (!$this->allianceDiplomacyRepository->isAtWar($alliance)) {
+
+            //TODO: let doctrine handle it
             $this->allianceBoardCategoryRepository->deleteAllCategories($alliance);
             $this->allianceApplicationRepository->deleteAllianceApplication($alliance);
             $diplomacies = $this->allianceDiplomacyRepository->getDiplomacies($alliance);

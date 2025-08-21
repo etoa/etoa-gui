@@ -7,51 +7,51 @@
     <form method="post">
         <table class="tbl">
             <tr>
-                <td class="tbltitle" valign="top">ID</td>
+                <td class="tbltitle">ID</td>
                 <td class="tbldata">{{ alliance.id }}</td>
             </tr>
             <tr>
-                <td class="tbltitle" valign="top">Name</td>
+                <td class="tbltitle">Name</td>
                 <td class="tbldata">{{ alliance.name }}</td>
             </tr>
             <tr>
-                <td class="tbltitle" valign="top">Tag</td>
+                <td class="tbltitle">Tag</td>
                 <td class="tbldata">{{ alliance.tag }}</td>
             </tr>
             <tr>
-                <td class="tbltitle" valign="top">Gründer</td>
-                <td class="tbldata">{{ allianceUsers[alliance.founderId]['user_nick']|default('Niemand') }}</td>
+                <td class="tbltitle">Gründer</td>
+                <td class="tbldata">{{ alliance.founder?alliance.founder.nick:'Niemand' }}</td>
             </tr>
             <tr>
-                <td class="tbltitle" valign="top">Text</td>
+                <td class="tbltitle">Text</td>
                 <td class="tbldata">{{ BBCodeToHTML(alliance.text)|raw }}</td>
             </tr>
             <tr>
-                <td class="tbltitle" valign="top">Gründung</td>
+                <td class="tbltitle">Gründung</td>
                 <td class="tbldata">{{ formatTimestamp(alliance.foundationTimestamp) }}</td>
             </tr>
             <tr>
-                <td class="tbltitle" valign="top">Website</td>
+                <td class="tbltitle">Website</td>
                 <td class="tbldata">{{ alliance.url }}</td>
             </tr>
             {% if alliance.image %}
                 <tr>
-                    <td class="tbltitle" valign="top">Bild</td>
+                    <td class="tbltitle">Bild</td>
                     <td class="tbldata"><img src="{{ alliance.imageUrl }}" width="100%" alt="{{ alliance.image }}"/>
                     </td>
                 </tr>
             {% endif %}
             <tr>
-                <td class="tbltitle" valign="top">Mitglieder</td>
+                <td class="tbltitle">Mitglieder</td>
                 <td class="tbldata">
                     <table style="width:100%">
-                        {% for user in allianceUsers %}
+                        {% for user in alliance.members %}
                             <tr>
-                                <td>{{ user.user_nick }}</td>
-                                <td>{{ user.user_points }} Punkte</td>
+                                <td>{{ user.nick }}</td>
+                                <td>{{ user.points }} Punkte</td>
                                 <td>
-                                    [<a href="{{ path('admin.users.view', {id: user.user_id}) }}">details</a>]
-                                    [<a href="?page=messages&amp;sub=sendmsg&amp;user_id={{ user.user_id }}">msg</a>]
+                                    [<a href="{{ path('admin.users.view', {id: user.id}) }}">details</a>]
+                                    [<a href="?page=messages&amp;sub=sendmsg&amp;user_id={{ user.id }}">msg</a>]
                                 </td>
                             </tr>
 
