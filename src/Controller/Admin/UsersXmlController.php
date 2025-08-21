@@ -2,10 +2,12 @@
 
 namespace EtoA\Controller\Admin;
 
+use EtoA\Form\Type\Core\UserType;
 use EtoA\User\UserRepository;
 use EtoA\User\UserToXml;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Finder\Finder;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\HttpFoundation\Request;
@@ -27,19 +29,6 @@ class UsersXmlController extends AbstractController
     #[IsGranted('ROLE_ADMIN_GAME-ADMIN')]
     public function list(Request $request): Response
     {
-        if ($request->request->has('exportdl')) {
-            return $this->redirectToRoute('admin.users.xml.generate', ['id' => $request->request->getInt('export_user_id')]);
-        }
-
-        if ($request->request->has('exportcache')) {
-            try {
-                $xmlfile = $this->userToXml->toCacheFile($request->request->getInt('export_user_id'));
-                $this->addFlash('success', "Die Userdaten wurden nach " . $xmlfile . " exportiert.");
-            } catch (\Exception $ex) {
-                $this->addFlash('error', $ex->getMessage());
-            }
-        }
-
         $xmlFiles = [];
         $files = Finder::create()
             ->in([$this->userToXml->getDataDirectory()])
@@ -56,9 +45,40 @@ class UsersXmlController extends AbstractController
             ];
         }
 
+        $form = $this->createFormBuilder()
+            ->add('exportdl', SubmitType::class, [
+                'label' => 'Herunterladen',
+            ])
+            ->add('exportcache', SubmitType::class, [
+                'label' => 'Exportieren',
+            ])
+            ->add('user', UserType::class, [
+                'required' => true,
+                'placeholder' => false,
+                'label' => false,
+            ])
+            ->getForm()
+            ->handleRequest($request);
+
+        if($form->isSubmitted() && $form->isValid()) {
+            if ($form->get('exportdl')->isClicked()) {
+                return $this->redirectToRoute('admin.users.xml.generate', ['id' => $form->get('user')->getData()->getId()]);
+            }
+
+            if ($form->get('exportcache')->isClicked()) {
+                try {
+                    $xmlfile = $this->userToXml->toCacheFile($form->get('user')->getData());
+                    $this->addFlash('success', "Die Userdaten wurden nach " . $xmlfile . " exportiert.");
+                } catch (\Exception $ex) {
+                    $this->addFlash('error', $ex->getMessage());
+                }
+            }
+        }
+
         return $this->render('admin/user-xml/list.html.twig', [
             'xmlFiles' => $xmlFiles,
             'userNicks' => $this->userRepository->searchUserNicknames(),
+            'form' => $form
         ]);
     }
 

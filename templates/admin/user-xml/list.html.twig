@@ -10,20 +10,14 @@
         einem User ein Backup erstellen willst, kannst du das hier tun:
     </p>
 
-    <form method="post">
+    {{ form_start(form) }}
         <p>
             Spieler wählen:
-            <select name="export_user_id">
-                {% for userId,nick in userNicks %}
-                    <option value="{{ userId }}">{{ nick }}</option>
-                {% endfor %}
-
-            </select>
-
-            <input type="submit" name="exportcache" value="Exportieren"/>
-            <input type="submit" name="exportdl" value="Herunterladen"/>
+            {{ form_widget(form.user) }}
+            {{ form_widget(form.exportcache) }}
+            {{ form_widget(form.exportdl) }}
         </p>
-    </form>
+    {{ form_end(form) }}
 
     <table class="table">
         <thead>
