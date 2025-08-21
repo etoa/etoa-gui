@@ -15,14 +15,15 @@ class AddMissileListType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('entityId', EntityType::class, [
+            ->add('entity', EntityType::class, [
                 'placeholder' => false,
                 'label' => 'Entity',
                 'search' => EntityLabelSearch::create()
                     ->codeIn([\EtoA\Universe\Entity\EntityType::PLANET])
                     ->planetUserIdNotNull(),
+                'get_type' => true
             ])
-            ->add('missileId', MissileType::class, [
+            ->add('missile', MissileType::class, [
                 'placeholder' => false,
                 'label' => 'Rakete',
             ])

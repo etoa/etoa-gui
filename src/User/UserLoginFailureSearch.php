@@ -3,6 +3,7 @@
 namespace EtoA\User;
 
 use EtoA\Core\Database\AbstractSearch;
+use EtoA\Entity\User;
 
 class UserLoginFailureSearch extends AbstractSearch
 {
@@ -11,9 +12,9 @@ class UserLoginFailureSearch extends AbstractSearch
         return new UserLoginFailureSearch();
     }
 
-    public function userId(int $userId): self
+    public function userId(int|User $userId): self
     {
-        $this->parts[] = 'l.failure_user_id = :userId';
+        $this->parts[] = 'q.user = :userId';
         $this->parameters['userId'] = $userId;
 
         return $this;
@@ -21,7 +22,7 @@ class UserLoginFailureSearch extends AbstractSearch
 
     public function likeIp(string $ip): self
     {
-        $this->parts[] = 'l.failure_ip LIKE :likeIp';
+        $this->parts[] = 'q.ip LIKE :likeIp';
         $this->parameters['likeIp'] = '%' . $ip . '%';
 
         return $this;
@@ -29,7 +30,7 @@ class UserLoginFailureSearch extends AbstractSearch
 
     public function likeHost(string $host): self
     {
-        $this->parts[] = 'l.failure_host LIKE :likeHost';
+        $this->parts[] = 'q.host LIKE :likeHost';
         $this->parameters['likeHost'] = '%' . $host . '%';
 
         return $this;
@@ -37,7 +38,7 @@ class UserLoginFailureSearch extends AbstractSearch
 
     public function likeClient(string $client): self
     {
-        $this->parts[] = 'l.failure_client LIKE :clientLike';
+        $this->parts[] = 'q.client LIKE :clientLike';
         $this->parameters['clientLike'] = '%' . $client . '%';
 
         return $this;

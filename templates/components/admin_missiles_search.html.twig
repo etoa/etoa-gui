@@ -11,9 +11,7 @@
     {% for item in search.entries %}
         {{ component('admin_missile_view', {
             item: item,
-            user: this.users[item.userId],
-            missile: this.missileNames[item.missileId],
-            entity: this.entities[item.entityId]
+            id: 'item-'~item.id
         }) }}
     {% else %}
         <tr><td colspan="9999"><i>Keine Einträge vorhanden</i></td></tr>

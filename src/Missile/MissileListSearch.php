@@ -3,6 +3,9 @@
 namespace EtoA\Missile;
 
 use EtoA\Core\Database\AbstractSearch;
+use EtoA\Entity\Missile;
+use EtoA\Entity\Planet;
+use EtoA\Entity\User;
 
 class MissileListSearch extends AbstractSearch
 {
@@ -13,31 +16,31 @@ class MissileListSearch extends AbstractSearch
 
     public function id(int $id): MissileListSearch
     {
-        $this->parts[] = "missilelist_id = :id";
+        $this->parts[] = "q.id = :id";
         $this->parameters['id'] = $id;
 
         return $this;
     }
 
-    public function missileId(int $missileId): MissileListSearch
+    public function missileId(Missile|int $missileId): MissileListSearch
     {
-        $this->parts[] = "missilelist_missile_id = :missileId";
+        $this->parts[] = "q.missile = :missileId";
         $this->parameters['missileId'] = $missileId;
 
         return $this;
     }
 
-    public function userId(int $userId): MissileListSearch
+    public function userId(User|int $userId): MissileListSearch
     {
-        $this->parts[] = "missilelist_user_id = :userId";
+        $this->parts[] = "q.user = :userId";
         $this->parameters['userId'] = $userId;
 
         return $this;
     }
 
-    public function entityId(int $entityId): MissileListSearch
+    public function entityId(Planet|int $entityId): MissileListSearch
     {
-        $this->parts[] = "missilelist_entity_id = :entityId";
+        $this->parts[] = "q.entity = :entityId";
         $this->parameters['entityId'] = $entityId;
 
         return $this;
@@ -45,7 +48,7 @@ class MissileListSearch extends AbstractSearch
 
     public function hasMissiles(): MissileListSearch
     {
-        $this->parts[] = "missilelist_count > 0";
+        $this->parts[] = "q.count > 0";
 
         return $this;
     }

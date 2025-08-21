@@ -32,10 +32,7 @@ class MissilesSearchComponent extends AbstractController
     private MissilesSearchRequest $request;
 
     public function __construct(
-        private MissileRepository $missileRepository,
-        private MissileDataRepository $missileDataRepository,
-        private UserRepository $userRepository,
-        private EntityRepository $entityRepository,
+        private readonly MissileRepository $missileRepository,
     ) {
         $this->request = new MissilesSearchRequest();
     }
@@ -43,30 +40,23 @@ class MissilesSearchComponent extends AbstractController
     public function getSearch(): SearchResult
     {
         $search = MissileListSearch::create()->hasMissiles();
-        if ($this->request->userId !== null) {
-            $search->userId($this->request->userId);
+        if ($this->request->user) {
+            $search->userId($this->request->user);
         }
 
-        if ($this->request->entityId !== null) {
-            $search->entityId($this->request->entityId);
+        if ($this->request->entity) {
+            $search->entityId($this->request->entity);
         }
 
-        if ($this->request->missileId !== null) {
-            $search->missileId($this->request->missileId);
+        if ($this->request->missile) {
+            $search->missileId($this->request->missile);
         }
 
-        $total = $this->missileRepository->count($search);
+        $total = $this->missileRepository->countBySearch($search);
 
         $limit = $this->getLimit($total);
 
         $entries = $this->missileRepository->search($search, $this->perPage, $limit);
-
-        if ($total > 0) {
-            $this->users = $this->userRepository->searchUserNicknames();
-            $this->missileNames = $this->missileDataRepository->getMissileNames(true);
-            $entityIds = array_map(fn (MissileListItem $item) => $item->entityId, $entries);
-            $this->entities = array_map(fn (EntityLabel $label) => $label->toString(), $this->entityRepository->searchEntityLabels(EntitySearch::create()->ids($entityIds)));
-        }
 
         return new SearchResult($entries, $limit, $total, $this->perPage);
     }

@@ -61,7 +61,7 @@ class UsersController extends AbstractAdminController
     {
         return $this->render('admin/user/login-failures.html.twig', [
             'form' => $this->createForm(UserLoginFailureType::class, $request->query->all()),
-            'total' => $this->loginFailureRepository->count(),
+            'total' => $this->loginFailureRepository->count([]),
         ]);
     }
 
@@ -71,8 +71,8 @@ class UsersController extends AbstractAdminController
     {
         $banners = [];
         $userNicks = $this->userRepository->searchUserNicknames();
-        foreach ($userNicks as $userId => $userNick) {
-            $banners[$userNick] = $this->userBannerService->getUserBanner($userId);
+        foreach ($userNicks as $user) {
+            $banners[$user->getNick()] = $this->userBannerService->getUserBanner($user->getId());
         }
 
         return $this->render('admin/user/banners.html.twig', [
@@ -88,13 +88,15 @@ class UsersController extends AbstractAdminController
     {
         $path = ProfileImage::IMAGE_PATH;
         $storedImagePath = $this->webRooDir . $path;
+
+        //TODO: use symfony form
         if ($request->request->has('validate_submit')) {
             foreach ($request->request->all('validate') as $userId => $validate) {
                 if ($validate == 0) {
                     $user = $this->userRepository->getUser($userId);
                     if ($user !== null) {
-                        if (file_exists($storedImagePath . $user->buildProfileImageUrl())) {
-                            unlink($storedImagePath . $user->buildProfileImageUrl());
+                        if (file_exists($storedImagePath . $user->getProfileImage())) {
+                            unlink($storedImagePath . $user->getProfileImage());
                         }
                         if ($this->userRepository->updateImgCheck($userId, false, '')) {
                             $this->addFlash('success', 'Bild entfernt!');

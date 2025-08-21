@@ -2,9 +2,13 @@
 
 namespace EtoA\Form\Request\Admin;
 
+use EtoA\Entity\Missile;
+use EtoA\Entity\Planet;
+use EtoA\Entity\User;
+
 class MissilesSearchRequest
 {
-    public ?int $userId = null;
-    public ?int $entityId = null;
-    public ?int $missileId = null;
+    public ?User $user = null;
+    public ?Planet $entity = null;
+    public ?Missile $missile = null;
 }

@@ -8,9 +8,9 @@
         {{ form_start(this.form, {'attr': {'onkeydown' :"return event.key != 'Enter';"}}) }}
     {% endif %}
     <tr>
-        <td>{{ this.user }}</td>
-        <td>{{ this.entity }}</td>
-        <td>{{ this.missile }}</td>
+        <td>{{ this.item.user.nick }}</td>
+        <td>{{ this.item.entity.entity.toString }}</td>
+        <td>{{ this.item.missile.name }}</td>
         <td>
             {% if this.isEdit %}
                 {{ form_row(this.form.count) }}
@@ -20,11 +20,11 @@
         </td>
         <td>
             {% if this.isEdit %}
-                <a href="#missile-{{ this.item.id }}" data-action="live#action" data-action-name="prevent|submit">Speichern</a>
-                <a href="#missile-{{ this.item.id }}" data-action="live#action" data-action-name="prevent|abortEdit">Abbrechen</a>
+                <a href="#missile-{{ this.item.id }}" data-action="live#action" data-live-action-param="prevent|submit">Speichern</a>
+                <a href="#missile-{{ this.item.id }}" data-action="live#action" data-live-action-param="prevent|abortEdit">Abbrechen</a>
             {% else %}
-                <a href="#missile-{{ this.item.id }}" data-action="live#action" data-action-name="prevent|showEdit">Bearbeiten</a>
-                <a onclick="confirm('Sollen {{ this.item.count}} {{ this.missile }} von diesem Planeten gelöscht werden?')" href="#missile-{{ this.item.id }}" data-action="live#action" data-action-name="prevent|delete">Löschen</a>
+                <a href="#missile-{{ this.item.id }}" data-action="live#action" data-live-action-param="prevent|showEdit">Bearbeiten</a>
+                <a onclick="confirm('Sollen {{ this.item.count}} {{ this.item.missile.name }} von diesem Planeten gelöscht werden?')" href="#missile-{{ this.item.id }}" data-action="live#action" data-live-action-param="prevent|delete">Löschen</a>
             {% endif %}
         </td>
     </tr>

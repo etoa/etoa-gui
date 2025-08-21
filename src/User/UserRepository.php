@@ -624,7 +624,7 @@ class UserRepository extends AbstractRepository
     }
 
     /**
-     * @return array<int, string>
+     * @return array<int, User>
      */
     public function searchUserNicknames(UserSearch $search = null, int $limit = null): array
     {

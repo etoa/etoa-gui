@@ -11,7 +11,7 @@
     {% for entry in search.entries %}
         <tr>
             <td>{{ formatTimestamp(entry.time) }}</td>
-            <td>{{ entry.userNick }}</td>
+            <td>{{ entry.user.nick }}</td>
             <td>{{ entry.ip }}</td>
             <td>{{ entry.host }}</td>
             <td>{{ entry.client }}</td>

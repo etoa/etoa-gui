@@ -16,42 +16,24 @@ use Symfony\UX\LiveComponent\Attribute\LiveProp;
 #[AsLiveComponent('admin_missile_view')]
 class MissileViewComponent extends AbstractEditComponent
 {
-    #[LiveProp]
-    public int $itemId;
-    #[LiveProp]
-    public string $user;
-    #[LiveProp]
-    public string $missile;
-    #[LiveProp]
-    public string $entity;
-    private ?MissileListItem $item = null;
-
-    public function mount(FormView $view = null, MissileListItem $item = null): void
-    {
-        $this->item = $item;
-        if ($item !== null) {
-            $this->itemId = $item->getId();
-        }
-    }
+    #[LiveProp(writable: true)]
+    public ?MissileListItem $item = null;
 
     public function __construct(
-        private MissileRepository $missileRepository
+        private readonly MissileRepository $missileRepository
     ) {
     }
 
     #[LiveAction]
     public function delete(): void
     {
-        $this->missileRepository->remove($this->itemId);
+        $this->missileRepository->remove($this->item);
+        $this->missileRepository->save();
         $this->item = null;
     }
 
     public function getItem(): ?MissileListItem
     {
-        if ($this->item === null) {
-            $this->item = $this->missileRepository->searchOne(MissileListSearch::create()->id($this->itemId));
-        }
-
         return $this->item;
     }
 
@@ -61,7 +43,5 @@ class MissileViewComponent extends AbstractEditComponent
     }
 
     protected function storeItem(): void
-    {
-        $this->missileRepository->setMissileCount($this->itemId, $this->item->getCount());
-    }
+    {}
 }

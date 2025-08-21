@@ -34,12 +34,11 @@ class MissileController extends AbstractAdminController
     #[IsGranted('ROLE_ADMIN_GAME-ADMIN')]
     public function search(Request $request): Response
     {
-        $addItem = MissileListItem::empty();
+        $addItem = new MissileListItem();
         $addForm = $this->createForm(AddMissileListType::class, $addItem);
         $addForm->handleRequest($request);
         if ($addForm->isSubmitted() && $addForm->isValid()) {
-            $userId = $this->planetRepository->getPlanetUserId($addItem->getEntityId());
-            $this->missileRepository->addMissile($addItem->getMissileId(), $addItem->getCount(), $userId, $addItem->getEntityId());
+            $this->missileRepository->addMissile($addItem->getMissile(), $addItem->getCount(), $addForm->get('entity')->getData()->getUser(), $addItem->getEntity());
 
             $this->addFlash('success', sprintf('%s Raketen hinzugefügt', StringUtils::formatNumber($addItem->getCount())));
         }
@@ -47,7 +46,7 @@ class MissileController extends AbstractAdminController
         return $this->render('admin/missiles/search.html.twig', [
             'addForm' => $addForm->createView(),
             'form' => $this->createForm(MissileSearchType::class, $request->query->all()),
-            'total' => $this->missileRepository->count(),
+            'total' => $this->missileRepository->count([]),
         ]);
     }
 

@@ -20,7 +20,9 @@ class MissileType extends AbstractType
         $resolver->setDefaults([
             'required' => false,
             'placeholder' => '(Alle)',
-            'choices' => array_flip($this->missileDataRepository->getMissileNames(true)),
+            'choices' => $this->missileDataRepository->getMissileNames(true),
+            'choice_value' => 'id',
+            'choice_label' => 'name'
         ]);
     }
 

@@ -20,7 +20,7 @@ class UserLoginFailureSearchComponent extends AbstractController
     private UserLoginFailureRequest $request;
 
     public function __construct(
-        private UserLoginFailureRepository $userLoginFailureRepository,
+        private readonly UserLoginFailureRepository $userLoginFailureRepository,
     ) {
         $this->perPage = 99;
         $this->request = new UserLoginFailureRequest();
@@ -29,23 +29,23 @@ class UserLoginFailureSearchComponent extends AbstractController
     public function getSearch(): SearchResult
     {
         $search = UserLoginFailureSearch::create();
-        if ($this->request->userId !== null) {
-            $search->userId($this->request->userId);
+        if ($this->request->user) {
+            $search->userId($this->request->user);
         }
 
-        if ($this->request->ip !== null) {
+        if ($this->request->ip) {
             $search->likeIp($this->request->ip);
         }
 
-        if ($this->request->host !== null) {
+        if ($this->request->host) {
             $search->likeHost($this->request->host);
         }
 
-        if ($this->request->client !== null) {
+        if ($this->request->client) {
             $search->likeClient($this->request->client);
         }
 
-        $total = $this->userLoginFailureRepository->count($search);
+        $total = $this->userLoginFailureRepository->countBySearch($search);
 
         $limit = $this->getLimit($total);
 

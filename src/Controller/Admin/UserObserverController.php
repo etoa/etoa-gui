@@ -40,7 +40,10 @@ class UserObserverController extends AbstractAdminController
             $this->addFlash('success', 'Spieler unter beobachtung gestellt');
         }
 
-        $users = $this->userRepository->searchAdminView(UserSearch::create()->observed());
+        $search = UserSearch::create();
+        $search->parts[] = 'user_observe IS NOT NULL';
+        $users = $this->userRepository->searchAdminView($search);
+        dd($users);
         $userIds = array_map(fn(User $user) => $user->getId(), $users);
         $entryCounts = $this->userSurveillanceRepository->counts($userIds);
 

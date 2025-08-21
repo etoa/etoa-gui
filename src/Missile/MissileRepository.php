@@ -3,7 +3,9 @@
 namespace EtoA\Missile;
 
 use Doctrine\Persistence\ManagerRegistry;
+use EtoA\Entity\Missile;
 use EtoA\Entity\MissileListItem;
+use EtoA\Entity\Planet;
 use EtoA\Entity\User;
 
 class MissileRepository extends \EtoA\Core\AbstractRepository
@@ -13,49 +15,22 @@ class MissileRepository extends \EtoA\Core\AbstractRepository
         parent::__construct($registry, MissileListItem::class);
     }
 
-    public function addMissile(int $missileId, int $amount, int $userId, int $entityId): void
+    public function addMissile(Missile $missile, int $amount, User $user, Planet $entity): void
     {
-        $hasMissiles = (bool) $this->createQueryBuilder('q')
-            ->select('missilelist_id')
-            ->from('missilelist')
-            ->where('missilelist_user_id = :userId')
-            ->andWhere('missilelist_entity_id = :entityId')
-            ->andWhere('missilelist_missile_id = :missileId')
-            ->setParameters([
-                'userId' => $userId,
-                'entityId' => $entityId,
-                'missileId' => $missileId,
-            ])->fetchOne();
 
-        if ($hasMissiles) {
-            $this->createQueryBuilder('q')
-                ->update('missilelist')
-                ->set('missilelist_count', 'missilelist_count + :amount')
-                ->where('missilelist_missile_id = :missileId')
-                ->andWhere('missilelist_entity_id = :entityId')
-                ->andWhere('missilelist_user_id = :userId')
-                ->setParameters([
-                    'amount' => $amount,
-                    'missileId' => $missileId,
-                    'userId' => $userId,
-                    'entityId' => $entityId,
-                ])->executeQuery();
-        } else {
-            $this->createQueryBuilder('q')
-                ->insert('missilelist')
-                ->values([
-                    'missilelist_count' => ':amount',
-                    'missilelist_missile_id' => ':missileId',
-                    'missilelist_entity_id' => ':entityId',
-                    'missilelist_user_id' => ':userId',
-                ])
-                ->setParameters([
-                    'amount' => $amount,
-                    'missileId' => $missileId,
-                    'userId' => $userId,
-                    'entityId' => $entityId,
-                ])->executeQuery();
+        $item = $this->findOneBy(['user'=>$user,'missile'=>$missile,'entity'=>$entity]);
+
+        if(!$item) {
+            $item = new MissileListItem();
+            $this->persist($item);
         }
+
+        $item->setUser($user);
+        $item->setEntity($entity);
+        $item->setMissile($missile);
+        $item->setCount($item->getCount()+max(0, $amount));
+
+        $this->save();
     }
 
     public function countEmpty(): int
@@ -91,12 +66,9 @@ class MissileRepository extends \EtoA\Core\AbstractRepository
      */
     public function search(MissileListSearch $search, int $limit, int $offset): array
     {
-        $data = $this->applySearchSortLimit($this->createQueryBuilder('q'), $search, null, $limit, $offset)
-            ->select('*')
-            ->from('missilelist')
-            ->fetchAllAssociative();
-
-        return array_map(fn ($row) => MissileListItem::createFromArray($row), $data);
+        return $this->applySearchSortLimit($this->createQueryBuilder('q'), $search, null, $limit, $offset)
+            ->getQuery()
+            ->execute();
     }
 
     public function searchOne(MissileListSearch $search): ?MissileListItem
@@ -161,5 +133,14 @@ class MissileRepository extends \EtoA\Core\AbstractRepository
             ->where('missilelist_count=0')
             ->executeQuery()
             ->rowCount();
+    }
+
+    public function countBySearch(MissileListSearch $search = null): int
+    {
+        return (int) $this->applySearchSortLimit($this->createQueryBuilder('q'), $search)
+            ->select('COUNT(q)')
+            ->setMaxResults(1)
+            ->getQuery()
+            ->getOneOrNullResult();
     }
 }

@@ -58,12 +58,12 @@ class MissileListItem
         return $this;
     }
 
-    public function getEntity(): ?User
+    public function getEntity(): ?Planet
     {
         return $this->entity;
     }
 
-    public function setEntity(?User $entity): static
+    public function setEntity(?Planet $entity): static
     {
         $this->entity = $entity;
 

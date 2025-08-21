@@ -2,9 +2,11 @@
 
 namespace EtoA\Form\Request\Admin;
 
+use EtoA\Entity\User;
+
 class UserLoginFailureRequest
 {
-    public ?int $userId = null;
+    public ?User $user = null;
     public ?string $ip = null;
     public ?string $host = null;
     public ?string $client = null;

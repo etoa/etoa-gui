@@ -3,6 +3,8 @@
 namespace EtoA\User;
 
 use EtoA\Core\Database\AbstractSearch;
+use EtoA\Entity\Alliance;
+use EtoA\Entity\Race;
 use EtoA\Entity\User;
 
 class UserSearch extends AbstractSearch
@@ -164,22 +166,22 @@ class UserSearch extends AbstractSearch
 
     public function confirmedImageCheck(): self
     {
-        $this->parts[] = "q.profileImgCheck = 1 AND q.profileImg <> ''";
+        $this->parts[] = "q.profileImageCheck = 1 AND q.profileImage <> ''";
 
         return $this;
     }
 
-    public function allianceId(int $allianceId): self
+    public function allianceId(int|Alliance $allianceId): self
     {
-        $this->parts[] = "q.allianceId = :allianceId";
+        $this->parts[] = "q.alliance = :allianceId";
         $this->parameters['allianceId'] = $allianceId;
 
         return $this;
     }
 
-    public function raceId(int $raceId): self
+    public function raceId(int|Race $raceId): self
     {
-        $this->parts[] = "q.raceId = :raceId";
+        $this->parts[] = "q.race = :raceId";
         $this->parameters['raceId'] = $raceId;
 
         return $this;
@@ -212,9 +214,9 @@ class UserSearch extends AbstractSearch
         return $this;
     }
 
-    public function race(int $raceId): self
+    public function race(int|Race $raceId): self
     {
-        $this->parts[] = "q.raceId = :race";
+        $this->parts[] = "q.race = :race";
         $this->parameters['race'] = $raceId;
 
         return $this;
