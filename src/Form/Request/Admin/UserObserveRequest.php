@@ -2,8 +2,10 @@
 
 namespace EtoA\Form\Request\Admin;
 
+use EtoA\Entity\User;
+
 class UserObserveRequest
 {
-    public ?int $userId = null;
+    public ?User $user = null;
     public ?string $reason = null;
 }

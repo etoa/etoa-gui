@@ -21,22 +21,22 @@
         <tbody>
         {% for user in users %}
             <tr>
-                <td><a href="{{ path('admin.users.view', {id: user.id}) }}">{{ user.nick }}</a></td>
-                <td>{{ formatNumber(user.points) }}</td>
-                <td>{{ user.observe }}</td>
-                {% if user.timeAction > 0 %}
+                <td><a href="{{ path('admin.users.view', {id: user.user_id}) }}">{{ user.user_nick }}</a></td>
+                <td>{{ formatNumber(user.user_points) }}</td>
+                <td>{{ user.user_observe }}</td>
+                {% if user.user_acttime > 0 %}
                     <td class="tbldata" style="color:#0f0;">online</td>
-                {% elseif user.timeLog > 0 %}
-                    <td class="tbldata">{{ formatTimestamp(user.timeLog) }}</td>
+                {% elseif user.user_logouttime > 0 %}
+                    <td class="tbldata">{{ formatTimestamp(user.user_logouttime) }}</td>
                 {% else %}
                     <td class="tbldata">Noch nicht eingeloggt!</td>
                 {% endif %}
 
-                <td>{{ formatNumber(entryCounts[user.id]|default(0)) }}</td>
+                <td>{{ formatNumber(entryCounts[user.user_id]|default(0)) }}</td>
                 <td>
-                    <a href="{{ path('admin.users.observer.details', {id: user.id}) }}">Details</a>
-                    <a href="{{ path('admin.users.observer.edit', {id: user.id}) }}">Text ändern</a>
-                    <a href="{{ path('admin.users.observer.remove', {id: user.id}) }}">Entfernen</a>
+                    <a href="{{ path('admin.users.observer.details', {id: user.user_id}) }}">Details</a>
+                    <a href="{{ path('admin.users.observer.edit', {id: user.user_id}) }}">Text ändern</a>
+                    <a href="{{ path('admin.users.observer.remove', {id: user.user_id}) }}">Entfernen</a>
                 </td>
             </tr>
         {% else %}

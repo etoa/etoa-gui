@@ -3,15 +3,16 @@
 namespace EtoA\Controller\Admin;
 
 use EtoA\Entity\User;
-use EtoA\Entity\UserSessionLog;
 use EtoA\Form\Request\Admin\UserObserveRequest;
 use EtoA\Form\Type\Admin\EditUserObserverType;
 use EtoA\Form\Type\Admin\UserObserveType;
 use EtoA\User\UserRepository;
 use EtoA\User\UserSearch;
+use EtoA\User\UserSessionLogRepository;
 use EtoA\User\UserSessionRepository;
 use EtoA\User\UserSurveillanceRepository;
 use EtoA\User\UserSurveillanceSearch;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -23,6 +24,7 @@ class UserObserverController extends AbstractAdminController
         private readonly UserRepository             $userRepository,
         private readonly UserSurveillanceRepository $userSurveillanceRepository,
         private readonly UserSessionRepository      $userSessionRepository,
+        private readonly UserSessionLogRepository   $userSessionLogRepository
     )
     {
     }
@@ -32,10 +34,15 @@ class UserObserverController extends AbstractAdminController
     public function list(Request $request): Response
     {
         $formRequest = new UserObserveRequest();
-        $form = $this->createForm(UserObserveType::class, $formRequest);
+        $form = $this->createForm(UserObserveType::class, $formRequest)->add('submit', SubmitType::class, [
+            'label' => 'Zur Beobachtungsliste hinzufügen',
+        ]);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->userRepository->updateObserve((int)$formRequest->userId, $formRequest->reason);
+            $user = $formRequest->user;
+            $user->setObserve($formRequest->reason);
+
+            $this->userRepository->save();
 
             $this->addFlash('success', 'Spieler unter beobachtung gestellt');
         }
@@ -43,8 +50,7 @@ class UserObserverController extends AbstractAdminController
         $search = UserSearch::create();
         $search->parts[] = 'user_observe IS NOT NULL';
         $users = $this->userRepository->searchAdminView($search);
-        dd($users);
-        $userIds = array_map(fn(User $user) => $user->getId(), $users);
+        $userIds = array_map(fn(array $user) => $user['user_id'], $users);
         $entryCounts = $this->userSurveillanceRepository->counts($userIds);
 
         return $this->render('admin/user-observer/list.html.twig', [
@@ -86,7 +92,7 @@ class UserObserverController extends AbstractAdminController
 
     #[Route('/admin/users/observer/{id}/details/{sessionId}', name: 'admin.users.observer.details.session')]
     #[IsGranted('ROLE_ADMIN_GAME-ADMIN')]
-    public function sessionDetails(?User $user = null, ?UserSessionLog $session = null): Response
+    public function sessionDetails(string $sessionId, ?User $user = null): Response
     {
         if ($user === null) {
             $this->addFlash('error', 'User existiert nicht');
@@ -94,27 +100,23 @@ class UserObserverController extends AbstractAdminController
             return $this->redirectToRoute('admin.users.observer');
         }
 
-        if ($session === null) {
-            $session = $this->userSessionRepository->find($session);
-            $id = $session->getId();
-        }
-        else {
-            $id = $session->getSessionId();
+        $session = $this->userSessionRepository->findOneBy(['id'=>$sessionId]);
+        if (!$session) {
+            $session = $this->userSessionLogRepository->findOneBy(['id'=>$sessionId]);
         }
 
         return $this->render('admin/user-observer/session-details.html.twig', [
-            'entries' => $this->userSurveillanceRepository->search(UserSurveillanceSearch::create()->session($id)),
+            'entries' => $this->userSurveillanceRepository->search(UserSurveillanceSearch::create()->session($sessionId)),
             'session' => $session,
-            'sessionId' => $id,
+            'sessionId' => $sessionId,
             'user' => $user,
         ]);
     }
 
     #[Route('/admin/users/observer/{id}/edit', name: 'admin.users.observer.edit')]
     #[IsGranted('ROLE_ADMIN_GAME-ADMIN')]
-    public function edit(Request $request, int $id): Response
+    public function edit(Request $request, ?User $user = null): Response
     {
-        $user = $this->userRepository->getUser($id);
         if ($user === null || null === $user->getObserve()) {
             $this->addFlash('error', 'Spieler steht nicht unter beobachtung');
 
@@ -124,7 +126,7 @@ class UserObserverController extends AbstractAdminController
         $form = $this->createForm(EditUserObserverType::class, $user);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->userRepository->updateObserve($user->getId(), $user->getObserve());
+            $this->userRepository->save();
             $this->addFlash('success', 'Beobachtungsgrund aktualisiert!');
 
             return $this->redirectToRoute('admin.users.observer');
@@ -138,14 +140,14 @@ class UserObserverController extends AbstractAdminController
 
     #[Route('/admin/users/observer/{id}/remove', name: 'admin.users.observer.remove')]
     #[IsGranted('ROLE_ADMIN_GAME-ADMIN')]
-    public function remove(int $id): Response
+    public function remove(?User $user = null): Response
     {
-        $user = $this->userRepository->getUser($id);
         if ($user === null || null === $user->getObserve()) {
             $this->addFlash('error', 'Spieler steht nicht unter beobachtung');
         } else {
-            $this->userRepository->updateObserve($user->getId(), null);
-            $this->userSurveillanceRepository->removeForUser($user->getId());
+            $user->setObserve(null);
+            $this->userRepository->save();
+            $this->userSurveillanceRepository->removeForUser($user);
 
             $this->addFlash('success', 'Spieler von der Beobachtungsliste entfernt');
         }

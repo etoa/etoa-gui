@@ -78,18 +78,18 @@ class UserSurveillanceRepository extends AbstractRepository
         if (count($userIds) === 0) {
             return [];
         }
-
         $data = $this->createQueryBuilder('q')
-            ->select('user_id, COUNT(*)')
-            ->from('user_surveillance')
-            ->where('user_id IN (:userIds)')
+            ->select("IDENTITY(q.user) as id")
+            ->addSelect('COUNT(q) as count')
+            ->where('q.user IN (:userIds)')
             ->setParameter('userIds', $userIds, ArrayParameterType::INTEGER)
-            ->groupBy('user_id')
-            ->fetchAllKeyValue();
+            ->groupBy('q.user')
+            ->getQuery()
+            ->execute();
 
         $counts = [];
-        foreach ($data as $userId => $count) {
-            $counts[(int)$userId] = (int)$count;
+        foreach ($data as $row) {
+            $counts[(int)$row['id']] = (int)$row['count'];
         }
 
         return $counts;

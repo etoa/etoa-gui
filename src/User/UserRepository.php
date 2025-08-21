@@ -277,7 +277,7 @@ class UserRepository extends AbstractRepository
     public function searchAdminView(UserSearch $search): array
     {
         $where = implode(' AND ', $search->parts);
-        $data = $this->getConnection()->fetchAllAssociative('SELECT
+        return $this->getConnection()->fetchAllAssociative('SELECT
                 users.*,
                 user_sessionlog.time_action AS time_log,
                 user_sessionlog.ip_addr AS ip_log,
@@ -290,8 +290,6 @@ class UserRepository extends AbstractRepository
             LEFT JOIN user_sessions ON users.user_id = user_sessions.user_id
             WHERE ' . $where . '
             ORDER BY users.user_nick', $search->parameters);
-
-        return array_map(fn($row) => new UserAdminView($row), $data);
     }
 
     public function getUserAdminView(int $userId): ?UserAdminView

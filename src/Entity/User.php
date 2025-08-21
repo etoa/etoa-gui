@@ -900,7 +900,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->observe;
     }
 
-    public function setObserve(string $observe): static
+    public function setObserve(?string $observe): static
     {
         $this->observe = $observe;
 

@@ -13,15 +13,12 @@ class UserObserveType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('userId', UserType::class, [
+            ->add('user', UserType::class, [
                 'label' => 'Spieler',
                 'placeholder' => 'Spieler auswählen',
             ])
             ->add('reason', TextareaType::class, [
                 'label' => 'Grund',
-            ])
-            ->add('submit', SubmitType::class, [
-                'label' => 'Zur Beobachtungsliste hinzufügen',
             ]);
     }
 }
