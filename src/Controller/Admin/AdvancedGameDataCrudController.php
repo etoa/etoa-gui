@@ -159,7 +159,7 @@ abstract class AdvancedGameDataCrudController extends GameDataCrudController
                         if ($arr[$v] == 1) {
                             echo '<img src="/build/images/true.gif" alt="true" />';
                         } else {
-                            echo '<img src="/build/false.gif" alt="true" />';
+                            echo '<img src="/build/images/false.gif" alt="true" />';
                         }
                         echo "</td>";
                     }
