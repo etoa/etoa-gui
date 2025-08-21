@@ -32,10 +32,11 @@ class ShipType extends AbstractType
                         $search = ShipSearch::create();
                     }
 
-                    return array_flip($this->shipDataRepository->searchShipNames($search));
+                    return $this->shipDataRepository->searchShipNames($search);
                 });
             },
-            'choices' => array_flip($this->shipDataRepository->getShipNames()),
+            'choice_value' => 'id',
+            'choice_label' => 'name',
         ]);
     }
 

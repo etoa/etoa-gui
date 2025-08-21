@@ -3,6 +3,7 @@
 namespace EtoA\Ship;
 
 use EtoA\Core\Database\AbstractSearch;
+use EtoA\Entity\Race;
 
 class ShipSearch extends AbstractSearch
 {
@@ -13,7 +14,7 @@ class ShipSearch extends AbstractSearch
 
     public function id(int $id): ShipSearch
     {
-        $this->parts[] = "ship_id = :id";
+        $this->parts[] = "q.id = :id";
         $this->parameters['id'] = $id;
 
         return $this;
@@ -24,7 +25,7 @@ class ShipSearch extends AbstractSearch
      */
     public function ids(array $ids): ShipSearch
     {
-        $this->parts[] = "ship_id IN(:ids)";
+        $this->parts[] = "q.id IN(:ids)";
         $this->stringArrayParameters['ids'] = $ids;
 
         return $this;
@@ -32,7 +33,7 @@ class ShipSearch extends AbstractSearch
 
     public function nameLike(string $name): ShipSearch
     {
-        $this->parts[] = "ship_name LIKE :nameLike";
+        $this->parts[] = "q.name LIKE :nameLike";
         $this->parameters['nameLike'] = $name . '%';
 
         return $this;
@@ -40,7 +41,7 @@ class ShipSearch extends AbstractSearch
 
     public function name(string $name): ShipSearch
     {
-        $this->parts[] = "ship_name = :name";
+        $this->parts[] = "q.name = :name";
         $this->parameters['name'] = $name;
 
         return $this;
@@ -48,14 +49,14 @@ class ShipSearch extends AbstractSearch
 
     public function showOrBuildable(): ShipSearch
     {
-        $this->parts[] = 'ship_show=1 OR ship_buildable=1';
+        $this->parts[] = 'q.show=1 OR q.buildable=1';
 
         return $this;
     }
 
     public function show(bool $show): ShipSearch
     {
-        $this->parts[] = 'ship_show = :show';
+        $this->parts[] = 'q.show = :show';
         $this->parameters['show'] = (int) $show;
 
         return $this;
@@ -63,14 +64,14 @@ class ShipSearch extends AbstractSearch
 
     public function buildable(): ShipSearch
     {
-        $this->parts[] = 'ship_buildable=1';
+        $this->parts[] = 'q.buildable=1';
 
         return $this;
     }
 
     public function special(bool $special): ShipSearch
     {
-        $this->parts[] = 'special_ship = :special';
+        $this->parts[] = 'q.special = :special';
         $this->parameters['special'] = (int) $special;
 
         return $this;
@@ -78,8 +79,8 @@ class ShipSearch extends AbstractSearch
 
     public function tradeable(bool $tradeable): ShipSearch
     {
-        $this->parts[] = 'ship_tradable = :tradeable';
-        $this->parameters['tradeable'] = (int) $tradeable;
+        $this->parts[] = 'q.tradable = :tradeable';
+        $this->parameters['tradeable'] = $tradeable;
 
         return $this;
     }
@@ -87,25 +88,25 @@ class ShipSearch extends AbstractSearch
     public function allianceShip(bool $allianceShip): ShipSearch
     {
         if ($allianceShip) {
-            $this->parts[] = 'ship_alliance_costs > 0';
+            $this->parts[] = 'q.allianceCosts > 0';
         } else {
-            $this->parts[] = 'ship_alliance_costs = 0';
+            $this->parts[] = 'q.allianceCosts = 0';
         }
 
         return $this;
     }
 
-    public function raceId(int $raceId): ShipSearch
+    public function raceId(int|Race $raceId): ShipSearch
     {
-        $this->parts[] = 'ship_race_id = :raceId';
+        $this->parts[] = 'q.race = :raceId';
         $this->parameters['raceId'] = $raceId;
 
         return $this;
     }
 
-    public function raceOrNull(int $raceId): ShipSearch
+    public function raceOrNull(Race|int $raceId): ShipSearch
     {
-        $this->parts[] = 'ship_race_id = 0 OR ship_race_id = :raceIdOrNull';
+        $this->parts[] = 'q.race = 0 OR q.race = :raceIdOrNull';
         $this->parameters['raceIdOrNull'] = $raceId;
 
         return $this;
@@ -113,7 +114,7 @@ class ShipSearch extends AbstractSearch
 
     public function producesPower(): self
     {
-        $this->parts[] = 'ship_prod_power > 0';
+        $this->parts[] = 'q.prodPower > 0';
 
         return $this;
     }

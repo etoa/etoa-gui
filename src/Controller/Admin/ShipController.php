@@ -12,13 +12,12 @@ use EtoA\Ranking\RankingService;
 use EtoA\Requirement\ObjectRequirement;
 use EtoA\Requirement\RequirementsUpdater;
 use EtoA\Ship\ShipDataRepository;
+use EtoA\Ship\ShipListRepository;
 use EtoA\Ship\ShipQueueRepository;
-use EtoA\Ship\ShipRepository;
 use EtoA\Ship\ShipRequirementRepository;
 use EtoA\Ship\ShipSearch;
 use EtoA\Ship\ShipXpCalculator;
 use EtoA\Support\StringUtils;
-use EtoA\Universe\Planet\PlanetRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -32,8 +31,7 @@ class ShipController extends AbstractAdminController
         private readonly ShipRequirementRepository $shipRequirementRepository,
         private readonly RankingService            $rankingService,
         private readonly ShipQueueRepository       $shipQueueRepository,
-        private readonly PlanetRepository          $planetRepository,
-        private readonly ShipRepository            $shipRepository,
+        private readonly ShipListRepository        $shipListRepository,
     )
     {
     }
@@ -46,16 +44,15 @@ class ShipController extends AbstractAdminController
         $addForm = $this->createForm(AddShipListType::class, $addItem);
         $addForm->handleRequest($request);
         if ($addForm->isSubmitted() && $addForm->isValid()) {
-            $userId = $this->planetRepository->getPlanetUserId($addItem->entityId);
-            $this->shipRepository->addShip($addItem->shipId, $addItem->count, $userId, $addItem->entityId);
+            $this->shipListRepository->addShip($addItem->getShip(), $addItem->getCount(), $addForm->get('entity')->getData()->getUser(), $addItem->getEntity());
 
-            $this->addFlash('success', sprintf('%s Schiffe hinzugefügt', StringUtils::formatNumber($addItem->count)));
+            $this->addFlash('success', sprintf('%s Schiffe hinzugefügt', StringUtils::formatNumber($addItem->getCount())));
         }
 
         return $this->render('admin/ships/search.html.twig', [
             'addForm' => $addForm->createView(),
             'form' => $this->createForm(ShipSearchType::class, $request->query->all()),
-            'total' => $this->shipRepository->count(),
+            'total' => $this->shipListRepository->count([]),
         ]);
     }
 

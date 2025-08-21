@@ -3,6 +3,9 @@
 namespace EtoA\Ship;
 
 use EtoA\Core\Database\AbstractSearch;
+use EtoA\Entity\Planet;
+use EtoA\Entity\Ship;
+use EtoA\Entity\User;
 
 class ShipListSearch extends AbstractSearch
 {
@@ -11,26 +14,26 @@ class ShipListSearch extends AbstractSearch
         return new ShipListSearch();
     }
 
-    public function userId(int $userId): self
+    public function userId(int|User $userId): self
     {
-        $this->parts[] = 'shiplist_user_id = :userId';
+        $this->parts[] = 'q.user = :userId';
         $this->parameters['userId'] = $userId;
 
         return $this;
     }
 
-    public function entityId(int $entityId): self
+    public function entityId(Planet|int $entityId): self
     {
-        $this->parts[] = 'shiplist_entity_id = :entityId';
+        $this->parts[] = 'q.entity = :entityId';
         $this->parameters['entityId'] = $entityId;
 
         return $this;
     }
 
 
-    public function shipId(int $shipId): self
+    public function shipId(int|Ship $shipId): self
     {
-        $this->parts[] = 'shiplist_ship_id = :shipId';
+        $this->parts[] = 'q.ship = :shipId';
         $this->parameters['shipId'] = $shipId;
 
         return $this;
@@ -38,7 +41,7 @@ class ShipListSearch extends AbstractSearch
 
     public function hasShips(): self
     {
-        $this->parts[] = "shiplist_count > 0 OR shiplist_bunkered > 0";
+        $this->parts[] = "q.count > 0 OR q.bunkered > 0";
 
         return $this;
     }

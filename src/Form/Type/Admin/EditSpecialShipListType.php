@@ -9,17 +9,12 @@ use Symfony\Component\Form\FormBuilderInterface;
 
 class EditSpecialShipListType extends EditShipListType
 {
-    public function __construct(
-        private ShipDataRepository $shipDataRepository,
-    ) {
-    }
-
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         parent::buildForm($builder, $options);
 
         /** @var Ship $ship */
-        $ship = $this->shipDataRepository->getShip($options['data']->shipId, false);
+        $ship = $options['data']->getShip();
 
         $builder
             ->add('specialShipExp', IntegerType::class, [

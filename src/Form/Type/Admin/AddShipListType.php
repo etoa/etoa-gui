@@ -15,14 +15,15 @@ class AddShipListType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('entityId', EntityType::class, [
+            ->add('entity', EntityType::class, [
                 'placeholder' => false,
                 'label' => 'Entity',
                 'search' => EntityLabelSearch::create()
                     ->codeIn([\EtoA\Universe\Entity\EntityType::PLANET])
                     ->planetUserIdNotNull(),
+                'get_type' => true
             ])
-            ->add('shipId', ShipType::class, [
+            ->add('ship', ShipType::class, [
                 'placeholder' => false,
                 'label' => 'Schiff',
             ])

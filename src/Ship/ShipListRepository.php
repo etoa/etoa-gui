@@ -106,12 +106,9 @@ class ShipListRepository extends AbstractRepository
      */
     public function search(ShipListSearch $search, int $limit = null, int $offset = null): array
     {
-        $data = $this->applySearchSortLimit($this->createQueryBuilder('q'), $search, null, $limit, $offset)
-            ->select('*')
-            ->from('shiplist')
-            ->fetchAllAssociative();
-
-        return array_map(fn ($row) => ShipListItem::createFromData($row), $data);
+        return $this->applySearchSortLimit($this->createQueryBuilder('q'), $search, null, $limit, $offset)
+            ->getQuery()
+            ->execute();
     }
 
 
@@ -137,13 +134,13 @@ class ShipListRepository extends AbstractRepository
         return $result;
     }
 
-    public function addShip(int $shipId, int $amount, int $userId, int $entityId): void
+    public function addShip(Ship $ship, int $amount, User $user, Planet $entity): void
     {
         if ($amount < 0) {
             throw new \InvalidArgumentException('Cannot add negative ship count');
         }
 
-        $this->addShipCount($shipId, $amount, $userId, $entityId);
+        $this->addShipCount($ship, $amount, $user, $entity);
     }
 
     public function removeShips(ShipListItem $shipListItem, int $amount): int
@@ -330,22 +327,22 @@ class ShipListRepository extends AbstractRepository
             ->executeQuery();
     }
 
-    private function addShipCount(int $shipId, int $amount, int $userId, int $entityId): void
+    private function addShipCount(Ship $ship, int $amount, User $user, Planet $entity): void
     {
-        $item = $this->findOneBy(['userId'=>$userId,'shipId'=>$shipId,'entityId'=>$entityId]);
+        $item = $this->findOneBy(['user'=>$user,'ship'=>$ship,'entity'=>$entity]);
 
         if(!$item) {
             $item = new ShipListItem();
-            $item->setUserId($userId);
-            $item->setEntityId($entityId);
-            $item->setEntity($this->entityRepository->findOneBy(['id'=>$entityId]));
-            $item->setShipId($shipId);
+            $this->persist($item);
         }
 
         $item->setCount($item->getCount()+max(0, $amount));
 
-        $this->getEntityManager()->persist($item);
-        $this->getEntityManager()->flush();
+        $item->setUser($user);
+        $item->setEntity($entity);
+        $item->setShip($ship);
+
+        $this->save();
     }
 
     /**
@@ -410,5 +407,14 @@ class ShipListRepository extends AbstractRepository
             ->setParameter('user', $user)
             ->getQuery()
             ->execute();
+    }
+
+    public function countBySearch(ShipListSearch $search = null): int
+    {
+        return (int) $this->applySearchSortLimit($this->createQueryBuilder('q'), $search)
+            ->select('COUNT(q)')
+            ->setMaxResults(1)
+            ->getQuery()
+            ->getOneOrNullResult();
     }
 }

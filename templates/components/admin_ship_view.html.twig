@@ -1,6 +1,5 @@
 <tbody
     {{ attributes }}
-    data-original-data="{}" {# Hack to prevent issue with symfony/ux #}
     data-action="change->live#update"
 >
 {% if this.item %}
@@ -9,9 +8,9 @@
     {% endif %}
     <tr>
         <td>{{ this.item.id }}</td>
-        <td>{{ this.user }}</td>
-        <td>{{ this.entity }}</td>
-        <td>{{ this.ship }}</td>
+        <td>{{ this.item.user.nick }}</td>
+        <td>{{ this.item.entity.entity.toString }}</td>
+        <td>{{ this.item.ship.name }}</td>
         <td>
             {% if this.isEdit %}
                 {{ form_row(this.form.count) }}
@@ -38,11 +37,11 @@
         </td>
         <td>
             {% if this.isEdit %}
-                <a href="#ship-{{ this.item.id }}" data-action="live#action" data-action-name="prevent|submit">Speichern</a>
-                <a href="#ship-{{ this.item.id }}" data-action="live#action" data-action-name="prevent|abortEdit">Abbrechen</a>
+                <a href="#ship-{{ this.item.id }}" data-action="live#action" data-live-action-param="prevent|submit">Speichern</a>
+                <a href="#ship-{{ this.item.id }}" data-action="live#action" data-live-action-param="prevent|abortEdit">Abbrechen</a>
             {% else %}
-                <a href="#ship-{{ this.item.id }}" data-action="live#action" data-action-name="prevent|showEdit">Bearbeiten</a>
-                <a onclick="confirm('Sollen {{ this.item.count}} {{ this.ship }} von diesem Planeten gelöscht werden?')" href="#ship-{{ this.item.id }}" data-action="live#action" data-action-name="prevent|delete">Löschen</a>
+                <a href="#ship-{{ this.item.id }}" data-action="live#action" data-live-action-param="prevent|showEdit">Bearbeiten</a>
+                <a onclick="confirm('Sollen {{ this.item.count}} {{ this.item.ship.name }} von diesem Planeten gelöscht werden?')" href="#ship-{{ this.item.id }}" data-action="live#action" data-live-action-param="prevent|delete">Löschen</a>
             {% endif %}
         </td>
     </tr>

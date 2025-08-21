@@ -4,15 +4,12 @@ namespace EtoA\Components\Admin;
 
 use EtoA\Components\Helper\SearchComponentTrait;
 use EtoA\Components\Helper\SearchResult;
-use EtoA\Entity\ShipListItem;
 use EtoA\Form\Request\Admin\ShipSearchRequest;
 use EtoA\Form\Type\Admin\ShipSearchType;
 use EtoA\Ship\ShipDataRepository;
+use EtoA\Ship\ShipListRepository;
 use EtoA\Ship\ShipListSearch;
-use EtoA\Ship\ShipRepository;
-use EtoA\Universe\Entity\EntityLabel;
 use EtoA\Universe\Entity\EntityRepository;
-use EtoA\Universe\Entity\EntitySearch;
 use EtoA\User\UserRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormInterface;
@@ -23,19 +20,13 @@ class ShipSearchComponent extends AbstractController
 {
     use SearchComponentTrait;
 
-    /** @var array<int, string> */
-    public array $users;
-    /** @var array<int, string> */
-    public array $shipNames;
-    /** @var array<int, string> */
-    public array $entities;
     private ShipSearchRequest $request;
 
     public function __construct(
-        private ShipRepository $shipRepository,
-        private ShipDataRepository $shipDataRepository,
-        private UserRepository $userRepository,
-        private EntityRepository $entityRepository,
+        private readonly ShipDataRepository $shipDataRepository,
+        private readonly UserRepository     $userRepository,
+        private readonly EntityRepository   $entityRepository,
+        private readonly ShipListRepository $shipListRepository
     ) {
         $this->request = new ShipSearchRequest();
     }
@@ -43,30 +34,23 @@ class ShipSearchComponent extends AbstractController
     public function getSearch(): SearchResult
     {
         $search = ShipListSearch::create()->hasShips();
-        if ($this->request->userId !== null) {
-            $search->userId($this->request->userId);
+        if ($this->request->user) {
+            $search->userId($this->request->user);
         }
 
-        if ($this->request->entityId !== null) {
-            $search->entityId($this->request->entityId);
+        if ($this->request->entity) {
+            $search->entityId($this->request->entity);
         }
 
-        if ($this->request->shipId !== null) {
-            $search->shipId($this->request->shipId);
+        if ($this->request->ship) {
+            $search->shipId($this->request->ship);
         }
 
-        $total = $this->shipRepository->count($search);
+        $total = $this->shipListRepository->countBySearch($search);
 
         $limit = $this->getLimit($total);
 
-        $entries = $this->shipRepository->search($search, $this->perPage, $limit);
-
-        if ($total > 0) {
-            $this->users = $this->userRepository->searchUserNicknames();
-            $this->shipNames = $this->shipDataRepository->getShipNames(true);
-            $entityIds = array_map(fn (ShipListItem $item) => $item->entityId, $entries);
-            $this->entities = array_map(fn (EntityLabel $label) => $label->toString(), $this->entityRepository->searchEntityLabels(EntitySearch::create()->ids($entityIds)));
-        }
+        $entries = $this->shipListRepository->search($search, $this->perPage, $limit);
 
         return new SearchResult($entries, $limit, $total, $this->perPage);
     }

@@ -6,11 +6,9 @@ use EtoA\Components\Helper\AbstractEditComponent;
 use EtoA\Entity\ShipListItem;
 use EtoA\Form\Type\Admin\EditShipListType;
 use EtoA\Form\Type\Admin\EditSpecialShipListType;
-use EtoA\Ship\ShipDataRepository;
-use EtoA\Ship\ShipRepository;
+use EtoA\Ship\ShipListRepository;
 use EtoA\Ship\ShipXpCalculator;
 use Symfony\Component\Form\FormInterface;
-use Symfony\Component\Form\FormView;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
 use Symfony\UX\LiveComponent\Attribute\LiveAction;
 use Symfony\UX\LiveComponent\Attribute\LiveProp;
@@ -18,60 +16,40 @@ use Symfony\UX\LiveComponent\Attribute\LiveProp;
 #[AsLiveComponent('admin_ship_view')]
 class ShipViewComponent extends AbstractEditComponent
 {
-    #[LiveProp]
-    public int $itemId;
-    #[LiveProp]
-    public string $user;
-    #[LiveProp]
-    public string $ship;
-    #[LiveProp]
-    public string $entity;
-    private ?ShipListItem $item = null;
-
-    public function mount(FormView $view = null, ShipListItem $item = null): void
-    {
-        $this->item = $item;
-        if ($item !== null) {
-            $this->itemId = $item->id;
-        }
-    }
+    #[LiveProp(writable: true)]
+    public ?ShipListItem $item = null;
 
     public function __construct(
-        private ShipRepository $shipRepository,
-        private ShipDataRepository $shipDataRepository
-    ) {
-    }
+        private readonly ShipListRepository $shipRepository,
+    ) {}
 
     #[LiveAction]
     public function delete(): void
     {
-        $this->shipRepository->removeEntry($this->itemId);
+        $this->shipRepository->remove($this->item);
+        $this->shipRepository->save();
         $this->item = null;
     }
 
     public function getItem(): ?ShipListItem
     {
-        if ($this->item === null) {
-            $this->item = $this->shipRepository->find($this->itemId);
-        }
-
         return $this->item;
     }
 
     public function getLevel(): int|string
     {
-        if (!$this->getItem()->specialShip) {
+        if (!$this->getItem()?->isSpecialShip()) {
             return 0;
         }
 
-        $ship = $this->shipDataRepository->getShip($this->getItem()->shipId, false);
+        $ship = $this->item->getShip();
 
-        return ShipXpCalculator::levelByXp($ship->specialNeedExp, $ship->specialExpFactor, $this->getItem()->specialShipExp) . ' ' . time();
+        return ShipXpCalculator::levelByXp($ship->getSpecialNeedExp(), $ship->getSpecialExpFactor(), $this->getItem()->getSpecialShipExp()) . ' ' . time();
     }
 
     protected function instantiateForm(): FormInterface
     {
-        if ($this->getItem()->specialShip) {
+        if ($this->getItem()?->isSpecialShip()) {
             return $this->createForm(EditSpecialShipListType::class, $this->getItem());
         }
 
