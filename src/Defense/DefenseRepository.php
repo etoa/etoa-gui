@@ -6,6 +6,7 @@ namespace EtoA\Defense;
 
 use Doctrine\Persistence\ManagerRegistry;
 use EtoA\Core\AbstractRepository;
+use EtoA\Entity\Defense;
 use EtoA\Entity\DefenseListItem;
 use EtoA\Entity\Entity;
 use EtoA\Entity\Planet;
@@ -52,14 +53,14 @@ class DefenseRepository extends AbstractRepository
         return $data !== false ? DefenseListItem::createFromData($data) : null;
     }
 
-    public function addDefense(int $defenseId, int $amount, int $userId, int $entityId): void
+    public function addDefense(Defense $defense, int $amount, User $user, Planet $entity): void
     {
         if ($amount < 0) {
             throw new \InvalidArgumentException('Cannot add negative defense count');
         }
 
 
-        $this->addDefenseCount($defenseId, $amount, $userId, $entityId);
+        $this->addDefenseCount($defense, $amount, $user, $entity);
     }
 
     public function setDefenseCount(int $id, int $count): void
@@ -98,22 +99,21 @@ class DefenseRepository extends AbstractRepository
         return $amount;
     }
 
-    private function addDefenseCount(int $defenseId, int $amount, int $userId, int $entityId): void
+    private function addDefenseCount(Defense $defense, int $amount, User $user, Planet $entity): void
     {
-        $item = $this->findOneBy(['userId'=>$userId,'defenseId'=>$defenseId,'entityId'=>$entityId]);
+        $item = $this->findOneBy(['user'=>$user,'defense'=>$defense,'entity'=>$entity]);
 
         if(!$item) {
             $item = new DefenseListItem();
-            $item->setUserId($userId);
-            $item->setEntityId($entityId);
-            $item->setEntity($this->entityRepository->findOneBy(['id'=>$entityId]));
-            $item->setDefenseId($defenseId);
+            $this->persist($item);
         }
 
+        $item->setUser($user);
+        $item->setEntity($entity);
+        $item->setDefense($defense);
         $item->setCount($item->getCount()+max(0, $amount));
 
-        $this->getEntityManager()->persist($item);
-        $this->getEntityManager()->flush();
+        $this->save();
     }
 
     public function getDefenseCount(int $userId, int $defenseId): int
@@ -270,12 +270,9 @@ class DefenseRepository extends AbstractRepository
      */
     public function search(DefenseListSearch $search, int $limit = null, int $offset = null): array
     {
-        $data = $this->applySearchSortLimit($this->createQueryBuilder('q'), $search, null, $limit, $offset)
-            ->select('deflist.*')
-            ->from('deflist')
-            ->fetchAllAssociative();
-
-        return array_map(fn ($row) => DefenseListItem::createFromData($row), $data);
+        return $this->applySearchSortLimit($this->createQueryBuilder('q'), $search, null, $limit, $offset)
+            ->getQuery()
+            ->execute();
     }
 
     public function removeForEntity(Planet $entity): void
@@ -286,5 +283,14 @@ class DefenseRepository extends AbstractRepository
             ->setParameter('entity', $entity)
             ->getQuery()
             ->execute();
+    }
+
+    public function countBySearch(DefenseListSearch $search = null): int
+    {
+        return (int) $this->applySearchSortLimit($this->createQueryBuilder('q'), $search)
+            ->select('COUNT(q)')
+            ->setMaxResults(1)
+            ->getQuery()
+            ->getOneOrNullResult();
     }
 }

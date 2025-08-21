@@ -3,6 +3,9 @@
 namespace EtoA\Defense;
 
 use EtoA\Core\Database\AbstractSearch;
+use EtoA\Entity\Defense;
+use EtoA\Entity\Planet;
+use EtoA\Entity\User;
 
 class DefenseListSearch extends AbstractSearch
 {
@@ -11,9 +14,9 @@ class DefenseListSearch extends AbstractSearch
         return new DefenseListSearch();
     }
 
-    public function userId(int $userId): self
+    public function userId(int|User $userId): self
     {
-        $this->parts[] = 'deflist_user_id = :userId';
+        $this->parts[] = 'q.user = :userId';
         $this->parameters['userId'] = $userId;
 
         return $this;
@@ -21,15 +24,15 @@ class DefenseListSearch extends AbstractSearch
 
     public function likeUserNick(string $userNick): self
     {
-        $this->parts[] = 'users.user_nick LIKE :likeUserNick';
+        $this->parts[] = 'users.nick LIKE :likeUserNick';
         $this->parameters['likeUserNick'] = '%' . $userNick . '%';
 
         return $this;
     }
 
-    public function entityId(int $entityId): self
+    public function entityId(int|Planet $entityId): self
     {
-        $this->parts[] = 'deflist_entity_id = :entityId';
+        $this->parts[] = 'q.entity = :entityId';
         $this->parameters['entityId'] = $entityId;
 
         return $this;
@@ -37,15 +40,15 @@ class DefenseListSearch extends AbstractSearch
 
     public function likePlanetName(string $planetName): self
     {
-        $this->parts[] = 'planets.planet_name LIKE :likePlanetName';
+        $this->parts[] = 'planets.name LIKE :likePlanetName';
         $this->parameters['likePlanetName'] = '%' . $planetName . '%';
 
         return $this;
     }
 
-    public function defenseId(int $defenseId): self
+    public function defenseId(int|Defense $defenseId): self
     {
-        $this->parts[] = 'deflist_def_id = :defenseId';
+        $this->parts[] = 'q.defense = :defenseId';
         $this->parameters['defenseId'] = $defenseId;
 
         return $this;

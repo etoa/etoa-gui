@@ -3,6 +3,7 @@
 namespace EtoA\Defense;
 
 use EtoA\Core\Database\AbstractSearch;
+use EtoA\Entity\Race;
 
 class DefenseSearch extends AbstractSearch
 {
@@ -31,29 +32,29 @@ class DefenseSearch extends AbstractSearch
 
     public function show(): self
     {
-        $this->parts[] = 'def_show = 1';
+        $this->parts[] = 'q.show = 1';
 
         return $this;
     }
 
     public function showOrBuildable(): self
     {
-        $this->parts[] = 'def_show = 1 OR def_buildable = 1';
+        $this->parts[] = 'q.show = 1 OR q.buildable = 1';
 
         return $this;
     }
 
-    public function raceId(int $raceId): self
+    public function raceId(Race|int $raceId): self
     {
-        $this->parts[] = 'def_race_id = :raceId';
+        $this->parts[] = 'q.race = :raceId';
         $this->parameters['raceId'] = $raceId;
 
         return $this;
     }
 
-    public function raceOrNull(int $raceId): self
+    public function raceOrNull(Race|int $raceId): self
     {
-        $this->parts[] = 'def_race_id = 0 OR def_race_id = :raceIdOrNull';
+        $this->parts[] = 'q.race IS NULL OR q.race = :raceIdOrNull';
         $this->parameters['raceIdOrNull'] = $raceId;
 
         return $this;

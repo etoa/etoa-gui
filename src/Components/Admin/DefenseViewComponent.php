@@ -15,42 +15,24 @@ use Symfony\UX\LiveComponent\Attribute\LiveProp;
 #[AsLiveComponent('admin_defense_view')]
 class DefenseViewComponent extends AbstractEditComponent
 {
-    #[LiveProp]
-    public int $itemId;
-    #[LiveProp]
-    public string $user;
-    #[LiveProp]
-    public string $defense;
-    #[LiveProp]
-    public string $entity;
-    private ?DefenseListItem $item = null;
-
-    public function mount(FormView $view = null, DefenseListItem $item = null): void
-    {
-        $this->item = $item;
-        if ($item !== null) {
-            $this->itemId = $item->id;
-        }
-    }
+    #[LiveProp(writable: true)]
+    public ?DefenseListItem $item = null;
 
     public function __construct(
-        private DefenseRepository $defenseRepository,
+        private readonly DefenseRepository $defenseRepository,
     ) {
     }
 
     #[LiveAction]
     public function delete(): void
     {
-        $this->defenseRepository->removeEntry($this->itemId);
+        $this->defenseRepository->remove($this->item);
+        $this->defenseRepository->save();
         $this->item = null;
     }
 
     public function getItem(): ?DefenseListItem
     {
-        if ($this->item === null) {
-            $this->item = $this->defenseRepository->getItem($this->itemId);
-        }
-
         return $this->item;
     }
 
@@ -61,6 +43,6 @@ class DefenseViewComponent extends AbstractEditComponent
 
     protected function storeItem(): void
     {
-        $this->defenseRepository->setDefenseCount($this->item->id, $this->item->count);
+        $this->defenseRepository->save();
     }
 }

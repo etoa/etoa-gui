@@ -32,7 +32,7 @@ class DefenseSort extends AbstractSort
 
     public static function category(): DefenseSort
     {
-        return new DefenseSort(['q.catId' => null, 'q.order' => null, 'q.name' => null]);
+        return new DefenseSort(['q.cat' => null, 'q.order' => null, 'q.name' => null]);
     }
 
     public static function specialWithUserSort(string $userSort, string $order): DefenseSort

@@ -20,7 +20,9 @@ class DefenseType extends AbstractType
         $resolver->setDefaults([
             'required' => false,
             'placeholder' => '(Alle)',
-            'choices' => array_flip($this->defenseDataRepository->getDefenseNames()),
+            'choices' => $this->defenseDataRepository->getDefenseNames(),
+            'choice_value' => 'id',
+            'choice_label' => 'name'
         ]);
     }
 

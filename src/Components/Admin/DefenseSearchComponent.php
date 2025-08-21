@@ -7,12 +7,9 @@ use EtoA\Components\Helper\SearchResult;
 use EtoA\Defense\DefenseDataRepository;
 use EtoA\Defense\DefenseListSearch;
 use EtoA\Defense\DefenseRepository;
-use EtoA\Entity\DefenseListItem;
 use EtoA\Form\Request\Admin\DefenseSearchRequest;
 use EtoA\Form\Type\Admin\DefenseSearchType;
-use EtoA\Universe\Entity\EntityLabel;
 use EtoA\Universe\Entity\EntityRepository;
-use EtoA\Universe\Entity\EntitySearch;
 use EtoA\User\UserRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormInterface;
@@ -23,19 +20,10 @@ class DefenseSearchComponent extends AbstractController
 {
     use SearchComponentTrait;
 
-    /** @var array<int, string> */
-    public array $users;
-    /** @var array<int, string> */
-    public array $defenseNames;
-    /** @var array<int, string> */
-    public array $entities;
     private DefenseSearchRequest $request;
 
     public function __construct(
-        private DefenseRepository $defenseRepository,
-        private DefenseDataRepository $defenseDataRepository,
-        private UserRepository $userRepository,
-        private EntityRepository $entityRepository,
+        private readonly DefenseRepository     $defenseRepository,
     ) {
         $this->request = new DefenseSearchRequest();
     }
@@ -43,30 +31,23 @@ class DefenseSearchComponent extends AbstractController
     public function getSearch(): SearchResult
     {
         $search = DefenseListSearch::create();
-        if ($this->request->userId !== null) {
-            $search->userId($this->request->userId);
+        if ($this->request->user) {
+            $search->userId($this->request->user);
         }
 
-        if ($this->request->entityId !== null) {
-            $search->entityId($this->request->entityId);
+        if ($this->request->entity) {
+            $search->entityId($this->request->entity);
         }
 
-        if ($this->request->defenseId !== null) {
-            $search->defenseId($this->request->defenseId);
+        if ($this->request->defense) {
+            $search->defenseId($this->request->defense);
         }
 
-        $total = $this->defenseRepository->count($search);
+        $total = $this->defenseRepository->countBySearch($search);
 
         $limit = $this->getLimit($total);
 
         $entries = $this->defenseRepository->search($search, $this->perPage, $limit);
-
-        if ($total > 0) {
-            $this->users = $this->userRepository->searchUserNicknames();
-            $this->defenseNames = $this->defenseDataRepository->getDefenseNames(true);
-            $entityIds = array_map(fn (DefenseListItem $item) => $item->entityId, $entries);
-            $this->entities = array_map(fn (EntityLabel $label) => $label->toString(), $this->entityRepository->searchEntityLabels(EntitySearch::create()->ids($entityIds)));
-        }
 
         return new SearchResult($entries, $limit, $total, $this->perPage);
     }

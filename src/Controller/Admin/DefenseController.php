@@ -29,7 +29,6 @@ class DefenseController extends AbstractAdminController
         private readonly DefenseDataRepository        $defenseDataRepository,
         private readonly DefenseQueueRepository       $defenseQueueRepository,
         private readonly DefenseRepository            $defenseRepository,
-        private readonly PlanetRepository             $planetRepository,
         private readonly DefenseRequirementRepository $defenseRequirementRepository,
     )
     {
@@ -43,16 +42,15 @@ class DefenseController extends AbstractAdminController
         $addForm = $this->createForm(AddDefenseListType::class, $addItem);
         $addForm->handleRequest($request);
         if ($addForm->isSubmitted() && $addForm->isValid()) {
-            $userId = $this->planetRepository->getPlanetUserId($addItem->entityId);
-            $this->defenseRepository->addDefense($addItem->defenseId, $addItem->count, $userId, $addItem->entityId);
+            $this->defenseRepository->addDefense($addItem->getDefense(), $addItem->getCount(), $addForm->get('entity')->getData()->getUser(), $addItem->getEntity());
 
-            $this->addFlash('success', sprintf('%s Verteidigungsanlagen hinzugefügt', StringUtils::formatNumber($addItem->count)));
+            $this->addFlash('success', sprintf('%s Verteidigungsanlagen hinzugefügt', StringUtils::formatNumber($addItem->getCount())));
         }
 
         return $this->render('admin/defense/search.html.twig', [
             'addForm' => $addForm->createView(),
             'form' => $this->createForm(DefenseSearchType::class, $request->query->all()),
-            'total' => $this->defenseRepository->count(),
+            'total' => $this->defenseRepository->count([]),
         ]);
     }
 

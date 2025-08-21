@@ -14,16 +14,17 @@ class DefenseSearchType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('entityId', EntityType::class, [
+            ->add('entity', EntityType::class, [
                 'label' => 'Planet',
                 'search' => EntityLabelSearch::create()
                     ->codeIn([\EtoA\Universe\Entity\EntityType::PLANET])
                     ->planetUserIdNotNull(),
+                'get_type' => true
             ])
-            ->add('userId', UserType::class, [
+            ->add('user', UserType::class, [
                 'label' => 'Spieler',
             ])
-            ->add('defenseId', DefenseType::class, [
+            ->add('defense', DefenseType::class, [
                 'label' => 'Verteidigung',
             ]);
     }
