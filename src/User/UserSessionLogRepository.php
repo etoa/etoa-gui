@@ -2,7 +2,7 @@
 
 namespace EtoA\User;
 
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\DBAL\Exception;
 use Doctrine\Persistence\ManagerRegistry;
 use EtoA\Core\AbstractRepository;
 use EtoA\Entity\UserSession;
@@ -43,9 +43,10 @@ class UserSessionLogRepository extends AbstractRepository
     public function countLogs(UserSessionSearch $search = null): int
     {
         return (int) $this->applySearchSortLimit($this->createQueryBuilder('q'), $search)
-            ->select('COUNT(*)')
-            ->from('user_sessionlog', 's')
-            ->fetchOne();
+            ->select('COUNT(q)')
+            ->setMaxResults(1)
+            ->getQuery()
+            ->getSingleScalarResult();
     }
 
     /**
@@ -61,6 +62,7 @@ class UserSessionLogRepository extends AbstractRepository
 
     /**
      * @return string[]
+     * @throws Exception
      */
     public function getLatestUserIps(): array
     {

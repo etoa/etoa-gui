@@ -151,7 +151,7 @@ class UsersController extends AbstractAdminController
     public function multis(): Response
     {
         $ips = [];
-        foreach ($this->userSessionRepository->getLatestUserIps() as $ip) {
+        foreach ($this->userSessionLogRepository->getLatestUserIps() as $ip) {
             $ips[$ip] = isset($ips[$ip]) ? $ips[$ip] + 1 : 1;
         }
 

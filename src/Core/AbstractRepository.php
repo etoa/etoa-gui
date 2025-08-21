@@ -4,6 +4,7 @@ namespace EtoA\Core;
 
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\DBAL\ArrayParameterType;
+use Doctrine\DBAL\Connection;
 use Doctrine\ORM\QueryBuilder;
 use EtoA\Core\Database\AbstractSearch;
 use EtoA\Core\Database\AbstractSort;
@@ -66,5 +67,10 @@ abstract class AbstractRepository extends ServiceEntityRepository
         }
 
         return $qb;
+    }
+
+    protected function getConnection(): Connection
+    {
+        return $this->getEntityManager()->getConnection();
     }
 }
