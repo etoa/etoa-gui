@@ -1,18 +1,18 @@
-{% set title="Mitglieder der Allianz " ~ alliance.nameWithTag %}
+{% set title="Mitglieder der Allianz " ~ formMembers.vars.data.toString %}
 
 {% extends 'admin/layout/admin.html.twig' %}
 
 {% block breadcrumbs %}
     {{ component('breadcrumbs', { items: [
         { label: 'Allianzsuche', url: path('admin.alliances') },
-        { label: alliance.nameWithTag, url: path('admin.alliances.view', {id: alliance.id}) },
-        { label: 'Mitglieder', url: path('admin.alliances.members', {id: alliance.id}) },
+        { label: formMembers.vars.data.toString, url: path('admin.alliances.view', {id: formMembers.vars.data.id}) },
+        { label: 'Mitglieder', url: path('admin.alliances.members', {id: formMembers.vars.data.id}) },
     ]}) }}
 {% endblock %}
 
 {% block content %}
 
-    <form method="post">
+    {{ form_start(formMembers) }}
         <h2>Mitglieder</h2>
 
         <table class="table">
@@ -22,32 +22,23 @@
                 <th>Rang</th>
                 <th>Mitgliedschaft beenden</th>
             </tr>
-            {% for member in members %}
+            {% for member in formMembers.members %}
                 <tr>
-                    <td id="uifo{{ member.user_id }}" style="display:none;">
-                        <a href="{{ path('admin.users.view', {id: member.user_id}) }}">Daten</a>
+                    <td id="uifo{{ member.vars.data.id }}" style="display:none;">
+                        <a href="{{ path('admin.users.view', {id: member.vars.data.id}) }}">Daten</a>
                         <br/>
-                        <a href="{{ path('admin.messages.send', {userId: member.user_id}) }}">Nachricht
+                        <a href="{{ path('admin.messages.send', {userId: member.vars.data.id}) }}">Nachricht
                             senden</a>
                     </td>
                     <td>
-                        <a href="{{ path('admin.users.view', {id: member.user_id}) }}" {{ cTT(member.user_nick, 'uifo', member.user_id) }}>{{ member.user_nick }}</a>
+                        <a href="{{ path('admin.users.view', {id: member.vars.data.id}) }}" {{ cTT(member.vars.data.nick, 'uifo', member.vars.data.id) }}>{{ member.vars.data.nick }}</a>
                     </td>
-                    <td>{{ formatNumber(member.user_points) }} Punkte</td>
+                    <td>{{ formatNumber(member.vars.data.points) }} Punkte</td>
                     <td>
-                        <select name="member_rank[{{ member.user_id }}]">
-                            <option value="0">-</option>
-                            {% for rank in ranks %}
-                                <option value="{{ rank.id }}"
-                                        {% if member.user_alliance_rank_id == rank.id %}
-                                            selected="selected"
-                                        {% endif %}
-                                >{{ rank.name }}</option>
-                            {% endfor %}
-                        </select>
+                        {{ form_widget(member.allianceRank) }}
                     </td>
                     <td>
-                        <input type="checkbox" name="member_kick[{{ member.user_id }}]" value="1"/>
+                        {{ form_widget(member.kick) }}
                     </td>
                 </tr>
             {% else %}
@@ -56,7 +47,9 @@
                 </tr>
             {% endfor %}
         </table>
-
+        {{ form_widget(formMembers.submit) }}
+    {{ form_end(formMembers) }}
+    {{ form_start(formRanks) }}
         <h2>Ränge</h2>
 
         <table class="table">
@@ -65,22 +58,16 @@
                 <th>Level</th>
                 <th>Löschen</th>
             </tr>
-            {% for rank in ranks %}
+            {% for rank in formRanks.ranks %}
                 <tr>
                     <td>
-                        <input type="text" size="35" name="rank_name[{{ rank.id }}]"
-                               value="{{ rank.name }}"/>
+                        {{ form_widget(rank.name) }}
                     </td>
                     <td>
-                        <select name="rank_level[{{ rank.id }}]">
-                            {% for x in range(0, 9) %}
-                                <option value="{{ x }}"
-                                        {% if rank.level == x %}selected="selected"{% endif %}>{{ x }}</option>
-                            {% endfor %}
-                        </select>
+                        {{ form_widget(rank.level) }}
                     </td>
                     <td>
-                        <input type="checkbox" name="rank_del[{{ rank.id }}]" value="1"/>
+                        {{ form_widget(rank.delete) }}
                     </td>
                 </tr>
             {% else %}
@@ -90,6 +77,6 @@
             {% endfor %}
         </table>
 
-        <p><input type="submit" name="member_save" value="Übernehmen"/></p>
-    </form>
+        <p>{{ form_widget(formRanks.submit) }}</p>
+    {{ form_end(formRanks) }}
 {% endblock %}
