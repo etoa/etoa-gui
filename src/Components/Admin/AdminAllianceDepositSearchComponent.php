@@ -5,6 +5,7 @@ namespace EtoA\Components\Admin;
 use EtoA\Alliance\AllianceSpendRepository;
 use EtoA\Components\Helper\SearchComponentTrait;
 use EtoA\Components\Helper\SearchResult;
+use EtoA\Entity\Alliance;
 use EtoA\Form\Request\Admin\AdminAllianceDepositSearchRequest;
 use EtoA\Form\Type\Admin\AllianceDepositSearchType;
 use EtoA\User\UserRepository;
@@ -19,17 +20,14 @@ class AdminAllianceDepositSearchComponent extends AbstractController
 {
     use SearchComponentTrait;
 
-    #[LiveProp()]
-    public int $allianceId;
-    public ?int $userId = null;
-    /** @var string[] */
-    public array $users;
+    #[LiveProp]
+    public Alliance $alliance;
     public bool $sum = false;
     private AdminAllianceDepositSearchRequest $request;
 
     public function __construct(
-        private AllianceSpendRepository $allianceSpendRepository,
-        private UserRepository $userRepository
+        private readonly AllianceSpendRepository $allianceSpendRepository,
+        private readonly UserRepository $userRepository
     ) {
         $this->request = new AdminAllianceDepositSearchRequest();
     }
@@ -39,15 +37,15 @@ class AdminAllianceDepositSearchComponent extends AbstractController
         $this->sum = (bool) $this->request->display;
         if ($this->sum) {
             $entries = [
-                $this->allianceSpendRepository->getTotalSpent($this->allianceId, $this->request->user),
+                $this->allianceSpendRepository->getTotalSpent($this->alliance, $this->request->user),
             ];
         } else {
-            $entries = $this->allianceSpendRepository->getSpent($this->allianceId, $this->request->user, 0);
+            $entries = $this->alliance->getSpends()->toArray();
         }
 
         $total = count($entries);
         if ($total > 0) {
-            $this->users = $this->userRepository->searchUserNicknames(UserSearch::create()->allianceId($this->allianceId));
+            $this->users = $this->userRepository->searchUserNicknames(UserSearch::create()->allianceId($this->alliance));
         }
 
         return new SearchResult($entries, 0, count($entries), $total);
@@ -55,7 +53,7 @@ class AdminAllianceDepositSearchComponent extends AbstractController
 
     protected function instantiateForm(): FormInterface
     {
-        return $this->createForm(AllianceDepositSearchType::class, $this->request, ['allianceId' => $this->allianceId]);
+        return $this->createForm(AllianceDepositSearchType::class, $this->request, ['allianceId' => $this->alliance]);
     }
 
     private function resetFormRequest(): void

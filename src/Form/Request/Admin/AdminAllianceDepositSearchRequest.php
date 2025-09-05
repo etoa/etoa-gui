@@ -2,8 +2,10 @@
 
 namespace EtoA\Form\Request\Admin;
 
+use EtoA\Entity\User;
+
 class AdminAllianceDepositSearchRequest
 {
-    public ?int $user = null;
+    public ?User $user = null;
     public ?bool $display = null;
 }

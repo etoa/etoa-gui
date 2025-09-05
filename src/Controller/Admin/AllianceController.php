@@ -2,14 +2,13 @@
 
 namespace EtoA\Controller\Admin;
 
-use EtoA\Alliance\AllianceBuildingRepository;
-use EtoA\Alliance\AllianceDiplomacyLevel;
+use EtoA\Alliance\AllianceBuildListRepository;
 use EtoA\Alliance\AllianceDiplomacyRepository;
-use EtoA\Alliance\AllianceHistoryRepository;
 use EtoA\Alliance\AllianceImageStorage;
 use EtoA\Alliance\AllianceRankRepository;
 use EtoA\Alliance\AllianceRepository;
 use EtoA\Alliance\AllianceService;
+use EtoA\Alliance\AllianceTechnologyListRepository;
 use EtoA\Alliance\AllianceTechnologyRepository;
 use EtoA\Alliance\InvalidAllianceParametersException;
 use EtoA\Entity\Alliance;
@@ -18,10 +17,16 @@ use EtoA\Entity\AllianceTechnologyListItem;
 use EtoA\Form\Type\Admin\AllianceBuildingAddType;
 use EtoA\Form\Type\Admin\AllianceCreateType;
 use EtoA\Form\Type\Admin\AllianceDepositSearchType;
+use EtoA\Form\Type\Admin\AllianceDiplomacyType;
 use EtoA\Form\Type\Admin\AllianceEditType;
+use EtoA\Form\Type\Admin\AllianceMembersType;
+use EtoA\Form\Type\Admin\AllianceRanksType;
 use EtoA\Form\Type\Admin\AllianceSearchType;
 use EtoA\Form\Type\Admin\AllianceTechnologyAddType;
 use EtoA\Support\StringUtils;
+use Symfony\Component\Form\Extension\Core\Type\CollectionType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -32,12 +37,13 @@ class AllianceController extends AbstractAdminController
     public function __construct(
         private readonly AllianceRepository           $allianceRepository,
         private readonly AllianceService              $allianceService,
-        private readonly AllianceHistoryRepository    $allianceHistoryRepository,
         private readonly AllianceTechnologyRepository $allianceTechnologyRepository,
-        private readonly AllianceBuildingRepository   $allianceBuildingRepository,
         private readonly AllianceImageStorage         $allianceImageStorage,
         private readonly AllianceDiplomacyRepository  $allianceDiplomacyRepository,
         private readonly AllianceRankRepository       $allianceRankRepository,
+        private readonly AllianceBuildListRepository  $allianceBuildListRepository,
+        private readonly AllianceTechnologyListRepository $allianceTechnologyListRepository
+
     )
     {
     }
@@ -132,10 +138,8 @@ class AllianceController extends AbstractAdminController
 
     #[Route('/admin/alliances/{id}/members', name: 'admin.alliances.members')]
     #[IsGranted('ROLE_ADMIN_TRIAL-ADMIN')]
-    public function members(int $id, Request $request): Response
+    public function members(Alliance $alliance, Request $request): Response
     {
-        $alliance = $this->allianceRepository->getAlliance($id);
-
         if ($request->isMethod('POST')) {
             // Change alliance memberships
             if ($request->request->has('member_kick') && count($request->request->all('member_kick')) > 0) {
@@ -166,135 +170,270 @@ class AllianceController extends AbstractAdminController
             $this->addFlash('success', 'Mitglieder aktualisiert!');
         }
 
+        $formMembers = $this->createFormBuilder($alliance)
+            ->add('members', CollectionType::class, [
+                'entry_type' => AllianceMembersType::class,
+                'label' => false
+            ])->add('submit', SubmitType::class, ['label' => 'Übernehmen'])
+            ->getForm()->handleRequest($request);
+
+        if ($formMembers->isSubmitted() && $formMembers->isValid()) {
+            foreach($formMembers->get('members')->all() as $member) {
+                if($member->get('kick')->getData()) {
+                    $alliance->removeMember($member->getData());
+                }
+            }
+            $this->allianceRepository->save();
+            return $this->redirectToRoute('admin.alliances.members',['id'=>$alliance->getId()]);
+        }
+
+        $formRanks = $this->createFormBuilder($alliance)
+            ->add('ranks', CollectionType::class, [
+                'entry_type' => AllianceRanksType::class,
+                'label' => false
+            ])->add('submit', SubmitType::class, ['label' => 'Übernehmen'])
+            ->getForm()->handleRequest($request);
+
+        if ($formRanks->isSubmitted() && $formRanks->isValid()) {
+            foreach($formRanks->get('ranks')->all() as $rank) {
+                if($rank->get('delete')->getData()) {
+                    $alliance->removeRank($rank->getData());
+                }
+            }
+            $this->allianceRepository->save();
+            return $this->redirectToRoute('admin.alliances.members',['id'=>$alliance->getId()]);
+        }
+
         return $this->render('admin/alliance/members.html.twig', [
-            'alliance' => $alliance,
-            'members' => $this->allianceRepository->findUsers($id),
-            'ranks' => $this->allianceRankRepository->getRanks($id),
+            'formMembers' => $formMembers,
+            'formRanks' => $formRanks
         ]);
     }
 
     #[Route('/admin/alliances/{id}/diplomacy', name: 'admin.alliances.diplomacy')]
     #[IsGranted('ROLE_ADMIN_TRIAL-ADMIN')]
-    public function diplomacy(int $id, Request $request): Response
+    public function diplomacy(Alliance $alliance, Request $request): Response
     {
-        $alliance = $this->allianceRepository->getAlliance($id);
+        $diplomacy = $this->allianceDiplomacyRepository->getDiplomacies($alliance);
+        $form = $this->createFormBuilder(['diplomacy'=>$diplomacy])
+            ->add('diplomacy', CollectionType::class, [
+                'entry_type' => AllianceDiplomacyType::class,
+                'label' => false
+            ])->add('submit', SubmitType::class, ['label' => 'Übernehmen'])
+            ->getForm()->handleRequest($request);
 
-        $changesMade = false;
-        if ($request->request->has('alliance_bnd_del') && count($request->request->all('alliance_bnd_del')) > 0) {
-            foreach (array_keys($request->request->all('alliance_bnd_del')) as $diplomacyId) {
-                $this->allianceDiplomacyRepository->deleteDiplomacy($diplomacyId);
+        if ($form->isSubmitted() && $form->isValid()) {
+            foreach($form->get('diplomacy')->all() as $diplomacy) {
+                if($diplomacy->get('delete')->getData()) {
+                    $this->allianceDiplomacyRepository->remove($diplomacy->getData());
+                }
             }
-            $changesMade = true;
-        }
-
-        if (count($request->request->all('alliance_bnd_level')) > 0) {
-            foreach (array_keys($request->request->all('alliance_bnd_level')) as $diplomacyId) {
-                $this->allianceDiplomacyRepository->updateDiplomacy(
-                    $diplomacyId,
-                    (int)$request->request->all('alliance_bnd_level')[$diplomacyId],
-                    $request->request->all('alliance_bnd_name')[$diplomacyId]
-                );
-            }
-            $changesMade = true;
-        }
-
-        if ($changesMade) {
+            $this->allianceDiplomacyRepository->save();
             $this->addFlash('success', 'Diplomatie aktualisiert!');
-            return $this->redirectToRoute('admin.alliances.view', ['id' => $id]);
+
+            return $this->redirectToRoute('admin.alliances.diplomacy',['id'=>$alliance->getId()]);
         }
 
         return $this->render('admin/alliance/diplomacy.html.twig', [
             'alliance' => $alliance,
-            'diplomacies' => $this->allianceDiplomacyRepository->getDiplomacies($alliance->id),
-            'levels' => AllianceDiplomacyLevel::all(),
+            'form' => $form
         ]);
     }
 
     #[Route('/admin/alliances/{id}/history', name: 'admin.alliances.history')]
     #[IsGranted('ROLE_ADMIN_TRIAL-ADMIN')]
-    public function history(int $id): Response
+    public function history(Alliance $alliance): Response
     {
-        $alliance = $this->allianceRepository->getAlliance($id);
-
         return $this->render('admin/alliance/history.html.twig', [
-            'alliance' => $alliance,
-            'history' => $this->allianceHistoryRepository->findForAlliance($alliance->id),
+            'alliance' => $alliance
         ]);
     }
 
     #[Route('/admin/alliances/{id}/resources', name: 'admin.alliances.resources')]
     #[IsGranted('ROLE_ADMIN_TRIAL-ADMIN')]
-    public function resources(int $id, Request $request): Response
+    public function resources(Alliance $alliance, Request $request): Response
     {
-        $alliance = $this->allianceRepository->getAlliance($id);
+        $form = $this->createFormBuilder($alliance)
+            ->add('resMetal', TextType::class, [
+                'attr' => [
+                    'size'=>12,
+                    'maxlength'=>20,
+                    'autocomplete'=>"off",
+                    'onfocus'=>"this.select()",
+                    'onclick'=>"this.select()",
+                    'onkeydown'=>"return nurZahlen(event)"
+                ],
+                'label' => false
+            ])
+            ->add('resCrystal', TextType::class, [
+                'attr' => [
+                    'size'=>12,
+                    'maxlength'=>20,
+                    'autocomplete'=>"off",
+                    'onfocus'=>"this.select()",
+                    'onclick'=>"this.select()",
+                    'onkeydown'=>"return nurZahlen(event)"
+                ],
+                'label' => false
+            ])
+            ->add('resPlastic', TextType::class, [
+                'attr' => [
+                    'size'=>12,
+                    'maxlength'=>20,
+                    'autocomplete'=>"off",
+                    'onfocus'=>"this.select()",
+                    'onclick'=>"this.select()",
+                    'onkeydown'=>"return nurZahlen(event)"
+                ],
+                'label' => false
+            ])
+            ->add('resFuel', TextType::class, [
+                'attr' => [
+                    'size'=>12,
+                    'maxlength'=>20,
+                    'autocomplete'=>"off",
+                    'onfocus'=>"this.select()",
+                    'onclick'=>"this.select()",
+                    'onkeydown'=>"return nurZahlen(event)"
+                ],
+                'label' => false
+            ])
+            ->add('resFood', TextType::class, [
+                'attr' => [
+                    'size'=>12,
+                    'maxlength'=>20,
+                    'autocomplete'=>"off",
+                    'onfocus'=>"this.select()",
+                    'onclick'=>"this.select()",
+                    'onkeydown'=>"return nurZahlen(event)"
+                ],
+                'label' => false
+            ])
+            ->add('addMetal', TextType::class, [
+                'attr' => [
+                    'size'=>8,
+                    'maxlength'=>20,
+                    'autocomplete'=>"off",
+                    'onfocus'=>"this.select()",
+                    'onclick'=>"this.select()",
+                    'onkeydown'=>"return nurZahlen(event)"
+                ],
+                'label' => false,
+                'required' => false,
+                'data' => 0,
+                'mapped' => false
+            ])
+            ->add('addCrystal', TextType::class, [
+                'attr' => [
+                    'size'=>8,
+                    'maxlength'=>20,
+                    'autocomplete'=>"off",
+                    'onfocus'=>"this.select()",
+                    'onclick'=>"this.select()",
+                    'onkeydown'=>"return nurZahlen(event)"
+                ],
+                'label' => false,
+                'required' => false,
+                'data' => 0,
+                'mapped' => false
+            ])
+            ->add('addPlastic', TextType::class, [
+                'attr' => [
+                    'size'=>8,
+                    'maxlength'=>20,
+                    'autocomplete'=>"off",
+                    'onfocus'=>"this.select()",
+                    'onclick'=>"this.select()",
+                    'onkeydown'=>"return nurZahlen(event)"
+                ],
+                'label' => false,
+                'required' => false,
+                'data' => 0,
+                'mapped' => false
+            ])
+            ->add('addFuel', TextType::class, [
+                'attr' => [
+                    'size'=>8,
+                    'maxlength'=>20,
+                    'autocomplete'=>"off",
+                    'onfocus'=>"this.select()",
+                    'onclick'=>"this.select()",
+                    'onkeydown'=>"return nurZahlen(event)"
+                ],
+                'label' => false,
+                'required' => false,
+                'data' => 0,
+                'mapped' => false
+            ])
+            ->add('addFood', TextType::class, [
+                'attr' => [
+                    'size'=>8,
+                    'maxlength'=>20,
+                    'autocomplete'=>"off",
+                    'onfocus'=>"this.select()",
+                    'onclick'=>"this.select()",
+                    'onkeydown'=>"return nurZahlen(event)"
+                ],
+                'label' => false,
+                'required' => false,
+                'data' => 0,
+                'mapped' => false
+            ])
+            ->add('submit', SubmitType::class, ['label' => 'Übernehmen'])
+            ->getForm()->handleRequest($request);
 
-        if ($request->isMethod('POST')) {
-            $this->allianceRepository->updateResources(
-                $id,
-                StringUtils::parseFormattedNumber($request->request->get('res_metal')),
-                StringUtils::parseFormattedNumber($request->request->get('res_crystal')),
-                StringUtils::parseFormattedNumber($request->request->get('res_plastic')),
-                StringUtils::parseFormattedNumber($request->request->get('res_fuel')),
-                StringUtils::parseFormattedNumber($request->request->get('res_food')),
-            );
-
+        if ($form->isSubmitted() && $form->isValid()) {
+            $this->allianceRepository->save();
             $this->allianceRepository->addResources(
-                $id,
-                StringUtils::parseFormattedNumber($request->request->get('res_metal_add')),
-                StringUtils::parseFormattedNumber($request->request->get('res_crystal_add')),
-                StringUtils::parseFormattedNumber($request->request->get('res_plastic_add')),
-                StringUtils::parseFormattedNumber($request->request->get('res_fuel_add')),
-                StringUtils::parseFormattedNumber($request->request->get('res_food_add')),
+                $alliance,
+                StringUtils::parseFormattedNumber($form->get('addMetal')->getData()),
+                StringUtils::parseFormattedNumber($form->get('addCrystal')->getData()),
+                StringUtils::parseFormattedNumber($form->get('addPlastic')->getData()),
+                StringUtils::parseFormattedNumber($form->get('addFuel')->getData()),
+                StringUtils::parseFormattedNumber($form->get('addFood')->getData())
             );
-
             $this->addFlash('success', 'Ressourcen aktualisiert!');
-            $alliance = $this->allianceRepository->getAlliance($id);
         }
 
         return $this->render('admin/alliance/resources.html.twig', [
-            'alliance' => $alliance,
+            'form' => $form,
         ]);
     }
 
     #[Route('/admin/alliances/{id}/deposit', name: 'admin.alliances.deposit')]
     #[IsGranted('ROLE_ADMIN_TRIAL-ADMIN')]
-    public function deposit(int $id, Request $request): Response
+    public function deposit(Alliance $alliance, Request $request): Response
     {
-        $alliance = $this->allianceRepository->getAlliance($id);
-
         return $this->render('admin/alliance/deposit.html.twig', [
             'alliance' => $alliance,
-            'form' => $this->createForm(AllianceDepositSearchType::class, $request->query->all(), ['allianceId' => $alliance->id]),
+            'form' => $this->createForm(AllianceDepositSearchType::class, $request->query->all(), ['allianceId' => $alliance->getId()]),
         ]);
     }
 
     #[Route('/admin/alliances/{id}/buildings', name: 'admin.alliances.buildings')]
     #[IsGranted('ROLE_ADMIN_TRIAL-ADMIN')]
-    public function buildings(Request $request, int $id): Response
+    public function buildings(Request $request, Alliance $alliance): Response
     {
-        $alliance = $this->allianceRepository->getAlliance($id);
+        $newBuildListItem = new AllianceBuildListItem();
+        $newBuildListItem->setAlliance($alliance);
 
-        $form = $this->createForm(AllianceBuildingAddType::class, AllianceBuildListItem::createFromAlliance($alliance));
+        $form = $this->createForm(AllianceBuildingAddType::class, $newBuildListItem);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             /** @var AllianceBuildListItem $data */
             $data = $form->getData();
-            if ($this->allianceBuildingRepository->existsInAlliance($data->allianceId, $data->buildingId)) {
-                $this->allianceBuildingRepository->updateForAlliance(
-                    $data->allianceId,
-                    $data->buildingId,
-                    $data->level,
-                    $data->memberFor
+            if ($this->allianceBuildListRepository->existsInAlliance($data->getAlliance(), $data->getAllianceBuilding())) {
+                $this->allianceBuildListRepository->updateForAlliance(
+                    $data->getAlliance(),
+                    $data->getAllianceBuilding(),
+                    $data->getLevel(),
+                    $data->getMemberFor()
                 );
 
                 $this->addFlash('success', 'Gebäudedatensatz erfolgreich bearbeitet!');
             } else {
-                $this->allianceBuildingRepository->addToAlliance(
-                    $data->allianceId,
-                    $data->buildingId,
-                    $data->level,
-                    $data->memberFor
-                );
+                $newBuildListItem->setMemberFor(count($alliance->getMembers()->toArray()));
+                $alliance->addBuildlist($newBuildListItem);
 
                 $this->addFlash('success', 'Gebäudedatensatz erfolgreich eingefügt!');
             }
@@ -302,38 +441,35 @@ class AllianceController extends AbstractAdminController
 
         return $this->render('admin/alliance/buildings.html.twig', [
             'alliance' => $alliance,
-            'buildings' => $this->allianceBuildingRepository->getNames(),
-            'buildlist' => $this->allianceBuildingRepository->getBuildList($alliance->id),
+            'buildlist' => $alliance->getBuildlist(),
             'form' => $form->createView(),
         ]);
     }
 
     #[Route('/admin/alliances/{id}/technologies', name: 'admin.alliances.technologies')]
     #[IsGranted('ROLE_ADMIN_TRIAL-ADMIN')]
-    public function technologies(Request $request, int $id): Response
+    public function technologies(Request $request, Alliance $alliance): Response
     {
-        $alliance = $this->allianceRepository->getAlliance($id);
-        $form = $this->createForm(AllianceTechnologyAddType::class, AllianceTechnologyListItem::createFromAlliance($alliance));
+        $newAllianceTechnology = new AllianceTechnologyListItem();
+        $newAllianceTechnology->setAlliance($alliance);
+
+        $form = $this->createForm(AllianceTechnologyAddType::class, $newAllianceTechnology);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             /** @var AllianceTechnologyListItem $data */
             $data = $form->getData();
-            if ($this->allianceTechnologyRepository->existsInAlliance($data->allianceId, $data->technologyId)) {
-                $this->allianceTechnologyRepository->updateForAlliance(
-                    $data->allianceId,
-                    $data->technologyId,
-                    $data->level,
-                    $data->memberFor
+            if ($this->allianceTechnologyListRepository->existsInAlliance($data->getAlliance(), $data->getTechnology())) {
+                $this->allianceTechnologyListRepository->updateForAlliance(
+                    $data->getAlliance(),
+                    $data->getTechnology(),
+                    $data->getLevel(),
+                    $data->getMemberFor()
                 );
 
                 $this->addFlash('success', 'Technologiedatensatz erfolgreich bearbeitet!');
             } else {
-                $this->allianceTechnologyRepository->addToAlliance(
-                    $data->allianceId,
-                    $data->technologyId,
-                    $data->level,
-                    $data->memberFor
-                );
+                $newAllianceTechnology->setMemberFor(count($alliance->getMembers()->toArray()));
+                $alliance->addTechlist($newAllianceTechnology);
 
                 $this->addFlash('success', 'Technologiedatensatz erfolgreich eingefügt!');
             }
@@ -341,8 +477,7 @@ class AllianceController extends AbstractAdminController
 
         return $this->render('admin/alliance/technologies.html.twig', [
             'alliance' => $alliance,
-            'technologies' => $this->allianceTechnologyRepository->getNames(),
-            'techlist' => $this->allianceTechnologyRepository->getTechnologyList($alliance->id),
+            'techlist' => $alliance->getTechlist(),
             'form' => $form->createView(),
         ]);
     }
