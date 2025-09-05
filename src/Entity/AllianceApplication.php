@@ -16,7 +16,7 @@ class AllianceApplication
 
     #[ORM\Id]
     #[ORM\JoinColumn(name: 'alliance_id', referencedColumnName: 'alliance_id')]
-    #[ORM\ManyToOne(targetEntity: Alliance::class)]
+    #[ORM\ManyToOne(targetEntity: Alliance::class, inversedBy: 'applications')]
     private Alliance|null $alliance;
 
     #[ORM\Column]

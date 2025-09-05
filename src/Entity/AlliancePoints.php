@@ -14,7 +14,7 @@ class AlliancePoints
     #[ORM\Column(name: "point_id")]
     private int $id;
     #[ORM\JoinColumn(name: 'point_alliance_id', referencedColumnName: 'alliance_id')]
-    #[ORM\ManyToOne(targetEntity: Alliance::class)]
+    #[ORM\ManyToOne(targetEntity: Alliance::class, inversedBy: 'alliancePoints')]
     private Alliance|null $alliance;
 
     #[ORM\Column(name: "point_timestamp")]

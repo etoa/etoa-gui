@@ -18,11 +18,11 @@ class AllianceDiplomacy
     private string $name;
 
     #[ORM\JoinColumn(name: 'alliance_bnd_alliance_id1', referencedColumnName: 'alliance_id')]
-    #[ORM\ManyToOne(targetEntity: Alliance::class)]
+    #[ORM\ManyToOne(targetEntity: Alliance::class, inversedBy: 'diplomacy1')]
     private Alliance|null $alliance1;
 
     #[ORM\JoinColumn(name: 'alliance_bnd_alliance_id2', referencedColumnName: 'alliance_id')]
-    #[ORM\ManyToOne(targetEntity: Alliance::class)]
+    #[ORM\ManyToOne(targetEntity: Alliance::class, inversedBy: 'diplomacy2')]
     private Alliance|null $alliance2;
 
     #[ORM\Column(name: "alliance_bnd_level")]

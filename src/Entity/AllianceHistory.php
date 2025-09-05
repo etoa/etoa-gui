@@ -16,7 +16,7 @@ class AllianceHistory
     private int $id;
 
     #[ORM\JoinColumn(name: 'history_alliance_id', referencedColumnName: 'alliance_id')]
-    #[ORM\ManyToOne(targetEntity: Alliance::class)]
+    #[ORM\ManyToOne(targetEntity: Alliance::class, inversedBy: 'history')]
     private Alliance|null $alliance;
 
     #[ORM\Column(name: "history_timestamp")]

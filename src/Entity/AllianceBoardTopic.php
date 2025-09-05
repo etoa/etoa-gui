@@ -21,7 +21,7 @@ class AllianceBoardTopic
     private int $id;
 
     #[ORM\JoinColumn(name: 'topic_cat_id', referencedColumnName: 'cat_id')]
-    #[ORM\ManyToOne(targetEntity: AllianceBoardCategory::class)]
+    #[ORM\ManyToOne(targetEntity: AllianceBoardCategory::class, inversedBy: 'topics')]
     private AllianceBoardCategory|null $category;
 
     #[ORM\JoinColumn(name: 'topic_bnd_id', referencedColumnName: 'alliance_bnd_id')]
@@ -33,7 +33,6 @@ class AllianceBoardTopic
     private User|null $user;
 
     #[ORM\OneToMany(mappedBy: 'topic', targetEntity: AllianceBoardPost::class, cascade: ['persist', 'remove'])]
-    #[ORM\JoinColumn(name: 'topic_id', referencedColumnName: 'post_topic_id')]
     private Collection $posts;
 
     #[ORM\Column(name: "topic_subject")]

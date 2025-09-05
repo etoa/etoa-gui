@@ -22,7 +22,7 @@ class AllianceNews
     #[ORM\Column(name: "alliance_news_date")]
     private int $date;
 
-    #[ORM\ManyToOne(targetEntity: Alliance::class)]
+    #[ORM\ManyToOne(targetEntity: Alliance::class, inversedBy: 'news')]
     #[ORM\JoinColumn(name: 'alliance_news_alliance_id', referencedColumnName: 'alliance_id')]
     private Alliance $alliance;
 

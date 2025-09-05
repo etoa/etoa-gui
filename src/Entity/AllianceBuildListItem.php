@@ -16,7 +16,7 @@ class AllianceBuildListItem
     private int $id;
 
     #[ORM\JoinColumn(name: 'alliance_buildlist_alliance_id', referencedColumnName: 'alliance_id')]
-    #[ORM\ManyToOne(targetEntity: Alliance::class)]
+    #[ORM\ManyToOne(targetEntity: Alliance::class, inversedBy: 'buildlist')]
     private Alliance|null $alliance;
 
     #[ORM\JoinColumn(name: 'alliance_buildlist_building_id', referencedColumnName: 'alliance_building_id')]
@@ -24,34 +24,19 @@ class AllianceBuildListItem
     private AllianceBuilding $allianceBuilding;
 
     #[ORM\Column(name: "alliance_buildlist_current_level", type: "integer")]
-    private int $level;
+    private int $level = 0;
 
     #[ORM\Column(name: "alliance_buildlist_build_start_time", type: "integer")]
-    private int $buildStartTime;
+    private int $buildStartTime = 0;
 
     #[ORM\Column(name: "alliance_buildlist_build_end_time", type: "integer")]
-    private int $buildEndTime;
+    private int $buildEndTime = 0;
 
     #[ORM\Column(name: "alliance_buildlist_cooldown", type: "integer")]
-    private int $cooldown;
+    private int $cooldown = 0;
 
     #[ORM\Column(name: "alliance_buildlist_member_for", type: "integer")]
-    private int $memberFor;
-
-    public static function createFromAlliance(AllianceWithMemberCount $alliance): AllianceBuildListItem
-    {
-        $item = new AllianceBuildListItem();
-        $item->id = 0;
-        $item->allianceId = $alliance->getId();
-        $item->buildingId = 0;
-        $item->level = 0;
-        $item->buildStartTime = 0;
-        $item->buildEndTime = 0;
-        $item->cooldown = 0;
-        $item->memberFor = $alliance->memberCount;
-
-        return $item;
-    }
+    private int $memberFor = 0;
 
     public static function createFromData(array $data): AllianceBuildListItem
     {
@@ -76,18 +61,6 @@ class AllianceBuildListItem
     public function getId(): ?int
     {
         return $this->id;
-    }
-
-    public function getBuildingId(): ?int
-    {
-        return $this->buildingId;
-    }
-
-    public function setBuildingId(int $buildingId): static
-    {
-        $this->buildingId = $buildingId;
-
-        return $this;
     }
 
     public function getLevel(): ?int

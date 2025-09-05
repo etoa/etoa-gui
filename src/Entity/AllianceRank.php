@@ -23,7 +23,7 @@ class AllianceRank
     private int $id;
 
     #[ORM\JoinColumn(name: 'rank_alliance_id', referencedColumnName: 'alliance_id')]
-    #[ORM\ManyToOne(targetEntity: Alliance::class)]
+    #[ORM\ManyToOne(targetEntity: Alliance::class, inversedBy: 'ranks')]
     private ?Alliance $alliance = null;
 
     #[ORM\Column(name: "rank_level")]

@@ -29,11 +29,10 @@ class AllianceBoardCategory
     private int $order;
 
     #[ORM\OneToMany(mappedBy: 'category', targetEntity: AllianceBoardTopic::class, cascade: ['persist', 'remove'])]
-    #[ORM\JoinColumn(name: 'cat_id', referencedColumnName: 'topic_cat_id')]
     private Collection $topics;
 
     #[ORM\JoinColumn(name: 'cat_alliance_id', referencedColumnName: 'alliance_id')]
-    #[ORM\ManyToOne(targetEntity: Alliance::class)]
+    #[ORM\ManyToOne(targetEntity: Alliance::class, inversedBy: 'boardCategories')]
     private Alliance|null $alliance;
 
     #[ORM\Column(name: "cat_alliance_id")]

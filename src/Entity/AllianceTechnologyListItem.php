@@ -16,7 +16,7 @@ class AllianceTechnologyListItem
     private int $id;
 
     #[ORM\JoinColumn(name: 'alliance_techlist_alliance_id', referencedColumnName: 'alliance_id')]
-    #[ORM\ManyToOne(targetEntity: Alliance::class)]
+    #[ORM\ManyToOne(targetEntity: Alliance::class, inversedBy: 'techlist')]
     private Alliance|null $alliance;
 
     #[ORM\JoinColumn(name: 'alliance_techlist_tech_id', referencedColumnName: 'alliance_tech_id')]
@@ -24,16 +24,16 @@ class AllianceTechnologyListItem
     private AllianceTechnology|null $technology;
 
     #[ORM\Column(name: "alliance_techlist_current_level", type: "integer")]
-    private int $level;
+    private int $level = 0;
 
     #[ORM\Column(name: "alliance_techlist_build_start_time", type: "integer")]
-    private int $buildStartTime;
+    private int $buildStartTime = 0;
 
     #[ORM\Column(name: "alliance_techlist_build_end_time", type: "integer")]
-    private int $buildEndTime;
+    private int $buildEndTime = 0;
 
     #[ORM\Column(name: "alliance_techlist_member_for", type: "integer")]
-    private int $memberFor;
+    private int $memberFor = 0;
 
     public static function createFromAlliance(AllianceWithMemberCount $alliance): AllianceTechnologyListItem
     {
@@ -133,12 +133,12 @@ class AllianceTechnologyListItem
         return $this;
     }
 
-    public function getTechnology(): ?Alliance
+    public function getTechnology(): ?AllianceTechnology
     {
         return $this->technology;
     }
 
-    public function setTechnology(?Alliance $technology): static
+    public function setTechnology(?AllianceTechnology $technology): static
     {
         $this->technology = $technology;
 

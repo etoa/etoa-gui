@@ -15,7 +15,7 @@ class AllianceSpend
     private int $id;
 
     #[ORM\JoinColumn(name: 'alliance_spend_alliance_id', referencedColumnName: 'alliance_id')]
-    #[ORM\ManyToOne(targetEntity: Alliance::class)]
+    #[ORM\ManyToOne(targetEntity: Alliance::class, inversedBy: 'spends')]
     private ?Alliance $alliance = null;
 
     #[ORM\JoinColumn(name: 'alliance_spend_user_id', referencedColumnName: 'user_id')]

@@ -15,7 +15,7 @@ class AlliancePoll
     private int $id;
 
     #[ORM\JoinColumn(name: 'poll_alliance_id', referencedColumnName: 'alliance_id')]
-    #[ORM\ManyToOne(targetEntity: Alliance::class)]
+    #[ORM\ManyToOne(targetEntity: Alliance::class, inversedBy: 'polls')]
     private Alliance|null $alliance;
 
     #[ORM\Column(name: "poll_title")]

@@ -21,7 +21,7 @@ class AllianceBoardPost
     private string $userNick;
 
     #[ORM\JoinColumn(name: 'post_topic_id', referencedColumnName: 'topic_id')]
-    #[ORM\ManyToOne(targetEntity: AllianceBoardTopic::class, cascade:['persist'])]
+    #[ORM\ManyToOne(targetEntity: AllianceBoardTopic::class, cascade:['persist'], inversedBy: 'posts')]
     private AllianceBoardTopic|null $topic;
 
     #[ORM\Column(name: "post_text")]
