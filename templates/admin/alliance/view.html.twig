@@ -84,7 +84,7 @@
                         </td>
                         <td>{{ formatNumber(member.points) }}</td>
                         <td>
-                            {{ member.allianceRank.name }}
+                            {{ member.allianceRank?member.allianceRank.name:'-' }}
                         </td>
                     </tr>
                 {% else %}
