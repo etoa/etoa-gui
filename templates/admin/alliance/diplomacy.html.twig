@@ -1,18 +1,17 @@
-{% set title="Diplomatie der Allianz " ~ alliance.nameWithTag %}
+{% set title="Diplomatie der Allianz " ~ alliance.toString %}
 
 {% extends 'admin/layout/admin.html.twig' %}
 
 {% block breadcrumbs %}
     {{ component('breadcrumbs', { items: [
         { label: 'Allianzsuche', url: path('admin.alliances') },
-        { label: alliance.nameWithTag, url: path('admin.alliances.view', {id: alliance.id}) },
+        { label: alliance.toString, url: path('admin.alliances.view', {id: alliance.id}) },
         { label: 'Diplomatie', url: path('admin.alliances.diplomacy', {id: alliance.id}) },
     ]}) }}
 {% endblock %}
 
 {% block content %}
-
-    <form method="post">
+    {{ form_start(form) }}
         <table class="table">
             <thead>
             <tr>
@@ -24,26 +23,27 @@
             </tr>
             </thead>
             <tbody>
-            {% for diplomacy in diplomacies %}
+            {% for diplomacy in form.diplomacy %}
                 <tr>
                     <td>
-                        <a href="{{ path('admin.alliances.edit', {id: diplomacy.otherAllianceId}) }}">[{{ diplomacy.otherAllianceTag }}
-                            ] {{ diplomacy.otherAllianceName }}</a>
+                        {% if diplomacy.vars.data.alliance1 == alliance %}
+                            <a href="{{ path('admin.alliances.edit', {id: diplomacy.vars.data.alliance2.id}) }}">{{ diplomacy.vars.data.alliance2.toString }}</a>
+                        {% else %}
+                            <a href="{{ path('admin.alliances.edit', {id: diplomacy.vars.data.alliance1.id}) }}">{{ diplomacy.vars.data.alliance1.toString }}</a>
+                        {% endif %}
                     </td>
                     <td>
-                        <input type="text" value="{{ diplomacy.name }}" name="alliance_bnd_name[{{ diplomacy.id }}]"/>
+                        {{ form_widget(diplomacy.name) }}
                     </td>
                     <td>
-                        <select name="alliance_bnd_level[{{ diplomacy.id }}]">
-                            {% for level,label in levels %}
-                                <option value="{{ level }}"{% if diplomacy.level == level %} selected="selected"{% endif %}>{{ label }}</option>
-                            {% endfor %}
-                        </select>
+                        {{ form_widget(diplomacy.level) }}
                     </td>
                     <td>
-                        {{ formatTimestamp(diplomacy.date) }}
+                        {{ formatTimestamp(diplomacy.vars.data.date) }}
                     </td>
-                    <td valign="top"><input type="checkbox" name="alliance_bnd_del[{{ diplomacy.id }}]" value="1"/></td>
+                    <td>
+                        {{ form_widget(diplomacy.delete) }}
+                    </td>
                 </tr>
             {% else %}
                 <tr>
@@ -53,8 +53,11 @@
             </tbody>
         </table>
 
-        {% if diplomacies|length > 0 %}
-            <p><input type="submit" name="bnd_save" value="Übernehmen" class="button"/></p>
+        {% if form.diplomacy|length > 0 %}
+            <p>
+                {{ form_widget(form.submit) }}
+            </p>
+            {{ form_widget(form._token) }}
         {% endif %}
-    </form>
+    {{ form_end(form,{render_rest:false}) }}
 {% endblock %}
