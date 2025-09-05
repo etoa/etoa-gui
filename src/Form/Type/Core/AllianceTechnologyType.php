@@ -18,7 +18,9 @@ class AllianceTechnologyType extends AbstractType
         $resolver
             ->setDefaults([
                 'required' => true,
-                'choices' => array_flip($this->allianceTechnologyRepository->getNames()),
+                'choices' => $this->allianceTechnologyRepository->findBy(['show'=>true]),
+                'choice_value' => 'id',
+                'choice_label' => 'name'
             ]);
     }
 

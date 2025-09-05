@@ -13,7 +13,7 @@ class AllianceTechnologyAddType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('technologyId', AllianceTechnologyType::class, [
+            ->add('technology', AllianceTechnologyType::class, [
                 'label' => 'Technologie',
             ])
             ->add('level', IntegerType::class, [

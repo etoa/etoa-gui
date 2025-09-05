@@ -17,20 +17,9 @@ class AllianceTechnologyListRepository extends AbstractRepository
         parent::__construct($registry, AllianceTechnologyListItem::class);
     }
 
-    public function existsInAlliance(int $allianceId, int $technologyId): bool
+    public function existsInAlliance(int|Alliance $allianceId, int|AllianceTechnology $technologyId): bool
     {
-        $test = $this->createQueryBuilder('q')
-            ->select('alliance_techlist_id')
-            ->from('alliance_techlist')
-            ->where('alliance_techlist_alliance_id = :alliance')
-            ->andWhere('alliance_techlist_tech_id = :technologyId')
-            ->setParameters([
-                'alliance' => $allianceId,
-                'technologyId' => $technologyId,
-            ])
-            ->fetchAllAssociative();
-
-        return count($test) > 0;
+        return $this->count(['alliance'=>$allianceId,'technology'=>$technologyId]) > 0;
     }
 
     public function getLevel(Alliance $alliance, AllianceTechnology|int $technology): ?int
@@ -92,16 +81,16 @@ class AllianceTechnologyListRepository extends AbstractRepository
             ->execute();
     }
 
-    public function updateForAlliance(int $allianceId, int $technologyId, int $level, int $amount, int $startTime = 0, int $endTime = 0): void
+    public function updateForAlliance(int|Alliance $allianceId, int|AllianceTechnology $technologyId, int $level, int $amount, int $startTime = 0, int $endTime = 0): void
     {
         $this->createQueryBuilder('q')
-            ->update('alliance_techlist')
-            ->set('alliance_techlist_current_level', ':level')
-            ->set('alliance_techlist_member_for', ':amount')
-            ->set('alliance_techlist_build_start_time', ':startTime')
-            ->set('alliance_techlist_build_end_time', ':endTime')
-            ->where('alliance_techlist_alliance_id = :alliance')
-            ->andWhere('alliance_techlist_tech_id = :technologyId')
+            ->update()
+            ->set('q.level', ':level')
+            ->set('q.memberFor', ':amount')
+            ->set('q.startTime', ':startTime')
+            ->set('q.endTime', ':endTime')
+            ->where('q.alliance = :alliance')
+            ->andWhere('q.technology = :technologyId')
             ->setParameters([
                 'level' => $level,
                 'amount' => $amount,
@@ -110,7 +99,8 @@ class AllianceTechnologyListRepository extends AbstractRepository
                 'startTime' => $startTime,
                 'endTime' => $endTime,
             ])
-            ->executeQuery();
+            ->getQuery()
+            ->execute();
     }
 
     public function removeForAlliance(Alliance $alliance): void
