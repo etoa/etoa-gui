@@ -13,7 +13,7 @@ class AllianceBuildingAddType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('buildingId', AllianceBuildingType::class, [
+            ->add('allianceBuilding', AllianceBuildingType::class, [
                 'label' => 'Gebäude',
             ])
             ->add('level', IntegerType::class, [

@@ -17,20 +17,9 @@ class AllianceBuildListRepository extends AbstractRepository
         parent::__construct($registry, AllianceBuildListItem::class);
     }
 
-    public function existsInAlliance(int $allianceId, int $buildingId): bool
+    public function existsInAlliance(int|Alliance $allianceId, int|AllianceBuilding $buildingId): bool
     {
-        $test = $this->createQueryBuilder('q')
-            ->select('alliance_buildlist_id')
-            ->from('alliance_buildlist')
-            ->where('alliance_buildlist_alliance_id = :alliance')
-            ->andWhere('alliance_buildlist_building_id = :buildingId')
-            ->setParameters([
-                'alliance' => $allianceId,
-                'buildingId' => $buildingId,
-            ])
-            ->fetchAllAssociative();
-
-        return count($test) > 0;
+        return $this->count(['alliance'=>$allianceId,'allianceBuilding'=>$buildingId]) > 0;
     }
 
     public function getLevel(Alliance $alliance, int $building): ?int
@@ -142,16 +131,16 @@ class AllianceBuildListRepository extends AbstractRepository
             ->execute();
     }
 
-    public function updateForAlliance(int $allianceId, int $buildingId, int $level, int $amount, int $startTime = 0, int $endTime = 0): void
+    public function updateForAlliance(int|Alliance $allianceId, int|AllianceBuilding $buildingId, int $level, int $amount, int $startTime = 0, int $endTime = 0): void
     {
         $this->createQueryBuilder('q')
-            ->update('alliance_buildlist')
-            ->set('alliance_buildlist_current_level', ':level')
-            ->set('alliance_buildlist_member_for', ':amount')
-            ->set('alliance_buildlist_build_start_time', ':startTime')
-            ->set('alliance_buildlist_build_end_time', ':endTime')
-            ->where('alliance_buildlist_alliance_id = :alliance')
-            ->andWhere('alliance_buildlist_building_id = :buildingId')
+            ->update()
+            ->set('q.level', ':level')
+            ->set('q.memberFor', ':amount')
+            ->set('q.buildStartTime', ':startTime')
+            ->set('q.buildEndTime', ':endTime')
+            ->where('q.alliance = :alliance')
+            ->andWhere('q.allianceBuilding = :buildingId')
             ->setParameters([
                 'level' => $level,
                 'amount' => $amount,
@@ -160,7 +149,8 @@ class AllianceBuildListRepository extends AbstractRepository
                 'startTime' => $startTime,
                 'endTime' => $endTime,
             ])
-            ->executeQuery();
+            ->getQuery()
+            ->execute();
     }
 
     public function removeForAlliance(Alliance $alliance): void

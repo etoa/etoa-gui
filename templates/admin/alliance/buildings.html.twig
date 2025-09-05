@@ -1,11 +1,11 @@
-{% set title="Gebäude der Allianz " ~ alliance.nameWithTag %}
+{% set title="Gebäude der Allianz " ~ alliance.toString %}
 
 {% extends 'admin/layout/admin.html.twig' %}
 
 {% block breadcrumbs %}
     {{ component('breadcrumbs', { items: [
         { label: 'Allianzsuche', url: path('admin.alliances') },
-        { label: alliance.nameWithTag, url: path('admin.alliances.view', {id: alliance.id}) },
+        { label: alliance.toString, url: path('admin.alliances.view', {id: alliance.id}) },
         { label: 'Gebäude', url: path('admin.alliances.buildings', {id: alliance.id}) },
     ]}) }}
 {% endblock %}
@@ -23,7 +23,7 @@
         <tbody>
         {% for item in buildlist %}
             <tr>
-                <td>{{ buildings[item.buildingId] }}</td>
+                <td>{{ item.allianceBuilding.name }}</td>
                 <td>{{ item.level }}</td>
                 <td>{{ item.memberFor }}</td>
                 <td>

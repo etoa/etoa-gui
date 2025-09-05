@@ -9,7 +9,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 class AllianceBuildingType extends AbstractType
 {
     public function __construct(
-        private AllianceBuildingRepository $allianceBuildingRepository
+        private readonly AllianceBuildingRepository $allianceBuildingRepository
     ) {
     }
 
@@ -18,7 +18,9 @@ class AllianceBuildingType extends AbstractType
         $resolver
             ->setDefaults([
                 'required' => true,
-                'choices' => array_flip($this->allianceBuildingRepository->getNames()),
+                'choices' => $this->allianceBuildingRepository->findBy(['show'=>true]),
+                'choice_value' => 'id',
+                'choice_label' => 'name'
             ]);
     }
 
