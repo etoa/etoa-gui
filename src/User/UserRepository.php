@@ -6,6 +6,7 @@ namespace EtoA\User;
 
 use Doctrine\Persistence\ManagerRegistry;
 use EtoA\Core\AbstractRepository;
+use EtoA\Entity\AdminUser;
 use EtoA\Entity\Alliance;
 use EtoA\Entity\AllianceRank;
 use EtoA\Entity\Race;
@@ -424,23 +425,14 @@ class UserRepository extends AbstractRepository
             ->fetchAllKeyValue();
     }
 
-    public function blockUser(int $userId, int $from, int $to, string $reason, int $adminId): void
+    public function blockUser(User $user, int $from, int $to, string $reason, AdminUser $admin): void
     {
-        $this->createQueryBuilder('q')
-            ->update('users')
-            ->set('user_blocked_from', ':from')
-            ->set('user_blocked_to', ':to')
-            ->set('user_ban_reason', ':reason')
-            ->set('user_ban_admin_id', ':adminId')
-            ->where('user_id = :userId')
-            ->setParameters([
-                'from' => $from,
-                'to' => $to,
-                'reason' => $reason,
-                'adminId' => $adminId,
-                'userId' => $userId,
-            ])
-            ->executeQuery();
+        $user->setBlockedFrom($from);
+        $user->setBlockedTo($to);
+        $user->setBanReason($reason);
+        $user->setBanAdmin($admin);
+
+        $this->save();
     }
 
     public function removeOldBans(): int

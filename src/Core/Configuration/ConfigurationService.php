@@ -27,16 +27,16 @@ class ConfigurationService
     {
         $elem = $this->repository->findOneBy(['name'=>$name]);
         if($elem) {
-            $elem->setValue($value);
-            $elem->setParam1($param1);
-            $elem->setParam2($param2);
+            $elem->setValue((string)$value);
+            $elem->setParam1((string)$param1);
+            $elem->setParam2((string)$param2);
         }
         else {
             $elem = new Config();
             $elem->setName($name);
-            $elem->setValue($value);
-            $elem->setParam1($param1);
-            $elem->setParam2($param2);
+            $elem->setValue((string)$value);
+            $elem->setParam1((string)$param1);
+            $elem->setParam2((string)$param2);
 
             $this->repository->persist($elem);
         }

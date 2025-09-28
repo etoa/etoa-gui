@@ -15,16 +15,16 @@ class AllianceNewsEditType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('authorAllianceId', AllianceType::class, [
+            ->add('alliance', AllianceType::class, [
                 'placeholder' => '(keine)',
                 'label' => 'Absender Allianz',
             ])
-            ->add('authorUserId', UserType::class, [
+            ->add('author', UserType::class, [
                 'placeholder' => '(keiner)',
                 'label' => 'Absender Spieler',
                 'required' => true,
             ])
-            ->add('toAllianceId', AllianceType::class, [
+            ->add('toAlliance', AllianceType::class, [
                 'placeholder' => '(keine)',
                 'label' => 'Empfänger Allianz',
             ])

@@ -125,11 +125,11 @@ class AllianceNewsRepository extends AbstractRepository
     public function deleteOlderThan(int $timestamp): int
     {
         return $this->createQueryBuilder('q')
-            ->delete('alliance_news')
-            ->where('alliance_news_date < :timestamp')
+            ->delete()
+            ->where('q.date < :timestamp')
             ->setParameter('timestamp', $timestamp)
-            ->executeQuery()
-            ->rowCount();
+            ->getQuery()
+            ->execute();
     }
 
     public function deleteEntry(int $newsId): void

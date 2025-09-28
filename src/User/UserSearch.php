@@ -171,10 +171,16 @@ class UserSearch extends AbstractSearch
         return $this;
     }
 
-    public function allianceId(int|Alliance $allianceId): self
+    public function allianceId(int|Alliance|null $allianceId): self
     {
-        $this->parts[] = "q.alliance = :allianceId";
-        $this->parameters['allianceId'] = $allianceId;
+        if($allianceId) {
+            $this->parts[] = "q.alliance  = :allianceId";
+            $this->parameters['allianceId'] = $allianceId;
+        }
+        else {
+            $this->parts[] = "q.alliance  IS NULL";
+        }
+
 
         return $this;
     }
