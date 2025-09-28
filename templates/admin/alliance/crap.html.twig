@@ -60,12 +60,12 @@
                 {% for alliance in alliancesWithoutUsers %}
                     <tr>
                         <td class="tbldata">{{ alliance.alliance_id }}</td>
-                        <td class="tbldata">{{ aliance.alliance_tag }}</td>
-                        <td class="tbldata"><a
-                                    href="?page=$page&amp;sub=edit&amp;alliance_id={{ alliance.alliance_id }}">detail</a>
+                        <td class="tbldata">{{ alliance.alliance_tag }}</td>
+                        <td class="tbldata">
+                            <a href="{{ path('admin.alliances.view',{id:alliance.alliance_id}) }}">detail</a>
                         </td>
-                        <td class="tbldata"><a
-                                    href="?page=$page&amp;sub=drop&amp;alliance_id={{ alliance.alliance_id }}">löschen</a>
+                        <td class="tbldata">
+                            <a href="{{ path('admin.alliances.delete',{id:alliance.alliance_id}) }}">löschen</a>
                         </td>
                     </tr>
                 {% endfor %}

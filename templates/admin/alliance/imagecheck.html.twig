@@ -18,26 +18,22 @@
 
                 {% for alliance in alliancesWithUncheckedPictures %}
                     <tr>
-                        <td>[{{ alliance.alliance_tag }}] {{ alliance.alliance_name }}</td>
+                        <td>[{{ alliance.tag }}] {{ alliance.name }}</td>
                         <td>
-                            {% if uncheckedImages[alliance.alliance_img] %}
-                                <img src="{{ webroot ~ alliance.alliance_img }}" alt="Profil"/>
+                            {% if uncheckedImages[alliance.image] %}
+                                <img src="{{ webroot ~ alliance.img }}" alt="Profil"/>
                             {% else %}
                                 <span style="color:red">Bild existiert nicht!</span>
                             {% endif %}
                         </td>
                         <td>
                             <p>
-                                <label>
-                                    <input type="radio" name="validate[{{ alliance.alliance_id }}]" value="1"
-                                           checked="checked"> Bild ist in Ordnung
-                                </label>
+                                <input type="radio" name="validate[{{ alliance.id }}]" value="1"
+                                       checked="checked"> Bild ist in Ordnung
                             </p>
                             <p>
-                                <label>
-                                    <input type="radio" name="validate[{{ alliance.alliance_id }}]" value="0"> Bild
-                                    verstösst gegen die Regeln. Lösche es!
-                                </label>
+                                <input type="radio" name="validate[{{ alliance.id }}]" value="0"> Bild
+                                verstösst gegen die Regeln. Lösche es!
                             </p>
                         </td>
                     </tr>

@@ -323,15 +323,15 @@ class AllianceRepository extends AbstractRepository
     {
         return $this->createQueryBuilder('q')
             ->select(
-                'alliance_id',
-                'alliance_tag',
-                'alliance_name',
-                'alliance_img'
+                'q.id',
+                'q.tag',
+                'q.name',
+                'q.image'
             )
-            ->from('alliances')
-            ->where('alliance_img_check = 1')
-            ->andWhere("alliance_img != ''")
-            ->fetchAllAssociative();
+            ->where('q.imageCheck = 1')
+            ->andWhere("q.image != ''")
+            ->getQuery()
+            ->execute();
     }
 
     /**
@@ -341,14 +341,14 @@ class AllianceRepository extends AbstractRepository
     {
         return $this->createQueryBuilder('q')
             ->select(
-                'alliance_id',
-                'alliance_tag',
-                'alliance_name',
-                'alliance_img'
+                'q.id',
+                'q.tag',
+                'q.name',
+                'q.image'
             )
-            ->from('alliances')
-            ->where("alliance_img != ''")
-            ->fetchAllAssociative();
+            ->where("q.image != ''")
+            ->getQuery()
+            ->execute();
     }
 
     /**
@@ -394,11 +394,11 @@ class AllianceRepository extends AbstractRepository
     public function countUsers(int $allianceId): int
     {
         return (int) $this->createQueryBuilder('q')
-            ->select("COUNT(*)")
-            ->from('users')
-            ->where('user_alliance_id = :id')
+            ->select("COUNT(q)")
+            ->where('q.id = :id')
             ->setParameter('id', $allianceId)
-            ->fetchOne();
+            ->getQuery()
+            ->execute();
     }
 
     /**

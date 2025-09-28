@@ -2,10 +2,10 @@
 
 namespace EtoA\Controller\Admin;
 
+use EtoA\Alliance\AllianceImage;
 use EtoA\Alliance\AllianceImageStorage;
 use EtoA\Alliance\AllianceRepository;
 use EtoA\Alliance\AllianceService;
-use EtoA\Entity\Alliance;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -32,7 +32,7 @@ class AllianceMiscController extends AbstractAdminController
                 if (count($alliances) > 0) {
                     foreach ($alliances as $alliance) {
                         if ($this->allianceRepository->countUsers((int)$alliance['alliance_id']) === 0) {
-                            $alliance = $this->allianceRepository->getAlliance((int)$alliance['alliance_id']);
+                            $alliance = $this->allianceRepository->findOneBy(['id'=>$alliance['alliance_id']]);
                             if ($this->allianceService->delete($alliance)) {
                                 $cnt++;
                             }
@@ -55,6 +55,7 @@ class AllianceMiscController extends AbstractAdminController
     #[IsGranted('ROLE_ADMIN_GAME-ADMIN')]
     public function imageCheck(Request $request): Response
     {
+        //TODO
         if ($request->request->has('validate_submit')) {
             foreach ($request->request->all('validate') as $allianceId => $value) {
                 if ($value == 0) {
@@ -74,7 +75,7 @@ class AllianceMiscController extends AbstractAdminController
         $alliances = $this->allianceRepository->findAllWithPictures();
         $paths = [];
         foreach ($alliances as $alliance) {
-            $paths[$alliance['alliance_id']] = $alliance['alliance_img'];
+            $paths[$alliance['id']] = $alliance['image'];
         }
 
         $files = $this->allianceImageStorage->getAllImages();
@@ -97,11 +98,11 @@ class AllianceMiscController extends AbstractAdminController
         $uncheckedImages = [];
         $alliancesWithUncheckedPictures = $this->allianceRepository->findAllWithUncheckedPictures();
         foreach ($alliancesWithUncheckedPictures as $alliance) {
-            $uncheckedImages[$alliance['alliance_img']] = $this->allianceImageStorage->exists($alliance['alliance_img']);
+            $uncheckedImages[$alliance['image']] = $this->allianceImageStorage->exists($alliance['image']);
         }
 
         return $this->render('admin/alliance/imagecheck.html.twig', [
-            'webroot' => Alliance::PROFILE_PICTURE_PATH,
+            'webroot' => AllianceImage::IMAGE_PATH,
             'alliancesWithUncheckedPictures' => $alliancesWithUncheckedPictures,
             'uncheckedImages' => $uncheckedImages,
             'orphaned' => $orphaned,
