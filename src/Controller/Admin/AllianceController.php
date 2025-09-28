@@ -37,13 +37,11 @@ class AllianceController extends AbstractAdminController
     public function __construct(
         private readonly AllianceRepository           $allianceRepository,
         private readonly AllianceService              $allianceService,
-        private readonly AllianceTechnologyRepository $allianceTechnologyRepository,
         private readonly AllianceImageStorage         $allianceImageStorage,
         private readonly AllianceDiplomacyRepository  $allianceDiplomacyRepository,
         private readonly AllianceRankRepository       $allianceRankRepository,
         private readonly AllianceBuildListRepository  $allianceBuildListRepository,
         private readonly AllianceTechnologyListRepository $allianceTechnologyListRepository
-
     )
     {
     }
@@ -71,14 +69,14 @@ class AllianceController extends AbstractAdminController
                 $alliance = $this->allianceService->create(
                     $data['tag'],
                     $data['name'],
-                    (int)$data['founder'],
+                    $data['founder'],
                 );
 
-                $this->addFlash('success', sprintf('Alliance %s erstellt', $alliance->nameWithTag));
+                $this->addFlash('success', sprintf('Alliance %s erstellt', $alliance->toString()));
 
                 return $this->redirectToRoute('admin.alliances');
             } catch (InvalidAllianceParametersException $ex) {
-                $this->addFlash('error', "Allianz konnte nicht erstellt werden!\n\n" . $ex->getMessage() . "");
+                $this->addFlash('error', "Allianz konnte nicht erstellt werden!\n\n" . $ex->getMessage());
             }
         }
 

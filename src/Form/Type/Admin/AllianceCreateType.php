@@ -24,7 +24,7 @@ class AllianceCreateType extends AbstractType
                 'required' => true,
                 'placeholder' => false,
                 'label' => 'Gründer',
-                'search' => UserSearch::create()->allianceId(0),
+                'search' => UserSearch::create()->allianceId(null),
             ])
             ->add('submit', SubmitType::class, [
                 'label' => 'Erstellen',

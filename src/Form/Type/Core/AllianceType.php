@@ -9,7 +9,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 class AllianceType extends AbstractType
 {
     public function __construct(
-        private AllianceRepository $allianceRepository,
+        private readonly AllianceRepository $allianceRepository,
     ) {
     }
 
@@ -20,7 +20,9 @@ class AllianceType extends AbstractType
         $resolver->setDefaults([
             'required' => false,
             'placeholder' => '(Alle)',
-            'choices' => array_flip($this->allianceRepository->getAllianceNamesWithTags()),
+            'choices' => $this->allianceRepository->findAll(),
+            'choice_value' => 'id',
+            'choice_label' => 'name',
         ]);
     }
 

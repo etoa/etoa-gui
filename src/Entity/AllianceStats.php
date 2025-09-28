@@ -9,7 +9,7 @@ use Doctrine\ORM\Mapping as ORM;
 class AllianceStats
 {
     #[ORM\Id]
-    #[ORM\OneToOne(mappedBy: "allianceStats", targetEntity: Alliance::class)]
+    #[ORM\OneToOne(inversedBy: "allianceStats", targetEntity: Alliance::class)]
     #[ORM\JoinColumn(name: 'alliance_id', referencedColumnName: 'alliance_id')]
     private Alliance $alliance;
 

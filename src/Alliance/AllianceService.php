@@ -37,16 +37,9 @@ class AllianceService
         private readonly AllianceHistoryRepository $allianceHistoryRepository,
         private readonly UserService $userService,
         private readonly AllianceDiplomacyRepository $allianceDiplomacyRepository,
-        private readonly AllianceBoardCategoryRepository $allianceBoardCategoryRepository,
         private readonly AllianceApplicationRepository $allianceApplicationRepository,
-        private readonly AllianceBoardTopicRepository $allianceBoardTopicRepository,
         private readonly AllianceBoardPostRepository $allianceBoardPostRepository,
-        private readonly AllianceBuildListRepository $allianceBuildListRepository,
-        private readonly AlliancePointsRepository $alliancePointsRepository,
-        private readonly AllianceNewsRepository $allianceNewsRepository,
         private readonly AlliancePollRepository $alliancePollRepository,
-        private readonly AllianceRankRepository $allianceRankRepository,
-        private readonly AllianceSpendRepository $allianceSpendRepository,
         private readonly LogRepository $logRepository,
         private readonly MessageRepository $messageRepository,
         private readonly ConfigurationService $config,
@@ -56,7 +49,6 @@ class AllianceService
         private readonly UrlGeneratorInterface $router,
         private readonly AllianceRankRightRepository    $allianceRankRightRepository,
         private readonly MessageCategoryRepository $messageCategoryRepository,
-        private readonly AllianceTechnologyListRepository $allianceTechnologyListRepository
     )
     {}
 
@@ -194,31 +186,6 @@ class AllianceService
     public function delete(Alliance $alliance, User $user = null): bool
     {
         if (!$this->allianceDiplomacyRepository->isAtWar($alliance)) {
-
-            //TODO: let doctrine handle it
-            $this->allianceBoardCategoryRepository->deleteAllCategories($alliance);
-            $this->allianceApplicationRepository->deleteAllianceApplication($alliance);
-            $diplomacies = $this->allianceDiplomacyRepository->getDiplomacies($alliance);
-            foreach ($diplomacies as $diplomacy) {
-                $this->allianceBoardTopicRepository->deleteBndTopic($diplomacy);
-            }
-
-            $this->allianceDiplomacyRepository->deleteAllianceDiplomacies($alliance);
-
-            $this->allianceBuildListRepository->removeForAlliance($alliance);
-            $this->allianceHistoryRepository->removeForAlliance($alliance);
-            $this->alliancePointsRepository->removeForAlliance($alliance);
-            $this->allianceNewsRepository->deleteAllianceEntries($alliance);
-            $this->alliancePollRepository->deleteAllianceEntries($alliance);
-            $this->allianceRankRepository->deleteAllianceRanks($alliance);
-            $this->allianceSpendRepository->deleteAllianceEntries($alliance);
-            $this->allianceTechnologyListRepository->removeForAlliance($alliance);
-
-            $this->repository->resetMother($alliance);
-
-            // Set user alliance link to null
-            $this->userRepository->resetAlliance($alliance);
-
             if ($user) {
                 $this->userService->addToUserLog($user, "alliance", "{nick} löst die Allianz [b]" . $alliance->toString() . "[/b] auf.");
                 $this->logRepository->add(LogFacility::ALLIANCE, LogSeverity::INFO, "Die Allianz [b]" . $alliance->toString() . "[/b] wurde von " . $user->getNick() . " aufgelöst!");
