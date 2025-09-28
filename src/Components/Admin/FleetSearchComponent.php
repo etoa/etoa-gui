@@ -4,13 +4,13 @@ namespace EtoA\Components\Admin;
 
 use EtoA\Components\Helper\SearchComponentTrait;
 use EtoA\Components\Helper\SearchResult;
+use EtoA\Fleet\FleetAction;
 use EtoA\Fleet\FleetRepository;
 use EtoA\Fleet\FleetSearch;
 use EtoA\Form\Request\Admin\FleetSearchRequest;
 use EtoA\Form\Type\Admin\FleetSearchType;
 use EtoA\Universe\Entity\EntityLabelSearch;
 use EtoA\Universe\Entity\EntityRepository;
-use EtoA\User\UserRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormInterface;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
@@ -21,8 +21,6 @@ class FleetSearchComponent extends AbstractController
     use SearchComponentTrait;
 
     /** @var array<int, string> */
-    public array $users;
-    /** @var array<int, string> */
     public array $entities = [];
     /** @var array<int, string> */
     public array $fleetStatusCode;
@@ -31,9 +29,8 @@ class FleetSearchComponent extends AbstractController
     private FleetSearchRequest $request;
 
     public function __construct(
-        private FleetRepository $fleetRepository,
-        private UserRepository $userRepository,
-        private EntityRepository $entityRepository
+        private readonly FleetRepository $fleetRepository,
+        private readonly EntityRepository $entityRepository
     ) {
         $this->request = new FleetSearchRequest();
     }
@@ -63,18 +60,17 @@ class FleetSearchComponent extends AbstractController
 
         $fleets = $this->fleetRepository->search($search);
         if (count($fleets) > 0) {
-            $this->fleetStatusCode = \FleetAction::$statusCode;
-            $this->fleetActions = \FleetAction::getAll();
-            $this->users = $this->userRepository->searchUserNicknames();
+            $this->fleetStatusCode = FleetAction::$statusCode;
+            $this->fleetActions = FleetAction::getAll();
             $entityIds = [];
             foreach ($fleets as $fleet) {
-                $entityIds[] = $fleet->entityFrom;
-                $entityIds[] = $fleet->entityTo;
+                $entityIds[] = $fleet->getEntityFrom()->getId();
+                $entityIds[] = $fleet->getEntityTo()->getId();
             }
 
             $entities = $this->entityRepository->searchEntityLabels(EntityLabelSearch::create()->ids($entityIds));
             foreach ($entities as $entity) {
-                $this->entities[$entity->id] = $entity->codeString() . ' ' . $entity->toStringWithOwner();
+                $this->entities[$entity->getId()] = $entity->codeString() . ' ' . $entity->toString();
             }
         }
 

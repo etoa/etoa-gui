@@ -13,11 +13,11 @@
     </tr>
     {% for fleet in search.entries %}
         <tr>
-            <td>{{ this.users[fleet.userId] }}</td>
+            <td>{{ fleet.user.nick }}</td>
             <td>{{ fleet.action }}</td>
             <td>{{ fleet.status }}</td>
-            <td>{{ this.entities[fleet.entityFrom] }}</td>
-            <td>{{ this.entities[fleet.entityTo] }}</td>
+            <td>{{ fleet.entityFrom.toString }}</td>
+            <td>{{ fleet.entityTo.toString }}</td>
             <td>{{ formatTimestamp(fleet.launchTime) }}</td>
             <td>{{ formatTimestamp(fleet.landTime) }}</td>
             <td>

@@ -41,7 +41,7 @@ class FleetController extends AbstractAdminController
     {
         return $this->render('admin/fleet/search.html.twig', [
             'form' => $this->createForm(FleetSearchType::class, $request->query->all()),
-            'total' => $this->fleetRepository->count(),
+            'total' => $this->fleetRepository->count([]),
         ]);
     }
 

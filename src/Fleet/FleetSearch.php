@@ -4,6 +4,8 @@ namespace EtoA\Fleet;
 
 use EtoA\Core\Database\AbstractSearch;
 use EtoA\Entity\Alliance;
+use EtoA\Entity\Entity;
+use EtoA\Entity\Fleet;
 use EtoA\Entity\User;
 
 class FleetSearch extends AbstractSearch
@@ -137,7 +139,7 @@ class FleetSearch extends AbstractSearch
         return $this;
     }
 
-    public function entityFrom(int $entityFrom): self
+    public function entityFrom(int|Entity $entityFrom): self
     {
         $this->parts[] = 'q.entityFrom = :entityFrom';
         $this->parameters['entityFrom'] = $entityFrom;
@@ -145,7 +147,7 @@ class FleetSearch extends AbstractSearch
         return $this;
     }
 
-    public function entityTo(int $entityTo): self
+    public function entityTo(int|Entity $entityTo): self
     {
         $this->parts[] = 'q.entityTo = :entityTo';
         $this->parameters['entityTo'] = $entityTo;
@@ -153,7 +155,7 @@ class FleetSearch extends AbstractSearch
         return $this;
     }
 
-    public function leader(int $leader): self
+    public function leader(Fleet|int $leader): self
     {
         $this->parts[] = 'q.leader = :leader';
         $this->parameters['leader'] = $leader;
