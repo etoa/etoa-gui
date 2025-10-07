@@ -19,6 +19,8 @@ p.center {
 #outGameContent	{
 	margin: 80px auto 10px;
 	width: 800px;	
+	color: white;
+	font-family: Verdana, sans-serif;
 }
 
 /*
