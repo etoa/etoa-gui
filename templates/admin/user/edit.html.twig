@@ -271,7 +271,7 @@
                                            id="user_profile_img_check">
                                     <label for="user_profile_img_check">Bild-Verifikation bestätigen</label><br/>
                                 {% endif %}
-                                <img src="{{ form.vars.data.userProperties.getProfileImageUrl }}" alt="Profil"/><br/>
+                                <img src="{{ form.vars.data.profileImage }}" alt="Profil"/><br/>
                                 {{ form_widget(form.imageDel) }}
                                 <label for="form_imageDel">Bild löschen</label><br/>
                             {% else %}

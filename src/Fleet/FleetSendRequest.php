@@ -2,22 +2,25 @@
 
 namespace EtoA\Fleet;
 
+use EtoA\Entity\Entity;
+use EtoA\Entity\Ship;
+
 class FleetSendRequest
 {
     public int $launchTime;
     public int $landTime;
-    public int $entityFrom;
+    public ?Entity $entityFrom;
     public int $count;
-    public int $shipId;
+    public ?Ship $ship;
 
     public static function new(): FleetSendRequest
     {
         $request = new FleetSendRequest();
         $request->launchTime = time();
         $request->landTime = time() + 3600;
-        $request->entityFrom = 0;
+        $request->entityFrom = null;
         $request->count = 1;
-        $request->shipId = 0;
+        $request->ship = null;
 
         return $request;
     }

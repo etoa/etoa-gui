@@ -38,9 +38,7 @@ class EntityType extends AbstractType
                     $entries = $this->entityRepository->searchEntityLabels($search);
                     $choices = [];
                     foreach ($entries as $entry) {
-                        $labelPrefix = $options['with_code_string'] ? $entry->codeString() . ' ' : '';
-
-                        $choices[$labelPrefix . $entry->toString() .' '. $entry->displayName()] = $options['get_type'] ? $entry->getType():$entry;
+                        $choices[$entry->toString() .' '. $entry->displayName()] = $options['get_type'] ? $entry->getType():$entry;
                     }
 
                     return $choices;

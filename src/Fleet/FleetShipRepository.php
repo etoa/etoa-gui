@@ -136,17 +136,18 @@ class FleetShipRepository extends AbstractRepository
             ->executeQuery();
     }
 
-    public function removeShipsFromFleet(int $fleetId, int $shipId): void
+    public function removeShipsFromFleet(Fleet $fleet, Ship $ship): void
     {
         $this->createQueryBuilder('q')
-            ->delete('fleet_ships')
-            ->where('fs_fleet_id = :fleetId')
-            ->andWhere('fs_ship_id = :shipId')
+            ->delete()
+            ->where('q.fleet = :fleet')
+            ->andWhere('q.ship = :ship')
             ->setParameters([
-                'fleetId' => $fleetId,
-                'shipId' => $shipId,
+                'fleet' => $fleet,
+                'ship' => $ship,
             ])
-            ->executeQuery();
+            ->getQuery()
+            ->execute();
     }
 
     public function removeAllShipsFromFleet(Fleet $fleet): void

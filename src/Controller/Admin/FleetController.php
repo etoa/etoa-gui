@@ -5,12 +5,12 @@ namespace EtoA\Controller\Admin;
 use Doctrine\ORM\EntityManagerInterface;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Entity\Fleet;
+use EtoA\Entity\FleetShip;
 use EtoA\Fleet\FleetAction;
 use EtoA\Fleet\FleetRepository;
 use EtoA\Fleet\FleetSendRequest;
 use EtoA\Fleet\FleetService;
 use EtoA\Fleet\FleetStatus;
-use EtoA\Fleet\FleetWithShips;
 use EtoA\Fleet\InvalidFleetParametersException;
 use EtoA\Form\Type\Admin\FleetSearchType;
 use EtoA\Form\Type\Admin\FleetType;
@@ -49,16 +49,12 @@ class FleetController extends AbstractAdminController
     #[IsGranted('ROLE_ADMIN_GAME-ADMIN')]
     public function new(Request $request): Response
     {
-        $fleet = new FleetWithShips(Fleet::empty(), [0 => 1]);
+        $fleet = new Fleet();
         $form = $this->createForm(FleetType::class, $fleet);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             $this->entityManager->persist($fleet);
             $this->entityManager->flush();
-
-            foreach ($fleet->ships as $ship) {
-                $this->fleetRepository->addShipsToFleet($fleet->getId(), $ship['shipId'], $ship['count']);
-            }
 
             $this->addFlash('success', 'Flotte erstellt!');
 
@@ -72,35 +68,35 @@ class FleetController extends AbstractAdminController
 
     #[Route('/admin/fleets/{id}/edit', name: 'admin.fleets.edit')]
     #[IsGranted('ROLE_ADMIN_GAME-ADMIN')]
-    public function edit(Request $request, int $id): Response
+    public function edit(Request $request, Fleet $fleet): Response
     {
         if ($request->request->has('cancel')) {
             try {
-                $this->fleetService->cancel($id);
+                $this->fleetService->cancel($fleet);
 
                 $this->addFlash('success', "Flug abgebrochen!");
             } catch (InvalidFleetParametersException $ex) {
                 $this->addFlash('error', "Kann Flotte nicht abbrechen: " . $ex->getMessage());
             }
 
-            return $this->redirectToRoute('admin.fleets.edit', ['id' => $id]);
+            return $this->redirectToRoute('admin.fleets.edit', ['id' => $fleet->getId()]);
         }
 
         if ($request->request->has('return')) {
             try {
-                $this->fleetService->cancel($id, true);
+                $this->fleetService->cancel($fleet, true);
 
                 $this->addFlash('success', "Flotte zurück gesendet!");
             } catch (InvalidFleetParametersException $ex) {
                 $this->addFlash('error', "Kann Flotte nicht zurücksenden: " . $ex->getMessage());
             }
 
-            return $this->redirectToRoute('admin.fleets.edit', ['id' => $id]);
+            return $this->redirectToRoute('admin.fleets.edit', ['id' => $fleet->getId()]);
         }
 
         if ($request->request->has('land')) {
             try {
-                $this->fleetService->land($id);
+                $this->fleetService->land($fleet);
                 $this->addFlash('success', "Flotte gelandet!");
             } catch (InvalidFleetParametersException $ex) {
                 $this->addFlash('error', "Kann Flotte nicht landen: " . $ex->getMessage());
@@ -109,35 +105,16 @@ class FleetController extends AbstractAdminController
             return $this->redirectToRoute('admin.fleets');
         }
 
-        $fleetShips = $this->fleetRepository->findAllShipsInFleet($id);
-        $fleet = new FleetWithShips($this->fleetRepository->find($id), $fleetShips);
         $form = $this->createForm(FleetType::class, $fleet);
         $form->handleRequest($request);
         if ($request->request->has('edit')) {
-            $shipIds = array_map(fn(array $row) => $row['shipId'], $fleet->ships);
+            $shipIds = array_map(fn(FleetShip $row) => $row->getShip()->getId(), $fleet->getFleetShips()->toArray());
             if (count($shipIds) !== count(array_unique($shipIds))) {
-                $form->get('ships')->addError(new FormError('Nur ein Eintrag pro Shiff möglich'));
+                $form->get('fleetShips')->addError(new FormError('Nur ein Eintrag pro Schiff möglich'));
             }
 
             if ($form->isSubmitted() && $form->isValid()) {
-                $shipMap = [];
-                foreach ($fleetShips as $ship) {
-                    $shipMap[$ship->shipId] = $ship->count;
-                }
-
-                foreach ($fleet->ships as $ship) {
-                    $toBeAdded = $ship['count'] - ($shipMap[$ship['shipId']] ?? 0);
-                    if ($toBeAdded !== 0) {
-                        $this->fleetRepository->addShipsToFleet($fleet->getId(), $ship['shipId'], $toBeAdded);
-                    }
-                    unset($shipMap[$ship['shipId']]);
-                }
-
-                foreach (array_keys($shipMap) as $shipId) {
-                    $this->fleetRepository->removeShipsFromFleet($fleet->getId(), $shipId);
-                }
-
-                $this->fleetRepository->save($fleet);
+                $this->fleetRepository->save();
 
                 $this->addFlash('success', 'Flottendaten geändert!');
             }
@@ -151,10 +128,10 @@ class FleetController extends AbstractAdminController
 
     #[Route('/admin/fleets/{id}/delete', name: 'admin.fleets.delete')]
     #[IsGranted('ROLE_ADMIN_GAME-ADMIN')]
-    public function delete(int $id): RedirectResponse
+    public function delete(Fleet $fleet): RedirectResponse
     {
-        $this->fleetRepository->removeAllShipsFromFleet($id);
-        $this->fleetRepository->remove($id);
+        $this->fleetRepository->remove($fleet);
+        $this->fleetRepository->save();
 
         $this->addFlash('success', "Die Flotte wurde gelöscht!");
 
@@ -171,22 +148,26 @@ class FleetController extends AbstractAdminController
         if ($form->isSubmitted() && $form->isValid()) {
             $count = 0;
             foreach ($this->planetRepository->getMainPlanets() as $planet) {
-                $fleetId = $this->fleetRepository->add(
-                    $planet->userId,
+                $fleet = $this->fleetRepository->add(
+                    $planet->getUser(),
                     $sendShips->launchTime,
                     $sendShips->landTime,
                     $sendShips->entityFrom,
-                    $planet->id,
+                    $planet->getEntity(),
                     FleetAction::FLIGHT,
                     FleetStatus::ARRIVAL->value,
                     new BaseResources()
                 );
 
-                $this->fleetRepository->addShipsToFleet(
-                    $fleetId,
-                    $sendShips->shipId,
-                    $sendShips->count,
-                );
+                $fleetShip = new FleetShip();
+                $fleetShip->setShip($sendShips->ship);
+                $fleetShip->setCount($sendShips->count);
+
+                $fleet->addFleetShip($fleetShip);
+
+                $this->fleetRepository->persist($fleet);
+                $this->fleetRepository->save();
+
                 $count++;
             }
 

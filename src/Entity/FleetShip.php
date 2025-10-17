@@ -26,61 +26,61 @@ class FleetShip
     private ?Ship $ship = null;
 
     #[ORM\Column(name: "fs_ship_cnt")]
-    private int $count;
+    private int $count = 0;
 
     #[ORM\Column(name: "fs_ship_faked")]
-    private int $shipFaked;
+    private int $shipFaked = 0;
 
     #[ORM\Column(name: "fs_special_ship", type: Types::BOOLEAN)]
-    private bool $specialShip;
+    private bool $specialShip = false;
 
     #[ORM\Column(name: "fs_special_ship_level")]
-    private int $specialShipLevel;
+    private int $specialShipLevel = 0;
 
     #[ORM\Column(name: "fs_special_ship_exp")]
-    private int $specialShipExperience;
+    private int $specialShipExperience = 0;
 
     #[ORM\Column(name: "fs_special_ship_bonus_weapon")]
-    private int $specialShipBonusWeapon;
+    private int $specialShipBonusWeapon = 0;
 
     #[ORM\Column(name: "fs_special_ship_bonus_structure")]
-    private int $specialShipBonusStructure;
+    private int $specialShipBonusStructure = 0;
 
     #[ORM\Column(name: "fs_special_ship_bonus_shield")]
-    private int $specialShipBonusShield;
+    private int $specialShipBonusShield = 0;
 
     #[ORM\Column(name: "fs_special_ship_bonus_heal")]
-    private int $specialShipBonusHeal;
+    private int $specialShipBonusHeal = 0;
 
     #[ORM\Column(name: "fs_special_ship_bonus_capacity")]
-    private int $specialShipBonusCapacity;
+    private int $specialShipBonusCapacity = 0;
 
     #[ORM\Column(name: "fs_special_ship_bonus_speed")]
-    private int $specialShipBonusSpeed;
+    private int $specialShipBonusSpeed = 0;
 
     #[ORM\Column(name: "fs_special_ship_bonus_pilots")]
-    private int $specialShipBonusPilots;
+    private int $specialShipBonusPilots = 0;
 
     #[ORM\Column(name: "fs_special_ship_bonus_tarn")]
-    private int $specialShipBonusTarn;
+    private int $specialShipBonusTarn = 0;
 
     #[ORM\Column(name: "fs_special_ship_bonus_antrax")]
-    private int $specialShipBonusAnthrax;
+    private int $specialShipBonusAnthrax = 0;
 
     #[ORM\Column(name: "fs_special_ship_bonus_forsteal")]
-    private int $specialShipBonusForSteal;
+    private int $specialShipBonusForSteal = 0;
 
     #[ORM\Column(name: "fs_special_ship_bonus_build_destroy")]
-    private int $specialShipBonusBuildDestroy;
+    private int $specialShipBonusBuildDestroy = 0;
 
     #[ORM\Column(name: "fs_special_ship_bonus_antrax_food")]
-    private int $specialShipBonusAnthraxFood;
+    private int $specialShipBonusAnthraxFood = 0;
 
     #[ORM\Column(name: "fs_special_ship_bonus_deactivade")]
-    private int $specialShipBonusDeactivate;
+    private int $specialShipBonusDeactivate = 0;
 
     #[ORM\Column(name: "fs_special_ship_bonus_readiness")]
-    private int $specialShipBonusReadiness;
+    private int $specialShipBonusReadiness = 0;
 
     public function getId(): ?int
     {

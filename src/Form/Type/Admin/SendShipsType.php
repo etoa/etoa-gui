@@ -36,7 +36,7 @@ class SendShipsType extends AbstractType
             ->add('count', IntegerType::class, [
                 'label' => 'Anzahl',
             ])
-            ->add('shipId', ShipType::class, [
+            ->add('ship', ShipType::class, [
                 'label' => 'Schiff',
                 'required' => true,
                 'placeholder' => false,

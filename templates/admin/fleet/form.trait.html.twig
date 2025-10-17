@@ -3,9 +3,9 @@
 
 <table class="tbl">
     <tr>
-        <th class="tbltitle">{{ form_label(form.userId) }}</th>
+        <th class="tbltitle">{{ form_label(form.user) }}</th>
         <td class="tbldata">
-            {{ form_row(form.userId, {label: false}) }}
+            {{ form_row(form.user, {label: false}) }}
         </td>
     </tr>
 
@@ -25,9 +25,9 @@
     </tr>
     {% if fleet is defined %}
         <tr>
-            <th class="tbltitle">Flugdauer</th>
+            <th class="tbltitle"><label for="fleet_time">Flugdauer</label></th>
             <td class="tbldata">
-                {{ formatTimespan(fleet.landTime - fleet.launchTime) }}
+                <span id="fleet_time">{{ formatTimespan(fleet.landTime - fleet.launchTime) }}</span>
             </td>
         </tr>
     {% endif %}
@@ -35,13 +35,13 @@
     <tr>
         <th class="tbltitle">{{ form_label(form.entityFrom) }}</th>
         <td class="tbldata">
-            {{ form_row(form.entityFrom, {label: false}) }}
+            {{ form_widget(form.entityFrom, {label: false}) }}
         </td>
     </tr>
     <tr>
         <th class="tbltitle">{{ form_label(form.entityTo) }}</th>
         <td class="tbldata">
-            {{ form_row(form.entityTo, {label: false}) }}
+            {{ form_widget(form.entityTo, {label: false}) }}
         </td>
     </tr>
 
@@ -49,10 +49,10 @@
         <th class="tbltitle">{{ form_label(form.action) }}</th>
         <td class="tbldata">
             <div class="inline-block">
-                {{ form_row(form.action, {label: false}) }}
+                {{ form_widget(form.action, {label: false}) }}
             </div>
             <div class="inline-block">
-                {{ form_row(form.status) }}
+                {{ form_widget(form.status) }}
             </div>
         </td>
     </tr>
@@ -189,21 +189,32 @@
     <tr><td style="background:#000;height:2px;" colspan="2"></td></tr>
 
     <tr>
-        <th class="tbltitle">{{ form_label(form.ships) }}</th>
+        <th class="tbltitle">{{ form_label(form.fleetShips) }}</th>
         <td class="tbldata" data-controller="collection">
-            <div>{{ form_errors(form.ships) }}</div>
+            <div>{{ form_errors(form) }}</div>
             <div data-collection-target="container">
-                {% for rows in form.ships %}
+                {% for rows in form.fleetShips %}
                     <div {% if loop.index == 1 %} data-collection-target="prototype"{% endif %}>
                         {% for element in rows %}
                             <div class="inline-block">
-                                {{ form_row(element) }}
+                                {{ form_widget(element) }}
                             </div>
                         {% endfor %}
                         <div class="inline-block{% if loop.index  == 1 %} hide{% endif %}">
                             <button type="button" data-action="click->collection#removeEntry">Löschen</button>
                         </div>
                     </div>
+                {% else %}
+                    <div {% if loop.index == 1 %} data-collection-target="prototype"{% endif %}>
+                        <div class="inline-block">
+                            {{ form_widget(form.fleetShips.vars.prototype.count) }}
+                            {{ form_widget(form.fleetShips.vars.prototype.ship) }}
+                        </div>
+                        <div class="inline-block{% if loop.index  == 1 %} hide{% endif %}">
+                            <button type="button" data-action="click->collection#removeEntry">Löschen</button>
+                        </div>
+                    </div>
+                    <br>
                 {% endfor %}
             </div>
             <button type="button" data-action="click->collection#addEntry">Hinzufügen</button>

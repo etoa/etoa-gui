@@ -2,6 +2,7 @@
 
 namespace EtoA\Form\Type\Admin;
 
+use EtoA\Entity\Fleet;
 use EtoA\Form\Type\Core\EntityType;
 use EtoA\Form\Type\Core\FleetActionStatusType;
 use EtoA\Form\Type\Core\FleetActionType;
@@ -12,13 +13,14 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class FleetType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('userId', UserType::class, [
+            ->add('user', UserType::class, [
                 'required' => true,
                 'placeholder' => false,
                 'label' => 'Besitzer',
@@ -98,12 +100,22 @@ class FleetType extends AbstractType
             ->add('fetchPeople', IntegerType::class, [
                 'label' => 'Abholen Passagiere',
             ])
-            ->add('ships', CollectionType::class, [
+            ->add('fleetShips', CollectionType::class, [
                 'entry_type' => FleetShipType::class,
                 'allow_add' => true,
                 'allow_delete' => true,
-                'prototype' => false,
+                'prototype' => true,'entry_options' => [
+                    'fleet' => $options['data'],
+                ],
+                'label' => false
             ])
         ;
+    }
+
+    public function configureOptions(OptionsResolver $resolver): void
+    {
+        $resolver->setDefaults([
+            'data_class' => Fleet::class,
+        ]);
     }
 }

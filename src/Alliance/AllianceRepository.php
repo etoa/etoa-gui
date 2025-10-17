@@ -88,7 +88,7 @@ class AllianceRepository extends AbstractRepository
 
         $result = [];
         foreach ($rows as $row) {
-            $result[(int) $row['id']] = sprintf('[%s] %s', $row['tag'], $row['name']);
+            $result[(int) $row->getId()] = sprintf('[%s] %s', $row->getTag(), $row->getName());
         }
 
         return $result;
