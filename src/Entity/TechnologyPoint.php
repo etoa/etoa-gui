@@ -14,8 +14,9 @@ class TechnologyPoint
     #[ORM\Column(name: "bp_id", type: "integer")]
     private int $id;
 
-    #[ORM\Column(name: "bp_tech_id", type: "integer")]
-    private int $technologyId;
+    #[ORM\JoinColumn(name: 'bp_tech_id', referencedColumnName: 'tech_id')]
+    #[ORM\ManyToOne(targetEntity: Technology::class)]
+    private ?Technology $technology = null;
 
     #[ORM\Column(name: "bp_level", type: "integer")]
     private int $level;
@@ -26,18 +27,6 @@ class TechnologyPoint
     public function getId(): ?int
     {
         return $this->id;
-    }
-
-    public function getTechnologyId(): ?int
-    {
-        return $this->technologyId;
-    }
-
-    public function setTechnologyId(int $technologyId): static
-    {
-        $this->technologyId = $technologyId;
-
-        return $this;
     }
 
     public function getLevel(): ?int
@@ -52,14 +41,26 @@ class TechnologyPoint
         return $this;
     }
 
-    public function getPoints(): ?int
+    public function getPoints(): ?float
     {
         return $this->points;
     }
 
-    public function setPoints(int $points): static
+    public function setPoints(float $points): static
     {
         $this->points = $points;
+
+        return $this;
+    }
+
+    public function getTechnology(): ?Technology
+    {
+        return $this->technology;
+    }
+
+    public function setTechnology(?Technology $technology): static
+    {
+        $this->technology = $technology;
 
         return $this;
     }

@@ -45,8 +45,9 @@ class TechnologyPointRepository extends AbstractRepository
     public function deleteAll(): void
     {
         $this->createQueryBuilder('q')
-            ->delete('tech_points')
-            ->executeQuery();
+            ->delete()
+            ->getQuery()
+            ->execute();
     }
 
     /**
