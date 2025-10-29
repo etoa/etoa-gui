@@ -4,29 +4,23 @@ namespace EtoA\Controller\Admin;
 
 use EtoA\Building\BuildingDataRepository;
 use EtoA\Building\BuildingListItemRepository;
-use EtoA\Building\BuildingPointRepository;
-use EtoA\Building\BuildingRequirementRepository;
 use EtoA\Entity\BuildingListItem;
+use EtoA\Entity\BuildingRequirements;
 use EtoA\Form\Type\Admin\AddBuildingItemType;
 use EtoA\Form\Type\Admin\BuildingSearchType;
 use EtoA\Form\Type\Admin\ObjectRequirementListType;
 use EtoA\Ranking\RankingService;
-use EtoA\Requirement\ObjectRequirement;
-use EtoA\Requirement\RequirementsUpdater;
-use EtoA\Universe\Planet\PlanetRepository;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
-use function DeepCopy\deep_copy;
 
 class BuildingController extends AbstractAdminController
 {
     public function __construct(
         private readonly BuildingDataRepository        $buildingDataRepository,
-        private readonly BuildingPointRepository       $buildingPointRepository,
         private readonly RankingService                $rankingService,
-        private readonly BuildingRequirementRepository $buildingRequirementRepository,
         private readonly BuildingListItemRepository    $buildingRepository
     )
     {
@@ -58,14 +52,19 @@ class BuildingController extends AbstractAdminController
     #[IsGranted('ROLE_ADMIN_SUPER-ADMIN')]
     public function points(Request $request): Response
     {
-        if ($request->isMethod('POST')) {
+        $form = $this->createFormBuilder()
+            ->add('calc', SubmitType::class, ['label' => 'Neu berechnen'])
+            ->getForm();
+
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
             $numBuildings = $this->rankingService->calcBuildingPoints();
             $this->addFlash('success', sprintf("Die Punkte von %s Gebäude wurden aktualisiert!", $numBuildings));
         }
 
         return $this->render('admin/building/points.html.twig', [
-            'buildingNames' => $this->buildingDataRepository->getBuildingNames(true),
-            'pointsMap' => $this->buildingPointRepository->getAllMap(),
+            'buildings' => $this->buildingDataRepository->getBuildingNames(true),
+            'form' => $form
         ]);
     }
 
@@ -73,23 +72,11 @@ class BuildingController extends AbstractAdminController
     #[IsGranted('ROLE_ADMIN_SUPER-ADMIN')]
     public function requirements(Request $request): Response
     {
-        $collection = $this->buildingRequirementRepository->getAll();
         $buildings = $this->buildingDataRepository->getBuildings();
-        $requirements = [];
-        $names = [];
-        foreach ($buildings as $building) {
-            $names[$building->getId()] = $building->getName();
-            $requirements[$building->getId()] = $collection->getAll($building->getId());
-        }
-
-        $requirementsCopy = deep_copy($requirements);
-
-        $form = $this->createForm(ObjectRequirementListType::class, $requirements, ['objectIds' => array_keys($buildings), 'objectNames' => $names]);
+        $form = $this->createForm(ObjectRequirementListType::class, $buildings,['type'=>BuildingRequirements::class]);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            /** @var ObjectRequirement[][] $updatedRequirements */
-            $updatedRequirements = $form->getData();
-            (new RequirementsUpdater($this->buildingRequirementRepository))->update($requirementsCopy, $updatedRequirements);
+            $this->buildingRepository->save();
 
             $this->addFlash('success', 'Voraussetzungen aktualisiert');
         }

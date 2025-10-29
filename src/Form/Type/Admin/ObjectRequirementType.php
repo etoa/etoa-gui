@@ -2,9 +2,9 @@
 
 namespace EtoA\Form\Type\Admin;
 
+use EtoA\Form\Type\Core\BuildingType;
 use EtoA\Form\Type\Core\PositiveIntegerType;
-use EtoA\Form\Type\Core\RequirementItemType;
-use EtoA\Requirement\ObjectRequirement;
+use EtoA\Form\Type\Core\TechnologyType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -15,7 +15,6 @@ class ObjectRequirementType extends AbstractType
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
-            'data_class' => ObjectRequirement::class,
             'label' => false,
         ]);
     }
@@ -23,11 +22,12 @@ class ObjectRequirementType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('objectId', HiddenType::class)
-            ->add('requiredId', RequirementItemType::class, [
-                'label' => false,
+            ->add('obj', HiddenType::class, [
+                'property_path' => 'obj.id'
             ])
-            ->add('requiredLevel', PositiveIntegerType::class, [
+            ->add('building', BuildingType::class)
+            ->add('tech', TechnologyType::class)
+            ->add('level', PositiveIntegerType::class, [
                 'label' => false,
             ]);
     }

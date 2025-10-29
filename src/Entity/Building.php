@@ -2,6 +2,8 @@
 
 namespace EtoA\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use EtoA\Building\BuildingRepository;
 use EtoA\Core\ObjectWithImage;
@@ -11,6 +13,11 @@ use EtoA\Universe\Resources\BaseResources;
 #[ORM\Table(name: 'buildings')]
 class Building implements ObjectWithImage
 {
+    public function __construct() {
+        $this->objectRequirements = new ArrayCollection();
+        $this->points = new ArrayCollection();
+    }
+
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: "AUTO")]
     #[ORM\Column(name: "building_id", type: "integer")]
@@ -130,6 +137,14 @@ class Building implements ObjectWithImage
 
     #[ORM\Column(name: "building_bunker_fleet_space", type: "integer")]
     private int $bunkerFleetSpace;
+
+    #[ORM\OneToMany(mappedBy: 'obj', targetEntity: BuildingRequirements::class, cascade: ['persist'])]
+    #[ORM\JoinColumn(name: 'building_id', referencedColumnName: 'obj_id')]
+    private Collection $objectRequirements;
+
+    #[ORM\OneToMany(mappedBy: 'building', targetEntity: BuildingPoint::class, cascade: ['persist','remove'])]
+    #[ORM\JoinColumn(name: 'building_id', referencedColumnName: 'bp_building_id')]
+    private Collection $points;
 
     public function calculateBunkerResources(int $level): int
     {
@@ -627,6 +642,66 @@ class Building implements ObjectWithImage
     public function setType(?BuildingType $type): static
     {
         $this->type = $type;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, BuildingRequirements>
+     */
+    public function getObjectRequirements(): Collection
+    {
+        return $this->objectRequirements;
+    }
+
+    public function addObjectRequirement(BuildingRequirements $objectRequirement): static
+    {
+        if (!$this->objectRequirements->contains($objectRequirement)) {
+            $this->objectRequirements->add($objectRequirement);
+            $objectRequirement->setObj($this);
+        }
+
+        return $this;
+    }
+
+    public function removeObjectRequirement(BuildingRequirements $objectRequirement): static
+    {
+        if ($this->objectRequirements->removeElement($objectRequirement)) {
+            // set the owning side to null (unless already changed)
+            if ($objectRequirement->getObj() === $this) {
+                $objectRequirement->setObj(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, BuildingPoint>
+     */
+    public function getPoints(): Collection
+    {
+        return $this->points;
+    }
+
+    public function addPoint(BuildingPoint $point): static
+    {
+        if (!$this->points->contains($point)) {
+            $this->points->add($point);
+            $point->setBuilding($this);
+        }
+
+        return $this;
+    }
+
+    public function removePoint(BuildingPoint $point): static
+    {
+        if ($this->points->removeElement($point)) {
+            // set the owning side to null (unless already changed)
+            if ($point->getBuilding() === $this) {
+                $point->setBuilding(null);
+            }
+        }
 
         return $this;
     }

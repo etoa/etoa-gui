@@ -3,10 +3,10 @@
 namespace EtoA\Building;
 
 use Doctrine\Persistence\ManagerRegistry;
+use EtoA\Core\AbstractRepository;
 use EtoA\Entity\BuildingRequirements;
-use EtoA\Requirement\AbstractRequirementRepository;
 
-class BuildingRequirementRepository extends AbstractRequirementRepository
+class BuildingRequirementRepository extends AbstractRepository
 {
     public function __construct(ManagerRegistry $registry)
     {

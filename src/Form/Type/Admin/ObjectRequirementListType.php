@@ -2,7 +2,6 @@
 
 namespace EtoA\Form\Type\Admin;
 
-use EtoA\Form\Validation\UniqueObjectRequirementConstraint;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -14,23 +13,24 @@ class ObjectRequirementListType extends AbstractType
     {
         $resolver
             ->setDefaults([
-                'objectIds' => [],
-                'objectNames' => [],
+                'type' => ''
             ]);
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
-        foreach ($options['objectIds'] as $objectId) {
+        foreach ($builder->getData() as $object) {
             $builder
-                ->add('object-' .$objectId, CollectionType::class, [
+                ->add('object-' . $object->getId(), CollectionType::class, [
                     'entry_type' => ObjectRequirementType::class,
                     'allow_add' => true,
                     'allow_delete' => true,
                     'prototype' => false,
                     'label' => false,
-                    'property_path' => sprintf('[%s]', $objectId),
-                    'constraints' => [new UniqueObjectRequirementConstraint(['objectNames' => $options['objectNames']])],
+                    'data' => $object->getObjectRequirements(),
+                    'entry_options' => [
+                        'data_class' => $options['type'],
+                    ],
                 ]);
         }
     }

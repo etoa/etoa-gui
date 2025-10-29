@@ -63,7 +63,7 @@ class BuildingDataRepository extends AbstractRepository
     }
 
     /**
-     * @return array<int, string>
+     * @return array<int, Building>
      */
     public function getBuildingNames(bool $showAll = false, BuildingSort $orderBy = null): array
     {
