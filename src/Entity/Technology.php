@@ -2,6 +2,8 @@
 
 namespace EtoA\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use EtoA\Core\ObjectWithImage;
 use EtoA\Technology\TechnologyDataRepository;
@@ -10,6 +12,11 @@ use EtoA\Technology\TechnologyDataRepository;
 #[ORM\Table(name: 'technologies')]
 class Technology implements ObjectWithImage
 {
+
+    public function __construct() {
+        $this->objectRequirements = new ArrayCollection();
+        $this->points = new ArrayCollection();
+    }
 
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: "AUTO")]
@@ -64,6 +71,14 @@ class Technology implements ObjectWithImage
 
     #[ORM\Column(name: "tech_stealable", type: "boolean")]
     private bool $stealable;
+
+    #[ORM\OneToMany(mappedBy: 'obj', targetEntity: TechnologyRequirement::class, cascade: ['persist'])]
+    #[ORM\JoinColumn(name: 'tech_id', referencedColumnName: 'obj_id')]
+    private Collection $objectRequirements;
+
+    #[ORM\OneToMany(mappedBy: 'technology', targetEntity: TechnologyPoint::class, cascade: ['persist','remove'])]
+    #[ORM\JoinColumn(name: 'tech_id', referencedColumnName: 'bp_tech_id')]
+    private Collection $points;
 
     public function getImagePath(string $type = 'small'): string
     {
@@ -270,6 +285,66 @@ class Technology implements ObjectWithImage
     public function setType(?TechnologyType $type): static
     {
         $this->type = $type;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, TechnologyRequirement>
+     */
+    public function getObjectRequirements(): Collection
+    {
+        return $this->objectRequirements;
+    }
+
+    public function addObjectRequirement(TechnologyRequirement $objectRequirement): static
+    {
+        if (!$this->objectRequirements->contains($objectRequirement)) {
+            $this->objectRequirements->add($objectRequirement);
+            $objectRequirement->setObj($this);
+        }
+
+        return $this;
+    }
+
+    public function removeObjectRequirement(TechnologyRequirement $objectRequirement): static
+    {
+        if ($this->objectRequirements->removeElement($objectRequirement)) {
+            // set the owning side to null (unless already changed)
+            if ($objectRequirement->getObj() === $this) {
+                $objectRequirement->setObj(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, TechnologyPoint>
+     */
+    public function getPoints(): Collection
+    {
+        return $this->points;
+    }
+
+    public function addPoint(TechnologyPoint $point): static
+    {
+        if (!$this->points->contains($point)) {
+            $this->points->add($point);
+            $point->setTechnology($this);
+        }
+
+        return $this;
+    }
+
+    public function removePoint(TechnologyPoint $point): static
+    {
+        if ($this->points->removeElement($point)) {
+            // set the owning side to null (unless already changed)
+            if ($point->getTechnology() === $this) {
+                $point->setTechnology(null);
+            }
+        }
 
         return $this;
     }

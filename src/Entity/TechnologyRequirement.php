@@ -25,7 +25,7 @@ class TechnologyRequirement
 
     #[ORM\JoinColumn(name: 'req_tech_id', referencedColumnName: 'tech_id')]
     #[ORM\ManyToOne(targetEntity: Technology::class)]
-    private ?Technology $technology = null;
+    private ?Technology $tech = null;
 
     #[ORM\Column(name: 'req_level')]
     private int $level = 1;
@@ -71,17 +71,15 @@ class TechnologyRequirement
         return $this;
     }
 
-    public function getTechnology(): ?Technology
+    public function getTech(): ?Technology
     {
-        return $this->technology;
+        return $this->tech;
     }
 
-    public function setTechnology(?Technology $technology): static
+    public function setTech(?Technology $tech): static
     {
-        $this->technology = $technology;
+        $this->tech = $tech;
 
         return $this;
     }
-
-    
 }

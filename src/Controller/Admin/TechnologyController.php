@@ -3,6 +3,7 @@
 namespace EtoA\Controller\Admin;
 
 use EtoA\Entity\TechnologyListItem;
+use EtoA\Entity\TechnologyRequirement;
 use EtoA\Form\Type\Admin\AddTechnologyItemType;
 use EtoA\Form\Type\Admin\ObjectRequirementListType;
 use EtoA\Form\Type\Admin\TechnologySearchType;
@@ -14,6 +15,7 @@ use EtoA\Technology\TechnologyPointRepository;
 use EtoA\Technology\TechnologyListItemRepository;
 use EtoA\Technology\TechnologyRequirementRepository;
 use EtoA\Universe\Planet\PlanetRepository;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -96,14 +98,19 @@ class TechnologyController extends AbstractAdminController
     #[IsGranted('ROLE_ADMIN_SUPER-ADMIN')]
     public function points(Request $request): Response
     {
-        if ($request->isMethod('POST')) {
+        $form = $this->createFormBuilder()
+            ->add('calc', SubmitType::class, ['label' => 'Neu berechnen'])
+            ->getForm();
+
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
             $numTechnologies = $this->rankingService->calcTechPoints();
             $this->addFlash('success', sprintf("Die Punkte von %s Technologien wurden aktualisiert!", $numTechnologies));
         }
 
         return $this->render('admin/technology/points.html.twig', [
-            'technologyNames' => $this->technologyDataRepository->getTechnologyNames(true),
-            'pointsMap' => $this->technologyPointRepository->getAllMap(),
+            'technologies' => $this->technologyDataRepository->getTechnologyNames(true),
+            'form' => $form
         ]);
     }
 
@@ -111,23 +118,11 @@ class TechnologyController extends AbstractAdminController
     #[IsGranted('ROLE_ADMIN_SUPER-ADMIN')]
     public function requirements(Request $request): Response
     {
-        $collection = $this->technologyRequirementRepository->getAll();
         $technologies = $this->technologyDataRepository->getTechnologies();
-        $requirements = [];
-        $names = [];
-        foreach ($technologies as $technology) {
-            $names[$technology->getId()] = $technology->getName();
-            $requirements[$technology->getId()] = $collection->getAll($technology->getId());
-        }
-
-        $requirementsCopy = deep_copy($requirements);
-
-        $form = $this->createForm(ObjectRequirementListType::class, $requirements, ['objectIds' => array_keys($names), 'objectNames' => $names]);
+        $form = $this->createForm(ObjectRequirementListType::class, $technologies, ['type'=>TechnologyRequirement::class]);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            /** @var ObjectRequirement[][] $updatedRequirements */
-            $updatedRequirements = $form->getData();
-            (new RequirementsUpdater($this->technologyRequirementRepository))->update($requirementsCopy, $updatedRequirements);
+            $this->technologyRepository->save();
 
             $this->addFlash('success', 'Voraussetzungen aktualisiert');
         }
