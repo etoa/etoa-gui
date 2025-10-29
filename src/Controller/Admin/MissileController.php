@@ -3,28 +3,23 @@
 namespace EtoA\Controller\Admin;
 
 use EtoA\Entity\MissileListItem;
+use EtoA\Entity\MissileRequirements;
 use EtoA\Form\Type\Admin\AddMissileListType;
 use EtoA\Form\Type\Admin\MissileSearchType;
 use EtoA\Form\Type\Admin\ObjectRequirementListType;
 use EtoA\Missile\MissileDataRepository;
 use EtoA\Missile\MissileRepository;
-use EtoA\Missile\MissileRequirementRepository;
-use EtoA\Requirement\ObjectRequirement;
-use EtoA\Requirement\RequirementsUpdater;
 use EtoA\Support\StringUtils;
-use EtoA\Universe\Planet\PlanetRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
-use function DeepCopy\deep_copy;
 
 class MissileController extends AbstractAdminController
 {
     public function __construct(
         private readonly MissileRepository            $missileRepository,
-        private readonly MissileDataRepository        $missileDataRepository,
-        private readonly MissileRequirementRepository $missileRequirementRepository,
+        private readonly MissileDataRepository        $missileDataRepository
     )
     {
     }
@@ -53,23 +48,12 @@ class MissileController extends AbstractAdminController
     #[IsGranted('ROLE_ADMIN_SUPER-ADMIN')]
     public function requirements(Request $request): Response
     {
-        $collection = $this->missileRequirementRepository->getAll();
         $missiles = $this->missileDataRepository->getMissiles();
-        $requirements = [];
-        $names = [];
-        foreach ($missiles as $missile) {
-            $names[$missile->getId()] = $missile->getName();
-            $requirements[$missile->getId()] = $collection->getAll($missile->getId());
-        }
 
-        $requirementsCopy = deep_copy($requirements);
-
-        $form = $this->createForm(ObjectRequirementListType::class, $requirements, ['objectIds' => array_keys($missiles), 'objectNames' => $names]);
+        $form = $this->createForm(ObjectRequirementListType::class, $missiles, ['type'=>MissileRequirements::class]);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            /** @var ObjectRequirement[][] $updatedRequirements */
-            $updatedRequirements = $form->getData();
-            (new RequirementsUpdater($this->missileRequirementRepository))->update($requirementsCopy, $updatedRequirements);
+            $this->missileDataRepository->save();
 
             $this->addFlash('success', 'Voraussetzungen aktualisiert');
         }

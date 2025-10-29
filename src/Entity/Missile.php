@@ -2,6 +2,8 @@
 
 namespace EtoA\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use EtoA\Core\ObjectWithImage;
 use EtoA\Missile\MissileDataRepository;
@@ -11,6 +13,10 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Table(name: 'missiles')]
 class Missile implements ObjectWithImage
 {
+    public function __construct() {
+        $this->objectRequirements = new ArrayCollection();
+    }
+
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: "AUTO")]
     #[ORM\Column(name: "missile_id", type: "integer")]
@@ -60,6 +66,10 @@ class Missile implements ObjectWithImage
 
     #[ORM\Column(name: "missile_show", type: "boolean")]
     private bool $show;
+
+    #[ORM\OneToMany(mappedBy: 'obj', targetEntity: MissileRequirements::class, cascade: ['persist','remove'])]
+    #[ORM\JoinColumn(name: 'missile_id', referencedColumnName: 'obj_id')]
+    private Collection $objectRequirements;
 
     public function getImagePath(string $type = "small"): string
     {
@@ -256,5 +266,35 @@ class Missile implements ObjectWithImage
     public function isLaunchable(): ?bool
     {
         return $this->launchable;
+    }
+
+    /**
+     * @return Collection<int, MissileRequirements>
+     */
+    public function getObjectRequirements(): Collection
+    {
+        return $this->objectRequirements;
+    }
+
+    public function addObjectRequirement(MissileRequirements $objectRequirement): static
+    {
+        if (!$this->objectRequirements->contains($objectRequirement)) {
+            $this->objectRequirements->add($objectRequirement);
+            $objectRequirement->setObj($this);
+        }
+
+        return $this;
+    }
+
+    public function removeObjectRequirement(MissileRequirements $objectRequirement): static
+    {
+        if ($this->objectRequirements->removeElement($objectRequirement)) {
+            // set the owning side to null (unless already changed)
+            if ($objectRequirement->getObj() === $this) {
+                $objectRequirement->setObj(null);
+            }
+        }
+
+        return $this;
     }
 }

@@ -14,7 +14,7 @@ class MissileRequirements
     private ?int $id = null;
 
     #[ORM\JoinColumn(name: 'obj_id', referencedColumnName: 'missile_id')]
-    #[ORM\ManyToOne(targetEntity: Missile::class)]
+    #[ORM\ManyToOne(targetEntity: Missile::class, inversedBy: 'objectRequirements')]
     private Missile $obj;
 
     #[ORM\JoinColumn(name: 'req_building_id', referencedColumnName: 'building_id')]
@@ -23,7 +23,7 @@ class MissileRequirements
 
     #[ORM\JoinColumn(name: 'req_tech_id', referencedColumnName: 'tech_id')]
     #[ORM\ManyToOne(targetEntity: Technology::class)]
-    private ?string $tech = null;
+    private ?Technology $tech = null;
 
     #[ORM\Column(name: 'req_level')]
     private ?int $level = null;

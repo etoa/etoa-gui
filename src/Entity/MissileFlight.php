@@ -14,11 +14,9 @@ class MissileFlight
     #[ORM\Column(name: "flight_id", type: "integer")]
     private int $id;
 
-    #[ORM\Column(name: "flight_entity_from", type: "integer")]
-    private int $entityFromId;
-
-    #[ORM\Column(name: "flight_entity_to", type: "integer")]
-    private int $targetPlanetId;
+    #[ORM\JoinColumn(name: 'flight_entity_from', referencedColumnName: 'id')]
+    #[ORM\ManyToOne(targetEntity: Planet::class)]
+    private ?Planet $entityFrom;
 
     #[ORM\JoinColumn(name: 'flight_entity_to', referencedColumnName: 'id')]
     #[ORM\ManyToOne(targetEntity: Planet::class)]
@@ -30,30 +28,6 @@ class MissileFlight
     public function getId(): ?int
     {
         return $this->id;
-    }
-
-    public function getEntityFromId(): ?int
-    {
-        return $this->entityFromId;
-    }
-
-    public function setEntityFromId(int $entityFromId): static
-    {
-        $this->entityFromId = $entityFromId;
-
-        return $this;
-    }
-
-    public function getTargetPlanetId(): ?int
-    {
-        return $this->targetPlanetId;
-    }
-
-    public function setTargetPlanetId(int $targetPlanetId): static
-    {
-        $this->targetPlanetId = $targetPlanetId;
-
-        return $this;
     }
 
     public function getLandTime(): ?int
@@ -76,6 +50,18 @@ class MissileFlight
     public function setTarget(?Planet $target): static
     {
         $this->target = $target;
+
+        return $this;
+    }
+
+    public function getEntityFrom(): ?Planet
+    {
+        return $this->entityFrom;
+    }
+
+    public function setEntityFrom(?Planet $entityFrom): static
+    {
+        $this->entityFrom = $entityFrom;
 
         return $this;
     }
