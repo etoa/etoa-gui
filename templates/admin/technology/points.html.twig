@@ -16,8 +16,7 @@
     {% for technology in technologies %}
         <h2>{{ technology.name }}</h2>
 
-        <twig:Table>
-        {% block table_content %}
+        <table class="tb">
             <tr>
             {% for item in technology.points %}
                 <th>{{ item.level }}</th>
@@ -29,7 +28,6 @@
                 {% endif %}
             {% endfor %}
             </tr>
-        {% endblock %}
-        </twig:Table>
+        </table>
     {% endfor %}
 {% endblock %}

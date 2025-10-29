@@ -6,7 +6,6 @@ namespace EtoA\Ranking;
 
 use EtoA\Alliance\AllianceBuildingRepository;
 use EtoA\Alliance\AllianceRepository;
-use EtoA\Alliance\AllianceStats;
 use EtoA\Alliance\AllianceStatsRepository;
 use EtoA\Alliance\AllianceTechnologyRepository;
 use EtoA\Building\BuildingDataRepository;
@@ -530,8 +529,10 @@ class RankingService
     {
         $ships = $this->shipDataRepository->getAllShips(true);
         foreach ($ships as $ship) {
-            $this->shipDataRepository->updateShipPoints($ship->getId(), $this->calculatePointsForShip($ship));
+            $ship->setPoints($this->calculatePointsForShip($ship));
         }
+
+        $this->shipDataRepository->save();
 
         return count($ships);
     }
@@ -550,8 +551,10 @@ class RankingService
     {
         $defenses = $this->defenseDataRepository->getAllDefenses();
         foreach ($defenses as $defense) {
-            $this->defenseDataRepository->updateDefensePoints($defense->getId(), $this->calculatePointsForDefense($defense));
+            $defense->setPoints($this->calculatePointsForDefense($defense));
         }
+
+        $this->defenseDataRepository->save();
 
         return count($defenses);
     }

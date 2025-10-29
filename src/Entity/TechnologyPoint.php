@@ -15,13 +15,13 @@ class TechnologyPoint
     private int $id;
 
     #[ORM\JoinColumn(name: 'bp_tech_id', referencedColumnName: 'tech_id')]
-    #[ORM\ManyToOne(targetEntity: Technology::class)]
+    #[ORM\ManyToOne(targetEntity: Technology::class, inversedBy: 'points')]
     private ?Technology $technology = null;
 
     #[ORM\Column(name: "bp_level", type: "integer")]
     private int $level;
 
-    #[ORM\Column(name: "bp_points", type: "integer")]
+    #[ORM\Column(name: "bp_points", type: "float")]
     private float $points;
 
     public function getId(): ?int

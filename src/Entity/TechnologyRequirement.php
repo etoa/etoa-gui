@@ -16,7 +16,7 @@ class TechnologyRequirement
     private int $id;
 
     #[ORM\JoinColumn(name: 'obj_id', referencedColumnName: 'tech_id')]
-    #[ORM\ManyToOne(targetEntity: Technology::class)]
+    #[ORM\ManyToOne(targetEntity: Technology::class, inversedBy: 'objectRequirements')]
     private Technology $obj;
 
     #[ORM\JoinColumn(name: 'req_building_id', referencedColumnName: 'building_id')]
