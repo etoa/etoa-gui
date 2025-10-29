@@ -18,6 +18,6 @@ class BuildingSort extends AbstractSort
 
     public static function type(): BuildingSort
     {
-        return new BuildingSort(['q.typeId' => null, 'q.order' => null, 'q.name' => null]);
+        return new BuildingSort(['q.type' => null, 'q.order' => null, 'q.name' => null]);
     }
 }

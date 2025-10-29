@@ -7,29 +7,27 @@
 
     <h3>Gebäudepunkt</h3>
 
-    <p>Nach jeder Änderung an den Gebäude müssen die Gebäudepunkt neu berechnet werden.</p>
+    <p>Nach jeder Änderung an den Gebäuden müssen die Gebäudepunkte neu berechnet werden.</p>
 
-    <form method="post">
-        <input type="submit" name="recalc" value="Neu berechnen" />
-    </form>
+    {{ form_start(form) }}
+        {{ form_widget(form.calc) }}
+    {{ form_end(form) }}
 
-    {% for id, name in buildingNames %}
-        <h2>{{ name }}</h2>
-
-        <table class="tb">
-            {% if pointsMap[id] is defined %}
-                <tr>
-                {% for level, points in pointsMap[id] %}
-                    <th>{{ level }}</th>
-                    <td style="text-align: right" title="{{ points }}">{{ formatNumber(points) }}</td>
-
+    {% for building in buildings %}
+        <h2>{{ building.name }}</h2>
+        <twig:Table>
+        {% block table_content %}
+            <tr>
+                {% for item in building.points %}
+                    <th>{{ item.level }}</th>
+                    <td style="text-align: right" title="{{ item.points }}">{{ formatNumber(item.points) }}</td>
                     {% if loop.index is divisible by(4) and not loop.last %}
                         </tr>
                         <tr>
                     {% endif %}
                 {% endfor %}
-                </tr>
-            {% endif %}
-        </table>
+            </tr>
+        {% endblock %}
+        </twig:Table>
     {% endfor %}
 {% endblock %}

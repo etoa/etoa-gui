@@ -29,10 +29,10 @@ class BuildingSearchComponent extends AbstractController
     private BuildingSearchRequest $request;
 
     public function __construct(
-        private BuildingListItemRepository $buildingRepository,
-        private BuildingDataRepository     $buildingDataRepository,
-        private UserRepository             $userRepository,
-        private EntityRepository           $entityRepository,
+        private readonly BuildingListItemRepository $buildingRepository,
+        private readonly BuildingDataRepository     $buildingDataRepository,
+        private readonly UserRepository             $userRepository,
+        private readonly EntityRepository           $entityRepository,
     ) {
         $this->request = new BuildingSearchRequest();
     }

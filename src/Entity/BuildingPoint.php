@@ -14,8 +14,9 @@ class BuildingPoint
     #[ORM\Column(name: "bp_id", type: "integer")]
     private int $id;
 
-    #[ORM\Column(name: "bp_building_id", type: "integer")]
-    private int $buildingId;
+    #[ORM\JoinColumn(name: 'bp_building_id', referencedColumnName: 'building_id')]
+    #[ORM\ManyToOne(targetEntity: Building::class, inversedBy: 'points')]
+    private ?Building $building = null;
 
     #[ORM\Column(name: "bp_level", type: "integer")]
     private int $level;
@@ -26,18 +27,6 @@ class BuildingPoint
     public function getId(): ?int
     {
         return $this->id;
-    }
-
-    public function getBuildingId(): ?int
-    {
-        return $this->buildingId;
-    }
-
-    public function setBuildingId(int $buildingId): static
-    {
-        $this->buildingId = $buildingId;
-
-        return $this;
     }
 
     public function getLevel(): ?int
@@ -60,6 +49,18 @@ class BuildingPoint
     public function setPoints(float $points): static
     {
         $this->points = $points;
+
+        return $this;
+    }
+
+    public function getBuilding(): ?Building
+    {
+        return $this->building;
+    }
+
+    public function setBuilding(?Building $building): static
+    {
+        $this->building = $building;
 
         return $this;
     }

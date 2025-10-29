@@ -16,9 +16,11 @@ use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Defense\DefenseDataRepository;
 use EtoA\Defense\DefenseRepository;
 use EtoA\Entity\Building;
+use EtoA\Entity\BuildingPoint;
 use EtoA\Entity\Defense;
 use EtoA\Entity\Ship;
 use EtoA\Entity\Technology;
+use EtoA\Entity\TechnologyPoint;
 use EtoA\Fleet\FleetRepository;
 use EtoA\Fleet\FleetSearchParameters;
 use EtoA\Race\RaceDataRepository;
@@ -458,7 +460,7 @@ class RankingService
         $this->buildingPointRepository->deleteAll();
 
         foreach ($buildings as $building) {
-            $this->buildingPointRepository->add($building->getId(), $this->calculatePointsForBuilding($building));
+            $this->calculatePointsForBuilding($building);
         }
 
         return count($buildings);
@@ -467,10 +469,9 @@ class RankingService
     /**
      * @return array<int, float>
      */
-    private function calculatePointsForBuilding(Building $building)
+    private function calculatePointsForBuilding(Building $building): void
     {
-        $points = [];
-        for ($level = 1; $level <= $building->getLastLevel(); $level++) {
+        for ($level = $building->getLastLevel(); $level > 0; $level--) {
             $r = $building->getCostsMetal()
                 + $building->getCostsCrystal()
                 + $building->getCostsFuel()
@@ -480,10 +481,13 @@ class RankingService
                 / (1 - $building->getBuildCostsFactor()))
                 / $this->config->param1Int('points_update');
 
-            $points[$level] = $p;
+            $points = new BuildingPoint();
+            $points->setPoints($p);
+            $points->setLevel($level);
+            $building->addPoint($points);
         }
 
-        return $points;
+        $this->buildingRepository->save();
     }
 
     public function calcTechPoints(): int
@@ -492,7 +496,7 @@ class RankingService
         $this->technologyPointRepository->deleteAll();
 
         foreach ($technologies as $technology) {
-            $this->technologyPointRepository->add($technology->getId(), $this->calculatePointsForTechnology($technology));
+            $this->calculatePointsForTechnology($technology);
         }
 
         return count($technologies);
@@ -501,10 +505,9 @@ class RankingService
     /**
      * @return array<int, float>
      */
-    private function calculatePointsForTechnology(Technology $technology): array
+    private function calculatePointsForTechnology(Technology $technology): void
     {
-        $points = [];
-        for ($level = 1; $level <= $technology->getLastLevel(); $level++) {
+        for ($level = $technology->getLastLevel(); $level > 0; $level--) {
             $r = $technology->getCostsMetal()
                 + $technology->getCostsCrystal()
                 + $technology->getCostsFuel()
@@ -514,10 +517,13 @@ class RankingService
                 / (1 - $technology->getBuildCostsFactor()))
                 / $this->config->param1Int('points_update');
 
-            $points[$level] = $p;
+            $points = new TechnologyPoint();
+            $points->setPoints($p);
+            $points->setLevel($level);
+            $technology->addPoint($points);
         }
 
-        return $points;
+        $this->technologyRepository->save();
     }
 
     public function calcShipPoints(): int
