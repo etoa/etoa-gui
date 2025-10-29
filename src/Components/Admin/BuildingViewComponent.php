@@ -31,6 +31,7 @@ class BuildingViewComponent extends AbstractEditComponent
     public function delete(): void
     {
         $this->buildingRepository->remove($this->item);
+        $this->buildingRepository->save();
         $this->item = null;
     }
 
