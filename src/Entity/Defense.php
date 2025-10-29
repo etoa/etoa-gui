@@ -2,6 +2,8 @@
 
 namespace EtoA\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use EtoA\Core\ObjectWithImage;
 use EtoA\Defense\DefenseDataRepository;
@@ -10,6 +12,10 @@ use EtoA\Universe\Resources\BaseResources;
 #[ORM\Entity(repositoryClass: DefenseDataRepository::class)]
 class Defense implements ObjectWithImage
 {
+    public function __construct() {
+        $this->objectRequirements = new ArrayCollection();
+    }
+
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: "AUTO")]
     #[ORM\Column(name: "def_id", type: "integer")]
@@ -89,6 +95,10 @@ class Defense implements ObjectWithImage
 
     #[ORM\Column(name: "def_points", type: "float")]
     private float $points;
+
+    #[ORM\OneToMany(mappedBy: 'obj', targetEntity: DefenseRequirements::class, cascade: ['persist', 'remove'])]
+    #[ORM\JoinColumn(name: 'def_id', referencedColumnName: 'obj_id')]
+    private Collection $objectRequirements;
 
     public function getImagePath(string $type = "small"): string
     {
@@ -415,6 +425,36 @@ class Defense implements ObjectWithImage
     public function setPoints(float $points): static
     {
         $this->points = $points;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, DefenseRequirements>
+     */
+    public function getObjectRequirements(): Collection
+    {
+        return $this->objectRequirements;
+    }
+
+    public function addObjectRequirement(DefenseRequirements $objectRequirement): static
+    {
+        if (!$this->objectRequirements->contains($objectRequirement)) {
+            $this->objectRequirements->add($objectRequirement);
+            $objectRequirement->setObj($this);
+        }
+
+        return $this;
+    }
+
+    public function removeObjectRequirement(DefenseRequirements $objectRequirement): static
+    {
+        if ($this->objectRequirements->removeElement($objectRequirement)) {
+            // set the owning side to null (unless already changed)
+            if ($objectRequirement->getObj() === $this) {
+                $objectRequirement->setObj(null);
+            }
+        }
 
         return $this;
     }
