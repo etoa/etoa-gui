@@ -8,7 +8,6 @@ use EtoA\Defense\DefenseRepository;
 use EtoA\Entity\DefenseQueueItem;
 use EtoA\Form\Type\Admin\EditDefenseQueueType;
 use Symfony\Component\Form\FormInterface;
-use Symfony\Component\Form\FormView;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
 use Symfony\UX\LiveComponent\Attribute\LiveAction;
 use Symfony\UX\LiveComponent\Attribute\LiveProp;
@@ -16,34 +15,20 @@ use Symfony\UX\LiveComponent\Attribute\LiveProp;
 #[AsLiveComponent('admin_defense_queue_view')]
 class DefenseQueueViewComponent extends AbstractEditComponent
 {
-    #[LiveProp]
-    public int $itemId;
-    #[LiveProp]
-    public string $user;
-    #[LiveProp]
-    public string $defense;
-    #[LiveProp]
-    public string $entity;
-    private ?DefenseQueueItem $item = null;
-
-    public function mount(FormView $view = null, DefenseQueueItem $item = null): void
-    {
-        $this->item = $item;
-        if ($item !== null) {
-            $this->itemId = $item->id;
-        }
-    }
+    #[LiveProp(writable: true)]
+    public ?DefenseQueueItem $item = null;
 
     public function __construct(
-        private DefenseQueueRepository $defenseQueueRepository,
-        private DefenseRepository $defenseRepository,
+        private readonly DefenseQueueRepository $defenseQueueRepository,
+        private readonly DefenseRepository      $defenseRepository,
     ) {
     }
 
     #[LiveAction]
     public function delete(): void
     {
-        $this->defenseQueueRepository->deleteQueueItem($this->itemId);
+        $this->defenseQueueRepository->remove($this->item);
+        $this->defenseQueueRepository->save();
         $this->item = null;
     }
 
@@ -52,19 +37,13 @@ class DefenseQueueViewComponent extends AbstractEditComponent
     {
         $item = $this->getItem();
         if ($item !== null) {
-            $this->defenseRepository->addDefense($item->defenseId, $item->count, $item->userId, $item->entityId);
-            $this->defenseQueueRepository->deleteQueueItem($item->id);
+            $this->defenseRepository->addDefense($item->getDefense(), $item->getCount(), $item->getUser(), $item->getEntity());
+            $this->delete();
         }
-
-        $this->item = null;
     }
 
     public function getItem(): ?DefenseQueueItem
     {
-        if ($this->item === null) {
-            $this->item = $this->defenseQueueRepository->getQueueItem($this->itemId);
-        }
-
         return $this->item;
     }
 

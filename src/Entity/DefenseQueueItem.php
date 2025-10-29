@@ -21,8 +21,8 @@ class DefenseQueueItem
     private ?User $user = null;
 
     #[ORM\JoinColumn(name: 'queue_entity_id', referencedColumnName: 'id')]
-    #[ORM\ManyToOne(targetEntity: Entity::class)]
-    private ?Entity $entity = null;
+    #[ORM\ManyToOne(targetEntity: Planet::class)]
+    private ?Planet $entity = null;
 
     #[ORM\JoinColumn(name: 'queue_def_id', referencedColumnName: 'def_id')]
     #[ORM\ManyToOne(targetEntity: Defense::class)]
@@ -152,12 +152,12 @@ class DefenseQueueItem
         return $this;
     }
 
-    public function getEntity(): ?Entity
+    public function getEntity(): ?Planet
     {
         return $this->entity;
     }
 
-    public function setEntity(?Entity $entity): static
+    public function setEntity(?Planet $entity): static
     {
         $this->entity = $entity;
 

@@ -2,9 +2,13 @@
 
 namespace EtoA\Form\Request\Admin;
 
+use EtoA\Entity\Defense;
+use EtoA\Entity\Planet;
+use EtoA\Entity\User;
+
 class DefenseQueueSearchRequest
 {
-    public ?int $userId = null;
-    public ?int $entityId = null;
-    public ?int $defenseId = null;
+    public ?User $user = null;
+    public ?Planet $entity = null;
+    public ?Defense $defense = null;
 }

@@ -6,21 +6,18 @@ use EtoA\Defense\DefenseDataRepository;
 use EtoA\Defense\DefenseQueueRepository;
 use EtoA\Defense\DefenseRepository;
 use EtoA\Defense\DefenseRequirementRepository;
-use EtoA\Entity\Defense;
 use EtoA\Entity\DefenseListItem;
+use EtoA\Entity\DefenseRequirements;
 use EtoA\Form\Type\Admin\AddDefenseListType;
 use EtoA\Form\Type\Admin\DefenseSearchType;
 use EtoA\Form\Type\Admin\ObjectRequirementListType;
 use EtoA\Ranking\RankingService;
-use EtoA\Requirement\ObjectRequirement;
-use EtoA\Requirement\RequirementsUpdater;
 use EtoA\Support\StringUtils;
-use EtoA\Universe\Planet\PlanetRepository;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
-use function DeepCopy\deep_copy;
 
 class DefenseController extends AbstractAdminController
 {
@@ -60,7 +57,7 @@ class DefenseController extends AbstractAdminController
     {
         return $this->render('admin/defense/queue.html.twig', [
             'form' => $this->createForm(DefenseSearchType::class, $request->query->all()),
-            'total' => $this->defenseQueueRepository->count(),
+            'total' => $this->defenseQueueRepository->count([]),
         ]);
     }
 
@@ -68,16 +65,19 @@ class DefenseController extends AbstractAdminController
     #[IsGranted('ROLE_ADMIN_SUPER-ADMIN')]
     public function points(Request $request): Response
     {
-        if ($request->isMethod('POST')) {
+        $form = $this->createFormBuilder()
+            ->add('calc', SubmitType::class, ['label' => 'Neu berechnen'])
+            ->getForm();
+
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
             $num = $this->rankingService->calcDefensePoints();
             $this->addFlash('success', sprintf("Die Punkte von %s Verteidigungsanlagen wurden aktualisiert!", $num));
         }
 
-        $defenses = $this->defenseDataRepository->getAllDefenses();
-        usort($defenses, fn(Defense $a, Defense $b) => $b->points <=> $a->points);
-
         return $this->render('admin/defense/points.html.twig', [
-            'defenses' => $defenses,
+            'defenses' => $this->defenseDataRepository->getAllDefenses(),
+            'form' => $form
         ]);
     }
 
@@ -85,23 +85,11 @@ class DefenseController extends AbstractAdminController
     #[IsGranted('ROLE_ADMIN_SUPER-ADMIN')]
     public function requirements(Request $request): Response
     {
-        $collection = $this->defenseRequirementRepository->getAll();
         $defenses = $this->defenseDataRepository->getAllDefenses();
-        $requirements = [];
-        $names = [];
-        foreach ($defenses as $defense) {
-            $names[$defense->id] = $defense->name;
-            $requirements[$defense->id] = $collection->getAll($defense->id);
-        }
-
-        $requirementsCopy = deep_copy($requirements);
-
-        $form = $this->createForm(ObjectRequirementListType::class, $requirements, ['objectIds' => array_keys($defenses), 'objectNames' => $names]);
+        $form = $this->createForm(ObjectRequirementListType::class, $defenses, ['type'=>DefenseRequirements::class]);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            /** @var ObjectRequirement[][] $updatedRequirements */
-            $updatedRequirements = $form->getData();
-            (new RequirementsUpdater($this->defenseRequirementRepository))->update($requirementsCopy, $updatedRequirements);
+            $this->defenseRepository->save();
 
             $this->addFlash('success', 'Voraussetzungen aktualisiert');
         }

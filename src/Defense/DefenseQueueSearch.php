@@ -3,7 +3,8 @@
 namespace EtoA\Defense;
 
 use EtoA\Core\Database\AbstractSearch;
-use EtoA\Entity\Entity;
+use EtoA\Entity\Defense;
+use EtoA\Entity\Planet;
 use EtoA\Entity\User;
 
 class DefenseQueueSearch extends AbstractSearch
@@ -23,13 +24,13 @@ class DefenseQueueSearch extends AbstractSearch
 
     public function likeUserNick(string $userNick): self
     {
-        $this->parts[] = 'users.user_nick LIKE :likeUserNick';
+        $this->parts[] = 'users.nick LIKE :likeUserNick';
         $this->parameters['likeUserNick'] = '%' . $userNick . '%';
 
         return $this;
     }
 
-    public function entity(Entity $entity): self
+    public function entity(Planet $entity): self
     {
         $this->parts[] = 'q.entity = :entity';
         $this->parameters['entity'] = $entity;
@@ -39,16 +40,16 @@ class DefenseQueueSearch extends AbstractSearch
 
     public function likePlanetName(string $planetName): self
     {
-        $this->parts[] = 'planets.planet_name = :likePlanetName';
+        $this->parts[] = 'planets.name = :likePlanetName';
         $this->parameters['likePlanetName'] = '%' . $planetName . '%';
 
         return $this;
     }
 
-    public function defenseId(int $defenseId): self
+    public function defenseId(Defense|int $defense): self
     {
-        $this->parts[] = 'q.defId = :defenseId';
-        $this->parameters['defenseId'] = $defenseId;
+        $this->parts[] = 'q.def = :defense';
+        $this->parameters['defense'] = $defense;
 
         return $this;
     }

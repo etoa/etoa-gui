@@ -7,12 +7,9 @@ use EtoA\Components\Helper\SearchResult;
 use EtoA\Defense\DefenseDataRepository;
 use EtoA\Defense\DefenseQueueRepository;
 use EtoA\Defense\DefenseQueueSearch;
-use EtoA\Entity\DefenseQueueItem;
 use EtoA\Form\Request\Admin\DefenseQueueSearchRequest;
 use EtoA\Form\Type\Admin\DefenseSearchType;
-use EtoA\Universe\Entity\EntityLabel;
 use EtoA\Universe\Entity\EntityRepository;
-use EtoA\Universe\Entity\EntitySearch;
 use EtoA\User\UserRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormInterface;
@@ -43,30 +40,23 @@ class DefenseQueueSearchComponent extends AbstractController
     public function getSearch(): SearchResult
     {
         $search = DefenseQueueSearch::create();
-        if ($this->request->userId !== null) {
-            $search->userId($this->request->userId);
+        if ($this->request->user !== null) {
+            $search->user($this->request->user);
         }
 
-        if ($this->request->entityId !== null) {
-            $search->entityId($this->request->entityId);
+        if ($this->request->entity !== null) {
+            $search->entity($this->request->entity);
         }
 
-        if ($this->request->defenseId !== null) {
-            $search->defenseId($this->request->defenseId);
+        if ($this->request->defense !== null) {
+            $search->defenseId($this->request->defense);
         }
 
-        $total = $this->defenseQueueRepository->count($search);
+        $total = $this->defenseQueueRepository->countBySearch($search);
 
         $limit = $this->getLimit($total);
 
         $entries = $this->defenseQueueRepository->searchQueueItems($search, $this->perPage, $limit);
-
-        if ($total > 0) {
-            $this->users = $this->userRepository->searchUserNicknames();
-            $this->defenseNames = $this->defenseDataRepository->getDefenseNames(true);
-            $entityIds = array_map(fn (DefenseQueueItem $item) => $item->entityId, $entries);
-            $this->entities = array_map(fn (EntityLabel $label) => $label->toString(), $this->entityRepository->searchEntityLabels(EntitySearch::create()->ids($entityIds)));
-        }
 
         return new SearchResult($entries, $limit, $total, $this->perPage);
     }

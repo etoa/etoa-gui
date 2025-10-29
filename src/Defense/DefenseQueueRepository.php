@@ -60,12 +60,10 @@ class DefenseQueueRepository extends AbstractRepository
      */
     public function searchQueueItems(DefenseQueueSearch $search, int $limit = null, int $offset = null): array
     {
-        $data = $this->applySearchSortLimit($this->createQueryBuilder('q'), $search, null, $limit, $offset)
+        return $this->applySearchSortLimit($this->createQueryBuilder('q'), $search, null, $limit, $offset)
             ->orderBy('q.startTime', 'ASC')
             ->getQuery()
             ->execute();
-
-        return array_map(fn ($row) => DefenseQueueItem::createFromData($row), $data);
     }
 
     public function saveQueueItem(DefenseQueueItem $item): void
@@ -150,5 +148,14 @@ class DefenseQueueRepository extends AbstractRepository
             ->setParameter('user', $user)
             ->getQuery()
             ->execute();
+    }
+
+    public function countBySearch(DefenseQueueSearch $search = null): int
+    {
+        return (int) $this->applySearchSortLimit($this->createQueryBuilder('q'), $search)
+            ->select('COUNT(q)')
+            ->setMaxResults(1)
+            ->getQuery()
+            ->getOneOrNullResult();
     }
 }
