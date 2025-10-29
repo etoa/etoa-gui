@@ -4,6 +4,7 @@ namespace EtoA\Ship;
 
 use EtoA\Core\Database\AbstractSearch;
 use EtoA\Entity\Race;
+use EtoA\Entity\Ship;
 
 class ShipSearch extends AbstractSearch
 {
@@ -12,7 +13,7 @@ class ShipSearch extends AbstractSearch
         return new ShipSearch();
     }
 
-    public function id(int $id): ShipSearch
+    public function id(Ship|int $id): ShipSearch
     {
         $this->parts[] = "q.id = :id";
         $this->parameters['id'] = $id;

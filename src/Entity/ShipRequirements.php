@@ -14,7 +14,7 @@ class ShipRequirements
     private ?int $id = null;
 
     #[ORM\JoinColumn(name: 'obj_id', referencedColumnName: 'ship_id')]
-    #[ORM\ManyToOne(targetEntity: Ship::class)]
+    #[ORM\ManyToOne(targetEntity: Ship::class, inversedBy: 'objectRequirements')]
     private Ship $obj;
 
     #[ORM\JoinColumn(name: 'req_building_id', referencedColumnName: 'building_id')]

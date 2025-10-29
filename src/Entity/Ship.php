@@ -2,6 +2,8 @@
 
 namespace EtoA\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use EtoA\Core\ObjectWithImage;
 use EtoA\Ship\ShipDataRepository;
 use EtoA\Universe\Resources\BaseResources;
@@ -11,6 +13,10 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Table(name: 'ships')]
 class Ship implements ObjectWithImage
 {
+    public function __construct() {
+        $this->objectRequirements = new ArrayCollection();
+    }
+
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: "AUTO")]
     #[ORM\Column(name: "ship_id", type: "integer")]
@@ -189,6 +195,10 @@ class Ship implements ObjectWithImage
 
     #[ORM\Column(name: "ship_tradable", type: "boolean")]
     private bool $shipTradeable;
+
+    #[ORM\OneToMany(mappedBy: 'obj', targetEntity: ShipRequirements::class, cascade: ['persist', 'remove'])]
+    #[ORM\JoinColumn(name: 'ship_id', referencedColumnName: 'obj_id')]
+    private Collection $objectRequirements;
 
     public function getImagePath(string $type = "small"): string
     {
@@ -911,6 +921,36 @@ class Ship implements ObjectWithImage
     public function setShipTradeable(bool $shipTradeable): static
     {
         $this->shipTradeable = $shipTradeable;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, ShipRequirements>
+     */
+    public function getObjectRequirements(): Collection
+    {
+        return $this->objectRequirements;
+    }
+
+    public function addObjectRequirement(ShipRequirements $objectRequirement): static
+    {
+        if (!$this->objectRequirements->contains($objectRequirement)) {
+            $this->objectRequirements->add($objectRequirement);
+            $objectRequirement->setObj($this);
+        }
+
+        return $this;
+    }
+
+    public function removeObjectRequirement(ShipRequirements $objectRequirement): static
+    {
+        if ($this->objectRequirements->removeElement($objectRequirement)) {
+            // set the owning side to null (unless already changed)
+            if ($objectRequirement->getObj() === $this) {
+                $objectRequirement->setObj(null);
+            }
+        }
 
         return $this;
     }
