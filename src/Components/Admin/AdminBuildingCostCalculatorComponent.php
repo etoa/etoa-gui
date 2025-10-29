@@ -28,8 +28,8 @@ class AdminBuildingCostCalculatorComponent extends AbstractController
     public array $levels = [];
 
     public function __construct(
-        private BuildingCostCalculator $buildingCostCalculator,
-        BuildingDataRepository $buildingDataRepository,
+        private readonly BuildingCostCalculator $buildingCostCalculator,
+        BuildingDataRepository                  $buildingDataRepository,
     ) {
         $this->buildings = $buildingDataRepository->searchBuildings(null, BuildingSort::type());
         $this->totalCosts = new PreciseResources();

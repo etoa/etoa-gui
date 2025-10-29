@@ -122,12 +122,12 @@ abstract class AdvancedGameDataCrudController extends GameDataCrudController
                 echo "<tr>";
                 if ($this->getImagePath() !== null) {
                     $imagePath = preg_replace('/<DB_TABLE_ID>/', strval($arr[$this->getTableId()]), $this->getImagePath());
-                    $path = $this->projectDir . '/assets' . $imagePath;
+                    $path = $this->projectDir . '/public' . $imagePath;
                     if (is_file($path)) {
                         $imageSize = getimagesize($path);
                         echo '<td style="background:#000;width:' . $imageSize[0] . 'px;">
                             <a href="?action=edit&amp;id=' . $arr[$this->getTableId()] . '">
-                            <img src="/build/' . $imagePath . '"/>
+                            <img src="'. $imagePath . '"/>
                             </a></td>';
                     } else {
                         echo '<td style="background:#000;width:40px;">
