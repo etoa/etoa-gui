@@ -2,9 +2,13 @@
 
 namespace EtoA\Form\Request\Admin;
 
+use EtoA\Entity\Planet;
+use EtoA\Entity\Ship;
+use EtoA\Entity\User;
+
 class ShipQueueSearchRequest
 {
-    public ?int $userId = null;
-    public ?int $shipId = null;
-    public ?int $entityId = null;
+    public ?User $user = null;
+    public ?Ship $ship = null;
+    public ?Planet $entity = null;
 }

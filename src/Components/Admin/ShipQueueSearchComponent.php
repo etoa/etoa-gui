@@ -32,10 +32,7 @@ class ShipQueueSearchComponent extends AbstractController
     private ShipQueueSearchRequest $request;
 
     public function __construct(
-        private ShipQueueRepository $shipQueueRepository,
-        private ShipDataRepository $shipDataRepository,
-        private UserRepository $userRepository,
-        private EntityRepository $entityRepository,
+        private readonly ShipQueueRepository $shipQueueRepository,
     ) {
         $this->request = new ShipQueueSearchRequest();
     }
@@ -43,30 +40,23 @@ class ShipQueueSearchComponent extends AbstractController
     public function getSearch(): SearchResult
     {
         $search = ShipQueueSearch::create();
-        if ($this->request->userId !== null) {
-            $search->userId($this->request->userId);
+        if ($this->request->user !== null) {
+            $search->userId($this->request->user);
         }
 
-        if ($this->request->entityId !== null) {
-            $search->entityId($this->request->entityId);
+        if ($this->request->entity !== null) {
+            $search->entityId($this->request->entity);
         }
 
-        if ($this->request->shipId !== null) {
-            $search->shipId($this->request->shipId);
+        if ($this->request->ship !== null) {
+            $search->shipId($this->request->ship);
         }
 
-        $total = $this->shipQueueRepository->count($search);
+        $total = $this->shipQueueRepository->countBySearch($search);
 
         $limit = $this->getLimit($total);
 
         $entries = $this->shipQueueRepository->searchQueueItems($search, $this->perPage, $limit);
-
-        if ($total > 0) {
-            $this->users = $this->userRepository->searchUserNicknames();
-            $this->shipNames = $this->shipDataRepository->getShipNames(true);
-            $entityIds = array_map(fn (ShipQueueItem $item) => $item->entityId, $entries);
-            $this->entities = array_map(fn (EntityLabel $label) => $label->toString(), $this->entityRepository->searchEntityLabels(EntitySearch::create()->ids($entityIds)));
-        }
 
         return new SearchResult($entries, $limit, $total, $this->perPage);
     }

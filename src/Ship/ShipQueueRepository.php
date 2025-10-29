@@ -110,12 +110,10 @@ class ShipQueueRepository extends AbstractRepository
      */
     public function searchQueueItems(ShipQueueSearch $search, int $limit = null, int $offset = null): array
     {
-        $data = $this->applySearchSortLimit($this->createQueryBuilder('q'), $search, null, $limit, $offset)
+        return $this->applySearchSortLimit($this->createQueryBuilder('q'), $search, null, $limit, $offset)
             ->orderBy('q.startTime', 'ASC')
             ->getQuery()
             ->execute();
-
-        return array_map(fn ($row) => ShipQueueItem::createFromData($row), $data);
     }
 
     public function saveQueueItem(ShipQueueItem $item): void
@@ -198,5 +196,14 @@ class ShipQueueRepository extends AbstractRepository
             ->setParameter('user', $user)
             ->getQuery()
             ->execute();
+    }
+
+    public function countBySearch(ShipQueueSearch $search = null): int
+    {
+        return (int) $this->applySearchSortLimit($this->createQueryBuilder('q'), $search)
+            ->select('COUNT(q)')
+            ->setMaxResults(1)
+            ->getQuery()
+            ->getOneOrNullResult();
     }
 }

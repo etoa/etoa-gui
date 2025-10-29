@@ -2,33 +2,29 @@
 
 namespace EtoA\Controller\Admin;
 
-use EtoA\Entity\Ship;
 use EtoA\Entity\ShipListItem;
+use EtoA\Entity\ShipRequirements;
 use EtoA\Form\Type\Admin\AddShipListType;
 use EtoA\Form\Type\Admin\ObjectRequirementListType;
 use EtoA\Form\Type\Admin\ShipSearchType;
 use EtoA\Form\Type\Admin\ShipXpCalculatorType;
 use EtoA\Ranking\RankingService;
-use EtoA\Requirement\ObjectRequirement;
-use EtoA\Requirement\RequirementsUpdater;
 use EtoA\Ship\ShipDataRepository;
 use EtoA\Ship\ShipListRepository;
 use EtoA\Ship\ShipQueueRepository;
-use EtoA\Ship\ShipRequirementRepository;
 use EtoA\Ship\ShipSearch;
 use EtoA\Ship\ShipXpCalculator;
 use EtoA\Support\StringUtils;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
-use function DeepCopy\deep_copy;
 
 class ShipController extends AbstractAdminController
 {
     public function __construct(
         private readonly ShipDataRepository        $shipDataRepository,
-        private readonly ShipRequirementRepository $shipRequirementRepository,
         private readonly RankingService            $rankingService,
         private readonly ShipQueueRepository       $shipQueueRepository,
         private readonly ShipListRepository        $shipListRepository,
@@ -62,7 +58,7 @@ class ShipController extends AbstractAdminController
     {
         return $this->render('admin/ships/queue.html.twig', [
             'form' => $this->createForm(ShipSearchType::class, $request->query->all()),
-            'total' => $this->shipQueueRepository->count(),
+            'total' => $this->shipQueueRepository->count([]),
         ]);
     }
 
@@ -80,7 +76,7 @@ class ShipController extends AbstractAdminController
         $ship = $this->shipDataRepository->searchShip($shipSearch);
         $levels = [];
         for ($level = 1; $level <= 30; $level++) {
-            $levels[$level] = ShipXpCalculator::xpByLevel($ship->specialNeedExp, $ship->specialExpFactor, $level);
+            $levels[$level] = ShipXpCalculator::xpByLevel($ship->getSpecialNeedExp(), $ship->getSpecialExpFactor(), $level);
         }
 
         return $this->render('admin/ships/xp-calculator.html.twig', [
@@ -93,16 +89,19 @@ class ShipController extends AbstractAdminController
     #[IsGranted('ROLE_ADMIN_SUPER-ADMIN')]
     public function points(Request $request): Response
     {
-        if ($request->isMethod('POST')) {
+        $form = $this->createFormBuilder()
+            ->add('calc', SubmitType::class, ['label' => 'Neu berechnen'])
+            ->getForm();
+
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
             $num = $this->rankingService->calcShipPoints();
             $this->addFlash('success', sprintf("Die Punkte von %s Schiffen wurden aktualisiert!", $num));
         }
 
-        $ships = $this->shipDataRepository->getAllShips(true);
-        usort($ships, fn(Ship $a, Ship $b) => $b->points <=> $a->points);
-
         return $this->render('admin/ships/points.html.twig', [
-            'ships' => $ships,
+            'ships' => $this->shipDataRepository->getAllShips(true),
+            'form' => $form
         ]);
     }
 
@@ -110,23 +109,11 @@ class ShipController extends AbstractAdminController
     #[IsGranted('ROLE_ADMIN_SUPER-ADMIN')]
     public function requirements(Request $request): Response
     {
-        $collection = $this->shipRequirementRepository->getAll();
         $ships = $this->shipDataRepository->getAllShips();
-        $requirements = [];
-        $names = [];
-        foreach ($ships as $ship) {
-            $names[$ship->id] = $ship->name;
-            $requirements[$ship->id] = $collection->getAll($ship->id);
-        }
-
-        $requirementsCopy = deep_copy($requirements);
-
-        $form = $this->createForm(ObjectRequirementListType::class, $requirements, ['objectIds' => array_keys($ships), 'objectNames' => $names]);
+        $form = $this->createForm(ObjectRequirementListType::class, $ships, ['type'=>ShipRequirements::class]);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            /** @var ObjectRequirement[][] $updatedRequirements */
-            $updatedRequirements = $form->getData();
-            (new RequirementsUpdater($this->shipRequirementRepository))->update($requirementsCopy, $updatedRequirements);
+            $this->shipDataRepository->save();
 
             $this->addFlash('success', 'Voraussetzungen aktualisiert');
         }

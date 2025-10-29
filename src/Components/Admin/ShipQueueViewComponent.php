@@ -5,10 +5,9 @@ namespace EtoA\Components\Admin;
 use EtoA\Components\Helper\AbstractEditComponent;
 use EtoA\Entity\ShipQueueItem;
 use EtoA\Form\Type\Admin\EditShipQueueType;
+use EtoA\Ship\ShipListRepository;
 use EtoA\Ship\ShipQueueRepository;
-use EtoA\Ship\ShipRepository;
 use Symfony\Component\Form\FormInterface;
-use Symfony\Component\Form\FormView;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
 use Symfony\UX\LiveComponent\Attribute\LiveAction;
 use Symfony\UX\LiveComponent\Attribute\LiveProp;
@@ -16,34 +15,20 @@ use Symfony\UX\LiveComponent\Attribute\LiveProp;
 #[AsLiveComponent('admin_ship_queue_view')]
 class ShipQueueViewComponent extends AbstractEditComponent
 {
-    #[LiveProp]
-    public int $itemId;
-    #[LiveProp]
-    public string $user;
-    #[LiveProp]
-    public string $ship;
-    #[LiveProp]
-    public string $entity;
-    private ?ShipQueueItem $item = null;
-
-    public function mount(FormView $view = null, ShipQueueItem $item = null): void
-    {
-        $this->item = $item;
-        if ($item !== null) {
-            $this->itemId = $item->getId();
-        }
-    }
+    #[LiveProp(writable: true)]
+    public ?ShipQueueItem $item = null;
 
     public function __construct(
-        private ShipQueueRepository $shipQueueRepository,
-        private ShipRepository $shipRepository,
+        private readonly ShipQueueRepository $shipQueueRepository,
+        private readonly ShipListRepository      $shipListRepository,
     ) {
     }
 
     #[LiveAction]
     public function delete(): void
     {
-        $this->shipQueueRepository->deleteQueueItem($this->itemId);
+        $this->shipQueueRepository->remove($this->item);
+        $this->shipQueueRepository->save();
         $this->item = null;
     }
 
@@ -52,19 +37,13 @@ class ShipQueueViewComponent extends AbstractEditComponent
     {
         $item = $this->getItem();
         if ($item !== null) {
-            $this->shipRepository->addShip($item->getShipId(), $item->getCount(), $item->getUserId(), $item->getEntityId());
-            $this->shipQueueRepository->deleteQueueItem($item->getId());
+            $this->shipListRepository->addShip($item->getShip(), $item->getCount(), $item->getUser(), $item->getEntity());
+            $this->delete();
         }
-
-        $this->item = null;
     }
 
     public function getItem(): ?ShipQueueItem
     {
-        if ($this->item === null) {
-            $this->item = $this->shipQueueRepository->getQueueItem($this->itemId);
-        }
-
         return $this->item;
     }
 

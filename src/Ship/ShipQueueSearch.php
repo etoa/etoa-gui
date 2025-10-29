@@ -4,6 +4,8 @@ namespace EtoA\Ship;
 
 use EtoA\Core\Database\AbstractSearch;
 use EtoA\Entity\Planet;
+use EtoA\Entity\Ship;
+use EtoA\Entity\User;
 
 class ShipQueueSearch extends AbstractSearch
 {
@@ -12,17 +14,17 @@ class ShipQueueSearch extends AbstractSearch
         return new ShipQueueSearch();
     }
 
-    public function userId(int $userId): self
+    public function userId(int|User $user): self
     {
-        $this->parts[] = 'q.userId = :userId';
-        $this->parameters['userId'] = $userId;
+        $this->parts[] = 'q.user = :userId';
+        $this->parameters['userId'] = $user;
 
         return $this;
     }
 
     public function likeUserNick(string $userNick): self
     {
-        $this->parts[] = 'users.user_nick LIKE :likeUserNick';
+        $this->parts[] = 'users.nick LIKE :likeUserNick';
         $this->parameters['likeUserNick'] = '%' . $userNick . '%';
 
         return $this;
@@ -38,16 +40,16 @@ class ShipQueueSearch extends AbstractSearch
 
     public function likePlanetName(string $planetName): self
     {
-        $this->parts[] = 'planets.planet_name = :likePlanetName';
+        $this->parts[] = 'planets.name = :likePlanetName';
         $this->parameters['likePlanetName'] = '%' . $planetName . '%';
 
         return $this;
     }
 
-    public function shipId(int $shipId): self
+    public function shipId(int|Ship $ship): self
     {
-        $this->parts[] = 'q.shipId = :shipId';
-        $this->parameters['shipId'] = $shipId;
+        $this->parts[] = 'q.ship = :shipId';
+        $this->parameters['shipId'] = $ship;
 
         return $this;
     }
