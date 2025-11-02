@@ -188,10 +188,12 @@ class EntityRepository extends AbstractRepository
      */
     public function getEntityCodes(): array
     {
-        return $this->createQueryBuilder('q')
-            ->select('id, code')
-            ->from('entities')
-            ->fetchAllKeyValue();
+        $data = $this->createQueryBuilder('q')
+            ->select('q.id, q.code')
+            ->getQuery()
+            ->execute();
+
+        return array_column($data, 'code', 'id');
     }
 
     public function getMaxEntityId(): int

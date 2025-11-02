@@ -308,9 +308,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: Fleet::class, cascade: ['persist', 'remove'])]
     private Collection $fleets;
 
-    #[ORM\OneToMany(mappedBy: 'leader', targetEntity: Fleet::class, cascade: ['persist', 'remove'])]
-    private Collection $fleetsLeader;
-
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: UserSessionLog::class, cascade: ['persist', 'remove'])]
     private Collection $sessionLogs;
 
@@ -341,7 +338,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->tickets = new ArrayCollection();
         $this->reports = new ArrayCollection();
         $this->fleets = new ArrayCollection();
-        $this->fleetsLeader = new ArrayCollection();
         $this->sessionLogs = new ArrayCollection();
     }
 
@@ -1950,36 +1946,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             // set the owning side to null (unless already changed)
             if ($fleet->getUser() === $this) {
                 $fleet->setUser(null);
-            }
-        }
-
-        return $this;
-    }
-
-    /**
-     * @return Collection<int, Fleet>
-     */
-    public function getFleetsLeader(): Collection
-    {
-        return $this->fleetsLeader;
-    }
-
-    public function addFleetsLeader(Fleet $fleetsLeader): static
-    {
-        if (!$this->fleetsLeader->contains($fleetsLeader)) {
-            $this->fleetsLeader->add($fleetsLeader);
-            $fleetsLeader->setLeader($this);
-        }
-
-        return $this;
-    }
-
-    public function removeFleetsLeader(Fleet $fleetsLeader): static
-    {
-        if ($this->fleetsLeader->removeElement($fleetsLeader)) {
-            // set the owning side to null (unless already changed)
-            if ($fleetsLeader->getLeader() === $this) {
-                $fleetsLeader->setLeader(null);
             }
         }
 

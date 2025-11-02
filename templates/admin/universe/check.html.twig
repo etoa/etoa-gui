@@ -7,30 +7,6 @@
 
     <h2>Integritätscheck</h2>
 
-    <h3>Prüfen ob zu allen Planeten mit einer User-Id auch ein User existiert...</h3>
-
-    {% if planetsWithInvalidUserId %}
-        <table class="tb">
-            <tr>
-                <th>Id</th>
-                <th>Name</th>
-                <th>User-Id</th>
-                <th>Aktionen</th>
-            </tr>
-
-            {% for planet in planetsWithInvalidUserId %}
-                <tr>
-                    <td>{{ planet.id }}</td>
-                    <td>{{ planet.name }}</td>
-                    <td>{{ planet.userId }}</td>
-                    <td><a href="{{ path('admin.universe.entity', {id: planet.id}) }}">Bearbeiten</a></td>
-                </tr>
-            {% endfor %}
-        </table>
-    {% else %}
-        {{ macros.messagebox('Keine Fehler gefunden!', 'success') }}
-    {% endif %}
-
     <h3>Prüfe auf Hauptplaneten ohne User...</h3>
     {% if mainPlanetsWithoutUsers %}
         <table class="tb">

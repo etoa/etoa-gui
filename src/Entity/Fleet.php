@@ -24,7 +24,7 @@ class Fleet
     protected User $user;
 
     #[ORM\JoinColumn(name: 'leader_id', referencedColumnName: 'id')]
-    #[ORM\ManyToOne(targetEntity: Fleet::class, inversedBy: 'fleetsLeader')]
+    #[ORM\ManyToOne(targetEntity: Fleet::class)]
     protected ?Fleet $leader = null;
 
     #[ORM\JoinColumn(name: 'entity_from', referencedColumnName: 'id')]

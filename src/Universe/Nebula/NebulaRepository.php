@@ -21,12 +21,10 @@ class NebulaRepository extends AbstractRepository
      */
     public function getAllIds(): array
     {
-        $data = $this->createQueryBuilder('q')
-            ->select("id")
-            ->from('nebulas')
-            ->fetchAllAssociative();
-
-        return array_map(fn (array $row) => (int) $row['id'], $data);
+        return $this->createQueryBuilder('q')
+            ->select("q.id")
+            ->getQuery()
+            ->getSingleColumnResult();
     }
 
     public function add(int $id, int $resCrystal): void

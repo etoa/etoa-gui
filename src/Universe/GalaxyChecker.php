@@ -68,8 +68,8 @@ class GalaxyChecker
         $userHasMainPlanet = [];
         foreach ($planets as $planet) {
             if ($planet->isMainPlanet()) {
-                $userPlanetCounts[$planet->getUserId()] = isset($userPlanetCounts[$planet->getUserId()]) ? $userPlanetCounts[$planet->getUserId()] + 1 : 1;
-                $userHasMainPlanet[$planet->getUserId()] = true;
+                $userPlanetCounts[$planet->getUser()->getId()] = isset($userPlanetCounts[$planet->getUser()->getId()]) ? $userPlanetCounts[$planet->getUser()->getId()] + 1 : 1;
+                $userHasMainPlanet[$planet->getUser()->getId()] = true;
             }
         }
 

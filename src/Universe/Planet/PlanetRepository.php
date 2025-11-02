@@ -27,12 +27,10 @@ class PlanetRepository extends AbstractRepository
      */
     public function getAllIds(): array
     {
-        $data = $this->createQueryBuilder('q')
-            ->select("id")
-            ->from('planets')
-            ->fetchAllAssociative();
-
-        return array_map(fn (array $row) => (int) $row['id'], $data);
+        return $this->createQueryBuilder('q')
+            ->select("q.id")
+            ->getQuery()
+            ->getSingleColumnResult();
     }
 
     /**
@@ -83,12 +81,9 @@ class PlanetRepository extends AbstractRepository
      */
     public function search(PlanetSearch $search): array
     {
-        $data = $this->applySearchSortLimit($this->createQueryBuilder('q'), $search)
-            ->select('*')
-            ->from('planets', 'p')
-            ->fetchAllAssociative();
-
-        return array_map(fn (array $row) => new Planet($row), $data);
+        return $this->applySearchSortLimit($this->createQueryBuilder('q'), $search)
+            ->getQuery()
+            ->execute();
     }
 
     /**

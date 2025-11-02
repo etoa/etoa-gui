@@ -20,12 +20,10 @@ class CellRepository extends AbstractRepository
      */
     public function getAllIds(): array
     {
-        $data = $this->createQueryBuilder('q')
-            ->select("id")
-            ->from('cells')
-            ->fetchAllAssociative();
-
-        return array_map(fn (array $row) => (int) $row['id'], $data);
+        return $this->createQueryBuilder('q')
+            ->select("q.id")
+            ->getQuery()
+            ->getSingleColumnResult();
     }
 
     /**

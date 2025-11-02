@@ -158,7 +158,6 @@ class UniverseController extends AbstractAdminController
     public function check(): Response
     {
         return $this->render('admin/universe/check.html.twig', [
-            'planetsWithInvalidUserId' => $this->galaxyChecker->planetsWithInvalidUserId(),
             'mainPlanetsWithoutUsers' => $this->galaxyChecker->mainPlanetsWithoutUsers(),
             'usersWithInvalidNumberOfMainPlanets' => $this->galaxyChecker->usersWithInvalidNumberOfMainPlanets(),
             'invalidEntities' => $this->galaxyChecker->invalidEntities(),
