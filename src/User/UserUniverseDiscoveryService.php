@@ -31,7 +31,7 @@ class UserUniverseDiscoveryService
             $cy_num = $this->config->param2Int('num_of_cells');
 
             $user->setDiscoveryMask(str_repeat('0', $sx_num * $cx_num * $sy_num * $cy_num));
-            $this->userRepository->saveDiscoveryMask($user->getId(), $user->getDiscoveryMask());
+            $this->userRepository->save();
         }
     }
 
@@ -95,7 +95,7 @@ class UserUniverseDiscoveryService
 
         $user->setDiscoveryMask(implode('', $discoveryMask));
 
-        $this->userRepository->saveDiscoveryMask($user->getId(), $user->getDiscoveryMask());
+        $this->userRepository->save();
     }
 
     public function setDiscoveredAll(User $user, bool $discovered): void
@@ -117,6 +117,6 @@ class UserUniverseDiscoveryService
 
         $user->setDiscoveryMask(implode('', $discoveryMask));
 
-        $this->userRepository->saveDiscoveryMask($user->getId(), $user->getDiscoveryMask());
+        $this->userRepository->save();
     }
 }

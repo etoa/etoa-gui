@@ -21,9 +21,7 @@ class GalaxyMapImageGenerator
         private readonly ConfigurationService         $config,
         private readonly CellRepository               $cellRepo,
         private readonly EntityRepository             $entityRepo,
-        private readonly StarRepository               $starRepo,
         private readonly WormholeRepository           $whRepo,
-        private readonly UserRepository               $userRepository,
         private readonly UserUniverseDiscoveryService $userUniverseDiscoveryService,
         private readonly string                       $projectDir,
     )
@@ -128,8 +126,8 @@ class GalaxyMapImageGenerator
             $sy = $entity->getCell()->getSy();
             if (($showAll && $user === null) || $user !== null && $this->userUniverseDiscoveryService->discovered($user, (($entity->getCell()->getSx() - 1) * $mim->numCellsX) + $entity->getCell()->getCx(), (($entity->getCell()->getSy() - 1) * $mim->numCellsY) + $entity->getCell()->getCy())) {
                 if ($entity->getCode() == EntityType::STAR) {
-                    $star = $this->starRepo->find($entity->getId());
-                    $starImageSrc = imagecreatefrompng($imgDir . "/stars/star" . $star->getTypeId() . "_small.png");
+                    $star = $entity->getStar();
+                    $starImageSrc = imagecreatefrompng($imgDir . "/stars/star" . $star->getSolarType()->getId() . "_small.png");
                     imagecopyresampled($mim->image, $starImageSrc, $xe, $ye, 0, 0, $mim->galaxyImageScale, $mim->galaxyImageScale, imagesx($starImageSrc), imagesy($starImageSrc));
                 } elseif ($entity->getCode() == EntityType::WORMHOLE) {
                     $wh = $this->whRepo->find($entity->getId());

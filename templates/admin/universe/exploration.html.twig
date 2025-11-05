@@ -2,33 +2,28 @@
 
 {% block content %}
     <h1>Erkundung</h1>
-    <p>
-        <b>Erkundung anzeigen für:</b>
-        <select onchange="document.location='{{ path('admin.universe.exploration.user') }}?userId='+this.options[this.selectedIndex].value">
-            <option value="0" style="font-style:italic;">(Benutzer wählen...)</option>
-            {% for id,nick in users %}
-                <option value="{{ id }}"{% if user and user.id == id %} selected="selected"{% endif %}>{{ nick }}</option>
-            {% endfor %}
-        </select>
-    </p>
+    {{ form_start(form) }}
+        <p>
+            <b>Erkundungen anzeigen für:</b>
+            {{ form_widget(form.users) }}
+        </p>
 
-    {% if user %}
-        <h3>Spieler '{{ user.nick }}'</h3>
-        <p>Erkundet: {{ discoveredPercent|round(2) }}%</p>
-        <form method="post">
+        {% if form.users.vars.data %}
+            <h3>Spieler '{{ form.users.vars.data.nick }}'</h3>
+            <p>Erkundet: {{ discoveredPercent|round(2) }}%</p>
             <p>
-                <input type="text" name="sx" value="{{ sx }}" size="2" />:<input type="text" name="sy" value="{{ sy }}" size="2" /> /
-                <input type="text" name="cx" value="{{ cx }}" size="2" />:<input type="text" name="cy" value="{{ cy }}" size="2" />
-                Radius: <input type="text" name="radius" value="{{ radius }}" size="1" />
-                <input type="submit" name="discover_selected" value="Gewählte Koordinate erkunden" />
+                {{ form_widget(form.sx) }}:{{ form_widget(form.sy) }} /
+                {{ form_widget(form.cx) }}:{{ form_widget(form.cy) }}
+                Radius: {{ form_widget(form.radius) }}
+                {{ form_widget(form.selected) }}
             </p>
             <p>
-                <input type="submit" name="discover_reset" value="Erkundung zurücksetzen" onclick="return confirm('Wirklich zurücksetzen?')" />
-                <input type="submit" name="discover_all" value="Alles erkunden" />
+                {{ form_widget(form.reset) }}
+                {{ form_widget(form.all) }}
             </p>
-            <img src="{{ path('admin.images.map') }}?legend&user={{ user.id }}" alt="Galaxiekarte" />
-        </form>
-    {% else %}
-        <p>Bitte Spieler wählen!</p>
-    {% endif %}
+            <img src="{{ path('admin.images.map') }}?legend&user={{ form.users.vars.data.id }}" alt="Galaxiekarte" />
+        {% else %}
+            <p>Bitte Spieler wählen!</p>
+        {% endif %}
+    {{ form_end(form) }}
 {% endblock %}
