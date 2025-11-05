@@ -128,14 +128,25 @@ class UniverseController extends AbstractAdminController
     #[IsGranted('ROLE_ADMIN_MASTER')]
     public function resetRound(Request $request): Response
     {
-        if ($request->isMethod('post')) {
+        $form = $this->createFormBuilder()
+            ->add('reset', SubmitType::class, [
+                'label' => 'Ja, die gesamte Runde zurücksetzen',
+                'attr' => [
+                    'onclick'=>"return confirm('Reset wirklich durchführen?')"
+                ]
+            ])
+            ->getForm()->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
             $this->universeResetService->reset();
             $this->addFlash('success', 'Die Runde wurde zurückgesetzt!');
 
             return $this->redirectToRoute('admin.universe.edit');
         }
 
-        return $this->render('admin/universe/reset-full.html.twig');
+        return $this->render('admin/universe/reset-full.html.twig', [
+            'form'=>$form
+        ]);
     }
 
     #[Route("/admin/universe/reset/universe", name: "admin.universe.reset.universe")]

@@ -20,27 +20,27 @@ class Nebula extends AbstractEntity implements ObjectWithImage
     private Entity $entity;
 
     #[ORM\Column]
-    private int $resMetal;
+    private int $resMetal = 0;
 
     #[ORM\Column]
-    private int $resCrystal;
+    private int $resCrystal = 0;
 
     #[ORM\Column]
-    private int $resPlastic;
+    private int $resPlastic = 0;
 
     #[ORM\Column]
-    private int $resFuel;
+    private int $resFuel = 0;
 
     #[ORM\Column]
-    private int $resFood;
+    private int $resFood = 0;
 
     #[ORM\Column]
-    private int $resPower;
+    private int $resPower = 0;
 
     public function getImagePath(string $type = ""):string
     {
         $numImages = 9;
-        $r = ($this->id % $numImages) + 1;
+        $r = ($this->entity->getId() % $numImages) + 1;
         return ObjectWithImage::BASE_PATH . "/nebulas/nebula" . $r . "_small.png";
     }
 

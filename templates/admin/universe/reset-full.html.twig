@@ -2,8 +2,8 @@
 
 {% block content %}
     <h2>Runde zurücksetzen</h2>
-    <form method="post">
+    {{ form_start(form) }}
         <p>Runde wirklich zurücksetzen?</p>
-        <input onclick="return confirm('Reset wirklich durchführen?')" type="submit" value="Ja, die gesamte Runde zurücksetzen" />
-    </form>
+        {{ form_widget(form.reset) }}
+    {{ form_end(form) }}
 {% endblock %}

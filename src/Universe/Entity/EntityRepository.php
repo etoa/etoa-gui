@@ -54,19 +54,17 @@ class EntityRepository extends AbstractRepository
             ->getSingleScalarResult();
     }
 
-    public function findRandomId(string $code): ?int
+    public function findRandom(string $code): ?Entity
     {
-        $id = $this->createQueryBuilder('q')
-            ->select('id')
-            ->from('entities')
-            ->where('code = :code')
+        return $this->createQueryBuilder('q')
+            ->where('q.code = :code')
             ->orderBy('RAND()')
             ->setParameters([
                 'code' => $code,
             ])
-            ->fetchOne();
-
-        return $id !== false ? (int) $id : null;
+            ->setMaxResults(1)
+            ->getQuery()
+            ->getOneOrNullResult();
     }
 
     public function getEntity(int $id): ?Entity
@@ -219,7 +217,7 @@ class EntityRepository extends AbstractRepository
     {
         return $this->getEntityCoordinatesQueryBuilder($search, $sort, $limit, $offset)
             ->select('q')
-            ->leftJoin('App:Planet', 'planets', 'WITH', 'q.id = planets.id')
+            ->leftJoin('App:Planet', 'planets', 'WITH', 'q.id = planets.entity')
             ->leftJoin('App:User', 'users', 'WITH', 'users.id = planets.user');
     }
 
@@ -227,9 +225,9 @@ class EntityRepository extends AbstractRepository
     {
         return (int) $this->getEntityCoordinatesQueryBuilder($search)
             ->select('COUNT(q)')
-            ->leftJoin('App:Planet', 'planets', 'WITH', 'q.id = planets.id')
+            ->leftJoin('App:Planet', 'planets', 'WITH', 'q.id = planets.entity')
             ->leftJoin('App:User', 'users', 'WITH', 'users.id = planets.user')
-            ->leftJoin('App:Star', 'stars', 'WITH', 'q.id = stars.id')
+            ->leftJoin('App:Star', 'stars', 'WITH', 'q.id = stars.entity')
             ->setMaxResults(1)
             ->getQuery()
             ->getOneOrNullResult();

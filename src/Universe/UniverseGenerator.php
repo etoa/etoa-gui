@@ -135,31 +135,31 @@ class UniverseGenerator
 
             // Star system
             if ($type[$x][$y] == EntityType::STAR) {
-                $this->createStarSystem($cell->id);
+                $this->createStarSystem($cell);
                 $starCount++;
             }
 
             // Asteroid Fields
             elseif ($type[$x][$y] == EntityType::ASTEROID) {
-                $this->createAsteroid($cell->id);
+                $this->createAsteroid($cell);
                 $asteroidsCount++;
             }
 
             // Nebulas
             elseif ($type[$x][$y] == EntityType::NEBULA) {
-                $this->createNebula($cell->id);
+                $this->createNebula($cell);
                 $nebulaCount++;
             }
 
             // Wormholes
             elseif ($type[$x][$y] == EntityType::WORMHOLE) {
-                $this->createWormhole($cell->id);
+                $this->createWormhole($cell);
                 $wormholeCount++;
             }
 
             // Empty space
             else {
-                $this->createEmptySpace($cell->id);
+                $this->createEmptySpace($cell);
             }
         }
 
@@ -170,14 +170,16 @@ class UniverseGenerator
         $this->linkWormholes();
 
         $output[] = "Platziere Marktplatz...";
-        $id = $this->entityRepo->findRandomId(EntityType::EMPTY_SPACE);
-        $this->entityRepo->updateCode($id, EntityType::MARKET);
-        $this->emptySpaceRepo->remove($id);
+        $entity = $this->entityRepo->findRandom(EntityType::EMPTY_SPACE);
+        $this->entityRepo->updateCode($entity, EntityType::MARKET);
+        $this->emptySpaceRepo->remove($entity->getEmptySpace());
 
         $output[] = "Erstelle Markt und Allianz entity...";
-        $id = $this->entityRepo->findRandomId(EntityType::EMPTY_SPACE);
-        $this->entityRepo->updateCode($id, EntityType::ALLIANCE_MARKET);
-        $this->emptySpaceRepo->remove($id);
+        $entity = $this->entityRepo->findRandom(EntityType::EMPTY_SPACE);
+        $this->entityRepo->updateCode($entity, EntityType::ALLIANCE_MARKET);
+        $this->emptySpaceRepo->remove($entity->getEmptySpace());
+
+        $this->entityRepo->save();
 
         $lock->release();
 
@@ -384,13 +386,15 @@ class UniverseGenerator
 
     private function removeOddWormhole(): int
     {
-        $numWormholes = $this->wormholeRepo->count();
+        $numWormholes = $this->wormholeRepo->count([]);
         if (fmod($numWormholes, 2) != 0) {
-            $wormholeId = $this->wormholeRepo->getOneId();
-            if ($wormholeId !== null) {
-                $this->entityRepo->updateCode($wormholeId, EntityType::EMPTY_SPACE);
-                $this->wormholeRepo->remove($wormholeId);
-                $this->emptySpaceRepo->add($wormholeId);
+            $wormhole = $this->wormholeRepo->getOne();
+            if ($wormhole) {
+                $entity = $wormhole->getEntity();
+                $this->entityRepo->updateCode($entity, EntityType::EMPTY_SPACE);
+                $this->wormholeRepo->remove($wormhole);
+
+                $this->emptySpaceRepo->add($entity);
                 $numWormholes--;
             }
         }
@@ -404,10 +408,10 @@ class UniverseGenerator
         $persistentWormholes = [];
 
         foreach ($this->wormholeRepo->findAll() as $wormhole) {
-            if ($wormhole->persistent) {
-                array_push($persistentWormholes, $wormhole->id);
+            if ($wormhole->isPersistent()) {
+                $persistentWormholes[] = $wormhole;
             } else {
-                array_push($wormholes, $wormhole->id);
+                $wormholes[] = $wormhole;
             }
         }
 
@@ -419,25 +423,15 @@ class UniverseGenerator
         if (fmod(count($persistentWormholes), 2) != 0) {
             $lastWormHole = array_pop($persistentWormholes);
             $this->wormholeRepo->setPersistent($lastWormHole, false);
-            array_push($wormholes, $lastWormHole);
+            $wormholes[] = $lastWormHole;
         }
 
-        $newWormholes = [];
         while (sizeof($wormholes) > 0) {
-            $newWormholes[array_shift($wormholes)] = array_pop($wormholes);
-        }
-        foreach ($newWormholes as $k => $v) {
-            $this->wormholeRepo->updateTarget($v, $k);
-            $this->wormholeRepo->updateTarget($k, $v);
-        }
+            $w1 = array_shift($wormholes);
+            $w2 = array_pop($wormholes);
 
-        $newPersistentWormholes = [];
-        while (sizeof($persistentWormholes) > 0) {
-            $newPersistentWormholes[array_shift($persistentWormholes)] = array_pop($persistentWormholes);
-        }
-        foreach ($newPersistentWormholes as $k => $v) {
-            $this->wormholeRepo->updateTarget($v, $k);
-            $this->wormholeRepo->updateTarget($k, $v);
+            $this->wormholeRepo->updateTarget($w1, $w2);
+            $this->wormholeRepo->updateTarget($w2, $w1);
         }
     }
 

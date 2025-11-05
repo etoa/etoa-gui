@@ -18,7 +18,7 @@
                 {{ entity.codeString() }}
                 {% if entity.code == 'p' and entity.planet.mainPlanet %}
                     (Hauptplanet)
-                {% elseif entity.code == 'w' and entity.wormhole.wormholePersistent %}
+                {% elseif entity.code == 'w' and entity.wormhole.persistent %}
                     (persistent)
                 {% endif %}
 
