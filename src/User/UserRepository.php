@@ -237,10 +237,15 @@ class UserRepository extends AbstractRepository
     public function resetDiscoveryMask(): void
     {
         $this->createQueryBuilder('q')
-            ->update('users')
-            ->set('discoverymask', "''")
-            ->set('user_setup', (string)0)
-            ->executeQuery();
+            ->update()
+            ->set('q.discoveryMask', ":mask")
+            ->set('q.setup', ":setup")
+            ->setParameters([
+                'mask' => '',
+                'setup' => false,
+            ])
+            ->getQuery()
+            ->execute();
     }
 
     public function setSetupFinished(User $user): void

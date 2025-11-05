@@ -16,6 +16,7 @@ use EtoA\Universe\Star\StarRepository;
 use EtoA\Universe\UniverseGenerator;
 use EtoA\Universe\UniverseResetService;
 use EtoA\Universe\Wormhole\WormholeRepository;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -43,7 +44,7 @@ class UniverseController extends AbstractAdminController
     #[IsGranted('ROLE_ADMIN_MASTER')]
     public function universe(Request $request): Response
     {
-        if ($this->cellRepository->count() === 0) {
+        if ($this->cellRepository->count([]) === 0) {
             return $this->redirectToRoute('admin.universe.big-bang.configure');
         }
 
@@ -58,12 +59,12 @@ class UniverseController extends AbstractAdminController
         return $this->render('admin/universe/universe.html.twig', [
             'sectorDimensions' => $this->cellRepository->getSectorDimensions(),
             'cellDimensions' => $this->cellRepository->getCellDimensions(),
-            'starCount' => $this->starRepository->count(),
-            'planetCount' => $this->planetRepository->count(),
-            'asteroidCount' => $this->asteroidRepository->count(),
-            'nebulaCount' => $this->nebulaRepository->count(),
-            'wormholeCount' => $this->wormholeRepository->count(),
-            'emptySpaceCount' => $this->emptySpaceRepository->count(),
+            'starCount' => $this->starRepository->count([]),
+            'planetCount' => $this->planetRepository->count([]),
+            'asteroidCount' => $this->asteroidRepository->count([]),
+            'nebulaCount' => $this->nebulaRepository->count([]),
+            'wormholeCount' => $this->wormholeRepository->count([]),
+            'emptySpaceCount' => $this->emptySpaceRepository->count([]),
             'addStarsForm' => $addStarsForm->createView(),
         ]);
     }
@@ -141,7 +142,16 @@ class UniverseController extends AbstractAdminController
     #[IsGranted('ROLE_ADMIN_MASTER')]
     public function resetUniverse(Request $request): Response
     {
-        if ($request->isMethod('post')) {
+        $form = $this->createFormBuilder()
+            ->add('reset', SubmitType::class, [
+                'label' => 'Universum zurücksetzen',
+                'attr' => [
+                    'onclick'=>"return confirm('Reset wirklich durchführen?')"
+                ]
+            ])
+            ->getForm()->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
             $this->universeResetService->reset(false);
             $this->addFlash('success', 'Das Universum wurde zurückgesetzt!');
 
@@ -150,6 +160,7 @@ class UniverseController extends AbstractAdminController
 
         return $this->render('admin/universe/reset.html.twig', [
             'planetWithUserCount' => $this->planetRepository->countWithUser(),
+            'form' => $form
         ]);
     }
 

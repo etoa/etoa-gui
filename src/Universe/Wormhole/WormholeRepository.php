@@ -6,6 +6,7 @@ namespace EtoA\Universe\Wormhole;
 
 use Doctrine\Persistence\ManagerRegistry;
 use EtoA\Core\AbstractRepository;
+use EtoA\Entity\Entity;
 use EtoA\Entity\Wormhole;
 
 class WormholeRepository extends AbstractRepository
@@ -70,36 +71,23 @@ class WormholeRepository extends AbstractRepository
         return array_map(fn ($row) => new Wormhole($row), $data);
     }
 
-    public function add(int $id, bool $persistent, int $targetId = 0): void
+    public function add(Entity $entity, bool $persistent, Entity $target = null): void
     {
-        $this->createQueryBuilder('q')
-            ->insert('wormholes')
-            ->values([
-                'id' => ':id',
-                'changed' => ':changed',
-                'persistent' => ':persistent',
-                'target_id' => ':targetId',
-            ])
-            ->setParameters([
-                'id' => $id,
-                'changed' => time(),
-                'persistent' => (int) $persistent,
-                'targetId' => $targetId,
-            ])
-            ->executeQuery();
+        $wormhole = new Wormhole();
+        $wormhole->setChanged(time());
+        $wormhole->setPersistent($persistent);
+        $wormhole->setTarget($target);
+
+        $entity->setWormhole($wormhole);
+
+        $this->save();
     }
 
-    public function updateTarget(int $id, int $targetId): void
+    public function updateTarget(Wormhole $wormhole, Entity $target): void
     {
-        $this->createQueryBuilder('q')
-            ->update('wormholes')
-            ->set('target_id', ':target_id')
-            ->where('id = :id')
-            ->setParameters([
-                'id' => $id,
-                'target_id' => $targetId,
-            ])
-            ->executeQuery();
+        $wormhole->setTarget($target);
+
+        $this->save();
     }
 
     public function setPersistent(int $id, bool $persistent): void

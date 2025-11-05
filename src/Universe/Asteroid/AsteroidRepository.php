@@ -7,6 +7,7 @@ namespace EtoA\Universe\Asteroid;
 use Doctrine\Persistence\ManagerRegistry;
 use EtoA\Core\AbstractRepository;
 use EtoA\Entity\Asteroid;
+use EtoA\Entity\Entity;
 use EtoA\Entity\User;
 
 class AsteroidRepository extends AbstractRepository
@@ -27,23 +28,16 @@ class AsteroidRepository extends AbstractRepository
             ->getSingleColumnResult();
     }
 
-    public function add(int $id, int $resMetal, int $resCrystal, int $resPlastic): void
+    public function add(Entity $entity, int $resMetal, int $resCrystal, int $resPlastic): void
     {
-        $this->createQueryBuilder('q')
-            ->insert('asteroids')
-            ->values([
-                'id' => ':id',
-                'res_metal' => ':res_metal',
-                'res_crystal' => ':res_crystal',
-                'res_plastic' => ':res_plastic',
-            ])
-            ->setParameters([
-                'id' => $id,
-                'res_metal' => $resMetal,
-                'res_crystal' => $resCrystal,
-                'res_plastic' => $resPlastic,
-            ])
-            ->executeQuery();
+        $asteroid = new Asteroid();
+        $asteroid->setResMetal($resMetal);
+        $asteroid->setResCrystal($resCrystal);
+        $asteroid->setResPlastic($resPlastic);
+
+        $entity->setAsteroid($asteroid);
+
+        $this->save();
     }
 
     public function update(

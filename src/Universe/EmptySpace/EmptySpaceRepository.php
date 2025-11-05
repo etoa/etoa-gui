@@ -7,6 +7,7 @@ namespace EtoA\Universe\EmptySpace;
 use Doctrine\Persistence\ManagerRegistry;
 use EtoA\Core\AbstractRepository;
 use EtoA\Entity\EmptySpace;
+use EtoA\Entity\Entity;
 use EtoA\Entity\User;
 
 class EmptySpaceRepository extends AbstractRepository
@@ -27,18 +28,13 @@ class EmptySpaceRepository extends AbstractRepository
             ->getSingleColumnResult();
     }
 
-    public function add(int $id, int $lastVisited = 0): void
+    public function add(Entity $entity, int $lastVisited = 0): void
     {
-        $this->createQueryBuilder('q')
-            ->insert('space')
-            ->values([
-                'id' => ':id',
-                'lastvisited' => ':lastvisited',
-            ])
-            ->setParameters([
-                'id' => $id,
-                'lastvisited' => $lastVisited,
-            ])
-            ->executeQuery();
+        $space = new EmptySpace();
+        $space->setLastVisited($lastVisited);
+
+        $entity->setEmptySpace($space);
+
+        $this->save();
     }
 }

@@ -32,14 +32,14 @@ class CellRepository extends AbstractRepository
     public function getSectorDimensions(): array
     {
         $data = $this->createQueryBuilder('q')
-            ->select('MAX(sx)', 'MAX(sy)')
-            ->from('cells')
-            ->fetchNumeric();
+            ->select('MAX(q.sx) as sx', 'MAX(q.sy) as sy')
+            ->getQuery()
+            ->execute();
 
-        return $data !== false
+        return $data
             ? [
-                'x' => (int) $data[0],
-                'y' => (int) $data[1],
+                'x' => (int) $data[0]['sx'],
+                'y' => (int) $data[0]['sy'],
             ] : [
                 'x' => 0,
                 'y' => 0,
@@ -52,14 +52,14 @@ class CellRepository extends AbstractRepository
     public function getCellDimensions(): array
     {
         $data = $this->createQueryBuilder('q')
-            ->select('MAX(cx)', 'MAX(cy)')
-            ->from('cells')
-            ->fetchNumeric();
+            ->select('MAX(q.cx) as cx', 'MAX(q.cy) as cy')
+            ->getQuery()
+            ->execute();
 
-        return $data !== false
+        return $data
             ? [
-                'x' => (int) $data[0],
-                'y' => (int) $data[1],
+                'x' => (int) $data[0]['cx'],
+                'y' => (int) $data[0]['cy'],
             ] : [
                 'x' => 0,
                 'y' => 0,

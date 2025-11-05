@@ -15,10 +15,6 @@ use Doctrine\ORM\Mapping as ORM;
 class Wormhole extends AbstractEntity implements ObjectWithImage
 {
     #[ORM\Id]
-    #[ORM\GeneratedValue(strategy: "AUTO")]
-    #[ORM\Column]
-    private int $id;
-
     #[ORM\OneToOne(mappedBy: "wormhole", targetEntity: Entity::class)]
     #[ORM\JoinColumn(name: 'id', referencedColumnName: 'id')]
     private Entity $entity;
@@ -47,11 +43,6 @@ class Wormhole extends AbstractEntity implements ObjectWithImage
     {
         $prefix = $this->persistent ? 'wormhole_persistent' : 'wormhole';
         return ObjectWithImage::BASE_PATH . "/wormholes/" . $prefix . "1_small.png";
-    }
-
-    public function getId(): ?int
-    {
-        return $this->id;
     }
 
     public function getChanged(): ?int

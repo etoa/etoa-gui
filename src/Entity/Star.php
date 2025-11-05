@@ -15,13 +15,9 @@ use Doctrine\ORM\Mapping as ORM;
 class Star extends AbstractEntity implements ObjectWithImage
 {
     #[ORM\Id]
-    #[ORM\GeneratedValue(strategy: "AUTO")]
-    #[ORM\Column]
-    private int $id;
-
     #[ORM\OneToOne(mappedBy: "star", targetEntity: Entity::class)]
     #[ORM\JoinColumn(name: 'id', referencedColumnName: 'id')]
-    private Entity $entity;
+    private ?Entity $entity = null;
 
     #[ORM\Column]
     private ?string $name = 'Unbenannt';
@@ -50,11 +46,6 @@ class Star extends AbstractEntity implements ObjectWithImage
     public function getAllowedFleetActions(): array
     {
         return [FleetAction::FLIGHT, FleetAction::EXPLORE];
-    }
-
-    public function getId(): ?int
-    {
-        return $this->id;
     }
 
     public function getName(): ?string

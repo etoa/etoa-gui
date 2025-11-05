@@ -15,31 +15,27 @@ use Doctrine\ORM\Mapping as ORM;
 class Asteroid extends AbstractEntity implements ObjectWithImage
 {
     #[ORM\Id]
-    #[ORM\GeneratedValue(strategy: "AUTO")]
-    #[ORM\Column]
-    private int $id;
-
     #[ORM\OneToOne(mappedBy: "asteroid", targetEntity: Entity::class)]
     #[ORM\JoinColumn(name: 'id', referencedColumnName: 'id')]
     private Entity $entity;
 
     #[ORM\Column]
-    private int $resMetal;
+    private int $resMetal = 0;
 
     #[ORM\Column]
-    private int $resCrystal;
+    private int $resCrystal = 0;
 
     #[ORM\Column]
-    private int $resPlastic;
+    private int $resPlastic = 0;
 
     #[ORM\Column]
-    private int $resFuel;
+    private int $resFuel = 0;
 
     #[ORM\Column]
-    private int $resFood;
+    private int $resFood = 0;
 
     #[ORM\Column]
-    private int $resPower;
+    private int $resPower = 0;
 
     public function getImagePath(string $type = ""): string
     {
@@ -56,11 +52,6 @@ class Asteroid extends AbstractEntity implements ObjectWithImage
     public function getAllowedFleetActions(): array
     {
         return [FleetAction::COLLECT_METAL, FleetAction::ANALYZE, FleetAction::FLIGHT, FleetAction::EXPLORE];
-    }
-
-    public function getId(): ?int
-    {
-        return $this->id;
     }
 
     public function getResMetal(): ?int

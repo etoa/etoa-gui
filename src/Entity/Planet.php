@@ -18,26 +18,23 @@ class Planet extends AbstractEntity implements ObjectWithImage
     public const COLONY_DELETE_THRESHOLD = 24 * 3600 * 5;
 
     #[ORM\Id]
-    #[ORM\GeneratedValue(strategy: "AUTO")]
-    #[ORM\Column(type: "integer")]
-    private int $id;
-
     #[ORM\OneToOne(mappedBy: "planet", targetEntity: Entity::class)]
     #[ORM\JoinColumn(name: 'id', referencedColumnName: 'id')]
     private Entity $entity;
 
     #[ORM\JoinColumn(name: 'planet_user_id', referencedColumnName: 'user_id')]
     #[ORM\ManyToOne(targetEntity: User::class, inversedBy:'planets')]
-    private User|null $user = null;
+    private ?User $user = null;
 
     #[ORM\Column(name: "planet_user_main", type: "boolean")]
-    private bool $mainPlanet;
+    private bool $mainPlanet = false;
 
     #[ORM\Column(name: "planet_user_changed", type: "integer")]
-    private int $userChanged;
+    private int $userChanged = 0;
 
-    #[ORM\Column(name: "planet_last_user_id", type: "integer")]
-    private int $lastUserId;
+    #[ORM\JoinColumn(name: 'planet_last_user_id', referencedColumnName: 'user_id')]
+    #[ORM\ManyToOne(targetEntity: User::class)]
+    private ?User $lastUser = null;
 
     #[ORM\Column(name: "planet_name", type: "string")]
     private ?string $name = 'Unbenannt';
@@ -47,124 +44,124 @@ class Planet extends AbstractEntity implements ObjectWithImage
     private PlanetType $planetType;
 
     #[ORM\Column(name: "planet_fields", type: "integer")]
-    private int $fields;
+    private int $fields = 0;
 
     #[ORM\Column(name: "planet_fields_extra", type: "integer")]
-    private int $fieldsExtra;
+    private int $fieldsExtra = 0;
 
     #[ORM\Column(name: "planet_fields_used", type: "integer")]
-    private int $fieldsUsed;
+    private int $fieldsUsed = 0;
 
     #[ORM\Column(name: "planet_image", type: "string")]
-    private string $image;
+    private string $image = '';
 
     #[ORM\Column(name: "planet_temp_from", type: "integer")]
-    private int $tempFrom;
+    private int $tempFrom = 0;
 
     #[ORM\Column(name: "planet_temp_to", type: "integer")]
-    private int $tempTo;
+    private int $tempTo = 0;
 
     #[ORM\Column(name: "planet_semi_major_axis", type: "float")]
-    private float $semiMajorAxis;
+    private float $semiMajorAxis = 1.000;
 
     #[ORM\Column(name: "planet_ecccentricity", type: "float")]
-    private float $ecccentricity;
+    private float $ecccentricity = 0.000;
 
     #[ORM\Column(name: "planet_mass", type: "integer")]
-    private int $mass;
+    private int $mass  = 0;
 
     #[ORM\Column(name: "planet_res_metal", type: "float")]
-    private float $resMetal;
+    private float $resMetal = 0.000000;
 
     #[ORM\Column(name: "planet_res_crystal", type: "float")]
-    private float $resCrystal;
+    private float $resCrystal = 0.000000;
 
     #[ORM\Column(name: "planet_res_plastic", type: "float")]
-    private float $resPlastic;
+    private float $resPlastic = 0.000000;
 
     #[ORM\Column(name: "planet_res_fuel", type: "float")]
-    private float $resFuel;
+    private float $resFuel = 0.000000;
 
     #[ORM\Column(name: "planet_res_food", type: "float")]
-    private float $resFood;
+    private float $resFood = 0.000000;
 
     #[ORM\Column(name: "planet_use_power", type: "integer")]
-    private int $usePower;
+    private int $usePower = 0;
 
     #[ORM\Column(name: "planet_last_updated", type: "integer")]
-    private int $lastUpdated;
+    private int $lastUpdated = 0;
 
     #[ORM\Column(name: "planet_bunker_metal", type: "integer")]
-    private int $bunkerMetal;
+    private int $bunkerMetal = 0;
 
     #[ORM\Column(name: "planet_bunker_crystal", type: "integer")]
-    private int $bunkerCrystal;
+    private int $bunkerCrystal = 0;
 
     #[ORM\Column(name: "planet_bunker_plastic", type: "integer")]
-    private int $bunkerPlastic;
+    private int $bunkerPlastic = 0;
 
     #[ORM\Column(name: "planet_bunker_fuel", type: "integer")]
-    private int $bunkerFuel;
+    private int $bunkerFuel = 0;
 
     #[ORM\Column(name: "planet_bunker_food", type: "integer")]
-    private int $bunkerFood;
+    private int $bunkerFood = 0;
 
     #[ORM\Column(name: "planet_prod_metal", type: "integer")]
-    private int $prodMetal;
+    private int $prodMetal = 0;
 
     #[ORM\Column(name: "planet_prod_crystal", type: "integer")]
-    private int $prodCrystal;
+    private int $prodCrystal = 0;
 
     #[ORM\Column(name: "planet_prod_plastic", type: "integer")]
-    private int $prodPlastic;
+    private int $prodPlastic = 0;
 
     #[ORM\Column(name: "planet_prod_fuel", type: "integer")]
-    private int $prodFuel;
+    private int $prodFuel = 0;
 
     #[ORM\Column(name: "planet_prod_food", type: "integer")]
-    private int $prodFood;
+    private int $prodFood = 0;
 
     #[ORM\Column(name: "planet_prod_power", type: "integer")]
-    private int $prodPower;
+    private int $prodPower = 0;
 
     #[ORM\Column(name: "planet_prod_people", type: "integer")]
-    private int $prodPeople;
+    private int $prodPeople = 0;
 
     #[ORM\Column(name: "planet_store_metal", type: "integer")]
-    private int $storeMetal;
+    private int $storeMetal = 0;
 
     #[ORM\Column(name: "planet_store_crystal", type: "integer")]
-    private int $storeCrystal;
+    private int $storeCrystal = 0;
 
     #[ORM\Column(name: "planet_store_plastic", type: "integer")]
-    private int $storePlastic;
+    private int $storePlastic = 0;
 
     #[ORM\Column(name: "planet_store_fuel", type: "integer")]
-    private int $storeFuel;
+    private int $storeFuel = 0;
 
     #[ORM\Column(name: "planet_store_food", type: "integer")]
-    private int $storeFood;
+    private int $storeFood = 0;
 
     #[ORM\Column(name: "planet_wf_metal", type: "integer")]
-    private int $wfMetal;
+    private int $wfMetal = 0;
 
     #[ORM\Column(name: "planet_wf_crystal", type: "integer")]
-    private int $wfCrystal;
+    private int $wfCrystal = 0;
 
     #[ORM\Column(name: "planet_wf_plastic", type: "integer")]
-    private int $wfPlastic;
+    private int $wfPlastic = 0;
 
     #[ORM\Column(name: "planet_people", type: "float")]
-    private float $people;
+    private float $people = 0.000000;
 
     #[ORM\Column(name: "planet_people_place", type: "integer")]
-    private int $peoplePlace;
+    private int $peoplePlace = 0;
 
     #[ORM\Column(name: "planet_desc", type: "string")]
     private ?string $description;
 
     #[ORM\Column(name: "invadedby", type: "integer")]
-    private int $invadedBy;
+    private int $invadedBy = 0;
     private array $allowedFleetActions = [];
 
     #[ORM\OneToMany(mappedBy: 'entity', targetEntity: BuildingListItem::class)]
@@ -225,16 +222,6 @@ class Planet extends AbstractEntity implements ObjectWithImage
         return $value / 100;
     }
 
-    public function getId(): int
-    {
-        return $this->id;
-    }
-
-    public function setId(int $id): void
-    {
-        $this->id = $id;
-    }
-
     public function isMainPlanet(): bool
     {
         return $this->mainPlanet;
@@ -253,16 +240,6 @@ class Planet extends AbstractEntity implements ObjectWithImage
     public function setUserChanged(int $userChanged): void
     {
         $this->userChanged = $userChanged;
-    }
-
-    public function getLastUserId(): int
-    {
-        return $this->lastUserId;
-    }
-
-    public function setLastUserId(int $lastUserId): void
-    {
-        $this->lastUserId = $lastUserId;
     }
 
     public function getName(): ?string

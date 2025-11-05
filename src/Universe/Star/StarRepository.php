@@ -6,8 +6,9 @@ namespace EtoA\Universe\Star;
 
 use Doctrine\Persistence\ManagerRegistry;
 use EtoA\Core\AbstractRepository;
+use EtoA\Entity\Entity;
+use EtoA\Entity\SolarType;
 use EtoA\Entity\Star;
-use EtoA\Entity\User;
 
 class StarRepository extends AbstractRepository
 {
@@ -43,19 +44,13 @@ class StarRepository extends AbstractRepository
         return $data !== false ? new Star($data) : null;
     }
 
-    public function add(int $id, int $typeId): void
+    public function add(Entity $entity, SolarType $type): void
     {
-        $this->createQueryBuilder('q')
-            ->insert('stars')
-            ->values([
-                'id' => ':id',
-                'type_id' => ':type_id',
-            ])
-            ->setParameters([
-                'id' => $id,
-                'type_id' => $typeId,
-            ])
-            ->executeQuery();
+        $star = new Star();
+        $star->setSolarType($type);
+        $entity->setStar($star);
+
+        $this->save();
     }
 
     public function update(int $id, ?string $name, int $typeId = null): bool

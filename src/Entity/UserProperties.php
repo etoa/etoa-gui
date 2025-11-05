@@ -256,7 +256,7 @@ class UserProperties
         return $this;
     }
 
-    public function getSpyShipCount()
+    public function getSpyShipCount(): int
     {
         return $this->spyShipCount;
     }

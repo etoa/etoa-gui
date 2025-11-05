@@ -6,6 +6,7 @@ namespace EtoA\Universe\Nebula;
 
 use Doctrine\Persistence\ManagerRegistry;
 use EtoA\Core\AbstractRepository;
+use EtoA\Entity\Entity;
 use EtoA\Entity\Nebula;
 use EtoA\Entity\User;
 
@@ -27,19 +28,14 @@ class NebulaRepository extends AbstractRepository
             ->getSingleColumnResult();
     }
 
-    public function add(int $id, int $resCrystal): void
+    public function add(Entity $entity, int $resCrystal): void
     {
-        $this->createQueryBuilder('q')
-            ->insert('nebulas')
-            ->values([
-                'id' => ':id',
-                'res_crystal' => ':res_crystal',
-            ])
-            ->setParameters([
-                'id' => $id,
-                'res_crystal' => $resCrystal,
-            ])
-            ->executeQuery();
+        $nebula = new Nebula();
+        $nebula->setResCrystal($resCrystal);
+
+        $entity->setNebula($nebula);
+
+        $this->save();
     }
 
     public function update(

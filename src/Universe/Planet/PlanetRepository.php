@@ -7,7 +7,9 @@ namespace EtoA\Universe\Planet;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 use EtoA\Core\AbstractRepository;
+use EtoA\Entity\Entity;
 use EtoA\Entity\Planet;
+use EtoA\Entity\PlanetType;
 use EtoA\Entity\User;
 use EtoA\Universe\Entity\EntityRepository;
 use EtoA\Universe\Entity\EntitySearch;
@@ -142,10 +144,10 @@ class PlanetRepository extends AbstractRepository
     public function countWithUser(): int
     {
         return (int) $this->createQueryBuilder('q')
-            ->select("COUNT(id)")
-            ->from('planets')
-            ->where('planet_user_id > 0')
-            ->fetchOne();
+            ->select("COUNT(q.entity)")
+            ->where('q.user IS NOT NULL')
+            ->getQuery()
+            ->getOneOrNullResult();
     }
 
     public function getRandomFreePlanet(int $sx = 0, int $sy = 0, ?int $minFields = null, ?int $planetType = null, ?int $starType = null):?Planet
@@ -195,32 +197,23 @@ class PlanetRepository extends AbstractRepository
     }
 
     public function add(
-        int $id,
-        int $typeId,
+        Entity $entity,
+        PlanetType $planetType,
         int $fields,
         string $image,
         int $tempFrom,
         int $tempTo
     ): void {
-        $this->createQueryBuilder('q')
-            ->insert('planets')
-            ->values([
-                'id' => ':id',
-                'planet_type_id' => ':type_id',
-                'planet_fields' => ':fields',
-                'planet_image' => ':image',
-                'planet_temp_from' => ':temp_from',
-                'planet_temp_to' => ':temp_to',
-            ])
-            ->setParameters([
-                'id' => $id,
-                'type_id' => $typeId,
-                'fields' => $fields,
-                'image' => $image,
-                'temp_from' => $tempFrom,
-                'temp_to' => $tempTo,
-            ])
-            ->executeQuery();
+        $planet = new Planet();
+        $planet->setPlanetType($planetType);
+        $planet->setFields($fields);
+        $planet->setImage($image);
+        $planet->setTempFrom($tempFrom);
+        $planet->setTempTo($tempTo);
+
+        $entity->setPlanet($planet);
+
+        $this->save();
     }
 
     public function setResources(

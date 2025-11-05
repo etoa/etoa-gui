@@ -8,6 +8,7 @@ use \Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 use EtoA\Core\AbstractRepository;
 use EtoA\Core\Database\AbstractSort;
+use EtoA\Entity\Cell;
 use EtoA\Entity\Entity;
 
 class EntityRepository extends AbstractRepository
@@ -88,15 +89,14 @@ class EntityRepository extends AbstractRepository
             return [];
         }
 
-        $data = $this->getEntityCoordinatesQueryBuilder()
-            ->where('code IN (' . implode(',', array_fill(0, count($codes), '?')) . ')')
-            ->andWhere('pos = 0')
+        return $this->getEntityCoordinatesQueryBuilder()
+            ->where('q.code IN (:codes)')
+            ->andWhere('q.pos = 0')
             ->orderBy('RAND()')
-            ->setParameters(array_values($codes))
+            ->setParameters(['codes'=>$codes])
             ->setMaxResults($limit)
-            ->fetchAllAssociative();
-
-        return array_map(fn (array $arr) => new Entity($arr), $data);
+            ->getQuery()
+            ->getResult();
     }
 
     public function findIncludeCell(Entity $entity): ?Entity
@@ -151,36 +151,22 @@ class EntityRepository extends AbstractRepository
         return $this->findOneBy(['code'=>EntityType::ALLIANCE_MARKET])->getId();
     }
 
-    public function add(int $cellId, string $code, int $pos = 0): int
+    public function add(Cell $cell, string $code, int $pos = 0): Entity
     {
-        $this->createQueryBuilder('q')
-            ->insert('entities')
-            ->values([
-                'cell_id' => ':cell_id',
-                'code' => ':code',
-                'pos' => ':pos',
-            ])
-            ->setParameters([
-                'cell_id' => $cellId,
-                'code' => $code,
-                'pos' => $pos,
-            ])
-            ->executeQuery();
+        $entity = new Entity();
+        $entity->setCell($cell);
+        $entity->setCode($code);
+        $entity->setPos($pos);
 
-        return (int) $this->getConnection()->lastInsertId();
+        $this->persist($entity);
+        $this->save();
+        return $entity;
     }
 
-    public function updateCode(int $id, string $code): void
+    public function updateCode(Entity $entity, string $code): void
     {
-        $this->createQueryBuilder('q')
-            ->update('entities')
-            ->set('code', ':code')
-            ->where('id = :id')
-            ->setParameters([
-                'id' => $id,
-                'code' => $code,
-            ])
-            ->executeQuery();
+        $entity->setCode($code);
+        $this->save();
     }
 
     /**
@@ -262,6 +248,6 @@ class EntityRepository extends AbstractRepository
                 'c.cx',
                 'c.cy'
             )
-            ->innerJoin('App:Cell', 'c', 'WITH', 'q.cellId = c.id');
+            ->innerJoin('App:Cell', 'c', 'WITH', 'q.cell = c.id');
     }
 }

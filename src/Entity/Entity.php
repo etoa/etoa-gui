@@ -22,32 +22,29 @@ class Entity
     #[ORM\Column(type: "integer")]
     private int $id;
 
-    #[ORM\OneToOne(inversedBy: 'entity', targetEntity: Star::class)]
+    #[ORM\OneToOne(inversedBy: 'entity', targetEntity: Star::class, cascade: ['persist', 'remove'])]
     #[ORM\JoinColumn(name: 'id', referencedColumnName: 'id')]
     private Star $star;
 
-    #[ORM\OneToOne(inversedBy: 'entity', targetEntity: Planet::class)]
+    #[ORM\OneToOne(inversedBy: 'entity', targetEntity: Planet::class, cascade: ['persist', 'remove'])]
     #[ORM\JoinColumn(name: 'id', referencedColumnName: 'id')]
     private Planet $planet;
 
-    #[ORM\OneToOne(inversedBy: 'entity', targetEntity: Asteroid::class)]
+    #[ORM\OneToOne(inversedBy: 'entity', targetEntity: Asteroid::class, cascade: ['persist', 'remove'])]
     #[ORM\JoinColumn(name: 'id', referencedColumnName: 'id')]
     private Asteroid $asteroid;
 
-    #[ORM\OneToOne(inversedBy: 'entity', targetEntity: Nebula::class)]
+    #[ORM\OneToOne(inversedBy: 'entity', targetEntity: Nebula::class, cascade: ['persist', 'remove'])]
     #[ORM\JoinColumn(name: 'id', referencedColumnName: 'id')]
     private Nebula $nebula;
 
-    #[ORM\OneToOne(inversedBy: 'entity', targetEntity: Wormhole::class)]
+    #[ORM\OneToOne(inversedBy: 'entity', targetEntity: Wormhole::class, cascade: ['persist', 'remove'])]
     #[ORM\JoinColumn(name: 'id', referencedColumnName: 'id')]
     private Wormhole $wormhole;
 
-    #[ORM\OneToOne(inversedBy: 'entity', targetEntity: EmptySpace::class)]
+    #[ORM\OneToOne(inversedBy: 'entity', targetEntity: EmptySpace::class, cascade: ['persist', 'remove'])]
     #[ORM\JoinColumn(name: 'id', referencedColumnName: 'id')]
     private EmptySpace $emptySpace;
-
-    #[ORM\Column(type: "integer")]
-    private int $cellId;
 
     #[ORM\ManyToOne(targetEntity: Cell::class)]
     private Cell $cell;
@@ -56,10 +53,10 @@ class Entity
     private string $code;
 
     #[ORM\Column(type: "integer")]
-    private int $pos;
+    private int $pos = 0;
 
     #[ORM\Column(type: "integer")]
-    private int $lastvisited;
+    private int $lastvisited = 0;
 
 
     public function toString(): string
@@ -156,6 +153,7 @@ class Entity
 
     public function setStar(?Star $star): static
     {
+        $star->setEntity($this);
         $this->star = $star;
 
         return $this;
@@ -168,6 +166,7 @@ class Entity
 
     public function setPlanet(?Planet $planet): static
     {
+        $planet->setEntity($this);
         $this->planet = $planet;
 
         return $this;
@@ -180,6 +179,7 @@ class Entity
 
     public function setAsteroid(?Asteroid $asteroid): static
     {
+        $asteroid->setEntity($this);
         $this->asteroid = $asteroid;
 
         return $this;
@@ -192,6 +192,7 @@ class Entity
 
     public function setNebula(?Nebula $nebula): static
     {
+        $nebula->setEntity($this);
         $this->nebula = $nebula;
 
         return $this;
@@ -204,6 +205,7 @@ class Entity
 
     public function setWormhole(?Wormhole $wormhole): static
     {
+        $wormhole->setEntity($this);
         $this->wormhole = $wormhole;
 
         return $this;
@@ -216,6 +218,7 @@ class Entity
 
     public function setEmptySpace(?EmptySpace $emptySpace): static
     {
+        $emptySpace->setEntity($this);
         $this->emptySpace = $emptySpace;
 
         return $this;

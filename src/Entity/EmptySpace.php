@@ -16,16 +16,12 @@ class EmptySpace extends AbstractEntity implements ObjectWithImage
 {
 
     #[ORM\Id]
-    #[ORM\GeneratedValue(strategy: "AUTO")]
-    #[ORM\Column(type: "integer")]
-    private int $id;
-
     #[ORM\OneToOne(mappedBy: "emptySpace", targetEntity: Entity::class)]
     #[ORM\JoinColumn(name: 'id', referencedColumnName: 'id')]
     private Entity $entity;
 
     #[ORM\Column(name: 'lastvisited', type: "integer")]
-    private int $lastVisited;
+    private int $lastVisited = 0;
 
     public function getEntityCodeString(): string
     {
@@ -42,11 +38,6 @@ class EmptySpace extends AbstractEntity implements ObjectWithImage
         $numImages = 10;
         $r = ($this->id % $numImages) + 1;
         return ObjectWithImage::BASE_PATH . "/space/space" . $r . "_small.png";
-    }
-
-    public function getId(): ?int
-    {
-        return $this->id;
     }
 
     public function getLastVisited(): ?int

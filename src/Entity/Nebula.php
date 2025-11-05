@@ -15,10 +15,6 @@ use Doctrine\ORM\Mapping as ORM;
 class Nebula extends AbstractEntity implements ObjectWithImage
 {
     #[ORM\Id]
-    #[ORM\GeneratedValue(strategy: "AUTO")]
-    #[ORM\Column(type: "integer")]
-    private int $id;
-
     #[ORM\OneToOne(mappedBy: "nebula", targetEntity: Entity::class)]
     #[ORM\JoinColumn(name: 'id', referencedColumnName: 'id')]
     private Entity $entity;
@@ -56,11 +52,6 @@ class Nebula extends AbstractEntity implements ObjectWithImage
     public function getEntityCodeString(): string
     {
         return "Interstellarer Gasnebel";
-    }
-
-    public function getId(): ?int
-    {
-        return $this->id;
     }
 
     public function getResMetal(): ?int

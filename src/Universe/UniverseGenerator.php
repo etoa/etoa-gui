@@ -5,6 +5,10 @@ declare(strict_types=1);
 namespace EtoA\Universe;
 
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Entity\Cell;
+use EtoA\Entity\Entity;
+use EtoA\Entity\PlanetType;
+use EtoA\Entity\SolarType;
 use EtoA\Universe\Asteroid\AsteroidRepository;
 use EtoA\Universe\Cell\CellRepository;
 use EtoA\Universe\EmptySpace\EmptySpaceRepository;
@@ -34,12 +38,12 @@ class UniverseGenerator
     private LockFactory $lockFactory;
 
     /**
-     * @var array<int>
+     * @var array<SolarType>
      */
     private array $solTypes = [];
 
     /**
-     * @var array<int>
+     * @var array<PlanetType>
      */
     private array $planetTypes = [];
 
@@ -77,8 +81,8 @@ class UniverseGenerator
 
     private function init(): void
     {
-        $this->solTypes = array_keys($this->solarTypesRepo->getSolarTypeNames());
-        $this->planetTypes = array_keys($this->planetTypesRepo->getPlanetTypeNames());
+        $this->solTypes = $this->solarTypesRepo->getSolarTypeNames();
+        $this->planetTypes = $this->planetTypesRepo->getPlanetTypeNames();
     }
 
     /**
@@ -283,7 +287,7 @@ class UniverseGenerator
         return $coordinates;
     }
 
-    private function createStarSystem(int $cellId, ?int $id = null): void
+    private function createStarSystem(Cell $cell, ?Entity $entity = null): void
     {
         $num_planets_min = $this->config->param1Int('num_planets');
         $num_planets_max = $this->config->param2Int('num_planets');
@@ -291,29 +295,28 @@ class UniverseGenerator
         // The Star
         $type = $this->solTypes[array_rand($this->solTypes)];
 
-        if ($id === null) {
-            $entityId = $this->entityRepo->add($cellId, EntityType::STAR, 0);
+        if (!$entity) {
+            $entity = $this->entityRepo->add($cell, EntityType::STAR);
         } else {
-            $this->entityRepo->updateCode($id, EntityType::STAR);
-            $entityId = $id;
+            $this->entityRepo->updateCode($entity, EntityType::STAR);
         }
-        $this->starRepo->add($entityId, $type);
+        $this->starRepo->add($entity, $type);
 
         // The planets
         $np = random_int($num_planets_min, $num_planets_max);
         for ($cnp = 1; $cnp <= $np; $cnp++) {
             $r = random_int(0, 100);
             if ($r <= $this->config->getInt('solsys_percent_planet')) {
-                $this->createPlanet($cellId, $cnp, $np);
+                $this->createPlanet($cell, $cnp, $np);
             } elseif ($r <= $this->config->getInt('solsys_percent_planet') + $this->config->getInt('solsys_percent_asteroids')) {
-                $this->createAsteroid($cellId, $cnp);
+                $this->createAsteroid($cell, $cnp);
             } else {
-                $this->createEmptySpace($cellId, $cnp);
+                $this->createEmptySpace($cell, $cnp);
             }
         }
     }
 
-    private function createPlanet(int $cellId, int $pos, int $np): void
+    private function createPlanet(Cell $cell, int $pos, int $np): void
     {
         $planet_fields_min = $this->config->param1Int('planet_fields');
         $planet_fields_max = $this->config->param2Int('planet_fields');
@@ -325,10 +328,10 @@ class UniverseGenerator
 
         $num_planet_images = $this->config->getInt('num_planet_images');
 
-        $id = $this->entityRepo->add($cellId, EntityType::PLANET, $pos);
+        $entity = $this->entityRepo->add($cell, EntityType::PLANET, $pos);
 
-        $typeId = $this->planetTypes[array_rand($this->planetTypes)];
-        $imageNumber = $typeId . "_" . random_int(1, $num_planet_images);
+        $type = $this->planetTypes[array_rand($this->planetTypes)];
+        $imageNumber = $type->getId() . "_" . random_int(1, $num_planet_images);
 
         $fields = random_int($planet_fields_min, $planet_fields_max);
 
@@ -338,8 +341,8 @@ class UniverseGenerator
         $tempMax = $temp + $planet_temp_diff;
 
         $this->planetRepo->add(
-            $id,
-            $typeId,
+            $entity,
+            $type,
             $fields,
             $imageNumber,
             $tempMin,
@@ -347,36 +350,36 @@ class UniverseGenerator
         );
     }
 
-    private function createAsteroid(int $cellId, int $pos = 0): void
+    private function createAsteroid(Cell $cell, int $pos = 0): void
     {
         $metal = random_int($this->config->param1Int('asteroid_ress'), $this->config->param2Int('asteroid_ress'));
         $crystal = random_int($this->config->param1Int('asteroid_ress'), $this->config->param2Int('asteroid_ress'));
         $plastic = random_int($this->config->param1Int('asteroid_ress'), $this->config->param2Int('asteroid_ress'));
 
-        $id = $this->entityRepo->add($cellId, EntityType::ASTEROID, $pos);
-        $this->asteroidRepo->add($id, $metal, $crystal, $plastic);
+        $entity = $this->entityRepo->add($cell, EntityType::ASTEROID, $pos);
+        $this->asteroidRepo->add($entity, $metal, $crystal, $plastic);
     }
 
-    private function createNebula(int $cellId, int $pos = 0): void
+    private function createNebula(Cell $cell, int $pos = 0): void
     {
         $crystal = random_int($this->config->param1Int('nebula_ress'), $this->config->param2Int('nebula_ress'));
 
-        $id = $this->entityRepo->add($cellId, EntityType::NEBULA, $pos);
-        $this->nebulaRepo->add($id, $crystal);
+        $entity = $this->entityRepo->add($cell, EntityType::NEBULA, $pos);
+        $this->nebulaRepo->add($entity, $crystal);
     }
 
-    private function createWormhole(int $cellId): void
+    private function createWormhole(Cell $cell): void
     {
         $persistent = (random_int(0, 100) <= $this->config->getInt('persistent_wormholes_ratio'));
 
-        $id = $this->entityRepo->add($cellId, EntityType::WORMHOLE);
-        $this->wormholeRepo->add($id, $persistent);
+        $entity = $this->entityRepo->add($cell, EntityType::WORMHOLE);
+        $this->wormholeRepo->add($entity, $persistent);
     }
 
-    private function createEmptySpace(int $cellId, int $pos = 0): void
+    private function createEmptySpace(Cell $cell, int $pos = 0): void
     {
-        $id = $this->entityRepo->add($cellId, EntityType::EMPTY_SPACE, $pos);
-        $this->emptySpaceRepo->add($id);
+        $entity = $this->entityRepo->add($cell, EntityType::EMPTY_SPACE, $pos);
+        $this->emptySpaceRepo->add($entity);
     }
 
     private function removeOddWormhole(): int
@@ -451,12 +454,16 @@ class UniverseGenerator
 
         $added = 0;
         foreach ($entities as $entity) {
-            if ($entity->code === EntityType::EMPTY_SPACE) {
-                $this->emptySpaceRepo->remove($entity->id);
-            } elseif ($entity->code === EntityType::ASTEROID) {
-                $this->asteroidRepo->remove($entity->id);
+            $entity = $this->entityRepo->findOneBy(['id'=>$entity['id']]);
+
+            if ($entity->getCode() === EntityType::EMPTY_SPACE) {
+                $this->emptySpaceRepo->remove($entity->getType());
+            } elseif ($entity->getCode() === EntityType::ASTEROID) {
+                $this->asteroidRepo->remove($entity->getType());
             }
-            $this->createStarSystem($entity->cellId, $entity->id);
+            $this->entityRepo->save();
+
+            $this->createStarSystem($entity->getCell(), $entity);
             $added++;
         }
 
