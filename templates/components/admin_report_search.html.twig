@@ -15,8 +15,7 @@
     {% for report in search.entries %}
         {{ component('admin_report_view', {
             report: report,
-            type: this.types[report.type],
-            userNick: this.users[report.userId]|default('-')
+            id: 'item-'~report.id
         }) }}
     {% endfor %}
 {% endblock %}

@@ -7,6 +7,7 @@
 {% else %}
     {% set style = '' %}
 {% endif %}
+
 <tbody
     {{ attributes }}
     data-original-data="{}" {# Hack to prevent issue with symfony/ux #}
@@ -16,23 +17,22 @@
     {{ style|raw }}
 >
     <td>{{ formatTimestamp(this.report.timestamp) }}</td>
-    <td>{{ this.type }}</td>
-    <td>{{ this.userNick }}</td>
+    <td>{{ this.report.type }}</td>
+    <td>{{ this.report.user.nick }}</td>
     <td>{{ this.report.subject }}</td>
 
     <td>
         <a href="#report-{{ this.report.id }}" data-action="click->toggle#onClick">Details</a>
         {% if this.report.deleted %}
-            <a href="#report-{{ this.report.id }}" data-action="live#action" data-action-name="prevent|undelete">Wiederherstellen</a>
+            <a href="#report-{{ this.report.id }}" data-action="live#action" data-live-action-param="prevent|undelete">Wiederherstellen</a>
         {% else %}
-            <a href="#report-{{ this.report.id }}" data-action="live#action" data-action-name="prevent|delete">Löschen</a>
+            <a href="#report-{{ this.report.id }}" data-action="live#action" data-live-action-param="prevent|delete">Löschen</a>
         {% endif %}
     </td>
 </tr>
 <tr id="report-{{ this.report.id }}" data-toggle-target="target" class="hide">
     <td colspan="99">
-        {% set subtype = this.report.data is defined ? this.report.data.subtype : 'other' %}
-        {% include 'components/reports/' ~ this.report.type ~ '/' ~ subtype ~ '.html.twig' with {report: this.report}%}
+        {% include 'components/reports/' ~ this.report.type ~ '/' ~ this.report.createFactory.subtype ~ '.html.twig' %}
     </td>
 </tr>
 </tbody>

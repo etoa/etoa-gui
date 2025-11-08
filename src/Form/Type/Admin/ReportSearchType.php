@@ -14,13 +14,13 @@ class ReportSearchType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('userId', UserType::class, [
+            ->add('user', UserType::class, [
                 'label' => 'Empfänger',
             ])
-            ->add('opponentId', UserType::class, [
+            ->add('opponent', UserType::class, [
                 'label' => 'Gegespieler',
             ])
-            ->add('entityId', EntityType::class, [
+            ->add('entity', EntityType::class, [
                 'label' => 'Entitiy',
             ])
             ->add('type', ReportCategoryType::class, [

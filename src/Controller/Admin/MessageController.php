@@ -42,7 +42,7 @@ class MessageController extends AbstractAdminController
     {
         return $this->render('admin/message/reports.html.twig', [
             'form' => $this->createForm(ReportSearchType::class, $request->query->all()),
-            'total' => $this->reportRepository->count(),
+            'total' => $this->reportRepository->count([]),
         ]);
     }
 

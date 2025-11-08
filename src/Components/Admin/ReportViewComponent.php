@@ -16,41 +16,27 @@ class ReportViewComponent
 {
     use DefaultActionTrait;
 
-    #[LiveProp]
-    public int $reportId;
-    #[LiveProp]
-    public string $userNick;
-    #[LiveProp]
-    public int $userId;
-    #[LiveProp]
-    public string $type = '';
-    private ?Report $report = null;
+    #[LiveProp(writable: true)]
+    public ?Report $report;
 
     public function __construct(
-        private ReportRepository $reportRepository,
-        private ReportAggregator $reportAggregator,
+        private readonly ReportRepository $reportRepository,
+        private readonly ReportAggregator $reportAggregator,
     ) {
-    }
-
-    public function mount(Report $report = null): void
-    {
-        $this->report = $report;
-        if ($this->report !== null) {
-            $this->reportId = $report->getId();
-            $this->userId = $report->getUserId();
-        }
     }
 
     #[LiveAction]
     public function delete(): void
     {
-        $this->reportRepository->setDeleted($this->reportId, true);
+        $this->report->setDeleted(true);
+        $this->reportRepository->save();
     }
 
     #[LiveAction]
     public function undelete(): void
     {
-        $this->reportRepository->setDeleted($this->reportId, false);
+        $this->report->setDeleted(false);
+        $this->reportRepository->save();
     }
 
     public function getReport(): Report

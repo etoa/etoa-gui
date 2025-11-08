@@ -50,14 +50,11 @@ class ReportRepository extends AbstractRepository
     public function searchReports(ReportSearch $search, int $limit, int $first = null): array
     {
         $qb = $this->createQueryBuilder('q')
-            ->select('*')
-            ->from('reports')
-            ->orderBy('timestamp', 'DESC');
+            ->orderBy('q.timestamp', 'DESC');
 
-        $data = $this->applySearchSortLimit($qb, $search, null, $limit, $first)
-            ->fetchAllAssociative();
-
-        return array_map(fn (array $row) => Report::createFromArray($row), $data);
+        return $this->applySearchSortLimit($qb, $search, null, $limit, $first)
+            ->getQuery()
+            ->execute();
     }
 
     public function searchReport(ReportSearch $search): ?Report
@@ -348,5 +345,14 @@ class ReportRepository extends AbstractRepository
             ->setParameter('user', $user)
             ->getQuery()
             ->execute();
+    }
+
+    public function countBySearch(ReportSearch $search = null): int
+    {
+        return (int) $this->applySearchSortLimit($this->createQueryBuilder('q'), $search)
+            ->select('COUNT(q)')
+            ->setMaxResults(1)
+            ->getQuery()
+            ->getOneOrNullResult();
     }
 }

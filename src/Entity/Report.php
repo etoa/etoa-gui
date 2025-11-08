@@ -79,26 +79,6 @@ class Report
     #[ORM\OneToOne(mappedBy: 'report', targetEntity: OtherReportData::class)]
     #[ORM\JoinColumn(name: 'id', referencedColumnName: 'id')]
     private OtherReportData $otherReportData;
-
-    public static function createFromArray(array $data): Report
-    {
-        $report = new Report();
-        $report->id = (int) $data['id'];
-        $report->timestamp = (int) $data['timestamp'];
-        $report->type = $data['type'];
-        $report->read = (bool) $data['read'];
-        $report->deleted = (bool) $data['deleted'];
-        $report->archived = (bool) $data['archived'];
-        $report->userId = (int) $data['user_id'];
-        $report->allianceId = (int) $data['alliance_id'];
-        $report->content = $data['content'];
-        $report->entity1Id = (int) $data['entity1_id'];
-        $report->entity2Id = (int) $data['entity2_id'];
-        $report->opponentId = (int) $data['opponent1_id'];
-
-        return $report;
-    }
-
     /**
      * @return int[]
      */

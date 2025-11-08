@@ -27,9 +27,8 @@ class ReportSearchComponent extends AbstractController
     private ReportSearchRequest $request;
 
     public function __construct(
-        private ReportRepository $reportRepository,
-        private UserRepository $userRepository,
-        private ReportAggregator $reportAggregator
+        private readonly ReportRepository $reportRepository,
+        private readonly UserRepository   $userRepository,
     ) {
         $this->request = new ReportSearchRequest();
     }
@@ -41,16 +40,16 @@ class ReportSearchComponent extends AbstractController
             $search->type($this->request->type);
         }
 
-        if ($this->request->userId !== null) {
-            $search->userId($this->request->userId);
+        if ($this->request->user) {
+            $search->userId($this->request->user);
         }
 
-        if ($this->request->opponentId !== null) {
-            $search->opponentId($this->request->opponentId);
+        if ($this->request->opponent) {
+            $search->opponentId($this->request->opponent);
         }
 
-        if ($this->request->entityId !== null) {
-            $search->entityId($this->request->entityId);
+        if ($this->request->entity) {
+            $search->entityId($this->request->entity);
         }
 
         if ($this->request->read !== null) {
@@ -65,17 +64,11 @@ class ReportSearchComponent extends AbstractController
             $search->archived($this->request->archived);
         }
 
-        $total = $this->reportRepository->count($search);
+        $total = $this->reportRepository->countBySearch($search);
 
         $limit = $this->getLimit($total);
 
         $reports = $this->reportRepository->searchReports($search, $this->perPage, $limit);
-
-        if (count($reports) > 0) {
-            $reports = $this->reportAggregator->aggregate($reports);
-            $this->types = ReportTypes::TYPES;
-            $this->users = $this->userRepository->searchUserNicknames();
-        }
 
         return new SearchResult($reports, $limit, $total, $this->perPage);
     }

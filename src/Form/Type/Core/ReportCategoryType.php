@@ -15,7 +15,7 @@ class ReportCategoryType extends AbstractType
         $resolver->setDefaults([
             'required' => true,
             'placeholder' => '(Alle)',
-            'choices' => array_flip(ReportTypes::TYPES),
+            'choices' => ReportTypes::items(),
         ]);
     }
 

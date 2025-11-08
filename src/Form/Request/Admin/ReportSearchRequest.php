@@ -2,12 +2,15 @@
 
 namespace EtoA\Form\Request\Admin;
 
+use EtoA\Entity\Entity;
+use EtoA\Entity\User;
+
 class ReportSearchRequest
 {
     public ?string $type = null;
-    public ?int $userId = null;
-    public ?int $opponentId = null;
-    public ?int $entityId = null;
+    public ?User $user = null;
+    public ?User $opponent = null;
+    public ?Entity $entity = null;
     public ?bool $read = null;
     public ?bool $deleted = null;
     public ?bool $archived = null;
