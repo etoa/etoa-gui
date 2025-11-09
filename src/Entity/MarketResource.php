@@ -25,34 +25,34 @@ class MarketResource
     private Entity $entity;
 
     #[ORM\Column(name: 'sell_0', type: "integer")]
-    private int $sell0;
+    private int $sell0 = 0;
 
     #[ORM\Column('sell_1', type: "integer")]
-    private int $sell1;
+    private int $sell1 = 0;
 
     #[ORM\Column('sell_2', type: "integer")]
-    private int $sell2;
+    private int $sell2 = 0;
 
     #[ORM\Column('sell_3', type: "integer")]
-    private int $sell3;
+    private int $sell3 = 0;
 
     #[ORM\Column('sell_4', type: "integer")]
-    private int $sell4;
+    private int $sell4 = 0;
 
     #[ORM\Column('buy_0', type: "integer")]
-    private int $buy0;
+    private int $buy0 = 0;
 
     #[ORM\Column('buy_1', type: "integer")]
-    private int $buy1;
+    private int $buy1 = 0;
 
     #[ORM\Column('buy_2', type: "integer")]
-    private int $buy2;
+    private int $buy2 = 0;
 
     #[ORM\Column('buy_3', type: "integer")]
-    private int $buy3;
+    private int $buy3 = 0;
 
     #[ORM\Column('buy_4', type: "integer")]
-    private int $buy4;
+    private int $buy4 = 0;
 
     #[ORM\JoinColumn(name: 'buyer_id', referencedColumnName: 'user_id')]
     #[ORM\ManyToOne(targetEntity: User::class)]
@@ -71,13 +71,13 @@ class MarketResource
     private ?Alliance $forAlliance = null;
 
     #[ORM\Column(type: "boolean")]
-    private bool $buyable;
+    private bool $buyable = true;
 
     #[ORM\Column]
-    private string $text;
+    private string $text = '';
 
     #[ORM\Column(name: "datum", type: "integer")]
-    private int $date;
+    private int $date = 0;
 
     public function getSellResources(): BaseResources
     {

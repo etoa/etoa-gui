@@ -152,12 +152,9 @@ class MarketShipRepository extends AbstractRepository
             ->execute();
     }
 
-    public function delete(int $offerId) : void
+    public function delete(MarketShip $offer) : void
     {
-        $this->createQueryBuilder('q')
-            ->delete('market_ship')
-            ->where('id = :id')
-            ->setParameter('id', $offerId)
-            ->executeQuery();
+        $this->remove($offer);
+        $this->save();
     }
 }

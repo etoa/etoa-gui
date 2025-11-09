@@ -23,52 +23,53 @@ class MarketAuction
     private Entity $entity;
 
     #[ORM\Column(name: "date_start", type: "integer")]
-    private int $dateStart;
+    private int $dateStart = 0;
 
     #[ORM\Column(name: "date_end", type: "integer")]
-    private int $dateEnd;
+    private int $dateEnd = 0;
 
     #[ORM\Column(name: "date_delete", type: "integer")]
-    private int $deleted;
+    private int $deleted = 0;
 
     #[ORM\Column('sell_0', type: "integer")]
-    private int $sell0;
+    private int $sell0 = 0;
 
     #[ORM\Column('sell_1', type: "integer")]
-    private int $sell1;
+    private int $sell1 = 0;
 
     #[ORM\Column('sell_2', type: "integer")]
-    private int $sell2;
+    private int $sell2 = 0;
 
     #[ORM\Column('sell_3', type: "integer")]
-    private int $sell3;
+    private int $sell3 = 0;
 
     #[ORM\Column('sell_4', type: "integer")]
-    private int $sell4;
+    private int $sell4 = 0;
+
+    #[ORM\JoinColumn(name: 'ship_id', referencedColumnName: 'ship_id')]
+    #[ORM\ManyToOne(targetEntity: Ship::class)]
+    private ?Ship $ship = null;
 
     #[ORM\Column(type: "integer")]
-    private int $shipId;
-
-    #[ORM\Column(type: "integer")]
-    private int $shipCount;
+    private int $shipCount = 0;
 
     #[ORM\Column]
-    private string $text;
+    private string $text = '';
 
     #[ORM\Column('currency_0', type: "integer")]
-    private int $currency0;
+    private int $currency0 = 1;
 
     #[ORM\Column('currency_1', type: "integer")]
-    private int $currency1;
+    private int $currency1 = 1;
 
     #[ORM\Column('currency_2', type: "integer")]
-    private int $currency2;
+    private int $currency2 = 1;
 
     #[ORM\Column('currency_3', type: "integer")]
-    private int $currency3;
+    private int $currency3 = 1;
 
     #[ORM\Column('currency_4', type: "integer")]
-    private int $currency4;
+    private int $currency4 = 1;
 
     #[ORM\JoinColumn(name: 'current_buyer_id', referencedColumnName: 'user_id')]
     #[ORM\ManyToOne(targetEntity: User::class)]
@@ -82,28 +83,28 @@ class MarketAuction
     private int $currentBuyerDate;
 
     #[ORM\Column('buy_0', type: "integer")]
-    private int $buy0;
+    private int $buy0 = 0;
 
     #[ORM\Column('buy_1', type: "integer")]
-    private int $buy1;
+    private int $buy1 = 0;
 
     #[ORM\Column('buy_2', type: "integer")]
-    private int $buy2;
+    private int $buy2 = 0;
 
     #[ORM\Column('buy_3', type: "integer")]
-    private int $buy3;
+    private int $buy3 = 0;
 
     #[ORM\Column('buy_4', type: "integer")]
-    private int $buy4;
+    private int $buy4 = 0;
 
     #[ORM\Column('bidcount', type: "integer")]
-    private int $bidCount;
+    private int $bidCount = 0;
 
     #[ORM\Column(type: "boolean")]
-    private bool $buyable;
+    private bool $buyable = true;
 
-    #[ORM\Column(type: "integer")]
-    private int $sent;
+    #[ORM\Column(type: "boolean")]
+    private bool $sent = false;
 
     public function getSellResources(): BaseResources
     {
@@ -238,18 +239,6 @@ class MarketAuction
     public function setSell4(int $sell4): static
     {
         $this->sell4 = $sell4;
-
-        return $this;
-    }
-
-    public function getShipId(): ?int
-    {
-        return $this->shipId;
-    }
-
-    public function setShipId(int $shipId): static
-    {
-        $this->shipId = $shipId;
 
         return $this;
     }
@@ -434,12 +423,12 @@ class MarketAuction
         return $this;
     }
 
-    public function getSent(): ?int
+    public function getSent(): ?bool
     {
         return $this->sent;
     }
 
-    public function setSent(int $sent): static
+    public function setSent(bool $sent): static
     {
         $this->sent = $sent;
 
@@ -490,6 +479,23 @@ class MarketAuction
     public function setCurrentBuyerEntity(?Entity $currentBuyerEntity): static
     {
         $this->currentBuyerEntity = $currentBuyerEntity;
+
+        return $this;
+    }
+
+    public function isSent(): ?bool
+    {
+        return $this->sent;
+    }
+
+    public function getShip(): ?Ship
+    {
+        return $this->ship;
+    }
+
+    public function setShip(?Ship $ship): static
+    {
+        $this->ship = $ship;
 
         return $this;
     }

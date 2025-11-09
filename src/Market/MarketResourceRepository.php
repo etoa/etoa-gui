@@ -196,12 +196,9 @@ class MarketResourceRepository extends AbstractRepository
             ->execute();
     }
 
-    public function delete(int $offerId) : void
+    public function delete(MarketResource $offer) : void
     {
-        $this->createQueryBuilder('q')
-            ->delete('market_ressource')
-            ->where('id = :id')
-            ->setParameter('id', $offerId)
-            ->executeQuery();
+        $this->remove($offer);
+        $this->save();
     }
 }

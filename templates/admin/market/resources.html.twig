@@ -7,17 +7,17 @@
     {% for offer in offers %}
         <table class="tb">
             <tr>
-                <th width="100">
+                <th>
                     Datum:
                 </th>
-                <td colspan="2" width="200">
+                <td colspan="2">
                     {{ formatTimestamp(offer.date) }}
                 </td>
-                <th width="100">
+                <th>
                     Spieler:
                 </th>
-                <td width="100">
-                    <a href="{{ path('admin.users.view', {id: offer.userId}) }}">{{ userNicknames[offer.userId]|default('Niemand') }}</a>
+                <td>
+                    <a href="{{ path('admin.users.view', {id: offer.user.id}) }}">{{ offer.user.nick|default('Niemand') }}</a>
                 </td>
                 <td class="tbltitle">
                     <form method="post" action="{{ path('admin.market.resources.delete', {id: offer.id}) }}">
@@ -34,8 +34,8 @@
                         </th>
                     {% endif %}
 
-                    <td width="110">{{ resourceName }}</td>
-                    <td width="100">
+                    <td>{{ resourceName }}</td>
+                    <td>
                         {{ formatNumber(offer.sellResources.get(index)) }}
                     </td>
 
@@ -45,8 +45,8 @@
                         </th>
                     {% endif %}
 
-                    <td width="110">{{ resourceName }}</td>
-                    <td width="100">
+                    <td>{{ resourceName }}</td>
+                    <td>
                         {{ formatNumber(offer.buyResources.get(index)) }}
                     </td>
                 </tr>

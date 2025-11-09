@@ -189,12 +189,9 @@ class MarketAuctionRepository extends AbstractRepository
             ->execute();
     }
 
-    public function deleteAuction(int $auctionId) : void
+    public function deleteAuction(MarketAuction $auction) : void
     {
-        $this->createQueryBuilder('q')
-            ->delete('market_auction')
-            ->where('id = :id')
-            ->setParameter('id', $auctionId)
-            ->executeQuery();
+        $this->remove($auction);
+        $this->save();
     }
 }

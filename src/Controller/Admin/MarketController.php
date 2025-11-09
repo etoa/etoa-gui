@@ -2,6 +2,9 @@
 
 namespace EtoA\Controller\Admin;
 
+use EtoA\Entity\MarketAuction;
+use EtoA\Entity\MarketResource;
+use EtoA\Entity\MarketShip;
 use EtoA\Market\MarketAuctionRepository;
 use EtoA\Market\MarketResourceRepository;
 use EtoA\Market\MarketShipRepository;
@@ -22,10 +25,8 @@ class MarketController extends AbstractController
 {
     public function __construct(
         private readonly RuntimeDataStore         $runtimeDataStore,
-        private readonly UserRepository           $userRepository,
         private readonly MarketResourceRepository $marketResourceRepository,
         private readonly MarketShipRepository     $marketShipRepository,
-        private readonly ShipDataRepository       $shipDataRepository,
         private readonly MarketAuctionRepository  $marketAuctionRepository,
     )
     {
@@ -53,16 +54,15 @@ class MarketController extends AbstractController
     public function resources(): Response
     {
         return $this->render('admin/market/resources.html.twig', [
-            'offers' => $this->marketResourceRepository->getAll(),
-            'userNicknames' => $this->userRepository->searchUserNicknames(),
+            'offers' => $this->marketResourceRepository->findBy([],['date'=>'ASC']),
             'resourceNames' => ResourceNames::NAMES,
         ]);
     }
 
     #[Route('/admin/market/resources/{id}', name: 'admin.market.resources.delete', methods: ['POST'])]
-    public function deleteResources(int $id): RedirectResponse
+    public function deleteResources(MarketResource $marketResource): RedirectResponse
     {
-        $this->marketResourceRepository->delete($id);
+        $this->marketResourceRepository->delete($marketResource);
         $this->addFlash('success', "Angebot gelöscht!");
 
         return $this->redirectToRoute('admin.market.resources');
@@ -72,17 +72,15 @@ class MarketController extends AbstractController
     public function ships(): Response
     {
         return $this->render('admin/market/ships.html.twig', [
-            'offers' => $this->marketShipRepository->getAll(),
-            'userNicknames' => $this->userRepository->searchUserNicknames(),
+            'offers' => $this->marketShipRepository->findBy([],['date'=>'ASC']),
             'resourceNames' => ResourceNames::NAMES,
-            'shipNames' => $this->shipDataRepository->searchShipNames(),
         ]);
     }
 
     #[Route('/admin/market/ships/{id}', name: 'admin.market.ships.delete', methods: ['POST'])]
-    public function deleteShips(int $id): RedirectResponse
+    public function deleteShips(MarketShip $marketShip): RedirectResponse
     {
-        $this->marketShipRepository->delete($id);
+        $this->marketShipRepository->delete($marketShip);
         $this->addFlash('success', "Angebot gelöscht!");
 
         return $this->redirectToRoute('admin.market.ships');
@@ -92,18 +90,16 @@ class MarketController extends AbstractController
     public function auctions(): Response
     {
         return $this->render('admin/market/auctions.html.twig', [
-            'auctions' => $this->marketAuctionRepository->getAll(),
-            'userNicknames' => $this->userRepository->searchUserNicknames(),
+            'auctions' => $this->marketAuctionRepository->findBy([],['dateEnd'=>'ASC']),
             'resourceNames' => ResourceNames::NAMES,
-            'shipNames' => $this->shipDataRepository->getShipNames(true),
             'now' => time(),
         ]);
     }
 
     #[Route('/admin/market/shipss/{id}', name: 'admin.market.auctions.delete', methods: ['POST'])]
-    public function deleteAuction(int $id): RedirectResponse
+    public function deleteAuction(MarketAuction $marketAuction): RedirectResponse
     {
-        $this->marketAuctionRepository->deleteAuction($id);
+        $this->marketAuctionRepository->deleteAuction($marketAuction);
         $this->addFlash('success', "Angebot gelöscht!");
 
         return $this->redirectToRoute('admin.market.auctions');

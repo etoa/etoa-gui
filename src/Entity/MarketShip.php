@@ -61,10 +61,10 @@ class MarketShip
     private ?Alliance $forAlliance = null;
 
     #[ORM\Column(type: "boolean")]
-    private bool $buyable;
+    private bool $buyable = true;
 
     #[ORM\Column]
-    private string $text;
+    private string $text = '';
 
     #[ORM\Column(name: "datum", type: "integer")]
     private int $date;

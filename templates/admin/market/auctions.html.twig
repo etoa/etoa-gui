@@ -7,23 +7,23 @@
     {% for auction in auctions %}
         <table class="tb">
             <tr>
-                <th>Anbieter</td>
-                <th>Auktion Start/Ende</td>
-                <th colspan="3">Angebot</td>
-                <th>Status</td>
+                <td>Anbieter</td>
+                <td>Auktion Start/Ende</td>
+                <td colspan="3">Angebot</td>
+                <td>Status</td>
             </tr>
             <tr>
                 <td rowspan="5">
-                    <a href="{{ path('admin.users.view', {id: auction.userId}) }}">{{ userNicknames[auction.userId]|default('Niemand') }}</a>
+                    <a href="{{ path('admin.users.view', {id: auction.user.id}) }}">{{ auction.user.nick|default('Niemand') }}</a>
                 </td>
                 <td>
                     Start {{ formatTimestamp(auction.dateStart) }}
                 </td>
 
-                {% if auction.shipId > 0 %}
+                {% if auction.ship is defined %}
                     <td rowspan="5">
                         {{ auction.shipCount }}
-                        <a href="?page=help&site=shipyard&id={{ auction.shipId }}">{{ shipNames[auction.shipId] }}</a>
+                        <a href="?page=help&site=shipyard&id={{ auction.ship.id }}">{{ auction.ship.name }}</a>
                     </td>
                 {% else %}
                     <td rowspan="5">Keine Schiffe</td>
@@ -37,9 +37,9 @@
                 </td>
 
                 <td class="tbldata" rowspan="5">
-                    {% if auction.currentBuyerId > 0 and auction.buyable == 0 %}
+                    {% if auction.currentBuyer.id is defined and auction.buyable == 0 %}
                         Verkauft!<br/><br/>
-                    {% elseif auction.currentBuyerId > 0 %}
+                    {% elseif auction.currentBuyer is defined %}
                         Es wurde bereits geboten<br><br>
                     {% endif %}
 
@@ -94,7 +94,7 @@
                 </td>
             </tr>
 
-            {% if auction.currentBuyerId > 0 %}
+            {% if auction.currentBuyer is defined %}
                 <tr>
                     <th colspan="6">
                         Höchstgebot
@@ -102,7 +102,7 @@
                 </tr>
                 <tr>
                     <td rowspan="5">
-                        <a href="{{ path('admin.users.view', {id: auction.currentBuyerId}) }}">{{ userNicknames[auction.currentBuyerId]|default('Niemand') }}</a>
+                        <a href="{{ path('admin.users.view', {id: auction.currentBuyer.id}) }}">{{ auction.currentBuyer.nick|default('Niemand') }}</a>
                     </td>
                     <td rowspan="5">
                         Geboten {{ formatTimestamp(auction.currentBuyerDate) }}
