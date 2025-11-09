@@ -53,20 +53,20 @@ class MarketImageGenerator
 
             foreach ($marketRates as $marketRate) {
                 $rates = [
-                    $marketRate->rate->metal,
-                    $marketRate->rate->crystal,
-                    $marketRate->rate->plastic,
-                    $marketRate->rate->fuel,
-                    $marketRate->rate->food,
-                    $marketRate->rate->people,
+                    $marketRate->getRate()->metal,
+                    $marketRate->getRate()->crystal,
+                    $marketRate->getRate()->plastic,
+                    $marketRate->getRate()->fuel,
+                    $marketRate->getRate()->food,
+                    $marketRate->getRate()->people,
                 ];
                 $drate = max(max($rates), $drate);
                 $grates[] = $rates;
                 if ($ts1 === null) {
-                    $ts1 = $marketRate->timestamp;
+                    $ts1 = $marketRate->getTimestamp();
                 }
 
-                $ts2 = $marketRate->timestamp;
+                $ts2 = $marketRate->getTimestamp();
             }
             $grates = array_reverse($grates);
             $drate *= 1.2;

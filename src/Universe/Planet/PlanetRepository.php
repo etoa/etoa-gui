@@ -481,15 +481,14 @@ class PlanetRepository extends AbstractRepository
     {
         $data = $this->createQueryBuilder('q')
             ->select(
-                'SUM(planet_res_metal) as metal',
-                'SUM(planet_res_crystal) as crystal',
-                'SUM(planet_res_plastic) as plastic',
-                'SUM(planet_res_fuel) as fuel',
-                'SUM(planet_res_food) as food'
+                'SUM(q.resMetal) as metal',
+                'SUM(q.resCrystal) as crystal',
+                'SUM(q.resPlastic) as plastic',
+                'SUM(q.resFuel) as fuel',
+                'SUM(q.resFood) as food'
             )
-            ->from('planets', 'p')
-            ->innerJoin('p', 'users', 'u', 'planet_user_id = user_id AND user_ghost = 0')
-            ->fetchAssociative();
+            ->getQuery()
+            ->getOneOrNullResult();
 
         $res = new BaseResources();
         $res->metal = (int) $data['metal'];

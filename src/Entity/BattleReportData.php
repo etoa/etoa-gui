@@ -303,11 +303,6 @@ class BattleReportData
 
     */
 
-    public function getId(): ?int
-    {
-        return $this->id;
-    }
-
     public function getSubtype(): ?string
     {
         return $this->subtype;

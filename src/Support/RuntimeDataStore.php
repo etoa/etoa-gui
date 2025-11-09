@@ -17,27 +17,21 @@ class RuntimeDataStore extends AbstractRepository
 
     public function get(string $key, string $default = null): ?string
     {
-        return $this->findOneBy(['dataKey'=>$key])??$default;
+        return $this->findOneBy(['dataKey'=>$key])->getDataValue()??$default;
     }
 
     public function set(string $key, string $value): void
     {
-        $this->getConnection()
-            ->executeStatement("
-				REPLACE INTO
-					runtime_data
-				(
-					data_key,
-					data_value
-				)
-				VALUES
-				(
-					:key,
-					:value
-				)
-				;", [
-                'key' => $key,
-                'value' => $value,
-            ]);
+        $data = $this->find($key);
+
+        if(!$data) {
+            $data = new RuntimeData();
+            $data->setDataKey($key);
+            $this->persist($data);
+        }
+
+        $data->setDataValue($value);
+
+        $this->save();
     }
 }

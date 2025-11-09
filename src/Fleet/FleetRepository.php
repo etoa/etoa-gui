@@ -240,14 +240,14 @@ class FleetRepository extends AbstractRepository
     {
         $data = $this->createQueryBuilder('q')
             ->select(
-                'SUM(res_metal) as metal',
-                'SUM(res_crystal) as crystal',
-                'SUM(res_plastic) as plastic',
-                'SUM(res_fuel) as fuel',
-                'SUM(res_food) as food'
+                'SUM(q.resMetal) as metal',
+                'SUM(q.resCrystal) as crystal',
+                'SUM(q.resPlastic) as plastic',
+                'SUM(q.resFuel) as fuel',
+                'SUM(q.resFood) as food'
             )
-            ->from('fleet')
-            ->fetchAssociative();
+            ->getQuery()
+            ->getOneOrNullResult();
 
         $res = new BaseResources();
         $res->metal = (int) $data['metal'];

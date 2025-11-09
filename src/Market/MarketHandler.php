@@ -57,8 +57,8 @@ class MarketHandler
 
             // For every resource calculate the ration and multiply with the weight factor
             for ($i = 0; $i < BaseResources::NUM_RESOURCES; $i++) {
-                if ($rate->supply->get($i) > 0) {
-                    $r = ($rate->demand->get($i) / $rate->supply->get($i));
+                if ($rate->getSupply()->get($i) > 0) {
+                    $r = ($rate->getDemand()->get($i) / $rate->getSupply()->get($i));
                     if ($r > $rateMax) {
                         $rates[$i] += $rateMax * $factor;
                     }
@@ -68,7 +68,7 @@ class MarketHandler
                         $rates[$i] += $r * $factor;
                     }
                 } else {
-                    if ($rate->demand->get($i) > 0) {
+                    if ($rate->getDemand()->get($i) > 0) {
                         $rates[$i] += $rateMax * $factor;
                     } else {
                         $rates[$i] += 1 * $factor;
@@ -117,19 +117,21 @@ class MarketHandler
         $rates = $this->calcRate();
 
         $rate = new MarketRate();
-        $rate->timestamp = time();
+        $rate->setTimestamp(time());
         for ($i = 0; $i < BaseResources::NUM_RESOURCES; $i++) {
             $this->runtimeDataStore->set('market_rate_' . $i, (string) $rates[$i]);
-            $rate->rate->set($i, $rates[$i]);
+            $rate->getRate()->set($i, $rates[$i]);
         }
 
         // Add a new row to the rates table. This row gets filled from now on with buy results
-        $this->marketRateRepository->save($rate);
+
+        $this->marketRateRepository->persist($rate);
+        $this->marketRateRepository->save();
 
         // Remove old values
         $rates = $this->marketRateRepository->getRates(1, $this->config->getInt('market_rates_count') * 2);
         if (count($rates) > 0) {
-            $this->marketRateRepository->removeWhereIdLowerThan($rates[0]->id);
+            $this->marketRateRepository->removeWhereIdLowerThan($rates[0]->getId());
         }
     }
 
@@ -145,10 +147,10 @@ class MarketHandler
         $rate = $rates[0];
 
         for ($i = 0; $i < BaseResources::NUM_RESOURCES; $i++) {
-            $rate->supply->set($i, $supply[$i]);
-            $rate->demand->set($i, $demand[$i]);
+            $rate->getSupply()->set($i, $supply[$i]);
+            $rate->getDemand()->set($i, $demand[$i]);
         }
 
-        $this->marketRateRepository->save($rate);
+        $this->marketRateRepository->save();
     }
 }

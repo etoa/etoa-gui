@@ -19,15 +19,12 @@ class MarketRateRepository extends AbstractRepository
      */
     public function getRates(int $amount, int $offset = 0): array
     {
-        $data = $this->createQueryBuilder('q')
-            ->select("*")
-            ->from('market_rates')
-            ->orderBy('id', 'DESC')
+        return $this->createQueryBuilder('q')
+            ->orderBy('q.id', 'DESC')
             ->setMaxResults($amount)
             ->setFirstResult($offset)
-            ->fetchAllAssociative();
-
-        return array_map(fn ($row) => MarketRate::createFromArray($row), $data);
+            ->getQuery()
+            ->execute();
     }
 
     public function removeWhereIdLowerThan(int $id): void
