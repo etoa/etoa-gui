@@ -2,10 +2,12 @@
 
 namespace EtoA\Controller\Admin;
 
+use EtoA\Entity\MessageData;
 use EtoA\Form\Type\Admin\MessageSearchType;
 use EtoA\Form\Type\Admin\MessageSendType;
 use EtoA\Form\Type\Admin\ReportSearchType;
 use EtoA\Message\AdminMessageRequest;
+use EtoA\Message\MessageDataRepository;
 use EtoA\Message\MessageRepository;
 use EtoA\Message\ReportRepository;
 use EtoA\Support\Mail\MailSenderService;
@@ -51,23 +53,26 @@ class MessageController extends AbstractAdminController
     public function sendMessage(Request $request): Response
     {
         $messageRequest = AdminMessageRequest::fromRequest($request);
-        $form = $this->createForm(MessageSendType::class, $messageRequest, ['admin_player_id' => $this->getUser()->getData()->playerId]);
+        $form = $this->createForm(MessageSendType::class, $messageRequest, ['admin_player' => $this->getUser()->getData()?->getPlayer()]);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             $msgCnt = 0;
             if ($messageRequest->sendAsInGameMessage()) {
-                if ($messageRequest->userId === null) {
-                    $userIds = array_keys($this->userRepository->searchUserNicknames());
+                if ($messageRequest->user === null) {
+                    $users = $this->userRepository->searchUserNicknames();
                 } else {
-                    $userIds = [$messageRequest->userId];
+                    $users = [$messageRequest->user];
                 }
 
-                foreach ($userIds as $userId) {
+                foreach ($users as $user) {
+                    $messageData = new MessageData();
+                    $messageData->setText($messageRequest->text);
+                    $messageData->setSubject($messageRequest->subject);
+
                     $this->messageRepository->sendFromUserToUser(
-                        $messageRequest->fromId,
-                        $userId,
-                        $messageRequest->subject,
-                        $messageRequest->text
+                        $messageRequest->from,
+                        $user,
+                        $messageData
                     );
                     $msgCnt++;
                 }
@@ -79,16 +84,16 @@ class MessageController extends AbstractAdminController
 
             $mailCnt = 0;
             if ($messageRequest->sendAsEmail()) {
-                if ($messageRequest->userId === null) {
+                if ($messageRequest->user === null) {
                     $recipients = $this->userRepository->getEmailAddressesWithNickname();
                 } else {
-                    $recipient = $this->userRepository->getUser($messageRequest->userId);
-                    $recipients = [$recipient->email => $recipient->nick];
+                    $recipient = $messageRequest->user;
+                    $recipients = [$recipient->getEmail() => $recipient->getNick()];
                 }
 
-                if ($messageRequest->fromId > 0) {
-                    $replyUser = $this->userRepository->getUser($this->getUser()->getData()->playerId);
-                    $replyTo = [$replyUser->email => $replyUser->nick];
+                if ($messageRequest->from) {
+                    $replyUser = $this->getUser()->getData()->getPlayer();
+                    $replyTo = [$replyUser->getEmail() => $replyUser->getNick()];
                 } else {
                     $replyTo = null;
                 }

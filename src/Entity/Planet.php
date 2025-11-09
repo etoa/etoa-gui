@@ -809,4 +809,16 @@ class Planet extends AbstractEntity implements ObjectWithImage
     {
         return $this->resMetal . ":" . $this->resCrystal . ":" . $this->resPlastic . ":" . $this->resFuel . ":" . $this->resFood . ":" . $this->people . ":0,w," . $this->wfMetal . ":" . $this->wfCrystal . ":" . $this->wfPlastic;
     }
+
+    public function getLastUser(): ?User
+    {
+        return $this->lastUser;
+    }
+
+    public function setLastUser(?User $lastUser): static
+    {
+        $this->lastUser = $lastUser;
+
+        return $this;
+    }
 }

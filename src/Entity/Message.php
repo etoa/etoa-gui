@@ -16,8 +16,7 @@ class Message
     #[ORM\Column(name:"message_id", type: "integer")]
     private int $id;
 
-    #[ORM\OneToOne(inversedBy: 'message', targetEntity: MessageData::class, cascade: ['persist', 'remove'])]
-    #[ORM\JoinColumn(name: 'message_id', referencedColumnName: 'id')]
+    #[ORM\OneToOne(mappedBy: 'message', targetEntity: MessageData::class, cascade: ['persist', 'remove'])]
     private ?MessageData $messageData = null;
 
     #[ORM\JoinColumn(name: 'message_cat_id', referencedColumnName: 'cat_id')]
@@ -25,11 +24,11 @@ class Message
     private ?MessageCategory $cat = null;
 
     #[ORM\JoinColumn(name: 'message_user_from', referencedColumnName: 'user_id')]
-    #[ORM\ManyToOne(targetEntity: User::class)]
+    #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'messagesFrom')]
     private ?User $userFrom = null;
 
     #[ORM\JoinColumn(name: 'message_user_to', referencedColumnName: 'user_id')]
-    #[ORM\ManyToOne(targetEntity: User::class)]
+    #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'messagesTo')]
     private ?User $userTo = null;
 
     #[ORM\Column(name:"message_timestamp", type: "integer")]

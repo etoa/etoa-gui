@@ -15,35 +15,23 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class MessageSendType extends AbstractType
 {
-    public function __construct(
-        private UserRepository $userRepository
-    ) {
-    }
-
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver
             ->setDefaults([
-                'admin_player_id' => null,
+                'admin_player' => null,
             ]);
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
-        $fromChoices = ['System' => 0];
-        if ($options['admin_player_id'] > 0) {
-            $playerNick = $this->userRepository->getNick($options['admin_player_id']);
-            if ($playerNick !== null) {
-                $fromChoices[$playerNick] = $options['admin_player_id'];
-            }
-        }
-
         $builder
-            ->add('fromId', ChoiceType::class, [
+            ->add('from', UserType::class, [
                 'label' => 'Sender',
-                'choices' => $fromChoices,
+                'data' => $options['admin_player'],
+                'placeholder' => 'System',
             ])
-            ->add('userId', UserType::class, [
+            ->add('user', UserType::class, [
                 'label' => 'Empfänger',
                 'placeholder' => '(Alle Spieler)',
             ])
@@ -56,6 +44,7 @@ class MessageSendType extends AbstractType
                     'E-Mail' => AdminMessageRequest::MESSAGE_TYPE_EMAIL,
                     'InGame-Nachricht & E-Mail' => AdminMessageRequest::MESSAGE_TYPE_BOTH,
                 ],
+                'data' => AdminMessageRequest::MESSAGE_TYPE_IN_GAME
             ])
             ->add('subject', TextType::class, [
                 'label' => 'Betreff',

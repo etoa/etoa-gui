@@ -10,7 +10,7 @@ use EtoA\Message\MessageDataRepository;
 class MessageData
 {
     #[ORM\Id]
-    #[ORM\OneToOne(mappedBy: 'messageData', targetEntity: Message::class, cascade: ['persist', 'remove'])]
+    #[ORM\OneToOne(inversedBy: 'messageData', targetEntity: Message::class, cascade: ['persist', 'remove'])]
     #[ORM\JoinColumn(name: 'id', referencedColumnName: 'message_id')]
     private ?Message $message = null;
 

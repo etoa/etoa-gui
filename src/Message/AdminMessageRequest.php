@@ -2,6 +2,7 @@
 
 namespace EtoA\Message;
 
+use EtoA\Entity\User;
 use Symfony\Component\HttpFoundation\Request;
 
 class AdminMessageRequest
@@ -10,8 +11,8 @@ class AdminMessageRequest
     public const MESSAGE_TYPE_EMAIL = 1;
     public const MESSAGE_TYPE_BOTH = 2;
 
-    public int $fromId;
-    public ?int $userId = null;
+    public ?User $from = null;
+    public ?User $user = null;
     public string $subject;
     public string $text;
     public int $type;
@@ -29,8 +30,8 @@ class AdminMessageRequest
     public static function fromRequest(Request $request): AdminMessageRequest
     {
         $message = new AdminMessageRequest();
-        if ($request->query->has('userId')) {
-            $message->userId = $request->query->getInt('userId');
+        if ($request->query->has('user')) {
+            $message->user = $request->query->get('user');
         }
 
         if ($request->query->has('type')) {

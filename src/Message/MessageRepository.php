@@ -187,14 +187,11 @@ class MessageRepository extends AbstractRepository
         $message->setCat($cat??$this->messageCategoryRepository->find(MessageCategoryId::USER));
         $message->setTimestamp(time());
 
+        $messageData->setFleet($fleet);
+        $message->setMessageData($messageData);
+
         $this->persist($message);
         $this->save();
-
-        $messageData->setFleet($fleet);
-        $messageData->setId($message->getId());
-
-        $this->messageDataRepository->persist($messageData);
-        $this->messageDataRepository->save();
     }
 
     /**

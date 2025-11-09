@@ -305,6 +305,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: Report::class, cascade: ['persist', 'remove'])]
     private Collection $reports;
 
+    #[ORM\OneToMany(mappedBy: 'userFrom', targetEntity: Message::class, cascade: ['persist', 'remove'])]
+    private Collection $messagesFrom;
+
+    #[ORM\OneToMany(mappedBy: 'userTo', targetEntity: Message::class, cascade: ['persist', 'remove'])]
+    private Collection $messagesTo;
+
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: Fleet::class, cascade: ['persist', 'remove'])]
     private Collection $fleets;
 
@@ -339,6 +345,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->reports = new ArrayCollection();
         $this->fleets = new ArrayCollection();
         $this->sessionLogs = new ArrayCollection();
+        $this->messagesTo = new ArrayCollection();
+        $this->messagesFrom = new ArrayCollection();
     }
 
     public function __toString()
@@ -1976,6 +1984,66 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             // set the owning side to null (unless already changed)
             if ($sessionLog->getUser() === $this) {
                 $sessionLog->setUser(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Message>
+     */
+    public function getMessagesFrom(): Collection
+    {
+        return $this->messagesFrom;
+    }
+
+    public function addMessagesFrom(Message $messagesFrom): static
+    {
+        if (!$this->messagesFrom->contains($messagesFrom)) {
+            $this->messagesFrom->add($messagesFrom);
+            $messagesFrom->setUserFrom($this);
+        }
+
+        return $this;
+    }
+
+    public function removeMessagesFrom(Message $messagesFrom): static
+    {
+        if ($this->messagesFrom->removeElement($messagesFrom)) {
+            // set the owning side to null (unless already changed)
+            if ($messagesFrom->getUserFrom() === $this) {
+                $messagesFrom->setUserFrom(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Message>
+     */
+    public function getMessagesTo(): Collection
+    {
+        return $this->messagesTo;
+    }
+
+    public function addMessagesTo(Message $messagesTo): static
+    {
+        if (!$this->messagesTo->contains($messagesTo)) {
+            $this->messagesTo->add($messagesTo);
+            $messagesTo->setUserTo($this);
+        }
+
+        return $this;
+    }
+
+    public function removeMessagesTo(Message $messagesTo): static
+    {
+        if ($this->messagesTo->removeElement($messagesTo)) {
+            // set the owning side to null (unless already changed)
+            if ($messagesTo->getUserTo() === $this) {
+                $messagesTo->setUserTo(null);
             }
         }
 
