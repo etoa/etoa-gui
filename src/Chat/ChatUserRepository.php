@@ -4,7 +4,8 @@ namespace EtoA\Chat;
 
 use Doctrine\Persistence\ManagerRegistry;
 use EtoA\Core\AbstractRepository;
-use EtoA\Entity\ChatLog;
+use EtoA\Entity\ChatUser;
+use EtoA\Entity\User;
 
 class ChatUserRepository extends AbstractRepository
 {
@@ -18,13 +19,12 @@ class ChatUserRepository extends AbstractRepository
      */
     public function getChatUsers(): array
     {
-        $data = $this->createQueryBuilder('q')
-            ->select('*')
-            ->from('chat_users')
-            ->orderBy('nick')
-            ->fetchAllAssociative();
-
-        return array_map(fn (array $row) => new ChatUser($row), $data);
+        return $this->createQueryBuilder('q')
+            ->leftJoin('q.user', 'u')
+            ->addSelect('u')
+            ->orderBy('u.nick', 'ASC')
+            ->getQuery()
+            ->getResult();
     }
 
     /**
@@ -69,30 +69,23 @@ class ChatUserRepository extends AbstractRepository
             ]);
     }
 
-    public function kickUser(int $userId, string $kickMessage): int
+    public function kickUser(User $user, string $kickMessage): void
     {
-        return $this->getConnection()->executeQuery('
-            UPDATE
-				chat_users
-			SET
-				kick=:kick
-			WHERE
-				user_id=:userId
-        ', [
-            'kick' => $kickMessage,
-            'userId' => $userId,
-        ])->rowCount();
+        $chatUser = $this->find($user);
+
+        if($chatUser)
+            $chatUser->setKick($kickMessage);
+
+        $this->save();
     }
 
-    public function deleteUser(int $userId): int
+    public function deleteUser(User $user): void
     {
-        return $this->getConnection()->executeQuery('
-            DELETE FROM
-				chat_users
-			WHERE
-				user_id=:userId
-        ', [
-            'userId' => $userId,
-        ])->rowCount();
+        $chatUser = $this->find($user);
+
+        if($chatUser) {
+            $this->remove($chatUser);
+            $this->save();
+        }
     }
 }

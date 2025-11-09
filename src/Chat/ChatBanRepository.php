@@ -6,6 +6,7 @@ use Doctrine\Persistence\ManagerRegistry;
 use EtoA\Core\AbstractRepository;
 use EtoA\Entity\BuildingListItem;
 use EtoA\Entity\ChatBan;
+use EtoA\Entity\User;
 
 class ChatBanRepository extends AbstractRepository
 {
@@ -41,26 +42,30 @@ class ChatBanRepository extends AbstractRepository
         return array_map(fn (array $row) => new ChatBan($row), $data);
     }
 
-    public function banUser(int $userId, string $reason, bool $forceReason = false): void
+    public function banUser(User $user, string $reason, bool $forceReason = false): void
     {
-        $this->getConnection()->executeQuery('
-            INSERT INTO
-				chat_banns
-			(user_id, reason, timestamp)
-			VALUES (:userId, :reason, :time)
-			ON DUPLICATE KEY UPDATE timestamp = :time' . ($forceReason ? ',reason=:reason' : ''), [
-            'userId' => $userId,
-            'reason' => $reason,
-            'time' => time(),
-        ]);
+        $ban = $this->find($user);
+
+        if(!$ban) {
+            $ban = new ChatBan();
+            $ban->setUser($user);
+            $ban->setReason($reason);
+        } else {
+            if($forceReason)
+                $ban->setReason($reason);
+        }
+
+        $ban->setTimestamp(time());
+
+        $this->persist($ban);
+        $this->save();
     }
 
-    public function deleteBan(int $userId): int
+    public function deleteBan(User $user): void
     {
-        return $this->getConnection()->executeQuery('
-            DELETE FROM chat_banns WHERE user_id = :userId
-        ', [
-            'userId' => $userId,
-        ])->rowCount();
+        $ban = $this->find($user);
+
+        $this->remove($ban);
+        $this->save();
     }
 }

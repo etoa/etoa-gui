@@ -25,11 +25,12 @@ class ChatLog
     #[ORM\Column]
     private string $color;
 
-    #[ORM\Column(type: "integer")]
-    private int $userId;
+    #[ORM\ManyToOne(targetEntity: User::class)]
+    #[ORM\JoinColumn(name: 'user_id', referencedColumnName: 'user_id')]
+    private ?User $user = null;
 
-    #[ORM\Column(type: "integer")]
-    private int $admin;
+    #[ORM\Column(type: "boolean")]
+    private bool $admin;
 
     #[ORM\Column(type: "boolean")]
     private bool $private;
@@ -90,24 +91,12 @@ class ChatLog
         return $this;
     }
 
-    public function getUserId(): ?int
-    {
-        return $this->userId;
-    }
-
-    public function setUserId(int $userId): static
-    {
-        $this->userId = $userId;
-
-        return $this;
-    }
-
-    public function getAdmin(): ?int
+    public function getAdmin(): ?bool
     {
         return $this->admin;
     }
 
-    public function setAdmin(int $admin): static
+    public function setAdmin(bool $admin): static
     {
         $this->admin = $admin;
 
@@ -134,6 +123,23 @@ class ChatLog
     public function setChannel(string $channel): static
     {
         $this->channel = $channel;
+
+        return $this;
+    }
+
+    public function isAdmin(): ?bool
+    {
+        return $this->admin;
+    }
+
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
+
+    public function setUser(?User $user): static
+    {
+        $this->user = $user;
 
         return $this;
     }

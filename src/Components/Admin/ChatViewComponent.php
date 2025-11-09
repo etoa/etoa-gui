@@ -5,9 +5,9 @@ namespace EtoA\Components\Admin;
 use EtoA\Chat\ChatBanRepository;
 use EtoA\Chat\ChatMessage;
 use EtoA\Chat\ChatRepository;
-use EtoA\Chat\ChatUser;
 use EtoA\Chat\ChatUserRepository;
 use EtoA\Entity\ChatBan;
+use EtoA\Entity\ChatUser;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
 use Symfony\UX\LiveComponent\Attribute\LiveAction;
 use Symfony\UX\LiveComponent\DefaultActionTrait;
@@ -18,9 +18,9 @@ class ChatViewComponent
     use DefaultActionTrait;
 
     public function __construct(
-        private ChatBanRepository $chatBanRepository,
-        private ChatUserRepository $chatUserRepository,
-        private ChatRepository $chatRepository,
+        private readonly ChatBanRepository  $chatBanRepository,
+        private readonly ChatUserRepository $chatUserRepository,
+        private readonly ChatRepository     $chatRepository,
     ) {
     }
 
@@ -50,6 +50,6 @@ class ChatViewComponent
      */
     public function getBans(): array
     {
-        return $this->chatBanRepository->getBans();
+        return $this->chatBanRepository->findAll();
     }
 }

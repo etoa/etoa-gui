@@ -20,7 +20,7 @@ class ChatLogSearchComponent extends AbstractController
     private ChatLogSearchRequest $request;
 
     public function __construct(
-        private ChatLogRepository $chatLogRepository,
+        private readonly ChatLogRepository $chatLogRepository,
     ) {
         $this->perPage = 250;
         $this->request = new ChatLogSearchRequest();
@@ -29,15 +29,15 @@ class ChatLogSearchComponent extends AbstractController
     public function getSearch(): SearchResult
     {
         $search = ChatLogSearch::create();
-        if ($this->request->userId !== null) {
-            $search->userId($this->request->userId);
+        if ($this->request->user) {
+            $search->userId($this->request->user);
         }
 
-        if ($this->request->text !== null) {
+        if ($this->request->text) {
             $search->textLike($this->request->text);
         }
 
-        $total = $this->chatLogRepository->count($search);
+        $total = $this->chatLogRepository->countBySearch($search);
 
         $limit = $this->getLimit($total);
 

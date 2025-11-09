@@ -2,8 +2,10 @@
 
 namespace EtoA\Form\Request\Admin;
 
+use EtoA\Entity\User;
+
 class ChatLogSearchRequest
 {
-    public ?int $userId = null;
+    public ?User $user = null;
     public ?string $text = null;
 }

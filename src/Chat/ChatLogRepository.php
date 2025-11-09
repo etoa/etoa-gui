@@ -34,13 +34,10 @@ class ChatLogRepository extends AbstractRepository
      */
     public function search(ChatLogSearch $search = null, int $limit = null, int $offset = null): array
     {
-        $data = $this->applySearchSortLimit($this->createQueryBuilder('q'), $search, null, $limit, $offset)
-            ->select('*')
-            ->from('chat_log')
-            ->orderBy('id', 'DESC')
-            ->fetchAllAssociative();
-
-        return array_map(fn (array $row) => new ChatLog($row), $data);
+        return $this->applySearchSortLimit($this->createQueryBuilder('q'), $search, null, $limit, $offset)
+            ->orderBy('q.id', 'DESC')
+            ->getQuery()
+            ->execute();
     }
 
     public function addLog(int $userId, string $nick, string $text, string $color, int $admin, string $channel = ''): void
@@ -66,5 +63,14 @@ class ChatLogRepository extends AbstractRepository
                 'channel' => $channel,
             ])
             ->executeQuery();
+    }
+
+    public function countBySearch(ChatLogSearch $search = null): int
+    {
+        return (int) $this->applySearchSortLimit($this->createQueryBuilder('q'), $search)
+            ->select('COUNT(q)')
+            ->setMaxResults(1)
+            ->getQuery()
+            ->getOneOrNullResult();
     }
 }

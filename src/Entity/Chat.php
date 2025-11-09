@@ -15,25 +15,26 @@ class Chat
     private int $id;
 
     #[ORM\Column(type: "integer")]
-    private int $timestamp;
+    private int $timestamp = 0;
 
     #[ORM\Column]
-    private string $nick;
+    private ?string $nick = null;
 
     #[ORM\Column]
-    private string $text;
+    private string $text = '';
 
     #[ORM\Column]
-    private string $color;
+    private ?string $color = '#fff';
 
-    #[ORM\Column(type: "integer")]
-    private int $userId;
+    #[ORM\ManyToOne(targetEntity: User::class)]
+    #[ORM\JoinColumn(name: 'user_id', referencedColumnName: 'user_id')]
+    private ?User $user = null;
 
-    #[ORM\Column(type: "integer")]
-    private int $admin;
+    #[ORM\Column(type: "boolean")]
+    private bool $admin = false;
 
     #[ORM\Column(type:'integer')]
-    private int $channelId;
+    private int $channelId = 0;
 
     public function getId(): ?int
     {
@@ -88,24 +89,12 @@ class Chat
         return $this;
     }
 
-    public function getUserId(): ?int
-    {
-        return $this->userId;
-    }
-
-    public function setUserId(int $userId): static
-    {
-        $this->userId = $userId;
-
-        return $this;
-    }
-
-    public function getAdmin(): ?int
+    public function getAdmin(): ?bool
     {
         return $this->admin;
     }
 
-    public function setAdmin(int $admin): static
+    public function setAdmin(bool $admin): static
     {
         $this->admin = $admin;
 
@@ -122,5 +111,22 @@ class Chat
         $this->channelId = $channelId;
 
         return $this;
+    }
+
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
+
+    public function setUser(?User $user): static
+    {
+        $this->user = $user;
+
+        return $this;
+    }
+
+    public function isAdmin(): ?bool
+    {
+        return $this->admin;
     }
 }

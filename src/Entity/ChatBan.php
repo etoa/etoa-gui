@@ -10,10 +10,6 @@ use EtoA\Chat\ChatBanRepository;
 class ChatBan
 {
     #[ORM\Id]
-    #[ORM\GeneratedValue(strategy: "AUTO")]
-    #[ORM\Column(type: "integer")]
-    private int $userId;
-
     #[ORM\ManyToOne(targetEntity: User::class)]
     #[ORM\JoinColumn(name: 'user_id', referencedColumnName: 'user_id')]
     private User $user;
@@ -23,11 +19,6 @@ class ChatBan
 
     #[ORM\Column(type: "integer")]
     private int $timestamp;
-
-    public function getUserId(): ?int
-    {
-        return $this->userId;
-    }
 
     public function getReason(): ?string
     {

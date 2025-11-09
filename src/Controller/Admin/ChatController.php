@@ -6,6 +6,7 @@ use EtoA\Chat\ChatBanRepository;
 use EtoA\Chat\ChatLogRepository;
 use EtoA\Chat\ChatManager;
 use EtoA\Chat\ChatUserRepository;
+use EtoA\Entity\User;
 use EtoA\Form\Type\Admin\ChatLogSearchType;
 use EtoA\User\UserRepository;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -35,14 +36,13 @@ class ChatController extends AbstractAdminController
 
     #[Route('/admin/chat/users/{id}/ban', name: 'admin.chat.ban')]
     #[IsGranted('ROLE_ADMIN_TRIAL-ADMIN')]
-    public function ban(int $id): RedirectResponse
+    public function ban(?User $user = null): RedirectResponse
     {
-        $user = $this->userRepository->getUser($id);
         if ($user === null) {
             $this->addFlash('error', 'Spieler nicht gefunden');
         } else {
-            $this->chatBanRepository->banUser($user->getId(), 'Banned by Admin');
-            $this->chatUserRepository->kickUser($user->getId(), 'Bannend by Admin');
+            $this->chatBanRepository->banUser($user, 'Banned by Admin');
+            $this->chatUserRepository->kickUser($user, 'Bannend by Admin');
             $this->chatManager->sendSystemMessage($user->getNick() . " wurde gebannt!");
 
             $this->addFlash('success', $user->getNick() . " wurde gebannt!");
@@ -53,13 +53,12 @@ class ChatController extends AbstractAdminController
 
     #[Route('/admin/chat/users/{id}/kick', name: 'admin.chat.kick')]
     #[IsGranted('ROLE_ADMIN_TRIAL-ADMIN')]
-    public function kick(int $id): RedirectResponse
+    public function kick(?User $user = null): RedirectResponse
     {
-        $user = $this->userRepository->getUser($id);
         if ($user === null) {
             $this->addFlash('error', 'Spieler nicht gefunden');
         } else {
-            $this->chatUserRepository->kickUser($user->getId(), 'Bannend by Admin');
+            $this->chatUserRepository->kickUser($user, 'Bannend by Admin');
             $this->chatManager->sendSystemMessage($user->getNick() . " wurde gekickt!");
 
             $this->addFlash('success', $user->getNick() . " wurde gekickt!");
@@ -70,13 +69,12 @@ class ChatController extends AbstractAdminController
 
     #[Route('/admin/chat/users/{id}/delete', name: 'admin.chat.delete')]
     #[IsGranted('ROLE_ADMIN_TRIAL-ADMIN')]
-    public function delete(int $id): RedirectResponse
+    public function delete(?User $user = null): RedirectResponse
     {
-        $user = $this->userRepository->getUser($id);
         if ($user === null) {
             $this->addFlash('error', 'Spieler nicht gefunden');
         } else {
-            $this->chatUserRepository->deleteUser($user->getId());
+            $this->chatUserRepository->deleteUser($user);
 
             $this->addFlash('success', $user->getNick() . " wurde aus dem Chat gelöscht!");
         }
@@ -86,13 +84,12 @@ class ChatController extends AbstractAdminController
 
     #[Route('/admin/chat/users/{id}/unban', name: 'admin.chat.unban')]
     #[IsGranted('ROLE_ADMIN_TRIAL-ADMIN')]
-    public function unban(int $id): RedirectResponse
+    public function unban(?User $user = null): RedirectResponse
     {
-        $user = $this->userRepository->getUser($id);
         if ($user === null) {
             $this->addFlash('error', 'Spieler nicht gefunden');
         } else {
-            $this->chatBanRepository->deleteBan($user->getId());
+            $this->chatBanRepository->deleteBan($user);
 
             $this->addFlash('success', "Ban für " . $user->getNick() . " wurde gelöscht!");
         }
@@ -106,7 +103,7 @@ class ChatController extends AbstractAdminController
     {
         return $this->render('admin/chat/log.html.twig', [
             'form' => $this->createForm(ChatLogSearchType::class, $request->query->all()),
-            'total' => $this->chatLogRepository->count(),
+            'total' => $this->chatLogRepository->count([]),
         ]);
     }
 }

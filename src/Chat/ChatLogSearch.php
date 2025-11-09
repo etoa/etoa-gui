@@ -3,6 +3,7 @@
 namespace EtoA\Chat;
 
 use EtoA\Core\Database\AbstractSearch;
+use EtoA\Entity\User;
 
 class ChatLogSearch extends AbstractSearch
 {
@@ -11,9 +12,9 @@ class ChatLogSearch extends AbstractSearch
         return new ChatLogSearch();
     }
 
-    public function userId(int $userId): self
+    public function userId(int|User $userId): self
     {
-        $this->parts[] = 'user_id = :userId';
+        $this->parts[] = 'q.user = :userId';
         $this->parameters['userId'] = $userId;
 
         return $this;
@@ -21,7 +22,7 @@ class ChatLogSearch extends AbstractSearch
 
     public function textLike(string $text): self
     {
-        $this->parts[] = 'text LIKE :textLike';
+        $this->parts[] = 'q.text LIKE :textLike';
         $this->parameters['textLike'] = '%' . $text . '%';
 
         return $this;

@@ -18,34 +18,26 @@ class ChatRepository extends AbstractRepository
      */
     public function getMessagesAfter(int $minId, int $channelId = 0): array
     {
-        $data = $this->createQueryBuilder('q')
-            ->select('*')
-            ->from('chat')
-            ->where('id > :minId')
-            ->andWhere('channel_id = :channelId')
+        return $this->createQueryBuilder('q')
+            ->where('q.id > :minId')
+            ->andWhere('q.channelId = :channelId')
             ->setParameters([
                 'minId' => $minId,
                 'channelId' => $channelId,
             ])
-            ->orderBy('timestamp', 'ASC')
-            ->executeQuery()
-            ->fetchAllAssociative();
-
-        return array_map(fn (array $row) => new ChatMessage($row), $data);
+            ->orderBy('q.timestamp', 'ASC')
+            ->getQuery()
+            ->execute();
     }
 
     public function addSystemMessage(string $message): void
     {
-        $this->createQueryBuilder('q')
-            ->insert('chat')
-            ->values([
-                'timestamp' => ':time',
-                'text' => ':text',
-            ])
-            ->setParameters([
-                'time' => time(),
-                'text' => $message,
-            ])->executeQuery();
+        $chat = new Chat();
+        $chat->setTimestamp(time());
+        $chat->setText($message);
+
+        $this->persist($chat);
+        $this->save();
     }
 
     public function addMessage(int $userId, string $nick, string $message, string $color, int $admin): void
