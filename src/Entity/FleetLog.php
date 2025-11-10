@@ -2,9 +2,8 @@
 
 namespace EtoA\Entity;
 
-use Doctrine\DBAL\Types\Types;
+use EtoA\Core\Database\DataTransformer;
 use EtoA\Log\FleetLogRepository;
-use EtoA\Universe\Resources\ResourceNames;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: FleetLogRepository::class)]
@@ -16,23 +15,28 @@ class FleetLog
     #[ORM\Column(type: "integer")]
     private int $id;
 
-    #[ORM\Column(type: "integer")]
-    private int $userId;
+    #[ORM\JoinColumn(name: 'user_id', referencedColumnName: 'user_id')]
+    #[ORM\ManyToOne(targetEntity: User::class)]
+    private ?User $user;
 
-    #[ORM\Column(type: "integer")]
-    private int $fleetId;
+    #[ORM\JoinColumn(name: 'fleet_id', referencedColumnName: 'id')]
+    #[ORM\ManyToOne(targetEntity: Fleet::class)]
+    private ?Fleet $fleet;
 
-    #[ORM\Column(type: "integer")]
-    private int $entityUserId;
+    #[ORM\JoinColumn(name: 'entity_user_id', referencedColumnName: 'user_id')]
+    #[ORM\ManyToOne(targetEntity: User::class)]
+    private ?User $entityUser;
 
     #[ORM\Column]
     private string $action;
 
-    #[ORM\Column(type: "integer")]
-    private int $entityFrom;
+    #[ORM\JoinColumn(name: 'entity_from', referencedColumnName: 'id')]
+    #[ORM\ManyToOne(targetEntity: Entity::class)]
+    private ?Entity $entityFrom;
 
-    #[ORM\Column(type: "integer")]
-    private int $entityTo;
+    #[ORM\JoinColumn(name: 'entity_to', referencedColumnName: 'id')]
+    #[ORM\ManyToOne(targetEntity: Entity::class)]
+    private ?Entity $entityTo;
 
     #[ORM\Column(type: "integer")]
     private int $timestamp;
@@ -84,18 +88,6 @@ class FleetLog
         return $this->id;
     }
 
-    public function getUserId(): ?int
-    {
-        return $this->userId;
-    }
-
-    public function setUserId(int $userId): static
-    {
-        $this->userId = $userId;
-
-        return $this;
-    }
-
     public function getAction(): ?string
     {
         return $this->action;
@@ -108,24 +100,24 @@ class FleetLog
         return $this;
     }
 
-    public function getEntityFrom(): ?int
+    public function getEntityFrom(): Entity
     {
         return $this->entityFrom;
     }
 
-    public function setEntityFrom(int $entityFrom): static
+    public function setEntityFrom(Entity $entityFrom): static
     {
         $this->entityFrom = $entityFrom;
 
         return $this;
     }
 
-    public function getEntityTo(): ?int
+    public function getEntityTo(): Entity
     {
         return $this->entityTo;
     }
 
-    public function setEntityTo(int $entityTo): static
+    public function setEntityTo(Entity $entityTo): static
     {
         $this->entityTo = $entityTo;
 
@@ -204,9 +196,9 @@ class FleetLog
         return $this;
     }
 
-    public function getFleetShipsStart(): string
+    public function getFleetShipsStart(): array
     {
-        return $this->fleetShipsStart;
+        return DataTransformer::dataString($this->fleetShipsStart,Ship::class);
     }
 
     public function setFleetShipsStart(string $fleetShipsStart): static
@@ -216,9 +208,9 @@ class FleetLog
         return $this;
     }
 
-    public function getFleetShipsEnd(): string
+    public function getFleetShipsEnd(): array
     {
-        return $this->fleetShipsEnd;
+        return DataTransformer::dataString($this->fleetShipsEnd,Ship::class);
     }
 
     public function setFleetShipsEnd(string $fleetShipsEnd): static
@@ -228,9 +220,9 @@ class FleetLog
         return $this;
     }
 
-    public function getEntityShipsStart(): string
+    public function getEntityShipsStart(): array
     {
-        return $this->entityShipsStart;
+        return DataTransformer::dataString($this->entityShipsStart,Ship::class);
     }
 
     public function setEntityShipsStart(string $entityShipsStart): static
@@ -240,9 +232,9 @@ class FleetLog
         return $this;
     }
 
-    public function getEntityShipsEnd(): string
+    public function getEntityShipsEnd(): array
     {
-        return $this->entityShipsEnd;
+        return DataTransformer::dataString($this->entityShipsEnd,Ship::class);
     }
 
     public function setEntityShipsEnd(string $entityShipsEnd): static
@@ -252,9 +244,9 @@ class FleetLog
         return $this;
     }
 
-    public function getFleetResStart(): ?string
+    public function getFleetResStart(): ?array
     {
-        return $this->fleetResStart;
+        return DataTransformer::ressourceString($this->fleetResStart);
     }
 
     public function setFleetResStart(string $fleetResStart): static
@@ -264,9 +256,9 @@ class FleetLog
         return $this;
     }
 
-    public function getFleetResEnd(): ?string
+    public function getFleetResEnd(): ?array
     {
-        return $this->fleetResEnd;
+        return DataTransformer::ressourceString($this->fleetResEnd);
     }
 
     public function setFleetResEnd(string $fleetResEnd): static
@@ -276,9 +268,9 @@ class FleetLog
         return $this;
     }
 
-    public function getEntityResStart(): ?string
+    public function getEntityResStart(): ?array
     {
-        return $this->entityResStart;
+        return DataTransformer::ressourceString($this->entityResStart);
     }
 
     public function setEntityResStart(string $entityResStart): static
@@ -288,9 +280,9 @@ class FleetLog
         return $this;
     }
 
-    public function getEntityResEnd(): ?string
+    public function getEntityResEnd(): ?array
     {
-        return $this->entityResEnd;
+        return DataTransformer::ressourceString($this->entityResEnd);
     }
 
     public function setEntityResEnd(string $entityResEnd): static
@@ -312,26 +304,38 @@ class FleetLog
         return $this;
     }
 
-    public function getFleetId(): ?int
+    public function getUser(): ?User
     {
-        return $this->fleetId;
+        return $this->user;
     }
 
-    public function setFleetId(int $fleetId): static
+    public function setUser(?User $user): static
     {
-        $this->fleetId = $fleetId;
+        $this->user = $user;
 
         return $this;
     }
 
-    public function getEntityUserId(): ?int
+    public function getFleet(): ?Fleet
     {
-        return $this->entityUserId;
+        return $this->fleet;
     }
 
-    public function setEntityUserId(int $entityUserId): static
+    public function setFleet(?Fleet $fleet): static
     {
-        $this->entityUserId = $entityUserId;
+        $this->fleet = $fleet;
+
+        return $this;
+    }
+
+    public function getEntityUser(): ?User
+    {
+        return $this->entityUser;
+    }
+
+    public function setEntityUser(?User $entityUser): static
+    {
+        $this->entityUser = $entityUser;
 
         return $this;
     }

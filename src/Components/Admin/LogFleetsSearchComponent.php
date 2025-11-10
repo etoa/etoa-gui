@@ -4,6 +4,7 @@ namespace EtoA\Components\Admin;
 
 use EtoA\Components\Helper\SearchComponentTrait;
 use EtoA\Components\Helper\SearchResult;
+use EtoA\Fleet\FleetAction;
 use EtoA\Form\Request\Admin\LogFleetsSearchRequest;
 use EtoA\Form\Type\Admin\LogFleetType;
 use EtoA\Log\FleetLogFacility;
@@ -13,7 +14,6 @@ use EtoA\Log\LogSeverity;
 use EtoA\Ship\ShipDataRepository;
 use EtoA\Universe\Entity\EntityLabel;
 use EtoA\Universe\Entity\EntityRepository;
-use EtoA\Universe\Entity\EntitySearch;
 use EtoA\User\UserRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormInterface;
@@ -41,10 +41,10 @@ class LogFleetsSearchComponent extends AbstractController
     private LogFleetsSearchRequest $request;
 
     public function __construct(
-        private FleetLogRepository $logRepository,
-        private UserRepository $userRepository,
-        private EntityRepository $entityRepository,
-        private ShipDataRepository $shipDataRepository
+        private readonly FleetLogRepository $logRepository,
+        private readonly UserRepository     $userRepository,
+        private readonly EntityRepository   $entityRepository,
+        private readonly ShipDataRepository $shipDataRepository
     ) {
         $this->request = new LogFleetsSearchRequest();
     }
@@ -76,27 +76,15 @@ class LogFleetsSearchComponent extends AbstractController
             $search->entityUserId($this->request->entityUser);
         }
 
-        $total = $this->logRepository->count($search);
+        $total = $this->logRepository->countBySearch($search);
 
         $limit = $this->getLimit($total);
 
         $logs = $this->logRepository->searchLogs($search, $this->perPage, $limit);
 
         if ($total > 0) {
-            $this->fleetStatusCode = \FleetAction::$statusCode;
-            $this->fleetActions = \FleetAction::getAll();
-            $this->shipNames = $this->shipDataRepository->searchShipNames();
-            $this->users = $this->userRepository->searchUserNicknames();
-
-            $entityIds = [];
-            foreach ($logs as $log) {
-                $entityIds[] = $log->entityFromId;
-                $entityIds[] = $log->entityToId;
-            }
-            $entities = $this->entityRepository->searchEntityLabels(EntitySearch::create()->ids(array_unique($entityIds)));
-            foreach ($entities as $label) {
-                $this->entities[$label->id] = $label;
-            }
+            $this->fleetStatusCode = FleetAction::$statusCode;
+            $this->fleetActions = FleetAction::getAll();
         }
 
         return new SearchResult($logs, $limit, $total, $this->perPage);

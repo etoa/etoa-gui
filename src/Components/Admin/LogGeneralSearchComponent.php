@@ -26,7 +26,7 @@ class LogGeneralSearchComponent extends AbstractController
     private LogGeneralSearchRequest $request;
 
     public function __construct(
-        private LogRepository $logRepository
+        private readonly LogRepository $logRepository
     ) {
         $this->request = new LogGeneralSearchRequest();
     }
@@ -46,7 +46,7 @@ class LogGeneralSearchComponent extends AbstractController
             $search->severity($this->request->severity);
         }
 
-        $total = $this->logRepository->count($search);
+        $total = $this->logRepository->countBySearch($search);
 
         $limit = $this->getLimit($total);
 

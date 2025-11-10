@@ -3,6 +3,7 @@
 namespace EtoA\Log;
 
 use EtoA\Core\Database\AbstractSearch;
+use EtoA\Entity\User;
 
 class FleetLogSearch extends AbstractSearch
 {
@@ -27,17 +28,17 @@ class FleetLogSearch extends AbstractSearch
         return $this;
     }
 
-    public function fleetUserId(int $fleetUserId): self
+    public function fleetUserId(int|User $fleetUserId): self
     {
-        $this->parts[] = 'user_id = :fleetUserId';
+        $this->parts[] = 'q.user = :fleetUserId';
         $this->parameters['fleetUserId'] = $fleetUserId;
 
         return $this;
     }
 
-    public function entityUserId(int $entityUserId): self
+    public function entityUserId(int|User $entityUserId): self
     {
-        $this->parts[] = 'entity_user_id = :entityUserId';
+        $this->parts[] = 'q.entityUser = :entityUserId';
         $this->parameters['entityUserId'] = $entityUserId;
 
         return $this;

@@ -3,6 +3,7 @@
 namespace EtoA\Core\Database;
 
 use EtoA\Entity\User;
+use EtoA\Universe\Resources\ResourceNames;
 
 class DataTransformer
 {
@@ -41,6 +42,19 @@ class DataTransformer
                     $entries[] = ['data'=>$data,'count'=>$count];
             }
         }
+
+        return $entries;
+    }
+
+    public static function ressourceString(string $string): array
+    {
+        $entries = [];
+        $dataEntries = explode(':', $string);
+
+        if($dataEntries && str_contains($string,':'))
+            foreach (ResourceNames::NAMES as $k => $v) {
+                $entries[$v] = (int) $dataEntries[$k];
+            }
 
         return $entries;
     }

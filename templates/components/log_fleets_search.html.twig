@@ -19,73 +19,73 @@
                 <td>{{ this.severities[log.severity] }}</td>
                 <td>{{ this.facilities[log.facility] }}</td>
 
-                <td>{{ this.users[log.userId] }}</td>
+                <td>{{ log.user.nick }}</td>
                 <td>{{ this.fleetActions[log.action]|raw }} [{{ this.fleetStatusCode[log.status] }}]</td>
-                <td>{{ this.entities[log.entityFromId].toString() }} <br/> {{ this.entities[log.entityFromId].ownerNick|default('Niemand') }}</td>
-                <td>{{ this.entities[log.entityToId].toString() }} <br/> {{ this.entities[log.entityToId].ownerNick|default('Niemand') }}</td>
+                <td>{{ log.entityFrom.toString }} <br/> {{ log.entityFrom.user.nick|default('Niemand') }}</td>
+                <td>{{ log.entityTo.toString }} <br/> {{ log.entityTo.user.nick|default('Niemand') }}</td>
                 <td>{{ formatTimestamp(log.launchTime) }}</td>
                 <td>{{ formatTimestamp(log.landTime) }}</td>
                 <td><a href="#log-{{ log.id }}" data-action="click->toggle#onClick">Bericht</a></td>
             </tr>
             <tr id="log-{{ log.id }}" data-toggle-target="target" class="hide">
                 <td colspan="10">
-                    <table width="450px">
+                    <table>
                         <tr>
                             <th>Schiffe in der Flotte</th>
                             <th>Vor der Aktion</th>
                             <th>Nach der Aktion</th>
                         </tr>
-                        {% for shipId,ships in log.iterateFleetShips %}
+                        {% for ship in log.fleetShipsStart %}
                             <tr>
-                                <td>{{ this.shipNames[shipId] }}</td>
-                                <td>{{ formatNumber(ships[0]) }}</td>
-                                <td>{{ formatNumber(ships[1]) }}</td>
+                                <td>{{ ship.data.name }}</td>
+                                <td>{{ formatNumber(ship.count) }}</td>
+                                <td>{{ log.fleetShipsEnd[loop.index0].count }}</td>
                             </tr>
                         {% endfor %}
                     </table>
 
-                    <table width="450px">
+                    <table>
                         <tr>
                             <th>Schiffe in dem Planeten</th>
                             <th>Vor der Aktion</th>
                             <th>Nach der Aktion</th>
                         </tr>
-                        {% for shipId,ships in log.iterateEntityShips %}
+                        {% for ship in log.entityShipsStart %}
                             <tr>
-                                <td>{{ this.shipNames[shipId] }}</td>
-                                <td>{{ formatNumber(ships[0]) }}</td>
-                                <td>{{ formatNumber(ships[1]) }}</td>
+                                <td>{{ ship.data.name }}</td>
+                                <td>{{ formatNumber(ship.count) }}</td>
+                                <td>{{ formatNumber(log.entityShipsEnd[loop.index0].count) }}</td>
                             </tr>
                         {% endfor %}
                     </table>
 
-                    <table width="450px">
+                    <table>
                         <tr>
                             <th>Rohstoffe in der Flotte</th>
                             <th>Vor der Aktion</th>
                             <th>Nach der Aktion</th>
                         </tr>
-                        {% for resName,res in log.iterateFleetResources %}
+                        {% for resName,res in log.fleetResStart %}
                             <tr>
                                 <td>{{ resName }}</td>
-                                <td>{{ formatNumber(res[0]) }}</td>
-                                <td>{{ formatNumber(res[1]) }}</td>
+                                <td>{{ formatNumber(res) }}</td>
+                                <td>{{ formatNumber(log.fleetResEnd[resName]) }}</td>
                             </tr>
                         {% endfor %}
                     </table>
 
-                    {% if log.entityResStart != "untouched" or log.entityResEnd != "untouched" %}
-                        <table width="450px">
+                    {% if log.entityResStart and log.entityResEnd %}
+                        <table>
                             <tr>
                                 <th>Rohstoffe auf der Entity</th>
                                 <th>Vor der Aktion</th>
                                 <th>Nach der Aktion</th>
                             </tr>
-                            {% for resName,res in log.iterateEntityResources %}
+                            {% for resName,res in log.entityResStart %}
                                 <tr>
                                     <td>{{ resName }}</td>
-                                    <td>{{ formatNumber(res[0]) }}</td>
-                                    <td>{{ formatNumber(res[1]) }}</td>
+                                    <td>{{ formatNumber(res) }}</td>
+                                    <td>{{ formatNumber(log.entityResEnd.resName) }}</td>
                                 </tr>
                             {% endfor %}
                         </table>

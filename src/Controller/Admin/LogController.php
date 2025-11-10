@@ -34,7 +34,7 @@ class LogController extends AbstractAdminController
     {
         return $this->render('admin/logs/general.html.twig', [
             'form' => $this->createForm(LogGeneralType::class, $request->query->all()),
-            'total' => $this->logRepository->count(),
+            'total' => $this->logRepository->count([]),
         ]);
     }
 
@@ -67,7 +67,7 @@ class LogController extends AbstractAdminController
     {
         return $this->render('admin/logs/fleets.html.twig', [
             'form' => $this->createForm(LogFleetType::class, $request->query->all()),
-            'total' => $this->fleetLogRepository->count(),
+            'total' => $this->fleetLogRepository->count([]),
         ]);
     }
 
@@ -77,7 +77,7 @@ class LogController extends AbstractAdminController
     {
         return $this->render('admin/logs/game.html.twig', [
             'form' => $this->createForm(LogGameType::class, $request->query->all()),
-            'total' => $this->gameLogRepository->count(),
+            'total' => $this->gameLogRepository->count([]),
         ]);
     }
 

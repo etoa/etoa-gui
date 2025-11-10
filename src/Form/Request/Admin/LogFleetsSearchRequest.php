@@ -2,12 +2,14 @@
 
 namespace EtoA\Form\Request\Admin;
 
+use EtoA\Entity\User;
+
 class LogFleetsSearchRequest
 {
     public ?int $facility = null;
     public ?int $severity = null;
     public ?string $action = null;
     public ?int $status = null;
-    public ?int $fleetUser = null;
-    public ?int $entityUser = null;
+    public ?User $fleetUser = null;
+    public ?User $entityUser = null;
 }

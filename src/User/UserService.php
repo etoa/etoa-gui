@@ -163,10 +163,10 @@ class UserService
 
             // Delete market fleets to planet
             $marketResFleets = $this->fleetRepository->findByParameters((new FleetSearchParameters())
-                ->entityTo($planet->getId())
+                ->entityTo($planet->getEntity()->getId())
                 ->action($this->config->get('market_ship_action_ress')));
             $marketShipFleets = $this->fleetRepository->findByParameters((new FleetSearchParameters())
-                ->entityTo($planet->getId())
+                ->entityTo($planet->getEntity()->getId())
                 ->action($this->config->get('market_ship_action_ship')));
             foreach (array_merge($marketResFleets, $marketShipFleets) as $fleet) {
                 $this->fleetRepository->remove($fleet);

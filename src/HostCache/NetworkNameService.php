@@ -43,7 +43,7 @@ class NetworkNameService
             return $host;
         }
 
-        $host = @gethostbyaddr($ip);
+        $host = (string)@gethostbyaddr($ip);
         $this->hostCache[$ip] = $host;
         $this->hostCacheRepository->store($host, $ip);
 

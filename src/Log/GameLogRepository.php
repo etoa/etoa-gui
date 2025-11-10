@@ -75,4 +75,13 @@ class GameLogRepository extends AbstractRepository
             ->executeQuery()
             ->rowCount();
     }
+
+    public function countBySearch(GameLogSearch $search = null): int
+    {
+        return (int) $this->applySearchSortLimit($this->createQueryBuilder('q'), $search)
+            ->select('COUNT(q)')
+            ->setMaxResults(1)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
 }

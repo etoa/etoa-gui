@@ -26,7 +26,7 @@ class Log
     #[ORM\Column]
     private string $message;
 
-    #[ORM\Column(type: "integer")]
+    #[ORM\Column(type: "string")]
     private string $ip;
 
     public function getId(): ?int

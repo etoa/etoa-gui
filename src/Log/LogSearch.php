@@ -13,7 +13,7 @@ class LogSearch extends AbstractSearch
 
     public function messageLike(string $message): self
     {
-        $this->parts[] = 'message LIKE :message';
+        $this->parts[] = 'q.message LIKE :message';
         $this->parameters['message'] = '%' . $message . '%';
 
         return $this;
@@ -21,7 +21,7 @@ class LogSearch extends AbstractSearch
 
     public function severity(int $severity): self
     {
-        $this->parts[] = 'severity >= :severity';
+        $this->parts[] = 'q.severity >= :severity';
         $this->parameters['severity'] = $severity;
 
         return $this;
@@ -29,7 +29,7 @@ class LogSearch extends AbstractSearch
 
     public function facility(int $facility): self
     {
-        $this->parts[] = 'facility = :facility';
+        $this->parts[] = 'q.facility = :facility';
         $this->parameters['facility'] = $facility;
 
         return $this;

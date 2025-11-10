@@ -19,13 +19,10 @@ class LogRepository extends AbstractRepository
      */
     public function searchLogs(LogSearch $search, int $limit = null, int $offset = null): array
     {
-        $data = $this->applySearchSortLimit($this->createQueryBuilder('q'), $search, null, $limit, $offset)
-            ->select('*')
-            ->from('logs')
-            ->orderBy('timestamp', 'DESC')
-            ->fetchAllAssociative();
-
-        return array_map(fn (array $row) => new Log($row), $data);
+        return $this->applySearchSortLimit($this->createQueryBuilder('q'), $search, null, $limit, $offset)
+            ->orderBy('q.timestamp', 'DESC')
+            ->getQuery()
+            ->execute();
     }
 
     public function add(int $facility, int $severity, string $message): void
@@ -51,5 +48,14 @@ class LogRepository extends AbstractRepository
             ->setParameter('threshold', $threshold)
             ->executeQuery()
             ->rowCount();
+    }
+
+    public function countBySearch(LogSearch $search = null): int
+    {
+        return (int) $this->applySearchSortLimit($this->createQueryBuilder('q'), $search)
+            ->select('COUNT(q)')
+            ->setMaxResults(1)
+            ->getQuery()
+            ->getOneOrNullResult();
     }
 }

@@ -2,11 +2,15 @@
 
 namespace EtoA\Form\Request\Admin;
 
+use EtoA\Entity\Alliance;
+use EtoA\Entity\Entity;
+use EtoA\Entity\User;
+
 class LogGameSearchRequest
 {
-    public ?int $user = null;
-    public ?int $alliance = null;
-    public ?int $entity = null;
+    public ?User $user = null;
+    public ?Alliance $alliance = null;
+    public ?Entity $entity = null;
     public ?int $facility = null;
     public ?string $query = null;
     public ?int $severity = null;

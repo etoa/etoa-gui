@@ -64,16 +64,16 @@ class LogGameSearchComponent extends AbstractController
     public function getSearch(): SearchResult
     {
         $search = GameLogSearch::create();
-        if ($this->request->user !== null) {
-            $search->userId($this->request->user);
+        if ($this->request->user) {
+            $search->user($this->request->user);
         }
 
-        if ($this->request->alliance !== null) {
+        if ($this->request->alliance) {
             $search->allianceId($this->request->alliance);
         }
 
-        if ($this->request->entity !== null) {
-            $search->entityId($this->request->entity);
+        if ($this->request->entity) {
+            $search->entity($this->request->entity);
         }
 
         if ($this->request->facility !== null) {
@@ -92,7 +92,7 @@ class LogGameSearchComponent extends AbstractController
             $search->objectId($this->request->object);
         }
 
-        $total = $this->logRepository->count($search);
+        $total = $this->logRepository->countBySearch($search);
 
         $limit = $this->getLimit($total);
 
@@ -115,11 +115,6 @@ class LogGameSearchComponent extends AbstractController
                 GameLogFacility::SHIP => ShipBuildType::all(),
                 GameLogFacility::DEF => DefenseBuildType::all(),
             ];
-
-            $entities = $this->entityRepository->searchEntityLabels(EntitySearch::create()->ids(array_unique(array_map(fn (GameLog $log) => $log->entityId, $logs))));
-            foreach ($entities as $label) {
-                $this->entities[$label->id] = $label->toString();
-            }
         }
 
         return new SearchResult($logs, $limit, $total, $this->perPage);
