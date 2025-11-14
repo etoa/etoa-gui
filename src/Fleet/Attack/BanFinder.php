@@ -4,6 +4,8 @@ namespace EtoA\Fleet\Attack;
 
 use EtoA\Entity\BattleLog;
 use EtoA\Support\StringUtils;
+use EtoA\Universe\Planet\PlanetRepository;
+use EtoA\User\UserRepository;
 
 class BanFinder
 {
@@ -13,6 +15,14 @@ class BanFinder
     private const MAX_ATTACKED_ENTITIES = [5, 10];           // Max. Anzahl Planeten die angegriffen werden können...
     private const TIME_BETWEEN_ATTACKS_ON_ENTITY = 6 * 3600; // ...innerhalb 6h
     private const BAN_RANGE = 24 * 3600;                     // alle Regeln gelten innerhalb von 24h
+
+    public function __construct(
+        private readonly UserRepository $userRepository,
+        private readonly PlanetRepository $planetRepository
+    )
+    {}
+
+    //TODO: seems bugged, check+refactor
 
     /**
      * @param BattleLog[] $logs
@@ -59,7 +69,7 @@ class BanFinder
                         if ($firstTime === 0) {
                             $firstTime = $eData[0];
 
-                            // Wenn mehr als 5 Planeten angegrifen wurden
+                            // Wenn mehr als 5 Planeten angegriffen wurden
                             if ($attackedEntities > self::MAX_ATTACKED_ENTITIES[$eData[1]]) {
                                 $ban = true;
                                 $banReason .= "Mehr als " . self::MAX_ATTACKED_ENTITIES[$eData[1]] . " innerhalb von " . (self::BAN_RANGE / 3600) . " Stunden.<br/>Anzahl: " . $attackedEntities . "<br/><br/>";
@@ -102,7 +112,7 @@ class BanFinder
                             $banReason .= "Der Abstand zwischen 2 Angriffen/Wellen auf ein Ziel ist kleiner als " . (self::TIME_BETWEEN_ATTACKS_ON_ENTITY / 3600) . " Stunden.<br />Dauer zwischen den beiden Angriffen: " . StringUtils::formatTimespan($eData[0] - $lastWave) . "<br /><br />";
                         }
 
-                        // Sperre wenn mehr als 2/4 Angriffe pro Planet
+                        // Sperre, wenn mehr als 2/4 Angriffe pro Planet
                         if ($waveCnt === 1 && $attackCntEntity > self::MAX_ATTACKS_PER_ENTITY[$eData[1]]) {
                             $ban = true;
                             $banReason .= "Mehr als " . self::MAX_ATTACKS_PER_ENTITY[$eData[1]] . " Angriffe/Wellen auf ein Ziel.<br />Anzahl:" . $attackCntEntity . "<br /><br />";
@@ -110,7 +120,7 @@ class BanFinder
 
                         // Es liegt eine Angriffsverletzung vor
                         if ($ban) {
-                            $bans[] = new Ban($eData[2], $eData[0], (int) $fUser, (int) $eUser, $entityId, $banReason);
+                            $bans[] = new Ban($eData[2], $eData[0], $this->userRepository->find($fUser), $this->userRepository->find($eUser), $this->planetRepository->find($entityId), $banReason);
                         }
                     }
                 }

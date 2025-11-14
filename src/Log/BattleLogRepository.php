@@ -18,13 +18,10 @@ class BattleLogRepository extends AbstractRepository
      */
     public function searchLogs(BattleLogSearch $search): array
     {
-        $data = $this->applySearchSortLimit($this->createQueryBuilder('q'), $search)
-            ->select('*')
-            ->from('logs_battle')
-            ->orderBy('timestamp', 'DESC')
-            ->fetchAllAssociative();
-
-        return array_map(fn (array $row) => new BattleLog($row), $data);
+        return $this->applySearchSortLimit($this->createQueryBuilder('q'), $search)
+            ->orderBy('q.timestamp', 'DESC')
+            ->getQuery()
+            ->execute();
     }
 
     public function cleanup(int $threshold): int

@@ -2,14 +2,17 @@
 
 namespace EtoA\Fleet\Attack;
 
+use EtoA\Entity\Planet;
+use EtoA\Entity\User;
+
 class Ban
 {
     public function __construct(
         public string $action,
         public int $timestamp,
-        public int $fleetUserId,
-        public int $entityUserId,
-        public int $entityId,
+        public User $fleetUser,
+        public User $entityUser,
+        public Planet $entity,
         public string $banReason
     ) {
     }

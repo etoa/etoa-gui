@@ -6,14 +6,13 @@ use EtoA\Components\Helper\SearchComponentTrait;
 use EtoA\Components\Helper\SearchResult;
 use EtoA\Fleet\Attack\Ban;
 use EtoA\Fleet\Attack\BanFinder;
-use EtoA\Fleet\LegacyFleetAction;
+use EtoA\Fleet\FleetAction;
 use EtoA\Form\Request\Admin\LogAttackBanSearchRequest;
 use EtoA\Form\Type\Admin\LogAttackBanType;
 use EtoA\Log\BattleLogRepository;
 use EtoA\Log\BattleLogSearch;
 use EtoA\Universe\Entity\EntityLabel;
 use EtoA\Universe\Entity\EntityRepository;
-use EtoA\Universe\Entity\EntitySearch;
 use EtoA\User\UserRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormInterface;
@@ -33,10 +32,10 @@ class LogAttackBanSearchComponent extends AbstractController
     private LogAttackBanSearchRequest $request;
 
     public function __construct(
-        private BattleLogRepository $battleLogRepository,
-        private BanFinder $attackBanFinder,
-        private UserRepository $userRepository,
-        private EntityRepository $entityRepository
+        private readonly BattleLogRepository $battleLogRepository,
+        private readonly BanFinder           $attackBanFinder,
+        private readonly UserRepository      $userRepository,
+        private readonly EntityRepository $entityRepository
     ) {
         $this->perPage = 99999;
         $this->request = new LogAttackBanSearchRequest();
@@ -68,16 +67,9 @@ class LogAttackBanSearchComponent extends AbstractController
         $limit = $this->getLimit($total);
 
         if ($total > 0) {
-            $this->users = $this->userRepository->searchUserNicknames();
-
-            $entities = $this->entityRepository->searchEntityLabels(EntitySearch::create()->ids(array_map(fn (Ban $ban) => $ban->entityId, $bans)));
-            foreach ($entities as $entity) {
-                $this->entities[$entity->id] = $entity;
-            }
-
             $actions = array_unique(array_map(fn (Ban $ban) => $ban->action, $bans));
             foreach ($actions as $action) {
-                $this->fleetActions[$action] = LegacyFleetAction::createFactory($action);
+                $this->fleetActions[$action] = FleetAction::createFactory($action);
             }
         }
 

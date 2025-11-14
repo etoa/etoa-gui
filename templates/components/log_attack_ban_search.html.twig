@@ -9,11 +9,11 @@
         <th>Sperrgrund</th>
     </tr>
     {% for ban in search.entries %}
-        <tr>
+          <tr>
             <td>{{ formatTimestamp(ban.timestamp) }}</td>
-            <td>{{ this.users[ban.fleetUserId] }}</td>
-            <td>{{ this.users[ban.entityUserId] }}</td>
-            <td>{{ this.entities[ban.entityId].toString() }}</td>
+            <td>{{ ban.fleetUser.nick }}</td>
+            <td>{{ ban.entityUser.nick }}</td>
+            <td>{{ ban.entity.entity.toString }}</td>
             <td>{{ this.fleetActions[ban.action]|raw }}</td>
             <td>{{ ban.banReason|raw }}</td>
         </tr>

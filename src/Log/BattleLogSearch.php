@@ -13,7 +13,7 @@ class BattleLogSearch extends AbstractSearch
 
     public function fleetUserId(int $fleetUserId): self
     {
-        $this->parts[] = 'user_id LIKE :fleetUserId';
+        $this->parts[] = 'q.fleetUserIds LIKE :fleetUserId';
         $this->parameters['fleetUserId'] = '%,' . $fleetUserId . ',%';
 
         return $this;
@@ -21,7 +21,7 @@ class BattleLogSearch extends AbstractSearch
 
     public function entityUserId(int $entityUserId): self
     {
-        $this->parts[] = 'entity_user_id LIKE :entityUserId';
+        $this->parts[] = 'q.entityUserIds LIKE :entityUserId';
         $this->parameters['entityUserId'] = '%,' . $entityUserId . ',%';
 
         return $this;
@@ -29,7 +29,7 @@ class BattleLogSearch extends AbstractSearch
 
     public function action(string $action): self
     {
-        $this->parts[] = 'action = :action';
+        $this->parts[] = 'q.action = :action';
         $this->parameters['action'] = $action;
 
         return $this;
@@ -37,7 +37,7 @@ class BattleLogSearch extends AbstractSearch
 
     public function attackingBetween(int $start, int $end): self
     {
-        $this->parts[] = 'fleet_weapon > 0 AND landtime <= :attackStart AND landtime > :attackEnd';
+        $this->parts[] = 'q.fleetWeapon > 0 AND q.landtime <= :attackStart AND q.landtime > :attackEnd';
         $this->parameters['attackStart'] = $start;
         $this->parameters['attackEnd'] = $end;
 
@@ -46,7 +46,7 @@ class BattleLogSearch extends AbstractSearch
 
     public function severity(int $severity): self
     {
-        $this->parts[] = 'severity >= :severity';
+        $this->parts[] = 'q.severity >= :severity';
         $this->parameters['severity'] = $severity;
 
         return $this;
@@ -54,7 +54,7 @@ class BattleLogSearch extends AbstractSearch
 
     public function facility(int $facility): self
     {
-        $this->parts[] = 'facility = :facility';
+        $this->parts[] = 'q.facility = :facility';
         $this->parameters['facility'] = $facility;
 
         return $this;
