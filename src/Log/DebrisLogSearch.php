@@ -3,6 +3,8 @@
 namespace EtoA\Log;
 
 use EtoA\Core\Database\AbstractSearch;
+use EtoA\Entity\AdminUser;
+use EtoA\Entity\User;
 
 class DebrisLogSearch extends AbstractSearch
 {
@@ -11,17 +13,17 @@ class DebrisLogSearch extends AbstractSearch
         return new DebrisLogSearch();
     }
 
-    public function userId(int $userId): self
+    public function userId(int|User $userId): self
     {
-        $this->parts[] = 'user_id = :userId';
+        $this->parts[] = 'q.user = :userId';
         $this->parameters['userId'] = $userId;
 
         return $this;
     }
 
-    public function adminId(int $adminId): self
+    public function adminId(int|AdminUser $adminId): self
     {
-        $this->parts[] = 'admin_id = :adminId';
+        $this->parts[] = 'q.admin = :adminId';
         $this->parameters['adminId'] = $adminId;
 
         return $this;
@@ -29,7 +31,7 @@ class DebrisLogSearch extends AbstractSearch
 
     public function timeBefore(int $timestamp): self
     {
-        $this->parts[] = 'time <= :timeBefore';
+        $this->parts[] = 'q.timestamp <= :timeBefore';
         $this->parameters['timeBefore'] = $timestamp;
 
         return $this;

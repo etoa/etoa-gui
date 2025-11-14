@@ -26,9 +26,7 @@ class LogDebrisSearchComponent extends AbstractController
     private LogDebrisSearchRequest $request;
 
     public function __construct(
-        private DebrisLogRepository $debrisLogRepository,
-        private UserRepository $userRepository,
-        private AdminUserRepository $adminUserRepository
+        private readonly DebrisLogRepository $debrisLogRepository
     ) {
         $this->perPage = 50;
         $this->request = new LogDebrisSearchRequest();
@@ -50,15 +48,13 @@ class LogDebrisSearchComponent extends AbstractController
             $search->adminId($this->request->admin);
         }
 
-        $total = $this->debrisLogRepository->count($search);
+        $total = $this->debrisLogRepository->countBySearch($search);
 
         $limit = $this->getLimit($total);
 
         $logs = [];
         if ($total > 0) {
             $logs = $this->debrisLogRepository->searchLogs($search, $this->perPage, $limit);
-            $this->admins = $this->adminUserRepository->searchNicknames();
-            $this->users = $this->userRepository->searchUserNicknames();
         }
 
         return new SearchResult($logs, $limit, $total, $this->perPage);

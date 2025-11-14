@@ -11,9 +11,9 @@
     </tr>
     {% for log in search.entries %}
         <tr>
-            <td>{{ formatTimestamp(log.timestamp) }}</td>
-            <td>{{ this.admins[log.adminId]|default('?') }}</td>
-            <td>{{ this.users[log.userId]|default('?') }}</td>
+            <td>{{ formatTimestamp(log.time) }}</td>
+            <td>{{ log.admin?log.admin.nick:'?' }}</td>
+            <td>{{ log.user?log.user.nick:'?' }}</td>
             <td>{{ log.metal }}</td>
             <td>{{ log.crystal }}</td>
             <td>{{ log.plastic }}</td>

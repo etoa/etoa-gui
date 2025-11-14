@@ -14,14 +14,16 @@ class DebrisLog
     #[ORM\Column(type: "integer")]
     private int $id;
 
-    #[ORM\Column(type: "integer")]
-    private int $adminId;
+    #[ORM\JoinColumn(name: 'user_id', referencedColumnName: 'user_id')]
+    #[ORM\ManyToOne(targetEntity: User::class)]
+    private ?User $user = null;
+
+    #[ORM\JoinColumn(name: 'admin_id', referencedColumnName: 'user_id')]
+    #[ORM\ManyToOne(targetEntity: AdminUser::class)]
+    private ?AdminUser $admin = null;
 
     #[ORM\Column(type: "integer")]
-    private int $userId;
-
-    #[ORM\Column(type: "integer")]
-    private int $timestamp;
+    private int $time;
 
     #[ORM\Column(type: "integer")]
     private int $metal;
@@ -35,42 +37,6 @@ class DebrisLog
     public function getId(): ?int
     {
         return $this->id;
-    }
-
-    public function getAdminId(): ?int
-    {
-        return $this->adminId;
-    }
-
-    public function setAdminId(int $adminId): static
-    {
-        $this->adminId = $adminId;
-
-        return $this;
-    }
-
-    public function getUserId(): ?int
-    {
-        return $this->userId;
-    }
-
-    public function setUserId(int $userId): static
-    {
-        $this->userId = $userId;
-
-        return $this;
-    }
-
-    public function getTimestamp(): ?int
-    {
-        return $this->timestamp;
-    }
-
-    public function setTimestamp(int $timestamp): static
-    {
-        $this->timestamp = $timestamp;
-
-        return $this;
     }
 
     public function getMetal(): ?int
@@ -105,6 +71,42 @@ class DebrisLog
     public function setPlastic(int $plastic): static
     {
         $this->plastic = $plastic;
+
+        return $this;
+    }
+
+    public function getTime(): ?int
+    {
+        return $this->time;
+    }
+
+    public function setTime(int $time): static
+    {
+        $this->time = $time;
+
+        return $this;
+    }
+
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
+
+    public function setUser(?User $user): static
+    {
+        $this->user = $user;
+
+        return $this;
+    }
+
+    public function getAdmin(): ?AdminUser
+    {
+        return $this->admin;
+    }
+
+    public function setAdmin(?AdminUser $admin): static
+    {
+        $this->admin = $admin;
 
         return $this;
     }

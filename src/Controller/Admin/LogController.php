@@ -46,7 +46,7 @@ class LogController extends AbstractAdminController
 
         return $this->render('admin/logs/debris.html.twig', [
             'form' => $this->createForm(LogDebrisType::class, $data),
-            'total' => $this->debrisLogRepository->count(),
+            'total' => $this->debrisLogRepository->count([]),
         ]);
     }
 
