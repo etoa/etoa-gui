@@ -2,7 +2,7 @@
 
 namespace EtoA\Controller\Admin;
 
-use EException;
+use EtoA\Exceptions\EException;
 use EtoA\Form\Type\Admin\LogAttackBanType;
 use EtoA\Form\Type\Admin\LogDebrisType;
 use EtoA\Form\Type\Admin\LogFleetType;
