@@ -15,19 +15,13 @@ class UserOnlineStatsRepository extends AbstractRepository
 
     public function addEntry(int $userCount, int $sessionCount): void
     {
-        $this->createQueryBuilder('q')
-            ->insert('user_onlinestats')
-            ->values([
-                'stats_timestamp' => ':now',
-                'stats_count' => ':sessionCount',
-                'stats_regcount' => ':userCount',
-            ])
-            ->setParameters([
-                'now' => time(),
-                'sessionCount' => $sessionCount,
-                'userCount' => $userCount,
-            ])
-            ->executeQuery();
+        $stats = new UserOnlineStats();
+        $stats->setTimestamp(time());
+        $stats->setSessionCount($sessionCount);
+        $stats->setUserCount($userCount);
+
+        $this->persist($stats);
+        $this->save();
     }
 
     /**
@@ -35,13 +29,10 @@ class UserOnlineStatsRepository extends AbstractRepository
      */
     public function getEntries(int $limit): array
     {
-        $data = $this->createQueryBuilder('q')
-            ->select('*')
-            ->from('user_onlinestats')
+        return $this->createQueryBuilder('q')
             ->setMaxResults($limit)
-            ->orderBy('stats_timestamp', 'DESC')
-            ->fetchAllAssociative();
-
-        return array_map(fn (array $row) => new UserOnlineStats($row), $data);
+            ->orderBy('q.timestamp', 'DESC')
+            ->getQuery()
+            ->execute();
     }
 }

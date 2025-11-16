@@ -7,9 +7,9 @@ use EtoA\Alliance\AllianceDiplomacyPoints;
 use EtoA\Alliance\AllianceDiplomacyRepository;
 use EtoA\Alliance\AllianceDiplomacySearch;
 use EtoA\Alliance\AllianceHistoryRepository;
-use EtoA\Alliance\AllianceRepository;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Message\MessageCategoryId;
+use EtoA\Message\MessageCategoryRepository;
 use EtoA\Message\MessageRepository;
 use EtoA\PeriodicTask\Result\SuccessResult;
 use EtoA\PeriodicTask\Task\WarPeaceUpdateTask;
@@ -18,22 +18,14 @@ use Symfony\Component\Messenger\Handler\MessageHandlerInterface;
 
 class WarPeaceUpdateHandler implements MessageHandlerInterface
 {
-    private AllianceDiplomacyRepository $allianceDiplomacyRepository;
-    private UserRatingService $userRatingService;
-    private AllianceHistoryRepository $allianceHistoryRepository;
-    private MessageRepository $messageRepository;
-    private AllianceRepository $allianceRepository;
-    private ConfigurationService $config;
-
-    public function __construct(AllianceDiplomacyRepository $allianceDiplomacyRepository, UserRatingService $userRatingService, AllianceHistoryRepository $allianceHistoryRepository, MessageRepository $messageRepository, AllianceRepository $allianceRepository, ConfigurationService $config)
-    {
-        $this->allianceDiplomacyRepository = $allianceDiplomacyRepository;
-        $this->userRatingService = $userRatingService;
-        $this->allianceHistoryRepository = $allianceHistoryRepository;
-        $this->messageRepository = $messageRepository;
-        $this->allianceRepository = $allianceRepository;
-        $this->config = $config;
-    }
+    public function __construct(
+        private readonly AllianceDiplomacyRepository $allianceDiplomacyRepository,
+        private readonly UserRatingService $userRatingService,
+        private readonly AllianceHistoryRepository $allianceHistoryRepository,
+        private readonly MessageRepository $messageRepository,
+        private readonly ConfigurationService $config,
+        private readonly MessageCategoryRepository $messageCategoryRepository
+    ){}
 
     public function __invoke(WarPeaceUpdateTask $task): SuccessResult
     {
@@ -42,14 +34,14 @@ class WarPeaceUpdateHandler implements MessageHandlerInterface
         // Assign diplomacy points for pacts
         $pacts = $this->allianceDiplomacyRepository->search(AllianceDiplomacySearch::create()->level(AllianceDiplomacyLevel::BND_CONFIRMED)->pendingPoints()->dateBefore($time - AllianceDiplomacyPoints::POINTS_MIN_PACT_DURATION));
         foreach ($pacts as $diplomacy) {
-            $reason = "Bündnis " . $diplomacy->alliance1Id . " mit " . $diplomacy->alliance2Id;
+            $reason = "Bündnis " . $diplomacy->getAlliance1()->getId() . " mit " . $diplomacy->getAlliance2()->getId();
             $this->userRatingService->addDiplomacyRating(
-                $diplomacy->diplomatId,
-                $diplomacy->points,
+                $diplomacy->getDiplomat(),
+                $diplomacy->getPoints(),
                 $reason
             );
 
-            $this->allianceDiplomacyRepository->updateDiplomacy($diplomacy->id, AllianceDiplomacyLevel::PEACE, $diplomacy->name, 0);
+            $this->allianceDiplomacyRepository->updateDiplomacy($diplomacy, AllianceDiplomacyLevel::PEACE, $diplomacy->getName(), 0);
         }
 
         $cnt = 0;
@@ -60,22 +52,22 @@ class WarPeaceUpdateHandler implements MessageHandlerInterface
         if ($nr > 0) {
             foreach ($wars as $war) {
                 // Add log
-                $text = "Der Krieg zwischen [b][" . $war->alliance1Tag . "] " . $war->alliance1Name . "[/b] und [b][" . $war->alliance2Tag . "] " . $war->alliance2Name . "[/b] ist zu Ende! Es folgt eine Friedenszeit von " . round($this->config->param1Int('alliance_war_time')) . " Stunden.";
-                $this->allianceHistoryRepository->addEntry($war->alliance1Id, $text);
-                $this->allianceHistoryRepository->addEntry($war->alliance2Id, $text);
+                $text = "Der Krieg zwischen [b][" . $war->getAlliance1()->getTag() . "] " . $war->getAlliance1()->getName() . "[/b] und [b][" . $war->getAlliance2()->getTag() . "] " . $war->getAlliance2()->getName() . "[/b] ist zu Ende! Es folgt eine Friedenszeit von " . round($this->config->param1Int('alliance_war_time')) . " Stunden.";
+                $this->allianceHistoryRepository->addEntry($war->getAlliance1(), $text);
+                $this->allianceHistoryRepository->addEntry($war->getAlliance2(), $text);
 
                 // Send message to leader
-                $this->messageRepository->createSystemMessage($this->allianceRepository->getFounderId($war->alliance1Id), MessageCategoryId::ALLIANCE, "Krieg beendet", $text . " Während dieser Friedenszeit kann kein neuer Krieg erklärt werden!");
-                $this->messageRepository->createSystemMessage($this->allianceRepository->getFounderId($war->alliance2Id), MessageCategoryId::ALLIANCE, "Krieg beendet", $text . " Während dieser Friedenszeit kann kein neuer Krieg erklärt werden!");
+                $this->messageRepository->createSystemMessage($war->getAlliance1()->getFounder(), $this->messageCategoryRepository->find(MessageCategoryId::ALLIANCE), "Krieg beendet", $text . " Während dieser Friedenszeit kann kein neuer Krieg erklärt werden!");
+                $this->messageRepository->createSystemMessage($war->getAlliance2()->getFounder(), $this->messageCategoryRepository->find(MessageCategoryId::ALLIANCE), "Krieg beendet", $text . " Während dieser Friedenszeit kann kein neuer Krieg erklärt werden!");
 
                 // Assing diplomacy points
                 $this->userRatingService->addDiplomacyRating(
-                    $war->diplomatId,
-                    $war->points,
-                    "Krieg " . $war->alliance1Id . " gegen " . $war->alliance2Id
+                    $war->getDiplomat(),
+                    $war->getPoints(),
+                    "Krieg " . $war->getAlliance1()->getId() . " gegen " . $war->getAlliance2()->getId()
                 );
 
-                $this->allianceDiplomacyRepository->updateDiplomacy($war->id, AllianceDiplomacyLevel::PEACE, $war->name, 0, $time);
+                $this->allianceDiplomacyRepository->updateDiplomacy($war, AllianceDiplomacyLevel::PEACE, $war->getName(), 0, $time);
             }
             $cnt += $nr;
         }
@@ -86,15 +78,15 @@ class WarPeaceUpdateHandler implements MessageHandlerInterface
         if ($nr > 0) {
             foreach ($peace as $diplomacy) {
                 // Add log
-                $text = "Der Friedensvertrag zwischen [b][" . $diplomacy->alliance1Tag . "] " . $diplomacy->alliance1Name . "[/b] und [b][" . $diplomacy->alliance2Tag . "] " . $diplomacy->alliance2Name . "[/b] ist abgelaufen. Ihr könnt einander nun wieder Krieg erklären.";
-                $this->allianceHistoryRepository->addEntry($diplomacy->alliance1Id, $text);
-                $this->allianceHistoryRepository->addEntry($diplomacy->alliance2Id, $text);
+                $text = "Der Friedensvertrag zwischen [b][" . $diplomacy->getAlliance1()->getTag() . "] " . $diplomacy->getAlliance1()->getName() . "[/b] und [b][" . $diplomacy->getAlliance2()->getTag() . "] " . $diplomacy->getAlliance2()->getName() . "[/b] ist abgelaufen. Ihr könnt einander nun wieder Krieg erklären.";
+                $this->allianceHistoryRepository->addEntry($diplomacy->getAlliance1(), $text);
+                $this->allianceHistoryRepository->addEntry($diplomacy->getAlliance2(), $text);
 
                 // Send message to leader
-                $this->messageRepository->createSystemMessage($this->allianceRepository->getFounderId($diplomacy->alliance1Id), MessageCategoryId::ALLIANCE, "Friedensvertrag abgelaufen", $text);
-                $this->messageRepository->createSystemMessage($this->allianceRepository->getFounderId($diplomacy->alliance2Id), MessageCategoryId::ALLIANCE, "Friedensvertrag abgelaufen", $text);
+                $this->messageRepository->createSystemMessage($diplomacy->getAlliance1()->getFounder(), $this->messageCategoryRepository->find(MessageCategoryId::ALLIANCE), "Friedensvertrag abgelaufen", $text);
+                $this->messageRepository->createSystemMessage($diplomacy->getAlliance2()->getFounder(), $this->messageCategoryRepository->find(MessageCategoryId::ALLIANCE), "Friedensvertrag abgelaufen", $text);
 
-                $this->allianceDiplomacyRepository->deleteDiplomacy($diplomacy->id);
+                $this->allianceDiplomacyRepository->deleteDiplomacy($diplomacy);
             }
             $cnt += $nr;
         }

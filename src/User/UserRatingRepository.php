@@ -84,7 +84,7 @@ class UserRatingRepository extends AbstractRepository
         $this->createQueryBuilder('q')
             ->update()
             ->set('q.diplomacyRating', 'q.diplomacyRating + :rating')
-            ->where('q.userId = :userId')
+            ->where('q.user = :userId')
             ->setParameters([
                 'rating' => $rating,
                 'userId' => $user->getId(),

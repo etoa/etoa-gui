@@ -13,6 +13,7 @@ class UserStats
         private readonly UserOnlineStatsRepository $userOnlineStatsRepository,
         private readonly PlanetRepository          $planetRepository,
         private readonly GameVersionService        $versionService,
+        private readonly string $projectDir
     )
     {
     }
@@ -30,7 +31,7 @@ class UserStats
         $totalSteps = 288;
 
         $im = imagecreate($w, $h);
-        $imh = imagecreatefromjpeg(__DIR__ . '/../../htdocs/images/logo_trans.jpg');
+        $imh = imagecreatefromjpeg($this->projectDir.'/public/build/images/logo_trans.jpg');
         imagecopyresized($im, $imh, (int)(($w - imagesx($imh)) / 2), (int)(($h - imagesy($imh)) / 2), 0, 0, imagesx($imh), imagesy($imh), imagesx($imh), imagesy($imh));
 
         $colWhite = imagecolorallocate($im, 255, 255, 255);
@@ -60,20 +61,20 @@ class UserStats
         $sumo = $sumr = 0;
         if ($mnr > 0) {
             foreach ($userOnlineStats as $stats) {
-                $t = $stats->timestamp;
-                $data[$t]['o'] = $stats->sessionCount;
-                $data[$t]['r'] = $stats->userCount;
-                $max = max($max, $stats->userCount);
-                $maxo = max($maxo, $stats->sessionCount);
-                if ($acto == false) {
-                    $acto = $stats->sessionCount;
+                $t = $stats->getTimestamp();
+                $data[$t]['o'] = $stats->getSessionCount();
+                $data[$t]['r'] = $stats->getUserCount();
+                $max = max($max, $stats->getUserCount());
+                $maxo = max($maxo, $stats->getSessionCount());
+                if (!$acto) {
+                    $acto = $stats->getSessionCount();
                 }
-                if ($actr == false) {
-                    $actr = $stats->userCount;
+                if (!$actr) {
+                    $actr = $stats->getUserCount();
                 }
-                $sumo += $stats->sessionCount;
-                $sumr += $stats->userCount;
-                $index0 = $stats->timestamp;
+                $sumo += $stats->getSessionCount();
+                $sumr += $stats->getUserCount();
+                $index0 = $stats->getTimestamp();
             }
             $avgo = round($sumo / $mnr, 2);
             $avgr = round($sumr / $mnr, 2);
@@ -176,8 +177,8 @@ class UserStats
         $acto = 0;
         $actr = 0;
         if ($mnr > 0) {
-            $acto = $stats[0]->sessionCount;
-            $actr = $stats[0]->userCount;
+            $acto = $stats[0]->getSessionCount();
+            $actr = $stats[0]->getUserCount();
         }
 
         $text = "<gameserver>
@@ -188,7 +189,7 @@ class UserStats
             <galaxy>
                 <planets>
                     <inhabited>" . $this->planetRepository->countWithUser() . "</inhabited>
-                    <total>" . $this->planetRepository->count() . "</total>
+                    <total>" . $this->planetRepository->count([]) . "</total>
                 </planets>
             </galaxy>
         </gameserver>";
