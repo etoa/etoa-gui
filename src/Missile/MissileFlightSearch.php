@@ -13,7 +13,7 @@ class MissileFlightSearch extends AbstractSearch
 
     public function entityFrom(int $entityFrom): self
     {
-        $this->parts[] = 'flight_entity_from = :entityFrom';
+        $this->parts[] = 'q.entityFrom = :entityFrom';
         $this->parameters['entityFrom'] = $entityFrom;
 
         return $this;
@@ -21,7 +21,7 @@ class MissileFlightSearch extends AbstractSearch
 
     public function landed(): self
     {
-        $this->parts[] = 'flight_landtime < :landTime';
+        $this->parts[] = 'q.landTime < :landTime';
         $this->parameters['landTime'] = time();
 
         return $this;

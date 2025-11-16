@@ -418,44 +418,28 @@ class BuildingListItemRepository extends AbstractRepository
     /**
      * @return ?array{building_name: string, buildlist_id: string}
      */
-    public function getDeactivatableBuilding(int $entityId): ?array
+    public function getDeactivatableBuilding(int|Planet $entityId): ?BuildingListItem
     {
-        $data = $this->getConnection()->fetchAssociative('
-            SELECT
-                building_name, buildlist_id
-            FROM
-                buildlist
-            INNER JOIN
-                buildings
-            ON building_id = buildlist_building_id
-            AND buildlist_entity_id = :entityId
-            AND buildlist_current_level > 0
-            AND buildlist_building_id IN (:buildingIds)
-            AND buildlist_deactivated < :now
-            ORDER BY RAND()
-            LIMIT 1
-        ', [
-            'entityId' => $entityId,
-            'now' => time(),
-            'buildingIds' => [BuildingId::DEFENSE, BuildingId::SHIPYARD, BuildingId::FLEET_CONTROL, BuildingId::MARKET, BuildingId::CRYPTO],
-        ], [
-            'buildingIds' => ArrayParameterType::INTEGER,
-        ]);
-
-        return $data !== false ? $data : null;
+        return $this->createQueryBuilder('q')
+            ->where('q.entity = :entityId')
+            ->andWhere('q.currentLevel>0')
+            ->andWhere('q.building IN (:buildingIds)')
+            ->andWhere('q.deactivated>:now')
+            ->setParameters([
+                'entityId' => $entityId,
+                'now' => time(),
+                'buildingIds' => [BuildingId::DEFENSE, BuildingId::SHIPYARD, BuildingId::FLEET_CONTROL, BuildingId::MARKET, BuildingId::CRYPTO],
+            ])
+            ->orderBy('RAND()')
+            ->setMaxResults(1)
+            ->getQuery()
+            ->getOneOrNullResult();
     }
 
-    public function deactivateBuilding(int $id, int $deactivateTime): void
+    public function deactivateBuilding(BuildingListItem $buildingListItem, int $deactivateTime): void
     {
-        $this->createQueryBuilder('q')
-            ->update('buildlist')
-            ->set('buildlist_deactivated', ':deactivated')
-            ->where('buildlist_id = :id')
-            ->setParameters([
-                'id' => $id,
-                'deactivated' => $deactivateTime,
-            ])
-            ->executeQuery();
+        $buildingListItem->setDeactivated($deactivateTime);
+        $this->save();
     }
 
     public function getPeopleWorking(Planet $entity, bool $onlyWorkingStatus = false): array

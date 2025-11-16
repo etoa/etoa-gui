@@ -84,24 +84,19 @@ class MissileRepository extends \EtoA\Core\AbstractRepository
     /**
      * @return MissileListItem[]
      */
-    public function findForUser(int $userId, ?int $entityId = null): array
+    public function findForUser(int|User $userId, int|Planet|null $entityId = null): array
     {
         $qb = $this->createQueryBuilder('q')
-            ->select('*')
-            ->from('missilelist')
-            ->where('missilelist_user_id = :userId')
+            ->where('q.user = :userId')
             ->setParameter('userId', $userId);
 
-        if ($entityId !== null) {
+        if ($entityId) {
             $qb
-                ->andWhere('missilelist_entity_id = :entityId')
+                ->andWhere('q.entity = :entityId')
                 ->setParameter('entityId', $entityId);
         }
 
-        $data = $qb
-            ->fetchAllAssociative();
-
-        return array_map(fn ($row) => MissileListItem::createFromArray($row), $data);
+        return $qb->getQuery()->execute();
     }
 
     public function setMissileCount(int $id, int $count): void

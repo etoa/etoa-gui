@@ -35,3 +35,7 @@ services:
 
   League\CommonMark\ConverterInterface:
     class: League\CommonMark\GithubFlavoredMarkdownConverter
+
+  _instanceof:
+    EtoA\PeriodicTask\Task\PeriodicTaskInterface:
+      tags: [ 'periodic.task' ]

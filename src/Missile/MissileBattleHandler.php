@@ -9,70 +9,53 @@ use EtoA\Defense\DefenseRepository;
 use EtoA\Entity\Missile;
 use EtoA\Entity\MissileFlight;
 use EtoA\Message\MessageCategoryId;
+use EtoA\Message\MessageCategoryRepository;
 use EtoA\Message\MessageRepository;
 use EtoA\Support\StringUtils;
-use EtoA\Universe\Planet\PlanetRepository;
 
 class MissileBattleHandler
 {
-    private ConfigurationService $config;
-    private PlanetRepository $planetRepository;
-    private MissileRepository $missileRepository;
-    private MissileFlightRepository $missileFlightRepository;
-    private MessageRepository $messageRepository;
-    private MissileDataRepository $missileDataRepository;
-    private DefenseDataRepository $defenseDataRepository;
-    private DefenseRepository $defenseRepository;
-    private BuildingListItemRepository $buildingRepository;
-
-    public function __construct(ConfigurationService $config, PlanetRepository $planetRepository, MissileRepository $missileRepository, MissileFlightRepository $missileFlightRepository, MessageRepository $messageRepository, MissileDataRepository $missileDataRepository, DefenseDataRepository $defenseDataRepository, DefenseRepository $defenseRepository, BuildingListItemRepository $buildingRepository)
-    {
-        $this->config = $config;
-        $this->planetRepository = $planetRepository;
-        $this->missileRepository = $missileRepository;
-        $this->missileFlightRepository = $missileFlightRepository;
-        $this->messageRepository = $messageRepository;
-        $this->missileDataRepository = $missileDataRepository;
-        $this->defenseDataRepository = $defenseDataRepository;
-        $this->defenseRepository = $defenseRepository;
-        $this->buildingRepository = $buildingRepository;
-    }
+    public function __construct(
+        private readonly ConfigurationService $config,
+        private readonly MissileRepository $missileRepository,
+        private readonly MissileFlightRepository $missileFlightRepository,
+        private readonly MessageRepository $messageRepository,
+        private readonly DefenseDataRepository $defenseDataRepository,
+        private readonly DefenseRepository $defenseRepository,
+        private readonly BuildingListItemRepository $buildingRepository,
+        private readonly MessageCategoryRepository $messageCategoryRepository
+    )
+    {}
 
     public function battle(MissileFlight $flight): void
     {
-        // Kampf abbrechen und Raketen zum Startplanet schicken wenn Kampfsperre aktiv ist
+        // Kampf abbrechen und Raketen zum Startplanet schicken, wenn Kampfsperre aktiv ist
         if ($this->config->getBoolean('battleban') && $this->config->param1Int('battleban_time') <= time() && $this->config->param2Int('battleban_time') > time()) {
-            $planetUserId = $this->planetRepository->getPlanetUserId($flight->getEntityFromId());
             // Transferiert Raketen zum Startplanet
-            foreach ($flight->missiles as $missileId => $count) {
-                $this->missileRepository->addMissile($missileId, $count, $planetUserId, $flight->getEntityFromId());
+            foreach ($flight->getFlightObjects() as $object) {
+                $this->missileRepository->addMissile($object->getMissile(), $object->getCount(), $flight->getEntityFrom()->getUser(), $flight->getEntityFrom());
             }
-
-            // Löscht Flug
-            $this->missileFlightRepository->deleteFlight($flight->getId(), $flight->getEntityFromId());
 
             // Schickt Nachricht an den Angreifer
             $msg = $this->config->param2('battleban_arrival_text');
-            $this->messageRepository->createSystemMessage($planetUserId, MessageCategoryId::SHIP_WAR, 'Ergebnis des Raketenangriffs', $msg);
+            $this->messageRepository->createSystemMessage($flight->getEntityFrom()->getUser(), $this->messageCategoryRepository->find(MessageCategoryId::SHIP_WAR), 'Ergebnis des Raketenangriffs', $msg);
+
+            // Löscht Flug
+            $this->missileFlightRepository->deleteFlight($flight);
 
             return;
         }
 
-        if ($flight->getEntityFromId() > 0) {
-            $targetUserId = $this->planetRepository->getPlanetUserId($flight->getTargetPlanetId());
-
-            $missiles = $this->missileDataRepository->getMissiles();
-            $this->missileFlightRepository->deleteFlight($flight->getId(), $flight->getEntityFromId());
-            if (count($flight->missiles) > 0) {
+        if ($flight->getEntityFrom()) {
+            if (count($flight->getFlightObjects()) > 0) {
                 // Select all attacking missiles
                 /** @var array<int, Missile> $attackingMissiles */
                 $attackingMissiles = [];
                 $attackingMissilesCount = 0;
-                foreach ($flight->missiles as $missileId => $count) {
-                    $missile = $missiles[$missileId];
-                    for ($x = 0; $x < $count; $x++) {
-                        $attackingMissiles[$attackingMissilesCount] = $missile->getDamage();
-                        $attackingMissiles[$attackingMissilesCount] = $missile->getDeactivate();
+                foreach ($flight->getFlightObjects() as $object) {
+                    for ($x = 0; $x < $object->getCount(); $x++) {
+                        $attackingMissiles[$attackingMissilesCount]['dmg'] = $object->getMissile()->getDamage();
+                        $attackingMissiles[$attackingMissilesCount]['emp'] = $object->getMissile()->getDeactivate();
                         $attackingMissilesCount++;
                     }
                 }
@@ -80,18 +63,17 @@ class MissileBattleHandler
                 shuffle($attackingMissiles);
 
                 // Select anti-missiles from target
-                $missileList = $this->missileRepository->findForUser($targetUserId, $flight->getTargetPlanetId());
+                $missileList = $this->missileRepository->findForUser($flight->getTarget()->getUser(), $flight->getTarget());
                 $defendingMissiles = [];
                 $defendingMissilesCounts = [];
                 $defendingMissileCount = 0;
                 foreach ($missileList as $item) {
-                    $missile = $missiles[$item->getMissileId()];
-                    if ($missile->getDef() > 0) {
+                    if ($item->getMissile()->getDef() > 0) {
                         $defendingMissilesCounts[$item->getId()] = $item->getCount();
                         for ($x = 0; $x < $item->getCount(); $x++) {
                             $defendingMissiles[$defendingMissileCount]['id'] = $item->getId();
-                            $defendingMissiles[$defendingMissileCount]['d'] = $missile->getDef();
-                            $defendingMissiles[$defendingMissileCount]['n'] = $missile->getName();
+                            $defendingMissiles[$defendingMissileCount]['d'] = $item->getMissile()->getDef();
+                            $defendingMissiles[$defendingMissileCount]['n'] = $item->getMissile()->getName();
                             $defendingMissileCount++;
                         }
                     }
@@ -133,8 +115,8 @@ class MissileBattleHandler
 
                 // Check if missiles are left
                 if ($attackingMissilesCount > 0) {
-                    $msg_a = "Eure Raketen haben den Planeten [b]" . $flight->targetPlanetName . "[/b] angegriffen! ";
-                    $msg_d = "Euer Planet [b]" . $flight->targetPlanetName . "[/b] wurde von einem Raketenangriff getroffen!\n";
+                    $msg_a = "Eure Raketen haben den Planeten [b]" . $flight->getTarget()->getName() . "[/b] angegriffen! ";
+                    $msg_d = "Euer Planet [b]" . $flight->getTarget()->getName() . "[/b] wurde von einem Raketenangriff getroffen!\n";
                     if ($dmcnt_start > 0) {
                         $msg_d .= "Eure Abfangraketen schossen zwar einige angreifende Raketen ab, jedoch kamen die restlichen Raketen trotzdem durch.\n ";
                         $msg_d .= "\n" . $def_report . "\n";
@@ -142,7 +124,7 @@ class MissileBattleHandler
 
                     // Bomb the defense
                     $defenses = $this->defenseDataRepository->getAllDefenses();
-                    $defenseList = $this->defenseRepository->findForUser($targetUserId, $flight->getTargetPlanetId());
+                    $defenseList = $flight->getTarget()->getDeflist();
                     if (count($defenseList) > 0) {
                         // Def values
                         $defendingStructure = 0;
@@ -151,7 +133,7 @@ class MissileBattleHandler
                         $defenseItemCounts = [];
                         $msg_d .= "Anlagen vor dem Angriff:\n\n";
                         foreach ($defenseList as $item) {
-                            $defense = $defenses[$item->getDefenseId()];
+                            $defense = $item->getDefense();
                             $defendingStructure += $defense->getStructure() * $item->getCount();
                             $defendingShield += $defense->getShield() * $item->getCount() * $this->config->getFloat('missile_battle_shield_factor');
                             $defenseItemsById[$item->getId()] = $item;
@@ -210,11 +192,11 @@ class MissileBattleHandler
                     $time = time();
                     foreach ($attackingMissiles as $attackingMissile) {
                         if ($attackingMissile->getDeactivate() > 0) {
-                            $toBeDeactivated = $this->buildingRepository->getDeactivatableBuilding($flight->getTargetPlanetId());
+                            $toBeDeactivated = $this->buildingRepository->getDeactivatableBuilding($flight->getTarget());
                             if ($toBeDeactivated !== null) {
                                 $msg_a .= "Das Gebäude " . $toBeDeactivated['building_name'] . " wurde für " . StringUtils::formatTimespan($attackingMissile->getDeactivate()) . " deaktiviert!\n";
                                 $msg_d .= "Euer Gebäude " . $toBeDeactivated['building_name'] . " wurde für " . StringUtils::formatTimespan($attackingMissile->getdeactivate()) . " deaktiviert!\n";
-                                $this->buildingRepository->deactivateBuilding((int) $toBeDeactivated['buildlist_id'], $time + $attackingMissile->getdeactivate());
+                                $this->buildingRepository->deactivateBuilding($toBeDeactivated, $time + $attackingMissile->getdeactivate());
                             }
                         }
                     }
@@ -229,9 +211,10 @@ class MissileBattleHandler
                     $this->missileRepository->setMissileCount($itemId, $count);
                 }
 
-                $this->messageRepository->createSystemMessage($flight->getEntityFromId(), MessageCategoryId::SHIP_WAR, 'Ergebnis des Raketenangriffs', $msg_a);
-                $this->messageRepository->createSystemMessage($targetUserId, MessageCategoryId::SHIP_WAR, 'Raketenangriff', $msg_d);
+                $this->messageRepository->createSystemMessage($flight->getEntityFrom()->getUser(), $this->messageCategoryRepository->find(MessageCategoryId::SHIP_WAR), 'Ergebnis des Raketenangriffs', $msg_a);
+                $this->messageRepository->createSystemMessage($flight->getTarget()->getUser(), $this->messageCategoryRepository->find(MessageCategoryId::SHIP_WAR), 'Raketenangriff', $msg_d);
             }
+            $this->missileFlightRepository->deleteFlight($flight);
         }
     }
 }

@@ -61,6 +61,7 @@ class CronjobController extends AbstractAdminController
                 'dayofweek' => $elements[4],
                 'current' => $cron->isDue($time),
                 'nextrun' => $cron->getNextRunDate($time),
+                'lastrun' => $cron->getPreviousRunDate($time),
             ];
             $periodictasks[$reflection->getShortName()] = $taskConfig;
         }

@@ -2,6 +2,8 @@
 
 namespace EtoA\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use EtoA\Missile\MissileFlightRepository;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -22,8 +24,16 @@ class MissileFlight
     #[ORM\ManyToOne(targetEntity: Planet::class)]
     private ?Planet $target;
 
+    #[ORM\OneToMany(mappedBy: 'flight', targetEntity: MissileFlightObject::class, cascade: ['persist', 'remove'])]
+    private Collection $flightObjects;
+
     #[ORM\Column(name: "flight_landtime", type: "integer")]
     private int $landTime;
+
+    public function __construct()
+    {
+        $this->flightObjects = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -62,6 +72,36 @@ class MissileFlight
     public function setEntityFrom(?Planet $entityFrom): static
     {
         $this->entityFrom = $entityFrom;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, MissileFlightObject>
+     */
+    public function getFlightObjects(): Collection
+    {
+        return $this->flightObjects;
+    }
+
+    public function addFlightObject(MissileFlightObject $flightObject): static
+    {
+        if (!$this->flightObjects->contains($flightObject)) {
+            $this->flightObjects->add($flightObject);
+            $flightObject->setFlight($this);
+        }
+
+        return $this;
+    }
+
+    public function removeFlightObject(MissileFlightObject $flightObject): static
+    {
+        if ($this->flightObjects->removeElement($flightObject)) {
+            // set the owning side to null (unless already changed)
+            if ($flightObject->getFlight() === $this) {
+                $flightObject->setFlight(null);
+            }
+        }
 
         return $this;
     }

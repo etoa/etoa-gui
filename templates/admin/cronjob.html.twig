@@ -60,6 +60,8 @@
                 <th>Monat</th>
                 <th>Tag der Woche</th>
                 <th>Aktuell</th>
+                <th>Letzte Ausführung</th>
+                <th>Nächste Ausführung</th>
                 <th style="width:90px">Aktion</th>
             </tr>
             </thead>
@@ -73,7 +75,9 @@
                         <td style="text-align:center;">{{ item.dayofmonth }}</td>
                         <td style="text-align:center;">{{ item.month }}</td>
                         <td style="text-align:center;">{{ item.dayofweek }}</td>
-                        <td style="text-align:center;">{% if item.current %}<img src="/web/images/icons/bullet_green.png">{% else %}<img src="/web/images/icons/bullet_black.png">{% endif %}</td>
+                        <td style="text-align:center;">{% if item.current %}<img src="{{ asset('/build/images/icons/bullet_green.png') }}">{% else %}<img src="{{ asset('/build/images/icons/bullet_black.png') }}">{% endif %}</td>
+                        <td>{{ item.lastrun|date("h:i:s", "Europe/Paris") }}</td>
+                        <td>{{ item.nextrun|date("h:i:s", "Europe/Paris") }}</td>
                         <td><input type="button" value="Ausführen" onclick="document.location='{{ path('admin.cron.task.run', {taskName: key}) }}'" /></td>
                     </tr>
                 {% endfor %}

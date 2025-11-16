@@ -18,29 +18,10 @@ class MissileFlightRepository extends AbstractRepository
      */
     public function getFlights(MissileFlightSearch $search): array
     {
-        $data = $this->applySearchSortLimit($this->createQueryBuilder('q'), $search)
-            ->select('f.flight_landtime, f.flight_id, p.planet_name, p.id, f.flight_entity_from')
-            ->from('missile_flights', 'f')
-            ->innerJoin('f', 'planets', 'p', 'p.id = f.flight_entity_to')
-            ->orderBy('flight_landtime', 'ASC')
-            ->fetchAllAssociative();
-
-        $objects = [];
-        if (count($data) > 0) {
-            $ids = array_map(fn (array $row) => $row['flight_id'], $data);
-            $qb = $this->createQueryBuilder('q');
-            $rows = $qb
-                ->select('f.obj_flight_id, f.obj_missile_id, f.obj_cnt')
-                ->from('missile_flights_obj', 'f')
-                ->where($qb->expr()->in('obj_flight_id', $ids))
-                ->fetchAllAssociative();
-
-            foreach ($rows as $row) {
-                $objects[(int) $row['obj_flight_id']][(int) $row['obj_missile_id']] = (int) $row['obj_cnt'];
-            }
-        }
-
-        return array_map(fn (array $row) => new MissileFlight($row, $objects[(int) $row['flight_id']] ?? []), $data);
+        return $this->applySearchSortLimit($this->createQueryBuilder('q'), $search)
+            ->orderBy('q.landTime', 'ASC')
+            ->getQuery()
+            ->execute();
     }
 
     /**
@@ -81,31 +62,9 @@ class MissileFlightRepository extends AbstractRepository
         return $flightId;
     }
 
-    public function deleteFlight(int $flightId, int $fromEntity): bool
+    public function deleteFlight(MissileFlight $missileFlight): void
     {
-        $deleted = (bool) $this->createQueryBuilder('q')
-            ->delete('missile_flights')
-            ->where('flight_id = :flightId')
-            ->andWhere('flight_entity_from = :fromEntity')
-            ->setParameters([
-                'flightId' => $flightId,
-                'fromEntity' => $fromEntity,
-            ])
-            ->executeQuery()
-            ->rowCount();
-
-        if (!$deleted) {
-            return false;
-        }
-
-        $this->createQueryBuilder('q')
-            ->delete('missile_flights_obj')
-            ->where('obj_flight_id = :flightId')
-            ->setParameters([
-                'flightId' => $flightId,
-            ])
-            ->executeQuery();
-
-        return true;
+        $this->remove($missileFlight);
+        $this->save();
     }
 }
