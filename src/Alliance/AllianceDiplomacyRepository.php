@@ -50,17 +50,10 @@ class AllianceDiplomacyRepository extends AbstractRepository
      */
     public function search(AllianceDiplomacySearch $search, int $limit = null): array
     {
-        $data = $this->applySearchSortLimit($this->createQueryBuilder('q'), $search, null, $limit)
-            ->select('b.*')
-            ->addSelect('a1.alliance_name as alliance1Name, a1.alliance_tag as alliance1Tag')
-            ->addSelect('a2.alliance_name as alliance2Name, a2.alliance_tag as alliance2Tag')
-            ->from('alliance_bnd', 'b')
-            ->leftJoin('b', 'alliances', 'a1', 'alliance_bnd_alliance_id1 = a1.alliance_id')
-            ->leftJoin('b', 'alliances', 'a2', 'alliance_bnd_alliance_id2 = a2.alliance_id')
-            ->orderBy('b.alliance_bnd_date', 'DESC')
-            ->fetchAllAssociative();
-
-        return array_map(fn (array $row) => new AllianceDiplomacy($row, 0), $data);
+        return $this->applySearchSortLimit($this->createQueryBuilder('q'), $search, null, $limit)
+            ->orderBy('q.date', 'DESC')
+            ->getQuery()
+            ->execute();
     }
 
     /**
@@ -141,33 +134,20 @@ class AllianceDiplomacyRepository extends AbstractRepository
             ->getOneOrNullResult();
     }
 
-    public function updateDiplomacy(int $id, int $level, string $name, int $points = null, int $date = null): void
+    public function updateDiplomacy(AllianceDiplomacy $diplomacy, int $level, string $name, int $points = null, int $date = null): void
     {
-        $qb = $this->createQueryBuilder('q')
-            ->update('alliance_bnd')
-            ->set('alliance_bnd_level', ':level')
-            ->set('alliance_bnd_name', ':name')
-            ->where('alliance_bnd_id = :id')
-            ->setParameters([
-                'id' => $id,
-                'level' => $level,
-                'name' => $name,
-            ]);
+        $diplomacy->setLevel($level);
+        $diplomacy->setName($name);
 
         if ($points !== null) {
-            $qb
-                ->set('alliance_bnd_points', ':points')
-                ->setParameter('points', $points);
+            $diplomacy->setPoints($points);
         }
 
         if ($date !== null) {
-            $qb
-                ->set('alliance_bnd_date', ':date')
-                ->setParameter('date', $date);
+            $diplomacy->setDate($date);
         }
 
-        $qb
-            ->executeQuery();
+        $this->save();
     }
 
     public function acceptBnd(AllianceDiplomacy $diplomacy, int $points): void
@@ -244,13 +224,10 @@ class AllianceDiplomacyRepository extends AbstractRepository
             ->execute();
     }
 
-    public function deleteDiplomacy(int $id): void
+    public function deleteDiplomacy(AllianceDiplomacy $diplomacy): void
     {
-        $this->createQueryBuilder('q')
-            ->delete('alliance_bnd')
-            ->where('alliance_bnd_id = :id')
-            ->setParameter('id', $id)
-            ->executeQuery();
+        $this->remove($diplomacy);
+        $this->save();
     }
 
     public function deleteAllianceDiplomacies(Alliance $alliance): void

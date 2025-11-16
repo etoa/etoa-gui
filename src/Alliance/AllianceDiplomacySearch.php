@@ -13,7 +13,7 @@ class AllianceDiplomacySearch extends AbstractSearch
 
     public function level(int $level): self
     {
-        $this->parts[] = 'alliance_bnd_level = :level';
+        $this->parts[] = 'q.level = :level';
         $this->parameters['level'] = $level;
 
         return $this;
@@ -21,7 +21,7 @@ class AllianceDiplomacySearch extends AbstractSearch
 
     public function dateBefore(int $timestamp): self
     {
-        $this->parts[] = 'alliance_bnd_date < :dateBefore';
+        $this->parts[] = 'q.date < :dateBefore';
         $this->parameters['dateBefore'] = $timestamp;
 
         return $this;
@@ -29,7 +29,7 @@ class AllianceDiplomacySearch extends AbstractSearch
 
     public function pendingPoints(): self
     {
-        $this->parts[] = 'alliance_bnd_points > 0';
+        $this->parts[] = 'q.points > 0';
 
         return $this;
     }
