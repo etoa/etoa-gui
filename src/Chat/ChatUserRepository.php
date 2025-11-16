@@ -32,14 +32,11 @@ class ChatUserRepository extends AbstractRepository
      */
     public function getTimedOutChatUsers(int $timeout): array
     {
-        $data = $this->createQueryBuilder('q')
-            ->select('*')
-            ->from('chat_users')
-            ->where('timestamp < UNIX_TIMESTAMP() - :timeout')
-            ->setParameter('timeout', $timeout)
-            ->fetchAllAssociative();
-
-        return array_map(fn (array $row) => new ChatUser($row), $data);
+        return $this->createQueryBuilder('q')
+            ->where('q.timestamp < :timeout')
+            ->setParameter('timeout', time() - $timeout)
+            ->getQuery()
+            ->execute();
     }
 
     public function getChatUser(int $userId): ?ChatUser

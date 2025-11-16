@@ -120,8 +120,8 @@ class ChatManager
     {
         $chatUsers = $this->chatUserRepository->getTimedOutChatUsers($this->config->getInt('chat_user_timeout'));
         foreach ($chatUsers as $chatUser) {
-            $this->sendSystemMessage($chatUser->nick . ' verlässt den Chat (Timeout).');
-            $this->chatUserRepository->deleteUser($chatUser->id);
+            $this->sendSystemMessage($chatUser->getKick() . ' verlässt den Chat (Timeout).');
+            $this->chatUserRepository->deleteUser($chatUser->getUser());
         }
 
         return count($chatUsers);
