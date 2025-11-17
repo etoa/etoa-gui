@@ -12,18 +12,12 @@ use Symfony\Component\Messenger\Handler\MessageHandlerInterface;
 
 class AdminMessageNotificationHandler implements MessageHandlerInterface
 {
-    private AdminUserRepository $adminUserRepository;
-    private MessageRepository $messageRepository;
-    private UserRepository $userRepository;
-    private MailSenderService $mailSenderService;
-
-    public function __construct(AdminUserRepository $adminUserRepository, MessageRepository $messageRepository, UserRepository $userRepository, MailSenderService $mailSenderService)
-    {
-        $this->adminUserRepository = $adminUserRepository;
-        $this->messageRepository = $messageRepository;
-        $this->userRepository = $userRepository;
-        $this->mailSenderService = $mailSenderService;
-    }
+    public function __construct(
+        private readonly AdminUserRepository $adminUserRepository,
+        private readonly MessageRepository $messageRepository,
+        private readonly MailSenderService $mailSenderService
+    )
+    {}
 
     public function __invoke(AdminMessageNotificationTask $task): SuccessResult
     {
@@ -31,23 +25,23 @@ class AdminMessageNotificationHandler implements MessageHandlerInterface
 
         $adminUsers = $this->adminUserRepository->findAll();
         foreach ($adminUsers as $adminUser) {
-            if ($adminUser->playerId > 0) {
+            if ($adminUser->getPlayer()) {
                 $messages = $this->messageRepository->findBy([
-                    'user_to_id' => $adminUser->playerId,
+                    'userTo' => $adminUser->getPlayer(),
                     'mailed' => false,
                     'read' => false,
                 ]);
                 if (count($messages) > 0) {
-                    $email_text = "Hallo " . $adminUser->nick . ",\n\nDu hast " . count($messages) . " neue Nachricht(en) erhalten.\n\n";
+                    $email_text = "Hallo " . $adminUser->getNick() . ",\n\nDu hast " . count($messages) . " neue Nachricht(en) erhalten.\n\n";
                     foreach ($messages as $message) {
-                        $email_text .= $message->userFrom == 0
-                            ? "#" . ($count + 1) . " Von System mit dem Betreff '" . $message->subject . "'\n\n\n"
-                            : "#" . ($count + 1) . " Von " . $this->userRepository->getNick($message->userFrom) . " mit dem Betreff '" . $message->subject . "'\n\n" . substr($message->text, 0, 500) . "\n\n\n";
+                        $email_text .= !$message->getUserFrom()
+                            ? "#" . ($count + 1) . " Von System mit dem Betreff '" . $message->getMessageData()->getSubject() . "'\n\n\n"
+                            : "#" . ($count + 1) . " Von " . $message->getUserFrom()->getNick() . " mit dem Betreff '" . $message->getMessageData()->getSubject() . "'\n\n" . substr($message->getMessageData()->getText(), 0, 500) . "\n\n\n";
                     }
 
-                    $this->mailSenderService->send("Neue private Nachricht in EtoA - Admin", $email_text, $adminUser->email);
+                    $this->mailSenderService->send("Neue private Nachricht in EtoA - Admin", $email_text, $adminUser->getEmail());
 
-                    $this->messageRepository->setMailed($adminUser->playerId);
+                    $this->messageRepository->setMailed($adminUser->getPlayer());
 
                     $count++;
                 }

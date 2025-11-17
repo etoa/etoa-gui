@@ -300,20 +300,18 @@ class MessageRepository extends AbstractRepository
         return $affected > 0;
     }
 
-    public function setMailed(int $userTo, bool $mailed = true): bool
+    public function setMailed(int|User $userTo, bool $mailed = true): void
     {
         $affected = $this->createQueryBuilder('q')
-            ->update('messages')
-            ->set('message_mailed', ':mailed')
-            ->where('message_user_to = :userTo')
+            ->update()
+            ->set('q.mailed', ':mailed')
+            ->where('q.userTo = :userTo')
             ->setParameters([
                 'userTo' => $userTo,
                 'mailed' => $mailed,
             ])
-            ->executeQuery()
-            ->rowCount();
-
-        return $affected > 0;
+            ->getQuery()
+            ->execute();
     }
 
     /**
