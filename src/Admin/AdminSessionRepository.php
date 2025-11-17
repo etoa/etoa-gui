@@ -33,11 +33,10 @@ class AdminSessionRepository extends AbstractRepository
     public function findByTimeout(int $timeout): array
     {
         return $this->createQueryBuilder('q')
-            ->select("id")
-            ->from('admin_user_sessions')
-            ->where('time_action + :timeout = ' . time())
+            ->where('q.timeAction + :timeout = ' . time())
             ->setParameter('timeout', $timeout)
-            ->fetchFirstColumn();
+            ->getQuery()
+            ->execute();
     }
 
     /**

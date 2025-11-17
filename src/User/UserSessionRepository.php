@@ -139,14 +139,11 @@ class UserSessionRepository extends AbstractRepository
      */
     public function findByTimeout(int $timeout): array
     {
-        $data = $this->createQueryBuilder('q')
-            ->select("*")
-            ->from('user_sessions')
-            ->where('time_action + :timeout = ' . time())
+        return $this->createQueryBuilder('q')
+            ->where('q.timeAction + :timeout = ' . time())
             ->setParameter('timeout', $timeout)
-            ->fetchAllAssociative();
-
-        return array_map(fn (array $row) => new UserSession($row), $data);
+            ->getQuery()
+            ->execute();
     }
 
     public function add(UserSession $userSession): void
