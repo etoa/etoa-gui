@@ -64,19 +64,31 @@ class ChatRepository extends AbstractRepository
 
     public function cleanupMessage(int $keep): int
     {
-        $keepId = (int) $this->createQueryBuilder('q')
-            ->select('id')
-            ->from('chat')
-            ->orderBy('id', 'DESC')
+        $count = 0;
+
+        $firstData = $this->createQueryBuilder('q')
+            ->orderBy('q.id', 'DESC')
             ->setMaxResults(1)
             ->setFirstResult($keep)
-            ->fetchOne();
+            ->getQuery()
+            ->getOneOrNullResult();
 
-        return $this->getConnection()->executeQuery('
-            DELETE FROM chat
-            WHERE id <= :keepId
-        ', [
-            'keepId' => $keepId,
-        ])->rowCount();
+        if($firstData) {
+            $messages = $this->createQueryBuilder('q')
+                ->where('q.id <= :keepId')
+                ->setParameter('keepId',$firstData->getId())
+                ->getQuery()
+                ->execute();
+
+            $count = count($messages);
+
+            foreach ($messages as $message) {
+                $this->remove($message);
+            }
+
+            $this->save();
+        }
+
+        return $count;
     }
 }
