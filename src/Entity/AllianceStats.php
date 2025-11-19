@@ -47,7 +47,7 @@ class AllianceStats
     private int $currentRank;
 
     #[ORM\Column(name: "alliance_rank_last")]
-    private int $lastRank;
+    private int $lastRank = 0;
 
     public function getAllianceTag(): ?string
     {

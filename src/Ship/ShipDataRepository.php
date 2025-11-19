@@ -42,11 +42,11 @@ class ShipDataRepository extends AbstractRepository
     public function getShipPoints(): array
     {
         $data = $this->createQueryBuilder('q')
-            ->select('ship_id', 'ship_points')
-            ->from('ships')
-            ->fetchAllKeyValue();
+            ->select('q.id', 'q.points')
+            ->getQuery()
+            ->execute();
 
-        return array_map(fn ($value) => (float) $value, $data);
+        return array_column($data, 'points', 'id');
     }
 
     public function updateShipPoints(int $shipId, float $points): void

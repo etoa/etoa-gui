@@ -69,17 +69,18 @@ class TechnologyListItemRepository extends AbstractRepository
     /**
      * @return array<int, int>
      */
-    public function getTechnologyLevels(int $userId): array
+    public function getTechnologyLevels(int|User $userId): array
     {
         $data = $this->createQueryBuilder('q')
-            ->select('techlist_tech_id, techlist_current_level')
-            ->where('techlist_user_id = :userId')
+            ->select('IDENTITY(q.technology), q.currentLevel')
+            ->where('q.user = :userId')
             ->setParameters([
                 'userId' => $userId,
             ])
-            ->fetchAllKeyValue();
+            ->getQuery()
+            ->execute();
 
-        return array_map(fn ($value) => (int) $value, $data);
+        return array_column($data, 'currentLevel', 'id');
     }
 
     public function getTechnologyLevel(User $user, Technology|int $technology): ?int

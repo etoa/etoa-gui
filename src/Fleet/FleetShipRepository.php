@@ -160,15 +160,16 @@ class FleetShipRepository extends AbstractRepository
             ->execute();
     }
 
-    public function getSpecialShipExperienceSumForUser(int $userId): int
+    public function getSpecialShipExperienceSumForUser(int|User $userId): int
     {
         return (int) $this->createQueryBuilder('q')
-            ->select('SUM(fs_special_ship_exp)')
-            ->from('fleet_ships', 'fs')
-            ->innerJoin('fs', 'fleet', 'f', 'f.id = fs.fs_fleet_id AND f.user_id = :userId')
-            ->andWhere('fs_ship_cnt = 1')
+            ->select('SUM(q.specialShipExperience)')
+            ->innerJoin('App:Fleet', 'f', 'with', 'f.id = q.fleet AND f.user = :userId')
+            ->andWhere('q.count = 1')
             ->setParameter('userId', $userId)
-            ->fetchOne();
+            ->setMaxResults(1)
+            ->getQuery()
+            ->getSingleScalarResult();
     }
 
     public function getFleetSpecialTarnBonus(Fleet $fleet): float

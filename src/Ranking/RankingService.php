@@ -5,8 +5,10 @@ declare(strict_types=1);
 namespace EtoA\Ranking;
 
 use EtoA\Alliance\AllianceBuildingRepository;
+use EtoA\Alliance\AllianceBuildListRepository;
 use EtoA\Alliance\AllianceRepository;
 use EtoA\Alliance\AllianceStatsRepository;
+use EtoA\Alliance\AllianceTechnologyListRepository;
 use EtoA\Alliance\AllianceTechnologyRepository;
 use EtoA\Building\BuildingDataRepository;
 use EtoA\Building\BuildingListItemRepository;
@@ -14,6 +16,7 @@ use EtoA\Building\BuildingPointRepository;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Defense\DefenseDataRepository;
 use EtoA\Defense\DefenseRepository;
+use EtoA\Entity\AllianceStats;
 use EtoA\Entity\Building;
 use EtoA\Entity\BuildingPoint;
 use EtoA\Entity\Defense;
@@ -22,9 +25,10 @@ use EtoA\Entity\Technology;
 use EtoA\Entity\TechnologyPoint;
 use EtoA\Fleet\FleetRepository;
 use EtoA\Fleet\FleetSearchParameters;
+use EtoA\Fleet\FleetShipRepository;
 use EtoA\Race\RaceDataRepository;
 use EtoA\Ship\ShipDataRepository;
-use EtoA\Ship\ShipRepository;
+use EtoA\Ship\ShipListRepository;
 use EtoA\Support\RuntimeDataStore;
 use EtoA\Technology\TechnologyDataRepository;
 use EtoA\Technology\TechnologyPointRepository;
@@ -44,57 +48,37 @@ use EtoA\User\UserStatRepository;
  */
 class RankingService
 {
-    private ConfigurationService $config;
-    private RuntimeDataStore $runtimeDataStore;
-    private AllianceRepository $allianceRepository;
-    private AllianceStatsRepository $allianceStatsRepository;
-    private PlanetRepository $planetRepository;
-    private BuildingListItemRepository $buildingRepository;
-    private BuildingDataRepository $buildingDataRepository;
-    private BuildingPointRepository $buildingPointRepository;
-    private TechnologyListItemRepository $technologyRepository;
-    private TechnologyDataRepository $technologyDataRepository;
-    private TechnologyPointRepository $technologyPointRepository;
-    private ShipRepository $shipRepository;
-    private ShipDataRepository $shipDataRepository;
-    private FleetRepository $fleetRepository;
-    private DefenseRepository $defenseRepository;
-    private DefenseDataRepository $defenseDataRepository;
-    private RaceDataRepository $raceRepository;
-    private UserStatRepository $userStatRepository;
-    private UserRepository $userRepository;
-    private EntityRepository $entityRepository;
-    private AllianceBuildingRepository $allianceBuildingRepository;
-    private AllianceTechnologyRepository $allianceTechnologyRepository;
-    private UserPointsRepository $userPointsRepository;
+    public function __construct(
+        private readonly ConfigurationService $config,
+        private readonly RuntimeDataStore $runtimeDataStore,
+        private readonly AllianceRepository $allianceRepository,
+        private readonly AllianceStatsRepository $allianceStatsRepository,
+        private readonly PlanetRepository $planetRepository,
+        private readonly BuildingListItemRepository $buildingRepository,
+        private readonly BuildingDataRepository $buildingDataRepository,
+        private readonly BuildingPointRepository $buildingPointRepository,
+        private readonly TechnologyListItemRepository $technologyRepository,
+        private readonly TechnologyDataRepository $technologyDataRepository,
+        private readonly TechnologyPointRepository $technologyPointRepository,
+       private readonly ShipDataRepository $shipDataRepository,
+        private readonly FleetRepository $fleetRepository,
+        private readonly DefenseRepository $defenseRepository,
+        private readonly DefenseDataRepository $defenseDataRepository,
+        private readonly RaceDataRepository $raceRepository,
+        private readonly UserStatRepository $userStatRepository,
+        private readonly UserRepository $userRepository,
+        private readonly EntityRepository $entityRepository,
+        private readonly AllianceBuildingRepository $allianceBuildingRepository,
+        private readonly AllianceBuildListRepository $allianceBuildListRepository,
+        private readonly AllianceTechnologyRepository $allianceTechnologyRepository,
+        private readonly UserPointsRepository $userPointsRepository,
+        private readonly ShipListRepository $shipListRepository,
+        private readonly FleetShipRepository $fleetShipRepository,
+        private readonly AllianceTechnologyListRepository $allianceTechnologyListRepository
+    )
+    {}
 
-    public function __construct(ConfigurationService $config, RuntimeDataStore $runtimeDataStore, AllianceRepository $allianceRepository, AllianceStatsRepository $allianceStatsRepository, PlanetRepository $planetRepository, BuildingListItemRepository $buildingRepository, BuildingDataRepository $buildingDataRepository, BuildingPointRepository $buildingPointRepository, TechnologyListItemRepository $technologyRepository, TechnologyDataRepository $technologyDataRepository, TechnologyPointRepository $technologyPointRepository, ShipRepository $shipRepository, ShipDataRepository $shipDataRepository, FleetRepository $fleetRepository, DefenseRepository $defenseRepository, DefenseDataRepository $defenseDataRepository, RaceDataRepository $raceRepository, UserStatRepository $userStatRepository, UserRepository $userRepository, EntityRepository $entityRepository, AllianceBuildingRepository $allianceBuildingRepository, AllianceTechnologyRepository $allianceTechnologyRepository, UserPointsRepository $userPointsRepository)
-    {
-        $this->config = $config;
-        $this->runtimeDataStore = $runtimeDataStore;
-        $this->allianceRepository = $allianceRepository;
-        $this->allianceStatsRepository = $allianceStatsRepository;
-        $this->planetRepository = $planetRepository;
-        $this->buildingRepository = $buildingRepository;
-        $this->buildingDataRepository = $buildingDataRepository;
-        $this->buildingPointRepository = $buildingPointRepository;
-        $this->technologyRepository = $technologyRepository;
-        $this->technologyDataRepository = $technologyDataRepository;
-        $this->technologyPointRepository = $technologyPointRepository;
-        $this->shipRepository = $shipRepository;
-        $this->shipDataRepository = $shipDataRepository;
-        $this->fleetRepository = $fleetRepository;
-        $this->defenseRepository = $defenseRepository;
-        $this->defenseDataRepository = $defenseDataRepository;
-        $this->raceRepository = $raceRepository;
-        $this->userStatRepository = $userStatRepository;
-        $this->userRepository = $userRepository;
-        $this->entityRepository = $entityRepository;
-        $this->allianceBuildingRepository = $allianceBuildingRepository;
-        $this->allianceTechnologyRepository = $allianceTechnologyRepository;
-        $this->userPointsRepository = $userPointsRepository;
-    }
-
+    //TODO: refactor
     public function calc(): RankingCalculationResult
     {
         $time = time();
@@ -123,10 +107,10 @@ class RankingService
         $oldranks = array();
         foreach ($ranks as $userRanks) {
             $oldranks[(int) $userRanks['id']][0] = (int) $userRanks['rank'];
-            $oldranks[(int) $userRanks['id']][1] = (int) $userRanks['rank_ships'];
-            $oldranks[(int) $userRanks['id']][2] = (int) $userRanks['rank_tech'];
-            $oldranks[(int) $userRanks['id']][3] = (int) $userRanks['rank_buildings'];
-            $oldranks[(int) $userRanks['id']][4] = (int) $userRanks['rank_exp'];
+            $oldranks[(int) $userRanks['id']][1] = (int) $userRanks['shipPoints'];
+            $oldranks[(int) $userRanks['id']][2] = (int) $userRanks['techPoints'];
+            $oldranks[(int) $userRanks['id']][3] = (int) $userRanks['buildingPoints'];
+            $oldranks[(int) $userRanks['id']][4] = (int) $userRanks['expPoints'];
         }
 
         $user_rank_highest = [];
@@ -159,7 +143,7 @@ class RankingService
             $planets = $this->planetRepository->getUserPlanets($user->getId());
             foreach ($planets as $planet) {
                 if ($planet->isMainPlanet()) {
-                    $entity = $this->entityRepository->findIncludeCell($planet->getId());
+                    $entity = $this->entityRepository->findIncludeCell($planet->getEntity());
                     $sx = $entity->getCell()->getSx();
                     $sy = $entity->getCell()->getSy();
 
@@ -167,31 +151,31 @@ class RankingService
                 }
             }
 
-            $shipListItems = $this->shipRepository->findForUser($user->getId());
+            $shipListItems = $this->shipListRepository->findForUser($user);
             foreach ($shipListItems as $shipListItem) {
-                $p = ($shipListItem->getBunkered() + $shipListItem->getCount()) * $shipPoints[$shipListItem->getShipId()];
+                $p = ($shipListItem->getBunkered() + $shipListItem->getCount()) * $shipPoints[$shipListItem->getShip()->getId()];
                 $points += $p;
                 $points_ships += $p;
             }
 
-            $fleets = $this->fleetRepository->findByParameters(FleetSearchParameters::create()->userId($user->getId()));
+            $fleets = $this->fleetRepository->findByParameters(FleetSearchParameters::create()->user($user));
             foreach ($fleets as $fleet) {
-                foreach ($this->fleetRepository->findAllShipsInFleet($fleet->getId()) as $shipEntry) {
-                    $p = $shipEntry->count * $shipPoints[$shipEntry->shipId];
+                foreach ($this->fleetShipRepository->findAllShipsInFleet($fleet) as $shipEntry) {
+                    $p = $shipEntry->getCount() * $shipPoints[$shipEntry->getShip()->getId()];
                     $points += $p;
                     $points_ships += $p;
                 }
             }
 
-            $defenseListItems = $this->defenseRepository->findForUser($user->getId());
+            $defenseListItems = $this->defenseRepository->findForUser($user);
             foreach ($defenseListItems as $defenseListItem) {
-                $p = round($defenseListItem->getCount() * $defensePoints[$defenseListItem->getDefenseId()]);
+                $p = round($defenseListItem->getCount() * $defensePoints[$defenseListItem->getDefense()->getId()]);
                 $points += $p;
                 $points_building += $p;
             }
 
             foreach ($planets as $planet) {
-                $buildingLevels = $this->buildingRepository->getBuildingLevels($planet->getId());
+                $buildingLevels = $this->buildingRepository->getBuildingLevels($planet);
                 foreach ($buildingLevels as $buildingId => $level) {
                     $p = round($buildingPoints[$buildingId][$level]);
                     $points += $p;
@@ -206,17 +190,17 @@ class RankingService
                 $points_tech += $p;
             }
 
-            $points_exp = max(0, $this->shipRepository->getSpecialShipExperienceSumForUser($user->getId()));
-            $points_exp += max(0, $this->fleetRepository->getSpecialShipExperienceSumForUser($user->getId()));
+            $points_exp = max(0, $this->shipListRepository->getSpecialShipExperienceSumForUser($user));
+            $points_exp += max(0, $this->fleetShipRepository->getSpecialShipExperienceSumForUser($user));
 
             $userStats[] = UserStatistic::createFromCalculation(
                 $user,
                 $user->getBlockedTo() > $time,
                 $user->getHmodFrom() > 0,
                 $user->getLogoutTime() < $time - $inactiveTime,
-                $user->getAllianceId(),
-                $user->getAllianceId() > 0 ? $allianceTags[$user->getAllianceId()] : null,
-                $user->getRaceId() > 0 ? $race[$user->getRaceId()] : null,
+                $user->getAlliance(),
+                $user->getAlliance()?$user->getAlliance()->getTag():'',
+                $user->getRace()?$user->getRace()->getName():'',
                 $sx,
                 $sy,
                 (int) $points,
@@ -237,10 +221,10 @@ class RankingService
             $rank = 1;
             foreach ($userStats as $stats) {
                 $rankShift = 0;
-                if (isset($oldranks[$stats->userId])) {
-                    if ($rank < $oldranks[$stats->userId][0]) {
+                if (isset($oldranks[$stats->user->getId()])) {
+                    if ($rank < $oldranks[$stats->user->getId()][0]) {
                         $rankShift = 1;
-                    } elseif ($rank > $oldranks[$stats->userId][0]) {
+                    } elseif ($rank > $oldranks[$stats->user->getId()][0]) {
                         $rankShift = 2;
                     }
                 }
@@ -249,10 +233,10 @@ class RankingService
                 $stats->rankShift = $rankShift;
                 $rank++;
 
-                $this->userRepository->updatePointsAndRank($stats, $user_rank_highest[$stats->userId]);
+                $this->userRepository->updatePointsAndRank($stats, $user_rank_highest[$stats->user->getId()]);
 
                 $max_points = max($max_points, $stats->points);
-                $points_arr[$stats->userId] = $stats->points;
+                $points_arr[$stats->user->getId()] = $stats->points;
             }
         }
 
@@ -262,10 +246,10 @@ class RankingService
             $rank = 1;
             foreach ($userStats as $stats) {
                 $rankShift = 0;
-                if (isset($oldranks[$stats->userId])) {
-                    if ($rank < $oldranks[$stats->userId][1]) {
+                if (isset($oldranks[$stats->user->getId()])) {
+                    if ($rank < $oldranks[$stats->user->getId()][1]) {
                         $rankShift = 1;
-                    } elseif ($rank > $oldranks[$stats->userId][1]) {
+                    } elseif ($rank > $oldranks[$stats->user->getId()][1]) {
                         $rankShift = 2;
                     }
                 }
@@ -282,10 +266,10 @@ class RankingService
             $rank = 1;
             foreach ($userStats as $stats) {
                 $rankShift = 0;
-                if (isset($oldranks[$stats->userId])) {
-                    if ($rank < $oldranks[$stats->userId][2]) {
+                if (isset($oldranks[$stats->user->getId()])) {
+                    if ($rank < $oldranks[$stats->user->getId()][2]) {
                         $rankShift = 1;
-                    } elseif ($rank > $oldranks[$stats->userId][2]) {
+                    } elseif ($rank > $oldranks[$stats->user->getId()][2]) {
                         $rankShift = 2;
                     }
                 }
@@ -302,10 +286,10 @@ class RankingService
             $rank = 1;
             foreach ($userStats as $stats) {
                 $rankShift = 0;
-                if (isset($oldranks[$stats->userId])) {
-                    if ($rank < $oldranks[$stats->userId][3]) {
+                if (isset($oldranks[$stats->user->getId()])) {
+                    if ($rank < $oldranks[$stats->user->getId()][3]) {
                         $rankShift = 1;
-                    } elseif ($rank > $oldranks[$stats->userId][3]) {
+                    } elseif ($rank > $oldranks[$stats->user->getId()][3]) {
                         $rankShift = 2;
                     }
                 }
@@ -322,10 +306,10 @@ class RankingService
             $rank = 1;
             foreach ($userStats as $stats) {
                 $rankShift = 0;
-                if (isset($oldranks[$stats->userId])) {
-                    if ($rank < $oldranks[$stats->userId][4]) {
+                if (isset($oldranks[$stats->user->getId()])) {
+                    if ($rank < $oldranks[$stats->user->getId()][4]) {
                         $rankShift = 1;
-                    } elseif ($rank > $oldranks[$stats->userId][4]) {
+                    } elseif ($rank > $oldranks[$stats->user->getId()][4]) {
                         $rankShift = 2;
                     }
                 }
@@ -368,9 +352,9 @@ class RankingService
             $level = 1;
             $points = 0;
             $baseCost = $technology->getCosts()->getSum();
-            while ($level <= $technology->lastLevel) {
-                $points += $baseCost * $technology->buildFactor ** ($level - 1) / $this->config->param1Int('points_update');
-                $technologyPoints[$technology->id][$level] = $points;
+            while ($level <= $technology->getLastLevel()) {
+                $points += $baseCost * $technology->getBuildFactor() ** ($level - 1) / $this->config->param1Int('points_update');
+                $technologyPoints[$technology->getId()][$level] = $points;
                 $level++;
             }
         }
@@ -382,9 +366,9 @@ class RankingService
             $level = 1;
             $points = 0;
             $baseCosts = $building->getCosts()->getSum();
-            while ($level <= $building->lastLevel) {
-                $points += $baseCosts * $building->buildFactor ** ($level - 1) / $this->config->param1Int('points_update');
-                $buildingPoints[$building->id][$level] = $points;
+            while ($level <= $building->getlastLevel()) {
+                $points += $baseCosts * $building->getBuildFactor() ** ($level - 1) / $this->config->param1Int('points_update');
+                $buildingPoints[$building->getId()][$level] = $points;
                 $level++;
             }
         }
@@ -395,7 +379,7 @@ class RankingService
         /** @var AllianceStats[] $allianceStats */
         $allianceStats = [];
         foreach ($alliances as $alliance) {
-            $allianceId = (int) $alliance['alliance_id'];
+            $allianceId = (int) $alliance['id'];
             $upoints = 0;
             $bpoints = 0;
             $tpoints = 0;
@@ -403,12 +387,12 @@ class RankingService
                 $upoints = floor((int) $alliance['upoints'] / $this->config->param2Int('points_update'));
             }
 
-            $buildingLevels = $this->allianceBuildingRepository->getLevels($allianceId);
+            $buildingLevels = $this->allianceBuildListRepository->getLevels($allianceId);
             foreach ($buildingLevels as $buildingId => $level) {
                 $bpoints += $buildingPoints[$buildingId][$level];
             }
 
-            $technologyLevels = $this->allianceTechnologyRepository->getLevels($allianceId);
+            $technologyLevels = $this->allianceTechnologyListRepository->getLevels($allianceId);
             foreach ($technologyLevels as $technologyId => $level) {
                 $tpoints += $technologyPoints[$technologyId][$level];
             }
@@ -416,30 +400,31 @@ class RankingService
             $apoints = $tpoints + $bpoints + ($usedAllianceShipPoints[$allianceId] ?? 0);
             $points = $apoints + $upoints;
 
-            $stats = AllianceStats::createFromData(
-                $allianceId,
-                $alliance['alliance_tag'],
-                $alliance['alliance_name'],
-                (int) $alliance['cnt'],
-                (int) $points,
-                (int) $upoints,
-                (int) $apoints,
-                (int) $tpoints,
-                (int) $bpoints,
-                (int) $alliance['uavg'],
-                (int) $alliance['cnt'],
-                (int) $alliance['alliance_rank_current']
-            );
+            $stats = new AllianceStats();
+            $stats->setAlliance($this->allianceRepository->find($allianceId));
+            $stats->setAllianceTag($alliance['tag']);
+            $stats->setAllianceName($alliance['name']);
+            $stats->setCount($alliance['cnt']);
+            $stats->setPoints((int)$points);
+            $stats->setShipPoints((int)($usedAllianceShipPoints[$allianceId] ?? 0));
+            $stats->setUserPoints((int)$upoints);
+            $stats->setAlliancePoints((int)$apoints);
+            $stats->setTechnologyPoints((int)$tpoints);
+            $stats->setBuildingPoints((int)$bpoints);
+            $stats->setUserAverage((int)$alliance['uavg']);
+            $stats->setCount($alliance['cnt']);
+            $stats->setCurrentRank($alliance['currentRank']);
+
             $allianceStats[] = $stats;
         }
 
-        usort($allianceStats, fn (AllianceStats $a, AllianceStats $b) => $b->points <=> $a->points);
+        usort($allianceStats, fn (AllianceStats $a, AllianceStats $b) => $b->getPoints() <=> $a->getPoints());
         if (count($allianceStats) > 0) {
             $rank = 1;
             foreach ($allianceStats as $stats) {
-                $stats->currentRank = $rank;
+                $stats->setCurrentRank($rank);
                 $this->allianceStatsRepository->add($stats);
-                $this->allianceRepository->updatePointsAndRank($stats->allianceId, $stats->points, $stats->currentRank, $stats->lastRank);
+                $this->allianceRepository->updatePointsAndRank($stats->getAlliance(), $stats->getPoints(), $stats->getCurrentRank(), $stats->getLastRank());
                 $rank++;
             }
         }

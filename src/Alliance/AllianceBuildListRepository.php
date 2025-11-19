@@ -30,17 +30,19 @@ class AllianceBuildListRepository extends AbstractRepository
     /**
      * @return array<int, int>
      */
-    public function getLevels(int $allianceId): array
+    public function getLevels(int|Alliance $allianceId): array
     {
-        return $this->createQueryBuilder('q')
-            ->select('alliance_buildlist_building_id, alliance_buildlist_current_level')
-            ->from('alliance_buildlist')
-            ->where('alliance_buildlist_alliance_id = :alliance')
-            ->andWhere('alliance_buildlist_current_level > 0')
+        $data =$this->createQueryBuilder('q')
+            ->select('IDENTITY(q.allianceBuilding) as id, q.level')
+            ->where('q.alliance = :alliance')
+            ->andWhere('q.level > 0')
             ->setParameters([
                 'alliance' => $allianceId,
             ])
-            ->fetchAllKeyValue();
+            ->getQuery()
+            ->execute();
+
+        return array_column($data, 'level', 'id');
     }
 
     public function getCooldown(int $allianceId, int $buildingId): int
@@ -177,6 +179,25 @@ class AllianceBuildListRepository extends AbstractRepository
                 'cooldownEnd' => $cooldownEnd,
             ])
             ->executeQuery();
+    }
+
+    /**
+     * @return array<int, AllianceBuildListItem>
+     */
+    public function getShipyardLevelsWhereNonNegativeResources(): array
+    {
+        return $this->createQueryBuilder('q')
+            ->innerJoin('App:Alliance', 'a', 'WITH', 'q.alliance = a.id')
+            ->where('q.allianceBuilding = :buildingId')
+            ->andWhere('a.resMetal >= 0')
+            ->andWhere('a.resCrystal >= 0')
+            ->andWhere('a.resPlastic >= 0')
+            ->andWhere('a.resFuel >= 0')
+            ->andWhere('a.resFood >= 0')
+            ->andWhere('q.level > 0')
+            ->setParameter('buildingId', AllianceBuildingId::SHIPYARD)
+            ->getQuery()
+            ->execute();
     }
 
 }

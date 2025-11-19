@@ -23,27 +23,19 @@ class UserPointsRepository extends AbstractRepository
             return;
         }
 
-        $parameters = [];
         foreach ($userStats as $stats) {
-            $parameters[] = $stats->userId;
-            $parameters[] = $timestamp;
-            $parameters[] = $stats->points;
-            $parameters[] = $stats->shipPoints;
-            $parameters[] = $stats->techPoints;
-            $parameters[] = $stats->buildingPoints;
+            $points = new UserPoints();
+            $points->setUser($stats->user);
+            $points->setTimestamp($timestamp);
+            $points->setPoints($stats->points);
+            $points->setShipPoints($stats->shipPoints);
+            $points->setTechPoints($stats->techPoints);
+            $points->setBuildingPoints($stats->buildingPoints);
+
+            $this->persist($points);
         }
 
-        $insertRow = implode(',', array_fill(0, count($userStats), '(?, ?, ?, ?, ?, ?)'));
-
-        $this->getConnection()->executeQuery('
-            INSERT INTO user_points (
-                point_user_id,
-                point_timestamp,
-                point_points,
-                point_ship_points,
-                point_tech_points,
-                point_building_points
-            ) VALUES ' . $insertRow, $parameters);
+        $this->save();
     }
 
     /**

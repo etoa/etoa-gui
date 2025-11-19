@@ -18,16 +18,14 @@ class BuildingPointRepository extends AbstractRepository
      */
     public function getAllMap(): array
     {
-        $data = $this->createQueryBuilder('q')
+        $points = $this->createQueryBuilder('q')
             ->orderBy('q.level', 'ASC')
             ->getQuery()
             ->execute();
 
-        $points = array_map(fn (array $row) => new BuildingPoint($row), $data);
-
         $map = [];
         foreach ($points as $point) {
-            $map[$point->buildingId][$point->level] = $point->points;
+            $map[$point->getBuilding()->getId()][$point->getLevel()] = $point->getPoints();
         }
 
         return $map;
@@ -37,8 +35,8 @@ class BuildingPointRepository extends AbstractRepository
     {
         return (bool) $this->createQueryBuilder('q')
             ->select('1')
-            ->from('building_points')
-            ->fetchOne();
+            ->getQuery()
+            ->execute();
     }
 
     public function deleteAll(): void

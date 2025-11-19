@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace EtoA\Building;
 
-use Doctrine\DBAL\ArrayParameterType;
 use Doctrine\DBAL\Query\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 use EtoA\Core\AbstractRepository;
@@ -13,11 +12,10 @@ use EtoA\Entity\BuildingListItem;
 use EtoA\Entity\Entity;
 use EtoA\Entity\Planet;
 use EtoA\Entity\User;
-use EtoA\Universe\Entity\EntityRepository;
 
 class BuildingListItemRepository extends AbstractRepository
 {
-    public function __construct(ManagerRegistry $registry, private readonly EntityRepository $entityRepository)
+    public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, BuildingListItem::class);
     }
@@ -25,19 +23,19 @@ class BuildingListItemRepository extends AbstractRepository
     /**
      * @return array<int, int>
      */
-    public function getBuildingLevels(int $entityId): array
+    public function getBuildingLevels(int|Planet $entityId): array
     {
         $data = $this->createQueryBuilder('q')
-            ->select('buildlist_building_id, buildlist_current_level')
-            ->from('buildlist')
-            ->andWhere('buildlist_entity_id = :entityId')
-            ->andWhere('buildlist_current_level > 0')
+            ->select('IDENTITY(q.building), q.currentLevel')
+            ->andWhere('q.entity = :entityId')
+            ->andWhere('q.currentLevel > 0')
             ->setParameters([
                 'entityId' => $entityId,
             ])
-            ->fetchAllKeyValue();
+            ->getQuery()
+            ->execute();
 
-        return array_map(fn($value) => (int)$value, $data);
+        return array_column($data, 'currentLevel', 'id');
     }
 
     /**

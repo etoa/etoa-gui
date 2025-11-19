@@ -11,7 +11,6 @@ use Doctrine\ORM\Mapping as ORM;
 class UserStat
 {
     #[ORM\Id]
-    #[ORM\GeneratedValue(strategy: "AUTO")]
     #[ORM\Column]
     private int $id;
 
@@ -28,7 +27,7 @@ class UserStat
     private bool $inactive;
 
     /** Rank for the current selection */
-    #[ORM\Column]
+    #[ORM\Column(name: '`rank`')]
     private int $rank;
 
     #[ORM\Column]
@@ -94,6 +93,13 @@ class UserStat
     public function getId(): ?int
     {
         return $this->id;
+    }
+
+    public function setId(int $id): static
+    {
+        $this->id = $id;
+
+        return $this;
     }
 
     public function getNick(): ?string

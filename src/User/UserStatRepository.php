@@ -24,63 +24,39 @@ class UserStatRepository extends AbstractRepository
 
         $parameters = [];
         foreach ($userStats as $stats) {
-            $parameters[] = $stats->userId;
-            $parameters[] = $stats->points;
-            $parameters[] = $stats->shipPoints;
-            $parameters[] = $stats->techPoints;
-            $parameters[] = $stats->buildingPoints;
-            $parameters[] = $stats->expPoints;
-            $parameters[] = $stats->nick;
-            $parameters[] = $stats->allianceTag ?? '';
-            $parameters[] = $stats->allianceId;
-            $parameters[] = $stats->raceName ?? '';
-            $parameters[] = $stats->sx;
-            $parameters[] = $stats->sy;
-            $parameters[] = $stats->blocked ? 1 : 0;
-            $parameters[] = $stats->inactive ? 1 : 0;
-            $parameters[] = $stats->hmod ? 1 : 0;
-            $parameters[] = $stats->rank;
-            $parameters[] = $stats->rankShips;
-            $parameters[] = $stats->rankTech;
-            $parameters[] = $stats->rankBuildings;
-            $parameters[] = $stats->rankExp;
-            $parameters[] = $stats->rankShift;
-            $parameters[] = $stats->rankShiftShips;
-            $parameters[] = $stats->rankShiftTech;
-            $parameters[] = $stats->rankShiftBuilding;
-            $parameters[] = $stats->rankShiftExp;
+            $userStat = new UserStat();
+
+            $userStat->setId($stats->user->getId());
+            $userStat->setPoints($stats->points);
+            $userStat->setShipPoints($stats->shipPoints);
+            $userStat->setTechPoints($stats->techPoints);
+            $userStat->setBuildingPoints($stats->buildingPoints);
+            $userStat->setExpPoints($stats->expPoints);
+            $userStat->setNick($stats->nick);
+            $userStat->setAllianceTag($stats->allianceTag);
+            $userStat->setAlliance($stats->alliance);
+            $userStat->setRaceName($stats->raceName);
+            $userStat->setSx($stats->sx);
+            $userStat->setSy($stats->sy);
+            $userStat->setBlocked($stats->blocked);
+            $userStat->setBlocked($stats->blocked);
+            $userStat->setInactive($stats->inactive);
+            $userStat->setHmod($stats->hmod);
+            $userStat->setRank($stats->rank);
+            $userStat->setRankShips($stats->rankShips);
+            $userStat->setRankTech($stats->rankTech);
+            $userStat->setRankBuildings($stats->rankBuildings);
+            $userStat->setRankExp($stats->rankExp);
+            $userStat->setShift($stats->rankShift);
+            $userStat->setShiftShips($stats->rankShiftShips);
+            $userStat->setShiftTechs($stats->rankShiftTech);
+            $userStat->setShiftBuildings($stats->rankShiftBuilding);
+            $userStat->setShiftExp($stats->rankShiftExp);
+
+            $this->persist($userStat);
         }
 
-        $insertRow = implode(',', array_fill(0, count($userStats), '(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'));
-
-        $this->getConnection()->executeQuery('
-            INSERT INTO user_stats (
-                id,
-                points,
-                points_ships,
-                points_tech,
-                points_buildings,
-                points_exp,
-                nick,
-                alliance_tag,
-                alliance_id,
-                race_name,
-                sx,
-                sy,
-                blocked,
-                inactive,
-                hmod,
-                rank,
-                rank_ships,
-                rank_tech,
-                rank_buildings,
-                rank_exp,
-                rankshift,
-                rankshift_ships,
-                rankshift_tech,
-                rankshift_buildings,
-                rankshift_exp
-            ) VALUES ' . $insertRow, $parameters);
+        $this->save();
     }
 
     /**
@@ -88,17 +64,15 @@ class UserStatRepository extends AbstractRepository
      */
     public function getUserRanks(): array
     {
-        return $this->getConnection()->fetchAllAssociative("
-            SELECT
-                id,
-                rank,
-                rank_ships,
-                rank_tech,
-                rank_buildings,
-                rank_exp
-            FROM
-                user_stats;
-        ");
+        return $this->createQueryBuilder('q')
+            ->select("q.id")
+            ->addSelect('q.rank')
+            ->addSelect('q.shipPoints')
+            ->addSelect('q.techPoints')
+            ->addSelect('q.buildingPoints')
+            ->addSelect('q.expPoints')
+            ->getQuery()
+            ->execute();
     }
 
     /**
@@ -129,7 +103,9 @@ class UserStatRepository extends AbstractRepository
 
     public function truncate(): void
     {
-        $this->getConnection()
-            ->executeStatement("TRUNCATE TABLE user_stats;");
+        $this->createQueryBuilder('q')
+            ->delete()
+            ->getQuery()
+            ->execute();
     }
 }

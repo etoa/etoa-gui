@@ -32,42 +32,15 @@ class AllianceStatsRepository extends AbstractRepository
 
     public function add(AllianceStats $stats): void
     {
-        $this->createQueryBuilder('q')
-            ->insert('alliance_stats')
-            ->values([
-                'alliance_id' => ':allianceId',
-                'alliance_tag' => ':allianceTag',
-                'alliance_name' => ':allianceName',
-                'points' => ':points',
-                'upoints' => ':userPoints',
-                'apoints' => ':alliancePoints',
-                'spoints' => ':shipPoints',
-                'tpoints' => ':technologyPoints',
-                'bpoints' => ':buildingPoints',
-                'uavg' => ':userAverage',
-                'cnt' => ':count',
-                'alliance_rank_current' => ':currentRank',
-                'alliance_rank_last' => ':lastRank',
-            ])
-            ->setParameters([
-                'allianceId' => $stats->allianceId,
-                'allianceTag' => $stats->allianceTag,
-                'allianceName' => $stats->allianceName,
-                'points' => $stats->points,
-                'userPoints' => $stats->userPoints,
-                'alliancePoints' => $stats->alliancePoints,
-                'shipPoints' => $stats->shipPoints,
-                'technologyPoints' => $stats->technologyPoints,
-                'buildingPoints' => $stats->buildingPoints,
-                'userAverage' => $stats->userAverage,
-                'count' => $stats->count,
-                'currentRank' => $stats->currentRank,
-                'lastRank' => $stats->lastRank,
-            ])->executeQuery();
+        $this->persist($stats);
+        $this->save();
     }
 
     public function deleteAll(): void
     {
-        $this->getConnection()->executeQuery('TRUNCATE TABLE alliance_stats');
+        $this->createQueryBuilder('q')
+            ->delete()
+            ->getQuery()
+            ->execute();
     }
 }

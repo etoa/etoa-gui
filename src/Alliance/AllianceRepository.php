@@ -68,11 +68,13 @@ class AllianceRepository extends AbstractRepository
      */
     public function getAllianceTags(): array
     {
-        return $this->createQueryBuilder('q')
-            ->select("alliance_id, alliance_tag")
-            ->from('alliances')
-            ->orderBy('alliance_name')
-            ->fetchAllKeyValue();
+        $data = $this->createQueryBuilder('q')
+            ->select("q.id, q.tag")
+            ->orderBy('q.name')
+            ->getQuery()
+            ->execute();
+
+        return array_column($data, 'tag', 'id');
     }
 
     /**
@@ -154,28 +156,7 @@ class AllianceRepository extends AbstractRepository
         $this->save();
     }
 
-    /**
-     * @return array<int, int>
-     */
-    public function getShipyardLevelsWhereNonNegativeResources(): array
-    {
-        $data = $this->createQueryBuilder('q')
-            ->select('alliance_id, alliance_buildlist_current_level')
-            ->addSelect('alliance_buildlist_current_level')
-            ->from('alliances')
-            ->innerJoin('alliances', 'alliance_buildlist', 'alliance_buildlist', 'alliance_id = alliance_buildlist_alliance_id')
-            ->where('alliance_buildlist_building_id = :buildingId')
-            ->andWhere('alliance_res_metal >= 0')
-            ->andWhere('alliance_res_crystal >= 0')
-            ->andWhere('alliance_res_plastic >= 0')
-            ->andWhere('alliance_res_fuel >= 0')
-            ->andWhere('alliance_res_food >= 0')
-            ->andWhere('alliance_buildlist_current_level > 0')
-            ->setParameter('buildingId', AllianceBuildingId::SHIPYARD)
-            ->fetchAllKeyValue();
 
-        return array_map(fn ($value) => (int) $value, $data);
-    }
     public function exists(string $tag, string $name, int $ignoreAllianceId = null): bool
     {
 
@@ -557,30 +538,22 @@ class AllianceRepository extends AbstractRepository
     public function getAllianceStats(): array
     {
         return $this->createQueryBuilder('q')
-            ->select('a.alliance_tag, a.alliance_name, a.alliance_id, a.alliance_rank_current')
-            ->addSelect('COUNT(*) AS cnt, SUM(u.points) AS upoints, AVG(u.points) AS uavg')
-            ->from('alliances', 'a')
-            ->innerJoin('a', 'user_stats', 'u', 'u.alliance_id = a.alliance_id')
-            ->groupBy('a.alliance_id')
+            ->select('q.tag, q.name, q.id, q.currentRank')
+            ->addSelect('COUNT(q) AS cnt, SUM(u.points) AS upoints, AVG(u.points) AS uavg')
+            ->innerJoin('App:UserStat', 'u', 'WITH', 'u.alliance = q.id')
+            ->groupBy('q.id')
             ->orderBy('SUM(u.points)', 'DESC')
-            ->fetchAllAssociative();
+            ->getQuery()
+            ->execute();
     }
 
-    public function updatePointsAndRank(int $allianceId, int $points, int $rank, int $lastRank): void
+    public function updatePointsAndRank(Alliance $alliance, int $points, int $rank, int $lastRank): void
     {
-        $this->createQueryBuilder('q')
-            ->update('alliances')
-            ->set('alliance_points', ':points')
-            ->set('alliance_rank_current', ':rank')
-            ->set('alliance_rank_last', ':lastRank')
-            ->where('alliance_id = :id')
-            ->setParameters([
-                'id' => $allianceId,
-                'points' => $points,
-                'rank' => $rank,
-                'lastRank' => $lastRank,
-            ])
-            ->executeQuery();
+        $alliance->setPoints($points);
+        $alliance->setCurrentRank($rank);
+        $alliance->setLastRank($lastRank);
+
+        $this->save();
     }
 
     public function removePointsByTimestamp(int $timestamp): int

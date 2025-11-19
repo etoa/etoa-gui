@@ -502,11 +502,13 @@ class UserRepository extends AbstractRepository
      */
     public function getUsedAllianceShipPoints(): array
     {
-        return $this->createQueryBuilder('q')
-            ->select('user_alliance_id, SUM(user_alliace_shippoints_used)')
-            ->from('users')
-            ->groupBy('user_alliance_id')
-            ->fetchAllKeyValue();
+        $data = $this->createQueryBuilder('q')
+            ->select('IDENTITY(q.alliance) as id, SUM(q.allianceShipPointsUsed) as used')
+            ->groupBy('q.alliance')
+            ->getQuery()
+            ->execute();
+
+        return array_column($data, 'used', 'id');
     }
 
     public function markAllianceShipPointsAsUsed(User $user, int $shipCost): void
@@ -524,17 +526,18 @@ class UserRepository extends AbstractRepository
             ->execute();
     }
 
-    public function addAllianceShipPoints(int $allianceId, int $points): void
+    public function addAllianceShipPoints(int|Alliance $allianceId, int $points): void
     {
         $this->createQueryBuilder('q')
-            ->update('users')
-            ->set('user_alliace_shippoints', 'user_alliace_shippoints + :points')
-            ->where('user_alliance_id = :allianceId')
+            ->update()
+            ->set('q.allianceShipPoints', 'q.allianceShipPoints + :points')
+            ->where('q.alliance = :allianceId')
             ->setParameters([
                 'allianceId' => $allianceId,
                 'points' => $points,
             ])
-            ->executeQuery();
+            ->getQuery()
+            ->execute();
     }
 
     public function exists(UserSearch $search): bool
@@ -668,45 +671,48 @@ class UserRepository extends AbstractRepository
     public function updatePointsAndRank(UserStatistic $userStatistic, int $highestRank): void
     {
         $this->createQueryBuilder('q')
-            ->update('users')
-            ->set('user_rank', ':rank')
-            ->set('user_points', ':points')
-            ->set('user_rank_highest', ':highestRank')
-            ->where('user_id = :userId')
+            ->update()
+            ->set('q.rank', ':rank')
+            ->set('q.points', ':points')
+            ->set('q.rankHighest', ':highestRank')
+            ->where('q.id = :userId')
             ->setParameters([
-                'userId' => $userStatistic->userId,
+                'userId' => $userStatistic->user->getId(),
                 'rank' => $userStatistic->rank,
                 'points' => $userStatistic->points,
                 'highestRank' => $highestRank,
             ])
-            ->executeQuery();
+            ->getQuery()
+            ->execute();
     }
 
     public function updateUserBoost(int $userId, float $productionBoost, float $buildingBoost): void
     {
         $this->createQueryBuilder('q')
-            ->update('users')
-            ->set('boost_bonus_production', ':production')
-            ->set('boost_bonus_building', ':building')
-            ->where('user_id = :userId')
+            ->update()
+            ->set('q.bonusProduction', ':production')
+            ->set('q.bonusBuilding', ':building')
+            ->where('q.id = :userId')
             ->setParameters([
                 'userId' => $userId,
                 'production' => $productionBoost,
                 'building' => $buildingBoost,
             ])
-            ->executeQuery();
+            ->getQuery()
+            ->execute();
     }
 
     public function resetBoost(): void
     {
         $this->createQueryBuilder('q')
-            ->update('users')
-            ->set('boost_bonus_production', ':zero')
-            ->set('boost_bonus_building', ':zero')
+            ->update()
+            ->set('q.boostBonusProduction', ':zero')
+            ->set('q.boostBonusBuilding', ':zero')
             ->setParameters([
                 'zero' => 0,
             ])
-            ->executeQuery();
+            ->getQuery()
+            ->execute();
     }
 
     /**

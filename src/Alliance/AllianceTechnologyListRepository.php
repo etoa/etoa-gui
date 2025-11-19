@@ -31,17 +31,19 @@ class AllianceTechnologyListRepository extends AbstractRepository
     /**
      * @return array<int, int>
      */
-    public function getLevels(int $allianceId): array
+    public function getLevels(int|Alliance $allianceId): array
     {
-        return $this->createQueryBuilder('q')
-            ->select('alliance_techlist_tech_id, alliance_techlist_current_level')
-            ->from('alliance_techlist')
-            ->where('alliance_techlist_alliance_id = :alliance')
-            ->andWhere('alliance_techlist_current_level > 0')
+        $data = $this->createQueryBuilder('q')
+            ->select('IDENTITY(q.technology) as id, q.level')
+            ->where('q.alliance = :alliance')
+            ->andWhere('q.level > 0')
             ->setParameters([
                 'alliance' => $allianceId,
             ])
-            ->fetchAllKeyValue();
+            ->getQuery()
+            ->execute();
+
+        return array_column($data, 'level', 'id');
     }
 
     public function addToAlliance(int $allianceId, int $technologyId, int $level, int $amount, int $startTime = 0, int $endTime = 0): void

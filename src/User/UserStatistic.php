@@ -2,16 +2,17 @@
 
 namespace EtoA\User;
 
+use EtoA\Entity\Alliance;
 use EtoA\Entity\User;
 
 class UserStatistic
 {
-    public int $userId;
+    public User $user;
     public string $nick;
     public bool $blocked;
     public bool $hmod;
     public bool $inactive;
-    public int $allianceId;
+    public ?Alliance $alliance;
     public ?string $allianceTag;
     public ?string $raceName;
     public int $sx;
@@ -33,15 +34,15 @@ class UserStatistic
     public int $rankShiftBuilding;
     public int $rankShiftExp;
 
-    public static function createFromCalculation(User $user, bool $blocked, bool $hmod, bool $inactive, int $allianceId, ?string $allianceTag, ?string $raceName, int $sx, int $sy, int $points, int $shipPoints, int $techPoints, int $buildingPoints, int $expPoints): UserStatistic
+    public static function createFromCalculation(User $user, bool $blocked, bool $hmod, bool $inactive, ?Alliance $alliance, ?string $allianceTag, ?string $raceName, int $sx, int $sy, int $points, int $shipPoints, int $techPoints, int $buildingPoints, int $expPoints): UserStatistic
     {
         $stats = new UserStatistic();
-        $stats->userId = $user->getId();
+        $stats->user = $user;
         $stats->nick = $user->getNick();
         $stats->blocked = $blocked;
         $stats->hmod = $hmod;
         $stats->inactive = $inactive;
-        $stats->allianceId = $allianceId;
+        $stats->alliance = $alliance;
         $stats->allianceTag = $allianceTag;
         $stats->raceName = $raceName;
         $stats->sx = $sx;

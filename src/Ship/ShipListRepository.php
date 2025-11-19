@@ -292,15 +292,16 @@ class ShipListRepository extends AbstractRepository
             ->fetchOne();
     }
 
-    public function getSpecialShipExperienceSumForUser(int $userId): int
+    public function getSpecialShipExperienceSumForUser(int|User $userId): int
     {
         return (int) $this->createQueryBuilder('q')
-            ->select('SUM(shiplist_special_ship_exp)')
-            ->from('shiplist')
-            ->where('shiplist_user_id = :userId')
-            ->andWhere('shiplist_count = 1')
+            ->select('SUM(q.specialShipExp)')
+            ->where('q.user = :userId')
+            ->andWhere('q.count = 1')
             ->setParameter('userId', $userId)
-            ->fetchOne();
+            ->setMaxResults(1)
+            ->getQuery()
+            ->getSingleScalarResult();
     }
 
     public function cleanUp(): int

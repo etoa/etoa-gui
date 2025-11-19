@@ -18,17 +18,15 @@ class TechnologyPointRepository extends AbstractRepository
      */
     public function getAllMap(): array
     {
-        $data = $this->createQueryBuilder('q')
-            ->select('*')
-            ->from('tech_points')
-            ->orderBy('bp_level', 'ASC')
-            ->fetchAllAssociative();
 
-        $points = array_map(fn (array $row) => new TechnologyPoint($row), $data);
+        $points = $this->createQueryBuilder('q')
+            ->orderBy('q.level', 'ASC')
+            ->getQuery()
+            ->execute();
 
         $map = [];
         foreach ($points as $point) {
-            $map[$point->technologyId][$point->level] = $point->points;
+            $map[$point->getTechnology()->getId()][$point->getLevel()] = $point->getPoints();
         }
 
         return $map;
@@ -38,8 +36,8 @@ class TechnologyPointRepository extends AbstractRepository
     {
         return (bool) $this->createQueryBuilder('q')
             ->select('1')
-            ->from('tech_points')
-            ->fetchOne();
+            ->getQuery()
+            ->execute();
     }
 
     public function deleteAll(): void

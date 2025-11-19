@@ -7,28 +7,22 @@ use EtoA\User\UserRepository;
 
 class AllianceShipPointsService
 {
-    private ConfigurationService $config;
-    private AllianceBuildingRepository $allianceBuildingRepository;
-    private UserRepository $userRepository;
-
-    public function __construct(ConfigurationService $config, AllianceBuildingRepository $allianceBuildingRepository, UserRepository $userRepository)
-    {
-        $this->config = $config;
-        $this->allianceBuildingRepository = $allianceBuildingRepository;
-        $this->userRepository = $userRepository;
-    }
+    public function __construct(
+        private readonly ConfigurationService $config,
+        private readonly AllianceBuildListRepository $allianceBuildListRepository,
+        private readonly UserRepository $userRepository)
+    {}
 
     public function update(): int
     {
-        $shipyardLevels = $this->allianceBuildingRepository->getShipyardLevelsWhereNonNegativeResources();
-        foreach ($shipyardLevels as $allianceId => $level) {
+        $shipyards = $this->allianceBuildListRepository->getShipyardLevelsWhereNonNegativeResources();
+        foreach ($shipyards as $shipyard) {
             // New exponential algorithm by river
-            // NOTE: if changed, also change in content/alliance/base.inc.php
-            $shipPointsAdd = (int) ceil($this->config->getInt("alliance_shippoints_per_hour") * $this->config->getFloat('alliance_shippoints_base') ** ($level - 1));
+            $shipPointsAdd = (int) ceil($this->config->getInt("alliance_shippoints_per_hour") * $this->config->getFloat('alliance_shippoints_base') ** ($shipyard->getLevel() - 1));
 
-            $this->userRepository->addAllianceShipPoints($allianceId, $shipPointsAdd);
+            $this->userRepository->addAllianceShipPoints($shipyard->getAlliance(), $shipPointsAdd);
         }
 
-        return count($shipyardLevels);
+        return count($shipyards);
     }
 }
