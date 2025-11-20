@@ -8,14 +8,12 @@ use Doctrine\Persistence\ManagerRegistry;
 use EtoA\Core\AbstractRepository;
 use EtoA\Entity\Defense;
 use EtoA\Entity\DefenseListItem;
-use EtoA\Entity\Entity;
 use EtoA\Entity\Planet;
 use EtoA\Entity\User;
-use EtoA\Universe\Entity\EntityRepository;
 
 class DefenseRepository extends AbstractRepository
 {
-    public function __construct(ManagerRegistry $registry,private readonly EntityRepository $entityRepository)
+    public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, DefenseListItem::class);
     }
@@ -255,14 +253,16 @@ class DefenseRepository extends AbstractRepository
 
     public function cleanUp(): int
     {
-        return $this->getConnection()
-            ->executeQuery(
-                "DELETE FROM
-                    `deflist`
-                WHERE
-                    `deflist_count`='0'
-                ;"
-            )->rowCount();
+        $data = $this->findBy(['count'=>0]);
+        $cnt = $this->count($data);
+
+        foreach ($data as $item) {
+            $this->remove($item);
+        }
+
+        $this->save();
+
+        return $cnt;
     }
 
     /**

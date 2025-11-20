@@ -12,14 +12,10 @@ use Symfony\Component\Messenger\Handler\MessageHandlerInterface;
 
 class CleanupDeflistHandler implements MessageHandlerInterface
 {
-    private DefenseRepository $defenseRepository;
-    private LogRepository $logRepository;
-
-    public function __construct(DefenseRepository $defenseRepository, LogRepository $logRepository)
-    {
-        $this->defenseRepository = $defenseRepository;
-        $this->logRepository = $logRepository;
-    }
+    public function __construct(
+        private readonly DefenseRepository $defenseRepository,
+        private readonly LogRepository $logRepository)
+    {}
 
     public function __invoke(CleanupDeflistTask $task): SuccessResult
     {
