@@ -9,12 +9,10 @@ use Symfony\Component\Messenger\Handler\MessageHandlerInterface;
 
 class CloseAssignedInactiveTicketsHandler implements MessageHandlerInterface
 {
-    private TicketService $ticketService;
-
-    public function __construct(TicketService $ticketService)
-    {
-        $this->ticketService = $ticketService;
-    }
+    public function __construct(
+        private readonly TicketService $ticketService
+    )
+    {}
 
     public function __invoke(CloseAssignedInactiveTicketsTask $task): SuccessResult
     {

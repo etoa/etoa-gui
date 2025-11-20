@@ -110,14 +110,15 @@ class TicketService
     {
         $threshold = time() - self::INACTIVE_TIME;
 
-        $ticketIds = $this->ticketRepo->findAssignedIds();
+        $tickets = $this->ticketRepo->findAssigned();
         $i = 0;
-        foreach ($ticketIds as $id) {
-            $message = $this->messageRepo->findLastMessageForTicket($id);
-            if ($message != null) {
-                if ($message->getAdminId() > 0 && $message->getTimestamp() < $threshold) {
-                    $ticket = $this->ticketRepo->find($id);
-                    $this->addMessage($ticket, "Das Ticket wurde automatisch geschlossen, da wir innerhalb der letzten 72 Stunden nichts mehr von dir gehört haben.");
+        foreach ($tickets as $ticket) {
+            $messages = $ticket->getTicketMessages();
+            foreach ($messages as $message) {
+                if ($message->getAdmin() && $message->getTimestamp() < $threshold) {
+                    $newMessage = new TicketMessage();
+                    $newMessage->setMessage("Das Ticket wurde automatisch geschlossen, da wir innerhalb der letzten 72 Stunden nichts mehr von dir gehört haben.");
+                    $this->addMessage($ticket, $newMessage);
                     $this->close($ticket, "solved");
                     $i++;
                 }

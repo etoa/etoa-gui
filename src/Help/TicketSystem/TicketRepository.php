@@ -37,18 +37,15 @@ class TicketRepository extends AbstractRepository
     }
 
     /**
-     * @return array<int>
+     * @return array<Ticket>
      */
-    public function findAssignedIds(): array
+    public function findAssigned(): array
     {
-        $data = $this->createQueryBuilder('q')
-            ->select("id")
-            ->from('tickets')
-            ->where("status = :status")
+        return $this->createQueryBuilder('q')
+            ->where("q.status = :status")
             ->setParameter('status', TicketStatus::ASSIGNED)
-            ->fetchFirstColumn();
-
-        return array_map(fn ($val) => (int) $val, $data);
+            ->getQuery()
+            ->execute();
     }
 
     /**
