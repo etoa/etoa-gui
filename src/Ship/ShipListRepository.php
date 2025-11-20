@@ -306,17 +306,13 @@ class ShipListRepository extends AbstractRepository
 
     public function cleanUp(): int
     {
-        return $this->getConnection()
-            ->executeQuery(
-                "DELETE FROM
-                    `shiplist`
-                WHERE
-                    `shiplist_count`='0'
-                    AND `shiplist_bunkered`='0'
-                    AND `shiplist_special_ship`='0'
-                    ;"
-            )
-            ->rowCount();
+        return $this->createQueryBuilder('q')
+            ->delete()
+            ->where('q.count = 0')
+            ->andWhere('q.bunkered = 0')
+            ->andWhere('q.specialShip = 0')
+            ->getQuery()
+            ->execute();
     }
 
     public function removeEntry(int $id): void
