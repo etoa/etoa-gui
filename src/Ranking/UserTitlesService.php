@@ -135,8 +135,9 @@ class UserTitlesService
             mkdir($dir);
         }
 
-        file_put_contents($this->getUserTitlesCacheFilePath(), $this->getTitles());
-        file_put_contents($this->getUserTitlesAdminCacheFilePath(), $this->getTitles(true));
+        //TODO check if this is needed
+  //      file_put_contents($this->getUserTitlesCacheFilePath(), $this->getTitles());
+  //      file_put_contents($this->getUserTitlesAdminCacheFilePath(), $this->getTitles(true));
     }
 
     public function getUserTitlesCacheFilePath(): string
