@@ -253,16 +253,11 @@ class DefenseRepository extends AbstractRepository
 
     public function cleanUp(): int
     {
-        $data = $this->findBy(['count'=>0]);
-        $cnt = $this->count($data);
-
-        foreach ($data as $item) {
-            $this->remove($item);
-        }
-
-        $this->save();
-
-        return $cnt;
+        return $this->createQueryBuilder('q')
+            ->delete()
+            ->where('q.count = 0')
+            ->getQuery()
+            ->execute();
     }
 
     /**

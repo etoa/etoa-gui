@@ -29,7 +29,7 @@ class AdminSessionManager
             ? time() - $threshold
             : time() - (24 * 3600 * $this->config->param2Int('sessionlog_store_days'));
 
-        $count = $this->repository->removeSessionLogs($timestamp);
+        $count = $this->adminSessionLogRepository->removeSessionLogs($timestamp);
 
         $this->logRepository->add(LogFacility::SYSTEM, LogSeverity::INFO, "$count Admin-Session-Logs die älter als " . date("d.m.Y, H:i", $timestamp) . " sind wurden gelöscht.");
 

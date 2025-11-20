@@ -33,11 +33,11 @@ class UserSessionLogRepository extends AbstractRepository
     public function removeSessionLogs(int $timestamp): int
     {
         return $this->createQueryBuilder('q')
-            ->delete('user_sessionlog')
-            ->where('time_action < :timestamp')
+            ->delete()
+            ->where('q.timeAction < :timestamp')
             ->setParameter('timestamp', $timestamp)
-            ->executeQuery()
-            ->rowCount();
+            ->getQuery()
+            ->execute();
     }
 
     public function countLogs(UserSessionSearch $search = null): int

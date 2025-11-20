@@ -39,6 +39,16 @@ class AdminSessionLogRepository extends AbstractRepository
         $this->save();
     }
 
+    public function removeSessionLogs(int $timestamp): int
+    {
+        return $this->createQueryBuilder('q')
+            ->delete()
+            ->where('q.timeAction < :timestamp')
+            ->setParameter('timestamp', $timestamp)
+            ->getQuery()
+            ->execute();
+    }
+
 //    /**
 //     * @return AdminSessionLog[] Returns an array of AdminSessionLog objects
 //     */

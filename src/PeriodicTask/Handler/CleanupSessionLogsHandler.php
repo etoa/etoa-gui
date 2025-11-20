@@ -10,14 +10,11 @@ use Symfony\Component\Messenger\Handler\MessageHandlerInterface;
 
 class CleanupSessionLogsHandler implements MessageHandlerInterface
 {
-    private UserSessionManager $userSessionManager;
-    private AdminSessionManager $adminSessionManager;
-
-    public function __construct(UserSessionManager $userSessionManager, AdminSessionManager $adminSessionManager)
-    {
-        $this->userSessionManager = $userSessionManager;
-        $this->adminSessionManager = $adminSessionManager;
-    }
+    public function __construct(
+        private readonly UserSessionManager $userSessionManager,
+        private readonly AdminSessionManager $adminSessionManager
+    )
+    {}
 
     public function __invoke(CleanupSessionLogsTask $task): SuccessResult
     {

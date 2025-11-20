@@ -47,7 +47,7 @@ class UserSessionManager
             ? time() - $threshold
             : time() - (24 * 3600 * $this->config->param1Int('sessionlog_store_days'));
 
-        $count = $this->repository->removeSessionLogs($timestamp);
+        $count = $this->userSessionLogRepository->removeSessionLogs($timestamp);
 
         $this->logRepository->add(LogFacility::SYSTEM, LogSeverity::INFO, "$count Usersession-Logs die älter als " . date("d.m.Y, H:i", $timestamp) . " sind wurden gelöscht.");
 
