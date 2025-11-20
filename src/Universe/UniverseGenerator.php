@@ -448,8 +448,6 @@ class UniverseGenerator
 
         $added = 0;
         foreach ($entities as $entity) {
-            $entity = $this->entityRepo->findOneBy(['id'=>$entity['id']]);
-
             if ($entity->getCode() === EntityType::EMPTY_SPACE) {
                 $this->emptySpaceRepo->remove($entity->getType());
             } elseif ($entity->getCode() === EntityType::ASTEROID) {

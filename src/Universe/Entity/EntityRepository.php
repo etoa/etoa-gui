@@ -87,7 +87,7 @@ class EntityRepository extends AbstractRepository
             return [];
         }
 
-        return $this->getEntityCoordinatesQueryBuilder()
+        return $this->createQueryBuilder('q')
             ->where('q.code IN (:codes)')
             ->andWhere('q.pos = 0')
             ->orderBy('RAND()')

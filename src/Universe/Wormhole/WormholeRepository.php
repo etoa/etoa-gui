@@ -40,20 +40,17 @@ class WormholeRepository extends AbstractRepository
      */
     public function findNonPersistentInRandomOrder(int $changedBefore, ?int $limit = null): array
     {
-        $data = $this->createQueryBuilder('q')
-            ->select("*")
-            ->from('wormholes')
-            ->where('persistent = 0')
-            ->andWhere('target_id > 0')
-            ->andWhere('changed < :changed')
+        return $this->createQueryBuilder('q')
+            ->where('q.persistent = 0')
+            ->andWhere('IDENTITY(q.target) > 0')
+            ->andWhere('q.changed < :changed')
             ->orderBy('RAND()')
             ->setMaxResults($limit)
             ->setParameters([
                 'changed' => $changedBefore,
             ])
-            ->fetchAllAssociative();
-
-        return array_map(fn ($row) => new Wormhole($row), $data);
+            ->getQuery()
+            ->execute();
     }
 
     public function add(Entity $entity, bool $persistent, Wormhole $target = null): void
