@@ -108,40 +108,34 @@ class MessageRepository extends AbstractRepository
     }
 
     /**
-     * @return array<int>
+     * @return array<Message>
      */
-    public function findIdsOfDeletedOlderThan(int $timestamp): array
+    public function findDeletedOlderThan(int $timestamp): array
     {
-        $data = $this->createQueryBuilder('q')
-            ->select('message_id')
-            ->from('messages')
-            ->where('message_deleted = 1')
-            ->andWhere('message_timestamp < :timestamp')
+        return $this->createQueryBuilder('q')
+            ->where('q.deleted = 1')
+            ->andWhere('q.timestamp < :timestamp')
             ->setParameters([
                 'timestamp' => $timestamp,
             ])
-            ->fetchFirstColumn();
-
-        return array_map(fn ($id) => (int) $id, $data);
+            ->getQuery()
+            ->execute();
     }
 
     /**
-     * @return array<int>
+     * @return array<Message>
      */
-    public function findIdsOfReadNotArchivedOlderThan(int $timestamp): array
+    public function findReadNotArchivedOlderThan(int $timestamp): array
     {
-        $data = $this->createQueryBuilder('q')
-            ->select('message_id')
-            ->from('messages')
-            ->where('message_archived = 0')
-            ->andWhere('message_read = 1')
-            ->andWhere('message_timestamp < :timestamp')
+        return $this->createQueryBuilder('q')
+            ->where('q.archived = 0')
+            ->andWhere('q.read = 1')
+            ->andWhere('q.timestamp < :timestamp')
             ->setParameters([
                 'timestamp' => $timestamp,
             ])
-            ->fetchFirstColumn();
-
-        return array_map(fn ($id) => (int) $id, $data);
+            ->getQuery()
+            ->execute();
     }
 
     /**
@@ -315,26 +309,23 @@ class MessageRepository extends AbstractRepository
     }
 
     /**
-     * @param array<int> $ids
+     * @param array $messages
+     * @return int
      */
-    public function removeBulk(array $ids): int
+    public function removeBulk(array $messages): int
     {
-        if (count($ids) == 0) {
-            return 0;
+        $affected = 0;
+
+        if (count($messages) == 0) {
+            return $affected;
         }
 
-        $affected = $this->createQueryBuilder('q')
-            ->delete('messages')
-            ->where('message_id IN (' . implode(',', array_fill(0, count($ids), '?')) . ')')
-            ->setParameters($ids)
-            ->executeQuery()
-            ->rowCount();
+        foreach ($messages as $message) {
+            $this->remove($message);
+            $affected++;
+        }
 
-        $this->createQueryBuilder('q')
-            ->delete('message_data')
-            ->where('id IN (' . implode(',', array_fill(0, count($ids), '?')) . ')')
-            ->setParameters($ids)
-            ->executeQuery();
+        $this->save();
 
         return $affected;
     }

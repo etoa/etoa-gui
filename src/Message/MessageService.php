@@ -32,8 +32,8 @@ class MessageService
                 ? time() - $threshold
                 : time() - (24 * 3600 * $this->config->getInt('messages_threshold_days'));
 
-            $ids = $this->repository->findIdsOfReadNotArchivedOlderThan($timestamp);
-            $count += $this->repository->removeBulk($ids);
+            $messages = $this->repository->findReadNotArchivedOlderThan($timestamp);
+            $count += $this->repository->removeBulk($messages);
 
             $this->logRepository->add(LogFacility::SYSTEM, LogSeverity::INFO, "Unarchivierte Nachrichten die älter als " . date("d.m.Y H:i", $timestamp) . " sind wurden gelöscht!");
         }
@@ -43,8 +43,8 @@ class MessageService
             ? time() - $threshold
             : time() - (24 * 3600 * $this->config->param1Int('messages_threshold_days'));
 
-        $ids = $this->repository->findIdsOfDeletedOlderThan($timestamp);
-        $count += $this->repository->removeBulk($ids);
+        $messages = $this->repository->findDeletedOlderThan($timestamp);
+        $count += $this->repository->removeBulk($messages);
 
         $this->logRepository->add(LogFacility::SYSTEM, LogSeverity::INFO, "Unarchivierte Nachrichten die älter als " . date("d.m.Y H:i", $timestamp) . " sind wurden gelöscht!");
 
