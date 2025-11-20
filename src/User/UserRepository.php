@@ -426,18 +426,18 @@ class UserRepository extends AbstractRepository
     public function removeOldBans(): int
     {
         return $this->createQueryBuilder('q')
-            ->update('users')
-            ->set('`user_blocked_from`', '0')
-            ->set('`user_blocked_to`', '0')
-            ->set('`user_ban_reason`', ':banReason')
-            ->set('`user_ban_admin_id`', '0')
-            ->where('`user_blocked_to` < :blockedBefore')
+            ->update()
+            ->set('q.blockedFrom', 0)
+            ->set('q.blockedTo', 0)
+            ->set('q.banReason', ':banReason')
+            ->set('q.banAdmin', 'NULL')
+            ->where('q.blockedTo < :blockedBefore')
             ->setParameters([
                 'blockedBefore' => time(),
                 'banReason' => '',
             ])
-            ->executeQuery()
-            ->rowCount();
+            ->getQuery()
+            ->execute();
     }
 
     public function updateImgCheck(int $userId, bool $check, string $image = null): bool
