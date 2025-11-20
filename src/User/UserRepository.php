@@ -333,22 +333,18 @@ class UserRepository extends AbstractRepository
      */
     public function findInactive(int $registerTime, int $onlineTime): array
     {
-        $data = $this->createQueryBuilder('q')
-            ->select('*')
-            ->from('users')
-            ->where('user_ghost = 0')
-            ->andWhere('admin = 0')
-            ->andWhere('user_blocked_to < :time')
-            ->andWhere('((user_registered < :registerTime AND user_points = 0)
-                OR (user_logouttime < :onlineTime AND user_logouttime > 0 AND user_hmode_from = 0))')
+        return $this->createQueryBuilder('q')
+            ->andWhere('q.admin = 0')
+            ->andWhere('q.blockedTo < :time')
+            ->andWhere('((q.registered < :registerTime AND q.points = 0)
+                OR (q.logoutTime < :onlineTime AND q.logoutTime > 0 AND q.hmodFrom = 0))')
             ->setParameters([
                 'time' => time(),
                 'registerTime' => $registerTime,
                 'onlineTime' => $onlineTime,
             ])
-            ->fetchAllAssociative();
-
-        return array_map(fn($row) => new User($row), $data);
+            ->getQuery()
+            ->execute();
     }
 
     /**
@@ -356,23 +352,20 @@ class UserRepository extends AbstractRepository
      */
     public function findLongInactive(int $logoutTimeFrom, int $logoutTimeTo): array
     {
-        $data = $this->createQueryBuilder('q')
-            ->select('*')
-            ->from('users')
-            ->where('user_ghost = 0')
-            ->andWhere('admin = 0')
-            ->andWhere('user_blocked_to < :time')
-            ->andWhere('user_logouttime > :logoutTimeFrom')
-            ->andWhere('user_logouttime < :logoutTimeTo')
-            ->andWhere('user_hmode_from = 0')
+        return $this->createQueryBuilder('q')
+            ->where('q.ghost = 0')
+            ->andWhere('q.admin = 0')
+            ->andWhere('q.blockedTo < :time')
+            ->andWhere('q.logoutTime > :logoutTimeFrom')
+            ->andWhere('q.logoutTime < :logoutTimeTo')
+            ->andWhere('q.hmodFrom = 0')
             ->setParameters([
                 'time' => time(),
                 'logoutTimeFrom' => $logoutTimeFrom,
                 'logoutTimeTo' => $logoutTimeTo,
             ])
-            ->fetchAllAssociative();
-
-        return array_map(fn($row) => new User($row), $data);
+            ->getQuery()
+            ->execute();
     }
 
     /**
