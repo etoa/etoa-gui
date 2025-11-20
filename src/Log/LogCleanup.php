@@ -7,11 +7,11 @@ use EtoA\Core\Configuration\ConfigurationService;
 class LogCleanup
 {
     public function __construct(
-        private ConfigurationService $config,
-        private LogRepository $logRepository,
-        private GameLogRepository $gameLogRepository,
-        private FleetLogRepository $fleetLogRepository,
-        private BattleLogRepository $battleLogRepository,
+        private readonly ConfigurationService $config,
+        private readonly LogRepository        $logRepository,
+        private readonly GameLogRepository    $gameLogRepository,
+        private readonly FleetLogRepository   $fleetLogRepository,
+        private readonly BattleLogRepository  $battleLogRepository,
     ) {
     }
 

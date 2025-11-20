@@ -127,11 +127,11 @@ class FleetLogRepository extends AbstractRepository
     public function cleanup(int $threshold): int
     {
         return $this->createQueryBuilder('q')
-            ->delete('logs_fleet')
-            ->where('timestamp < :threshold')
+            ->delete()
+            ->where('q.timestamp < :threshold')
             ->setParameter('threshold', $threshold)
-            ->executeQuery()
-            ->rowCount();
+            ->getQuery()
+            ->execute();
     }
 
     public function countBySearch(FleetLogSearch $search = null): int

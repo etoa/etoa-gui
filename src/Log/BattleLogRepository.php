@@ -27,10 +27,10 @@ class BattleLogRepository extends AbstractRepository
     public function cleanup(int $threshold): int
     {
         return $this->createQueryBuilder('q')
-            ->delete('logs_battle')
-            ->where('timestamp < :threshold')
+            ->delete()
+            ->where('q.timestamp < :threshold')
             ->setParameter('threshold', $threshold)
-            ->executeQuery()
-            ->rowCount();
+            ->getQuery()
+            ->execute();
     }
 }

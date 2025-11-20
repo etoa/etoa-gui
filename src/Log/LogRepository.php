@@ -43,11 +43,11 @@ class LogRepository extends AbstractRepository
     public function cleanup(int $threshold): int
     {
         return $this->createQueryBuilder('q')
-            ->delete('logs')
-            ->where('timestamp < :threshold')
+            ->delete()
+            ->where('q.timestamp < :threshold')
             ->setParameter('threshold', $threshold)
-            ->executeQuery()
-            ->rowCount();
+            ->getQuery()
+            ->execute();
     }
 
     public function countBySearch(LogSearch $search = null): int
