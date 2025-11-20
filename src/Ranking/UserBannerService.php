@@ -4,9 +4,7 @@ declare(strict_types=1);
 
 namespace EtoA\Ranking;
 
-use EtoA\Alliance\AllianceRepository;
 use EtoA\Core\Configuration\ConfigurationService;
-use EtoA\Race\RaceDataRepository;
 use EtoA\Support\StringUtils;
 use EtoA\User\UserRepository;
 use GdImage;
@@ -16,28 +14,15 @@ class UserBannerService
     public const BANNER_WIDTH = 468;
     public const BANNER_HEIGHT = 60;
 
-    private ConfigurationService $config;
-    private UserRepository $userRepository;
-    private AllianceRepository $allianceRepository;
-    private RaceDataRepository $raceDataRepository;
-
     private string $userBannerBackgroundImage = "images/userbanner/userbanner1.png";
     private string $userBannerFont = "images/userbanner/calibri.ttf";
-    private string $cacheDir;
 
     public function __construct(
-        ConfigurationService $config,
-        UserRepository $userRepository,
-        AllianceRepository $allianceRepository,
-        RaceDataRepository $raceDataRepository,
-        string $cacheDir
-    ) {
-        $this->config = $config;
-        $this->userRepository = $userRepository;
-        $this->allianceRepository = $allianceRepository;
-        $this->raceDataRepository = $raceDataRepository;
-        $this->cacheDir = $cacheDir;
-    }
+        private readonly ConfigurationService $config,
+        private readonly UserRepository $userRepository,
+        private readonly string $cacheDir,
+        private readonly string $projectDir
+    ) {}
 
     public function createUserBanner(): void
     {
@@ -48,8 +33,6 @@ class UserBannerService
 
         $createdFiles = array();
 
-        $allianceNames = $this->allianceRepository->getAllianceNamesWithTags();
-        $raceNames = $this->raceDataRepository->getRaceNames(true);
         $users = $this->userRepository->searchUsers();
         foreach ($users as $user) {
             if ($user->getAdmin() == 1) {
@@ -63,8 +46,8 @@ class UserBannerService
 
             $im = $this->createUserBannerImage(
                 $user->getNick(),
-                $user->getAllianceId() > 0 && isset($allianceNames[$user->getAllianceId()]) ? $allianceNames[$user->getAllianceId()] : null,
-                $raceNames[$user->getRaceId()],
+                $user->getAlliance()?->getName(),
+                $user->getRace()->getName(),
                 $text
             );
 
@@ -111,8 +94,8 @@ class UserBannerService
         string $race,
         string $text
     ) {
-        $font = realpath(__DIR__ . '/../../htdocs/' . $this->userBannerFont);
-        $backgroundImage = __DIR__ . '/../../htdocs/' . $this->userBannerBackgroundImage;
+        $font = realpath($this->projectDir . '/public/build/' . $this->userBannerFont);
+        $backgroundImage = $this->projectDir . '/public/build/' . $this->userBannerBackgroundImage;
 
         $im = imagecreatefrompng($backgroundImage);
 
