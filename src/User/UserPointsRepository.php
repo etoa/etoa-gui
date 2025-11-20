@@ -79,4 +79,14 @@ class UserPointsRepository extends AbstractRepository
             ->getQuery()
             ->execute();
     }
+
+    public function removePointsByTimestamp(int $timestamp): int
+    {
+        return $this->createQueryBuilder('q')
+            ->delete()
+            ->where("q.timestamp < :timestamp")
+            ->setParameter('timestamp', $timestamp)
+            ->getQuery()
+            ->execute();
+    }
 }

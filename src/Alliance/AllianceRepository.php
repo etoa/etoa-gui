@@ -556,16 +556,6 @@ class AllianceRepository extends AbstractRepository
         $this->save();
     }
 
-    public function removePointsByTimestamp(int $timestamp): int
-    {
-        return $this->createQueryBuilder('q')
-            ->delete('alliance_points')
-            ->where("point_timestamp < :timestamp")
-            ->setParameter('timestamp', $timestamp)
-            ->executeQuery()
-            ->rowCount();
-    }
-
     public function resetMother(Alliance $alliance): void
     {
         $this->createQueryBuilder('q')

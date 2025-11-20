@@ -186,16 +186,6 @@ class UserRepository extends AbstractRepository
             ->executeQuery();
     }
 
-    public function removePointsByTimestamp(int $timestamp): int
-    {
-        return $this->createQueryBuilder('q')
-            ->delete('user_points')
-            ->where("point_timestamp < :timestamp")
-            ->setParameter('timestamp', $timestamp)
-            ->executeQuery()
-            ->rowCount();
-    }
-
     public function getUserIdByNick(string $nick): ?int
     {
         $result = $this->createQueryBuilder('q')
