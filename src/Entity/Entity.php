@@ -86,18 +86,6 @@ class Entity
         return $this->id;
     }
 
-    public function getCellId(): ?int
-    {
-        return $this->cellId;
-    }
-
-    public function setCellId(int $cellId): static
-    {
-        $this->cellId = $cellId;
-
-        return $this;
-    }
-
     public function getCode(): ?string
     {
         return $this->code;

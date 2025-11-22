@@ -15,43 +15,29 @@ use Symfony\UX\LiveComponent\Attribute\LiveProp;
 #[AsLiveComponent('admin_default_item')]
 class DefaultItemComponent extends AbstractEditComponent
 {
-    #[LiveProp]
-    public int $itemId;
-    #[LiveProp]
-    public string $name;
-    private ?DefaultItem $item = null;
+    #[LiveProp(writable: true)]
+    public ?DefaultItem $item = null;
 
     public function __construct(
-        private DefaultItemRepository $defaultItemRepository,
+        private readonly DefaultItemRepository $defaultItemRepository,
     ) {
-    }
-
-    public function mount(FormView $view = null, DefaultItem $item = null): void
-    {
-        $this->item = $item;
-        if ($item !== null) {
-            $this->itemId = $item->getId();
-        }
     }
 
     #[LiveAction]
     public function delete(): void
     {
-        $this->defaultItemRepository->removeItem($this->itemId);
+        $this->defaultItemRepository->remove($this->item);
+        $this->defaultItemRepository->save();
         $this->item = null;
     }
 
     protected function storeItem(): void
     {
-        $this->defaultItemRepository->updateItemCount($this->itemId, $this->item->getCount());
+        $this->defaultItemRepository->updateItemCount($this->item->getId(), $this->item->getCount());
     }
 
     public function getItem(): ?DefaultItem
     {
-        if ($this->item === null) {
-            $this->item = $this->defaultItemRepository->getItem($this->itemId);
-        }
-
         return $this->item;
     }
 

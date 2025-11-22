@@ -4,6 +4,7 @@ namespace EtoA\Form\Type\Admin;
 
 use EtoA\Form\Type\Core\PositiveIntegerType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormBuilderInterface;
 
 class NewDefaultItemType extends AbstractType
@@ -12,10 +13,13 @@ class NewDefaultItemType extends AbstractType
     {
         $builder
             ->add('object', DefaultItemType::class, [
-                'required' => true,
+                'required' => true
             ])
             ->add('count', PositiveIntegerType::class, [
                 'label' => 'Stufe/Anzahl',
+            ])
+            ->add('submit', SubmitType::class, [
+                'label' => 'Hinzufügen',
             ]);
     }
 }

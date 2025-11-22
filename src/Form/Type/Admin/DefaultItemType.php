@@ -14,11 +14,11 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 class DefaultItemType extends AbstractType
 {
     public function __construct(
-        private TechnologyDataRepository $technologyDataRepository,
-        private BuildingDataRepository $buildingDataRepository,
-        private DefenseDataRepository $defenseDataRepository,
-        private ShipDataRepository $shipDataRepository,
-        private MissileDataRepository $missileDataRepository,
+        private readonly TechnologyDataRepository $technologyDataRepository,
+        private readonly BuildingDataRepository   $buildingDataRepository,
+        private readonly DefenseDataRepository    $defenseDataRepository,
+        private readonly ShipDataRepository       $shipDataRepository,
+        private readonly MissileDataRepository    $missileDataRepository,
     ) {
     }
 
@@ -30,12 +30,14 @@ class DefaultItemType extends AbstractType
             'required' => false,
             'placeholder' => 'Objekt wählen',
             'choices' => [
-                'Gebäude' => array_map(fn (int $id) => 'b:'.$id, array_flip($this->buildingDataRepository->getBuildingNames(true))),
-                'Technologien' => array_map(fn (int $id) => 't:'.$id, array_flip($this->technologyDataRepository->getTechnologyNames(true))),
-                'Schiffe' => array_map(fn (int $id) => 's:'.$id, array_flip($this->shipDataRepository->getShipNames(true))),
-                'Verteidigung' => array_map(fn (int $id) => 'd:'.$id, array_flip($this->defenseDataRepository->getDefenseNames(true))),
-                'Raketen' => array_map(fn (int $id) => 'm:'.$id, array_flip($this->missileDataRepository->getMissileNames(true))),
+                'Gebäude' => $this->buildingDataRepository->getBuildingNames(true),
+                'Technologien' => $this->technologyDataRepository->getTechnologyNames(true),
+                'Schiffe' => $this->shipDataRepository->getShipNames(true),
+                'Verteidigung' => $this->defenseDataRepository->getDefenseNames(true),
+                'Raketen' => $this->missileDataRepository->getMissileNames(true),
             ],
+            'choice_label' => 'name',
+            'choice_value' => 'id'
         ]);
     }
 

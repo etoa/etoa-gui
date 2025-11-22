@@ -6,6 +6,7 @@ use EtoA\Building\BuildingDataRepository;
 use EtoA\DefaultItem\DefaultItemRepository;
 use EtoA\Defense\DefenseDataRepository;
 use EtoA\Entity\DefaultItem;
+use EtoA\Entity\DefaultItemSet;
 use EtoA\Form\Type\Admin\NewDefaultItemType;
 use EtoA\Missile\MissileDataRepository;
 use EtoA\Ship\ShipDataRepository;
@@ -25,7 +26,7 @@ class DefaultItemSetComponent extends AbstractController
     use DefaultActionTrait;
 
     #[LiveProp]
-    public int $setId;
+    public DefaultItemSet $set;
     public string $error = '';
     /** @var array<int, string> */
     public array $buildings = [];
@@ -39,12 +40,12 @@ class DefaultItemSetComponent extends AbstractController
     public array $missiles = [];
 
     public function __construct(
-        private DefaultItemRepository $defaultItemRepository,
-        private BuildingDataRepository $buildingDataRepository,
-        private TechnologyDataRepository $technologyDataRepository,
-        private ShipDataRepository $shipDataRepository,
-        private DefenseDataRepository $defenseDataRepository,
-        private MissileDataRepository $missileDataRepository,
+        private readonly DefaultItemRepository    $defaultItemRepository,
+        private readonly BuildingDataRepository   $buildingDataRepository,
+        private readonly TechnologyDataRepository $technologyDataRepository,
+        private readonly ShipDataRepository       $shipDataRepository,
+        private readonly DefenseDataRepository    $defenseDataRepository,
+        private readonly MissileDataRepository    $missileDataRepository,
     ) {
     }
 
@@ -53,7 +54,7 @@ class DefaultItemSetComponent extends AbstractController
      */
     public function getItems(): array
     {
-        $defaultItems = $this->defaultItemRepository->getItemsGroupedByCategory($this->setId);
+        $defaultItems = $this->defaultItemRepository->getItemsGroupedByCategory($this->set);
         if (isset($defaultItems['b'])) {
             $this->buildings = $this->buildingDataRepository->getBuildingNames(true);
         }
@@ -88,6 +89,6 @@ class DefaultItemSetComponent extends AbstractController
 
     protected function instantiateForm(): FormInterface
     {
-        return $this->createForm(NewDefaultItemType::class, DefaultItem::empty());
+        return $this->createForm(NewDefaultItemType::class, new DefaultItem());
     }
 }

@@ -1,7 +1,5 @@
 <div
     {{ attributes }}
-    data-original-data="{}" {# Hack to prevent issue with symfony/ux #}
-    data-action="change->live#update"
 >
     <div style="display: flex;justify-content: space-between;align-items: flex-start;">
         {% for category, items in this.items %}
@@ -15,7 +13,7 @@
                     {% for item in items %}
                         {{ component('admin_default_item', {
                             item: item,
-                            name: this.buildings[item.objectId]
+                            id:item.id
                         }) }}
                     {% endfor %}
                 </table>
@@ -28,8 +26,7 @@
                     </tr>
                     {% for item in items %}
                         {{ component('admin_default_item', {
-                            item: item,
-                            name: this.technologies[item.objectId]
+                            item: item
                         }) }}
                     {% endfor %}
                 </table>
@@ -42,8 +39,7 @@
                     </tr>
                     {% for item in items %}
                         {{ component('admin_default_item', {
-                            item: item,
-                            name: this.ships[item.objectId]
+                            item: item
                         }) }}
                     {% endfor %}
                 </table>
@@ -57,7 +53,7 @@
                     {% for item in items %}
                         {{ component('admin_default_item', {
                             item: item,
-                            name: this.defense[item.objectId]
+                            id: item.id
                         }) }}
                     {% endfor %}
                 </table>
@@ -70,8 +66,7 @@
                     </tr>
                     {% for item in items %}
                         {{ component('admin_default_item', {
-                            item: item,
-                            name: this.missiles[item.objectId]
+                            item: item
                         }) }}
                     {% endfor %}
                 </table>
@@ -84,6 +79,5 @@
     {% if this.error %}
         <p>{{ this.error }}</p>
     {% endif %}
-    {{ form(this.form) }}
-    <input type="submit" value="Hinzufügen" data-action="live#action" data-action-name="prevent|submit">
+    {{ form(form) }}
 </div>

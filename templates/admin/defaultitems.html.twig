@@ -24,7 +24,8 @@
             </legend>
 
             {{ component('admin_default_item_set', {
-                setId: set.id
+                set: set,
+                id: set.id
             }) }}
         </fieldset>
     {% endfor %}

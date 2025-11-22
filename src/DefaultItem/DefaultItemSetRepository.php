@@ -25,7 +25,7 @@ class DefaultItemSetRepository extends AbstractRepository
      */
     public function getSets(bool $activeOnly = true): array
     {
-        return $this->findBy($activeOnly?['active'=>true]:null,['name'=>'ASC']);
+        return $this->findBy($activeOnly?['active'=>true]:[],['name'=>'ASC']);
     }
 
     public function createSet(string $name): void

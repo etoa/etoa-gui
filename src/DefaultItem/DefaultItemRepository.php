@@ -4,8 +4,8 @@ namespace EtoA\DefaultItem;
 
 use Doctrine\Persistence\ManagerRegistry;
 use EtoA\Core\AbstractRepository;
-use EtoA\Entity\BuildingListItem;
 use EtoA\Entity\DefaultItem;
+use EtoA\Entity\DefaultItemSet;
 
 class DefaultItemRepository extends AbstractRepository
 {
@@ -44,9 +44,9 @@ class DefaultItemRepository extends AbstractRepository
     /**
      * @return array<string, array<DefaultItem>>
      */
-    public function getItemsGroupedByCategory(int $setId): array
+    public function getItemsGroupedByCategory(DefaultItemSet $set): array
     {
-        $data = $this->findBy(['setId'=>$setId]);
+        $data = $set->getDefaultItems();
 
         $result = [];
         foreach ($data as $row) {
