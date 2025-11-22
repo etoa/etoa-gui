@@ -2,6 +2,7 @@
 
 namespace EtoA\Controller\Admin;
 
+use EtoA\Admin\AdminSessionLogRepository;
 use EtoA\Admin\AdminSessionManager;
 use EtoA\Admin\AdminSessionRepository;
 use EtoA\Core\Configuration\ConfigurationService;
@@ -22,6 +23,7 @@ class AdminSessionController extends AbstractAdminController
         private readonly AdminSessionManager    $sessionManager,
         private readonly LogRepository          $logRepository,
         private readonly ConfigurationService   $config,
+        private readonly AdminSessionLogRepository $sessionLogRepository,
         private readonly AdminSessionRepository $sessionRepository
     )
     {
@@ -59,7 +61,7 @@ class AdminSessionController extends AbstractAdminController
         return $this->render('admin/admin-session/logs.html.twig', [
             'sessionLogForm' => $this->createForm(AdminSessionLogType::class)->createView(),
             'deleteSessionForm' => $this->createForm(DeleteAdminSessionLogType::class)->createView(),
-            'sessionLogCount' => $this->sessionRepository->countSessionLog(),
+            'sessionLogCount' => $this->sessionLogRepository->count([]),
         ]);
     }
 

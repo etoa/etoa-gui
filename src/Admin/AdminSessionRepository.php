@@ -39,21 +39,6 @@ class AdminSessionRepository extends AbstractRepository
             ->execute();
     }
 
-    /**
-     * @return AdminSession[]
-     */
-    public function findAll(): array
-    {
-        $data = $this->createQueryBuilder('q')
-            ->select('s.*', 'u.user_nick')
-            ->from('admin_user_sessions', 's')
-            ->innerJoin('s', 'admin_users', 'u', 's.user_id=u.user_id')
-            ->orderBy('time_action', 'DESC')
-            ->fetchAllAssociative();
-
-        return array_map(fn (array $row) => new AdminSession($row), $data);
-    }
-
     public function exists(string $id, int|AdminUser $user, string $userAgent): bool
     {
         return (bool) $this->findOneBy(['id'=>$id,'user'=>$user,'userAgent'=>$userAgent]);
@@ -100,14 +85,6 @@ class AdminSessionRepository extends AbstractRepository
             ->setParameter('user', $user)
             ->getQuery()
             ->execute();
-    }
-
-    public function countSessionLog(): int
-    {
-        return (int) $this->createQueryBuilder('q')
-            ->select("COUNT(*)")
-            ->from("admin_user_sessionlog")
-            ->fetchOne();
     }
 
     /**

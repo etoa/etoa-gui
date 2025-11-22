@@ -2,9 +2,9 @@
         {{ attributes }}
         data-action="change->live#update"
 >
-    {{ form(this.form) }}
+    {{ form(form) }}
 
-    {% if this.request.user > 0 %}
+    {% if this.request.user %}
         <table class="table">
             <thead>
             <tr>

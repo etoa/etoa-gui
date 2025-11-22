@@ -2,7 +2,7 @@
 
 namespace EtoA\Components\Admin;
 
-use EtoA\Admin\AdminSessionRepository;
+use EtoA\Admin\AdminSessionLogRepository;
 use EtoA\Entity\AdminSessionLog;
 use EtoA\Form\Request\Admin\AdminSessionLogRequest;
 use EtoA\Form\Type\Admin\AdminSessionLogType;
@@ -21,7 +21,7 @@ class AdminSessionLogComponent extends AbstractController
     public AdminSessionLogRequest $request;
 
     public function __construct(
-        private AdminSessionRepository $sessionRepository
+        private readonly AdminSessionLogRepository $sessionLogRepository
     ) {
         $this->request = new AdminSessionLogRequest();
     }
@@ -32,8 +32,8 @@ class AdminSessionLogComponent extends AbstractController
     public function getLogs(): array
     {
         $logs = [];
-        if ($this->request->user !== null) {
-            $logs = $this->sessionRepository->findSessionLogsByUser($this->request->user);
+        if ($this->request->user) {
+            $logs = $this->sessionLogRepository->findBy(['userId'=>$this->request->user->getId()]);
         }
 
         return $logs;

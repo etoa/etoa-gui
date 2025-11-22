@@ -2,7 +2,9 @@
 
 namespace EtoA\Form\Request\Admin;
 
+use EtoA\Entity\AdminUser;
+
 class AdminSessionLogRequest
 {
-    public ?int $user = null;
+    public ?AdminUser $user = null;
 }
