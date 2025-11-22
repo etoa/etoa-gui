@@ -87,13 +87,14 @@ class AdminManagementController extends AbstractAdminController
 
     #[Route('/admin/admin-management/{id}/delete', name: 'admin.admin_management.delete')]
     #[IsGranted('ROLE_ADMIN_SUPER-ADMIN')]
-    public function delete(int $id): Response
+    public function delete(AdminUser $admin): Response
     {
-        $admin = $this->adminUserRepository->find($id);
-        if ($admin != null && $this->adminUserRepository->remove($admin)) {
-            $this->logRepository->add(LogFacility::ADMIN, LogSeverity::INFO, "Der Administrator " . $this->getUser()->getUsername() . " löscht den Administrator " . $admin->nick . " (ID: " . $admin->id . ").");
-            $this->addFlash('success', 'Benutzer gelöscht!');
-        }
+        $this->logRepository->add(LogFacility::ADMIN, LogSeverity::INFO, "Der Administrator " . $this->getUser()->getUsername() . " löscht den Administrator " . $admin->getNick() . " (ID: " . $admin->getId() . ").");
+
+        $this->adminUserRepository->remove($admin);
+        $this->adminUserRepository->save();
+
+        $this->addFlash('success', 'Benutzer gelöscht!');
 
         return $this->redirectToRoute('admin.admin_management');
     }
