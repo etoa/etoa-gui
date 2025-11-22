@@ -185,24 +185,24 @@ class ReportRepository extends AbstractRepository
     public function removeUnarchivedread(int $beforeTimestamp): int
     {
         return $this->createQueryBuilder('q')
-            ->delete('reports')
-            ->where('archived = 0')
-            ->andWhere('`read` = 1')
-            ->andWhere('timestamp < :timestamp')
+            ->delete()
+            ->where('q.archived = 0')
+            ->andWhere('q.read = 1')
+            ->andWhere('q.timestamp < :timestamp')
             ->setParameter('timestamp', $beforeTimestamp)
-            ->executeQuery()
-            ->rowCount();
+            ->getQuery()
+            ->execute();
     }
 
     public function removeDeleted(int $beforeTimestamp): int
     {
         return $this->createQueryBuilder('q')
-            ->delete('reports')
-            ->where('deleted = 1')
-            ->andWhere('timestamp < :timestamp')
+            ->delete()
+            ->where('q.deleted = 1')
+            ->andWhere('q.timestamp < :timestamp')
             ->setParameter('timestamp', $beforeTimestamp)
-            ->executeQuery()
-            ->rowCount();
+            ->getQuery()
+            ->execute();
     }
 
     /**
