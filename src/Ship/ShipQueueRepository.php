@@ -164,13 +164,13 @@ class ShipQueueRepository extends AbstractRepository
             ->execute();
     }
 
-    public function unfreezeConstruction(int $userId, int $duration): void
+    public function unfreezeConstruction(int|User $userId, int $duration): void
     {
         $this->createQueryBuilder('q')
             ->set('q.buildType', 0)
             ->set('q.startTime', 'q.startTime +'.$duration)
             ->set('q.endTime', 'q.endTime +'. $duration)
-            ->where('q.userId = :userId')
+            ->where('q.user = :userId')
             ->setParameters([
                 'userId' => $userId,
             ])

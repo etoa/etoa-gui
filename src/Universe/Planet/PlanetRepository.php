@@ -423,16 +423,10 @@ class PlanetRepository extends AbstractRepository
             ->executeQuery();
     }
 
-    public function setLastUpdated(int $id, int $timestamp): void
+    public function setLastUpdated(Planet $planet, int $timestamp): void
     {
-        $this->createQueryBuilder('q')
-            ->set('planet_last_updated', $timestamp)
-            ->where('id = :id')
-            ->setParameters([
-                'id' => $id
-            ])
-            ->getQuery()
-            ->execute();
+        $planet->setLastUpdated($timestamp);
+        $this->save();
     }
 
     public function setMain(Planet $planet): void
@@ -459,7 +453,7 @@ class PlanetRepository extends AbstractRepository
         $this->save();
     }
 
-    public function freezeProduction(int $userId): void
+    public function freezeProduction(int|User $userId): void
     {
         $this->createQueryBuilder('q')
             ->set('q.lastUpdated', "0")
@@ -469,7 +463,7 @@ class PlanetRepository extends AbstractRepository
             ->set('q.prodFuel', "0")
             ->set('q.prodFood', "0")
             ->set('q.prodPower', "0")
-            ->where('q.userId = :userId')
+            ->where('q.user = :userId')
             ->setParameters([
                 'userId' => $userId,
             ])

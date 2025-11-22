@@ -98,10 +98,10 @@ class UserHolidayService
 
         $this->userRepository->save();
 
-        $userPlanets = $this->planetRepository->getUserPlanets($user->getId());
+        $userPlanets = $user->getPlanets();
         foreach ($userPlanets as $planet) {
-            $this->planetRepository->setLastUpdated($planet->getId(), time());
-            $this->backendMessageService->updatePlanet($planet->getId());
+            $this->planetRepository->setLastUpdated($planet, time());
+            $this->backendMessageService->updatePlanet($planet->getEntity()->getId());
         }
 
         return true;

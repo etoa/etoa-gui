@@ -363,21 +363,18 @@ class UserRepository extends AbstractRepository
      */
     public function findInactiveInHolidayMode(int $threshold): array
     {
-        $data = $this->createQueryBuilder('q')
-            ->select('*')
-            ->from('users')
-            ->where('user_ghost = 0')
-            ->andWhere('admin = 0')
-            ->andWhere('user_blocked_to < :time')
-            ->andWhere('user_hmode_from > 0')
-            ->andWhere('user_hmode_from < :threshold')
+        return $this->createQueryBuilder('q')
+            ->where('q.ghost = 0')
+            ->andWhere('q.admin = 0')
+            ->andWhere('q.blockedTo < :time')
+            ->andWhere('q.hmodFrom > 0')
+            ->andWhere('q.hmodFrom < :threshold')
             ->setParameters([
                 'time' => time(),
                 'threshold' => $threshold,
             ])
-            ->fetchAllAssociative();
-
-        return array_map(fn($row) => new User($row), $data);
+            ->getQuery()
+            ->execute();
     }
 
     /**
@@ -463,10 +460,11 @@ class UserRepository extends AbstractRepository
     public function addSittingDays(int $days): void
     {
         $this->createQueryBuilder('q')
-            ->update('users')
-            ->set('`user_sitting_days`', '`user_sitting_days` + :days')
+            ->update()
+            ->set('q.sittingDays', 'q.sittingDays + :days')
             ->setParameter('days', $days)
-            ->executeQuery();
+            ->getQuery()
+            ->execute();
     }
 
     public function setSittingDays(User $user, int $days): void
