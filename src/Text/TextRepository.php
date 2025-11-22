@@ -90,7 +90,11 @@ class TextRepository extends AbstractRepository
 
         if(!$text || !$text->getContent()) {
             $text = new Text();
+            $text->setId($id);
             $text->setContent($this->textDef[$id]['default']);
+            $text->setDescription($this->textDef[$id]['description']);
+            $text->setLabel($this->textDef[$id]['label']);
+            $this->persist($text);
         }
 
         return $text;

@@ -12,7 +12,6 @@ use EtoA\Text\TextRepository;
 class Text
 {
     #[ORM\Id]
-    #[ORM\GeneratedValue(strategy: "AUTO")]
     #[ORM\Column(name: "text_id", type: "string")]
     private string $id;
 
@@ -25,6 +24,10 @@ class Text
     #[ORM\Column(name: "text_enabled", type: 'boolean')]
     private bool $enabled = true;
 
+    private string $label = '';
+
+    private string $description = '';
+
     public function isEnabled(): bool
     {
         return $this->enabled && $this->content !== '';
@@ -33,6 +36,13 @@ class Text
     public function getId(): ?string
     {
         return $this->id;
+    }
+
+    public function setId(string $id): static
+    {
+        $this->id = $id;
+
+        return $this;
     }
 
     public function getContent(): ?string
@@ -47,12 +57,12 @@ class Text
         return $this;
     }
 
-    public function getUpdated()
+    public function getUpdated(): int
     {
         return $this->updated;
     }
 
-    public function setUpdated($updated): static
+    public function setUpdated(int $updated): static
     {
         $this->updated = $updated;
 
@@ -65,4 +75,26 @@ class Text
 
         return $this;
     }
+
+    public function getLabel(): string
+    {
+        return $this->label;
+    }
+
+    public function setLabel(string $label): void
+    {
+        $this->label = $label;
+    }
+
+    public function getDescription(): string
+    {
+        return $this->description;
+    }
+
+    public function setDescription(string $description): void
+    {
+        $this->description = $description;
+    }
+
+
 }

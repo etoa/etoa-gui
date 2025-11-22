@@ -3,6 +3,8 @@
 namespace EtoA\Controller\Admin;
 
 use EtoA\Text\TextRepository;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -37,19 +39,31 @@ class TextController extends AbstractAdminController
     {
         if ($this->textRepository->isValidTextId($id)) {
             $text = $this->textRepository->find($id);
-            if ($request->isMethod('POST')) {
-                if ($request->request->has('save')) {
-                    $text->content = $request->request->get('content');
-                    $this->textRepository->save($text);
-                } elseif ($request->request->has('reset')) {
-                    $this->textRepository->reset($id);
-                    $text = $this->textRepository->find($id);
-                }
+
+            $form = $this->createFormBuilder($text)
+                ->add('content', TextareaType::class, [
+                    'attr' => [
+                        'rows'=>28,
+                        'cols'=>100
+                    ]
+                ])
+                ->add('submit', SubmitType::class, [
+                    'label' => 'Übernehmen',
+                    'attr' => [
+                        'class' => "positive"
+                    ]
+                ])
+
+                ->getForm()
+                ->handleRequest($request);
+
+            if ($form->isSubmitted() && $form->isValid()) {
+                $this->textRepository->save();
             }
 
             return $this->render('admin/texts/edit.html.twig', [
                 'subtitle' => 'Text bearbeiten',
-                'text' => $text,
+                'form' => $form
             ]);
         }
 
@@ -80,8 +94,9 @@ class TextController extends AbstractAdminController
     {
         if ($this->textRepository->isValidTextId($id)) {
             $text = $this->textRepository->find($id);
-            $text->enabled = true;
-            $this->textRepository->save($text);
+            $text->setEnabled(true);
+
+            $this->textRepository->save();
         }
 
         return $this->redirectToRoute('admin.texts');
@@ -93,8 +108,8 @@ class TextController extends AbstractAdminController
     {
         if ($this->textRepository->isValidTextId($id)) {
             $text = $this->textRepository->find($id);
-            $text->enabled = false;
-            $this->textRepository->save($text);
+            $text->setEnabled(false);
+            $this->textRepository->save();
         }
 
         return $this->redirectToRoute('admin.texts');
