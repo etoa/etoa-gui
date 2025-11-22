@@ -22,7 +22,7 @@
             <tr>
                 <td style="color:{% if online %}#0f0{% else %}red{% endif %};">{% if online %}Online{% else %}Timeout{% endif %}</td>
                 <td>
-                    <a href="{{ path('admin.admin_management.edit', {id: session.userId}) }}">{{ session.userNick }}</a>
+                    <a href="{{ path('admin.admin_management.edit', {id: session.user.id}) }}">{{ session.user.nick }}</a>
                 </td>
                 <td>{{ formatTimestamp(session.timeLogin) }}</td>
                 <td>{{ formatTimestamp(session.timeAction) }}</td>

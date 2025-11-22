@@ -9,6 +9,7 @@ use EtoA\Log\LogFacility;
 use EtoA\Log\LogRepository;
 use EtoA\Log\LogSeverity;
 use EtoA\Security\Admin\CurrentAdmin;
+use phpDocumentor\Reflection\Types\This;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
@@ -55,26 +56,25 @@ class AdminManagementController extends AbstractAdminController
 
     #[Route('/admin/admin-management/{id}/edit', name: 'admin.admin_management.edit')]
     #[IsGranted('ROLE_ADMIN_SUPER-ADMIN')]
-    public function edit(Request $request, int $id, UserPasswordHasherInterface $passwordHasher): Response
+    public function edit(Request $request, AdminUser $admin): Response
     {
-        $admin = $this->adminUserRepository->find($id);
         $form = $this->createForm(AdminUserType::class, $admin);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            if ((bool)$admin->passwordString) {
-                $this->adminUserRepository->setPassword($admin, $passwordHasher->hashPassword(new CurrentAdmin($admin), $admin->passwordString));
-                $this->logRepository->add(LogFacility::ADMIN, LogSeverity::INFO, "Der Administrator " . $this->getUser()->getUsername() . " ändert das Passwort des Administrators " . $admin->nick . "(" . $admin->id . ").");
+
+            if (array_key_exists('password',$this->adminUserRepository->getChangeset($admin))) {
+                $this->logRepository->add(LogFacility::ADMIN, LogSeverity::INFO, "Der Administrator " . $this->getUser()->getUsername() . " ändert das Passwort des Administrators " . $admin->getNick() . "(" . $admin->getId() . ").");
             }
 
-            if ($form->has('tfa_remove') && (bool)$form->get('tfa_remove')->getData()) {
-                $admin->tfaSecret = "";
-                $this->logRepository->add(LogFacility::ADMIN, LogSeverity::INFO, "Der Administrator " . $this->getUser()->getUsername() . " deaktiviert die Zwei-Faktor-Authentifizierung des Administrators " . $admin->nick . "(" . $admin->id . ").");
+            if ($form->has('tfa_remove') && $form->get('tfa_remove')->getData()) {
+                $admin->setTfaSecret('');
+                $this->logRepository->add(LogFacility::ADMIN, LogSeverity::INFO, "Der Administrator " . $this->getUser()->getUsername() . " deaktiviert die Zwei-Faktor-Authentifizierung des Administrators " . $admin->getNick() . "(" . $admin->getId() . ").");
             }
 
-            $this->adminUserRepository->save($admin);
+            $this->adminUserRepository->save();
 
             $this->addFlash('success', "Gespeichert!");
-            $this->logRepository->add(LogFacility::ADMIN, LogSeverity::INFO, "Der Administrator " . $this->getUser()->getUsername() . " ändert die Daten des Administrators " . $admin->nick . " (ID: " . $admin->id . ").");
+            $this->logRepository->add(LogFacility::ADMIN, LogSeverity::INFO, "Der Administrator " . $this->getUser()->getUsername() . " ändert die Daten des Administrators " . $admin->getNick() . " (ID: " . $admin->getId() . ").");
 
             return $this->redirectToRoute('admin.admin_management');
         }

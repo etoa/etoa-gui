@@ -42,7 +42,9 @@ class AdminUserType extends AbstractType
 
         if ($admin->getId()) {
             $builder
-                ->add('passwordString', PasswordType::class, [
+                ->add('password', PasswordType::class, [
+                    'mapped' => false,
+                    'hash_property_path' => 'password',
                     'required' => false,
                     'label' => 'Neues Passwort',
                 ]);
