@@ -169,19 +169,19 @@ class ConfigController extends AbstractAdminController
         $message .= '<p>' . $cnt . ' Einträge in der Standardkonfiguration.</p>';
 
         $cnt = 0;
-        foreach ($this->config->all() as $cn => $ci) {
+        foreach ($this->config->all() as $cn) {
             $cnt++;
             $found = false;
             foreach ($xml->items->item as $i) {
-                if ($i['name'] == $cn) {
+                if ($i['name'] == $cn->getName()) {
                     $found = true;
 
                     break;
                 }
             }
             if (!$found) {
-                $message .= $cn . ' existiert in der Datenbank, aber nicht in der Standardkonfiguration! ';
-                $this->config->forget($cn);
+                $message .= $cn->getName() . ' existiert in der Datenbank, aber nicht in der Standardkonfiguration! ';
+                $this->config->forget($cn->getName());
                 $message .= '<b>Gelöscht</b><br/>';
             }
         }
@@ -200,7 +200,6 @@ class ConfigController extends AbstractAdminController
     {
         if ($request->isMethod('POST')) {
             if (($cnt = $this->config->restoreDefaults()) > 0) {
-                $this->config->reload();
                 $this->backendMessageService->reloadConfig();
 
                 $this->addFlash('success', "$cnt Einstellungen wurden wiederhergestellt!");

@@ -169,7 +169,7 @@ class ConfigurationService
         $cnt = 0;
         foreach ($xml->items->item as $itemDefinition) {
             $item = new Config();
-            $item->setName($itemDefinition->name);
+            $item->setName($itemDefinition->getName());
             $item->setValue($itemDefinition->v ?? '');
             $item->setParam1($itemDefinition->p1 ?? '');
             $item->setParam2($itemDefinition->p2 ?? '');
