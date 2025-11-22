@@ -60,7 +60,7 @@ class UserPropertiesRepository extends AbstractRepository
     public function getDesignStats(int $limit): array
     {
         return $this->createQueryBuilder('q')
-            ->select( 'COUNT(q.id) as cnt')
+            ->select( 'COUNT(q.user) as cnt')
             ->addSelect('q.cssStyle')
             ->groupBy('q.cssStyle')
             ->orderBy('cnt','DESC')
