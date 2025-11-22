@@ -166,23 +166,18 @@ class TechnologyListItemRepository extends AbstractRepository
 
     public function countEmpty(): int
     {
-        return (int) $this->createQueryBuilder('q')
-            ->select('COUNT(techlist_id)')
-            ->where('techlist_current_level=0')
-            ->andWhere('techlist_build_start_time=0')
-            ->andWhere('techlist_build_end_time=0')
-            ->getFirstResult();
+        return $this->count(['currentLevel'=>0,'startTime'=>0,'endTime'=>0]);
     }
 
     public function deleteEmpty(): int
     {
         return $this->createQueryBuilder('q')
-            ->delete('techlist')
-            ->where('techlist_current_level=0')
-            ->andWhere('techlist_build_start_time=0')
-            ->andWhere('techlist_build_end_time=0')
-            ->executeQuery()
-            ->rowCount();
+            ->delete()
+            ->where('q.currentLevel=0')
+            ->andWhere('q.startTime=0')
+            ->andWhere('q.endTime=0')
+            ->getQuery()
+            ->execute();
     }
 
     public function removeEntry(int $id): void

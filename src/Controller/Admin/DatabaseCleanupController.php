@@ -17,6 +17,7 @@ use EtoA\Message\ReportCleanup;
 use EtoA\Message\ReportRepository;
 use EtoA\Missile\MissileRepository;
 use EtoA\Ranking\PointsService;
+use EtoA\Ship\ShipListRepository;
 use EtoA\Ship\ShipRepository;
 use EtoA\Technology\TechnologyListItemRepository;
 use EtoA\User\UserPointsRepository;
@@ -40,6 +41,7 @@ class DatabaseCleanupController extends AbstractAdminController
         private readonly UserService                  $userService,
         private readonly UserRepository               $userRepository,
         private readonly ShipRepository               $shipRepository,
+        private readonly ShipListRepository           $shipListRepository,
         private readonly DefenseRepository            $defenseRepository,
         private readonly BuildingListItemRepository   $buildingRepository,
         private readonly TechnologyListItemRepository $technologyRepository,
@@ -124,7 +126,7 @@ class DatabaseCleanupController extends AbstractAdminController
 
             /* object lists */
             if ($request->request->has('cl_objlist') || $all) {
-                $nr = $this->shipRepository->cleanUp();
+                $nr = $this->shipListRepository->cleanUp();
                 $message .= $nr . " leere Schiffdaten wurden gelöscht!<br/>";
                 $this->logRepository->add(LogFacility::SYSTEM, LogSeverity::INFO, "$nr leere Schiffsdatensätze wurden manuell gelöscht!");
 
@@ -145,21 +147,21 @@ class DatabaseCleanupController extends AbstractAdminController
             'messageDeletedCount' => $this->messageRepository->countDeleted(),
             'reportNotArchivedCount' => $this->reportRepository->countNotArchived(),
             'reportDeletedCount' => $this->reportRepository->countDeleted(),
-            'logCount' => $this->logRepository->count(),
-            'sessionCount' => $this->userSessionRepository->count(),
-            'userPointsCount' => $this->userPointsRepository->count(),
-            'alliancePointsCount' => $this->alliancePointsRepository->count(),
+            'logCount' => $this->logRepository->count([]),
+            'sessionCount' => $this->userSessionRepository->count([]),
+            'userPointsCount' => $this->userPointsRepository->count([]),
+            'alliancePointsCount' => $this->alliancePointsRepository->count([]),
             'userInactiveCount' => $this->userService->getNumInactive(),
             'userDeletedCount' => count($this->userRepository->findDeleted()),
-            'shipCount' => $this->shipRepository->count(),
-            'shipEmptyCount' => $this->shipRepository->countEmpty(),
-            'defenseCount' => $this->defenseRepository->count(),
+            'shipCount' => $this->shipRepository->count([]),
+            'shipEmptyCount' => $this->shipListRepository->countEmpty(),
+            'defenseCount' => $this->defenseRepository->count([]),
             'defenseEmptyCount' => $this->defenseRepository->countEmpty(),
             'buildingCount' => $this->buildingRepository->numBuildingListEntries(),
             'buildingEmptyCount' => $this->buildingRepository->countEmpty(),
-            'technologyCount' => $this->technologyRepository->count(),
+            'technologyCount' => $this->technologyRepository->count([]),
             'technologyEmptyCount' => $this->technologyRepository->countEmpty(),
-            'missileCount' => $this->missileRepository->count(),
+            'missileCount' => $this->missileRepository->count([]),
             'missileEmptyCount' => $this->missileRepository->countEmpty(),
             'messageDays' => $messageDays,
             'messageDeletedDays' => $messageDeletedDays,

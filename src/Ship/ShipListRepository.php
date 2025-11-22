@@ -283,13 +283,7 @@ class ShipListRepository extends AbstractRepository
 
     public function countEmpty(): int
     {
-        return (int) $this->createQueryBuilder('q')
-            ->select('COUNT(shiplist_id)')
-            ->from('shiplist')
-            ->where('shiplist_count = 0')
-            ->andWhere('shiplist_bunkered = 0')
-            ->andWhere('shiplist_special_ship = 0')
-            ->fetchOne();
+        return $this->count(['count'=>0,'bunkered'=>0,'specialShip'=>0]);
     }
 
     public function getSpecialShipExperienceSumForUser(int|User $userId): int

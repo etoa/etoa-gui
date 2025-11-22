@@ -124,10 +124,7 @@ class BuildingListItemRepository extends AbstractRepository
 
     public function numBuildingListEntries(): int
     {
-        return (int)$this->createQueryBuilder('q')
-            ->select('COUNT(buildlist_id)')
-            ->from('buildlist')
-            ->fetchOne();
+        return $this->count([]);
     }
 
     public function countBuildInProgress(int $userId, int $entityId): int
@@ -148,24 +145,18 @@ class BuildingListItemRepository extends AbstractRepository
 
     public function countEmpty(): int
     {
-        return (int)$this->createQueryBuilder('q')
-            ->select('COUNT(buildlist_id)')
-            ->from('buildlist')
-            ->where('buildlist_current_level=0')
-            ->andWhere('buildlist_build_start_time=0')
-            ->andWhere('buildlist_build_end_time=0')
-            ->fetchOne();
+        return $this->count(['currentLevel'=>0,'startTime'=>0,'endTime'=>0]);
     }
 
     public function deleteEmpty(): int
     {
         return $this->createQueryBuilder('q')
-            ->delete('buildlist')
-            ->where('buildlist_current_level=0')
-            ->andWhere('buildlist_build_start_time=0')
-            ->andWhere('buildlist_build_end_time=0')
-            ->executeQuery()
-            ->rowCount();
+            ->delete()
+            ->where('q.currentLevel=0')
+            ->andWhere('q.startTime=0')
+            ->andWhere('q.endTime=0')
+            ->getQuery()
+            ->execute();
     }
 
     /**

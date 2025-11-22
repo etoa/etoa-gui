@@ -35,11 +35,7 @@ class MissileRepository extends \EtoA\Core\AbstractRepository
 
     public function countEmpty(): int
     {
-        return (int) $this->createQueryBuilder('q')
-            ->select("COUNT(missilelist_id)")
-            ->from('missilelist')
-            ->where('missilelist_count = 0')
-            ->fetchOne();
+        return $this->count(['count'=>0]);
     }
 
     /**
@@ -124,10 +120,10 @@ class MissileRepository extends \EtoA\Core\AbstractRepository
     public function deleteEmpty(): int
     {
         return $this->createQueryBuilder('q')
-            ->delete('missilelist')
-            ->where('missilelist_count=0')
-            ->executeQuery()
-            ->rowCount();
+            ->delete()
+            ->where('q.count=0')
+            ->getQuery()
+            ->execute();
     }
 
     public function countBySearch(MissileListSearch $search = null): int
