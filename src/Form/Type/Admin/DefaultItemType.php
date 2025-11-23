@@ -36,7 +36,9 @@ class DefaultItemType extends AbstractType
                 'Verteidigung' => $this->defenseDataRepository->getDefenseNames(true),
                 'Raketen' => $this->missileDataRepository->getMissileNames(true),
             ],
-            'choice_label' => 'name',
+            'choice_label' => function (Mixed $type): string {
+                return $type->getName();
+            },
             'choice_value' => 'id'
         ]);
     }

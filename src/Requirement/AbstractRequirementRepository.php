@@ -2,9 +2,11 @@
 
 namespace EtoA\Requirement;
 
-use Doctrine\DBAL\Connection;
 use EtoA\Core\AbstractRepository;
-use phpDocumentor\Reflection\Types\This;
+use EtoA\Entity\Building;
+use EtoA\Entity\BuildingRequirements;
+use EtoA\Entity\Technology;
+use EtoA\Entity\TechnologyRequirement;
 
 abstract class AbstractRequirementRepository extends AbstractRepository
 {
@@ -32,27 +34,19 @@ abstract class AbstractRequirementRepository extends AbstractRepository
     }
 
     /**
-     * @return ObjectRequirement[]
+     * @return BuildingRequirements[]
      */
-    public function getRequiredByBuilding(int $buildingId): array
+    public function getRequiredByBuilding(int|Building $buildingId): array
     {
         return $this->findBy(['building'=>$buildingId],['level'=>'DESC']);
     }
 
     /**
-     * @return ObjectRequirement[]
+     * @return TechnologyRequirement[]
      */
-    public function getRequiredByTechnology(int $technologyId): array
+    public function getRequiredByTechnology(int|Technology $technologyId): array
     {
-        $data = $this->createQueryBuilder('q')
-            ->select('*')
-            ->from($this->table)
-            ->where('req_tech_id = :technologyId')
-            ->orderBy('req_level')
-            ->setParameter('technologyId', $technologyId)
-            ->fetchAllAssociative();
-
-        return array_map(fn (array $row) => ObjectRequirement::createFromData($row), $data);
+        return $this->findBy(['tech'=>$technologyId],['level'=>'DESC']);
     }
 
     public function add(int $objId, int $level, ?int $techId, ?int $buildingId): void

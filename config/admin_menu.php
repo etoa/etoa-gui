@@ -503,10 +503,10 @@ return [
         "route" => "admin.tools.index",
         "roles" => "master,super-admin,game-admin",
         "children" => [
-            "TF-Rechner" => [
+            /*"TF-Rechner" => [
                 "route" => "admin.tf-calculator",
                 "roles" => "master,super-admin,game-admin,trial-game-admin",
-            ],
+            ],*/
             "Technikbaum" => [
                 "route" => "admin.help.techtree",
                 "roles" => "master,super-admin,game-admin",

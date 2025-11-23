@@ -3,6 +3,7 @@
 namespace EtoA\Form\Type\Core;
 
 use EtoA\Building\BuildingDataRepository;
+use EtoA\Building\BuildingId;
 use EtoA\Defense\DefenseDataRepository;
 use EtoA\Missile\MissileDataRepository;
 use EtoA\Ship\ShipDataRepository;
@@ -13,28 +14,31 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 class TechTreeSelectionType extends AbstractType
 {
     public function __construct(
-        private TechnologyDataRepository $technologyDataRepository,
-        private BuildingDataRepository $buildingDataRepository,
-        private ShipDataRepository $shipDataRepository,
-        private DefenseDataRepository $defenseDataRepository,
-        private MissileDataRepository $missileDataRepository,
+        private readonly TechnologyDataRepository $technologyDataRepository,
+        private readonly BuildingDataRepository   $buildingDataRepository,
+        private readonly ShipDataRepository       $shipDataRepository,
+        private readonly DefenseDataRepository    $defenseDataRepository,
+        private readonly MissileDataRepository    $missileDataRepository,
     ) {
     }
 
     public function configureOptions(OptionsResolver $resolver): void
     {
         parent::configureOptions($resolver);
-
         $resolver->setDefaults([
             'required' => false,
             'placeholder' => 'Auswahl',
             'choices' => [
                 'Gebäude' => $this->buildingDataRepository->findBy(['show'=>1]),
-                'Technologien' => $this->technologyDataRepository->findBy(['show'=>1]),/*
-                'Schiffe' => array_map(fn (int $id) => 's:'.$id, array_flip($this->shipDataRepository->getShipNames())),
-                'Verteidigung' => array_map(fn (int $id) => 'd:'.$id, array_flip($this->defenseDataRepository->getDefenseNames())),
-                'Raketen' => array_map(fn (int $id) => 'm:'.$id, array_flip($this->missileDataRepository->getMissileNames())),*/
+                'Technologien' => $this->technologyDataRepository->findBy(['show'=>1]),
+                'Schiffe' => $this->shipDataRepository->findAll(),
+                'Verteidigung' => $this->defenseDataRepository->findAll(),
+                'Raketen' => $this->missileDataRepository->findAll(),
             ],
+            'choice_label' => function (Mixed $type): string {
+                return $type->getName();
+            },
+            'data' => $this->buildingDataRepository->find(BuildingId::BUILDING->value)
         ]);
     }
 

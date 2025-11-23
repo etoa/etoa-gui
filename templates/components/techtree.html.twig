@@ -1,9 +1,8 @@
 <div
     {{ attributes }}
-    data-action="change->live#update"
 >
     {{ form_start(form) }}
-        {{ form_row(form.id) }}
+        {{ form_row(form.obj) }}
     {{ form_end(form) }}
 
     <div style="width:650px;text-align:center;;margin-left:10px;padding:10px;background:#fff;color:#000;border:1px solid #000">
@@ -12,10 +11,10 @@
         {% if this.requiredObjects|length > 0 %}
             <div class="techtreeItemContainer">
                 {% for item in this.requiredObjects %}
-                    <div class="techtreeItem" style="background:url('{{ item.item.getImagePath('medium') }}');">
+                    <div class="techtreeItem" style="background:url('{{ item.building?item.building.getImagePath('medium'):item.tech.getImagePath('medium') }}');">
                         <div class="techtreeItemLevel">Lvl <b>{{ item.level }}</b></div>
                         <a href="javascript:;" onclick="" style="height:100%;display:block;"></a>
-                        <div class="techtreeItemName">{{ item.name }}</div>
+                        <div class="techtreeItemName">{{ item.building?item.building.name:item.tech.name }}</div>
                     </div>
                 {% endfor %}
                 <br style="clear:both;" />

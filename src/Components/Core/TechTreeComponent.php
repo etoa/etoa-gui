@@ -22,7 +22,6 @@ use EtoA\Technology\TechnologyRequirementRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormInterface;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
-use Symfony\UX\LiveComponent\Attribute\LiveProp;
 use Symfony\UX\LiveComponent\ComponentWithFormTrait;
 use Symfony\UX\LiveComponent\DefaultActionTrait;
 
@@ -32,90 +31,60 @@ class TechTreeComponent extends AbstractController
     use ComponentWithFormTrait;
     use DefaultActionTrait;
 
-    #[LiveProp(writable: true)]
-    public ?string $id = null;
-    private null|Missile|Ship|Defense|Technology|Building $object = null;
-    /** @var array */
-    public array $requiredObjects = [];
-    /** @var array */
-    public array $allowedObjects = [];
-
     public function __construct(
-        private BuildingDataRepository $buildingDataRepository,
-        private TechnologyDataRepository $technologyDataRepository,
-        private ShipDataRepository $shipDataRepository,
-        private DefenseDataRepository $defenseDataRepository,
-        private MissileDataRepository $missileDataRepository,
-        private RequirementRepositoryProvider $requirementRepositoryProvider,
-        private BuildingRequirementRepository $buildingRequirementRepository,
-        private TechnologyRequirementRepository $technologyRequirementRepository,
-        private ShipRequirementRepository $shipRequirementRepository,
-        private DefenseRequirementRepository $defenseRequirementRepository,
-        private MissileRequirementRepository $missileRequirementRepository,
+        private readonly BuildingDataRepository          $buildingDataRepository,
+        private readonly TechnologyDataRepository        $technologyDataRepository,
+        private readonly ShipDataRepository              $shipDataRepository,
+        private readonly DefenseDataRepository           $defenseDataRepository,
+        private readonly MissileDataRepository           $missileDataRepository,
+        private readonly RequirementRepositoryProvider   $requirementRepositoryProvider,
+        private readonly BuildingRequirementRepository   $buildingRequirementRepository,
+        private readonly TechnologyRequirementRepository $technologyRequirementRepository,
+        private readonly ShipRequirementRepository       $shipRequirementRepository,
+        private readonly DefenseRequirementRepository    $defenseRequirementRepository,
+        private readonly MissileRequirementRepository    $missileRequirementRepository,
     ) {
     }
 
     public function getObject(): Missile|Ship|Defense|Technology|Building
     {
-        $id = $this->formView->vars['attr']['id'] ?? '';
-        [$cat, $id] = explode(':', $id);
-        $id = (int) $id;
-        $repository = $this->requirementRepositoryProvider->getRepositoryForCategory($cat);
-        $requirements = $repository->getRequirements($id);
+        return $this->form->get('obj')->getData();
+    }
 
-        $this->requiredObjects = $requirements;
+    public function getRequiredObjects():array {
+        return $this->form->get('obj')->getData()->getObjectRequirements()->getValues();
+    }
 
-        switch ($cat) {
-            case 'b':
-                $this->object = $this->buildingDataRepository->find($id);
+    public function getAllowedObjects():array {
+        $allowedObjects = [];
+        $object = $this->getObject();
 
-                break;
-            case 't':
-                $this->object = $this->technologyDataRepository->find($id);
-
-                break;
-            case 's':
-                $this->object = $this->shipDataRepository->find($id);
-
-                break;
-            case 'd':
-                $this->object = $this->defenseDataRepository->find($id);
-
-                break;
-            case 'm':
-                $this->object = $this->missileDataRepository->find($id);
-
-                break;
-            default:
-                throw new \InvalidArgumentException('Unknown category:' . $cat);
-        }
-
-        $this->allowedObjects = [];
-        if (in_array($cat, ['b', 't'], true)) {
-            if ($cat === 'b') {
-                $buildingRequirements = $this->buildingRequirementRepository->getRequiredByBuilding($id);
-                $defenseRequirements = $this->defenseRequirementRepository->getRequiredByBuilding($id);
-                $shipRequirements = $this->shipRequirementRepository->getRequiredByBuilding($id);
-                $technologyRequirements = $this->technologyRequirementRepository->getRequiredByBuilding($id);
-                $missileRequirements = $this->missileRequirementRepository->getRequiredByBuilding($id);
+        $class = get_class($object);
+        if (in_array($class, [Building::class, Technology::class], true)) {
+            if ($class === Building::class) {
+                $buildingRequirements = $this->buildingRequirementRepository->getRequiredByBuilding($object);
+                $defenseRequirements = $this->defenseRequirementRepository->getRequiredByBuilding($object);
+                $shipRequirements = $this->shipRequirementRepository->getRequiredByBuilding($object);
+                $technologyRequirements = $this->technologyRequirementRepository->getRequiredByBuilding($object);
+                $missileRequirements = $this->missileRequirementRepository->getRequiredByBuilding($object);
             } else {
-                $buildingRequirements = $this->buildingRequirementRepository->getRequiredByTechnology($id);
-                $defenseRequirements = $this->defenseRequirementRepository->getRequiredByTechnology($id);
-                $shipRequirements = $this->shipRequirementRepository->getRequiredByTechnology($id);
-                $technologyRequirements = $this->technologyRequirementRepository->getRequiredByTechnology($id);
-                $missileRequirements = $this->missileRequirementRepository->getRequiredByTechnology($id);
+                $buildingRequirements = $this->buildingRequirementRepository->getRequiredByTechnology($object);
+                $defenseRequirements = $this->defenseRequirementRepository->getRequiredByTechnology($object);
+                $shipRequirements = $this->shipRequirementRepository->getRequiredByTechnology($object);
+                $technologyRequirements = $this->technologyRequirementRepository->getRequiredByTechnology($object);
+                $missileRequirements = $this->missileRequirementRepository->getRequiredByTechnology($object);
             }
 
-            $this->allowedObjects = array_merge($buildingRequirements,$defenseRequirements,$shipRequirements,$technologyRequirements,$missileRequirements);
-
+            $allowedObjects = array_merge($buildingRequirements,$defenseRequirements,$shipRequirements,$technologyRequirements,$missileRequirements);
         }
-        return $this->object;
+
+        return $allowedObjects;
     }
 
     protected function instantiateForm(): FormInterface
     {
-        return $this->createFormBuilder(null, ['attr' => ['id' => $this->id ?? 'b:6']])
-            ->add('id', TechTreeSelectionType::class, ['label' => false])
+        return $this->createFormBuilder()
+            ->add('obj', TechTreeSelectionType::class, ['label' => false])
             ->getForm();
     }
 }

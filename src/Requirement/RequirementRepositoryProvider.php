@@ -10,37 +10,25 @@ use EtoA\Technology\TechnologyRequirementRepository;
 
 class RequirementRepositoryProvider
 {
-    private ShipRequirementRepository $shipRequirementRepository;
-    private DefenseRequirementRepository $defenseRequirementRepository;
-    private BuildingRequirementRepository $buildingRequirementRepository;
-    private TechnologyRequirementRepository $technologyRequirementRepository;
-    private MissileRequirementRepository $missileRequirementRepository;
-
-    public function __construct(ShipRequirementRepository $shipRequirementRepository, DefenseRequirementRepository $defenseRequirementRepository, BuildingRequirementRepository $buildingRequirementRepository, TechnologyRequirementRepository $technologyRequirementRepository, MissileRequirementRepository $missileRequirementRepository)
-    {
-        $this->shipRequirementRepository = $shipRequirementRepository;
-        $this->defenseRequirementRepository = $defenseRequirementRepository;
-        $this->buildingRequirementRepository = $buildingRequirementRepository;
-        $this->technologyRequirementRepository = $technologyRequirementRepository;
-        $this->missileRequirementRepository = $missileRequirementRepository;
-    }
+    public function __construct(
+        private readonly ShipRequirementRepository $shipRequirementRepository,
+        private readonly DefenseRequirementRepository $defenseRequirementRepository,
+        private readonly BuildingRequirementRepository $buildingRequirementRepository,
+        private readonly TechnologyRequirementRepository $technologyRequirementRepository,
+        private readonly MissileRequirementRepository $missileRequirementRepository
+    )
+    {}
 
     public function getRepositoryForTableName(string $type): AbstractRequirementRepository
     {
-        switch ($type) {
-            case 'ship_requirements':
-                return $this->shipRequirementRepository;
-            case 'def_requirements':
-                return $this->defenseRequirementRepository;
-            case 'tech_requirements':
-                return $this->technologyRequirementRepository;
-            case 'building_requirements':
-                return $this->buildingRequirementRepository;
-            case 'missile_requirements':
-                return $this->missileRequirementRepository;
-            default:
-                throw new \InvalidArgumentException('No requirement repository available for :' . $type);
-        }
+        return match ($type) {
+            'ship_requirements' => $this->shipRequirementRepository,
+            'def_requirements' => $this->defenseRequirementRepository,
+            'tech_requirements' => $this->technologyRequirementRepository,
+            'building_requirements' => $this->buildingRequirementRepository,
+            'missile_requirements' => $this->missileRequirementRepository,
+            default => throw new \InvalidArgumentException('No requirement repository available for :' . $type),
+        };
     }
 
     public function getRepositoryForCategory(string $category): AbstractRequirementRepository

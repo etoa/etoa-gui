@@ -20,6 +20,10 @@ class NewDefaultItemType extends AbstractType
             ])
             ->add('submit', SubmitType::class, [
                 'label' => 'Hinzufügen',
+                'attr' => [
+                    'data-action'=>"live#action",
+                    'data-live-action-param'=>"prevent|submit"
+                ]
             ]);
     }
 }
