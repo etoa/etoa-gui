@@ -40,15 +40,15 @@ class AccessLogRepository extends AbstractRepository
     public function getCountsForDomain(string $domain): array
     {
         $data = $this->createQueryBuilder('q')
-            ->select('target, COUNT(target) cnt')
-            ->from('accesslog')
-            ->where('domain = :domain')
-            ->groupBy('target')
+            ->select('q.target, COUNT(q.target) cnt')
+            ->where('q.domain = :domain')
+            ->groupBy('q.target')
             ->orderBy('cnt', 'DESC')
             ->setParameter('domain', $domain)
-            ->fetchAllKeyValue();
+            ->getQuery()
+            ->execute();
 
-        return array_map(fn ($value) => (int) $value, $data);
+        return array_column($data, 'cnt', 'target');
     }
 
     /**
@@ -75,7 +75,8 @@ class AccessLogRepository extends AbstractRepository
     public function deleteAll(): void
     {
         $this->createQueryBuilder('q')
-            ->delete('accesslog')
-            ->executeQuery();
+            ->delete()
+            ->getQuery()
+            ->execute();
     }
 }
