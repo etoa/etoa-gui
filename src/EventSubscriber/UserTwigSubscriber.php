@@ -97,7 +97,7 @@ class UserTwigSubscriber implements EventSubscriberInterface
         $ownFleetCount = $this->fleetRepository->count(['user'=>$cu->getData()]);
         $newMessages = $this->messageRepository->count(['deleted'=>0,'userTo'=>$cu->getId(),'read'=>0]);
         $newReports = $this->reportRepository->countUserUnread($cu->getData());
-        $properties = $this->userPropertiesRepository->getOrCreateProperties($cu->getId());
+        $properties = $this->userPropertiesRepository->getOrCreateProperties($cu->getData());
         $page = $request->query->get('page', 'overview');
         $mode = $request->query->get('mode', '');
         $infoText = $this->textRepo->find('info');

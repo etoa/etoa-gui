@@ -296,7 +296,7 @@ class UserConfigController extends AbstractGameController
     #[Route('/game/config/design', name: 'game.config.design')]
     public function design(Request $request): Response
     {
-        $properties = $this->userPropertiesRepository->getOrCreateProperties($this->getUser()->getId());
+        $properties = $this->userPropertiesRepository->getOrCreateProperties($this->getUser()->getData());
         $planetWidth = [];
 
         for ($x = 450; $x <= 700; $x += 50) {
@@ -355,7 +355,7 @@ class UserConfigController extends AbstractGameController
     #[Route('/game/config/sitting', name: 'game.config.sitting')]
     public function sitting(Request $request, UserMultiRepository $userMultiRepository, UserSittingRepository $userSittingRepository): Response
     {
-        $multiEntries = $userMultiRepository->getUserEntries($this->getUser()->getId(), true);
+        $multiEntries = $userMultiRepository->getUserEntries($this->getUser()->getData(), true);
         if ($multiEntries) {
             $form = $this->createFormBuilder(['userMultis' => $multiEntries])
                 ->add('save', SubmitType::class, ['label' => 'Übernehmen'])
@@ -380,7 +380,7 @@ class UserConfigController extends AbstractGameController
                 if ($userMulti->get('delMulti')->getData()) {
                     $entry = $userMultiRepository->getUserEntry($this->getUser()->getId(), $userMulti->getData()->multiUserId);
                     if ($entry !== null) {
-                        if ($entry->getReason() !== '0' && $entry->getMultiUserId() !== 0) {
+                        if ($entry->getReason() !== '0' && $entry->getMultiUser()->getId() !== 0) {
                             $userMultiRepository->deleteEntry($entry->getId());
                         } else {
                             $userMultiRepository->deactivateEntry($entry->getId());
@@ -433,7 +433,7 @@ class UserConfigController extends AbstractGameController
         }
 
         $userSitting = new UserSitting();
-        $userSitting->setUserId($this->getUser()->getId());
+        $userSitting->setUser($this->getUser()->getData());
 
         $form = $this->createFormBuilder($userSitting)
             ->add('save', SubmitType::class, ['label' => 'Speichern'])

@@ -19,12 +19,11 @@ class DesignService
     public function getCurrentDesign():string
     {
         $cu = $this->security->getUser();
-        $properties = $this->userPropertiesRepository->getOrCreateProperties($cu->getId());
-
-        $design = Design::DIRECTORY . "/official/" . $this->config->get('default_css_style');
-        if (filled($properties->getCssStyle())) {
-            if (is_dir(Design::DIRECTORY . "/official/" . $properties->getCssStyle())) {
-                $design = Design::DIRECTORY . "/official/" . $properties->getCssStyle();
+        $properties = $this->userPropertiesRepository->getOrCreateProperties($cu->getData());
+        $design = 'build/'.Design::DIRECTORY . "/official/" . $this->config->get('default_css_style');
+        if ($properties->getCssStyle()) {
+            if (is_dir('build/'.Design::DIRECTORY . "/official/" . $properties->getCssStyle())) {
+                $design = 'build/'.Design::DIRECTORY . "/official/" . $properties->getCssStyle();
             }
         }
 

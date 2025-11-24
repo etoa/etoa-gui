@@ -30,16 +30,13 @@ class UserPropertiesRepository extends AbstractRepository
         $this->userRepository->save();
     }
 
-    public function getOrCreateProperties(int $userId): UserProperties
+    public function getOrCreateProperties(User $user): UserProperties
     {
-        $data = $this->getProperties($userId);
-
-        if ($data === null) {
-            $this->addBlank($userId);
-            $data = $this->getProperties($userId);
+        if (!$user->getUserProperties()) {
+            $this->addBlank($user);
         }
 
-        return $data;
+        return $user->getUserProperties();
     }
 
     public function getProperties(int $userId): ?UserProperties

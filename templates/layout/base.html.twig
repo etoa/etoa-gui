@@ -15,7 +15,7 @@
 
     <!-- CSS Stylesheets -->
     {% if templateDir|default(false) %}
-        <link rel="stylesheet" type="text/css" href="{{ asset('build' ~ templateDir ~ '/style.css' ) }}"/>
+        <link rel="stylesheet" type="text/css" href="{{ asset(templateDir ~ '/style.css' ) }}"/>
     {% endif %}
 
     {{ encore_entry_link_tags(encoreEntry|default('app')) }}
@@ -34,7 +34,7 @@
     {% endif %}
     {% endif %}
     {% if templateDir|default(false) %}
-        <script type="text/javascript" src="{{ asset('build' ~ templateDir ~ '/scripts.js' ) }}"></script>
+        <script type="text/javascript" src="{{ asset(templateDir ~ '/scripts.js' ) }}"></script>
     {% endif %}
 </head>
 <body>

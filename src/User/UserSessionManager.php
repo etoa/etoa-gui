@@ -33,7 +33,7 @@ class UserSessionManager
     {
         $sessions = $this->repository->findByTimeout($this->config->getInt('user_timeout'));
         foreach ($sessions as $session) {
-            $this->unregisterSession($session->getId(), false);
+            $this->unregisterSession($session->getUser(), false);
         }
     }
 
