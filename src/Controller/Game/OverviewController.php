@@ -58,6 +58,8 @@ class OverviewController extends AbstractGameController
     {
     }
 
+    //TODO: refactor
+
     #[Route('/game/overview', name: 'game.overview')]
     public function overview(Request $request): Response
     {
@@ -150,7 +152,7 @@ class OverviewController extends AbstractGameController
                 $building_zeit = "(" . $building_h . "h " . $building_m . "m " . $building_s . "s)";
 
                 $building_time = $building_zeit;
-                $building_name = $buildingNames[$entry->getBuildingId()];
+                $building_name = $buildingNames[$entry->getBuilding()->getId()];
 
                 // Zeigt Ausbaulevel bei Abriss
                 if ($entry->getBuildType() == 4) {
@@ -177,64 +179,64 @@ class OverviewController extends AbstractGameController
                 $queueItem = $queueEntries[0];
 
                 //Verbleibende Zeit bis zur fertigstellung des aktuellen Auftrages
-                $shipyard_rest_time[$userPlanet->getId()] = $queueItem->getEndTime() - time();
+                $shipyard_rest_time[$userPlanet->getEntity()->getId()] = $queueItem->getEndTime() - time();
                 //Schiffsname
-                $shipyard_name[$userPlanet->getId()] = $shipNames[$queueItem->getShip()->getId()];
+                $shipyard_name[$userPlanet->getEntity()->getId()] = $shipNames[$queueItem->getShip()->getId()];
 
                 //infos über den raumschiffswerft
-                $shipyard_h = floor($shipyard_rest_time[$userPlanet->getId()] / 3600);
-                $shipyard_m = floor(($shipyard_rest_time[$userPlanet->getId()] - $shipyard_h * 3600) / 60);
-                $shipyard_s = $shipyard_rest_time[$userPlanet->getId()] - $shipyard_h * 3600 - $shipyard_m * 60;
-                $shipyard_zeit[$userPlanet->getId()] = "(" . $shipyard_h . "h " . $shipyard_m . "m " . $shipyard_s . "s)";
+                $shipyard_h = floor($shipyard_rest_time[$userPlanet->getEntity()->getId()] / 3600);
+                $shipyard_m = floor(($shipyard_rest_time[$userPlanet->getEntity()->getId()] - $shipyard_h * 3600) / 60);
+                $shipyard_s = $shipyard_rest_time[$userPlanet->getEntity()->getId()] - $shipyard_h * 3600 - $shipyard_m * 60;
+                $shipyard_zeit[$userPlanet->getEntity()->getId()] = "(" . $shipyard_h . "h " . $shipyard_m . "m " . $shipyard_s . "s)";
 
-                $shipyard_time[$userPlanet->getId()] = $shipyard_zeit[$userPlanet->getId()];
-                if ($shipyard_rest_time[$userPlanet->getId()] <= 0) {
-                    $shipyard_time[$userPlanet->getId()] = "Fertig";
+                $shipyard_time[$userPlanet->getEntity()->getId()] = $shipyard_zeit[$userPlanet->getEntity()->getId()];
+                if ($shipyard_rest_time[$userPlanet->getEntity()->getId()] <= 0) {
+                    $shipyard_time[$userPlanet->getEntity()->getId()] = "Fertig";
                 }
             } else {
-                $shipyard_time[$userPlanet->getId()] = "";
-                $shipyard_name[$userPlanet->getId()] = "";
+                $shipyard_time[$userPlanet->getEntity()->getId()] = "";
+                $shipyard_name[$userPlanet->getEntity()->getId()] = "";
             }
 
             // waffenfabrik infos
-            $queueEntries = $this->defenseQueueRepository->searchQueueItems(DefenseQueueSearch::create()->entity($userPlanet->getEntity())->endAfter(time()), 1);
+            $queueEntries = $this->defenseQueueRepository->searchQueueItems(DefenseQueueSearch::create()->entity($userPlanet->getEntity()->getPlanet())->endAfter(time()), 1);
             if (count($queueEntries) > 0) {
                 $queueItem = $queueEntries[0];
 
                 //Verbleibende Zeit bis zur fertigstellung des aktuellen Auftrages
-                $defense_rest_time[$userPlanet->getId()] = $queueItem->getEndTime() - time();
+                $defense_rest_time[$userPlanet->getEntity()->getId()] = $queueItem->getEndTime() - time();
                 //Defname
-                $defense_name[$userPlanet->getId()] = $defenseNames[$queueItem->getDefense()];
+                $defense_name[$userPlanet->getEntity()->getId()] = $defenseNames[$queueItem->getDefense()];
 
                 // Infos über die Waffenfabrik
-                $defense_h = floor($defense_rest_time[$userPlanet->getId()] / 3600);
-                $defense_m = floor(($defense_rest_time[$userPlanet->getId()] - $defense_h * 3600) / 60);
-                $defense_s = $defense_rest_time[$userPlanet->getId()] - $defense_h * 3600 - $defense_m * 60;
-                $defense_zeit[$userPlanet->getId()] = "(" . $defense_h . "h " . $defense_m . "m " . $defense_s . "s)";
+                $defense_h = floor($defense_rest_time[$userPlanet->getEntity()->getId()] / 3600);
+                $defense_m = floor(($defense_rest_time[$userPlanet->getEntity()->getId()] - $defense_h * 3600) / 60);
+                $defense_s = $defense_rest_time[$userPlanet->getEntity()->getId()] - $defense_h * 3600 - $defense_m * 60;
+                $defense_zeit[$userPlanet->getEntity()->getId()] = "(" . $defense_h . "h " . $defense_m . "m " . $defense_s . "s)";
 
-                $defense_time[$userPlanet->getId()] = $defense_zeit[$userPlanet->getId()];
-                if ($defense_rest_time[$userPlanet->getId()] <= 0) {
-                    $defense_time[$userPlanet->getId()] = "Fertig";
+                $defense_time[$userPlanet->getEntity()->getId()] = $defense_zeit[$userPlanet->getEntity()->getId()];
+                if ($defense_rest_time[$userPlanet->getEntity()->getId()] <= 0) {
+                    $defense_time[$userPlanet->getEntity()->getId()] = "Fertig";
                 }
             } else {
-                $defense_time[$userPlanet->getId()] = "";
-                $defense_name[$userPlanet->getId()] = "";
+                $defense_time[$userPlanet->getEntity()->getId()] = "";
+                $defense_name[$userPlanet->getEntity()->getId()] = "";
             }
 
             $planet_info = "<b class=\"planet_name\">" . StringUtils::encodeDBStringToPlaintext($userPlanet->displayName()) . "</b><br>" . $building_name . " " . $building_level;
             $planet_image_path = $userPlanet->getImagePath('medium');
 
             // Planet bild mit link zum bauhof und der informationen übergabe beim mouseover
-            $planet_link = "<a href=\"?page=buildings&change_entity=" . $userPlanet->getId() . "\"><img id=\"Planet\" src=\"" . $planet_image_path . "\" width=\"" . $pic_width . "\" height=\"" . $pic_height . "\"
+            $planet_link = "<a href=\"?page=buildings&change_entity=" . $userPlanet->getEntity()->getId() . "\"><img id=\"Planet\" src=\"" . $planet_image_path . "\" width=\"" . $pic_width . "\" height=\"" . $pic_height . "\"
         onMouseOver=\"show_info(
-            '" . $userPlanet->getId() . "',
+            '" . $userPlanet->getEntity()->getId() . "',
             '" . StringUtils::encodeDBStringToJS($userPlanet->displayName()) . "',
             '" . $building_name . "',
             '" . $building_time . "',
-            '" . $shipyard_name[$userPlanet->getId()] . "',
-            '" . $shipyard_time[$userPlanet->getId()] . "',
-            '" . $defense_name[$userPlanet->getId()] . "',
-            '" . $defense_time[$userPlanet->getId()] . "',
+            '" . $shipyard_name[$userPlanet->getEntity()->getId()] . "',
+            '" . $shipyard_time[$userPlanet->getEntity()->getId()] . "',
+            '" . $defense_name[$userPlanet->getEntity()->getId()] . "',
+            '" . $defense_time[$userPlanet->getEntity()->getId()] . "',
             '" . floor($userPlanet->getPeople()) . "',
             '" . floor($userPlanet->getResMetal()) . "',
             '" . floor($userPlanet->getResCrystal()) . "',
@@ -293,14 +295,14 @@ class OverviewController extends AbstractGameController
                 $top = $middle_top + (($d_infos / 2) * sin(deg2rad($degree + 270))) - $pic_height / 2;
             }
 
-            $planets .= "<div id=\"planet_info_" . $userPlanet->getId() . "\" style=\"position:absolute; left:" . $left . "px; top:" . $top . "px; width:" . $info_box_width . "px; height:" . $info_box_height . "px; text-align:" . $text . "; vertical-align:middle;\">";
+            $planets .= "<div id=\"planet_info_" . $userPlanet->getEntity()->getId() . "\" style=\"position:absolute; left:" . $left . "px; top:" . $top . "px; width:" . $info_box_width . "px; height:" . $info_box_height . "px; text-align:" . $text . "; vertical-align:middle;\">";
 
             $planets .= $planet_info;
-            $planets .= '<span id="planet_timer_' . $userPlanet->getId() . '">';
+            $planets .= '<span id="planet_timer_' . $userPlanet->getEntity()->getId() . '">';
 
             // Stellt Zeit Counter dar, wenn ein Gebäude in bau ist
             if ($building_rest_time > 0) {
-                $planets .= startTime($building_rest_time, "planet_timer_" . $userPlanet->getId() . "", 0, "<br>(TIME)") . "";
+                $planets .= startTime($building_rest_time, "planet_timer_" . $userPlanet->getEntity()->getId() . "", 0, "<br>(TIME)") . "";
             }
 
             $planets .= "</span></div>";

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace EtoA\User;
 
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Entity\User;
 use EtoA\Log\LogFacility;
 use EtoA\Log\LogRepository;
 use EtoA\Log\LogSeverity;
@@ -19,17 +20,12 @@ class UserSessionManager
         private readonly UserSessionLogRepository $userSessionLogRepository
     ) {}
 
-    public function unregisterSession(string $sessionId = null, bool $logoutPressed = true): void
+    public function unregisterSession(User $user, bool $logoutPressed = true): void
     {
-        if ($sessionId == null) {
-            $sessionId = session_id();
-        }
-
-        $userSession = $this->repository->find($sessionId);
-        if ($userSession != null) {
-            $this->userSessionLogRepository->addSessionLog($userSession, $logoutPressed ? time() : 0);
-            $this->repository->remove($userSession);
-            $this->userRepository->setLogoutTime($userSession->getUser());
+        if ($user->getSession() != null) {
+            $this->userSessionLogRepository->addSessionLog($user->getSession(), $logoutPressed ? time() : 0);
+            $user->setSession(null);
+            $this->userRepository->save();
         }
     }
 

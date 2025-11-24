@@ -231,7 +231,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToOne(mappedBy: "user", targetEntity: UserRating::class, cascade: ['persist'], orphanRemoval: true)]
     private ?UserRating $userRating;
 
-    #[ORM\OneToOne(mappedBy: "user", targetEntity: UserSession::class, orphanRemoval: true)]
+    #[ORM\OneToOne(mappedBy: "user", targetEntity: UserSession::class, cascade: ['persist'], orphanRemoval: true)]
     private ?UserSession $session;
 
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: Planet::class)]

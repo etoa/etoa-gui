@@ -56,10 +56,8 @@ class UserTwigSubscriber implements EventSubscriberInterface
         private readonly ConfigurationService           $config,
         private readonly GameUtils                      $utilities,
         private readonly UrlGeneratorInterface          $router,
-        private readonly TutorialManager                $tutorialManager,
         private readonly ForeignFleetService            $foreignFleetLoader,
         private readonly PlanetRepository               $planetRepository,
-        private readonly UserWarningRepository          $userWarningRepository,
         private readonly TutorialUserProgressRepository $tutorialUserProgressRepository
     )
     {
@@ -122,13 +120,13 @@ class UserTwigSubscriber implements EventSubscriberInterface
         each() - returns the current element key and value, and moves the internal pointer forward
          */
         if ($cu->getData()->isSetup()) {
-            $userPlanets = $this->planetRepository->getUserPlanets($cu->getId());
+            $userPlanets = $cu->getData()->getPlanets();
             $planets = [];
             $mainplanet = 0;
             foreach ($userPlanets as $planet) {
-                $planets[] = $planet->getId();
+                $planets[] = $planet->getEntity()->getId();
                 if ($planet->isMainPlanet()) {
-                    $mainplanet = $planet->getId();
+                    $mainplanet = $planet->getEntity()->getId();
                 }
             }
 
@@ -191,7 +189,7 @@ class UserTwigSubscriber implements EventSubscriberInterface
             'viewportScale' => $_SESSION['viewportScale'] ?? 0,
             'fontSize' => ($_SESSION['viewportScale'] ?? 1) * 16 . "px",
             'helpBox' => false,
-            'warnings' => $this->userWarningRepository->findBy(['userId'=>$cu->getId()])
+            'warnings' => $cu->getData()->getUserWarnings()
         ]);
         foreach ($globals as $key => $value) {
             $this->twig->addGlobal($key, $value);

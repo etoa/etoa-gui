@@ -15,7 +15,7 @@ class UserSession
 
     #[ORM\OneToOne(inversedBy: "session", targetEntity: User::class)]
     #[ORM\JoinColumn(name: 'user_id', referencedColumnName: 'user_id', onDelete: 'CASCADE')]
-    private User $user;
+    private ?User $user;
 
     #[ORM\Column]
     private ?string $ipAddr;

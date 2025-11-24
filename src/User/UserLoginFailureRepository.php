@@ -49,11 +49,11 @@ class UserLoginFailureRepository extends AbstractRepository
         return $this->findBy(['ip'=>$ip],['time'=>'DESC']);
     }
 
-    public function countLoginFailuresSince(int $userId, int $since): int
+    public function countLoginFailuresSince(int|User $userId, int $since): int
     {
         return (int) $this->createQueryBuilder('q')
-            ->select('COUNT(q.userId)')
-            ->where('q.userId = :userId')
+            ->select('COUNT(q.user)')
+            ->where('q.user = :userId')
             ->andWhere('q.time > :since')
             ->setParameters([
                 'userId' => $userId,

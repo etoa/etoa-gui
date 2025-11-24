@@ -19,29 +19,15 @@ use Symfony\Component\Security\Http\Event\LogoutEvent;
 
 class UserSessionSubscriber implements EventSubscriberInterface
 {
-    private UserSessionManager $userSessionManager;
-    private UserSessionRepository $userSessionRepository;
-    private TokenStorageInterface $tokenStorage;
-    private ConfigurationService $config;
-    private UrlGeneratorInterface $urlGenerator;
-    private UserSittingRepository $userSittingRepository;
-
     public function __construct(
-        UserSessionManager $userSessionManager,
-        UserSessionRepository $userSessionRepository,
-        TokenStorageInterface $tokenStorage,
-        ConfigurationService $config,
-        UrlGeneratorInterface $urlGenerator,
-        UserSittingRepository $userSittingRepository,
+        private readonly UserSessionManager $userSessionManager,
+        private readonly UserSessionRepository $userSessionRepository,
+        private readonly TokenStorageInterface $tokenStorage,
+        private readonly ConfigurationService $config,
+        private readonly UrlGeneratorInterface $urlGenerator,
+        private readonly UserSittingRepository $userSittingRepository,
     )
-    {
-        $this->userSessionManager = $userSessionManager;
-        $this->userSessionRepository = $userSessionRepository;
-        $this->tokenStorage = $tokenStorage;
-        $this->config = $config;
-        $this->urlGenerator = $urlGenerator;
-        $this->userSittingRepository = $userSittingRepository;
-    }
+    {}
 
     public function onSuccessfulLogin(LoginSuccessEvent $event): void
     {
@@ -51,9 +37,8 @@ class UserSessionSubscriber implements EventSubscriberInterface
             /** @var CurrentPlayer $user */
             $user = $event->getAuthenticatedToken()->getUser();
 
-            $oldSession = $this->userSessionRepository->findOneBy(['user'=>$user->getData()]);
-            if($oldSession)
-                $this->userSessionRepository->remove($oldSession);
+            if($user->getData()->getSession())
+                $this->userSessionRepository->remove($user->getData()->getSession());
 
             $sessionModel = new UserSession();
             $sessionModel
@@ -63,9 +48,10 @@ class UserSessionSubscriber implements EventSubscriberInterface
                 ->setUserAgent($event->getRequest()->headers->get('User-Agent'))
                 ->setTimeLogin($time);
 
-            $this->userSessionRepository->add($sessionModel);
+            $user->getData()->setSession($sessionModel);
+            $this->userSessionRepository->save();
 
-            $sittingEntry = $this->userSittingRepository->getActiveUserEntry($user->getId());
+            $sittingEntry = $this->userSittingRepository->getActiveUserEntry($user->getData());
             if ($sittingEntry !== null) {
                 $session->set('sittingActive', true);
                 $session->set('sittingUntil', $sittingEntry->getDateTo());
@@ -106,7 +92,7 @@ class UserSessionSubscriber implements EventSubscriberInterface
 
                 if ($sittingActive) {
                     if (time() < $sittingUntil) {
-                        $activeSitting = $this->userSittingRepository->getActiveUserEntry($user->getId());
+                        $activeSitting = $this->userSittingRepository->getActiveUserEntry($user->getData());
 
                         if ($activeSitting !== null) {
                             $allows = true;
@@ -134,7 +120,7 @@ class UserSessionSubscriber implements EventSubscriberInterface
     {
         if ($event->getToken() !== null && $event->getToken()->getUser() instanceof CurrentPlayer) {
             $event->getRequest()->getSession()->remove('lastAction');
-            $this->userSessionManager->unregisterSession($event->getRequest()->getSession()->getId());
+            $this->userSessionManager->unregisterSession($event->getToken()->getUser()->getData());
         }
     }
 
