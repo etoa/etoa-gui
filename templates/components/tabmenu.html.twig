@@ -1,10 +1,10 @@
 <div class="tabMenu">
     {% for key,item in data %}
-        {% if active == key %}
+        {%- if active == key -%}
             <a href="{{ path(key) }}" class="tabEnabled">{{ item }}</a>
-        {% else %}
+        {%- else -%}
             <a href="{{ path(key) }}">{{ item }}</a>
-        {% endif %}
+        {%- endif -%}
     {% endfor %}
     <br style="clear:both;"/>
 </div>
