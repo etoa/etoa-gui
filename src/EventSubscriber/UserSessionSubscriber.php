@@ -37,8 +37,10 @@ class UserSessionSubscriber implements EventSubscriberInterface
             /** @var CurrentPlayer $user */
             $user = $event->getAuthenticatedToken()->getUser();
 
-            if($user->getData()->getSession())
-                $this->userSessionRepository->remove($user->getData()->getSession());
+            if($user->getData()->getSession()) {
+                $this->userSessionManager->unregisterSession($user->getData(), false);
+            }
+
 
             $sessionModel = new UserSession();
             $sessionModel
@@ -104,7 +106,6 @@ class UserSessionSubscriber implements EventSubscriberInterface
 
                 if ($allows) {
                     if (!$bot) {
-
                         $this->userSessionRepository->update($session->getId(), $time, $botCount, $lastSpan, $event->getRequest()->getClientIp());
                         $session->set('lastAction', $time);
                         return;

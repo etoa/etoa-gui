@@ -17,8 +17,8 @@ use EtoA\Support\BBCodeUtils;
 use EtoA\Support\GameVersionService;
 use EtoA\Support\StringUtils;
 use EtoA\Text\TextRepository;
-use EtoA\Tutorial\TutorialManager;
 use EtoA\Tutorial\TutorialUserProgressRepository;
+use EtoA\Universe\Planet\PlanetManager;
 use EtoA\Universe\Planet\PlanetRepository;
 use EtoA\User\UserPropertiesRepository;
 use Symfony\Bundle\SecurityBundle\Security;
@@ -130,8 +130,8 @@ class UserTwigSubscriber implements EventSubscriberInterface
                 }
             }
 
-            $eid = isset($_GET['change_entity']) ? (int)$_GET['change_entity'] : 0;
-            if ($eid > 0 && in_array($eid, $planets, true)) {
+            $eid = $event->getRequest()->get('change_entity');
+            if ($eid && in_array($eid, $planets, true)) {
                 $cpid = $eid;
                 $s->set('cpid',$cpid) ;
             } elseif ($s->get('cpid') && in_array((int)$s->get('cpid'), $planets, true)) {
@@ -142,14 +142,14 @@ class UserTwigSubscriber implements EventSubscriberInterface
             }
 
             $cp = $this->planetRepository->find($cpid);
-            $pm = new \EtoA\Legacy\PlanetManager($planets, $this->planetRepository);
+            $pm = new PlanetManager($planets, $this->planetRepository);
         }
 
 
 
         if (isset($cp, $pm)) {
             $currentPlanetData = [
-                'currentPlanetName' => $cp->getName(),
+                'currentPlanetName' => $cp->getEntity()->toString(),
                 'currentPlanetImage' => $cp->getImagePath('m'),
                 'planetList' => $pm->getLinkList($s->get('cpid')),
                 'nextPlanetId' => $pm->nextId($s->get('cpid')),

@@ -106,7 +106,7 @@ class OverviewController extends AbstractGameController
         }
 
         // Planetkreis
-        $properties = $this->userPropertiesRepository->getOrCreateProperties($this->getUser()->getId());
+        $properties = $this->userPropertiesRepository->getOrCreateProperties($this->getUser()->getData());
         //Kreis Definitionen
         $division = 15;            //Kreis Teilung: So hoch wie die maximale Anzahl Planeten
         $d_planets = $properties->getPlanetCircleWidth();    //Durchmesser der Bilder (in Pixel)

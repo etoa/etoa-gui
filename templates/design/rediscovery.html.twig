@@ -49,9 +49,9 @@
       </div>
       <a id="toggle-planet-dropdown" class="button-triangular" href="javascript:"></a>
       <a id="change-planet-previous" class="button-triangular" href="javascript:" title="Zum vorherigen Planet (Kürzel: [1])"
-         onclick="document.location='?page={{ page }}&mode={{ mode }}&change_entity={{ prevPlanetId }}'"></a>
+         onclick="document.location='?change_entity={{ prevPlanetId }}'"></a>
       <a id="change-planet-hext" class="button-triangular" href="javascript:" title="Zum nächsten Planet (Kürzel: [2])"
-         onclick="document.location='?page={{ page }}&mode={{ mode }}&change_entity={{ nextPlanetId }}'"></a>
+         onclick="document.location='?change_entity={{ nextPlanetId }}'"></a>
     </section>
 
     <!-- Middle Section -->
@@ -100,7 +100,7 @@
       <a id="navigate-fleets-2" class="button-attack {% if fleetAttack > 0 %}attack-alert{% endif %}" title="Flotten (Kürzel: [l])"
          href="?page=fleets">Angriff</a>
       <a id="navigate-notes" class="button-round-blue" title="Notizen"
-        {% if noteBox %}
+        {% if noteBox is defined %}
         href="javascript:" onclick="window.open('popup.php?page=notepad','notes','status=no,width=800,height=600,scrollbars=yes,resizable=yes');"
       {% else %}
         href="?page=notepad"
@@ -135,15 +135,15 @@
         {% endfor %}
       </div>
       <a id="change-planet-previous-mobile" class="button-triangular" href="javascript:"
-         onclick="document.location='?page={{ page }}&mode={{ mode }}&change_entity={{ prevPlanetId }}'"></a>
+         onclick="document.location='?change_entity={{ prevPlanetId }}'"></a>
       <a id="change-planet-next-mobile" class="button-triangular" href="javascript:"
-         onclick="document.location='?page={{ page }}&mode={{ mode }}&change_entity={{ nextPlanetId }}'"></a>
+         onclick="document.location='?change_entity={{ nextPlanetId }}'"></a>
     </section>
   </div>
 
   {# -----------------------------------  Game-Area ----------------------------------- #}
 
-  {% if adds %}
+  {% if adds is defined %}
     <div id="adds">
       {{ addBanner }}
     </div>

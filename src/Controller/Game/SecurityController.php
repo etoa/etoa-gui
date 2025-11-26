@@ -23,7 +23,7 @@ class SecurityController extends AbstractController
         return $this->render('game/login/login.html.twig', [
             'error' => $authenticationUtils->getLastAuthenticationError(),
             'lastUsername' => $authenticationUtils->getLastUsername(),
-            'templateDir' => '/' . Design::DIRECTORY . '/official/' . $this->config->get('default_css_style'),
+            'templateDir' => 'build/' . Design::DIRECTORY . '/official/' . $this->config->get('default_css_style'),
             'roundName' => $this->config->get('roundname'),
         ]);
     }
