@@ -2,7 +2,6 @@
 
 namespace EtoA\Components\Core;
 
-use EtoA\Admin\AllianceBoardAvatar;
 use EtoA\Alliance\AllianceBuildingId;
 use EtoA\Alliance\AllianceBuildListRepository;
 use EtoA\Building\BuildingId;
@@ -12,6 +11,7 @@ use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Market\MarketAuctionRepository;
 use EtoA\Market\MarketResourceRepository;
 use EtoA\Market\MarketShipRepository;
+use EtoA\Support\RuntimeDataStore;
 use EtoA\Support\StringUtils;
 use EtoA\Universe\Planet\PlanetRepository;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -26,6 +26,16 @@ class MarketInfo extends AbstractGameController
     public int $returnFactor = 0;
     public string $tax = '';
     public string $statusText = '';
+    public ?string $marketMetalFactor;
+    public ?string $marketCrystalFactor;
+    public ?string $marketPlasticFactor;
+    public ?string $marketFuelFactor;
+    public ?string $marketFoodFactor;
+    public float $ressPriceFactorMax;
+    public float $ressPriceFactorMin;
+    public mixed $marketTax;
+    public float $auctionPriceFactorMax;
+    public float $auctionPriceFactorMin;
 
     public function __construct(
         private readonly MarketResourceRepository $marketResourceRepository,
@@ -35,7 +45,8 @@ class MarketInfo extends AbstractGameController
         private readonly BuildingListItemRepository $buildingListItemRepository,
         private readonly AllianceBuildListRepository $allianceBuildListRepository,
         private readonly RequestStack $requestStack,
-        private readonly ConfigurationService $configurationService
+        private readonly ConfigurationService $configurationService,
+        private readonly RuntimeDataStore         $runtimeDataStore,
     )
     {}
 
@@ -71,6 +82,17 @@ class MarketInfo extends AbstractGameController
         } else {
             $this->statusText = "Es wurde noch kein Handelszentrum gebaut!";
         }
+
+        $this->marketMetalFactor = $this->runtimeDataStore->get('market_rate_0', "1");
+        $this->marketCrystalFactor = $this->runtimeDataStore->get('market_rate_1', "1");
+        $this->marketPlasticFactor = $this->runtimeDataStore->get('market_rate_2', "1");
+        $this->marketFuelFactor = $this->runtimeDataStore->get('market_rate_3', "1");
+        $this->marketFoodFactor = $this->runtimeDataStore->get('market_rate_4', "1");
+        $this->ressPriceFactorMax = $this->configurationService->getFloat('res_price_factor_max');
+        $this->ressPriceFactorMin = $this->configurationService->getFloat('res_price_factor_min');
+        $this->auctionPriceFactorMin = $this->configurationService->getFloat('auction_price_factor_max');
+        $this->auctionPriceFactorMax = $this->configurationService->getFloat('auction_price_factor_min');
+        $this->marketTax = max(1, $this->configurationService->getFloat('market_sell_tax') * ($specialist ? $specialist->getTradeBonus() : 1));
 
         return $data;
     }

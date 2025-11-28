@@ -31,7 +31,8 @@ class MarketController extends AbstractGameController
             if ($market && $market->getCurrentLevel() > 0) {
                 if (!$market->isDeactivated()) {
                     return $this->render('game/market/market_home.html.twig', [
-
+                        'marketLevel' => $market->getCurrentLevel(),
+                        'planetName' => $cp->getName()
                     ]);
                 }
 

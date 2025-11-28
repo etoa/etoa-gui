@@ -1,6 +1,6 @@
 {% extends 'layout/game.html.twig' %}
 {% block content %}
-    <h1>Marktplatz (Stufe ' . $market->currentLevel . ') des Planeten ' . $planet->name . '</h1>
+    <h1>Marktplatz (Stufe {{ marketLevel }}) des Planeten {{ planetName }}</h1>
     <twig:ResourceBox/>
     {% set tabs = {
         "game.market.home" : "Angebote aufgeben",
