@@ -5,10 +5,14 @@ namespace EtoA\Building;
 use Doctrine\Persistence\ManagerRegistry;
 use EtoA\Core\AbstractRepository;
 use EtoA\Entity\Building;
+use EtoA\Entity\Planet;
 
 class BuildingDataRepository extends AbstractRepository
 {
-    public function __construct(ManagerRegistry $registry)
+    public function __construct(
+        ManagerRegistry $registry,
+        private readonly BuildingListItemRepository $buildingListItemRepository
+    )
     {
         parent::__construct($registry, Building::class);
     }
@@ -101,5 +105,20 @@ class BuildingDataRepository extends AbstractRepository
             ->orderBy('building_order')
             ->addOrderBy('building_name')
             ->fetchAllKeyValue();
+    }
+
+    /**
+     * @return array<string, Building>
+     */
+    public function getBuildingsWithBuildList(int|Planet $entityId): array
+    {
+        $buildings = $this->findAll();
+
+        foreach ($buildings as $building) {
+            $bl = $this->buildingListItemRepository->findOneBy(['building'=>$building, 'entity'=>$entityId]);
+            $building->bl = $bl;
+        }
+
+        return $buildings;
     }
 }

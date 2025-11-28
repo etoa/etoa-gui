@@ -9,7 +9,7 @@ use EtoA\Universe\Resources\PreciseResources;
 class BuildingCostCalculator
 {
     public function __construct(
-        private ConfigurationService $config,
+        private readonly ConfigurationService $config,
     ) {
     }
 
@@ -45,7 +45,7 @@ class BuildingCostCalculator
         }
 
         if ($context->solarType !== null) {
-            $factor += $context->solarType->buildTime - 1;
+            $factor += $context->solarType->getBuildTime() - 1;
         }
 
         return (int) ($time * $factor);

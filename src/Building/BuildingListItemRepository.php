@@ -627,32 +627,6 @@ class BuildingListItemRepository extends AbstractRepository
         ], $data);
     }
 
-    /**
-     * @return array<string, mixed>[]
-     */
-    public function getLegacyBuildList(int $entityId): array
-    {
-        return $this->getConnection()
-            ->fetchAllAssociative("
-                SELECT
-                    l.*,
-                    i.*
-                FROM
-                    buildings i
-                LEFT JOIN
-                    buildlist l
-                ON
-                    l.buildlist_building_id = i.building_id
-                    AND l.buildlist_entity_id= :entityId
-                WHERE i.building_show='1'
-                ORDER BY
-                    i.building_order,
-                    i.building_name;
-            ", [
-                'entityId' => $entityId,
-            ]);
-    }
-
     public function findWithProductionOrPowerUse(Entity $entity): array
     {
         return $this->createQueryBuilder('q')
