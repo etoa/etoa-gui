@@ -36,6 +36,8 @@ class MarketInfo extends AbstractGameController
     public mixed $marketTax;
     public float $auctionPriceFactorMax;
     public float $auctionPriceFactorMin;
+    public float $shipPriceFactorMax;
+    public float $shipPriceFactorMin;
 
     public function __construct(
         private readonly MarketResourceRepository $marketResourceRepository,
@@ -92,6 +94,8 @@ class MarketInfo extends AbstractGameController
         $this->ressPriceFactorMin = $this->configurationService->getFloat('res_price_factor_min');
         $this->auctionPriceFactorMin = $this->configurationService->getFloat('auction_price_factor_max');
         $this->auctionPriceFactorMax = $this->configurationService->getFloat('auction_price_factor_min');
+        $this->shipPriceFactorMax = $this->configurationService->getFloat('ship_price_factor_max');
+        $this->shipPriceFactorMin = $this->configurationService->getFloat('ship_price_factor_min');
         $this->marketTax = max(1, $this->configurationService->getFloat('market_sell_tax') * ($specialist ? $specialist->getTradeBonus() : 1));
 
         return $data;
