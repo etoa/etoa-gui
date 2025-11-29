@@ -75,8 +75,8 @@ class FleetLaunchService
         //Wormhole enable?
         $this->fleetLaunch->setWormholeEnable($this->technologyListItemRepository->getTechnologyLevel($this->fleetLaunch->getOwner(), TechnologyId::WORMHOLE) > 0);
 
-        if ($this->fleetLaunch->getOwner()->getAlliance() && $this->allianceBuildListRepository->getLevel($this->fleetLaunch->getOwner()->getAlliance(), AllianceBuildingId::MAIN) > 0) {
-            $flvl = $this->allianceBuildListRepository->getLevel($this->fleetLaunch->getOwner()->getAlliance(), AllianceBuildingId::FLEET_CONTROL);
+        if ($this->fleetLaunch->getOwner()->getAlliance() && $this->allianceBuildListRepository->getLevel($this->fleetLaunch->getOwner()->getAlliance(), AllianceBuildingId::MAIN->value) > 0) {
+            $flvl = $this->allianceBuildListRepository->getLevel($this->fleetLaunch->getOwner()->getAlliance(), AllianceBuildingId::FLEET_CONTROL->value);
             $this->setAllianceSlots($flvl);
         }
 

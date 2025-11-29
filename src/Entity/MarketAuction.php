@@ -19,8 +19,8 @@ class MarketAuction
     private ?User $user = null;
 
     #[ORM\JoinColumn(name: 'entity_id', referencedColumnName: 'id')]
-    #[ORM\ManyToOne(targetEntity: Entity::class)]
-    private Entity $entity;
+    #[ORM\ManyToOne(targetEntity: Planet::class)]
+    private Planet $entity;
 
     #[ORM\Column(name: "date_start", type: "integer")]
     private int $dateStart = 0;
@@ -76,8 +76,8 @@ class MarketAuction
     private ?User $currentBuyer = null;
 
     #[ORM\JoinColumn(name: 'current_buyer_entity_id', referencedColumnName: 'id')]
-    #[ORM\ManyToOne(targetEntity: Entity::class)]
-    private Entity $currentBuyerEntity;
+    #[ORM\ManyToOne(targetEntity: Planet::class)]
+    private Planet $currentBuyerEntity;
 
     #[ORM\Column(type: "integer")]
     private int $currentBuyerDate;
@@ -447,12 +447,12 @@ class MarketAuction
         return $this;
     }
 
-    public function getEntity(): ?Entity
+    public function getEntity(): ?Planet
     {
         return $this->entity;
     }
 
-    public function setEntity(?Entity $entity): static
+    public function setEntity(?Planet $entity): static
     {
         $this->entity = $entity;
 
@@ -471,12 +471,12 @@ class MarketAuction
         return $this;
     }
 
-    public function getCurrentBuyerEntity(): ?Entity
+    public function getCurrentBuyerEntity(): ?Planet
     {
         return $this->currentBuyerEntity;
     }
 
-    public function setCurrentBuyerEntity(?Entity $currentBuyerEntity): static
+    public function setCurrentBuyerEntity(?Planet $currentBuyerEntity): static
     {
         $this->currentBuyerEntity = $currentBuyerEntity;
 

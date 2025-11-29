@@ -262,7 +262,7 @@ class AllianceBaseController extends AbstractGameController
     #[Route('/game/alliance/base/shipyard', name: 'game.alliance.base.shipyard')]
     public function shipyard(Request $request): Response {
         $alliance = $this->getUser()->getData()->getAlliance();
-        $allianceShipyardLevel = $this->allianceBuildListRepository->getLevel($alliance, AllianceBuildingId::SHIPYARD);
+        $allianceShipyardLevel = $this->allianceBuildListRepository->getLevel($alliance, AllianceBuildingId::SHIPYARD->value);
         $ships = [];
         $cu = $this->getUser()->getData();
         $form = $this->createFormBuilder();

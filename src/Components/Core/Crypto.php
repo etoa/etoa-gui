@@ -267,7 +267,7 @@ class Crypto extends AbstractGameController
         $this->user = $this->getUser()->getData();
         $request = $this->requestStack->getCurrentRequest();
 
-        $this->userCooldown =  $this->allianceBuildingCooldownRepository->getUserCooldown($this->user, AllianceBuildingId::CRYPTO);
+        $this->userCooldown =  $this->allianceBuildingCooldownRepository->getUserCooldown($this->user, AllianceBuildingId::CRYPTO->value);
 
         $entity = $this->planetRepository->find($request->getSession()->get('cpid'))->getEntity();
         $cell = $entity->getCell();

@@ -2,12 +2,12 @@
 
 namespace EtoA\Alliance;
 
-class AllianceBuildingId
+enum AllianceBuildingId: int
 {
-    public const MAIN = 1;
-    public const MARKET = 2;
-    public const SHIPYARD = 3;
-    public const FLEET_CONTROL = 4;
-    public const RESEARCH = 5;
-    public const CRYPTO = 6;
+    case MAIN = 1;
+    case MARKET = 2;
+    case SHIPYARD = 3;
+    case FLEET_CONTROL = 4;
+    case RESEARCH = 5;
+    case CRYPTO = 6;
 }

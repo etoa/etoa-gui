@@ -57,7 +57,7 @@ class FleetController extends AbstractGameController
         $alliance = $cu->getAlliance();
 
         if($alliance) {
-            if ($this->allianceBuildListRepository->getLevel($alliance, AllianceBuildingId::FLEET_CONTROL) >= AllianceFleetControlLevel::SHOW) {
+            if ($this->allianceBuildListRepository->getLevel($alliance, AllianceBuildingId::FLEET_CONTROL->value) >= AllianceFleetControlLevel::SHOW) {
                 $userAlliancePermission = $this->allianceService->getUserAlliancePermissions($alliance, $cu);
                 $supportFleets = $this->fleetRepository->search(FleetSearch::create()->actionIn([FleetAction::SUPPORT])->userIn($this->userRepository->findBy(['alliance'=>$alliance])));
                 $allianceAttackFleets = $this->fleetRepository->search(FleetSearch::create()->actionIn([FleetAction::ALLIANCE])->nextId($cu->getAlliance()->getId())->status(FleetStatus::DEPARTURE->value)->isLeader());
@@ -95,7 +95,7 @@ class FleetController extends AbstractGameController
             } else {
                 $userAlliancePermission = $this->allianceService->getUserAlliancePermissions($alliance, $cu);
                 if ($userAlliancePermission->hasRights(AllianceRights::FLEET_MINISTER)) {
-                    $allianceFleetControlLevel = $this->allianceBuildListRepository->getLevel($alliance, AllianceBuildingId::FLEET_CONTROL);
+                    $allianceFleetControlLevel = $this->allianceBuildListRepository->getLevel($alliance, AllianceBuildingId::FLEET_CONTROL->value);
                     if ($fleet->getAction() === FleetAction::SUPPORT && $fleet->getUser()->getAlliance() === $alliance && ($fleet->getStatus() == 0 || $fleet->getStatus() == 3)) {
                         $valid = $allianceFleetControlLevel;
                     } elseif ($fleet->getAction() === FleetAction::ALLIANCE && $fleet->getUser()->getAlliance() === $alliance) {

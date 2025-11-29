@@ -170,9 +170,9 @@ class TwigExtension extends AbstractExtension
         return ImageUtil::icon($key);
     }
 
-    public function getRuntimeValue(string $key): string
+    public function getRuntimeValue(string $key, string $default = null): string
     {
-        return (string)$this->runtimeDataStore->get($key);
+        return (string)$this->runtimeDataStore->get($key, $default);
     }
 
     /**

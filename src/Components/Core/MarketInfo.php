@@ -70,12 +70,12 @@ class MarketInfo extends AbstractGameController
 
         // Lädt Stufe des Allianzmarktplatzes
         if ($user->getAlliance())
-            $alliance_market_level = $this->allianceBuildListRepository->findOneBy(['alliance'=>$user->getAlliance(),'allianceBuilding'=>AllianceBuildingId::MARKET])?->getLevel();
+            $alliance_market_level = $this->allianceBuildListRepository->findOneBy(['alliance'=>$user->getAlliance(),'allianceBuilding'=>AllianceBuildingId::MARKET->value])?->getLevel();
         else
             $alliance_market_level = 0;
 
         if ($alliance_market_level > 0) {
-            $allianceMarketCooldown = $this->allianceBuildListRepository->findOneBy(['alliance'=>$user->getAlliance(),'building'=>AllianceBuildingId::MARKET])?->getCooldown();
+            $allianceMarketCooldown = $this->allianceBuildListRepository->findOneBy(['alliance'=>$user->getAlliance(),'building'=>AllianceBuildingId::MARKET->value])?->getCooldown();
             if ($allianceMarketCooldown > time()) {
                 $this->statusText = "Bereit in <span id=\"cdcd\">" . StringUtils::formatTimespan($allianceMarketCooldown - time()) . "</span>";
             } else {

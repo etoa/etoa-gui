@@ -19,8 +19,8 @@ class MarketShip
     private ?User $user = null;
 
     #[ORM\JoinColumn(name: 'entity_id', referencedColumnName: 'id')]
-    #[ORM\ManyToOne(targetEntity: Entity::class)]
-    private Entity $entity;
+    #[ORM\ManyToOne(targetEntity: Planet::class)]
+    private Planet $entity;
 
     #[ORM\JoinColumn(name: 'ship_id', referencedColumnName: 'ship_id')]
     #[ORM\ManyToOne(targetEntity: Ship::class)]
@@ -49,8 +49,8 @@ class MarketShip
     private ?User $buyer = null;
 
     #[ORM\JoinColumn(name: 'buyer_entity_id', referencedColumnName: 'id')]
-    #[ORM\ManyToOne(targetEntity: Entity::class)]
-    private Entity $buyerEntity;
+    #[ORM\ManyToOne(targetEntity: Planet::class)]
+    private Planet $buyerEntity;
 
     #[ORM\JoinColumn(name: 'for_user', referencedColumnName: 'user_id')]
     #[ORM\ManyToOne(targetEntity: User::class)]
@@ -206,12 +206,12 @@ class MarketShip
         return $this;
     }
 
-    public function getEntity(): ?Entity
+    public function getEntity(): ?Planet
     {
         return $this->entity;
     }
 
-    public function setEntity(?Entity $entity): static
+    public function setEntity(?Planet $entity): static
     {
         $this->entity = $entity;
 
@@ -242,12 +242,12 @@ class MarketShip
         return $this;
     }
 
-    public function getBuyerEntity(): ?Entity
+    public function getBuyerEntity(): ?Planet
     {
         return $this->buyerEntity;
     }
 
-    public function setBuyerEntity(?Entity $buyerEntity): static
+    public function setBuyerEntity(?Planet $buyerEntity): static
     {
         $this->buyerEntity = $buyerEntity;
 

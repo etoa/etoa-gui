@@ -195,7 +195,7 @@ class AllianceBuildListRepository extends AbstractRepository
             ->andWhere('a.resFuel >= 0')
             ->andWhere('a.resFood >= 0')
             ->andWhere('q.level > 0')
-            ->setParameter('buildingId', AllianceBuildingId::SHIPYARD)
+            ->setParameter('buildingId', AllianceBuildingId::SHIPYARD->value)
             ->getQuery()
             ->execute();
     }

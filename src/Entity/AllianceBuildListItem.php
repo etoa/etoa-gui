@@ -38,21 +38,6 @@ class AllianceBuildListItem
     #[ORM\Column(name: "alliance_buildlist_member_for", type: "integer")]
     private int $memberFor = 0;
 
-    public static function createFromData(array $data): AllianceBuildListItem
-    {
-        $item = new AllianceBuildListItem();
-        $item->id = (int) $data['alliance_buildlist_id'];
-        $item->allianceId = (int) $data['alliance_buildlist_alliance_id'];
-        $item->buildingId = (int) $data['alliance_buildlist_building_id'];
-        $item->level = (int) $data['alliance_buildlist_current_level'];
-        $item->buildStartTime = (int) $data['alliance_buildlist_build_start_time'];
-        $item->buildEndTime = (int) $data['alliance_buildlist_build_end_time'];
-        $item->cooldown = (int) $data['alliance_buildlist_cooldown'];
-        $item->memberFor = (int) $data['alliance_buildlist_member_for'];
-
-        return $item;
-    }
-
     public function isUnderConstruction(): bool
     {
         return $this->buildEndTime > time();

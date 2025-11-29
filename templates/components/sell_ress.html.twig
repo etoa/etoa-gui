@@ -1,0 +1,100 @@
+<div {{ attributes }}>
+    {% if this.possible %}
+        <twig:Table title="Rohstoffe verkaufen">
+            {% block table_content %}
+                <tr>
+                    <th style="width:15%;vertical-align:middle;">Rohstoff</th>
+                    <th style="width:10%;vertical-align:middle;">Angebot</th>
+                    <th style="width:5%;text-align:center;vertical-align:middle;">Kurs</th>
+                    <th style="width:10%;vertical-align:middle;">Preis</th>
+                    <th style="width:40%;vertical-align:middle;">Min./Max.</th>
+                </tr>
+                <tr>
+                    <th style="vertical-align:middle;"> {{ constant('EtoA\\Universe\\Resources\\ResourceNames::METAL') }} :</th>
+                    <td style="vertical-align:middle;">
+                        <input type="text" value="0" name="res_sell_0" id="ress_sell_metal" size="9" maxlength="15" onkeyup="FormatNumber(this.id,this.value, {{ planet.resMetal }} ,'','');calcMarketRessPrice('0');"/>
+                    </td>
+                    <th style="text-align:center;vertical-align:middle;"> {{ runtimeValue('market_rate_0',1)}} </th>
+                    <td id="ress_buy_metal_field" style="vertical-align:middle;">
+                        <input type="text" value="0" name="res_buy_0" id="ress_buy_metal" size="7" maxlength="15" onkeyup="FormatNumber(this.id,this.value,'','','');calcMarketRessPrice('0');" disabled="disabled"/>
+                    </td>
+                    <th id="ress_min_max_metal" style="vertical-align:middle;"> - </th>
+                </tr>
+                <tr>
+                    <th style="vertical-align:middle;"> {{ constant('EtoA\\Universe\\Resources\\ResourceNames::CRYSTAL') }} :</th>
+                    <td style="vertical-align:middle;">
+                        <input type="text" value="0" name="res_sell_1" id="ress_sell_crystal" size="9" maxlength="15" onkeyup="FormatNumber(this.id,this.value, {{ planet.resCrystal }} ,'','');calcMarketRessPrice('0');"/>
+                    </td>
+                    <th style="text-align:center;vertical-align:middle;"> {{ runtimeValue('market_rate_1',1)}} </th>
+                    <td id="ress_buy_crystal_field" style="vertical-align:middle;">
+                        <input type="text" value="0" name="res_buy_1" id="ress_buy_crystal" size="7" maxlength="15" onkeyup="FormatNumber(this.id,this.value,'','','');calcMarketRessPrice('0');"  disabled="disabled"/>
+                    </td>
+                    <th id="ress_min_max_crystal" style="vertical-align:middle;"> - </th>
+                </tr>
+                <tr>
+                        <th style="vertical-align:middle;"> {{ constant('EtoA\\Universe\\Resources\\ResourceNames::PLASTIC') }} :</th>
+                    <td style="vertical-align:middle;">
+                        <input type="text" value="0" name="res_sell_2" id="ress_sell_plastic" size="9" maxlength="15" onkeyup="FormatNumber(this.id,this.value, {{ planet.resPlastic }} ,'','');calcMarketRessPrice('0');"/>
+                    </td>
+                    <th style="text-align:center;vertical-align:middle;"> {{ runtimeValue('market_rate_2',1)}} </th>
+                    <td id="ress_buy_plastic_field" style="vertical-align:middle;">
+                        <input type="text" value="0" name="res_buy_2" id="ress_buy_plastic" size="7" maxlength="15" onkeyup="FormatNumber(this.id,this.value,'','','');calcMarketRessPrice('0');" disabled="disabled"/>
+                    </td>
+                    <th id="ress_min_max_plastic" style="vertical-align:middle;"> - </th>
+                </tr>
+                <tr>
+                    <th style="vertical-align:middle;"> {{ constant('EtoA\\Universe\\Resources\\ResourceNames::FUEL') }} :</th>
+                    <td style="vertical-align:middle;">
+                        <input type="text" value="0" name="res_sell_3" id="ress_sell_fuel" size="9" maxlength="15" onkeyup="FormatNumber(this.id,this.value, {{ planet.resFuel }} ,'','');calcMarketRessPrice('0');"/>
+                    </td>
+                    <th style="text-align:center;vertical-align:middle;"> {{ runtimeValue('market_rate_3',1)}} </th>
+                    <td id="ress_buy_fuel_field" style="vertical-align:middle;">
+                        <input type="text" value="0" name="res_buy_3" id="ress_buy_fuel" size="7" maxlength="15" onkeyup="FormatNumber(this.id,this.value,'','','');calcMarketRessPrice('0');" disabled="disabled"/>
+                    </td>
+                    <th id="ress_min_max_fuel" style="vertical-align:middle;"> - </th>
+                </tr>
+                <tr>
+                    <th style="vertical-align:middle;"> {{ constant('EtoA\\Universe\\Resources\\ResourceNames::FOOD') }} :</th>
+                    <td style="vertical-align:middle;">
+                        <input type="text" value="0" name="res_sell_4" id="ress_sell_food" size="9" maxlength="15" onkeyup="FormatNumber(this.id,this.value, {{ planet.resFood }} ,'','');calcMarketRessPrice('0');"/>
+                    </td>
+                    <th style="text-align:center;vertical-align:middle;"> {{ runtimeValue('market_rate_4',1)}} </th>
+                    <td id="ress_buy_food_field" style="vertical-align:middle;">
+                        <input type="text" value="0" name="res_buy_4" id="ress_buy_food" size="7" maxlength="15" onkeyup="FormatNumber(this.id,this.value,'','','');calcMarketRessPrice('0');" disabled="disabled"/>
+                    </td>
+                    <th id="ress_min_max_food" style="vertical-align:middle;"> - </th>
+                </tr>
+                <tr>
+                    <th>Beschreibung</th>
+                    <td colspan="4">
+                        <input type="text" value="" name="ressource_text" id="ressource_text" size="55" maxlength="60" style="width:98%"
+                               {{ tm("Text", "Schreib einen kleinen Werbetext für deine Waren.") }}  onkeyup="calcMarketRessPrice('0');"/>
+                    </td>
+                </tr>
+            <tr>
+                <th>Reservation</th>
+                <td colspan="3">
+                    <input type="radio" name="resource_offer_reservation" id="resource_offer_reservation_0" value="0" checked="checked" /> <label for="resource_offer_reservation_0">Öffentliches Angebot</label><br/>
+                    {% if configValue('market_user_reservation_active') %}
+                        <input type="radio" name="resource_offer_reservation" id="resource_offer_reservation_1" value="1" /> <label for="resource_offer_reservation_1">Für eine bestimmte Person</label><br/>
+                    {% endif %}
+
+                    {% if app.user.data.alliance and outerScope.this.allianceMarketLevel >= 1 and not outerScope.cdEnabled %}
+                        <input type="radio" name="resource_offer_reservation" id="resource_offer_reservation_2" value="2" />
+                        <label for="resource_offer_reservation_2" {{ tm("Reservation", "Fall dieses Angebot nur Spieler aus
+                    deiner Allianz kaufen sollen, mach hier ein Häkchen") }} >Für Allianzmitglieder</label>
+                    {% endif %}
+                    </td>
+                <td style="vertical-align:middle"><input type="text" name="resource_offer_user_nick" id="resource_offer_user_nick"  maxlength="{{ param2('nick_length') }}" size="25" autocomplete="off" value="" onkeyup="xajax_searchUser(this.value,'resource_offer_user_nick')"><br/><div class="citybox" id="citybox">&nbsp;</div></td>
+                </tr>
+                <tr>
+                    <td colspan="5" id="check_message" style="text-align:center;vertical-align:middle;height:30px;">&nbsp;</td>
+                </tr>
+            {% endblock %}
+        </twig:Table>
+    {% else %}
+        {% import 'macros.html.twig' as macros %}
+        {{ macros.errorMessage('Auf diesem Planeten können keine weiteren Angebote erstellt werden!') }}
+    {% endif %}
+</div>
+

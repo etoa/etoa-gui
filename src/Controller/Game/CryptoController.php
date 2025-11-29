@@ -26,7 +26,7 @@ class CryptoController extends AbstractGameController
     #[Route('/game/crypto', name: 'game.crypto')]
     public function crypto(Request $request):Response
     {
-        $cryptoCenterLevel = $this->allianceBuildListRepository->findOneBy(['alliance'=>$this->getUser()->getData()?->getAlliance(),'allianceBuilding'=>AllianceBuildingId::CRYPTO])?->getLevel();
+        $cryptoCenterLevel = $this->allianceBuildListRepository->findOneBy(['alliance'=>$this->getUser()->getData()?->getAlliance(),'allianceBuilding'=>AllianceBuildingId::CRYPTO->value])?->getLevel();
 
         // Allg. deaktivierung
         if ($this->configurationService->getBoolean('crypto_enable')) {
