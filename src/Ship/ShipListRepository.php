@@ -408,4 +408,18 @@ class ShipListRepository extends AbstractRepository
             ->getQuery()
             ->getOneOrNullResult();
     }
+
+    public function getTradeableShipsOnPlanet(Planet $planet):array
+    {
+        return $this->createQueryBuilder('q')
+            ->join('App:Ship','s','WITH','q.ship = s.id')
+            ->where('s.special = 0')
+            ->andWhere('q.entity = :planet')
+            ->andWhere('s.shipTradeable = 1')
+            ->andWhere('s.allianceCosts = 0')
+            ->setParameter('planet',$planet)
+            ->orderBy('s.name')
+            ->getQuery()
+            ->execute();
+    }
 }

@@ -5,6 +5,7 @@ namespace EtoA\Controller\Game;
 use EtoA\Building\BuildingId;
 use EtoA\Building\BuildingListItemRepository;
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Market\MarketService;
 use EtoA\Support\StringUtils;
 use EtoA\Universe\Planet\PlanetRepository;
 use Symfony\Component\HttpFoundation\Request;
@@ -16,7 +17,8 @@ class MarketController extends AbstractGameController
     public function __construct(
         private readonly ConfigurationService $configurationService,
         private readonly PlanetRepository $planetRepository,
-        private readonly BuildingListItemRepository $buildingListItemRepository
+        private readonly BuildingListItemRepository $buildingListItemRepository,
+        private readonly MarketService $marketService
     )
     {
     }
@@ -27,12 +29,17 @@ class MarketController extends AbstractGameController
             $cp = $this->planetRepository->find($request->getSession()->get('cpid'));
             $market = $this->buildingListItemRepository->findOneBy(['user'=>$this->getUser()->getData(),'entity'=>$cp,'building'=>BuildingId::MARKET]);
 
-            //Überprüfung ob der Marktplatz schon gebaut wurde
+            //Überprüfung, ob der Marktplatz schon gebaut wurde
             if ($market && $market->getCurrentLevel() > 0) {
                 if (!$market->isDeactivated()) {
+                    $anzahl = $this->marketService->getOfferCountOnCurrentEntity($cp);
+                    $marketLevel = $market->getCurrentLevel();
+                    $possible = ($marketLevel - $anzahl) > 0;
+
                     return $this->render('game/market/market_home.html.twig', [
                         'marketLevel' => $market->getCurrentLevel(),
-                        'planetName' => $cp->getName()
+                        'planetName' => $cp->getName(),
+                        'possible' => $possible
                     ]);
                 }
 

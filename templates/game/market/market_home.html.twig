@@ -2,5 +2,10 @@
 {% import 'macros.html.twig' as macros %}
 
 {% block market %}
-    <twig:SellRess/>
+    {% if possible %}
+        <twig:SellRess/>
+        <twig:SellShip/>
+    {% else %}
+        {{ macros.errorMessage('Auf diesem Planeten können keine weiteren Angebote erstellt werden!') }}
+    {% endif %}
 {% endblock %}

@@ -1,0 +1,160 @@
+<div {{ attributes }}>
+    {% if this.possible %}
+        <script type="text/javascript">
+            ships = [];
+            {% for tradeableShip in this.tradeableShips %}
+                ships[{{ tradeableShip.ship.id }}] = {};
+                ships[{{ tradeableShip.ship.id }}]["name"] = '{{ tradeableShip.ship.name }}';
+                ships[{{ tradeableShip.ship.id }}]['costs_metal'] = {{ tradeableShip.ship.costsMetal }}
+                ships[{{ tradeableShip.ship.id }}]['costs_crystal'] = {{ tradeableShip.ship.costsCrystal }};
+                ships[{{ tradeableShip.ship.id }}]['costs_plastic'] = {{ tradeableShip.ship.costsPlastic }};
+                ships[{{ tradeableShip.ship.id }}]['costs_fuel'] = {{ tradeableShip.ship.costsFuel }};
+                ships[{{ tradeableShip.ship.id }}]['costs_food'] = {{ tradeableShip.ship.costsFood }};
+                ships[{{ tradeableShip.ship.id }}]["count"] = {{ tradeableShip.count }};
+            {% endfor %}
+        </script>
+        <form id="ship_selector">
+        <input type="hidden" value="0" name="ship_last_update" id="ship_last_update"/>
+        <twig:Table title="Schiffe verkaufen">
+            {% block table_content %}
+                <td height="30" colspan="3" style="vertical-align:middle;">
+                    <select name="ship_list" id="ship_list" onchange="calcMarketShipPrice(1, 0);">
+                        {% for tradeableShip in outerScope.this.tradeableShips %}
+                            <option value="{{ tradeableShip.ship.id }}">{{ tradeableShip.ship.name }} ({{ tradeableShip.count }})</option>
+                        {% endfor %}
+                    </select>
+                </td>
+                <td height="30" colspan="2" style="vertical-align:middle;">
+                    <input type="text" value="0" name="ship_count" id="ship_count" size="5" maxlength="7"
+                           onkeyup="calcMarketShipPrice(1, 0);"/> Stück
+                    &nbsp;
+                    <input type="text" value="100" name="ship_percent" id="ship_percent" size="5" maxlength="7"
+                           onkeyup="calcMarketShipPrice(1, 0);"/> Verkaufspreis in %
+                </td>
+                <tr>
+                    <th style="width:15%;vertical-align:middle;">Rohstoff</th>
+                    <th style="width:10%;vertical-align:middle;">Angebot</th>
+                    <th style="width:5%;text-align:center;vertical-align:middle;">Kurs</th>
+                    <th style="width:10%;vertical-align:middle;">Preis</th>
+                    <th style="width:40%;vertical-align:middle;">Min./Max.</th>
+                </tr>
+                <tr>
+                    <th style="vertical-align:middle;">{{ constant('EtoA\\Universe\\Resources\\ResourceNames::METAL') }}:</th>
+                    <td id="ship_sell_metal_field" style="vertical-align:middle;">
+                        <input type="text" value="0" name="ship_sell_metal" id="ship_sell_metal" size="7" maxlength="15"
+                               disabled="disabled"/>
+                    </td>
+                    <th style="text-align:center;vertical-align:middle;">{{ runtimeValue('market_rate_0',1)}}</th>
+                    <td id="ship_buy_metal_field" style="vertical-align:middle;">
+                        <input type="text" value="0" name="ship_buy_0" id="ship_buy_metal" size="7" maxlength="15"
+                               onkeyup="calcMarketShipPrice(0, 0);"/>
+                    </td>
+                    <th id="ship_min_max_metal" style="vertical-align:middle;"> -</th>
+                </tr>
+                <tr>
+                    <th style="vertical-align:middle;">{{ constant('EtoA\\Universe\\Resources\\ResourceNames::CRYSTAL') }}:</th>
+                    <td id="ship_sell_crystal_field" style="vertical-align:middle;">
+                        <input type="text" value="0" name="ship_sell_crystal" id="ship_sell_crystal" size="7" maxlength="15"
+                               disabled="disabled"/>
+                    </td>
+                    <th style="text-align:center;vertical-align:middle;">{{ runtimeValue('market_rate_1',1)}}</th>
+                    <td id="ship_buy_crystal_field" style="vertical-align:middle;">
+                        <input type="text" value="0" name="ship_buy_1" id="ship_buy_crystal" size="7" maxlength="15"
+                               onkeyup="calcMarketShipPrice(0, 0);"/>
+                    </td>
+                    <th id="ship_min_max_crystal" style="vertical-align:middle;"> -</th>
+                </tr>
+                <tr>
+                    <th style="vertical-align:middle;">{{ constant('EtoA\\Universe\\Resources\\ResourceNames::PLASTIC') }}:</th>
+                    <td id="ship_sell_plastic_field" style="vertical-align:middle;">
+                        <input type="text" value="0" name="ship_sell_plastic" id="ship_sell_plastic" size="7" maxlength="15"
+                               disabled="disabled"/>
+                    </td>
+                    <th style="text-align:center;vertical-align:middle;">{{ runtimeValue('market_rate_2',1)}}</th>
+                    <td id="ship_buy_plastic_field" style="vertical-align:middle;">
+                        <input type="text" value="0" name="ship_buy_2" id="ship_buy_plastic" size="7" maxlength="15"
+                               onkeyup="calcMarketShipPrice(0, 0);"/>
+                    </td>
+                    <th id="ship_min_max_plastic" style="vertical-align:middle;"> -</th>
+                </tr>
+                <tr>
+                    <th style="vertical-align:middle;">{{ constant('EtoA\\Universe\\Resources\\ResourceNames::FUEL') }}:</th>
+                    <td id="ship_sell_fuel_field" style="vertical-align:middle;">
+                        <input type="text" value="0" name="ship_sell_fuel" id="ship_sell_fuel" size="7" maxlength="15"
+                               disabled="disabled"/>
+                    </td>
+                    <th style="text-align:center;vertical-align:middle;">{{ runtimeValue('market_rate_3',1)}}</th>
+                    <td id="ship_buy_fuel_field" style="vertical-align:middle;">
+                        <input type="text" value="0" name="ship_buy_3" id="ship_buy_fuel" size="7" maxlength="15"
+                               onkeyup="calcMarketShipPrice(0, 0);"/>
+                    </td>
+                    <th id="ship_min_max_fuel" style="vertical-align:middle;"> -</th>
+                </tr>
+                <tr>
+                    <th style="vertical-align:middle;">{{ constant('EtoA\\Universe\\Resources\\ResourceNames::FOOD') }}:</th>
+                    <td id="ship_sell_food_field" style="vertical-align:middle;">
+                        <input type="text" value="0" name="ship_sell_food" id="ship_sell_food" size="7" maxlength="15"
+                               disabled="disabled"/>
+                    </td>
+                    <th style="text-align:center;vertical-align:middle;">{{ runtimeValue('market_rate_4',1)}}</th>
+                    <td id="ship_buy_food_field" style="vertical-align:middle;">
+                        <input type="text" value="0" name="ship_buy_4" id="ship_buy_food" size="7" maxlength="15"
+                               onkeyup="calcMarketShipPrice(0, 0);"/>
+                    </td>
+                    <th id="ship_min_max_food" style="vertical-align:middle;"> -</th>
+                </tr>
+                <tr>
+                    <th>Beschreibung</th>
+                    <td colspan="4">
+                        <input type="text" value="" name="ship_text" id="ship_text" size="55" maxlength="60"
+                               style="width:98%" {{ tm("Text", "Schreib einen kleinen Werbetext für deine Waren.")|raw }}
+                        onkeyup="calcMarketShipPrice('0');"/>
+                    </td>
+                </tr>
+                <tr>
+                    <th>Reservation</th>
+                    <td colspan="3">
+                        <input type="radio" name="ship_offer_reservation" id="ship_offer_reservation_0" value="0"
+                               checked="checked"/> <label for="ship_offer_reservation_0">Öffentliches Angebot</label><br/>
+                        {% if configValue('market_user_reservation_active') %}
+                        <input type="radio" name="ship_offer_reservation" id="ship_offer_reservation_1" value="1"/> <label
+                                for="ship_offer_reservation_1">Für eine bestimmte Person</label><br/>
+                        {% endif %}
+                        {% if app.user.data.alliance and outerScope.this.allianceMarketLevel >= 1 and not outerScope.cdEnabled %}
+                            <input type="radio" name="ship_offer_reservation" id="ship_offer_reservation_2" value="2"/>
+                            <label for="ship_offer_reservation_2" {{ tm("Reservation", "Fall dieses Angebot nur Spieler aus deiner
+                            Allianz kaufen sollen, mach hier ein H&auml;kchen")|raw }}>Für Allianzmitglieder</label>
+                        {% endif %}
+                    </td>
+                    <td style="vertical-align:middle"><input type="text" name="ship_offer_user_nick"
+                                                             id="ship_offer_user_nick"
+                                                             maxlength="{{ configValue('nick_length') }}" size="25"
+                                                             autocomplete="off" value=""
+                                                             onkeyup="xajax_searchUser(this.value,'ship_offer_user_nick')"><br/>
+                        <div class="citybox" id="citybox">&nbsp;</div>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="5" id="ship_check_message" style="text-align:center;vertical-align:middle;height:30px;">
+                        &nbsp;
+                    </td>
+                </tr>
+
+            {% endblock %}
+        </twig:Table>
+        <script>
+            $(function() {
+                $('#ship_offer_user_nick').hide();
+                $('input[name=ship_offer_reservation]').click(function() {
+                    if ($(this).val() === 1) {
+                        $('#ship_offer_user_nick').show();
+                    } else {
+                        $('#ship_offer_user_nick').hide();
+                    }
+                });
+            });
+        </script>
+        <input type="button" class="button" name="ship_sell_submit" id="ship_sell_submit" value="Angebot aufgeben" style="color:#f00;" disabled="disabled" onclick="calcMarketShipPrice(0, 1);checkUpdate('ship_selector', 'ship_last_update');"/></form><br/><br/>
+    {% endif %}
+</div>
+
