@@ -415,6 +415,7 @@ class ShipListRepository extends AbstractRepository
             ->join('App:Ship','s','WITH','q.ship = s.id')
             ->where('s.special = 0')
             ->andWhere('q.entity = :planet')
+            ->andWhere('q.count > 0')
             ->andWhere('s.shipTradeable = 1')
             ->andWhere('s.allianceCosts = 0')
             ->setParameter('planet',$planet)

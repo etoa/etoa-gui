@@ -1,4 +1,5 @@
 {% extends 'layout/base.html.twig' %}
+{% import 'macros.html.twig' as macros %}
 {#
 -----------------------------------------------------------------------------------------------------------------------------------
 //--Beschreibung       :         Re:Discovery-Menuedesign Version
@@ -154,6 +155,12 @@
 
   <div id="game-area">
     <div id="contentwrap">
+      {% for type, messages in app.flashes|default([]) %}
+        {% for message in messages %}
+          {{ macros.message('',message,type) }}
+        {% endfor %}
+      {% endfor %}
+
       {{ content|default('')|raw }}
       {% block content %}
       {% endblock %}

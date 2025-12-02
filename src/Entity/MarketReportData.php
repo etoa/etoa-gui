@@ -19,64 +19,64 @@ class MarketReportData
     private string $subtype = 'other';
 
     #[ORM\Column]
-    private int $recordId;
+    private int $recordId  = 0;
 
     #[ORM\JoinColumn(name: 'fleet1_id', referencedColumnName: 'id')]
     #[ORM\ManyToOne(targetEntity: Fleet::class)]
-    private Fleet $fleet1;
+    private ?Fleet $fleet1 = null;
 
     #[ORM\JoinColumn(name: 'fleet2_id', referencedColumnName: 'id')]
     #[ORM\ManyToOne(targetEntity: Fleet::class)]
-    private Fleet $fleet2;
+    private ?Fleet $fleet2 = null;
 
     #[ORM\Column(name:'buy_0')]
-    private int $buyMetal;
+    private int $buyMetal = 0;
 
     #[ORM\Column(name:'buy_1')]
-    private int $buyCrystal;
+    private int $buyCrystal = 0;
 
     #[ORM\Column(name:'buy_2')]
-    private int $buyPlastic;
+    private int $buyPlastic = 0;
 
     #[ORM\Column(name:'buy_3')]
-    private int $buyFuel;
+    private int $buyFuel = 0;
 
     #[ORM\Column(name:'buy_4')]
-    private int $buyFood;
+    private int $buyFood = 0;
 
     #[ORM\Column(name:'buy_5')]
-    private int $buyPeople;
+    private int $buyPeople = 0;
 
     #[ORM\Column(name:'sell_0')]
-    private int $sellMetal;
+    private int $sellMetal = 0;
 
     #[ORM\Column(name:'sell_1')]
-    private int $sellCrystal;
+    private int $sellCrystal = 0;
 
     #[ORM\Column(name:'sell_2')]
-    private int $sellPlastic;
+    private int $sellPlastic = 0;
 
     #[ORM\Column(name:'sell_3')]
-    private int $sellFuel;
+    private int $sellFuel = 0;
 
     #[ORM\Column(name:'sell_4')]
-    private int $sellFood;
+    private int $sellFood = 0;
 
     #[ORM\Column(name:'sell_5')]
-    private int $sellPeople;
+    private int $sellPeople = 0;
 
     #[ORM\Column]
-    private float $factor;
+    private float $factor = 1;
 
     #[ORM\JoinColumn(name: 'ship_id', referencedColumnName: 'ship_id')]
     #[ORM\ManyToOne(targetEntity: Ship::class)]
     private Ship $ship;
 
     #[ORM\Column]
-    private int $shipCount;
+    private int $shipCount = 0;
 
     #[ORM\Column]
-    private int $timestamp2;
+    private int $timestamp2 = 0;
 
     private BaseResources $buy;
 

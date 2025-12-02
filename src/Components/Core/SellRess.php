@@ -8,7 +8,6 @@ use EtoA\Building\BuildingId;
 use EtoA\Building\BuildingListItemRepository;
 use EtoA\Controller\Game\AbstractGameController;
 use EtoA\Entity\Planet;
-use EtoA\Market\MarketService;
 use EtoA\Universe\Planet\PlanetRepository;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\UX\TwigComponent\Attribute\AsTwigComponent;
@@ -23,7 +22,6 @@ class SellRess extends AbstractGameController
         private readonly PlanetRepository $planetRepository,
         private readonly BuildingListItemRepository $buildingListItemRepository,
         private readonly RequestStack $requestStack,
-        private readonly MarketService $marketService,
         private readonly AllianceBuildListRepository $allianceBuildListRepository
     )
     {}

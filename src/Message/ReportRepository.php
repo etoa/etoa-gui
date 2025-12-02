@@ -7,7 +7,9 @@ namespace EtoA\Message;
 use Doctrine\DBAL\ArrayParameterType;
 use Doctrine\Persistence\ManagerRegistry;
 use EtoA\Core\AbstractRepository;
+use EtoA\Entity\Alliance;
 use EtoA\Entity\BattleReportData;
+use EtoA\Entity\Entity;
 use EtoA\Entity\MarketReportData;
 use EtoA\Entity\OtherReportData;
 use EtoA\Entity\Report;
@@ -61,33 +63,22 @@ class ReportRepository extends AbstractRepository
         return $data !== false ? Report::createFromArray($data) : null;
     }
 
-    protected function addReport(string $type, int $userId, int $allianceId, ?string $content, int $entity1Id, int $entity2Id, int $opponentId): int
+    protected function addReport(string $type, User $user, ?Alliance $alliance, ?string $content, Entity $entity1, ?Entity $entity2 = null, ?User $opponent = null): Report
     {
-        $this->createQueryBuilder('q')
-            ->insert('reports')
-            ->values([
-                'timestamp' => ':time',
-                'type' => ':type',
-                'user_id' => ':userId',
-                'alliance_id' => ':allianceId',
-                'content' => ':content',
-                'entity1_id' => ':entity1Id',
-                'entity2_id' => ':entity2Id',
-                'opponent1_id' => ':opponentId',
-            ])
-            ->setParameters([
-                ':time' => time(),
-                'type' => $type,
-                'userId' => $userId,
-                'allianceId' => $allianceId,
-                'content' => $content,
-                'entity1Id' => $entity1Id,
-                'entity2Id' => $entity2Id,
-                'opponentId' => $opponentId,
-            ])
-            ->executeQuery();
+        $report = new Report();
+        $report->setTimestamp(time());
+        $report->setUser($user);
+        $report->setAlliance($alliance);
+        $report->setType($type);
+        $report->setContent($content);
+        $report->setEntity1($entity1);
+        $report->setEntity2($entity2);
+        $report->setOpponent1($opponent);
 
-        return (int) $this->getConnection()->lastInsertId();
+        $this->persist($report);
+        $this->save();
+
+        return $report;
     }
 
     /**

@@ -2,7 +2,6 @@
 
 namespace EtoA\Entity;
 
-use Doctrine\ORM\EntityNotFoundException;
 use Doctrine\ORM\Mapping as ORM;
 use EtoA\Core\Database\DataTransformer;
 use EtoA\Message\Report\ExploreReport;
@@ -24,19 +23,19 @@ class Report
     private int $id;
 
     #[ORM\Column(type: "integer")]
-    private int $timestamp;
+    private int $timestamp = 0;
 
     #[ORM\Column(type: "string")]
-    private string $type;
+    private string $type = 'other';
 
     #[ORM\Column(name: '`read`',type: "boolean")]
-    private bool $read;
+    private bool $read = false;
 
     #[ORM\Column(type: "boolean")]
-    private bool $deleted;
+    private bool $deleted = false;
 
     #[ORM\Column(type: "boolean")]
-    private bool $archived;
+    private bool $archived = false;
 
     #[ORM\JoinColumn(name: 'user_id', referencedColumnName: 'user_id')]
     #[ORM\ManyToOne(targetEntity: User::class, cascade: ['persist'], inversedBy:'reports')]
@@ -47,10 +46,10 @@ class Report
     private ?Alliance $alliance = null;
 
     #[ORM\Column(type: "string")]
-    private ?string $subject;
+    private ?string $subject = null;
 
     #[ORM\Column(type: "string")]
-    private ?string $content;
+    private ?string $content = null;
 
     #[ORM\JoinColumn(name: 'entity1_id', referencedColumnName: 'id')]
     #[ORM\ManyToOne(targetEntity: Entity::class)]

@@ -95,8 +95,10 @@
         <!-- zentraler Inhaltsbereich -->
         <section id="content">
             <div id="contentwrap">
-                {% for message in app.flashes('warning') %}
-                    {{ macros.message('Info',message) }}
+                {% for type, messages in app.flashes|default([]) %}
+                    {% for message in messages %}
+                        {{ macros.message('',message,type) }}
+                    {% endfor %}
                 {% endfor %}
 
                 {{ content|default('')|raw }}

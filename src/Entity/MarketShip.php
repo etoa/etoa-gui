@@ -50,7 +50,7 @@ class MarketShip
 
     #[ORM\JoinColumn(name: 'buyer_entity_id', referencedColumnName: 'id')]
     #[ORM\ManyToOne(targetEntity: Planet::class)]
-    private Planet $buyerEntity;
+    private ?Planet $buyerEntity = null;
 
     #[ORM\JoinColumn(name: 'for_user', referencedColumnName: 'user_id')]
     #[ORM\ManyToOne(targetEntity: User::class)]

@@ -2,6 +2,11 @@
 
 namespace EtoA\Message;
 
+use EtoA\Entity\Entity;
+use EtoA\Entity\Fleet;
+use EtoA\Entity\MarketReportData;
+use EtoA\Entity\Ship;
+use EtoA\Entity\User;
 use EtoA\Universe\Resources\BaseResources;
 
 class MarketReportRepository extends ReportRepository
@@ -53,47 +58,29 @@ class MarketReportRepository extends ReportRepository
             ->executeQuery();
     }
 
-    public function addShipReport(int $marketId, int $userId, int $entityId, int $opponentId, int $shipId, int $shipCount, string $subType, BaseResources $costs, float $factor = 1.0, string $content = null, int $timestamp2 = 0, int $entity2Id = 0, int $fleet1Id = 0, int $fleet2Id = 0): void
+    public function addShipReport(int $marketId, User $user, Entity $entity, ?User $opponent, Ship $ship, int $shipCount, string $subType, BaseResources $costs, float $factor = 1.0, string $content = null, int $timestamp2 = 0, Entity $entity2 = null, Fleet $fleet1 = null, Fleet $fleet2 = null): void
     {
-        $reportId = $this->addReport(ReportTypes::TYPE_MARKET, $userId, 0, $content, $entityId, $entity2Id, $opponentId);
+        $report = $this->addReport(ReportTypes::MARKET->value, $user, null, $content, $entity, $entity2, $opponent);
 
-        $this->createQueryBuilder('q')
-            ->insert('reports_market')
-            ->values([
-                'id' => ':id',
-                'subtype' => ':subtype',
-                'record_id' => ':recordId',
-                'buy_0' => ':buy0',
-                'buy_1' => ':buy1',
-                'buy_2' => ':buy2',
-                'buy_3' => ':buy3',
-                'buy_4' => ':buy4',
-                'buy_5' => ':buy5',
-                'ship_id' => ':shipId',
-                'ship_count' => ':shipCount',
-                'factor' => ':factor',
-                'timestamp2' => ':timestamp2',
-                'fleet1_id' => ':fleet1Id',
-                'fleet2_id' => ':fleet2Id',
-            ])
-            ->setParameters([
-                'id' => $reportId,
-                'subtype' => $subType,
-                'recordId' => $marketId,
-                'buy0' => $costs->get(0),
-                'buy1' => $costs->get(1),
-                'buy2' => $costs->get(2),
-                'buy3' => $costs->get(3),
-                'buy4' => $costs->get(4),
-                'buy5' => 0,
-                'factor' => $factor,
-                'shipId' => $shipId,
-                'shipCount' => $shipCount,
-                'timestamp2' => $timestamp2,
-                'fleet1Id' => $fleet1Id,
-                'fleet2Id' => $fleet2Id,
-            ])
-            ->executeQuery();
+        $marketReport = new MarketReportData();
+        $marketReport->setReport($report);
+        $marketReport->setSubtype($subType);
+        $marketReport->setRecordId($marketId);
+        $marketReport->setBuyMetal($costs->metal);
+        $marketReport->setBuyCrystal($costs->crystal);
+        $marketReport->setBuyPlastic($costs->plastic);
+        $marketReport->setBuyFuel($costs->fuel);
+        $marketReport->setBuyFood($costs->food);
+        $marketReport->setBuyPeople(0);
+        $marketReport->setShipCount($shipCount);
+        $marketReport->setFactor($factor);
+        $marketReport->setShip($ship);
+        $marketReport->setTimestamp2($timestamp2);
+        $marketReport->setFleet1($fleet1);
+        $marketReport->setFleet2($fleet2);
+
+        $this->persist($marketReport);
+        $this->save();
     }
 
     public function addResourceReport(int $marketId, int $userId, int $entityId, int $opponentId, BaseResources $sellResources, string $subType, BaseResources $costs, float $factor = 1.0, string $content = null, int $timestamp2 = 0, int $entity2Id = 0, int $fleet1Id = 0, int $fleet2Id = 0): void
