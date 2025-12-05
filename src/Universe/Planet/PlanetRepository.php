@@ -280,9 +280,9 @@ class PlanetRepository extends AbstractRepository
             ->set('q.resFuel', 'q.resFuel - :res_fuel')
             ->set('q.resFood', 'q.resFood - :res_food')
             ->set('q.people', 'q.people - :people')
-            ->where('q.id = :id')
+            ->where('q.entity = :entity')
             ->setParameters([
-                'id' => $planet->getId(),
+                'entity' => $planet->getEntity(),
                 'res_metal' => $resources->metal,
                 'res_crystal' => $resources->crystal,
                 'res_plastic' => $resources->plastic,

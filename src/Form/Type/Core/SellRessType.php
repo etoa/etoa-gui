@@ -2,7 +2,6 @@
 
 namespace EtoA\Form\Type\Core;
 
-use EtoA\Entity\ShipListItem;
 use EtoA\Support\StringUtils;
 use EtoA\User\UserRepository;
 use Symfony\Component\Form\AbstractType;
@@ -16,156 +15,138 @@ use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class SellShipType extends AbstractType
+class SellRessType extends AbstractType
 {
-
-
     public function __construct(
         private readonly UserRepository $userRepository
     ){}
 
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
-        $tradeableShips = $options['tradeable_ships'];
         $marketUserReservationActive = $options['market_user_reservation_active'];
         $hasAlliance = $options['has_alliance'];
         $allianceMarketLevel = $options['alliance_market_level'];
         $cdEnabled = $options['cd_enabled'];
         $nickLength = $options['nick_length'];
+        $planet = $options['planet'];
 
         $builder
-            ->add('ship_last_update', HiddenType::class, [
+            ->add('ress_last_update', HiddenType::class, [
                 'data' => '0',
                 'mapped' => false
             ])
-            ->add('ship', ChoiceType::class, [
+            ->add('ress_metal', HiddenType::class, [
                 'label' => false,
-                'choices' => $tradeableShips,
-                'attr' => [
-                    'onchange' => 'calcMarketShipPrice(1, 0);',
-                ],
-                'choice_value' => 'ship.id',
-                'choice_label' => function (?ShipListItem $item): string {
-                    return $item->getShip()->getName() . ' (' . $item->getCount() . ')';
-                },
+                'data' => $planet->getResMetal(),
                 'mapped' => false
             ])
-            ->add('count', TextType::class, [
+            ->add('ress_crystal', HiddenType::class, [
                 'label' => false,
-                'attr' => [
-                    'size' => 5,
-                    'maxlength' => 7,
-                    'onkeyup' => 'calcMarketShipPrice(1, 0);',
-                ],
-                'data' => '0',
-            ])
-            ->add('ship_percent', TextType::class, [
-                'label' => false,
-                'attr' => [
-                    'size' => 5,
-                    'maxlength' => 7,
-                    'onkeyup' => 'calcMarketShipPrice(1, 0);',
-                ],
-                'data' => '100',
+                'data' => $planet->getResCrystal(),
                 'mapped' => false
             ])
-            ->add('ship_sell_metal', TextType::class, [
+            ->add('ress_plastic', HiddenType::class, [
                 'label' => false,
-                'attr' => [
-                    'size' => 7,
-                    'maxlength' => 15,
-                    'disabled' => 'disabled',
-                ],
-                'data' => '0',
-                'disabled' => true,
+                'data' => $planet->getResPlastic(),
                 'mapped' => false
             ])
-            ->add('ship_sell_crystal', TextType::class, [
+            ->add('ress_fuel', HiddenType::class, [
                 'label' => false,
-                'attr' => [
-                    'size' => 7,
-                    'maxlength' => 15,
-                    'disabled' => 'disabled',
-                ],
-                'data' => '0',
-                'disabled' => true,
+                'data' => $planet->getResFuel(),
                 'mapped' => false
             ])
-            ->add('ship_sell_plastic', TextType::class, [
+            ->add('ress_food', HiddenType::class, [
                 'label' => false,
-                'attr' => [
-                    'size' => 7,
-                    'maxlength' => 15,
-                    'disabled' => 'disabled',
-                ],
-                'data' => '0',
-                'disabled' => true,
+                'data' => $planet->getResFood(),
                 'mapped' => false
             ])
-            ->add('ship_sell_fuel', TextType::class, [
+            ->add('sell0', TextType::class, [
                 'label' => false,
                 'attr' => [
-                    'size' => 7,
+                    'size' => 9,
                     'maxlength' => 15,
-                    'disabled' => 'disabled',
+                    'onkeyup'=>"FormatNumber(this.id,this.value,".$planet->getResMetal()." ,'','');calcMarketRessPrice('0');"
                 ],
-                'data' => '0',
-                'disabled' => true,
-                'mapped' => false
+                'data' => '0'
             ])
-            ->add('ship_sell_food', TextType::class, [
+            ->add('sell1', TextType::class, [
                 'label' => false,
                 'attr' => [
-                    'size' => 7,
+                    'size' => 9,
                     'maxlength' => 15,
-                    'disabled' => 'disabled'
+                    'onkeyup'=>"FormatNumber(this.id,this.value,".$planet->getResCrystal()." ,'','');calcMarketRessPrice('0');"
                 ],
-                'data' => '0',
-                'disabled' => true,
-                'mapped' => false
+                'data' => '0'
             ])
-            ->add('costs0', TextType::class, [
+            ->add('sell2', TextType::class, [
                 'label' => false,
                 'attr' => [
-                    'size' => 7,
+                    'size' => 9,
                     'maxlength' => 15,
-                    'onkeyup' => 'calcMarketShipPrice(0, 0);',
+                    'onkeyup'=>"FormatNumber(this.id,this.value,".$planet->getResPlastic()." ,'','');calcMarketRessPrice('0');"
                 ],
-                'data' => 0,
+                'data' => '0'
             ])
-            ->add('costs1', TextType::class, [
+            ->add('sell3', TextType::class, [
                 'label' => false,
                 'attr' => [
-                    'size' => 7,
+                    'size' => 9,
                     'maxlength' => 15,
-                    'onkeyup' => 'calcMarketShipPrice(0, 0);',
+                    'onkeyup'=>"FormatNumber(this.id,this.value,".$planet->getResFuel()." ,'','');calcMarketRessPrice('0');"
                 ],
-                'data' => '0',
+                'data' => '0'
             ])
-            ->add('costs2', TextType::class, [
+            ->add('sell4', TextType::class, [
                 'label' => false,
                 'attr' => [
-                    'size' => 7,
+                    'size' => 9,
                     'maxlength' => 15,
-                    'onkeyup' => 'calcMarketShipPrice(0, 0);',
+                    'onkeyup'=>"FormatNumber(this.id,this.value,".$planet->getResFood()." ,'','');calcMarketRessPrice('0');"
                 ],
-                'data' => '0',
+                'data' => '0'
             ])
-            ->add('costs3', TextType::class, [
+            ->add('buy0', TextType::class, [
                 'label' => false,
                 'attr' => [
                     'size' => 7,
                     'maxlength' => 15,
-                    'onkeyup' => 'calcMarketShipPrice(0, 0);',
+                    'onkeyup' => 'calcMarketRessPrice(0, 0);',
                 ],
                 'data' => '0',
             ])
-            ->add('costs4', TextType::class, [
+            ->add('buy1', TextType::class, [
                 'label' => false,
                 'attr' => [
                     'size' => 7,
                     'maxlength' => 15,
-                    'onkeyup' => 'calcMarketShipPrice(0, 0);',
+                    'onkeyup' => 'calcMarketRessPrice(0, 0);',
+                ],
+                'data' => '0',
+            ])
+            ->add('buy2', TextType::class, [
+                'label' => false,
+                'attr' => [
+                    'size' => 7,
+                    'maxlength' => 15,
+                    'onkeyup' => 'calcMarketRessPrice(0, 0);',
+                ],
+                'data' => '0',
+            ])
+            ->add('buy3', TextType::class, [
+                'label' => false,
+                'attr' => [
+                    'size' => 7,
+                    'maxlength' => 15,
+                    'onkeyup' => 'calcMarketRessPrice(0, 0);',
+                ],
+                'data' => '0',
+            ])
+            ->add('buy4', TextType::class, [
+                'label' => false,
+                'attr' => [
+                    'size' => 7,
+                    'maxlength' => 15,
+                    'onkeyup' => 'calcMarketRessPrice(0, 0);',
                 ],
                 'data' => '0',
             ])
@@ -176,18 +157,15 @@ class SellShipType extends AbstractType
                     'size' => 55,
                     'maxlength' => 60,
                     'style' => 'width:98%',
-                    'onkeyup' => "calcMarketShipPrice('0');",
+                    'onkeyup' => "calcMarketRessPrice('0');",
                 ],
                 'empty_data' => '',
             ])
-            ->add('ship_offer_reservation', ChoiceType::class, [
+            ->add('ressource_offer_reservation', ChoiceType::class, [
                 'label' => false,
                 'expanded' => true,
                 'choices' => $this->getReservationChoices($marketUserReservationActive, $hasAlliance, $allianceMarketLevel, $cdEnabled),
                 'data' => '0',
-                'attr' => [
-                    'class' => 'ship-offer-reservation',
-                ],
                 'mapped' => false
             ])
             ->add('forUser', TextType::class, [
@@ -206,7 +184,7 @@ class SellShipType extends AbstractType
                     'class' => 'button',
                     'style' => 'color:#f00',
                     'disabled'=>'disabled',
-                    'onclick'=>"calcMarketShipPrice(0, 1);checkUpdate('ship_selector', 'ship_last_update')"
+                    'onclick'=>"calcMarketRessPrice(1);checkUpdate('ress_selector', 'ress_last_update')"
                 ],
                 'label' => 'Angebot aufgeben'
             ]);
@@ -221,12 +199,17 @@ class SellShipType extends AbstractType
         ;
         $builder->addEventListener(FormEvents::PRE_SUBMIT, function (FormEvent $event) {
             $data = $event->getData();
-            $data['costs0'] = StringUtils::parseFormattedNumber($data['costs0']);
-            $data['costs1'] = StringUtils::parseFormattedNumber($data['costs1']);
-            $data['costs2'] = StringUtils::parseFormattedNumber($data['costs2']);
-            $data['costs3'] = StringUtils::parseFormattedNumber($data['costs3']);
-            $data['costs4'] = StringUtils::parseFormattedNumber($data['costs4']);
-            $data['count'] = StringUtils::parseFormattedNumber($data['count']);
+            $data['buy0'] = array_key_exists('buy0',$data)?StringUtils::parseFormattedNumber($data['buy0']):0;
+            $data['buy1'] = array_key_exists('buy1',$data)?StringUtils::parseFormattedNumber($data['buy1']):0;
+            $data['buy2'] = array_key_exists('buy2',$data)?StringUtils::parseFormattedNumber($data['buy2']):0;
+            $data['buy3'] = array_key_exists('buy3',$data)?StringUtils::parseFormattedNumber($data['buy3']):0;
+            $data['buy4'] = array_key_exists('buy4',$data)?StringUtils::parseFormattedNumber($data['buy4']):0;
+
+            $data['sell0'] = StringUtils::parseFormattedNumber($data['sell0']);
+            $data['sell1'] = StringUtils::parseFormattedNumber($data['sell1']);
+            $data['sell2'] = StringUtils::parseFormattedNumber($data['sell2']);
+            $data['sell3'] = StringUtils::parseFormattedNumber($data['sell3']);
+            $data['sell4'] = StringUtils::parseFormattedNumber($data['sell4']);
 
             $event->setData($data);
         });
@@ -252,21 +235,21 @@ class SellShipType extends AbstractType
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
-            'tradeable_ships' => [],
             'market_user_reservation_active' => false,
             'has_alliance' => false,
             'alliance_market_level' => 0,
             'cd_enabled' => false,
             'nick_length' => 20,
+            'planet' => null,
         ]);
 
         $resolver->setRequired([
-            'tradeable_ships',
             'market_user_reservation_active',
             'has_alliance',
             'alliance_market_level',
             'cd_enabled',
             'nick_length',
+            'planet',
         ]);
     }
 }
