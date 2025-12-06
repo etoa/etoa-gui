@@ -1,0 +1,105 @@
+<div {{ attributes }}>
+    {{ form_start(this.form, {'attr': {'id': 'auction_selector'}}) }}
+        {{ form_widget(this.form.auction_last_update,{id:'auction_last_update'}) }}
+        {{ form_widget(this.form.auction_time_min,{id:'auction_time_min'}) }}
+        {{ form_widget(this.form.auction_metal,{id:'auction_metal'}) }}
+        {{ form_widget(this.form.auction_crystal,{id:'auction_crystal'}) }}
+        {{ form_widget(this.form.auction_plastic,{id:'auction_plastic'}) }}
+        {{ form_widget(this.form.auction_fuel,{id:'auction_fuel'}) }}
+        {{ form_widget(this.form.auction_food,{id:'auction_food'}) }}
+
+        <twig:Table title="Rohstoffe versteigern">
+            {% block table_content %}
+                <tr>
+                    <th style="width:10%;vertical-align:middle;">Rohstoff</th>
+                    <th style="width:10%;vertical-align:middle;">Angebot</th>
+                    <th style="width:5%;text-align:center;vertical-align:middle;">Kurs</th>
+                    <th style="width:5%;vertical-align:middle;">Preis</th>
+                    <th colspan="2" style="width:45%;text-align:center;vertical-align:middle;">Zeit</th>
+                </tr>
+                <tr>
+                    <th style="vertical-align:middle;"> {{ constant('EtoA\\Universe\\Resources\\ResourceNames::METAL') }} :</th>
+                    <td style="vertical-align:middle;">
+                        {{ form_widget(outerScope.this.form.sell0,{id:'auction_sell_metal'}) }}
+                    </td>
+                    <th style="text-align:center;vertical-align:middle;"> {{ runtimeValue('market_rate_0',1)}} </th>
+                    <td id="auction_buy_metal_field" style="vertical-align:middle;">
+                        {{ form_widget(outerScope.this.form.currency0,{id:'auction_buy_metal'}) }}
+                    </td>
+                    <th colspan="2" style="vertical-align:middle;">&nbsp;</th>
+                </tr>
+                <tr>
+                    <th style="vertical-align:middle;"> {{ constant('EtoA\\Universe\\Resources\\ResourceNames::CRYSTAL') }} :</th>
+                    <td style="vertical-align:middle;">
+                        {{ form_widget(outerScope.this.form.sell1,{id:'auction_sell_crystal'}) }}
+                    </td>
+                    <th style="text-align:center;vertical-align:middle;"> {{ runtimeValue('market_rate_1',1)}} </th>
+                    <td id="auction_buy_crystal_field" style="vertical-align:middle;">
+                        {{ form_widget(outerScope.this.form.currency1,{id:'auction_buy_crystal'}) }}
+                    </td>
+                    <th style="vertical-align:middle;">Dauer:</th>
+                    <td id="auction_time_field" style="vertical-align:middle;">
+                        {{ configValue('auction_min_duration') }} Tage
+                        {{ form_widget(outerScope.this.form.auction_time_days,{id:'auction_time_days'}) }}
+                        Tage und
+                        {{ form_widget(outerScope.this.form.auction_time_hours,{id:'auction_time_hours'}) }}
+                       Stunden
+                    </td>
+                </tr>
+                <tr>
+                    <th style="vertical-align:middle;"> {{ constant('EtoA\\Universe\\Resources\\ResourceNames::PLASTIC') }} :</th>
+                    <td style="vertical-align:middle;">
+                        {{ form_widget(outerScope.this.form.sell2,{id:'auction_sell_plastic'}) }}
+                    </td>
+                    <th style="text-align:center;vertical-align:middle;"> {{ runtimeValue('market_rate_2',1)}} </th>
+                    <td id="auction_buy_plastic_field" style="vertical-align:middle;">
+                        {{ form_widget(outerScope.this.form.currency2,{id:'auction_buy_plastic'}) }}
+                    </td>
+                    <th colspan="2" style="vertical-align:middle;">&nbsp;</th>
+                </tr>
+                <tr>
+                    <th style="vertical-align:middle;"> {{ constant('EtoA\\Universe\\Resources\\ResourceNames::FUEL') }} :</th>
+                    <td style="vertical-align:middle;">
+                        {{ form_widget(outerScope.this.form.sell3,{id:'auction_sell_fuel'}) }}
+                    </td>
+                    <th style="text-align:center;vertical-align:middle;"> {{ runtimeValue('market_rate_3',1)}} </th>
+                    <td id="auction_buy_fuel_field" style="vertical-align:middle;">
+                        {{ form_widget(outerScope.this.form.currency3,{id:'auction_buy_fuel'}) }}
+                    </td>
+                    <th style="vertical-align:middle;">Ende:</th>
+                    <td id="auction_end_time" style="vertical-align:middle;">
+                        {{ (date().timestamp + (outerScope.this.minDuration * 24 * 3600))|date("d.m.Y H:i") }}
+                    </td>
+                </tr>
+                <tr>
+                    <th style="vertical-align:middle;"> {{ constant('EtoA\\Universe\\Resources\\ResourceNames::FOOD') }} :</th>
+                    <td style="vertical-align:middle;">
+                        {{ form_widget(outerScope.this.form.sell4,{id:'auction_sell_food'}) }}
+                    </td>
+                    <th style="text-align:center;vertical-align:middle;"> {{ runtimeValue('market_rate_4',1)}} </th>
+                    <td id="auction_buy_food_field" style="vertical-align:middle;">
+                        {{ form_widget(outerScope.this.form.currency4,{id:'auction_buy_food'}) }}
+                    </td>
+                    <th colspan="2" style="vertical-align:middle;">&nbsp;</th>
+                </tr>
+                <tr>
+                    <th>Beschreibung</th>
+                    <td colspan="5">
+                        {{ form_widget(outerScope.this.form.text, {
+                            'attr': {
+                                'data-tooltip': 'Schreib einen kleinen Werbetext für deine Waren.',
+                                'data-tooltip-title': 'Text'
+                            },
+                            id:'auction_text'
+                        }) }}
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="6" id="auction_check_message" style="text-align:center;vertical-align:middle;height:30px;">&nbsp;</td>
+                </tr>
+            {% endblock %}
+        </twig:Table>
+        {{ form_widget(this.form.submit,{id:'auction_sell_submit'}) }}
+    {{ form_end(this.form) }}
+</div>
+

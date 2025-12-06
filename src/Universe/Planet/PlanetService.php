@@ -16,14 +16,12 @@ use EtoA\Log\LogRepository;
 use EtoA\Log\LogSeverity;
 use EtoA\Ship\ShipListRepository;
 use EtoA\Ship\ShipQueueRepository;
-use EtoA\Ship\ShipRepository;
 
 class PlanetService
 {
     public function __construct(
         private readonly PlanetRepository           $repository,
         private readonly BuildingListItemRepository $buildingRepository,
-        private readonly ShipRepository             $shipRepository,
         private readonly DefenseRepository          $defenseRepository,
         private readonly ConfigurationService       $config,
         private readonly LogRepository              $logRepository,

@@ -56,20 +56,20 @@ class MarketAuction
     #[ORM\Column]
     private string $text = '';
 
-    #[ORM\Column('currency_0', type: "integer")]
-    private int $currency0 = 1;
+    #[ORM\Column('currency_0', type: "boolean")]
+    private bool $currency0 = true;
 
-    #[ORM\Column('currency_1', type: "integer")]
-    private int $currency1 = 1;
+    #[ORM\Column('currency_1', type: "boolean")]
+    private bool $currency1 = true;
 
-    #[ORM\Column('currency_2', type: "integer")]
-    private int $currency2 = 1;
+    #[ORM\Column('currency_2', type: "boolean")]
+    private bool $currency2 = true;
 
-    #[ORM\Column('currency_3', type: "integer")]
-    private int $currency3 = 1;
+    #[ORM\Column('currency_3', type: "boolean")]
+    private bool $currency3 = true;
 
-    #[ORM\Column('currency_4', type: "integer")]
-    private int $currency4 = 1;
+    #[ORM\Column('currency_4', type: "boolean")]
+    private bool $currency4 = true;
 
     #[ORM\JoinColumn(name: 'current_buyer_id', referencedColumnName: 'user_id')]
     #[ORM\ManyToOne(targetEntity: User::class)]
@@ -267,60 +267,60 @@ class MarketAuction
         return $this;
     }
 
-    public function getCurrency0(): ?int
+    public function getCurrency0(): ?bool
     {
         return $this->currency0;
     }
 
-    public function setCurrency0(int $currency0): static
+    public function setCurrency0(bool $currency0): static
     {
         $this->currency0 = $currency0;
 
         return $this;
     }
 
-    public function getCurrency1(): ?int
+    public function getCurrency1(): ?bool
     {
         return $this->currency1;
     }
 
-    public function setCurrency1(int $currency1): static
+    public function setCurrency1(bool $currency1): static
     {
         $this->currency1 = $currency1;
 
         return $this;
     }
 
-    public function getCurrency2(): ?int
+    public function getCurrency2(): ?bool
     {
         return $this->currency2;
     }
 
-    public function setCurrency2(int $currency2): static
+    public function setCurrency2(bool $currency2): static
     {
         $this->currency2 = $currency2;
 
         return $this;
     }
 
-    public function getCurrency3(): ?int
+    public function getCurrency3(): ?bool
     {
         return $this->currency3;
     }
 
-    public function setCurrency3(int $currency3): static
+    public function setCurrency3(bool $currency3): static
     {
         $this->currency3 = $currency3;
 
         return $this;
     }
 
-    public function getCurrency4(): ?int
+    public function getCurrency4(): ?bool
     {
         return $this->currency4;
     }
 
-    public function setCurrency4(int $currency4): static
+    public function setCurrency4(bool $currency4): static
     {
         $this->currency4 = $currency4;
 
