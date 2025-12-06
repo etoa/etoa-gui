@@ -10,7 +10,6 @@ use EtoA\Entity\Planet;
 use EtoA\Entity\Ship;
 use EtoA\Entity\ShipListItem;
 use EtoA\Entity\User;
-use EtoA\Universe\Entity\EntityRepository;
 
 /**
  * @extends ServiceEntityRepository<ShipListItem>
@@ -22,7 +21,7 @@ use EtoA\Universe\Entity\EntityRepository;
  */
 class ShipListRepository extends AbstractRepository
 {
-    public function __construct(ManagerRegistry $registry, private readonly EntityRepository $entityRepository)
+    public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, ShipListItem::class);
     }

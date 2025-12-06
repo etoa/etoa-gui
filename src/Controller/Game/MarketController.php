@@ -8,7 +8,9 @@ use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Form\Type\Core\CheckboxType;
 use EtoA\Market\MarketResourceRepository;
 use EtoA\Market\MarketService;
+use EtoA\Market\MarketShipRepository;
 use EtoA\Message\MarketReportRepository;
+use EtoA\Ship\ShipListRepository;
 use EtoA\Support\StringUtils;
 use EtoA\Universe\Planet\PlanetRepository;
 use EtoA\Universe\Resources\BaseResources;
@@ -28,7 +30,9 @@ class MarketController extends AbstractGameController
         private readonly BuildingListItemRepository $buildingListItemRepository,
         private readonly MarketService $marketService,
         private readonly MarketResourceRepository $marketResourceRepository,
-        private readonly MarketReportRepository $marketReportRepository
+        private readonly MarketReportRepository $marketReportRepository,
+        private readonly MarketShipRepository $marketShipRepository,
+        private readonly ShipListRepository $shipListRepository
     )
     {
     }
@@ -76,12 +80,12 @@ class MarketController extends AbstractGameController
 
     #[Route('/game/market/sell', name: 'game.market.sell')]
     public function sell(Request $request): Response {
-        $offers = $this->marketResourceRepository->getUserOffers($this->getUser()->getData());
+        $offersRess = $this->marketResourceRepository->getUserOffers($this->getUser()->getData());
         $cp = $this->planetRepository->find($request->getSession()->get('cpid'));
         $market = $this->buildingListItemRepository->findOneBy(['user'=>$this->getUser()->getData(),'entity'=>$cp,'building'=>BuildingId::MARKET]);
         $returnFactor =  floor((1 - 1 / ($market ->getCurrentLevel()+ 1)) * 100) / 100;
 
-        $form = $this->createFormBuilder(['offers'=>$offers])
+        $formRess = $this->createFormBuilder(['offers'=>$offersRess])
             ->add('offers', CollectionType::class, [
                 'entry_type' => CheckboxType::class,
                 'label' => false,
@@ -94,8 +98,8 @@ class MarketController extends AbstractGameController
             ->getForm()
             ->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            foreach ($form->get('offers')->all() as $marketOffer) {
+        if ($formRess->isSubmitted() && $formRess->isValid()) {
+            foreach ($formRess->get('offers')->all() as $marketOffer) {
                 if($marketOffer->get('checkbox')->getData()) {
                     $sellResources = $marketOffer->getData()->getSellResources();
                     $returnResources = new PreciseResources();
@@ -115,12 +119,50 @@ class MarketController extends AbstractGameController
 
                     $this->marketResourceRepository->delete($marketOffer->getData());
                     $this->addFlash('success', "Angebot wurde gelöscht und du hast " . ($currentReturnFactor * 100) . "% der angebotenen Rohstoffe zur&uuml;ck erhalten!");
+                    return $this->redirectToRoute('game.market.sell');
+                }
+            }
+        }
+
+        ////
+        $offersShip = $this->marketShipRepository->getUserOffers($this->getUser()->getData());
+
+        $formShip = $this->createFormBuilder(['offers'=>$offersShip])
+            ->add('offers', CollectionType::class, [
+                'entry_type' => CheckboxType::class,
+                'label' => false,
+                'required' => false,
+            ])
+            ->add('submit', SubmitType::class, [
+                'label' => 'Angebot zurückziehen'
+            ])
+
+            ->getForm()
+            ->handleRequest($request);
+
+        if ($formShip->isSubmitted() && $formShip->isValid()) {
+            foreach ($formShip->get('offers')->all() as $marketOffer) {
+                if($marketOffer->get('checkbox')->getData()) {
+                    $currentMarket = $this->buildingListItemRepository->findOneBy(['user'=>$this->getUser()->getData(),'entity'=>$marketOffer->getData()->getEntity(),'building'=>BuildingId::MARKET]);
+                    $currentReturnFactor = floor((1 - 1 / ($currentMarket ->getCurrentLevel()+ 1)) * 100) / 100;
+                    $returnCount = (int)floor($marketOffer->getData()->getCount() * $currentReturnFactor);
+
+                    if ($returnCount > 0) {
+                        $this->shipListRepository->addShip($marketOffer->getData()->getShip(), $returnCount, $marketOffer->getData()->getUser(), $marketOffer->getData()->getEntity());
+                    }
+
+                    $this->marketReportRepository->addShipReport($marketOffer->getData()->getId(), $this->getUser()->getData(), $marketOffer->getData()->getEntity()->getEntity(), null, $marketOffer->getData()->getShip(), $marketOffer->getData()->getCount(), "shipcancel", $marketOffer->getData()->getCosts(), $currentReturnFactor);
+
+                    $this->marketShipRepository->delete($marketOffer->getData());
+                    $this->addFlash('success', "Angebot wurde gelöscht und du hast " . ($currentReturnFactor * 100) . "% der angebotenen Schiffe zurück erhalten! (es wird abgerundet)");
+                    return $this->redirectToRoute('game.market.sell');
                 }
             }
         }
 
         return $this->render('game/market/sell.html.twig',[
-            'form' => $form,
+            'formRess' => $formRess,
+            'formShip'=> $formShip,
             'marketLevel' => $market->getCurrentLevel(),
             'planetName' => $cp->getName(),
             'returnFactor' => $returnFactor

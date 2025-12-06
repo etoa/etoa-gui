@@ -110,20 +110,9 @@ class MarketShipRepository extends AbstractRepository
     /**
      * @return MarketShip[]
      */
-    public function getUserOffers(int $userId): array
+    public function getUserOffers(User $user): array
     {
-        $data = $this->createQueryBuilder('q')
-            ->select('*')
-            ->from('market_ship')
-            ->where('user_id = :userId')
-            ->andWhere('buyable = 1')
-            ->orderBy('datum', 'ASC')
-            ->setParameters([
-                'userId' => $userId,
-            ])
-            ->fetchAllAssociative();
-
-        return array_map(fn (array $row) => new MarketShip($row), $data);
+        return $this->findBy(['user'=>$user,'buyable'=>true],['date'=>'ASC']);
     }
 
     public function getUserOffer(int $id, int $userId): ?MarketShip
