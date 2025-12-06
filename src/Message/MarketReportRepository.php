@@ -53,7 +53,7 @@ class MarketReportRepository extends ReportRepository
         $this->save();
     }
 
-    public function addResourceReport(int $marketId, User $user, Entity $entity, ?User $opponent, BaseResources $sellResources, string $subType, BaseResources $costs, float $factor = 1.0, string $content = null, int $timestamp2 = 0, ?Entity $entity2 = null, ?Fleet $fleet1 = null, ?Fleet $fleet2 = null): void
+    public function addResourceReport(int $marketId, User $user, Entity $entity, ?User $opponent, BaseResources $sellResources, string $subType, BaseResources $costs, float $factor = 1.0, ?string $content = null, int $timestamp2 = 0, ?Entity $entity2 = null, ?Fleet $fleet1 = null, ?Fleet $fleet2 = null): void
     {
         $report = $this->addReport(ReportTypes::MARKET->value, $user, null, $content, $entity, $entity2, $opponent);
 

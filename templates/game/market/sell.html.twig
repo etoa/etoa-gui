@@ -1,0 +1,54 @@
+{% extends 'game/market/market.html.twig' %}
+{% import 'macros.html.twig' as macros %}
+
+{% block market %}
+    {% if form.offers.vars.data %}
+        {{ form_start(form) }}
+        <twig:Table title="Rohstoffe">
+            {% block table_content %}
+                <tr>
+                    <th>Rohstoffe:</th>
+                    <th>Angebot:</th>
+                    <th>Preis:</th>
+                    <th>Marktplatz:</th>
+                    <th>Datum/Text:</th>
+                    <th>Zurückziehen:</th>
+                </tr>
+                {% for offer in form.offers %}
+                    {% for rk,rn in constant('EtoA\\Universe\\Resources\\ResourceNames::NAMES') %}
+                        <tr>
+                            <td class="rescolor{{ rk }}"> {{ constant('EtoA\\Universe\\Resources\\ResIcons::ICONS')[rk]|raw }}  <b> {{ rn }} </b>:</td>
+                            <td class="rescolor{{ rk }}"> {{ (offer.vars.data.sellResources.get(rk) > 0 ?
+                            formatNumber(offer.vars.data.sellResources.get(rk)) : '-') }} </td>
+                            <td class="rescolor{{ rk }}"> {{ (offer.vars.data.buyResources.get(rk) > 0 ?
+                            formatNumber(offer.vars.data.buyResources.get(rk)) : '-') }} </td>
+                            {% if loop.first %}
+                                <td rowspan="5">{{ offer.vars.data.entity.entity.toString }} {{ offer.vars.data.entity.name }}</td>
+                                <td rowspan="5"> {{ offer.vars.data.date|date("d.m.Y  G:i:s") }}<br/><br/>
+                                    {{ offer.vars.data.text }}
+                                </td>
+                                <td rowspan="5" {{tm('','Wenn du das Angebot zurückziehst erhälst du '~(returnFactor * 100)~
+                                '% des Angebotes zurück (abgerundet)')|raw}}>
+                                    {{form_widget(offer.checkbox)}}
+                                    <br/><br/>
+                                    {% if offer.vars.data.forUser %}
+                                        <span class="userAllianceMemberColor">Für Spieler {{ offer.vars.data.forUser }} reserviert</span>
+                                    {% elseif offer.vars.data.forAlliance %}
+                                        <span class="userAllianceMemberColor">Für Allianzmitglied Reserviert</span>
+                                    {% endif %}
+                                </td>
+                            {% endif %}
+                        </tr>
+                    {% endfor %}
+                    {% if not loop.last %}
+                        <tr><td colspan="7" style="height:10px;background:#000"></td></tr>
+                    {% endif %}
+                {% endfor %}
+            {% endblock %}
+        </twig:Table>
+        {{ form_widget(form.submit) }}
+        {{ form_end(form) }}<br/><br/>
+    {% else %}
+        {{ macros.message('Rohstoffe','Keine Angebote vorhanden!') }}
+    {% endif %}
+{% endblock %}
