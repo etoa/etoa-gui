@@ -4,6 +4,7 @@ namespace EtoA\Market;
 
 use Doctrine\Persistence\ManagerRegistry;
 use EtoA\Core\AbstractRepository;
+use EtoA\Entity\Alliance;
 use EtoA\Entity\MarketResource;
 use EtoA\Entity\Planet;
 use EtoA\Entity\User;
@@ -78,43 +79,41 @@ class MarketResourceRepository extends AbstractRepository
     /**
      * @return MarketResource[]
      */
-    public function getBuyableOffers(int $userId, int $allianceId, BaseResources $sellFilter, BaseResources $buyFilter): array
+    public function getBuyableOffers(User $user, ?BaseResources $sellFilter = null, ?BaseResources $buyFilter = null): array
     {
         $qb = $this->createQueryBuilder('q')
-            ->select('*')
-            ->from('market_ressource')
-            ->where('user_id <> :userId')
-            ->andWhere('for_user = 0 OR for_user = :userId')
-            ->andWhere('for_alliance = 0 OR for_alliance = :allianceId')
+            ->where('q.user <> :userId')
+            ->andWhere('q.forUser IS NULL OR q.forUser = :userId')
+            ->andWhere('q.forAlliance IS NULL OR q.forAlliance = :allianceId')
             ->setParameters([
-                'userId' => $userId,
-                'allianceId' => $allianceId,
+                'userId' => $user,
+                'allianceId' => $user->getAlliance(),
             ]);
 
-        if ($sellFilter->getSum() > 0) {
+
+        if ($sellFilter && $sellFilter->getSum() > 0) {
             $filter = [];
             foreach (array_keys(ResourceNames::NAMES) as $index) {
                 if ($sellFilter->get($index) > 0) {
-                    $filter[] = 'sell_' . $index . ' > 0';
+                    $filter[] = 'q.sell' . $index . ' > 0';
                 }
             }
             $qb->andWhere(implode(' OR ', $filter));
         }
 
-        if ($buyFilter->getSum() > 0) {
+        if ($buyFilter && $buyFilter->getSum() > 0) {
             $filter = [];
             foreach (array_keys(ResourceNames::NAMES) as $index) {
                 if ($buyFilter->get($index) > 0) {
-                    $filter[] = 'buy_' . $index . ' > 0';
+                    $filter[] = 'q.buy' . $index . ' > 0';
                 }
             }
             $qb->andWhere(implode(' OR ', $filter));
         }
 
-        $data = $qb
-            ->fetchAllAssociative();
-
-        return array_map(fn (array $row) => new MarketResource($row), $data);
+        return $qb
+            ->getQuery()
+            ->execute();
     }
 
     public function countBuyableOffers(int $userId, int $allianceId): int

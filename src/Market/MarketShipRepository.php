@@ -70,21 +70,18 @@ class MarketShipRepository extends AbstractRepository
     /**
      * @return MarketShip[]
      */
-    public function getBuyableOffers(int $userId, int $allianceId): array
+    public function getBuyableOffers(User $user): array
     {
-        $data = $this->createQueryBuilder('q')
-            ->select('*')
-            ->from('market_ship')
-            ->where('user_id <> :userId')
-            ->andWhere('for_user = 0 OR for_user = :userId')
-            ->andWhere('for_alliance = 0 OR for_alliance = :allianceId')
+        return $this->createQueryBuilder('q')
+            ->where('q.user <> :userId')
+            ->andWhere('q.forUser is NULL OR q.forUser = :userId')
+            ->andWhere('q.forAlliance IS NULL OR q.forAlliance = :allianceId')
             ->setParameters([
-                'userId' => $userId,
-                'allianceId' => $allianceId,
+                'userId' => $user,
+                'allianceId' => $user->getAlliance(),
             ])
-            ->fetchAllAssociative();
-
-        return array_map(fn (array $row) => new MarketShip($row), $data);
+            ->getQuery()
+            ->execute();
     }
 
     public function getBuyableOffer(int $id, int $userId, int $allianceId): ?MarketShip

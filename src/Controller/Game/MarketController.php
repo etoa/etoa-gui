@@ -213,6 +213,17 @@ class MarketController extends AbstractGameController
 
     #[Route('/game/market/search', name: 'game.market.search')]
     public function search(): Response {
+        //Ressourcen
+        $offersRess = $this->marketResourceRepository->getBuyableOffers($this->getUser()->getData());
 
+        //Schiffe
+        $offersShip = $this->marketShipRepository->getBuyableOffers($this->getUser()->getData());
+
+        //Auktionen
+        $offersAuction = $this->marketAuctionRepository->getBuyableAuctions($this->getUser()->getData());
+
+        return $this->render('game/market/search.html.twig',[
+
+        ]);
     }
 }
