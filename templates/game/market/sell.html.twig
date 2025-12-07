@@ -102,4 +102,64 @@
         {{ macros.message('Schiffe','Keine Angebote vorhanden!') }}
     {% endif %}
 
+
+
+    {% if formAuction.offers.vars.data %}
+        {{ form_start(formAuction) }}
+        <twig:Table title="Rohstoffe">
+            {% block table_content %}
+                <tr>
+                    <th>Angebot</th>
+                    <th>Beschreibung</th>
+                    <th style="width:100px;">Angebotsende</th>
+                    <th style="width:50px;">Gebote</th>
+                    <th>Aktuelles Gebot</th>
+                    <th>Zurückziehen</th>
+                </tr>
+                {% for offer in formAuction.offers %}
+                    <td>
+                        {% for rk,rn in constant('EtoA\\Universe\\Resources\\ResourceNames::NAMES') %}
+                            {% if offer.vars.data.getSellResources.get(rk) > 0 %}
+                                <span class="rescolor{{ rk }}"> {{ constant('EtoA\\Universe\\Resources\\ResIcons::ICONS')[rk]|raw }}  <b> {{ rn }} </b>:</span>
+                                <span class="rescolor{{ rk }}"> {{ formatNumber(offer.vars.data.getSellResources.get(rk)) }} </span>
+                            {% endif %}
+                        {% endfor %}
+                    </td>
+                    <td>{{ offer.vars.data.text }}</td>
+                    <td>
+                        {% if (offer.vars.data.dateEnd - date().timestamp) <= 0 %}
+                            Auktion beendet!
+                        {% else %}
+                            {{ formatTimespan(offer.vars.data.dateEnd - date().timestamp) }}
+                        {% endif %}
+                    </td>
+                    <td>{{ offer.vars.data.bidCount }}</td>
+                    <td>
+                        {% for rk,rn in constant('EtoA\\Universe\\Resources\\ResourceNames::NAMES') %}
+                            {% if offer.vars.data.getBuyResources.get(rk) > 0 %}
+                                <span class="rescolor{{ rk }}"> {{ constant('EtoA\\Universe\\Resources\\ResIcons::ICONS')[rk]|raw }}  <b> {{ rn }} </b>:</span>
+                                <span class="rescolor{{ rk }}"> {{ offer.vars.data.getBuyResources.get(rk) }}</span>
+                            {% endif %}
+                        {% endfor %}
+                    </td>
+                    <td {{tm('','Wenn du das Angebot zurückziehst erhälst du '~(returnFactor * 100)~
+                    '% des Angebotes zurück (abgerundet)')|raw}}>
+                        {% if (offer.vars.data.dateEnd - date().timestamp) > 0 and offer.vars.data.bidCount == 0 and offer.vars.data.buyable %}
+                            {{form_widget(offer.checkbox)}}
+                        {% endif %}
+                    </td>
+                    {% if not loop.last %}
+                        <tr><td colspan="6" style="height:10px;background:#000"></td></tr>
+                    {% endif %}
+                {% endfor %}
+            {% endblock %}
+        </twig:Table>
+        {{ form_widget(formAuction.submit) }}
+        {{ form_widget(formAuction._token) }}
+        {{ form_end(formAuction,{render_rest:false}) }}<br/><br/>
+    {% else %}
+        {{ macros.message('Auktionen','Keine Auktionen vorhanden!') }}
+    {% endif %}
+
+
 {% endblock %}

@@ -148,19 +148,9 @@ class MarketAuctionRepository extends AbstractRepository
     /**
      * @return MarketAuction[]
      */
-    public function getUserAuctions(int $userId): array
+    public function getUserAuctions(User $user): array
     {
-        $data = $this->createQueryBuilder('q')
-            ->select('*')
-            ->from('market_auction')
-            ->where('user_id = :userId')
-            ->orderBy('date_end', 'ASC')
-            ->setParameters([
-                'userId' => $userId,
-            ])
-            ->fetchAllAssociative();
-
-        return array_map(fn (array $row) => new MarketAuction($row), $data);
+        return $this->findBy(['user'=>$user,'buyable'=>true],['dateEnd'=>'ASC']);
     }
 
     public function getUserAuction(int $id, int $userId): ?MarketAuction
