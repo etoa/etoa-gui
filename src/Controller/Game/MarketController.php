@@ -212,18 +212,13 @@ class MarketController extends AbstractGameController
     }
 
     #[Route('/game/market/search', name: 'game.market.search')]
-    public function search(): Response {
-        //Ressourcen
-        $offersRess = $this->marketResourceRepository->getBuyableOffers($this->getUser()->getData());
-
-        //Schiffe
-        $offersShip = $this->marketShipRepository->getBuyableOffers($this->getUser()->getData());
-
-        //Auktionen
-        $offersAuction = $this->marketAuctionRepository->getBuyableAuctions($this->getUser()->getData());
+    public function search(Request $request): Response {
+        $cp = $this->planetRepository->find($request->getSession()->get('cpid'));
+        $market = $this->buildingListItemRepository->findOneBy(['user'=>$this->getUser()->getData(),'entity'=>$cp,'building'=>BuildingId::MARKET]);
 
         return $this->render('game/market/search.html.twig',[
-
+            'marketLevel' => $market->getCurrentLevel(),
+            'planetName' => $cp->getName(),
         ]);
     }
 }

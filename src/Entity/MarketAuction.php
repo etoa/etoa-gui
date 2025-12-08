@@ -121,11 +121,11 @@ class MarketAuction
     public function getCurrencyResources(): BaseResources
     {
         $resources = new BaseResources();
-        $resources->metal = $this->currency0;
-        $resources->crystal = $this->currency1;
-        $resources->plastic = $this->currency2;
-        $resources->fuel = $this->currency3;
-        $resources->food = $this->currency4;
+        $resources->metal = (int)$this->currency0;
+        $resources->crystal = (int)$this->currency1;
+        $resources->plastic = (int)$this->currency2;
+        $resources->fuel = (int)$this->currency3;
+        $resources->food = (int)$this->currency4;
 
         return $resources;
     }

@@ -180,19 +180,17 @@ class ShipDataRepository extends AbstractRepository
     public function getShip(int $shipId, bool $onlyShipShow = true): ?Ship
     {
         $qb = $this->createQueryBuilder('q')
-            ->select('*')
-            ->from('ships')
-            ->andWhere('ship_id = :shipId')
+            ->andWhere('q.id = :shipId')
             ->setParameter('shipId', $shipId);
 
         if ($onlyShipShow) {
-            $qb->andWhere('ship_show = 1');
+            $qb->andWhere('q.show = 1');
         }
 
-        $data = $qb
-            ->fetchAssociative();
-
-        return $data !== false ? new Ship($data) : null;
+        return $qb
+            ->setMaxResults(1)
+            ->getQuery()
+            ->getOneOrNullResult();
     }
 
     /**

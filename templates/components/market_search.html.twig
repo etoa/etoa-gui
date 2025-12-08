@@ -1,0 +1,367 @@
+<div {{ attributes }}>
+    <twig:Table title="Suchfilter">
+        {% block table_content %}
+            <tr>
+                <td>
+                    <div id="market_search_filter_category_selector">
+                        Kategorie:
+                        <select
+                                data-model="searchCat"
+                                id="search_cat"
+                                name="search_cat"
+                        >
+                            <option value="resources" {{ outerScope.this.searchCat == 'resources' ? 'selected' : '' }}>
+                                Rohstoffe
+                            </option>
+                            {% if outerScope.this.canShowShips %}
+                                <option value="ships" {{ outerScope.this.searchCat == 'ships' ? 'selected' : '' }}>
+                                    Schiffe
+                                </option>
+                            {% endif %}
+                            {% if outerScope.this.canShowAuctions %}
+                                <option value="auctions" {{ outerScope.this.searchCat == 'auctions' ? 'selected' : '' }}>
+                                    Auktionen
+                                </option>
+                            {% endif %}
+                        </select>
+                    </div>
+
+                    {# Resource filters #}
+                    <div id="market_search_filter_container_res"
+                         style="{{ outerScope.this.searchCat == 'resources' ? '' : 'display:none;' }}">
+                        <span>Angebot:</span>
+                        <input
+                                type="checkbox"
+                                id="market_search_filter_supply_0"
+                                data-model="supplyMetal"
+                                {{ outerScope.this.supplyMetal ? 'checked' : '' }}
+                        />
+                        <label for="market_search_filter_supply_0"
+                               class="rescolor0">{{ outerScope.this.resourceNames[0] }}</label>
+
+                        <input
+                                type="checkbox"
+                                id="market_search_filter_supply_1"
+                                data-model="supplyCrystal"
+                                {{ outerScope.this.supplyCrystal ? 'checked' : '' }}
+                        />
+                        <label for="market_search_filter_supply_1"
+                               class="rescolor1">{{ outerScope.this.resourceNames[1] }}</label>
+
+                        <input
+                                type="checkbox"
+                                id="market_search_filter_supply_2"
+                                data-model="supplyPlastic"
+                                {{ outerScope.this.supplyPlastic ? 'checked' : '' }}
+                        />
+                        <label for="market_search_filter_supply_2"
+                               class="rescolor2">{{ outerScope.this.resourceNames[2] }}</label>
+
+                        <input
+                                type="checkbox"
+                                id="market_search_filter_supply_3"
+                                data-model="supplyFuel"
+                                {{ outerScope.this.supplyFuel ? 'checked' : '' }}
+                        />
+                        <label for="market_search_filter_supply_3"
+                               class="rescolor3">{{ outerScope.this.resourceNames[3] }}</label>
+
+                        <input
+                                type="checkbox"
+                                id="market_search_filter_supply_4"
+                                data-model="supplyFood"
+                                {{ outerScope.this.supplyFood ? 'checked' : '' }}
+                        />
+                        <label for="market_search_filter_supply_4"
+                               class="rescolor4">{{ outerScope.this.resourceNames[4] }}</label>
+
+                        <br/>
+
+                        <span>Preis:</span>
+                        <input
+                                type="checkbox"
+                                id="market_search_filter_demand_0"
+                                data-model="demandMetal"
+                                {{ outerScope.this.demandMetal ? 'checked' : '' }}
+                        />
+                        <label for="market_search_filter_demand_0"
+                               class="rescolor0">{{ outerScope.this.resourceNames[0] }}</label>
+
+                        <input
+                                type="checkbox"
+                                id="market_search_filter_demand_1"
+                                data-model="demandCrystal"
+                                {{ outerScope.this.demandCrystal ? 'checked' : '' }}
+                        />
+                        <label for="market_search_filter_demand_1"
+                               class="rescolor1">{{ outerScope.this.resourceNames[1] }}</label>
+
+                        <input
+                                type="checkbox"
+                                id="market_search_filter_demand_2"
+                                data-model="demandPlastic"
+                                {{ outerScope.this.demandPlastic ? 'checked' : '' }}
+                        />
+                        <label for="market_search_filter_demand_2"
+                               class="rescolor2">{{ outerScope.this.resourceNames[2] }}</label>
+
+                        <input
+                                type="checkbox"
+                                id="market_search_filter_demand_3"
+                                data-model="demandFuel"
+                                {{ outerScope.this.demandFuel ? 'checked' : '' }}
+                        />
+                        <label for="market_search_filter_demand_3"
+                               class="rescolor3">{{ outerScope.this.resourceNames[3] }}</label>
+
+                        <input
+                                type="checkbox"
+                                id="market_search_filter_demand_4"
+                                data-model="demandFood"
+                                {{ outerScope.this.demandFood ? 'checked' : '' }}
+                        />
+                        <label for="market_search_filter_demand_4"
+                               class="rescolor4">{{ outerScope.this.resourceNames[4] }}</label>
+
+                        <br/>
+
+                        <input
+                                type="checkbox"
+                                id="market_search_filter_payable"
+                                data-model="filterPayable"
+                                {{ outerScope.this.filterPayable ? 'checked' : '' }}
+                        />
+                        <label for="market_search_filter_payable" style="width:200px;">Nur bezahlbare Angebote anzeigen</label>
+                    </div>
+
+                    {# Ship filters #}
+                    <div id="market_search_filter_container_ship"
+                         style="{{ outerScope.this.searchCat == 'ships' ? '' : 'display:none;' }}">
+                        <span>Preis:</span>
+                        <input
+                                type="checkbox"
+                                id="market_ship_search_filter_demand_0"
+                                data-model="shipDemandMetal"
+                                {{ outerScope.this.shipDemandMetal ? 'checked' : '' }}
+                        />
+                        <label for="market_ship_search_filter_demand_0"
+                               class="rescolor0">{{ outerScope.this.resourceNames[0] }}</label>
+
+                        <input
+                                type="checkbox"
+                                id="market_ship_search_filter_demand_1"
+                                data-model="shipDemandCrystal"
+                                {{ outerScope.this.shipDemandCrystal ? 'checked' : '' }}
+                        />
+                        <label for="market_ship_search_filter_demand_1"
+                               class="rescolor1">{{ outerScope.this.resourceNames[1] }}</label>
+
+                        <input
+                                type="checkbox"
+                                id="market_ship_search_filter_demand_2"
+                                data-model="shipDemandPlastic"
+                                {{ outerScope.this.shipDemandPlastic ? 'checked' : '' }}
+                        />
+                        <label for="market_ship_search_filter_demand_2"
+                               class="rescolor2">{{ outerScope.this.resourceNames[2] }}</label>
+
+                        <input
+                                type="checkbox"
+                                id="market_ship_search_filter_demand_3"
+                                data-model="shipDemandFuel"
+                                {{ outerScope.this.shipDemandFuel ? 'checked' : '' }}
+                        />
+                        <label for="market_ship_search_filter_demand_3"
+                               class="rescolor3">{{ outerScope.this.resourceNames[3] }}</label>
+
+                        <input
+                                type="checkbox"
+                                id="market_ship_search_filter_demand_4"
+                                data-model="shipDemandFood"
+                                {{ outerScope.this.shipDemandFood ? 'checked' : '' }}
+                        />
+                        <label for="market_ship_search_filter_demand_4"
+                               class="rescolor4">{{ outerScope.this.resourceNames[4] }}</label>
+
+                        <br/>
+
+                        <input
+                                type="checkbox"
+                                id="market_ship_search_filter_payable"
+                                data-model="shipFilterPayable"
+                                {{ outerScope.this.shipFilterPayable ? 'checked' : '' }}
+                        />
+                        <label for="market_ship_search_filter_payable" style="width:200px;">Nur bezahlbare Angebote
+                            anzeigen</label>
+                    </div>
+
+                    {# Auction filters #}
+                    <div id="market_search_filter_container_auction"
+                         style="{{ outerScope.this.searchCat == 'auctions' ? '' : 'display:none;' }}">
+                        {# Auctions don't need additional filters #}
+                    </div>
+                </td>
+            </tr>
+        {% endblock %}
+    </twig:Table>
+
+    <div id="market_search_results">
+        {% set offers = this.filteredOffers %}
+
+        {% if offers|length > 0 %}
+            {# Resource offers #}
+            {% if this.searchCat == 'resources' %}
+                <twig:Table>
+                    {% block table_content %}
+                        <thead>
+                            <tr>
+                                <th class="infoboxtitle" colspan="20">Rohstoffangebote ({{ offers|length }})</th>
+                            </tr>
+                            <tr>
+                                <th>Rohstoffe</th>
+                                <th>Angebot</th>
+                                <th>Preis</th>
+                                <th>Anbieter</th>
+                                <th>Entfernung</th>
+                                <th>Beschreibung</th>
+                                <th style="width:50px;">Kaufen</th>
+                            </tr>
+                        </thead>
+                        {% for offer in offers %}
+                            {% for rk, rn in outerScope.this.getResourceNames %}
+                                {% if offer.sellResources.get(rk) > 0 or offer.buyResources.get(rk) > 0 %}
+                                    <tr>
+                                        <td class="rescolor{{ rk }}"> {{ constant('EtoA\\Universe\\Resources\\ResIcons::ICONS')[rk]|raw }}
+                                            <b> {{ rn }} </b>:
+                                        </td>
+                                        <td class="rescolor{{ rk }}">
+                                            {{ offer.sellResources.get(rk) > 0 ? formatNumber(offer.sellResources.get(rk)) : '-' }}
+                                        </td>
+                                        <td class="rescolor{{ rk }}">
+                                            {{ offer.buyResources.get(rk) > 0 ? formatNumber(offer.buyResources.get(rk)) : '-' }}
+                                        </td>
+                                        {% if loop.first %}
+                                            <td rowspan={{ outerScope.this.getRessourceCount(offer.buyResources)+outerScope.this.getRessourceCount(offer.sellResources) }}>{{ offer.user.nick }}</td>
+                                            <td rowspan={{ outerScope.this.getRessourceCount(offer.buyResources)+outerScope.this.getRessourceCount(offer.sellResources) }}>{{ formatTimespan(outerScope.this.getDuration(offer)) }}</td>
+                                            <td rowspan={{ outerScope.this.getRessourceCount(offer.buyResources)+outerScope.this.getRessourceCount(offer.sellResources) }}>{{ offer.text }}</td>
+                                            <td rowspan={{ outerScope.this.getRessourceCount(offer.buyResources)+outerScope.this.getRessourceCount(offer.sellResources) }}></td>
+                                        {% endif %}
+                                    </tr>
+                                {% endif %}
+                            {% endfor %}
+                            {% if not loop.last %}
+                                <tr class="spacer">
+                                    <td colspan="7" style="height:10px;background:#000"></td>
+                                </tr>
+                            {% endif %}
+                        {% endfor %}
+                    {% endblock %}
+                </twig:Table>
+            {% endif %}
+
+            {# Ship offers #}
+            {% if this.searchCat == 'ships' %}
+                <twig:Table>
+                    {% block table_content %}
+                        <thead>
+                            <tr>
+                                <th class="infoboxtitle" colspan="20">Angebotsübersicht</th>
+                            </tr>
+                            <tr>
+                                <th>Angebot:</th>
+                                <th colspan="2">Preis:</th>
+                                <th>Anbieter:</th>
+                                <th>Beschreibung:</th>
+                                <th>Kaufen:</th>
+                            </tr>
+                        </thead>
+                        {% for offer in offers %}
+                            {% for rk,rn in constant('EtoA\\Universe\\Resources\\ResourceNames::NAMES') %}
+                                <tr>
+                                    {% if loop.first %}
+                                        <td rowspan="{{ constant('EtoA\\Universe\\Resources\\ResourceNames::NAMES')|length }}">
+                                            {{ offer.ship.name }} {{ formatNumber(offer.count) }}
+                                        </td>
+                                    {% endif %}
+                                    <td class="rescolor{{ rk }}"> {{ constant('EtoA\\Universe\\Resources\\ResIcons::ICONS')[rk]|raw }}  <b> {{ rn }} </b>:</td>
+                                    <td class="rescolor{{ rk }}"> {{ (offer.costs.get(rk) > 0 ?
+                                        formatNumber(offer.costs.get(rk)) : 0) }}
+                                    </td>
+                                    {% if loop.first %}
+                                        <td rowspan="{{ constant('EtoA\\Universe\\Resources\\ResourceNames::NAMES')|length }}">{{ offer.user.nick }}</td>
+                                        <td rowspan="{{ constant('EtoA\\Universe\\Resources\\ResourceNames::NAMES')|length }}">
+                                            {% if offer.forUser == outerScope.this.user %}
+                                                <span class="userAllianceMemberColor">Für dich reserviert</span>
+                                                <span class="rtext top">{{ offer.text }}</span>
+                                            {% elseif offer.forAlliance %}
+                                                <span class="userAllianceMemberColor">Für Allianzmitglied Reserviert</span>
+                                                <span class="rtext top">{{ offer.text }}</span>
+                                            {% else %}
+                                                <span class="rtext">{{ offer.text }}</span>
+                                            {% endif %}
+                                        </td>
+                                        <td rowspan="{{ constant('EtoA\\Universe\\Resources\\ResourceNames::NAMES')|length }}"></td>
+                                    {% endif %}
+                                </tr>
+                            {% endfor %}
+                            {% if not loop.last %}
+                                <tr><td colspan="6" style="height:10px;background:#000"></td></tr>
+                            {% endif %}
+                        {% endfor %}
+                    {% endblock %}
+                </twig:Table>
+            {% endif %}
+
+            {# Auction offers #}
+            {% if this.searchCat == 'auctions' %}
+                <twig:Table title="Offene Auktionen">
+                    {% block table_content %}
+                        <tr>
+                            <th>Angebot</th>
+                            <th>Beschreibung</th>
+                            <th style="width:100px;">Angebotsende</th>
+                            <th style="width:50px;">Gebote</th>
+                            <th colspan="2">Aktuelles Gebot</th>
+                        </tr>
+                        {% for offer in offers %}
+                            <tr>
+                                <td>
+                                    {% for rk,rn in constant('EtoA\\Universe\\Resources\\ResourceNames::NAMES') %}
+                                        {% if offer.getSellResources.get(rk) > 0 %}
+                                            <span class="rescolor{{ rk }}"> {{ constant('EtoA\\Universe\\Resources\\ResIcons::ICONS')[rk]|raw }}  <b> {{ rn }} </b>:</span>
+                                            <span class="rescolor{{ rk }}"> {{ formatNumber(offer.getSellResources.get(rk)) }} </span>
+                                        {% endif %}
+                                    {% endfor %}
+                                </td>
+                                <td>{{ offer.text }}</td>
+                                <td>
+                                    {% if (offer.dateEnd - date().timestamp) <= 0 %}
+                                        Auktion beendet!
+                                    {% else %}
+                                        {{ formatTimespan(offer.dateEnd - date().timestamp) }}
+                                    {% endif %}
+                                </td>
+                                <td>{{ offer.bidCount }}</td>
+                                <td>
+                                    {% for rk,rn in constant('EtoA\\Universe\\Resources\\ResourceNames::NAMES') %}
+                                        {% if offer.getCurrencyResources.get(rk) > 0 %}
+                                            <span class="rescolor{{ rk }}"> {{ constant('EtoA\\Universe\\Resources\\ResIcons::ICONS')[rk]|raw }}  <b> {{ rn }} </b>:</span>
+                                            <span class="rescolor{{ rk }}"> {{ offer.getBuyResources.get(rk) }}</span>
+                                            <br style="clear:both;" />
+                                        {% endif %}
+                                    {% endfor %}
+                                </td>
+                                <td style="width:100px;">
+                                    <input type="button" onclick="" value="Infos & Bieten"/>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    {% endblock %}
+                </twig:Table>
+            {% endif %}
+        {% else %}
+            {% import 'macros.html.twig' as macros %}
+            {{ macros.message('','Keine Angebote gefunden!') }}
+        {% endif %}
+    </div>
+</div>
