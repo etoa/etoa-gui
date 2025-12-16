@@ -131,24 +131,22 @@ class MarketResourceRepository extends AbstractRepository
             ->fetchOne();
     }
 
-    public function getBuyableOffer(int $id, int $userId, int $allianceId): ?MarketResource
+    public function getBuyableOffer(int $id, int|User $user, ?Alliance $alliance): ?MarketResource
     {
-        $data = $this->createQueryBuilder('q')
-            ->select('*')
-            ->from('market_ressource')
-            ->where('id = :id')
-            ->andWhere('user_id <> :userId')
-            ->andWhere('for_user = 0 OR for_user = :userId')
-            ->andWhere('for_alliance = 0 OR for_alliance = :allianceId')
-            ->andWhere('buyable = 1')
+        return $this->createQueryBuilder('q')
+            ->where('q.id = :id')
+            ->andWhere('q.user <> :userId')
+            ->andWhere('q.forUser IS NULL OR q.forUser = :userId')
+            ->andWhere('q.forAlliance IS NULL OR q.forAlliance = :allianceId')
+            ->andWhere('q.buyable = 1')
             ->setParameters([
                 'id' => $id,
-                'userId' => $userId,
-                'allianceId' => $allianceId,
+                'userId' => $user,
+                'allianceId' => $alliance,
             ])
-            ->fetchAssociative();
-
-        return $data !== false ? new MarketResource($data) : null;
+            ->setMaxResults(1)
+            ->getQuery()
+            ->getOneOrNullResult();
     }
 
     /**

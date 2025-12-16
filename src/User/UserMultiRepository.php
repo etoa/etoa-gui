@@ -149,18 +149,18 @@ class UserMultiRepository extends AbstractRepository
         return $data !== false ? new UserMulti($data) : null;
     }
 
-    public function existsEntryWith(int $userId, int $otherUserId): bool
+    public function existsEntryWith(User $userId, User $otherUserId): bool
     {
         return (bool) $this->createQueryBuilder('q')
-            ->select('1')
-            ->from('user_multi')
-            ->where('user_id = :userId AND multi_id = :otherUserId')
-            ->orWhere('user_id = :otherUserId AND multi_id = :userId')
+            ->where('q.user = :userId AND q.multiUser = :otherUserId')
+            ->orWhere('q.user = :otherUserId AND q.multiUser = :userId')
             ->setParameters([
                 'userId' => $userId,
                 'otherUserId' => $otherUserId,
             ])
-            ->fetchOne();
+            ->setMaxResults(1)
+            ->getQuery()
+            ->getOneOrNullResult();
     }
 
     public function deleteUserEntries(User $user): void

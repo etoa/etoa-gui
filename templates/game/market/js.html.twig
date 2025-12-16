@@ -625,9 +625,6 @@
 
         // Ändert Statusnachricht
         document.getElementById('ship_check_message').innerHTML = ship_check_message;
-
-        // Ändert das Hiddenfeld "Schiffsname", welches für die Weiterverarbeitung mit PHP benötigt wird
-        document.getElementById('ship_name').value = ship_name;
     }
 
 
@@ -897,11 +894,11 @@
         const auction_buy_food = document.getElementById('buy_4').value;
 
         // Das eingegebene Gebot (neuer Preis) formatieren (Trennzeichen entfernen) und in Variable speichern
-        let auction_new_buy_metal = document.getElementById('auction_new_buy_0').value.replace(/`/g, "");
-        let auction_new_buy_crystal = document.getElementById('auction_new_buy_1').value.replace(/`/g, "");
-        let auction_new_buy_plastic = document.getElementById('auction_new_buy_2').value.replace(/`/g, "");
-        let auction_new_buy_fuel = document.getElementById('auction_new_buy_3').value.replace(/`/g, "");
-        let auction_new_buy_food = document.getElementById('auction_new_buy_4').value.replace(/`/g, "");
+        let auction_new_buy_metal = document.getElementById('auction_new_buy_0')?document.getElementById('auction_new_buy_0').value.replace(/`/g, ""):0;
+        let auction_new_buy_crystal = document.getElementById('auction_new_buy_1')?document.getElementById('auction_new_buy_1').value.replace(/`/g, ""):0;
+        let auction_new_buy_plastic = document.getElementById('auction_new_buy_2')?document.getElementById('auction_new_buy_2').value.replace(/`/g, ""):0;
+        let auction_new_buy_fuel = document.getElementById('auction_new_buy_3')?document.getElementById('auction_new_buy_3').value.replace(/`/g, ""):0;
+        let auction_new_buy_food = document.getElementById('auction_new_buy_4')?document.getElementById('auction_new_buy_4').value.replace(/`/g, ""):0;
 
         // Stellt sicher, dass nur positive Zahlen verrechnet werden
         // 1. Prüft, ob Wert eine Zahl ist und nicht leer ist. Wenn nicht, wird 0 in das Feld geschrieben
@@ -1013,7 +1010,7 @@
             const auction_max = FormatNumber('return', auction_buy_max[res], '', '', '');
 
             // Definiert die "Min./Max." Ausgabe
-            out_auction_min_max[res] = `<a href="javascript:;" onclick="document.getElementById('${buy_field}').value=${sum_min};calcMarketAuctionPrice('0');FormatNumber('${buy_field}','${sum_min}','','','');">${auction_min}</a> / <a href="javascript:;" onclick="document.getElementById('${buy_field}').value=${sum_max};calcMarketAuctionPrice('0');FormatNumber('${buy_field}','${sum_max}','','','');">${auction_max}</a>`;
+            out_auction_min_max[res] = `<a href="javascript:;" onclick="updateField(${buy_field},${sum_min})">${auction_min}</a> / <a href="javascript:;" onclick="updateField(${buy_field},${sum_max})">${auction_max}</a>`;
         }
 
         // End Prüfung ob Angebot OK ist
@@ -1117,6 +1114,13 @@
 
         // Ändert Statusnachricht
         document.getElementById('auction_check_message').innerHTML = auction_check_message;
+    }
+
+    function updateField(field, sum) {
+        field.value=sum;
+        calcMarketAuctionPrice('0');
+        FormatNumber(field.id,sum,'','','');
+        field.dispatchEvent(new Event('change', { bubbles: true }));
     }
 
 

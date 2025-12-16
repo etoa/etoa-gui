@@ -92,8 +92,8 @@ class MarketInfo extends AbstractGameController
         $this->marketFoodFactor = $this->runtimeDataStore->get('market_rate_4', "1");
         $this->ressPriceFactorMax = $this->configurationService->getFloat('res_price_factor_max');
         $this->ressPriceFactorMin = $this->configurationService->getFloat('res_price_factor_min');
-        $this->auctionPriceFactorMin = $this->configurationService->getFloat('auction_price_factor_max');
-        $this->auctionPriceFactorMax = $this->configurationService->getFloat('auction_price_factor_min');
+        $this->auctionPriceFactorMax = $this->configurationService->getFloat('auction_price_factor_max');
+        $this->auctionPriceFactorMin = $this->configurationService->getFloat('auction_price_factor_min');
         $this->shipPriceFactorMax = $this->configurationService->getFloat('ship_price_factor_max');
         $this->shipPriceFactorMin = $this->configurationService->getFloat('ship_price_factor_min');
         $this->marketTax = max(1, $this->configurationService->getFloat('market_sell_tax') * ($specialist ? $specialist->getTradeBonus() : 1));

@@ -18,12 +18,12 @@ class UserRatingService
         $this->logRepository = $logRepository;
     }
 
-    public function addTradeRating(int $userId, int $rating, bool $sell = true, string $reason = ""): void
+    public function addTradeRating(User $user, int $rating, bool $sell = true, string $reason = ""): void
     {
-        $this->userRatingRepository->addTradeRating($userId, $rating, $sell);
+        $this->userRatingRepository->addTradeRating($user, $rating, $sell);
 
         if ($reason != "") {
-            $this->logRepository->add(LogFacility::RANKING, LogSeverity::INFO, "HP: Der Spieler " . $userId . " erhält " . $rating . " Handelspunkte. Grund: " . $reason);
+            $this->logRepository->add(LogFacility::RANKING, LogSeverity::INFO, "HP: Der Spieler " . $user->getNick() . " erhält " . $rating . " Handelspunkte. Grund: " . $reason);
         }
     }
 

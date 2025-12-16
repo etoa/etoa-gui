@@ -61,22 +61,22 @@ class UserRatingRepository extends AbstractRepository
             ->leftJoin('App:Alliance', 'a', 'WITH', 'u.alliance = a.id');
     }
 
-    public function addTradeRating(int $userId, int $rating, bool $sell = true): void
+    public function addTradeRating(User $user, int $rating, bool $sell = true): void
     {
         $qry = $this->createQueryBuilder('q')
-            ->update('user_ratings')
-            ->set('trade_rating', 'trade_rating + :rating')
-            ->where('id = :userId')
+            ->update()
+            ->set('q.tradeRating', 'q.tradeRating + :rating')
+            ->where('q.user = :userId')
             ->setParameters([
                 'rating' => $rating,
-                'userId' => $userId,
+                'userId' => $user,
             ]);
         if ($sell) {
-            $qry->set('trades_sell', 'trades_sell + 1');
+            $qry->set('q.tradesSell', 'q.tradesSell + 1');
         } else {
-            $qry->set('trades_buy', 'trades_buy + 1');
+            $qry->set('q.tradesBuy', 'q.tradesBuy + 1');
         }
-        $qry->executeQuery();
+        $qry->getQuery()->execute();
     }
 
     public function addDiplomacyRating(User $user, int $rating): void

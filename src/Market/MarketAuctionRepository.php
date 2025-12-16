@@ -5,6 +5,7 @@ namespace EtoA\Market;
 use Doctrine\Persistence\ManagerRegistry;
 use EtoA\Core\AbstractRepository;
 use EtoA\Entity\MarketAuction;
+use EtoA\Entity\Planet;
 use EtoA\Entity\User;
 use EtoA\Universe\Resources\BaseResources;
 
@@ -59,43 +60,24 @@ class MarketAuctionRepository extends AbstractRepository
         return (int) $this->getConnection()->lastInsertId();
     }
 
-    public function addBid(int $auctionId, int $buyerId, int $buyerEntityId, BaseResources $bid, bool $finalBid = false, int $deleteDate = null): void
+    public function addBid(MarketAuction $auction, User $buyer, Planet $buyerEntity, BaseResources $bid, bool $finalBid = false, int $deleteDate = null): void
     {
-        $parameters = [
-            'id' => $auctionId,
-            'buyerId' => $buyerId,
-            'buyerEntityId' => $buyerEntityId,
-            'now' => time(),
-            'buy0' => $bid->metal,
-            'buy1' => $bid->crystal,
-            'buy2' => $bid->plastic,
-            'buy3' => $bid->fuel,
-            'buy4' => $bid->food,
-        ];
-
-        $qb = $this->createQueryBuilder('q')
-            ->update('market_auction')
-            ->set('current_buyer_id', ':buyerId')
-            ->set('current_buyer_entity_id', ':buyerEntityId')
-            ->set('current_buyer_date', ':now')
-            ->set('bidcount', 'bidcount + 1')
-            ->set('buy_0', ':buy0')
-            ->set('buy_1', ':buy1')
-            ->set('buy_2', ':buy2')
-            ->set('buy_3', ':buy3')
-            ->set('buy_4', ':buy4')
-            ->where('id = :id');
+        $auction->setCurrentBuyer($buyer);
+        $auction->setCurrentBuyerEntity($buyerEntity);
+        $auction->setCurrentBuyerDate(time());
+        $auction->setBuy0($bid->metal);
+        $auction->setBuy1($bid->crystal);
+        $auction->setBuy2($bid->plastic);
+        $auction->setBuy3($bid->fuel);
+        $auction->setBuy4($bid->food);
+        $auction->setBidCount($auction->getBidCount()+1);
 
         if ($finalBid) {
-            $qb
-                ->set('buyable', '0')
-                ->set('date_delete', ':delete');
-            $parameters['delete'] = $deleteDate;
+            $auction->setBuyable(false);
+            $auction->setDeleted($deleteDate);
         }
 
-        $qb
-            ->setParameters($parameters)
-            ->executeQuery();
+        $this->save();
     }
 
     /**
@@ -126,20 +108,18 @@ class MarketAuctionRepository extends AbstractRepository
             ->execute();
     }
 
-    public function getNonUserAuction(int $id, int $userId): ?MarketAuction
+    public function getNonUserAuction(int $id, int|User $userId): ?MarketAuction
     {
-        $data = $this->createQueryBuilder('q')
-            ->select('*')
-            ->from('market_auction')
-            ->where('id = :id')
-            ->andWhere('user_id <> :userId')
+        return $this->createQueryBuilder('q')
+            ->where('q.id = :id')
+            ->andWhere('q.user <> :userId')
             ->setParameters([
                 'id' => $id,
                 'userId' => $userId,
             ])
-            ->fetchAssociative();
-
-        return $data !== false ? new MarketAuction($data) : null;
+            ->setMaxResults(1)
+            ->getQuery()
+            ->getOneOrNullResult();
     }
 
     /**
