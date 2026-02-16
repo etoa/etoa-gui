@@ -1,0 +1,62 @@
+{% extends 'game/haven/haven.html.twig' %}
+
+{% block haven %}
+    <twig:Table title="Zielinfos">
+        {% block table_content %}
+            {% if fleet.wormholeEntryEntity %}
+            <tr>
+                <th><b>Wurmloch-Eintrittspunkt:</b></th>
+                <td id="targetinfo" style="padding:16px 2px 2px 60px;color:#fff;height:47px;background:#000 url('{{ fleet.wormholeEntryEntity.imagePath }}') no-repeat 3px 3px;">
+                    $fleet->wormholeEntryEntity($fleet->wormholeEntryEntity->entityCodeString() , Besitzer:
+                    $fleet->wormholeEntryEntity->owner() )
+                </td>
+            </tr>
+            <tr>
+                <th><b>Wurmloch-Austrittspunkt:</b></th>
+                <td id="targetinfo" style="padding:16px 2px 2px 60px;color:#fff;height:47px;background:#000 url('$fleet->wormholeExitEntity->imagePath()') no-repeat 3px 3px;">
+                    $fleet->wormholeExitEntity  ( $fleet->wormholeExitEntity->entityCodeString() , Besitzer:
+                    $fleet->wormholeExitEntity->owner() )
+                </td>
+            </tr>
+            {% endif %}
+            <tr>
+                <th><b>Ziel-Informationen:</b></th>
+                <td id="targetinfo"
+                    style="padding:16px 2px 2px 60px;color:#fff;height:47px;background:#000 url('{{ fleet.targetEntity.getType.imagePath }}') no-repeat 3px 3px;">
+                    {{ fleet.targetEntity.toString }} ({{ fleet.targetEntity.codeString }}, Besitzer: {{ fleet.targetEntity.displayOwner }})
+                </td>
+            </tr>
+            <tr>
+                <th>Speedfaktor:</th>
+                <td>
+                    {{ fleet.getSpeedPercent }}%
+                </td>
+            </tr>
+            <tr>
+                <th>Entfernung:</th>
+                <td id="distance"> {{ formatNumber(fleet.getDistance()) }}AE</td>
+            </tr>
+            <tr>
+                <th>Dauer:</th>
+                <td><span id="duration" style="font-weight:bold;">{{ formatTimespan(fleet.getDuration) }}</span>
+                </td>
+            </tr>
+            <tr>
+                <th>Treibstoff:</th>
+                <td><span id="costs" style="font-weight:bold;">{{ formatNumber(fleet.getCosts) }}t {{ constant('EtoA\\Universe\\Resources\\ResourceNames::FUEL') }}</span>
+                </td>
+            </tr>
+            <tr>
+                <th>Nahrung:</th>
+                <td>
+                    <span id="costsFood" style="font-weight:bold;">{{ formatNumber(fleet.getCostsFood) }}t {{ constant('EtoA\\Universe\\Resources\\ResourceNames::FOOD') }}</span>
+                </td>
+            </tr>
+            <tr id="supportTime" style="display: none;">
+                <th>Supportzeit:</th>
+                <td id="support"></td>
+            </tr>
+        {% endblock %}
+    </twig:Table>
+    <twig:HavenTarget/>
+{% endblock %}

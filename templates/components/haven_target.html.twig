@@ -37,14 +37,21 @@
                     </td>
                 </tr>
                 <tr>
-                    <th id="targettitle"><b>Ziel-Informationen:</b></th>
+                    <th id="targettitle">
+                        <b>Ziel-Informationen:</b>
+                    </th>
                     <td id="targetinfo" style="padding:2px 2px 3px 6px;background:#000;color:#fff;height:47px;">
-                        <img src="{{ outerScope.this.fleetLaunch.targetEntity.imagePath }}"/>
+                        {% if outerScope.this.targetEntity %}
+                            <img src="{{ outerScope.this.targetEntity.getType.imagePath }}"/>
+                            <br/> {{ outerScope.this.targetEntity.toString }} ({{ outerScope.this.targetEntity.codeString }}, Besitzer: {{ outerScope.this.targetEntity.getOwner }})
+                        {% else %}
+                            <div style="color:#f00">Ziel nicht vorhanden!</div>
+                        {% endif %}
                     </td>
                 </tr>
                 <tr>
                     <th>Entfernung:</th>
-                    <td id="distance">-</td>
+                    <td id="distance">{{ outerScope.this.distance }}</td>
                 </tr>
                 <tr>
                     <th>Kosten/100 AE:</th>
@@ -60,19 +67,23 @@
                 </tr>
                 <tr>
                     <th>Dauer:</th>
-                    <td><span id="duration" style="font-weight:bold;">-</span> (inkl. Start- und Landezeit von
+                    <td><span id="duration" style="font-weight:bold;">{{ outerScope.this.duration }}</span> (inkl. Start- und Landezeit von
                         {{ formatTimespan(outerScope.this.fleetLaunch.getTimeLaunchLand) }} )
                     </td>
                 </tr>
                 <tr>
                     <th>Treibstoff:</th>
-                    <td><span id="costs" style="font-weight:bold;">-</span> (inkl. Start- und Landeverbrauch von
+                    <td><span id="costs" style="font-weight:bold;">{{ outerScope.this.costs }}</span> (inkl. Start- und Landeverbrauch von
                         {{ formatNumber(outerScope.this.fleetLaunch.getCostsLaunchLand) }} {{ constant('EtoA\\Universe\\Resources\\ResourceNames::FUEL') }} )
                     </td>
                 </tr>
                 <tr>
                     <th>Nahrung:</th>
-                    <td><span id="food" style="font-weight:bold;">-</span></td>
+                    <td>
+                        <span id="food" style="font-weight:bold;">
+                        {{ outerScope.this.food }}
+                        </span>
+                    </td>
                 </tr>
                 <tr>
                     <th>Piloten:</th>
@@ -92,7 +103,6 @@
                 </tr>
             {% endblock %}
         </twig:Table>
-    {{ this.havenTargetInfo }}
     {{ form_widget(form.submit) }}
     {{ form_widget(form._token) }}
     {{ form_end(form, {render_rest:false}) }}

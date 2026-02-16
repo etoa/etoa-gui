@@ -124,15 +124,26 @@ class HavenController extends AbstractGameController
             $this->fleetLaunchService->setFleetLaunch(unserialize($session->get('fleetLaunch')));
 
         if($this->fleetLaunchService->getFleetLaunch()->isShipsFixed()) {
-
-/*
-            if ($form->isSubmitted() && $form->isValid()) {
-                //dd($this->fleetLaunchService->getFleetLaunch());
-            }
-*/
             return $this->render('game/haven/target.html.twig',[
                 'fleetLaunch' => $this->fleetLaunchService->getFleetLaunch(),
                 'serializedFleetLaunch' => serialize($this->fleetLaunchService->getFleetLaunch())
+            ]);
+        }
+
+        return $this->redirectToRoute('game.haven.show');
+    }
+
+    #[Route('/game/haven/action', name: 'game.haven.action')]
+    public function action(Request $request): Response
+    {
+        $session = $request->getSession();
+        if($session->has('fleetLaunch'))
+            dd(unserialize($session->get('fleetLaunch')));
+            $this->fleetLaunchService->setFleetLaunch(unserialize($session->get('fleetLaunch')));
+
+        if ($this->fleetLaunchService->getFleetLaunch()->isShipsFixed() && $this->fleetLaunchService->checkTarget()) {
+            return $this->render('game/haven/action.html.twig',[
+                'fleet' => $this->fleetLaunchService->getFleetLaunch()
             ]);
         }
 

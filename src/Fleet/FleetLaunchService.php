@@ -70,6 +70,10 @@ class FleetLaunchService
         $sourceEnt = $this->planetRepository->find($request->getSession()->get('cpid'));
 
         $this->fleetLaunch->setSourceEntity($sourceEnt);
+        if(!$this->fleetLaunch->getTargetEntity()) {
+            $this->fleetLaunch->setTargetEntity($sourceEnt->getEntity());
+        }
+
         $this->fleetLaunch->setOwner($sourceEnt->getUser());
 
         //Wormhole enable?
@@ -88,7 +92,7 @@ class FleetLaunchService
         ) {
 
             /** @var BuildingListItem $fleetControl */
-            $fleetControl = $this->buildingListItemRepository->getEntityBuilding($this->fleetLaunch->getOwner(), $this->fleetLaunch->getSourceEntity(), BuildingId::FLEET_CONTROL);
+            $fleetControl = $this->buildingListItemRepository->getEntityBuilding($this->fleetLaunch->getOwner(), $this->fleetLaunch->getSourceEntity(), BuildingId::FLEET_CONTROL->value);
             // Check if haven is out of order
             if (!$fleetControl || $fleetControl->getCurrentLevel() === 0) {
                 $this->fleetLaunch->setError("Der Raumschiffhafen ist noch nicht gebaut.");
@@ -293,17 +297,17 @@ class FleetLaunchService
      */
     public function checkTarget(): bool
     {
-        if ($this->sourceEntity->resFuel() >= $this->getCosts()) {
-            if ($this->sourceEntity->resFood() >= $this->getCostsFood()) {
-                if ($this->getCapacity() >= 0) {
-                    $this->targetOk = true;
-                    return $this->targetOk;
+        if ($this->fleetLaunch->getSourceEntity()->getResFuel() >= $this->fleetLaunch->getCosts()) {
+            if ($this->fleetLaunch->getSourceEntity()->getResFood() >= $this->fleetLaunch->getCostsFood()) {
+                if ($this->fleetLaunch->getCapacity() >= 0) {
+                    $this->fleetLaunch->setTargetOk(true);
+                    return true;
                 } else
-                    $this->error = "Zu wenig Laderaum für soviel Treibstoff und Nahrung (" . StringUtils::formatNumber(abs($this->getCapacity())) . " zuviel)!";
+                    $this->fleetLaunch->setError("Zu wenig Laderaum für soviel Treibstoff und Nahrung (" . StringUtils::formatNumber(abs($this->fleetLaunch->getCapacity())) . " zuviel)!");
             } else
-                $this->error = "Zuwenig Nahrung! " . StringUtils::formatNumber($this->sourceEntity->resFood()) . " t " . ResourceNames::FOOD . " vorhanden, " . StringUtils::formatNumber($this->getCostsFood()) . " t benötigt.";
+                $this->fleetLaunch->setError("Zuwenig Nahrung! " . StringUtils::formatNumber($this->fleetLaunch->getSourceEntity()->getResFood()) . " t " . ResourceNames::FOOD . " vorhanden, " . StringUtils::formatNumber($this->getCostsFood()) . " t benötigt.");
         } else
-            $this->error = "Zuwenig Treibstoff! " . StringUtils::formatNumber($this->sourceEntity->resFuel()) . " t " . ResourceNames::FUEL . " vorhanden, " . StringUtils::formatNumber($this->getCosts()) . " t benötigt.";
+            $this->fleetLaunch->setError("Zuwenig Treibstoff! " . StringUtils::formatNumber($this->fleetLaunch->getSourceEntity()->getResFuel()) . " t " . ResourceNames::FUEL . " vorhanden, " . StringUtils::formatNumber($this->fleetLaunch->getCosts()) . " t benötigt.");
         return false;
     }
 
@@ -619,12 +623,7 @@ class FleetLaunchService
 
     function getCostsFood(): float|int
     {
-        global $app;
-        /** @var ConfigurationService $config */
-        $config = $app[ConfigurationService::class];
-
-        $this->costsFood = ceil($this->getPilots() * $config->getInt('people_food_require') / 3600 * $this->getDuration());
-        return $this->costsFood;
+        return ceil($this->fleetLaunch->getPilots() * $this->configurationService->getInt('people_food_require') / 3600 * $this->fleetLaunch->getDuration());
     }
 
     // subtracts the payload ress (not support/flight fuel and food)
