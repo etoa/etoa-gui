@@ -30,11 +30,11 @@ class Star extends AbstractEntity implements ObjectWithImage
     {
         switch ($type) {
             case 'small':
-                return self::BASE_PATH."/stars/star".$this->typeId."_small.png";
+                return self::BASE_PATH."/stars/star".$this->solarType->getId()."_small.png";
             case 'medium':
-                return self::BASE_PATH."/stars/star".$this->typeId."_middle.png";
+                return self::BASE_PATH."/stars/star".$this->solarType->getId()."_middle.png";
             default:
-                return self::BASE_PATH."/stars/star".$this->typeId.".png";
+                return self::BASE_PATH."/stars/star".$this->solarType->getId().".png";
         }
     }
 

@@ -160,9 +160,4 @@ class UserRating
 
         return $this;
     }
-
-    public function getUserId(): ?int
-    {
-        return $this->userId;
-    }
 }

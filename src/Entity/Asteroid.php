@@ -40,7 +40,7 @@ class Asteroid extends AbstractEntity implements ObjectWithImage
     public function getImagePath(string $type = ""): string
     {
         $numImages = 5;
-        $r = ($this->id % $numImages) + 1;
+        $r = ($this->getEntity()->getId() % $numImages) + 1;
         return ObjectWithImage::BASE_PATH . "/asteroids/asteroids" . $r . "_small.png";
     }
 

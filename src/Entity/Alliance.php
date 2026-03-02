@@ -8,6 +8,7 @@ use EtoA\Alliance\AllianceImage;
 use EtoA\Alliance\AllianceRepository;
 use EtoA\Universe\Resources\BaseResources;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Ignore;
 
 #[ORM\Entity(repositoryClass: AllianceRepository::class)]
 #[ORM\Table(name: 'alliances')]
@@ -170,6 +171,7 @@ class Alliance
         return "[" . $this->tag . "] " . $this->name;
     }
 
+    #[Ignore]
     public function getImageUrl(): ?string
     {
         if ($this->image == '') {

@@ -36,7 +36,7 @@ class EmptySpace extends AbstractEntity implements ObjectWithImage
     public function getImagePath(): string
     {
         $numImages = 10;
-        $r = ($this->id % $numImages) + 1;
+        $r = ($this->getEntity()->getId() % $numImages) + 1;
         return ObjectWithImage::BASE_PATH . "/space/space" . $r . "_small.png";
     }
 
