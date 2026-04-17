@@ -153,9 +153,9 @@ class PlanetRepository extends AbstractRepository
     public function getRandomFreePlanet(int $sx = 0, int $sy = 0, ?int $minFields = null, ?int $planetType = null, ?int $starType = null):?Planet
     {
         $qry = $this->createQueryBuilder('q')
-            ->innerJoin('App:PlanetType', 't', 'WITH', 'q.typeId = t.id AND t.habitable = 1')
-            ->innerJoin('App:Entity', 'e', 'WITH', 'q.id = e.id')
-            ->innerJoin('App:Cell', 'c', 'WITH', 'e.cellId = c.id')
+            ->innerJoin('App:PlanetType', 't', 'WITH', 'q.planetType = t.id AND t.habitable = 1')
+            ->innerJoin('App:Entity', 'e', 'WITH', 'q.entity = e.id')
+            ->innerJoin('App:Cell', 'c', 'WITH', 'e.id = c.id')
             ->orderBy('Rand()')
             ->setMaxResults(1);
 
@@ -170,7 +170,7 @@ class PlanetRepository extends AbstractRepository
         }
 
         if ($planetType > 0) {
-            $qry->andWhere('q.typeId = :planetType')
+            $qry->andWhere('q.planetType = :planetType')
                 ->setParameter('planetType', $planetType);
         }
 
@@ -181,13 +181,13 @@ class PlanetRepository extends AbstractRepository
 
         if ($starType > 0) {
             //TODO: simplify
-            $stars = $this->starRepository->findBy(['typeId'=>$starType]);
-            $starIds = array_map(fn ($row) => (int) $row->getId(), $stars);
+            $stars = $this->starRepository->findBy(['solarType'=>$starType]);
+            $starIds = array_map(fn ($row) => (int) $row->getEntity()->getId(), $stars);
             $entity = $this->entityRepository->searchEntities(EntitySearch::create()->ids($starIds));
             $cellIds = array_map(fn ($row) => (int) $row['cid'], $entity);
 
             $qry->andWhere(
-                'e.cellId in (:cellIds)')
+                'IDENTITY(e.cell) in (:cellIds)')
                 ->setParameter('cellIds', $cellIds);
         }
 
@@ -323,9 +323,9 @@ class PlanetRepository extends AbstractRepository
             ->execute();
     }
 
-    public function assignToUser(Planet $planet, int $userId, bool $main = false): void
+    public function assignToUser(Planet $planet, User $user, bool $main = false): void
     {
-        $planet->setUserId($userId);
+        $planet->setUser($user);
         $planet->setMainPlanet($main);
         $this->save();
     }

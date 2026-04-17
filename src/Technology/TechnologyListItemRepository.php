@@ -90,7 +90,7 @@ class TechnologyListItemRepository extends AbstractRepository
 
     public function addTechnology(Technology $technology, int $level, User $user, Entity $entity): void
     {
-        $item = $this->findOneBy(['user'=>$user,'technology'=>$technology,'entity'=>$entity]);
+        $item = $this->findOneBy(['user'=>$user,'technology'=>$technology]);
 
         if(!$item) {
             $item = new TechnologyListItem();

@@ -7,6 +7,7 @@ namespace EtoA\User;
 use EtoA\Building\BuildingListItemRepository;
 use EtoA\DefaultItem\DefaultItemRepository;
 use EtoA\Defense\DefenseRepository;
+use EtoA\Entity\DefaultItemSet;
 use EtoA\Entity\Planet;
 use EtoA\Entity\User;
 use EtoA\Ship\ShipListRepository;
@@ -54,35 +55,37 @@ class UserSetupService
     /**
      * Add an item setlist to a given planet
      */
-    public function addItemSetListToPlanet(Planet $planet, User $user, int $setId): void
+    public function addItemSetListToPlanet(Planet $planet, User $user, DefaultItemSet $set): void
     {
-        $defaultItems = $this->defaultItemRepository->getItemsGroupedByCategory($setId);
+        $defaultItems = $this->defaultItemRepository->getItemsGroupedByCategory($set);
+
+
 
         // Add buildings
         if (isset($defaultItems['b'])) {
             foreach ($defaultItems['b'] as $defaultItem) {
-                $this->buildingRepository->addBuilding($defaultItem->getObjectId(), $defaultItem->getCount(), $user, $planet);
+                $this->buildingRepository->addBuilding($defaultItem->getBuilding(), $defaultItem->getCount(), $user, $planet);
             }
         }
 
         // Add technologies
         if (isset($defaultItems['t'])) {
             foreach ($defaultItems['t'] as $defaultItem) {
-                $this->technologyRepository->addTechnology($defaultItem->getObjectId(), $defaultItem->getCount(), $userId, $planetId);
+                $this->technologyRepository->addTechnology($defaultItem->getTechnology(), $defaultItem->getCount(), $user, $planet->getEntity());
             }
         }
 
         // Add ships
         if (isset($defaultItems['s'])) {
             foreach ($defaultItems['s'] as $defaultItem) {
-                $this->shipListRepository->addShip($defaultItem->getObjectId(), $defaultItem->getCount(), $userId, $planetId);
+                $this->shipListRepository->addShip($defaultItem->getShip(), $defaultItem->getCount(), $user, $planet);
             }
         }
 
         // Add defense
         if (isset($defaultItems['d'])) {
             foreach ($defaultItems['d'] as $defaultItem) {
-                $this->defenseRepository->addDefense($defaultItem->getObjectId(), $defaultItem->getCount(), $userId, $planetId);
+                $this->defenseRepository->addDefense($defaultItem->getDefense(), $defaultItem->getCount(), $user, $planet);
             }
         }
     }
@@ -92,8 +95,8 @@ class UserSetupService
         $cu = $this->security->getUser();
 
         $this->planetRepository->reset($planet);
-        $this->planetRepository->assignToUser($planet, $cu->getId(), true);
+        $this->planetRepository->assignToUser($planet, $cu->getData(), true);
         $this->planetService->setDefaultResources($planet);
-        $this->userService->addToUserLog($cu->getId(), "planets", "{nick} wählt [b]" . $planet->getEntity()->toString() . "[/b] als Hauptplanet aus.");
+        $this->userService->addToUserLog($cu->getData(), "planets", "{nick} wählt [b]" . $planet->getEntity()->toString() . "[/b] als Hauptplanet aus.");
     }
 }

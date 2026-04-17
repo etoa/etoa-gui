@@ -43,15 +43,7 @@ class RaceDataRepository extends AbstractRepository
 
     public function getRace(int $raceId): ?Race
     {
-        $data = $this->createQueryBuilder('q')
-            ->select('r.*')
-            ->from('races', 'r')
-            ->where('r.race_id = :id')
-            ->andWhere('r.race_active = 1')
-            ->setParameter('id', $raceId)
-            ->fetchAssociative();
-
-        return $data !== false ? new Race($data) : null;
+        return $this->findOneBy(['id'=>$raceId,'active'=>true]);
     }
 
     /**

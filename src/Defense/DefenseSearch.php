@@ -25,7 +25,7 @@ class DefenseSearch extends AbstractSearch
 
     public function buildable(): self
     {
-        $this->parts[] = 'def_buildable = 1';
+        $this->parts[] = 'q.buildable = 1';
 
         return $this;
     }

@@ -25,7 +25,6 @@ class PlanetService
         private readonly DefenseRepository          $defenseRepository,
         private readonly ConfigurationService       $config,
         private readonly LogRepository              $logRepository,
-        private readonly PlanetTypeRepository       $planetTypeRepository,
         private readonly ShipListRepository $shipListRepository,
         private readonly ShipQueueRepository $shipQueueRepository,
         private readonly DefenseQueueRepository $defenseQueueRepository,
@@ -39,7 +38,7 @@ class PlanetService
     {
         $data = array();
         foreach ($this->repository->getUserPlanets($userId) as $planet) {
-            $data[$planet->getId()] = $planet->displayName();
+            $data[$planet->getEntity()->getId()] = $planet->displayName();
         }
 
         return $data;
@@ -79,21 +78,21 @@ class PlanetService
     public function reset(Planet $planet): void
     {
         $this->repository->reset($planet);
-        $this->shipListRepository->removeForEntity($planet->getEntity());
+        $this->shipListRepository->removeForEntity($planet);
         $this->shipQueueRepository->removeForEntity($planet->getEntity());
-        $this->defenseRepository->removeForEntity($planet->getEntity());
+        $this->defenseRepository->removeForEntity($planet);
         $this->defenseQueueRepository->removeForEntity($planet->getEntity());
-        $this->buildingRepository->removeForEntity($planet->getEntity());
+        $this->buildingRepository->removeForEntity($planet);
         $this->buildingQueueItemRepository->removeForEntity($planet->getEntity());
 
-        $this->logRepository->add(LogFacility::GALAXY, LogSeverity::INFO, "Der Planet mit der ID " . $planet->getId() . " wurde zurückgesetzt!");
+        $this->logRepository->add(LogFacility::GALAXY, LogSeverity::INFO, "Der Planet mit der ID " . $planet->getEntity()->getId() . " wurde zurückgesetzt!");
     }
 
     public function getAllowedFleetActions(Planet $planet):array {
-        $planetType = $this->planetTypeRepository->get($planet->getTypeId());
+        $planetType = $planet->getPlanetType();
 
         $arr = array();
-        if ($planet->getUserId() > 0) {
+        if ($planet->getUser()) {
             $arr[] = FleetAction::TRANSPORT;
             $arr[] = FleetAction::FETCH;
             $arr[] = FleetAction::POSITION;
@@ -112,7 +111,7 @@ class PlanetService
             $arr[] = FleetAction::MARKET;
             $arr[] = FleetAction::EMP;
         }
-        if ($planet->getUserId() == 0 && $planetType->isHabitable())
+        if ($planet->getUser() && $planetType->isHabitable())
             $arr[] = FleetAction::COLONIZE;
         if ($planet->getWfMetal() || $planet->getWfCrystal() || $planet->getWfPlastic())
             $arr[] = FleetAction::COLLECT_DEBRIS;

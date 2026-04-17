@@ -86,10 +86,10 @@ class UserToXml
         $mainPlanet = 0;
         foreach ($planets as $planet) {
             if ($planet->isMainPlanet()) {
-                $mainPlanet = $planet->getId();
+                $mainPlanet = $planet->getEntity()->getId();
             }
             $xml .= "
-        <planet id=\"" . $planet->getId() . "\" name=\"" . $planet->getName() . "\" main=\"" . (int) $planet->isMainPlanet() . "\">
+        <planet id=\"" . $planet->getEntity()->getId() . "\" name=\"" . $planet->getName() . "\" main=\"" . (int) $planet->isMainPlanet() . "\">
             <type id=\"" . $planet->getPlanetType()->getId() . "\">" . $planet->getPlanetType()->getName() . "</type>
             <metal>" . $planet->getResMetal() . "</metal>
             <crystal>" . $planet->getResCrystal() . "</crystal>
@@ -115,7 +115,7 @@ class UserToXml
         $xml = "<buildings>";
         $buildListItems = $this->buildingRepository->findForUser($user);
         foreach ($buildListItems as $item) {
-            $xml .= "<building planet=\"" . $item->getEntity()->getId() . "\" id=\"" . $item->getBuilding()->getId(). "\" level=\"" . $item->getCurrentLevel() . "\">" . $item->getBuilding()->getName() . "</building>";
+            $xml .= "<building planet=\"" . $item->getEntity()->getEntity()->getId() . "\" id=\"" . $item->getBuilding()->getId(). "\" level=\"" . $item->getCurrentLevel() . "\">" . $item->getBuilding()->getName() . "</building>";
         }
         $xml .= "</buildings>";
 
@@ -139,7 +139,7 @@ class UserToXml
         $xml = "<ships>";
         $shipListItems = $this->shipListRepository->findForUser($user);
         foreach ($shipListItems as $item) {
-            $xml .= "<ship planet=\"" . $item->getEntity()->getId() . "\" id=\"" . $item->getShip()->getId() . "\" count=\"" . $item->getCount() . "\">" . $item->getShip()->getName() . "</ship>";
+            $xml .= "<ship planet=\"" . $item->getEntity()->getEntity()->getId() . "\" id=\"" . $item->getShip()->getId() . "\" count=\"" . $item->getCount() . "\">" . $item->getShip()->getName() . "</ship>";
         }
         $fleets = $this->fleetRepository->findByParameters((new FleetSearchParameters())->user($user));
         foreach ($fleets as $fleet) {
@@ -158,7 +158,7 @@ class UserToXml
         $xml = "<defenses>";
         $defenseItems = $this->defenseRepository->findForUser($user);
         foreach ($defenseItems as $item) {
-            $xml .= "<defense planet=\"" . $item->getEntity()->getId() . "\" id=\"" . $item->getDefense()->getId() . "\" count=\"" . $item->getCount() . "\">" . $item->getDefense()->getName() . "</defense>";
+            $xml .= "<defense planet=\"" . $item->getEntity()->getEntity()->getId() . "\" id=\"" . $item->getDefense()->getId() . "\" count=\"" . $item->getCount() . "\">" . $item->getDefense()->getName() . "</defense>";
         }
         $xml .= "</defenses>";
 

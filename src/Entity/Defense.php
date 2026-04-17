@@ -84,11 +84,13 @@ class Defense implements ObjectWithImage
     #[ORM\Column(name: "def_jam", type: "integer")]
     private int $jam;
 
-    #[ORM\Column(name: "def_race_id", type: "integer")]
-    private int $raceId;
+    #[ORM\JoinColumn(name: 'def_race_id', referencedColumnName: 'race_id')]
+    #[ORM\ManyToOne(targetEntity: Race::class)]
+    private ?Race $race = null;
 
-    #[ORM\Column(name: "def_cat_id", type: "integer")]
-    private int $catId;
+    #[ORM\JoinColumn(name: 'def_cat_id', referencedColumnName: 'cat_id')]
+    #[ORM\ManyToOne(targetEntity: DefenseCategory::class)]
+    private ?DefenseCategory $cat = null;
 
     #[ORM\Column(name: "def_max_count", type: "integer")]
     private int $maxCount;
@@ -381,28 +383,24 @@ class Defense implements ObjectWithImage
         return $this;
     }
 
-    public function getRaceId(): ?int
+    public function getRace(): ?Race
     {
-        return $this->raceId;
+        return $this->race;
     }
 
-    public function setRaceId(int $raceId): static
+    public function setRace(?Race $race): void
     {
-        $this->raceId = $raceId;
-
-        return $this;
+        $this->race = $race;
     }
 
-    public function getCatId(): ?int
+    public function getCat(): ?DefenseCategory
     {
-        return $this->catId;
+        return $this->cat;
     }
 
-    public function setCatId(int $catId): static
+    public function setCat(?DefenseCategory $cat): void
     {
-        $this->catId = $catId;
-
-        return $this;
+        $this->cat = $cat;
     }
 
     public function getMaxCount(): ?int

@@ -23,7 +23,7 @@ class EntityRepository extends AbstractRepository
 
         return $this->createQueryBuilder('q')
             ->select('count(distinct(q.id))')
-            ->innerJoin('App:Cell', 'c', 'WITH', 'q.cellId = c.id')
+            ->innerJoin('App:Cell', 'c', 'WITH', 'q.id = c.id')
             ->where('q.code = :code')
             ->andWhere('c.sx = :sx')
             ->andWhere('c.sy = :sy')
@@ -40,8 +40,8 @@ class EntityRepository extends AbstractRepository
     {
         return (int) $this->createQueryBuilder('q')
             ->select('COUNT(DISTINCT(q.id))')
-            ->innerJoin('App:Cell', 'c', 'WITH', 'q.cellId = c.id')
-            ->innerJoin('App:Planet', 'p', 'WITH', 'p.id = q.id AND p.userId > 0')
+            ->innerJoin('App:Cell', 'c', 'WITH', 'q.id = c.id')
+            ->innerJoin('App:Planet', 'p', 'WITH', 'p.entity = q.id AND p.user > 0')
             ->where('q.code = :code')
             ->andWhere('c.sx = :sx')
             ->andWhere('c.sy = :sy')
@@ -108,10 +108,19 @@ class EntityRepository extends AbstractRepository
             ->execute();
     }
 
-    public function findByCellAndPosition(int $cellId, int $position): ?Entity
+    public function findByCellAndPosition(int|Cell $cellId, int $position): ?Entity
     {
-        $entity = $this->findBy(['cellId'=>$cellId,'pos'=>$position]);
-        return $entity ? $entity[0]: null;
+        return $this->createQueryBuilder('q')
+            ->innerJoin('App:Cell', 'c', 'WITH', 'q.cell = c.id')
+            ->where('q.cell = :cellId')
+            ->andWhere('q.pos = :position')
+            ->setParameters([
+                'cellId' => $cellId,
+                'position' => $position,
+            ])
+            ->setMaxResults(1)
+            ->getQuery()
+            ->getOneOrNullResult();
     }
 
     public function findByCoordinates(EntityCoordinates $coordinates): ?Entity

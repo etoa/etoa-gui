@@ -55,12 +55,12 @@ class SetupController extends AbstractGameController
     #[Route('/game/setup/race', name: 'game.setup.race')]
     public function setupRace(Request $request): Response
     {
-        if($this->getUser()->getData()->getRaceId() === 0) {
+        if(!$this->getUser()->getData()->getRace()) {
             $addForm = $this->createForm(RaceSetupType::class);
             $addForm->handleRequest($request);
 
             if($addForm->isSubmitted() && $addForm->isValid()) {
-                $this->getUser()->getData()->setRaceId($addForm->getData()['race']->getId());
+                $this->getUser()->getData()->setRace($addForm->get('race')->getData());
                 $this->userRepository->save();
                 return $this->redirectToRoute('game.setup.sector');
             }
@@ -81,7 +81,7 @@ class SetupController extends AbstractGameController
             return $this->redirectToRoute('game.setup.finished');
         }
 
-        if($this->getUser()->getData()->getRaceId() > 0 ) {
+        if($this->getUser()->getData()->getRace()) {
             $sx_num = $this->configurationService->param1Int('num_of_sectors');
             $sy_num = $this->configurationService->param2Int('num_of_sectors');
 
@@ -110,7 +110,7 @@ class SetupController extends AbstractGameController
                     $tt->addGoodCond("Bewohnte Planeten: " . $countInhabitedPlanets);
                     $tt->addComment("Klickt hier um euren Heimatplaneten in Sektor <b>" . $xcnt . "/" . $ycnt . "</b> anzusiedeln!");
 
-                    $map[$y][$x] = "<area shape=\"rect\" coords=\"$x," . (GalaxyMap::WIDTH - $y) . "," . ($x + $sec_x_size) . "," . (GalaxyMap::WIDTH - $y - $sec_y_size) . "\" href=\"".$this->generateUrl('game.setup.planet', ['id'=>$planet?->getId()]) . "\" alt=\"Sektor $xcnt / $ycnt\" " . $tt->toString() . ">\n";
+                    $map[$y][$x] = "<area shape=\"rect\" coords=\"$x," . (GalaxyMap::WIDTH - $y) . "," . ($x + $sec_x_size) . "," . (GalaxyMap::WIDTH - $y - $sec_y_size) . "\" href=\"".$this->generateUrl('game.setup.planet', ['id'=>$planet?->getEntity()->getId()]) . "\" alt=\"Sektor $xcnt / $ycnt\" " . $tt->toString() . ">\n";
                     $ycnt++;
                 }
                 $xcnt++;
@@ -128,13 +128,13 @@ class SetupController extends AbstractGameController
     #[Route('/game/setup/planet/{id?}', name: 'game.setup.planet')]
     public function setupPlanet(?Planet $planet, Request $request): Response
     {
-        if($this->getUser()->getData()->getRaceId() === 0) {
+        if(!$this->getUser()->getData()->getRace()) {
             return $this->redirectToRoute('game.setup.race');
         }
 
         $sets = $this->defaultItemSetRepository->getSets();
 
-        if($this->planetRepository->findBy(['mainPlanet'=>true,'userId'=>$this->getUser()->getId()]))  {
+        if($this->planetRepository->findBy(['mainPlanet'=>true,'user'=>$this->getUser()->getData()]))  {
             if (count($sets) > 1) {
                 return $this->redirectToRoute('game.setup.itemset');
             }
@@ -153,9 +153,10 @@ class SetupController extends AbstractGameController
             return $this->redirectToRoute('game.setup.sector');
         }
 
+
         $planetType = $planet->getPlanetType();
         $entity = $planet->getEntity();
-        $star = $this->starRepository->find($this->entityRepository->findByCellAndPosition($entity->getCellId(), 0)->getId());
+        $star = $this->starRepository->find($this->entityRepository->findByCellAndPosition($entity->getCell(), 0)->getId());
         $starType = $star->getSolarType();
         $race = $this->getUser()->getData()->getRace();
 
@@ -237,12 +238,13 @@ class SetupController extends AbstractGameController
             $session = $request->getSession();
             $session->set('filter_sol_id',$addForm->get('filter_sol_id')->getData());
             $session->set('filter_planet_id',$addForm->get('filter_planet_id')->getData());
-            return $this->redirectToRoute('game.setup.planet',['id'=> $planet?->getId()]);
+
+            return $this->redirectToRoute('game.setup.planet',['id'=> $planet?->getEntity()->getId()]);
         }
 
         if($addForm->get('submit_chooseplanet')->isClicked() && $addForm->isValid()) {
             if ($planet->getPlanetType()->isHabitable() &&
-                $planet->getUserId() == 0 &&
+                $planet->getUser() === null &&
                 $planet->getFields() > $this->configurationService->getInt('user_min_fields')
                 #&& $this->checker->checker_verify()
             ) {
@@ -251,7 +253,7 @@ class SetupController extends AbstractGameController
                 if (count($sets) > 1) {
                     return $this->redirectToRoute('game.setup.itemset');
                 } elseif (count($sets) === 1) {
-                    $this->userSetupService->addItemSetListToPlanet($planet, $this->getUser()->getData(), $sets[0]->getId());
+                    $this->userSetupService->addItemSetListToPlanet($planet, $this->getUser()->getData(), $sets[0]);
                     $this->userRepository->setSetupFinished($this->getUser()->getData());
                     return $this->redirectToRoute('game.setup.finished');
                 } else {
@@ -306,8 +308,8 @@ class SetupController extends AbstractGameController
         $text = '';
 
         if ($welcomeText?->isEnabled()) {
-            $text = BBCodeUtils::toHTML($welcomeText->content);
-            $this->messageRepository->createSystemMessage($this->getUser()->getData(),  $this->messageCategoryRepository->find(MessageCategoryId::USER), 'Willkommen', $welcomeText->content);
+            $text = BBCodeUtils::toHTML($welcomeText->getContent());
+            $this->messageRepository->createSystemMessage($this->getUser()->getData(),  $this->messageCategoryRepository->find(MessageCategoryId::USER), 'Willkommen', $welcomeText->getContent());
         }
 
         return $this->render('game/setup/setup_finished.html.twig', [

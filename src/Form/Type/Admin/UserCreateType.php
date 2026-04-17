@@ -33,6 +33,7 @@ class UserCreateType extends AbstractType
             ->add('race', RaceType::class, [
                 'placeholder' => 'Keine',
                 'label' => 'Rasse',
+                'constraints' => [],
             ])
             ->add('ghost', ChoiceType::class, [
                 'expanded' => true,

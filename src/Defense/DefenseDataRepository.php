@@ -125,17 +125,9 @@ class DefenseDataRepository extends AbstractRepository
      */
     public function searchDefense(DefenseSearch $search, DefenseSort $sort = null, int $limit = null): array
     {
-        $data = $this->applySearchSortLimit($this->createQueryBuilder('q'), $search, $sort, $limit)
-            ->select('*')
-            ->from('defense')
-            ->fetchAllAssociative();
-
-        $results = [];
-        foreach ($data as $row) {
-            $defense = new Defense($row);
-            $results[$defense->id] = $defense;
-        }
-
-        return $results;
+        return $this->applySearchSortLimit($this->createQueryBuilder('q'), $search, $sort, $limit)
+            ->select()
+            ->getQuery()
+            ->execute();
     }
 }

@@ -390,10 +390,12 @@ class UserController extends AbstractAdminController
             ->add('avatarDel', CheckboxType::class, [
                 'mapped' => false,
                 'label' => false,
+                'required' => false
             ])
             ->add('imageDel', CheckboxType::class, [
                 'label' => false,
-                'mapped' => false
+                'mapped' => false,
+                'required' => false
             ])
             ->add('specialist', ChoiceType::class, [
                 'required' => false,

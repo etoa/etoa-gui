@@ -7,6 +7,7 @@ namespace EtoA\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use EtoA\Core\AbstractRepository;
+use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Entity\User;
 use EtoA\Entity\UserProperties;
 
@@ -15,7 +16,8 @@ class UserPropertiesRepository extends AbstractRepository
     public function __construct(
         ManagerRegistry $registry,
         private readonly EntityManagerInterface $entityManager,
-        private readonly UserRepository $userRepository
+        private readonly UserRepository $userRepository,
+        private readonly ConfigurationService $config
     )
     {
         parent::__construct($registry, UserProperties::class);
@@ -24,7 +26,7 @@ class UserPropertiesRepository extends AbstractRepository
     public function addBlank(User $user): void
     {
         $userProperties = new UserProperties();
-
+        $userProperties->setCssStyle($this->config->get('default_css_style'));
         $user->setUserProperties($userProperties);
 
         $this->userRepository->save();
