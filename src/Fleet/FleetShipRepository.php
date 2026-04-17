@@ -64,59 +64,37 @@ class FleetShipRepository extends AbstractRepository
         return $this->findBy(['fleet'=>$fleet,'shipFaked'=>$faked]);
     }
 
-    public function findShipsInFleet(Fleet $fleet, Ship $ship): ?FleetShip
+    public function findShipsInFleet(Fleet $fleet, Ship|int $ship): ?FleetShip
     {
         return $this->findOneBy(['fleet'=>$fleet,'ship'=>$ship]);
     }
 
-    public function addSpecialShipsToFleet(int $fleetId, int $shipId, int $count, ShipListItem $item): void
+    public function addSpecialShipsToFleet(Fleet $fleet, Ship $ship, int $count, ShipListItem $item): void
     {
-        $this->createQueryBuilder('q')
-            ->insert('fleet_ships')
-            ->values([
-                'fs_fleet_id' => ':fleetId',
-                'fs_ship_id' => ':shipId',
-                'fs_ship_cnt' => ':count',
-                'fs_special_ship' => '1',
-                'fs_special_ship_level' => ':level',
-                'fs_special_ship_exp' => ':exp',
-                'fs_special_ship_bonus_weapon' => ':bonusWeapon',
-                'fs_special_ship_bonus_structure' => ':bonusStructure',
-                'fs_special_ship_bonus_shield' => ':bonusShield',
-                'fs_special_ship_bonus_heal' => ':bonusHeal',
-                'fs_special_ship_bonus_capacity' => ':bonusCapacity',
-                'fs_special_ship_bonus_speed' => ':bonusSpeed',
-                'fs_special_ship_bonus_readiness' => ':bonusReadiness',
-                'fs_special_ship_bonus_pilots' => ':bonusPilots',
-                'fs_special_ship_bonus_tarn' => ':bonusTarn',
-                'fs_special_ship_bonus_antrax' => ':bonusAntrax',
-                'fs_special_ship_bonus_forsteal' => ':bonusForsteal',
-                'fs_special_ship_bonus_build_destroy' => ':bonusBuildDestroy',
-                'fs_special_ship_bonus_antrax_food' => ':bonusAntraxFood',
-                'fs_special_ship_bonus_deactivade' => ':bonusDeactivade',
-            ])
-            ->setParameters([
-                'fleetId' => $fleetId,
-                'shipId' => $shipId,
-                'count' => $count,
-                'level' => $item->specialShipLevel,
-                'exp' => $item->specialShipExp,
-                'bonusWeapon' => $item->specialShipBonusWeapon,
-                'bonusStructure' => $item->specialShipBonusStructure,
-                'bonusShield' => $item->specialShipBonusShield,
-                'bonusHeal' => $item->specialShipBonusHeal,
-                'bonusCapacity' => $item->specialShipBonusCapacity,
-                'bonusSpeed' => $item->specialShipBonusSpeed,
-                'bonusReadiness' => $item->specialShipBonusReadiness,
-                'bonusPilots' => $item->specialShipBonusPilots,
-                'bonusTarn' => $item->specialShipBonusTarn,
-                'bonusAntrax' => $item->specialShipBonusAnthrax,
-                'bonusForsteal' => $item->specialShipBonusForSteal,
-                'bonusBuildDestroy' => $item->specialShipBonusBuildDestroy,
-                'bonusAntraxFood' => $item->specialShipBonusAnthraxFood,
-                'bonusDeactivade' => $item->specialShipBonusDeactivate,
-            ])
-            ->executeQuery();
+        $fleetShip = new FleetShip();
+        $fleetShip->setFleet($fleet);
+        $fleetShip->setShip($ship);
+        $fleetShip->setCount($count);
+        $fleetShip->setSpecialShip(true);
+        $fleetShip->setSpecialShipLevel($item->getSpecialShipLevel());
+        $fleetShip->setSpecialShipExperience($item->getSpecialShipExp());
+        $fleetShip->setSpecialShipBonusWeapon($item->getSpecialShipBonusWeapon());
+        $fleetShip->setSpecialShipBonusStructure($item->getSpecialShipBonusStructure());
+        $fleetShip->setSpecialShipBonusShield($item->getSpecialShipBonusShield());
+        $fleetShip->setSpecialShipBonusHeal($item->getSpecialShipBonusHeal());
+        $fleetShip->setSpecialShipBonusCapacity($item->getSpecialShipBonusCapacity());
+        $fleetShip->setSpecialShipBonusSpeed($item->getSpecialShipBonusSpeed());
+        $fleetShip->setSpecialShipBonusReadiness($item->getSpecialShipBonusReadiness());
+        $fleetShip->setSpecialShipBonusPilots($item->getSpecialShipBonusPilots());
+        $fleetShip->setSpecialShipBonusTarn($item->getSpecialShipBonusTarn());
+        $fleetShip->setSpecialShipBonusAnthrax($item->getSpecialShipBonusAnthrax());
+        $fleetShip->setSpecialShipBonusForSteal($item->getSpecialShipBonusForSteal());
+        $fleetShip->setSpecialShipBonusBuildDestroy($item->getSpecialShipBonusBuildDestroy());
+        $fleetShip->setSpecialShipBonusAnthraxFood($item->getSpecialShipBonusAnthraxFood());
+        $fleetShip->setSpecialShipBonusDeactivate($item->getSpecialShipBonusDeactivate());
+
+        $this->persist($fleetShip);
+        $this->save();
     }
 
 

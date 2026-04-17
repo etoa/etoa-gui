@@ -410,18 +410,18 @@ die Spielleitung";
         // or att allowed if target user is not noob protected
         // or att allowed if target user is inactive
         // or att allowed if target user is locked
-        if ($cu->getAllianceId() > 0 && $u->getAllianceId() > 0) {
+        if ($cu->getAlliance() && $u->getAlliance()) {
 
-            return $this->allianceDiplomacyRepository->isAtWar($cu->getAllianceId(), $u->getAllianceId())
+            return $this->allianceDiplomacyRepository->isAtWar($cu->getAlliance(), $u->getAlliance())
                 || !$this->isUserNoobProtected($u)
                 || $this->isInactiv($u)
                 || ($u->getBlockedFrom() < time() && $u->getBlockedTo() > time())
-                || $u->getNpc();
+                || $u->isNpc();
         } else {
             return !$this->isUserNoobProtected($u)
                 || $this->isInactiv($u)
                 || ($u->getBlockedFrom() < time() && $u->getBlockedTo() > time())
-                || $u->getNpc();
+                || $u->isNpc();
         }
     }
 
@@ -430,9 +430,9 @@ die Spielleitung";
         $cu = $this->security->getUser()->getData();
         // check whether user points are outside limits
         // or this user or opponent is below minimum attack threshold
-        return ($u->getPoints() * USER_ATTACK_PERCENTAGE > $cu->getPoints() || $u->getPoints() / USER_ATTACK_PERCENTAGE < $cu->getPoints())
-            || ($cu->getPoints() <= USER_ATTACK_MIN_POINTS)
-            || ($u->getPoints() <= USER_ATTACK_MIN_POINTS);
+        return ($u->getPoints() * $this->config->getFloat('user_attack_percentage') > $cu->getPoints() || $u->getPoints() / $this->config->getFloat('user_attack_percentage') < $cu->getPoints())
+            || ($cu->getPoints() <= $this->config->getInt('user_attack_min_points'))
+            || ($u->getPoints() <= $this->config->getInt('user_attack_min_points'));
     }
 
     public function isInactiv(User $u):bool

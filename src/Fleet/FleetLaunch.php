@@ -25,7 +25,7 @@ class FleetLaunch
     private int $speedPercent1 = 0;
     private int $duration = 0;
     private int $duration1 = 0;
-    private int $costsPerHundredAE = 0;
+    private float $costsPerHundredAE = 0;
     private int $costsPerHundredAE1 = 0;
     private int $timeLaunchLand = 0;
     private int $costsLaunchLand = 0;
@@ -73,17 +73,8 @@ class FleetLaunch
     private int $fakeId = 0;
     private array $shipActions = [];
     private array $factoredShipActions = [];
-    /**
-     * @var false
-     */
     private bool $havenOk = false;
-    /**
-     * @var false
-     */
     private bool $targetOk = false;
-    /**
-     * @var false
-     */
     private bool $actionOk = false;
     private float $capacity = 0;
     private float $totalCapacity = 0;
@@ -101,6 +92,7 @@ class FleetLaunch
      * >> Step 1 <<
      */
     public function __construct(
+
     )
     {
         /*
@@ -176,7 +168,7 @@ class FleetLaunch
         $this->ships = $ships;
     }
 
-    public function setSpeed(int $speed): void
+    public function setSpeed(float $speed): void
     {
         $this->speed = $speed;
     }
@@ -186,12 +178,12 @@ class FleetLaunch
         $this->duration = $duration;
     }
 
-    public function setCostsPerHundredAE(int $costsPerHundredAE): void
+    public function setCostsPerHundredAE(float $costsPerHundredAE): void
     {
         $this->costsPerHundredAE = $costsPerHundredAE;
     }
 
-    public function setTimeLaunchLand(int $timeLaunchLand): void
+    public function setTimeLaunchLand(float $timeLaunchLand): void
     {
         $this->timeLaunchLand = $timeLaunchLand;
     }
@@ -244,7 +236,7 @@ class FleetLaunch
     function setSpeedPercent($perc): void
     {
         $this->speedPercent = max(1, min(100, $perc));
-        $this->duration = $this->distance / $this->getSpeed();    // Calculate duration
+        $this->duration = $this->distance / ($this->getSpeed()>0?$this->getSpeed():1);    // Calculate duration
         $this->duration *= 3600;    // Convert to seconds
         $this->duration += $this->getTimeLaunchLand();    // Add launch and land time
         $this->duration = ceil($this->duration);
@@ -295,6 +287,11 @@ class FleetLaunch
         $this->supportFuel = $supportFuel;
     }
 
+    public function getLoadedRes($id)
+    {
+        return ($this->res[$id] > 0) ? $this->res[$id] : 0;
+    }
+
     public function setSupport(string $support): void
     {
         $this->support = $support;
@@ -336,20 +333,20 @@ class FleetLaunch
         $this->res[$id] = 0;
         $this->calcResLoaded();
         if ($ammount >= 0) {
-            if ($id == 4) {
-                $loaded = floor(min($ammount, $this->getCapacity(), $this->sourceEntity->getRes($id) - $this->getSupportFuel() - $this->getCosts()));
-            } elseif ($id == 5) {
-                $loaded = floor(min($ammount, $this->getCapacity(), $this->sourceEntity->getRes($id) - $this->getSupportFood() - $this->getCostsFood()));
-            } else {
-                $loaded = floor(min($ammount, $this->getCapacity(), $this->sourceEntity->getRes($id)));
+            switch ($id) {
+                case 1: $loaded = floor(min($ammount, $this->getCapacity(), $this->sourceEntity->getResMetal()));break;
+                case 2: $loaded = floor(min($ammount, $this->getCapacity(), $this->sourceEntity->getResCrystal()));break;
+                case 3: $loaded = floor(min($ammount, $this->getCapacity(), $this->sourceEntity->getResPlastic()));break;
+                case 4: $loaded = floor(min($ammount, $this->getCapacity(), $this->sourceEntity->getResFuel() - $this->getSupportFuel() - $this->getCosts()));break;
+                case 5: $loaded = floor(min($ammount, $this->getCapacity(), $this->sourceEntity->getResFood() - $this->getSupportFood() - $this->getCostsFood()));break;
             }
         } else {
-            if ($id == 4) {
-                $loaded = floor(min($this->getCapacity(), max(0, $this->sourceEntity->getRes($id) + $ammount - $this->getSupportFuel() - $this->getCosts())));
-            } elseif ($id == 5) {
-                $loaded = floor(min($this->getCapacity(), max(0, $this->sourceEntity->getRes($id) + $ammount - $this->getSupportFood() - $this->getCostsFood())));
-            } else {
-                $loaded = floor(min($this->getCapacity(), max(0, $this->sourceEntity->getRes($id) + $ammount)));
+            switch ($id) {
+                case 1: $loaded = floor(min($this->getCapacity(), max(0, $this->sourceEntity->getResMetal() + $ammount)));break;
+                case 2: $loaded = floor(min($this->getCapacity(), max(0, $this->sourceEntity->getResCrystal() + $ammount)));break;
+                case 3: $loaded = floor(min($this->getCapacity(), max(0, $this->sourceEntity->getResPlastic() + $ammount)));break;
+                case 4: $loaded = floor(min($this->getCapacity(), max(0, $this->sourceEntity->getResFuel() + $ammount - $this->getSupportFuel() - $this->getCosts()))); break;
+                case 5: $loaded = floor(min($this->getCapacity(), max(0, $this->sourceEntity->getResFood() + $ammount - $this->getSupportFood() - $this->getCostsFood()))); break;
             }
         }
         $this->res[$id] = $loaded;
@@ -425,7 +422,7 @@ class FleetLaunch
 
     function getAllianceSlots(): int
     {
-        if ($this->sourceEntity->getUser()->getAlliance() && isset($this->allianceSlots)) {
+        if ($this->sourceEntity->getUser()?->getAlliance() && isset($this->allianceSlots)) {
             return $this->allianceSlots - count($this->aFleets) - count($this->supportedAllianceEntities);
         }
         return 0;

@@ -7,15 +7,15 @@
             <tr>
                 <th><b>Wurmloch-Eintrittspunkt:</b></th>
                 <td id="targetinfo" style="padding:16px 2px 2px 60px;color:#fff;height:47px;background:#000 url('{{ fleet.wormholeEntryEntity.imagePath }}') no-repeat 3px 3px;">
-                    $fleet->wormholeEntryEntity($fleet->wormholeEntryEntity->entityCodeString() , Besitzer:
-                    $fleet->wormholeEntryEntity->owner() )
+                    $fleet.wormholeEntryEntity($fleet.wormholeEntryEntity.entityCodeString() , Besitzer:
+                    $fleet.wormholeEntryEntity.owner() )
                 </td>
             </tr>
             <tr>
                 <th><b>Wurmloch-Austrittspunkt:</b></th>
-                <td id="targetinfo" style="padding:16px 2px 2px 60px;color:#fff;height:47px;background:#000 url('$fleet->wormholeExitEntity->imagePath()') no-repeat 3px 3px;">
-                    $fleet->wormholeExitEntity  ( $fleet->wormholeExitEntity->entityCodeString() , Besitzer:
-                    $fleet->wormholeExitEntity->owner() )
+                <td id="targetinfo" style="padding:16px 2px 2px 60px;color:#fff;height:47px;background:#000 url('$fleet.wormholeExitEntity.imagePath()') no-repeat 3px 3px;">
+                    $fleet.wormholeExitEntity  ( $fleet.wormholeExitEntity.entityCodeString() , Besitzer:
+                    $fleet.wormholeExitEntity.owner() )
                 </td>
             </tr>
             {% endif %}
@@ -34,7 +34,7 @@
             </tr>
             <tr>
                 <th>Entfernung:</th>
-                <td id="distance"> {{ formatNumber(fleet.getDistance()) }}AE</td>
+                <td id="distance"> {{ formatNumber(fleet.getDistance) }}AE</td>
             </tr>
             <tr>
                 <th>Dauer:</th>
@@ -58,5 +58,93 @@
             </tr>
         {% endblock %}
     </twig:Table>
-    <twig:HavenTarget/>
+    {{ form_start(form) }}
+        <twig:Table>
+        {% block table_content %}
+            <tr>
+                <th>Aktionswahl</th>
+                <th colspan="2">Ladung</th>
+            </tr>
+            <tr>
+                <td rowspan="9">
+                    {% if form.actions %}
+                        {{ form_widget(form.actions) }}
+                    {% else %}
+                        <i>Keine Aktion auf dieses Ziel verfügbar!</i><br/>
+                    {% endif %}
+                </td>
+                <th style="width:170px;">Freie Kapazität:</th>
+                <td style="width:150px;" id="resfree">{{ formatNumber(fleet.getCapacity) }}</td>
+            </tr>
+            <tr>
+                <th>Freie Passagierplätze:</th>
+                <td style="width:150px;" id="peoplefree">{{ formatNumber(fleet.getPeopleCapacity) }}</td>
+            </tr>
+            <tr id="resbox1">
+                <th>
+                    {{ constant('EtoA\\Universe\\Resources\\ResIcons::METAL')|raw }}
+                    {{ constant('EtoA\\Universe\\Resources\\ResourceNames::METAL') }}
+                </th>
+                <td>
+                    {{ form_widget(form.res1) }}
+                    <a href="javascript:;" onclick="xajax_havenCheckRes(1, floor($fleet.sourceEntity.getRes(1)) );">max</a>
+                </td>
+            </tr>
+            <tr id="resbox2">
+                <th>{{ constant('EtoA\\Universe\\Resources\\ResIcons::CRYSTAL')|raw }}
+                    {{ constant('EtoA\\Universe\\Resources\\ResourceNames::CRYSTAL') }}</th>
+                <td>
+                    {{ form_widget(form.res2) }}
+                    <a href="javascript:;" onclick="xajax_havenCheckRes(2, floor($fleet.sourceEntity.getRes(2)) );">max</a>
+                </td>
+            </tr>
+            <tr id="resbox3">
+                <th>
+                    {{ constant('EtoA\\Universe\\Resources\\ResIcons::PLASTIC')|raw }}
+                    {{ constant('EtoA\\Universe\\Resources\\ResourceNames::PLASTIC') }}
+                </th>
+                <td>
+                    {{ form_widget(form.res3) }}
+                    <a href="javascript:;" onclick="xajax_havenCheckRes(3, floor($fleet.sourceEntity.getRes(3)) );">max</a>
+                </td>
+            </tr>
+            <tr id="resbox4">
+                <th>
+                    {{ constant('EtoA\\Universe\\Resources\\ResIcons::FUEL')|raw }}
+                    {{ constant('EtoA\\Universe\\Resources\\ResourceNames::FUEL') }}
+                </th>
+                <td>
+                    {{ form_widget(form.res4) }}
+                    <a href="javascript:;" onclick="xajax_havenCheckRes(4, floor($fleet.sourceEntity.getRes(4)) );">max</a>
+                </td>
+            </tr>
+            <tr id="resbox5">
+                <th>
+                    {{ constant('EtoA\\Universe\\Resources\\ResIcons::FOOD')|raw }}
+                    {{ constant('EtoA\\Universe\\Resources\\ResourceNames::FOOD') }}
+                </th>
+                <td>
+                    {{ form_widget(form.res5) }}
+                    <a href="javascript:;" onclick="xajax_havenCheckRes(5, floor($fleet.sourceEntity.getRes(5)) );">max</a>
+                </td>
+            </tr>
+            <tr id="resbox6">
+                <th>
+                    {{ constant('EtoA\\Universe\\Resources\\ResIcons::PEOPLE')|raw }}
+                    Passagiere
+                </th>
+                <td>
+                    {{ form_widget(form.res6) }}
+                    <a href="javascript:;" onclick="xajax_havenCheckPeople( floor($fleet.sourceEntity.people()) );">max</a>
+                </td>
+            </tr>
+            <tr id="resbox7">
+                <th id="respercent">&nbsp;</th>
+                <td>&nbsp;
+                    <a href="javascript:;" onclick="xajax_havenSetResAll();">Alles einladen</a>
+                </td>
+            </tr>
+        {% endblock %}
+        </twig:Table>
+    {{form_end(form)}}
 {% endblock %}

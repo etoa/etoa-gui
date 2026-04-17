@@ -39,10 +39,12 @@ class Alliance
 
     #[ORM\JoinColumn(name: 'alliance_mother', referencedColumnName: 'alliance_id')]
     #[ORM\ManyToOne(targetEntity: Alliance::class)]
+    #[Ignore]
     private ?Alliance $mother = null;
 
     #[ORM\JoinColumn(name: 'alliance_mother_request', referencedColumnName: 'alliance_id')]
     #[ORM\ManyToOne(targetEntity: Alliance::class)]
+    #[Ignore]
     private ?Alliance $motherRequest = null;
 
     #[ORM\Column(name: "alliance_accept_applications")]
@@ -107,45 +109,59 @@ class Alliance
     private int $objectsForMembers = 1;
 
     #[ORM\OneToOne(mappedBy: "alliance", targetEntity: AllianceStats::class, cascade: ['persist'], orphanRemoval: true)]
+    #[Ignore]
     private ?AllianceStats $allianceStats = null;
 
     #[ORM\OneToMany(mappedBy: 'alliance', targetEntity: User::class)]
+    #[Ignore]
     private Collection $members;
 
     #[ORM\OneToMany(mappedBy: 'alliance', targetEntity: AllianceBoardCategory::class, cascade: ['persist', 'remove'])]
+    #[Ignore]
     private Collection $boardCategories;
 
     #[ORM\OneToMany(mappedBy: 'alliance', targetEntity: AllianceApplication::class, cascade: ['persist', 'remove'])]
+    #[Ignore]
     private Collection $applications;
 
     #[ORM\OneToMany(mappedBy: 'alliance1', targetEntity: AllianceDiplomacy::class, cascade: ['persist', 'remove'])]
+    #[Ignore]
     private Collection $diplomacy1;
 
     #[ORM\OneToMany(mappedBy: 'alliance2', targetEntity: AllianceDiplomacy::class, cascade: ['persist', 'remove'])]
+    #[Ignore]
     private Collection $diplomacy2;
 
     #[ORM\OneToMany(mappedBy: 'alliance', targetEntity: AllianceBuildListItem::class, cascade: ['persist', 'remove'])]
+    #[Ignore]
     private Collection $buildlist;
 
     #[ORM\OneToMany(mappedBy: 'alliance', targetEntity: AllianceHistory::class, cascade: ['persist', 'remove'])]
+    #[Ignore]
     private Collection $history;
 
     #[ORM\OneToMany(mappedBy: 'alliance', targetEntity: AlliancePoints::class, cascade: ['persist', 'remove'])]
+    #[Ignore]
     private Collection $alliancePoints;
 
     #[ORM\OneToMany(mappedBy: 'alliance', targetEntity: AllianceNews::class, cascade: ['persist', 'remove'])]
+    #[Ignore]
     private Collection $news;
 
     #[ORM\OneToMany(mappedBy: 'alliance', targetEntity: AlliancePoll::class, cascade: ['persist', 'remove'])]
+    #[Ignore]
     private Collection $polls;
 
     #[ORM\OneToMany(mappedBy: 'alliance', targetEntity: AllianceRank::class, cascade: ['persist', 'remove'])]
+    #[Ignore]
     private Collection $ranks;
 
     #[ORM\OneToMany(mappedBy: 'alliance', targetEntity: AllianceSpend::class, cascade: ['persist', 'remove'])]
+    #[Ignore]
     private Collection $spends;
 
     #[ORM\OneToMany(mappedBy: 'alliance', targetEntity: AllianceTechnologyListItem::class, cascade: ['persist', 'remove'])]
+    #[Ignore]
     private Collection $techlist;
 
     public function __construct()

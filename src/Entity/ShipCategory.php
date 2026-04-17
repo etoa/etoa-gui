@@ -14,13 +14,13 @@ class ShipCategory
     #[ORM\Column(name: "cat_id", type: "integer")]
     private int $id;
 
-    #[ORM\Column(name: "cat_name", type: "integer")]
+    #[ORM\Column(name: "cat_name", type: "string")]
     private string $name;
 
     #[ORM\Column(name: "cat_border", type: "integer")]
     private int $order;
 
-    #[ORM\Column(name: "cat_color", type: "integer")]
+    #[ORM\Column(name: "cat_color", type: "string")]
     private string $color;
 
     public function getId(): ?int
@@ -28,12 +28,12 @@ class ShipCategory
         return $this->id;
     }
 
-    public function getName(): ?int
+    public function getName(): string
     {
         return $this->name;
     }
 
-    public function setName(int $name): static
+    public function setName(string $name): static
     {
         $this->name = $name;
 
@@ -52,12 +52,12 @@ class ShipCategory
         return $this;
     }
 
-    public function getColor(): ?int
+    public function getColor(): string
     {
         return $this->color;
     }
 
-    public function setColor(int $color): static
+    public function setColor(string $color): static
     {
         $this->color = $color;
 

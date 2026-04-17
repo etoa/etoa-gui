@@ -12,6 +12,7 @@ use EtoA\Universe\Others\AllianceMarket;
 use EtoA\Universe\Others\Market;
 use EtoA\Universe\Others\Unexplored;
 use EtoA\Universe\Others\UnknownEntity;
+use Symfony\Component\Serializer\Annotation\Ignore;
 
 #[ORM\Entity(repositoryClass: EntityRepository::class)]
 #[ORM\Table(name: 'entities')]
@@ -22,26 +23,32 @@ class Entity
     #[ORM\Column(type: "integer")]
     private int $id;
 
+    #[Ignore]
     #[ORM\OneToOne(inversedBy: 'entity', targetEntity: Star::class, cascade: ['persist', 'remove'])]
     #[ORM\JoinColumn(name: 'id', referencedColumnName: 'id')]
     private Star $star;
 
+    #[Ignore]
     #[ORM\OneToOne(inversedBy: 'entity', targetEntity: Planet::class, cascade: ['persist', 'remove'])]
     #[ORM\JoinColumn(name: 'id', referencedColumnName: 'id')]
     private Planet $planet;
 
+    #[Ignore]
     #[ORM\OneToOne(inversedBy: 'entity', targetEntity: Asteroid::class, cascade: ['persist', 'remove'])]
     #[ORM\JoinColumn(name: 'id', referencedColumnName: 'id')]
     private Asteroid $asteroid;
 
+    #[Ignore]
     #[ORM\OneToOne(inversedBy: 'entity', targetEntity: Nebula::class, cascade: ['persist', 'remove'])]
     #[ORM\JoinColumn(name: 'id', referencedColumnName: 'id')]
     private Nebula $nebula;
 
+    #[Ignore]
     #[ORM\OneToOne(inversedBy: 'entity', targetEntity: Wormhole::class, cascade: ['persist', 'remove'])]
     #[ORM\JoinColumn(name: 'id', referencedColumnName: 'id')]
     private Wormhole $wormhole;
 
+    #[Ignore]
     #[ORM\OneToOne(inversedBy: 'entity', targetEntity: EmptySpace::class, cascade: ['persist', 'remove'])]
     #[ORM\JoinColumn(name: 'id', referencedColumnName: 'id')]
     private EmptySpace $emptySpace;
@@ -247,7 +254,7 @@ class Entity
 
     public function getOwner(): ?User
     {
-        if($this->getCode() === EntityType::PLANET && $this->planet->getUser()) {
+        if($this->getCode() === EntityType::PLANET && isset($this->planet) && $this->planet->getUser()) {
             return $this->planet->getUser();
         }
 

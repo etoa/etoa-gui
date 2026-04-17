@@ -1,0 +1,39 @@
+{% extends 'game/haven/haven.html.twig' %}
+
+{% block haven %}
+    <twig:Table>
+        {% block table_content %}
+            <tr>
+                <th colspan="2" style="color:#0f0">Flotte gestartet!</th>
+            </tr>
+                 <tr>
+            <td style="width:50%">
+                <b>Aktion:</b>
+            </td>
+            <td style="color:{{ color }}">{{ name }}</td>
+            </tr>
+            <tr>
+                <td><b>Ladung: {{ constant('EtoA\\Universe\\Resources\\ResourceNames::METAL') }}</b></td>
+                <td>{{ formatNumber(fleet.getLoadedRes(1)) }}</td>
+            </tr>
+            <tr>
+                <td><b>Ladung: {{ constant('EtoA\\Universe\\Resources\\ResourceNames::METAL') }}</b></td>
+                <td>{{ formatNumber(fleet.getLoadedRes(2)) }}</td>
+            </tr>
+            <tr>
+                <td><b>Ladung: {{ constant('EtoA\\Universe\\Resources\\ResourceNames::METAL') }}</b></td>
+                <td>{{ formatNumber(fleet.getLoadedRes(3)) }}</td>
+            </tr>
+            <tr>
+                <td><b>Ladung: {{ constant('EtoA\\Universe\\Resources\\ResourceNames::METAL') }}</b></td>
+                <td>{{ formatNumber(fleet.getLoadedRes(4)) }}</td>
+            </tr>
+            <tr>
+                <td><b>Ladung: {{ constant('EtoA\\Universe\\Resources\\ResourceNames::METAL') }}</b></td>
+                <td>{{ formatNumber(fleet.getLoadedRes(5)) }}</td>
+            </tr>
+        {% endblock %}
+    </twig:Table>
+        <input type="button" value="Weitere Flotte starten" />
+    &nbsp;   <input type="button" value="Flotte beobachten" />
+{% endblock %}

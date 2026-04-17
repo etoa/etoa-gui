@@ -10,6 +10,9 @@ use Doctrine\ORM\Mapping as ORM;
 use EtoA\Core\ObjectWithImage;
 use EtoA\Universe\Entity\AbstractEntity;
 use EtoA\Universe\Planet\PlanetRepository;
+use EtoA\Universe\Planet\PlanetService;
+use Symfony\Component\Serializer\Annotation\Ignore;
+use Symfony\Contracts\Service\Attribute\Required;
 
 #[ORM\Entity(repositoryClass: PlanetRepository::class)]
 #[ORM\Table(name: 'planets')]
@@ -39,6 +42,7 @@ class Planet extends AbstractEntity implements ObjectWithImage
     #[ORM\Column(name: "planet_name", type: "string")]
     private ?string $name = 'Unbenannt';
 
+    #[Ignore]
     #[ORM\JoinColumn(name: 'planet_type_id', referencedColumnName: 'type_id')]
     #[ORM\ManyToOne(targetEntity: PlanetType::class)]
     private PlanetType $planetType;
@@ -162,19 +166,40 @@ class Planet extends AbstractEntity implements ObjectWithImage
 
     #[ORM\Column(name: "invadedby", type: "integer")]
     private int $invadedBy = 0;
-    private array $allowedFleetActions = [];
 
+    #[Ignore]
     #[ORM\OneToMany(mappedBy: 'entity', targetEntity: BuildingListItem::class)]
     #[ORM\JoinColumn(name: 'id', referencedColumnName: 'buildlist_entity_id')]
     private Collection $buildlist;
 
+    #[Ignore]
     #[ORM\OneToMany(mappedBy: 'entity', targetEntity: DefenseListItem::class)]
     #[ORM\JoinColumn(name: 'id', referencedColumnName: 'deflist_entity_id')]
     private Collection $deflist;
 
+    #[Ignore]
     #[ORM\OneToMany(mappedBy: 'entity', targetEntity: ShipListItem::class)]
     #[ORM\JoinColumn(name: 'id', referencedColumnName: 'shiplist_entity_id')]
     private Collection $shiplist;
+
+    #[Ignore]
+    private ?PlanetService $planetService = null;
+
+    public function __serialize(): array
+    {
+        // Exclude planetService from serialization
+        $data = get_object_vars($this);
+        unset($data['planetService']);
+        return $data;
+    }
+
+    public function __unserialize(array $data): void
+    {
+        foreach ($data as $key => $value) {
+            $this->$key = $value;
+        }
+        $this->planetService = null;
+    }
 
     public function __construct()
     {
@@ -652,14 +677,13 @@ class Planet extends AbstractEntity implements ObjectWithImage
         $this->invadedBy = $invadedBy;
     }
 
+    #[Ignore]
     public function getAllowedFleetActions(): array
     {
-        return $this->allowedFleetActions;
-    }
-
-    public function setAllowedFleetActions(array $allowedFleetActions): void
-    {
-        $this->allowedFleetActions = $allowedFleetActions;
+        if ($this->planetService === null) {
+            return [];
+        }
+        return $this->planetService->getAllowedFleetActions($this);
     }
 
     public function getImagePath(string $type = "small"): string
@@ -820,5 +844,11 @@ class Planet extends AbstractEntity implements ObjectWithImage
         $this->lastUser = $lastUser;
 
         return $this;
+    }
+
+    #[Required]
+    public function setPlanetService(PlanetService $planetService): void
+    {
+        $this->planetService = $planetService;
     }
 }

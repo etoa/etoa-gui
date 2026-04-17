@@ -4,13 +4,18 @@ namespace EtoA\Fleet;
 
 use EtoA\Alliance\AllianceBuildingId;
 use EtoA\Alliance\AllianceBuildListRepository;
+use EtoA\Alliance\AllianceDiplomacyRepository;
 use EtoA\Building\BuildingId;
 use EtoA\Building\BuildingListItemRepository;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Entity\BuildingListItem;
 use EtoA\Entity\Entity;
+use EtoA\Entity\Fleet;
 use EtoA\Entity\Planet;
 use EtoA\Entity\ShipListItem;
+use EtoA\Log\FleetLogRepository;
+use EtoA\Ship\ShipListRepository;
+use EtoA\Ship\ShipRepository;
 use EtoA\Ship\ShipRequirementRepository;
 use EtoA\Support\StringUtils;
 use EtoA\Technology\TechnologyId;
@@ -18,7 +23,9 @@ use EtoA\Technology\TechnologyListItemRepository;
 use EtoA\Universe\Entity\EntityCoordinates;
 use EtoA\Universe\Entity\EntityService;
 use EtoA\Universe\Planet\PlanetRepository;
+use EtoA\Universe\Resources\BaseResources;
 use EtoA\Universe\Resources\ResourceNames;
+use EtoA\User\UserService;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\RequestStack;
 
@@ -37,7 +44,13 @@ class FleetLaunchService
         private readonly RequestStack $requestStack,
         private readonly PlanetRepository $planetRepository,
         private readonly AllianceBuildListRepository $allianceBuildListRepository,
-        private readonly EntityService $entityService
+        private readonly EntityService $entityService,
+        private readonly AllianceDiplomacyRepository $allianceDiplomacyRepository,
+        private readonly UserService $userService,
+        private readonly ShipListRepository $shipListRepository,
+        private readonly FleetShipRepository $fleetShipRepository,
+        private readonly FleetLogRepository $fleetLogRepository,
+        private readonly ShipRepository $shipRepository
     )
     {
     }
@@ -318,41 +331,33 @@ class FleetLaunchService
      */
     public function setAction($actionCode): bool
     {
-        if ($this->targetOk) {
+        if ($this->fleetLaunch->isTargetOk()) {
             $actions = $this->getAllowedActions();
             if (isset($actions[$actionCode])) {
-                $this->action = $actionCode;
+                $this->fleetLaunch->setAction($actionCode);
 
-                $this->actionOk = true;
+                $this->fleetLaunch->setActionOk(true);
                 return true;
             }
         }
-        $this->error = "Es befindet sich kein Schiff in der Flotte, welches die Aktion ausführen kann.";
+        $this->fleetLaunch->setError("Es befindet sich kein Schiff in der Flotte, welches die Aktion ausführen kann.");
         return false;
     }
 
 
-    public function launch(): bool|\EtoA\Entity\Fleet
+    public function launch(): bool|Fleet
     {
-        global $app;
-
-        /** @var FleetRepository $fleetRepository */
-        $fleetRepository = $app[FleetRepository::class];
-        /** @var PlanetRepository $planetRepository */
-        $planetRepository = $app[PlanetRepository::class];
-
-        if ($this->actionOk) {
+        if ($this->fleetLaunch->isActionOk()) {
             if ($this->checkHaven()) {
                 $time = time();
-                $this->landTime = ($time + $this->getDuration());
+                $this->getFleetLaunch()->setTimeLaunchLand($time + $this->fleetLaunch->getDuration());
 
                 // Subtract ships from source
-                /** @var ShipRepository $shipRepository */
-                $shipRepository = $app[ShipRepository::class];
                 $addcnt = 0;
-                foreach ($this->ships as $sid => $sda) {
-                    $this->ships[$sid]['count'] = $shipRepository->removeShips((int) $sid, (int) $sda['count'], (int) $this->ownerId, (int) $this->sourceEntity->id());
-                    $addcnt += $this->ships[$sid]['count'];
+                foreach ($this->getFleetLaunch()->getShips() as $sid => $sda) {
+                    $shipListItem = $this->shipListRepository->findOneBy(['entity'=>$this->getFleetLaunch()->getSourceEntity(),'ship'=>$sid]);
+                    $this->fleetLaunch->getShips()[$sid]['count'] = $this->shipListRepository->removeShips($shipListItem, (int) $sda['count']);
+                    $addcnt += $this->getFleetLaunch()->getShips()[$sid]['count'];
                 }
 
                 if ($addcnt > 0) {
@@ -362,15 +367,14 @@ class FleetLaunchService
                     $this->finalLoadResource();
 
                     // Subtract flight and support costs from source
-                    $planetRepository->addResources($this->sourceEntity->id(), 0, 0, 0, -$this->getCosts() - $this->getSupportFuel(), -$this->getCostsFood() - $this->getSupportFood(), - ($this->getPilots() + $this->capacityPeopleLoaded));
-                    $this->sourceEntity->reloadRes();
+                    $this->planetRepository->addResources($this->getFleetLaunch()->getSourceEntity(), 0, 0, 0, -$this->getFleetLaunch()->getCosts() - $this->getFleetLaunch()->getSupportFuel(), -$this->getCostsFood() - $this->fleetLaunch->getSupportFood(), - ($this->getFleetLaunch()->getPilots() + $this->getFleetLaunch()->getCapacityPeopleLoaded()));
 
-                    if ($this->action == "alliance" && $this->leaderId != 0) {
+                    if ($this->getFleetLaunch()->getAction() === "alliance" && $this->getFleetLaunch()->getLeader()) {
                         $status = 3;
-                        $nextId = $this->sourceEntity->ownerAlliance();
-                    } elseif ($this->action == "support") {
+                        $nextId = $this->getFleetLaunch()->getSourceEntity()->getEntity()->getOwner()->getAlliance();
+                    } elseif ($this->getFleetLaunch()->getAction() === "support") {
                         $status = 0;
-                        $nextId = $this->sourceEntity->id();
+                        $nextId = $this->getFleetLaunch()->getSourceEntity()->getEntity()->getId();
                     } else {
                         $status = 0;
                         $nextId = 0;
@@ -378,58 +382,56 @@ class FleetLaunchService
 
                     // Create fleet record
                     $resources = new BaseResources();
-                    $resources->metal = $this->res[1];
-                    $resources->crystal = $this->res[2];
-                    $resources->plastic = $this->res[3];
-                    $resources->fuel = $this->res[4];
-                    $resources->food = $this->res[5];
-                    $resources->people = $this->capacityPeopleLoaded;
+                    $resources->metal = $this->getFleetLaunch()->getRes()[1];
+                    $resources->crystal = $this->getFleetLaunch()->getRes()[2];
+                    $resources->plastic = $this->getFleetLaunch()->getRes()[3];
+                    $resources->fuel = $this->getFleetLaunch()->getRes()[4];
+                    $resources->food = $this->getFleetLaunch()->getRes()[5];
+                    $resources->people = $this->getFleetLaunch()->getCapacityPeopleLoaded();
 
                     $fetch = new BaseResources();
-                    $fetch->metal = $this->fetch[1];
-                    $fetch->crystal = $this->fetch[2];
-                    $fetch->plastic = $this->fetch[3];
-                    $fetch->fuel = $this->fetch[4];
-                    $fetch->food = $this->fetch[5];
-                    $fetch->people = $this->fetch[6];
+                    $fetch->metal = $this->getFleetLaunch()->getFetch()[1];
+                    $fetch->crystal = $this->getFleetLaunch()->getFetch()[2];
+                    $fetch->plastic = $this->getFleetLaunch()->getFetch()[3];
+                    $fetch->fuel = $this->getFleetLaunch()->getFetch()[4];
+                    $fetch->food = $this->getFleetLaunch()->getFetch()[5];
+                    $fetch->people = $this->getFleetLaunch()->getFetch()[6];
 
-                    $fid = $fleetRepository->add($this->ownerId, $time, $this->landTime, $this->sourceEntity->id(), $this->targetEntity->id(), $this->action, $status, $resources, $fetch, $this->getPilots(), $this->getCosts(), $this->getCostsFood(), $this->getCostsPower(), $this->leaderId, $nextId, $this->supportTime, $this->supportCostsFuel, $this->supportCostsFood);
+                    $fid = $this->fleetRepository->add($this->getFleetLaunch()->getOwner(), $time, $this->getFleetLaunch()->getTimeLaunchLand(), $this->getFleetLaunch()->getSourceEntity()->getEntity(), $this->getFleetLaunch()->getTargetEntity(), $this->getFleetLaunch()->getAction(), $status, $resources, $fetch, $this->getFleetLaunch()->getPilots(), $this->getFleetLaunch()->getCosts(), $this->getCostsFood(), $this->getFleetLaunch()->getCostsPower(), $this->getFleetLaunch()->getLeader(), $nextId, $this->getFleetLaunch()->getSupportTime(), $this->getFleetLaunch()->getSupportCostsFuel(), $this->getFleetLaunch()->getSupportCostsFood());
 
                     $shipLog = "";
-                    foreach ($this->ships as $sid => $sda) {
+                    foreach ($this->getFleetLaunch()->getShips() as $sid => $sda) {
                         $shipLog .= $sid . ":" . $sda['count'] . ",";
                         if ($sda['special']) {
-                            $fleetRepository->addSpecialShipsToFleet($fid, $sid, $sda['count'], $sda['item']);
+                            $this->fleetShipRepository->addSpecialShipsToFleet($fid, $this->shipRepository->find($sid), $sda['count'], $sda['item']);
                         } elseif ($sda['fake'] !== false) {
-                            $fleetRepository->addShipsToFleet($fid, $sid, $sda['count'], $this->fakeId);
+                            $this->fleetShipRepository->addShipsToFleet($fid, $this->shipRepository->find($sid), $sda['count'], $this->getFleetLaunch()->getFakeId());
                         } else {
-                            $fleetRepository->addShipsToFleet($fid, $sid, $sda['count']);
+                            $this->fleetShipRepository->addShipsToFleet($fid, $this->shipRepository->find($sid), $sda['count']);
                         }
                     }
 
                     //add all the cool stuff to the fleetLog
                     $resources = new BaseResources();
-                    $resources->metal = $this->res[1];
-                    $resources->crystal = $this->res[2];
-                    $resources->plastic = $this->res[3];
-                    $resources->fuel = $this->res[4];
-                    $resources->food = $this->res[5];
-                    $resources->people = $this->capacityPeopleLoaded;
+                    $resources->metal = $this->getFleetLaunch()->getRes()[1];
+                    $resources->crystal = $this->getFleetLaunch()->getRes()[2];
+                    $resources->plastic = $this->getFleetLaunch()->getRes()[3];
+                    $resources->fuel = $this->getFleetLaunch()->getRes()[4];
+                    $resources->food = $this->getFleetLaunch()->getRes()[5];
+                    $resources->people = $this->getFleetLaunch()->getCapacityPeopleLoaded();
 
                     $fetch = new BaseResources();
-                    $fetch->metal = $this->fetch[1];
-                    $fetch->crystal = $this->fetch[2];
-                    $fetch->plastic = $this->fetch[3];
-                    $fetch->fuel = $this->fetch[4];
-                    $fetch->food = $this->fetch[5];
-                    $fetch->people = $this->fetch[6];
+                    $fetch->metal = $this->getFleetLaunch()->getFetch()[1];
+                    $fetch->crystal = $this->getFleetLaunch()->getFetch()[2];
+                    $fetch->plastic = $this->getFleetLaunch()->getFetch()[3];
+                    $fetch->fuel = $this->getFleetLaunch()->getFetch()[4];
+                    $fetch->food = $this->getFleetLaunch()->getFetch()[5];
+                    $fetch->people = $this->getFleetLaunch()->getFetch()[6];
 
-                    /** @var FleetLogRepository $fleetLogRepository */
-                    $fleetLogRepository = $app[FleetLogRepository::class];
-                    $fleetLogRepository->addLaunch($fid, $this->ownerId, $this->sourceEntity->id, $this->targetEntity->id(), $time, $this->landTime, $this->action, $this->getPilots(), $this->getCosts() + $this->supportCostsFuel, $this->getCostsFood() + $this->supportCostsFood, $resources, $fetch, $shipLog, $this->entityResourceLogStart, $this->sourceEntity->getResourceLog());
+                    $this->fleetLogRepository->addLaunch($fid, $this->getFleetLaunch()->getOwner(), $this->getFleetLaunch()->getSourceEntity()->getEntity(), $this->getFleetLaunch()->getTargetEntity(), $time, $this->getFleetLaunch()->getTimeLaunchLand(), $this->getFleetLaunch()->getAction(), $this->getFleetLaunch()->getPilots(), $this->getFleetLaunch()->getCosts() + $this->getFleetLaunch()->getSupportCostsFuel(), $this->getCostsFood() + $this->getFleetLaunch()->getSupportCostsFood(), $resources, $fetch, $shipLog, $this->getFleetLaunch()->getEntityResourceLogStart(), $this->getFleetLaunch()->getSourceEntity()->getResourceLog());
 
-                    if ($this->action === \EtoA\Fleet\FleetAction::ALLIANCE && $this->leaderId == 0) {
-                        $fleetRepository->markAsLeader($fid, $this->sourceEntity->ownerAlliance());
+                    if ($this->getFleetLaunch()->getAction() === FleetAction::ALLIANCE && $this->getFleetLaunch()->getLeader() === null) {
+                        $this->fleetRepository->markAsLeader($fid, $this->getFleetLaunch()->getSourceEntity()->getUser()->getAlliance()->getId());
                     }
                     return $fid;
                 } else {
@@ -437,7 +439,7 @@ class FleetLaunchService
                 }
             }
         } else {
-            $this->error = "Aktion nocht nicht festgelegt!";
+            $this->error = "Aktion noch nicht festgelegt!";
         }
         return false;
     }
@@ -480,31 +482,22 @@ class FleetLaunchService
     /**
      *
      */
-    function getAllowedActions(): array
+    public function getAllowedActions(): array
     {
-        global $app;
-
-        /** @var ConfigurationService $config */
-        $config = $app[ConfigurationService::class];
-        /** @var AllianceDiplomacyRepository $allianceDiplomacyRepository */
-        $allianceDiplomacyRepository = $app[AllianceDiplomacyRepository::class];
-
         $this->error = '';
-
         //$allowed =  ($this->sFleets && count($this->sFleets) && ( $this->leaderId>0 || in_array($this->targetEntity->id,$this->sFleets))) ? true : false;
         $allowed = true;
         // Get possible actions by intersecting ship actions and allowed target actions
-        $actions = array_intersect($this->shipActions, $this->targetEntity->allowedFleetActions());
+        $actions = array_intersect($this->fleetLaunch->getShipActions(), $this->fleetLaunch->getTargetEntity()->getType()->getAllowedFleetActions());
         $actionObjs = array();
-
         $battleban = false;
-        if ($config->getBoolean("battleban") && $config->param1Int("battleban_time") <= time() && $config->param2Int("battleban_time") > time()) {
-            $this->error = "Kampfsperre von " . StringUtils::formatDate($config->param1Int("battleban_time")) . " bis " . StringUtils::formatDate($config->param2Int("battleban_time")) . ". " . $config->param1("battleban");
+        if ($this->configurationService->getBoolean("battleban") && $this->configurationService->param1Int("battleban_time") <= time() && $this->configurationService->param2Int("battleban_time") > time()) {
+            $this->error = "Kampfsperre von " . StringUtils::formatDate($this->configurationService->param1Int("battleban_time")) . " bis " . StringUtils::formatDate($this->configurationService->param2Int("battleban_time")) . ". " . $this->configurationService->param1("battleban");
             $battleban = true;
         }
 
-        if ($config->getBoolean("flightban") && $config->param1Int("flightban_time") <= time() && $config->param2Int("flightban_time") > time()) {
-            $this->error = "Flottensperre von " . StringUtils::formatDate($config->param1Int("flightban_time")) . " bis " . StringUtils::formatDate($config->param2Int("flightban_time")) . ". " . $config->param1("flightban");
+        if ($this->configurationService->getBoolean("flightban") && $this->configurationService->param1Int("flightban_time") <= time() && $this->configurationService->param2Int("flightban_time") > time()) {
+            $this->error = "Flottensperre von " . StringUtils::formatDate($this->configurationService->param1Int("flightban_time")) . " bis " . StringUtils::formatDate($this->configurationService->param2Int("flightban_time")) . ". " . $this->configurationService->param1("flightban");
         } else {
             $noobProtectionErrorAdded = false;
 
@@ -520,21 +513,21 @@ class FleetLaunchService
                 // or if alliance battle system is only allowed for alliances at war
                 // and the source's and target's alliances aren't at war against each other
                 if (
-                    $this->sourceEntity->ownerId() != $this->targetEntity->ownerId() &&
+                    $this->fleetLaunch->getSourceEntity()->getUser() !== $this->fleetLaunch->getTargetEntity()->getOwner() &&
                     $ai->allianceAction && (
                         // alliance battle system is disabled
-                        !$config->getBoolean("abs_enabled") || (
+                        !$this->configurationService->getBoolean("abs_enabled") || (
                             // or abs is enabled for alliances at war only
-                            $config->param1Boolean("abs_enabled") && (
+                            $this->configurationService->param1Boolean("abs_enabled") && (
                                 (
                                     // and it is an agressive action
                                     $ai->attitude() == 3 &&
                                     // and the two alliances are not at war against each other
-                                    !$allianceDiplomacyRepository->isAtWar($this->sourceEntity->owner->allianceId(), $this->targetEntity->ownerAlliance())) || (
+                                    !$this->allianceDiplomacyRepository->isAtWar($this->fleetLaunch->getSourceEntity()->getUser()->getAlliance(), $this->fleetLaunch->getTargetEntity()->getOwner()->getAlliance())) || (
                                     // or it is a defensive action
                                     $ai->attitude() == 1 &&
                                     // and the user's alliance is not at war
-                                    !$allianceDiplomacyRepository->isAtWar($this->owner->allianceId())))))
+                                    !$this->allianceDiplomacyRepository->isAtWar($this->fleetLaunch->getOwner()->getAlliance())))))
                 ) {
                     continue;
                 }
@@ -544,22 +537,27 @@ class FleetLaunchService
                     // Action is allowed if:
                     (
                         // * Source and target are the same and the action allows that
-                        ($this->sourceEntity->id() == $this->targetEntity->id() && $ai->allowSourceEntity()) ||
+                        ($this->fleetLaunch->getSourceEntity() === $this->fleetLaunch->getTargetEntity() && $ai->allowSourceEntity()) ||
                         // * source and target are different but belong to the same user and the action is possible for the same user (e.g. ok for transport, not ok for attack)
-                        ($this->sourceEntity->ownerId() == $this->targetEntity->ownerId() && $this->sourceEntity->id() != $this->targetEntity->id() && $ai->allowOwnEntities()) ||
+                        ($this->fleetLaunch->getSourceEntity()->getEntity()->getOwner() === $this->fleetLaunch->getTargetEntity()->getOwner() && $this->fleetLaunch->getSourceEntity() !== $this->fleetLaunch->getTargetEntity() && $ai->allowOwnEntities()) ||
                         // * source and target are from different users and target belongs to an user (so it's not a nebula for example) and the action allows any other player's planet as target
-                        ($this->sourceEntity->ownerId() != $this->targetEntity->ownerId() && $this->targetEntity->ownerId() > 0 && $ai->allowPlayerEntities()) ||
+                        ($this->fleetLaunch->getTargetEntity()->getOwner() && $this->fleetLaunch->getSourceEntity()->getEntity()->getOwner() !== $this->fleetLaunch->getTargetEntity()->getOwner() && $ai->allowPlayerEntities()) ||
                         // * target doesn't belong to an user and action allows that (e.g. crystal collection from nebulas)
-                        ($this->targetEntity->ownerId() == 0 && $ai->allowNpcEntities()) ||
+                        (!$this->fleetLaunch->getTargetEntity()->getOwner() && $ai->allowNpcEntities()) ||
                         // * action allows only same-alliance users and source and target user belong to the same alliance (alliance >0 -> they have an alliance) OR same user for no alliance
                         //   this is used only for support, so in case different user there is also a check whether there are available support slots on the planet (checkDefNum)
-                        ($ai->allowAllianceEntities && $this->sourceEntity->ownerAlliance() == $this->targetEntity->ownerAlliance() && ($this->sourceEntity->ownerId() == $this->targetEntity->ownerId() || ($this->sourceEntity->ownerAlliance() > 0 && ($supportPossible = $this->checkDefNum()))))) &&
-                    (!$ai->allianceAction || $this->getAllianceSlots() > 0 || $allowed) //this last check, checks for every AllianceAction support, alliance if there is a empty slot
+                        ($ai->allowAllianceEntities &&
+                            $this->fleetLaunch->getSourceEntity()->getEntity()?->getOwner()?->getAlliance() === $this->fleetLaunch->getTargetEntity()?->getOwner()->getAlliance() &&
+                            ($this->fleetLaunch->getSourceEntity()->getEntity()->getOwner() === $this->fleetLaunch->getOwner()
+                                || ($this->fleetLaunch->getSourceEntity()->getEntity()->getOwner()->getAlliance()
+                                    && ($supportPossible = $this->checkDefNum()))
+                            ))) &&
+                    (!$ai->allianceAction || $this->fleetLaunch->getAllianceSlots() > 0 || $allowed) //this last check, checks for every AllianceAction support, alliance if there is a empty slot
                 ) {
                     //Check for exclusive Actions
                     $exclusiceAllowed = true;
                     if ($ai->exclusive()) {
-                        foreach ($this->getShips() as $ship) {
+                        foreach ($this->fleetLaunch->getShips() as $ship) {
                             if (!(in_array($ai->code(), $ship['actions'], true) || $ship['special'])) {
                                 $exclusiceAllowed = false;
                                 break;
@@ -567,26 +565,26 @@ class FleetLaunchService
                         }
                     }
                     if ($exclusiceAllowed) {
-                        if ($this->targetEntity->ownerId() > 0) {
-                            if (!$this->targetEntity->ownerHoliday() || $ai->allowOnHoliday()) {
+                        if ($this->fleetLaunch->getTargetEntity()->getOwner()) {
+                            if (!$this->fleetLaunch->getOwner()->getHmodTo() || $ai->allowOnHoliday()) {
                                 if ($ai->attitude() > 1) {
                                     if (!$battleban) {
                                         if (
                                             $ai->allowActivePlayerEntities()
-                                            || $this->targetEntity->owner->isInactivLong()
-                                            || ($this->ownerId == $this->sourceEntity->lastUserCheck())
+                                            || $this->fleetLaunch->getTargetEntity()->getOwner()->getLastOnline() < ((time() -  $this->configurationService->param2Int('user_inactive_days')) * 86400)
+                                            || ($this->fleetLaunch->getOwner() === $this->fleetLaunch->getSourceEntity()->getLastUser())
                                         ) {
-                                            if ($this->owner->canAttackPlanet($this->targetEntity)) {
+                                            if ($this->userService->canAttackUser($this->fleetLaunch->getTargetEntity()->getOwner())) {
                                                 if (strpos($ai, 'Bombardierung')) {
-                                                    if ($allianceDiplomacyRepository->isAtWar($this->sourceEntity->owner->allianceId(), $this->targetEntity->ownerAlliance()))
+                                                    if ($this->allianceDiplomacyRepository->isAtWar($this->fleetLaunch->getSourceEntity()->getUser()->getAlliance(), $this->fleetLaunch->getTargetEntity()->getOwner()->getAlliance()))
                                                         $actionObjs[$i] = $ai;
                                                 } else
                                                     $actionObjs[$i] = $ai;
                                             } else if (!$noobProtectionErrorAdded) {
                                                 $this->error .= 'Der Besitzer des Ziels steht unter Anfängerschutz! '
-                                                    . 'Die Punkte des Users müssen zwischen ' . (USER_ATTACK_PERCENTAGE * 100) . '% und '
-                                                    . (100 / USER_ATTACK_PERCENTAGE) . '% von deinen Punkten liegen.<br />'
-                                                    . 'Ausserdem müssen beide Spieler mindestens ' . (USER_ATTACK_MIN_POINTS)
+                                                    . 'Die Punkte des Users müssen zwischen ' . ($this->configurationService->getFloat('user_attack_percentage') * 100) . '% und '
+                                                    . (100 / $this->configurationService->getFloat('user_attack_percentage')) . '% von deinen Punkten liegen.<br />'
+                                                    . 'Ausserdem müssen beide Spieler mindestens ' . ($this->configurationService->getInt('user_attack_min_points'))
                                                     . ' Punkte haben.<br />';
                                                 // only add error message once, not for every action
                                                 $noobProtectionErrorAdded = true;
@@ -611,7 +609,7 @@ class FleetLaunchService
                 if (!$supportPossible) {
                     // Meldung ausgeben, dass Support nicht möglich ist
                     $this->error .= 'Support nicht m&ouml;glich, die Maximalzahl von ' .
-                        $config->param1Int('alliance_fleets_max_players') .
+                        $this->configurationService->param1Int('alliance_fleets_max_players') .
                         ' Verteidigern ist auf diesem Planet bereits erreicht.<br />';
                     $supportPossible = true;
                 }
@@ -629,44 +627,42 @@ class FleetLaunchService
     // subtracts the payload ress (not support/flight fuel and food)
     function finalLoadResource(): void
     {
-        global $app;
-
-        /** @var PlanetRepository $planetRepository */
-        $planetRepository = $app[PlanetRepository::class];
-
-        $this->sourceEntity->reloadRes();
         $resources = new BaseResources();
 
         foreach (ResourceNames::NAMES as $rk => $rn) {
             $id = $rk + 1;
-            if ($this->res[$id] >= 0) {
-                $ammount = $this->res[$id];
+            if ($this->getFleetLaunch()->getRes()[$id] >= 0) {
+                $ammount = $this->getFleetLaunch()->getRes()[$id];
             } else {
-                if ($id == 4) {
-                    $ammount = max(0, $this->sourceEntity->getRes($id) + $this->res[$id] - $this->getSupportFuel() - $this->getCosts());
-                } elseif ($id == 5) {
-                    $ammount = max(0, $this->sourceEntity->getRes($id) + $this->res[$id] - $this->getSupportFood() - $this->getCostsFood());
-                } else
-                    $ammount = max(0, $this->sourceEntity->getRes($id) + $this->res[$id]);
+                switch ($id) {
+                    case 4: $ammount = max(0, $this->getFleetLaunch()->getSourceEntity()->getResFuel() + $this->getFleetLaunch()->getRes()[$id] - $this->getFleetLaunch()->getSupportFuel() - $this->getFleetLaunch()->getCosts());break;
+                    case 5: $ammount = max(0, $this->getFleetLaunch()->getSourceEntity()->getResFood() + $this->getFleetLaunch()->getRes()[$id] - $this->getFleetLaunch()->getSupportFood() - $this->getCostsFood());break;
+                    case 1: $ammount = max(0, $this->getFleetLaunch()->getSourceEntity()->getResMetal() + $this->getFleetLaunch()->getRes()[$id]);break;
+                    case 2: $ammount = max(0, $this->getFleetLaunch()->getSourceEntity()->getResCrystal() + $this->getFleetLaunch()->getRes()[$id]);break;
+                    case 3: $ammount = max(0, $this->getFleetLaunch()->getSourceEntity()->getResPlastic() + $this->getFleetLaunch()->getRes()[$id]);break;
+                }
             }
 
-            $this->res[$id] = 0;
             $this->calcResLoaded();
-            if ($id == 4) {
-                $loaded = (int) floor(min($ammount, $this->getCapacity(), $this->sourceEntity->getRes($id) - $this->getSupportFuel() - $this->getCosts()));
-            } elseif ($id == 5) {
-                $loaded = (int) floor(min($ammount, $this->getCapacity(), $this->sourceEntity->getRes($id) - $this->getSupportFood() - $this->getCostsFood()));
-            } else {
-                $loaded = (int) floor(min($ammount, $this->getCapacity(), $this->sourceEntity->getRes($id)));
+
+            switch ($id) {
+                case 4: $loaded = (int) floor(min($ammount, $this->getCapacity(), $this->getFleetLaunch()->getSourceEntity()->getResFuel() - $this->getFleetLaunch()->getSupportFuel() - $this->getFleetLaunch()->getCosts())); break;
+                case 5: $loaded = (int) floor(min($ammount, $this->getCapacity(), $this->getFleetLaunch()->getSourceEntity()->getResFuel() - $this->getFleetLaunch()->getSupportFood() - $this->getFleetLaunch()->getCostsFood())); break;
+                case 1: $loaded = (int) floor(min($ammount, $this->getCapacity(), $this->getFleetLaunch()->getSourceEntity()->getResMetal()));break;
+                case 2: $loaded = (int) floor(min($ammount, $this->getCapacity(), $this->getFleetLaunch()->getSourceEntity()->getResCrystal()));break;
+                case 3: $loaded = (int) floor(min($ammount, $this->getCapacity(), $this->getFleetLaunch()->getSourceEntity()->getResPlastic()));break;
             }
-            $this->res[$id] = $loaded;
+
+            $res = $this->getFleetLaunch()->getRes();
+            $res[$id] = $loaded;
+            $this->getFleetLaunch()->setRes($res);
+
             $resources->set($rk, $loaded);
         }
 
         $this->calcResLoaded();
 
-        $planetRepository->removeResources($this->sourceEntity->id(), $resources);
-        $this->sourceEntity->reloadRes();
+        $this->planetRepository->removeResources($this->getFleetLaunch()->getSourceEntity(), $resources);
     }
 
     function getSupportMaxTime(): float
@@ -1040,5 +1036,20 @@ class FleetLaunchService
             $response->alert("Fehler! Es wurden keine Ziel gewählt!");
         }
         return $response;
+    }
+
+    private function getCapacity(): float|int
+    {
+        return $this->getFleetLaunch()->getTotalCapacity() - $this->getFleetLaunch()->getCapacityResLoaded() - $this->getFleetLaunch()->getCapacityFuelUsed() - $this->getFleetLaunch()->getCostsFood() - $this->getFleetLaunch()->getSupportCostsFood() - $this->getFleetLaunch()->getSupportCostsFuel();
+    }
+
+    private function calcResLoaded(): void
+    {
+        $capacityResLoaded = 0;
+        foreach ($this->getFleetLaunch()->getRes() as $i) {
+            $capacityResLoaded += $i;
+        }
+
+        $this->getFleetLaunch()->setCapacityResLoaded($capacityResLoaded);
     }
 }

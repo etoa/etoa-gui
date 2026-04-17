@@ -4,7 +4,10 @@ namespace EtoA\Log;
 
 use Doctrine\Persistence\ManagerRegistry;
 use EtoA\Core\AbstractRepository;
+use EtoA\Entity\Entity;
+use EtoA\Entity\Fleet;
 use EtoA\Entity\FleetLog;
+use EtoA\Entity\User;
 use EtoA\Fleet\FleetStatus;
 use EtoA\Universe\Resources\BaseResources;
 
@@ -26,74 +29,34 @@ class FleetLogRepository extends AbstractRepository
             ->execute();
     }
 
-    public function addLaunch(int $fleetId, int $userId, int $entityFromId, int $targetEntityId, int $launchTime, int $landTime, string $action, int $pilots, int $fuel, int $food, BaseResources $resource, BaseResources $fetch, string $fleetShipEnd, string $entityResStart, string $entityResEnd): void
+    public function addLaunch(Fleet $fleet, User $user, Entity $entityFrom, Entity $targetEntity, int $launchTime, int $landTime, string $action, int $pilots, int $fuel, int $food, BaseResources $resource, BaseResources $fetch, string $fleetShipEnd, string $entityResStart, string $entityResEnd): void
     {
         $fleetResEnd = sprintf('%s:%s:%s:%s:%s:%s:0,f,', $resource->metal, $resource->crystal, $resource->plastic, $resource->fuel, $resource->food, $resource->people);
         $fleetResEnd .= sprintf('%s:%s:%s:%s:%s:%s:', $fetch->metal, $fetch->crystal, $fetch->plastic, $fetch->fuel, $fetch->food, $fetch->people);
+        $fleetLog = new FleetLog();
+        $fleetLog->setFleet($fleet);
+        $fleetLog->setFacility(FleetLogFacility::LAUNCH);
+        $fleetLog->setTimestamp(time());
+        $fleetLog->setMessage(sprintf('Treibstoff: %s Nahrung: %s Piloten: %s', $fuel, $food, $pilots));
+        $fleetLog->setUser($user);
+        $fleetLog->setEntityUser($user);
+        $fleetLog->setEntityFrom($entityFrom);
+        $fleetLog->setEntityTo($entityFrom);
+        $fleetLog->setLaunchTime($launchTime);
+        $fleetLog->setLandTime($landTime);
+        $fleetLog->setAction($action);
+        $fleetLog->setStatus(FleetStatus::DEPARTURE->value);
+        $fleetLog->setFleetResStart("0:0:0:0:0:0:0,f,0:0:0:0:0:0:0");
+        $fleetLog->setFleetResEnd($fleetResEnd);
+        $fleetLog->setFleetShipsStart('0');
+        $fleetLog->setFleetShipsEnd($fleetShipEnd);
+        $fleetLog->setEntityResStart($entityResStart);
+        $fleetLog->setEntityResEnd($entityResEnd);
+        $fleetLog->setEntityShipsStart('');
+        $fleetLog->setEntityShipsEnd('');
 
-        $this->getConnection()->executeQuery('INSERT DELAYED INTO logs_fleet (
-                fleet_id,
-                facility,
-                timestamp,
-                message,
-                user_id,
-                entity_user_id,
-                entity_from,
-                entity_to,
-                launchtime,
-                landtime,
-                action,
-                status,
-                fleet_res_start,
-                fleet_res_end,
-                fleet_ships_start,
-                fleet_ships_end,
-                entity_res_start,
-                entity_res_end,
-                entity_ships_start,
-                entity_ships_end
-            ) VALUES (
-                :fleetId,
-                :facility,
-                :timestamp,
-                :text,
-                :userId,
-                :userId,
-                :entityFromId,
-                :targetEntityId,
-                :launchTime,
-                :landTime,
-                :action,
-                :status,
-                :fleetResStart,
-                :fleetResEnd,
-                :fleetShipStart,
-                :fleetShipEnd,
-                :entityResStart,
-                :entityResEnd,
-                :entityShipsStart,
-                :entityShipsEnd
-            )', [
-            'fleetId' => $fleetId,
-            'facility' => FleetLogFacility::LAUNCH,
-            'timestamp' => time(),
-            'text' => sprintf('Treibstoff: %s Nahrung: %s Piloten: %s', $fuel, $food, $pilots),
-            'userId' => $userId,
-            'entityFromId' => $entityFromId,
-            'targetEntityId' => $targetEntityId,
-            'launchTime' => $launchTime,
-            'landTime' => $landTime,
-            'action' => $action,
-            'status' => FleetStatus::DEPARTURE->value,
-            'fleetResStart' => "0:0:0:0:0:0:0,f,0:0:0:0:0:0:0",
-            'fleetResEnd' => $fleetResEnd,
-            'fleetShipStart' => '0',
-            'fleetShipEnd' => $fleetShipEnd,
-            'entityResStart' => $entityResStart,
-            'entityResEnd' => $entityResEnd,
-            'entityShipsStart' => '',
-            'entityShipsEnd' => '',
-        ]);
+        $this->persist($fleetLog);
+        $this->save();
     }
 
     public function addCancel(int $fleetId, int $userId, int $entityFromId, int $targetEntityId, int $launchTime, int $landTime, string $action, int $status, int $pilots, int $fuel, int $food, BaseResources $resourceStart, BaseResources $resourcesEnd): void

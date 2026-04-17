@@ -204,18 +204,11 @@ class FleetRepository extends AbstractRepository
         $this->save();
     }
 
-    public function markAsLeader(int $id, int $allianceId): void
+    public function markAsLeader(Fleet $fleet, int $allianceId): void
     {
-        $this->createQueryBuilder('q')
-            ->update('fleet')
-            ->set('leader_id', ':id')
-            ->set('next_id', ':allianceId')
-            ->where('id = :id')
-            ->setParameters([
-                'id' => $id,
-                'allianceId' => $allianceId,
-            ])
-            ->executeQuery();
+
+        $fleet->setNextId($allianceId);
+        $this->save();
     }
 
     public function promoteNewAllianceFleetLeader(Fleet $newLeader, Fleet $existingLeader, int $landTime): void

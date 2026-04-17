@@ -11,6 +11,7 @@ use EtoA\Fleet\FleetLaunchService;
 use EtoA\Ship\ShipListRepository;
 use EtoA\Ship\ShipTransformRepository;
 use EtoA\Support\StringUtils;
+use EtoA\Universe\Entity\AbstractEntity;
 use EtoA\Universe\Entity\EntityCoordinates;
 use EtoA\Universe\Entity\EntityRepository;
 use EtoA\Universe\Entity\EntityService;
@@ -25,6 +26,7 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
 use Symfony\UX\LiveComponent\Attribute\LiveAction;
 use Symfony\UX\LiveComponent\Attribute\LiveProp;
@@ -77,7 +79,8 @@ class HavenTarget extends AbstractGameController
         private readonly RequestStack $requestStack,
         private readonly ConfigurationService $configurationService,
         private readonly UserUniverseDiscoveryService $userUniverseDiscoveryService,
-        private readonly EntityService $entityService
+        private readonly EntityService $entityService,
+        private readonly SerializerInterface $serializer
     )
     {
     }
@@ -88,7 +91,9 @@ class HavenTarget extends AbstractGameController
 
         if(!$this->fleetLaunch) {
             $request = $this->requestStack->getCurrentRequest();
-            $this->fleetLaunch = unserialize($request->getSession()->get('fleetLaunch'));
+            $this->fleetLaunch = $this->serializer->deserialize($request->getSession()->get('fleetLaunch'), FleetLaunch::class, 'json', [
+                'allow_extra_attributes' => true,
+            ]);
         }
 
 //dd($this->fleetLaunch);
@@ -279,7 +284,9 @@ class HavenTarget extends AbstractGameController
     {
         if(!$this->fleetLaunch) {
             $request = $this->requestStack->getCurrentRequest();
-            $this->fleetLaunch = unserialize($request->getSession()->get('fleetLaunch'));
+            $this->fleetLaunch = $this->serializer->deserialize($request->getSession()->get('fleetLaunch'), FleetLaunch::class, 'json', [
+                'allow_extra_attributes' => true,
+            ]);
         }
 
         $alliance = "";
@@ -363,7 +370,17 @@ class HavenTarget extends AbstractGameController
             $this->fleetLaunch->setLeader(null);
             $request = $this->requestStack->getCurrentRequest();
             $session = $request->getSession();
-            $session->set('fleetLaunch',serialize($this->fleetLaunch));
+
+            $session->set('fleetLaunch',$this->serializer->serialize($this->fleetLaunch, 'json', [
+                'circular_reference_handler' => function ($object) {
+                    if(is_a($object,AbstractEntity::class)) {
+                        return $object->getEntity()->getId();
+                    }
+                    return $object->getId();
+                },
+                'ignored_attributes' => ['__initializer__', '__cloner__', '__isInitialized__', 'lazyObjectState', 'lazyObjectInitialized', 'lazyObjectAsInitialized'],
+                'skip_null_values' => true,
+            ]));
 
             return $this->redirectToRoute('game.haven.action');
         }

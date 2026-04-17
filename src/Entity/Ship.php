@@ -112,8 +112,9 @@ class Ship implements ObjectWithImage
     #[ORM\Column(name: "ship_weapon", type: "integer")]
     private int $weapon;
 
-    #[ORM\Column(name: "ship_race_id", type: "integer")]
-    private int $raceId;
+    #[ORM\JoinColumn(name: 'ship_race_id', referencedColumnName: 'race_id')]
+    #[ORM\ManyToOne(targetEntity: Race::class)]
+    private ?Race $race = null;
 
     #[ORM\Column(name: "ship_launchable", type: "boolean")]
     private bool $launchable;
@@ -121,8 +122,9 @@ class Ship implements ObjectWithImage
     #[ORM\Column(name: "ship_fieldsprovide", type: "integer")]
     private int $fieldsProvided;
 
-    #[ORM\Column(name: "ship_cat_id", type: "integer")]
-    private int $catId;
+    #[ORM\JoinColumn(name: 'ship_cat_id', referencedColumnName: 'cat_id')]
+    #[ORM\ManyToOne(targetEntity: ShipCategory::class)]
+    private ?ShipCategory $cat = null;
 
     #[ORM\Column(name: "ship_fakeable", type: "boolean")]
     private bool $fakeable;
@@ -589,16 +591,14 @@ class Ship implements ObjectWithImage
         return $this;
     }
 
-    public function getRaceId(): ?int
+    public function getRace(): ?Race
     {
-        return $this->raceId;
+        return $this->race;
     }
 
-    public function setRaceId(int $raceId): static
+    public function setRace(?Race $race): void
     {
-        $this->raceId = $raceId;
-
-        return $this;
+        $this->race = $race;
     }
 
     public function isLaunchable(): ?bool
@@ -625,16 +625,14 @@ class Ship implements ObjectWithImage
         return $this;
     }
 
-    public function getCatId(): ?int
+    public function getCat(): ?ShipCategory
     {
-        return $this->catId;
+        return $this->cat;
     }
 
-    public function setCatId(int $catId): static
+    public function setCat(?ShipCategory $cat): void
     {
-        $this->catId = $catId;
-
-        return $this;
+        $this->cat = $cat;
     }
 
     public function isFakeable(): ?bool

@@ -6,6 +6,7 @@ namespace EtoA\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use EtoA\Bookmark\BookmarkRepository;
+use Symfony\Component\Serializer\Annotation\Ignore;
 
 #[ORM\Entity(repositoryClass: BookmarkRepository::class)]
 #[ORM\Table(name: 'bookmarks')]
@@ -16,6 +17,7 @@ class Bookmark
     #[ORM\Column]
     private int $id;
 
+    #[Ignore]
     #[ORM\JoinColumn(name: 'user_id', referencedColumnName: 'user_id')]
     #[ORM\ManyToOne(targetEntity: User::class, cascade: ['persist'], inversedBy:'bookmarks')]
     private ?User $user = null;

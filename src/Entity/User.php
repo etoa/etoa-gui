@@ -11,6 +11,7 @@ use Doctrine\ORM\Mapping as ORM;
 use EtoA\User\UserInterface;
 use EtoA\User\UserRepository;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
+use Symfony\Component\Serializer\Annotation\Ignore;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: 'users')]
@@ -24,6 +25,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(name: "user_id", type: "integer")]
     private int $id;
 
+    #[Ignore]
     #[ORM\OneToOne(mappedBy: 'user', targetEntity: UserProperties::class, cascade: ['persist', 'remove'])]
     private ?UserProperties $userProperties;
 
@@ -81,6 +83,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(name: "user_attack_bans", type: "integer")]
     private int $attackBans = 0;
 
+    #[Ignore]
     #[ORM\JoinColumn(name: 'user_ban_admin_id', referencedColumnName: 'user_id')]
     #[ORM\ManyToOne(targetEntity: AdminUser::class)]
     private ?AdminUser $banAdmin = null;
@@ -127,6 +130,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(name: "user_rank_highest", type: "integer")]
     private int $rankHighest = 0;
 
+    #[Ignore]
     #[ORM\JoinColumn(name: 'user_alliance_rank_id', referencedColumnName: 'rank_id')]
     #[ORM\ManyToOne(targetEntity: AllianceRank::class)]
     private ?AllianceRank $allianceRank = null;
@@ -228,92 +232,123 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(type: "boolean")]
     private bool $userChangedMainPlanet = false;
 
+    #[Ignore]
     #[ORM\OneToOne(mappedBy: "user", targetEntity: UserRating::class, cascade: ['persist'], orphanRemoval: true)]
     private ?UserRating $userRating;
 
+    #[Ignore]
     #[ORM\OneToOne(mappedBy: "user", targetEntity: UserSession::class, cascade: ['persist'], orphanRemoval: true)]
     private ?UserSession $session;
 
+    #[Ignore]
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: Planet::class)]
     private ?Collection $planets;
 
+    #[Ignore]
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: TechnologyListItem::class, cascade: ['persist', 'remove'])]
     private Collection $techlist;
+
+    #[Ignore]
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: UserLog::class, cascade: ['persist', 'remove'])]
     private Collection $logs;
 
+    #[Ignore]
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: UserComment::class, cascade: ['persist', 'remove'])]
     private Collection $comments;
 
+    #[Ignore]
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: MissileListItem::class, cascade: ['persist', 'remove'])]
     private Collection $missiles;
 
+    #[Ignore]
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: AllianceApplication::class, cascade: ['persist', 'remove'])]
     private Collection $applications;
 
+    #[Ignore]
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: ShipListItem::class, cascade: ['persist', 'remove'])]
     private Collection $shipList;
 
+    #[Ignore]
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: ShipQueueItem::class, cascade: ['persist', 'remove'])]
     private Collection $shipQueue;
 
+    #[Ignore]
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: DefenseListItem::class, cascade: ['persist', 'remove'])]
     private Collection $defenseList;
 
+    #[Ignore]
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: BuildingListItem::class, cascade: ['persist', 'remove'])]
     private Collection $buildingList;
 
+    #[Ignore]
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: Buddy::class, cascade: ['persist', 'remove'])]
     private Collection $buddyList;
 
+    #[Ignore]
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: MarketResource::class, cascade: ['persist', 'remove'])]
     private Collection $marketResources;
 
+    #[Ignore]
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: MarketShip::class, cascade: ['persist', 'remove'])]
     private Collection $marketShips;
 
+    #[Ignore]
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: MarketAuction::class, cascade: ['persist', 'remove'])]
     private Collection $marketAuctions;
 
+    #[Ignore]
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: Notepad::class, cascade: ['persist', 'remove'])]
     private Collection $notes;
+
 
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: Bookmark::class, cascade: ['persist', 'remove'])]
     private Collection $bookmarks;
 
+    #[Ignore]
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: FleetBookmark::class, cascade: ['persist', 'remove'])]
     private Collection $fleetBookmarks;
 
+    #[Ignore]
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: UserMulti::class, cascade: ['persist', 'remove'])]
     private Collection $userMultis;
 
+    #[Ignore]
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: UserPoints::class, cascade: ['persist', 'remove'])]
     private Collection $userPoints;
 
+    #[Ignore]
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: UserWarning::class, cascade: ['persist', 'remove'])]
     private Collection $userWarnings;
 
+    #[Ignore]
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: UserSitting::class, cascade: ['persist', 'remove'])]
     private Collection $userSittings;
 
+    #[Ignore]
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: UserSurveillance::class, cascade: ['persist', 'remove'])]
     private Collection $userSurveillances;
 
+    #[Ignore]
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: Ticket::class, cascade: ['persist', 'remove'])]
     private Collection $tickets;
 
+    #[Ignore]
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: Report::class, cascade: ['persist', 'remove'])]
     private Collection $reports;
 
+    #[Ignore]
     #[ORM\OneToMany(mappedBy: 'userFrom', targetEntity: Message::class, cascade: ['persist', 'remove'])]
     private Collection $messagesFrom;
 
+    #[Ignore]
     #[ORM\OneToMany(mappedBy: 'userTo', targetEntity: Message::class, cascade: ['persist', 'remove'])]
     private Collection $messagesTo;
 
+    #[Ignore]
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: Fleet::class, cascade: ['persist', 'remove'])]
     private Collection $fleets;
 
+    #[Ignore]
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: UserSessionLog::class, cascade: ['persist', 'remove'])]
     private Collection $sessionLogs;
 
@@ -556,7 +591,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->banReason;
     }
 
-    public function setBanReason(string $banReason): static
+    public function setBanReason(?string $banReason): static
     {
         $this->banReason = $banReason;
 
