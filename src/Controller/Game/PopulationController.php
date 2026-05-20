@@ -29,8 +29,6 @@ class PopulationController extends AbstractGameController
     public function __construct(
         private readonly BuildingListItemRepository $buildingListItemRepository,
         private readonly ConfigurationService $configurationService,
-        private readonly TechnologyRequirementRepository $technologyRequirementRepository,
-        private readonly TechnologyListItemRepository $technologyListItemRepository,
         private readonly TechnologyService $technologyService,
         private readonly TechnologyDataRepository $technologyDataRepository,
         private readonly BuildingRepository $buildingRepository,

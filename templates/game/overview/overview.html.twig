@@ -158,7 +158,7 @@
         <twig:RoundEnd/>
         {% if failureCount > 0%}
             <twig:Box title="Fehlerhafte Logins">
-                <div style="color:red;"><b>Seit deinem letzten Login gab es  {{ failureCount }} <a href="?page=userconfig&amp;mode=logins">fehlerhafte Loginversuche</a>!</b></div>
+                <div style="color:red;"><b>Seit deinem letzten Login gab es  {{ failureCount }} <a href="{{ path('game.config.logins') }}">fehlerhafte Loginversuche</a>!</b></div>
             </twig:Box>
         {% endif %}
     {% endif %}

@@ -36,9 +36,9 @@ class UserLoginFailureRepository extends AbstractRepository
     /**
      * @return UserLoginFailure[]
      */
-    public function getUserLoginFailures(int $userId, int $limit = null): array
+    public function getUserLoginFailures(int|User $userId, int $limit = null): array
     {
-        return $this->findBy(['userId'=>$userId],['time'=>'DESC'],$limit);
+        return $this->findBy(['user'=>$userId],['time'=>'DESC'],$limit);
     }
 
     /**

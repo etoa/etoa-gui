@@ -9,7 +9,7 @@ class ExternalUrl
     public const HELP_CENTER_ON_CLICK = "window.open('" . self::HELP_CENTER . "','helpcenter','width=1024,height=700,scrollbars=yes');";
 
     // Forum Link
-    public const FORUM = "http://forum.etoa.ch";
+    public const FORUM = "https://forum.etoa.ch";
 
     // Chat
     public const CHAT = "chatframe.php";

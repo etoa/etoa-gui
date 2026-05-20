@@ -356,21 +356,15 @@ class UserConfigController extends AbstractGameController
     public function sitting(Request $request, UserMultiRepository $userMultiRepository, UserSittingRepository $userSittingRepository): Response
     {
         $multiEntries = $userMultiRepository->getUserEntries($this->getUser()->getData(), true);
-        if ($multiEntries) {
-            $form = $this->createFormBuilder(['userMultis' => $multiEntries])
-                ->add('save', SubmitType::class, ['label' => 'Übernehmen'])
-                ->add('userMultis', CollectionType::class, array(
-                    'entry_type' => MultiViewType::class,
-                    'allow_add' => true,
-                    'allow_delete' => true,
-                    'entry_options' => ['label' => false],
-                ))
-                ->getForm();
-        } else {
-            $form = $this->createFormBuilder()
-                ->add('save', SubmitType::class, ['label' => 'Übernehmen'])
-                ->getForm();
-        }
+        $form = $this->createFormBuilder(['userMultis' => $multiEntries])
+            ->add('save', SubmitType::class, ['label' => 'Übernehmen'])
+            ->add('userMultis', CollectionType::class, array(
+                'entry_type' => MultiViewType::class,
+                'label' => false,
+                'allow_add' => true,
+                'allow_delete' => true
+            ))
+            ->getForm();
 
         $form->handleRequest($request);
 
@@ -624,7 +618,7 @@ class UserConfigController extends AbstractGameController
     ): Response
     {
 
-        $activeSessions = $userSessionRepository->getActiveUserSessions($this->getUser()->getId());
+        $activeSessions = $userSessionRepository->getActiveUserSessions($this->getUser()->getData());
         $sessionLogs = $userSessionLogRepository->getSessionLogs(UserSessionSearch::create()->userId($this->getUser()->getId()), 10);
         $failures = $userLoginFailureRepository->getUserLoginFailures($this->getUser()->getId(), 10);
 

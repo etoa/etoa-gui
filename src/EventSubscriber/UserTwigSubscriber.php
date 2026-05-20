@@ -149,6 +149,7 @@ class UserTwigSubscriber implements EventSubscriberInterface
 
         if (isset($cp, $pm)) {
             $currentPlanetData = [
+                'currentPlanetId' => $cp->getEntity()->getId(),
                 'currentPlanetName' => $cp->getEntity()->toString(),
                 'currentPlanetImage' => $cp->getImagePath('m'),
                 'planetList' => $pm->getLinkList($s->get('cpid')),

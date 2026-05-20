@@ -105,26 +105,17 @@ class TwigExtension extends AbstractExtension
 
     public function getUrl(string $id): string
     {
-        switch ($id) {
-            case 'forum':
-                return ExternalUrl::FORUM;
-            case 'helpcenter':
-                return ExternalUrl::HELP_CENTER;
-            case 'rules':
-                return ExternalUrl::RULES;
-            case 'teamspeak':
-                return ExternalUrl::TEAMSPEAK;
-            case 'bugreport':
-                return ExternalUrl::DEV_CENTER;
-            case 'chat':
-                return ExternalUrl::CHAT;
-            case 'login':
-                return $this->router->generate('external.login');
-            case 'banner':
-                return ExternalUrl::USERBANNER_LINK;
-            default:
-                throw new \InvalidArgumentException('Unknown url ' . $id);
-        }
+        return match ($id) {
+            'forum' => ExternalUrl::FORUM,
+            'helpcenter' => ExternalUrl::HELP_CENTER,
+            'rules' => ExternalUrl::RULES,
+            'teamspeak' => ExternalUrl::TEAMSPEAK,
+            'bugreport' => ExternalUrl::DEV_CENTER,
+            'chat' => ExternalUrl::CHAT,
+            'login' => $this->router->generate('external.login'),
+            'banner' => ExternalUrl::USERBANNER_LINK,
+            default => throw new \InvalidArgumentException('Unknown url ' . $id),
+        };
     }
 
     public function getOnClick(string $id): string

@@ -12,25 +12,25 @@
 
   {# ----------------------------------- Obere Menueleiste ----------------------------------- #}
   <div class="navigation-top">
-    <a href="?page=stats" title="Statistiken (Kürzel: [s])">Statistiken</a>
+    <a href="{{ path('game.stats.total') }}" title="Statistiken (Kürzel: [s])">Statistiken</a>
     <a href="{{ etoaUrl('forum') }}" target="_blank" title="Forum">Forum</a>
     <a href="javascript:"
        onclick="{{ onClick('chat') }}" title="Chat">Chat</a>
     <a href="javascript:"
        onclick="{{ onClick('teamspeak') }}" title="Discord">Discord</a>
-    <a href="?page=userconfig" title="Einstellungen">Einstellungen</a>
+    <a href="{{ path('game.config.general') }}" title="Einstellungen">Einstellungen</a>
     <a href="javascript:"
        onclick="{{ onClick('rules') }}" title="Regeln">Regeln</a>
     <a href="javascript:"
        onclick="{{ onClick('helpcenter') }}" title="HelpCenter">HelpCenter</a>
-    <a href="?logout=1">Eject</a>
+    <a href="{{ path('game.logout') }}">Eject</a>
   </div>
 
   {# ----------------------------------- Linke Menueleiste ----------------------------------- #}
   <div class="navigation-main">
     <!-- Top Section -->
     <section id="nav-top">
-      <a id="navigate-overview" class="button-round-blue" href="?page=overview" title="Zur Übersicht (Kürzel: [Leertaste])"></a>
+      <a id="navigate-overview" class="button-round-blue" href="{{ path('game.overview') }}" title="Zur Übersicht (Kürzel: [Leertaste])"></a>
       <span id="server-time-label">Serverzeit</span>
       <span id="server-time" class="servertime">{{ serverTime() }}</span>
       <span id="current-planet-name" class="current-planet">{{ currentPlanetName }}</span>
@@ -58,53 +58,53 @@
     <!-- Middle Section -->
     <section id="nav-common">
       <span class="section-label">Allgemeines</span>
-      <a class="button-blue" href="?page=alliance" title="Allianz (Kürzel: [a])">Allianz</a>
-      <a class="button-blue" href="?page=townhall" title="Rathaus">Rathaus</a>
-      <a class="button-blue" href="?page=sector" title="Raumkarte (Kürzel: [k])">Raumkarte</a>
-      <a class="button-blue" href="?page=fleets" title="Flotten (Kürzel: [l])">Flotten</a>
-      <a class="button-blue" href="?page=bookmarks" title="Favoriten (Kürzel: [v])">Favoriten</a>
+      <a class="button-blue" href="{{ path('game.alliance') }}" title="Allianz (Kürzel: [a])">Allianz</a>
+      <a class="button-blue" href="{{ path('game.townhall') }}" title="Rathaus">Rathaus</a>
+      <a class="button-blue" href="{{ path('game.sector') }}" title="Raumkarte (Kürzel: [k])">Raumkarte</a>
+      <a class="button-blue" href="{{ path('game.fleets') }}" title="Flotten (Kürzel: [l])">Flotten</a>
+      <a class="button-blue" href="{{ path('game.bookmarks.target') }}" title="Favoriten (Kürzel: [v])">Favoriten</a>
     </section>
 
     <section id="nav-planet">
       <span class="section-label">Planet</span>
-      <a class="button-blue" href="?page=planetoverview" title="Informationen">Informationen</a>
-      <a class="button-blue" href="?page=economy" title="Wirtschaft (Kürzel: [p])">Wirtschaft</a>
-      <a class="button-blue" href="?page=population" title="Bevölkerung (Kürzel: [B])">Bevölkerung</a>
+      <a class="button-blue" href="{{ path('game.planetoverview.overview') }}" title="Informationen">Informationen</a>
+      <a class="button-blue" href="{{ path('game.planetstats') }}" title="Wirtschaft (Kürzel: [p])">Wirtschaft</a>
+      <a class="button-blue" href="{{ path('game.population',{id:currentPlanetId}) }}" title="Bevölkerung (Kürzel: [B])">Bevölkerung</a>
       <a class="button-blue" href="?page=techtree" title="Technikbaum">Technikbaum</a>
-      <a class="button-blue" href="?page=haven" title="Raumschiffhafen (Kürzel: [h])">Raumschiffhafen</a>
-      <a class="button-blue" href="?page=market" title="Marktplatz (Kürzel: [m])">Marktplatz</a>
-      <a class="button-blue" href="?page=crypto" title="Kryptocenter">Kryptocenter</a>
-      <a class="button-blue" href="?page=bunker" title="Bunker">Bunker</a>
+      <a class="button-blue" href="{{ path('game.haven.show') }}" title="Raumschiffhafen (Kürzel: [h])">Raumschiffhafen</a>
+      <a class="button-blue" href="{{ path('game.market.home') }}" title="Marktplatz (Kürzel: [m])">Marktplatz</a>
+      <a class="button-blue" href="{{ path('game.crypto') }}" title="Kryptocenter">Kryptocenter</a>
+      <a class="button-blue" href="{{ path('game.bunker.res') }}" title="Bunker">Bunker</a>
     </section>
 
     <section id="nav-production">
       <span class="section-label">Produktion</span>
-      <a class="button-blue" href="?page=buildings" title="Bauhof (Kürzel: [g])">Bauhof</a>
-      <a class="button-blue" href="?page=research" title="Forschung (Kürzel: [f])">Forschung</a>
-      <a class="button-blue" href="?page=shipyard" title="Raumschiffswerft (Kürzel: [w])">Raumschiffswerft</a>
-      <a class="button-blue" href="?page=defense" title="Verteidigungsanlagen (Kürzel: [d])">Verteidigungsanlagen</a>
-      <a class="button-blue" href="?page=recycle" title="Recycling">Recycling</a>
-      <a class="button-blue" href="?page=missiles" title="Raketensilo (Kürzel: [r])">Raketensilo</a>
+      <a class="button-blue" href="{{ path('game.buildings') }}" title="Bauhof (Kürzel: [g])">Bauhof</a>
+      <a class="button-blue" href="{{ path('game.research') }}" title="Forschung (Kürzel: [f])">Forschung</a>
+      <a class="button-blue" href="{{ path('game.shipyard') }}" title="Raumschiffswerft (Kürzel: [w])">Raumschiffswerft</a>
+      <a class="button-blue" href="{{ path('game.defense') }}" title="Verteidigungsanlagen (Kürzel: [d])">Verteidigungsanlagen</a>
+      <a class="button-blue" href="{{ path('game.recycle') }}" title="Recycling">Recycling</a>
+      <a class="button-blue" href="{{ path('game.missiles') }}" title="Raketensilo (Kürzel: [r])">Raketensilo</a>
     </section>
 
     <section id="nav-other">
       <span class="section-label">Sonstiges</span>
-      <a class="button-blue {% if buddys %}text-glow-green{% endif %}" href="?page=buddylist">Buddyliste</a>
+      <a class="button-blue {% if buddys %}text-glow-green{% endif %}" href="{{ path('game.buddylist.overview') }}">Buddyliste</a>
     </section>
 
     <section id="nav-bottom">
       <!-- Bottom Section -->
       <a id="navigate-messages" class="button-round-blue {% if messages > 0 %}unread{% endif %}" title="Nachrichten (Kürzel: [n])"
-         href="?page=messages"></a>
+         href="{{ path('game.messages.inbox') }}"></a>
       <a id="navigate-reports" class="button-round-blue {% if newreports > 0 %}unread{% endif %}" title="Berichte (Kürzel: [b])"
-         href="?page=reports"></a>
+         href="{{ path('game.reports.all') }}"></a>
       <a id="navigate-fleets-2" class="button-attack {% if fleetAttack > 0 %}attack-alert{% endif %}" title="Flotten (Kürzel: [l])"
-         href="?page=fleets">Angriff</a>
+         href="{{ path('game.fleets') }}">Angriff</a>
       <a id="navigate-notes" class="button-round-blue" title="Notizen"
         {% if noteBox is defined %}
-        href="javascript:" onclick="window.open('popup.php?page=notepad','notes','status=no,width=800,height=600,scrollbars=yes,resizable=yes');"
+        href="javascript:" onclick="window.open('{{ path('game.notepad.list',{popup:1}) }}');"
       {% else %}
-        href="?page=notepad"
+        href="{{ path('game.notepad.list') }}"
         {% endif %}></a>
     </section>
   </div>
@@ -119,7 +119,7 @@
       <span id="server-time-mobile" class="servertime">{{ serverTime() }}</span>
       <!-- Flottenalarm -->
       <a id="navigate-fleets-mobile" class="button-attack {% if fleetAttack > 0 %}attack-alert{% endif %}"
-         href="?page=fleets">Angriff</a>
+         href="{{ path('game.fleets') }}">Angriff</a>
       <!-- Mobilemenue toggle -->
       <a id="top-menu-toggle" class="button-round-blue" href="javascript:"></a>
     </section>

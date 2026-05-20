@@ -7,6 +7,7 @@ namespace EtoA\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use EtoA\Core\AbstractRepository;
+use EtoA\Entity\User;
 use EtoA\Entity\UserSession;
 use EtoA\Entity\UserSessionLog;
 
@@ -129,9 +130,9 @@ class UserSessionRepository extends AbstractRepository
     /**
      * @return UserSession[]
      */
-    public function getActiveUserSessions(int $userId): array
+    public function getActiveUserSessions(int|User $userId): array
     {
-        return $this->findBy(['userId'=>$userId],['timeAction'=>'DESC']);
+        return $this->findBy(['user'=>$userId],['timeAction'=>'DESC']);
     }
 
     /**
