@@ -8,7 +8,7 @@ use EtoA\Design\Design;
 use EtoA\Fleet\FleetRepository;
 use EtoA\Fleet\FleetSearch;
 use EtoA\Legacy\UserSession;
-use EtoA\Legacy\UtilityMethodProvider;
+use EtoA\Support\GameUtils;
 use EtoA\Message\MessageRepository;
 use EtoA\Message\ReportRepository;
 use EtoA\Support\BBCodeUtils;
@@ -36,7 +36,7 @@ class LegacyIndexController extends AbstractController
         private readonly BuddyListRepository      $buddyListRepository,
         private readonly RuntimeDataStore         $runtimeDataStore,
         private readonly UserSession              $userSession,
-        private readonly UtilityMethodProvider    $utilities,
+        private readonly GameUtils                $utilities,
     )
     {
     }
