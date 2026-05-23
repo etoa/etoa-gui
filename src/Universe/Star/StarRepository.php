@@ -23,7 +23,7 @@ class StarRepository extends AbstractRepository
     public function getAllIds(): array
     {
         return $this->createQueryBuilder('q')
-            ->select("q.id")
+            ->select("IDENTITY(q.entity)")
             ->getQuery()
             ->getSingleColumnResult();
     }
