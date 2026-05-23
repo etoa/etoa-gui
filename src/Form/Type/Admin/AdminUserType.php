@@ -38,17 +38,13 @@ class AdminUserType extends AbstractType
             ])
             ->add('nick', TextType::class, [
                 'label' => 'Nickname',
+            ])
+            ->add('password', PasswordType::class, [
+                'mapped' => false,
+                'hash_property_path' => 'password',
+                'required' => false,
+                'label' => 'Neues Passwort',
             ]);
-
-        if ($admin->getId()) {
-            $builder
-                ->add('password', PasswordType::class, [
-                    'mapped' => false,
-                    'hash_property_path' => 'password',
-                    'required' => false,
-                    'label' => 'Neues Passwort',
-                ]);
-        }
 
         if ($admin->getTfaSecret() !== '') {
             $builder

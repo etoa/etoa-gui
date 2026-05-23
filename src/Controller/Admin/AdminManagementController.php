@@ -41,7 +41,8 @@ class AdminManagementController extends AbstractAdminController
         $form = $this->createForm(AdminUserType::class, $admin);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->adminUserRepository->save($admin);
+            $this->adminUserRepository->persist($admin);
+            $this->adminUserRepository->save();
 
             $this->addFlash('success', "Gespeichert!");
             $this->logRepository->add(LogFacility::ADMIN, LogSeverity::INFO, "Der Administrator " . $this->getUser()->getUsername() . " erstellt einen neuen Administrator: " . $admin->getNick() . "(" . $admin->getId() . ").");
