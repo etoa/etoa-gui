@@ -53,7 +53,7 @@ class WormholeRepository extends AbstractRepository
             ->execute();
     }
 
-    public function add(Entity $entity, bool $persistent, Wormhole $target = null): void
+    public function add(Entity $entity, bool $persistent, Wormhole $target = null, bool $flush = true): void
     {
         $wormhole = new Wormhole();
         $wormhole->setChanged(time());
@@ -62,7 +62,9 @@ class WormholeRepository extends AbstractRepository
 
         $entity->setWormhole($wormhole);
 
-        $this->save();
+        if ($flush) {
+            $this->save();
+        }
     }
 
     public function updateTarget(Wormhole $wormhole, Wormhole $target): void

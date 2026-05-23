@@ -103,9 +103,13 @@ class UniverseGenerator
 
         $output[] = "Lade Schöpfungs-Einstellungen...";
 
+        //2
         $numberOfSectorsX = $this->config->param1Int('num_of_sectors');
+        //2
         $numberOfSectorsY = $this->config->param2Int('num_of_sectors');
+        //10
         $numberOfCellsX = $this->config->param1Int('num_of_cells');
+        //10
         $numberOfCellsY = $this->config->param2Int('num_of_cells');
 
         $starCount = 0;
@@ -129,38 +133,44 @@ class UniverseGenerator
         $this->cellRepo->addMultiple($coordinates);
 
         $output[] = "Zellen gespeichert, fülle Objekte rein...";
-        $cells = $this->cellRepo->findAllCoordinates();
-        foreach ($cells as $cell) {
-            [$x, $y] = $cell->getAbsoluteCoordinates($numberOfCellsX, $numberOfCellsY);
+        $batchSize = 100;
+        $connection = $this->entityRepo->getDatabaseConnection();
+        $processedCells = 0;
+        $totalCells = $numberOfSectorsX * $numberOfSectorsY * $numberOfCellsX * $numberOfCellsY;
 
-            // Star system
-            if ($type[$x][$y] == EntityType::STAR) {
-                $this->createStarSystem($cell);
-                $starCount++;
+        $connection->beginTransaction();
+
+        try {
+            foreach ($this->cellRepo->createQueryBuilder('c')->getQuery()->toIterable() as $cell) {
+                [$x, $y] = $cell->getAbsoluteCoordinates($numberOfCellsX, $numberOfCellsY);
+                $cellId = $cell->getId();
+
+                if ($type[$x][$y] == EntityType::STAR) {
+                    $this->createStarSystemDirect($connection, $cellId);
+                    $starCount++;
+                } elseif ($type[$x][$y] == EntityType::ASTEROID) {
+                    $this->createAsteroidDirect($connection, $cellId, 0);
+                    $asteroidsCount++;
+                } elseif ($type[$x][$y] == EntityType::NEBULA) {
+                    $this->createNebulaDirect($connection, $cellId, 0);
+                    $nebulaCount++;
+                } elseif ($type[$x][$y] == EntityType::WORMHOLE) {
+                    $this->createWormholeDirect($connection, $cellId);
+                } else {
+                    $this->createEmptySpaceDirect($connection, $cellId, 0);
+                }
+
+                $processedCells++;
+
+                if ($processedCells % $batchSize === 0) {
+                    $output[] = "Fortschritt: $processedCells / $totalCells Zellen verarbeitet...";
+                }
             }
 
-            // Asteroid Fields
-            elseif ($type[$x][$y] == EntityType::ASTEROID) {
-                $this->createAsteroid($cell);
-                $asteroidsCount++;
-            }
-
-            // Nebulas
-            elseif ($type[$x][$y] == EntityType::NEBULA) {
-                $this->createNebula($cell);
-                $nebulaCount++;
-            }
-
-            // Wormholes
-            elseif ($type[$x][$y] == EntityType::WORMHOLE) {
-                $this->createWormhole($cell);
-                $wormholeCount++;
-            }
-
-            // Empty space
-            else {
-                $this->createEmptySpace($cell);
-            }
+            $connection->commit();
+        } catch (\Exception $e) {
+            $connection->rollBack();
+            throw $e;
         }
 
         $output[] = "Universum erstellt, prüfe Wurmlöcher...";
@@ -460,5 +470,194 @@ class UniverseGenerator
         }
 
         return $added;
+    }
+
+    private function createStarSystemBatch(Cell $cell): void
+    {
+        $num_planets_min = $this->config->param1Int('num_planets');
+        $num_planets_max = $this->config->param2Int('num_planets');
+
+        $type = $this->solTypes[array_rand($this->solTypes)];
+
+        $entity = $this->addEntityBatch($cell, EntityType::STAR);
+        $this->starRepo->add($entity, $type, false);
+
+        $np = random_int($num_planets_min, $num_planets_max);
+        for ($cnp = 1; $cnp <= $np; $cnp++) {
+            $r = random_int(0, 100);
+            if ($r <= $this->config->getInt('solsys_percent_planet')) {
+                $this->createPlanetBatch($cell, $cnp, $np);
+            } elseif ($r <= $this->config->getInt('solsys_percent_planet') + $this->config->getInt('solsys_percent_asteroids')) {
+                $this->createAsteroidBatch($cell, $cnp);
+            } else {
+                $this->createEmptySpaceBatch($cell, $cnp);
+            }
+        }
+    }
+
+    private function createPlanetBatch(Cell $cell, int $pos, int $np): void
+    {
+        $planet_fields_min = $this->config->param1Int('planet_fields');
+        $planet_fields_max = $this->config->param2Int('planet_fields');
+
+        $planet_temp_min = $this->config->param1Int('planet_temp');
+        $planet_temp_max = $this->config->param2Int('planet_temp');
+        $planet_temp_diff = $this->config->getInt('planet_temp');
+        $planet_temp_totaldiff = abs($planet_temp_min) + abs($planet_temp_max);
+
+        $num_planet_images = $this->config->getInt('num_planet_images');
+
+        $entity = $this->addEntityBatch($cell, EntityType::PLANET, $pos);
+
+        $type = $this->planetTypes[array_rand($this->planetTypes)];
+        $imageNumber = $type->getId() . "_" . random_int(1, $num_planet_images);
+
+        $fields = random_int($planet_fields_min, $planet_fields_max);
+
+        $tblock = (int) round($planet_temp_totaldiff / $np);
+        $temp = random_int($planet_temp_max - ($tblock * $pos), ($planet_temp_max - ($tblock * $pos) + $tblock));
+        $tempMin = $temp - $planet_temp_diff;
+        $tempMax = $temp + $planet_temp_diff;
+
+        $this->planetRepo->add($entity, $type, $fields, $imageNumber, $tempMin, $tempMax, false);
+    }
+
+    private function createAsteroidBatch(Cell $cell, int $pos = 0): void
+    {
+        $metal = random_int($this->config->param1Int('asteroid_ress'), $this->config->param2Int('asteroid_ress'));
+        $crystal = random_int($this->config->param1Int('asteroid_ress'), $this->config->param2Int('asteroid_ress'));
+        $plastic = random_int($this->config->param1Int('asteroid_ress'), $this->config->param2Int('asteroid_ress'));
+
+        $entity = $this->addEntityBatch($cell, EntityType::ASTEROID, $pos);
+        $this->asteroidRepo->add($entity, $metal, $crystal, $plastic, false);
+    }
+
+    private function createNebulaBatch(Cell $cell, int $pos = 0): void
+    {
+        $crystal = random_int($this->config->param1Int('nebula_ress'), $this->config->param2Int('nebula_ress'));
+
+        $entity = $this->addEntityBatch($cell, EntityType::NEBULA, $pos);
+        $this->nebulaRepo->add($entity, $crystal, false);
+    }
+
+    private function createWormholeBatch(Cell $cell): void
+    {
+        $persistent = (random_int(0, 100) <= $this->config->getInt('persistent_wormholes_ratio'));
+
+        $entity = $this->addEntityBatch($cell, EntityType::WORMHOLE);
+        $this->wormholeRepo->add($entity, $persistent, null, false);
+    }
+
+    private function createEmptySpaceBatch(Cell $cell, int $pos = 0): void
+    {
+        $entity = $this->addEntityBatch($cell, EntityType::EMPTY_SPACE, $pos);
+        $this->emptySpaceRepo->add($entity, 0, false);
+    }
+
+    private function addEntityBatch(Cell $cell, string $code, int $pos = 0): Entity
+    {
+        $entity = new Entity();
+        $entity->setCell($cell);
+        $entity->setCode($code);
+        $entity->setPos($pos);
+
+        $this->entityRepo->persist($entity);
+        return $entity;
+    }
+
+    private function createStarSystemDirect($connection, int $cellId): void
+    {
+        $num_planets_min = $this->config->param1Int('num_planets');
+        $num_planets_max = $this->config->param2Int('num_planets');
+
+        $type = $this->solTypes[array_rand($this->solTypes)];
+        
+        $connection->insert('entities', ['cell_id' => $cellId, 'code' => EntityType::STAR, 'pos' => 0]);
+        $entityId = (int) $connection->lastInsertId();
+        $connection->insert('stars', ['id' => $entityId, 'type_id' => $type->getId()]);
+
+        $np = random_int($num_planets_min, $num_planets_max);
+        for ($cnp = 1; $cnp <= $np; $cnp++) {
+            $r = random_int(0, 100);
+            if ($r <= $this->config->getInt('solsys_percent_planet')) {
+                $this->createPlanetDirect($connection, $cellId, $cnp, $np);
+            } elseif ($r <= $this->config->getInt('solsys_percent_planet') + $this->config->getInt('solsys_percent_asteroids')) {
+                $this->createAsteroidDirect($connection, $cellId, $cnp);
+            } else {
+                $this->createEmptySpaceDirect($connection, $cellId, $cnp);
+            }
+        }
+    }
+
+    private function createPlanetDirect($connection, int $cellId, int $pos, int $np): void
+    {
+        $planet_fields_min = $this->config->param1Int('planet_fields');
+        $planet_fields_max = $this->config->param2Int('planet_fields');
+        $planet_temp_min = $this->config->param1Int('planet_temp');
+        $planet_temp_max = $this->config->param2Int('planet_temp');
+        $planet_temp_diff = $this->config->getInt('planet_temp');
+        $planet_temp_totaldiff = abs($planet_temp_min) + abs($planet_temp_max);
+        $num_planet_images = $this->config->getInt('num_planet_images');
+
+        $type = $this->planetTypes[array_rand($this->planetTypes)];
+        $imageNumber = $type->getId() . "_" . random_int(1, $num_planet_images);
+        $fields = random_int($planet_fields_min, $planet_fields_max);
+
+        $tblock = (int) round($planet_temp_totaldiff / $np);
+        $temp = random_int($planet_temp_max - ($tblock * $pos), ($planet_temp_max - ($tblock * $pos) + $tblock));
+        $tempMin = $temp - $planet_temp_diff;
+        $tempMax = $temp + $planet_temp_diff;
+
+        $connection->insert('entities', ['cell_id' => $cellId, 'code' => EntityType::PLANET, 'pos' => $pos]);
+        $entityId = (int) $connection->lastInsertId();
+        $connection->insert('planets', [
+            'id' => $entityId,
+            'planet_type_id' => $type->getId(),
+            'planet_fields' => $fields,
+            'planet_image' => $imageNumber,
+            'planet_temp_from' => $tempMin,
+            'planet_temp_to' => $tempMax
+        ]);
+    }
+
+    private function createAsteroidDirect($connection, int $cellId, int $pos): void
+    {
+        $metal = random_int($this->config->param1Int('asteroid_ress'), $this->config->param2Int('asteroid_ress'));
+        $crystal = random_int($this->config->param1Int('asteroid_ress'), $this->config->param2Int('asteroid_ress'));
+        $plastic = random_int($this->config->param1Int('asteroid_ress'), $this->config->param2Int('asteroid_ress'));
+
+        $connection->insert('entities', ['cell_id' => $cellId, 'code' => EntityType::ASTEROID, 'pos' => $pos]);
+        $entityId = (int) $connection->lastInsertId();
+        $connection->insert('asteroids', [
+            'id' => $entityId,
+            'res_metal' => $metal,
+            'res_crystal' => $crystal,
+            'res_plastic' => $plastic
+        ]);
+    }
+
+    private function createNebulaDirect($connection, int $cellId, int $pos): void
+    {
+        $crystal = random_int($this->config->param1Int('nebula_ress'), $this->config->param2Int('nebula_ress'));
+
+        $connection->insert('entities', ['cell_id' => $cellId, 'code' => EntityType::NEBULA, 'pos' => $pos]);
+        $entityId = (int) $connection->lastInsertId();
+        $connection->insert('nebulas', ['id' => $entityId, 'res_crystal' => $crystal]);
+    }
+
+    private function createWormholeDirect($connection, int $cellId): void
+    {
+        $persistent = (random_int(0, 100) <= $this->config->getInt('persistent_wormholes_ratio')) ? 1 : 0;
+
+        $connection->insert('entities', ['cell_id' => $cellId, 'code' => EntityType::WORMHOLE, 'pos' => 0]);
+        $entityId = (int) $connection->lastInsertId();
+        $connection->insert('wormholes', ['id' => $entityId, 'changed' => time(), 'persistent' => $persistent]);
+    }
+
+    private function createEmptySpaceDirect($connection, int $cellId, int $pos): void
+    {
+        $connection->insert('entities', ['cell_id' => $cellId, 'code' => EntityType::EMPTY_SPACE, 'pos' => $pos]);
+        $entityId = (int) $connection->lastInsertId();
+        $connection->insert('space', ['id' => $entityId, 'lastvisited' => 0]);
     }
 }

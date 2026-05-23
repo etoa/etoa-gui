@@ -28,13 +28,15 @@ class EmptySpaceRepository extends AbstractRepository
             ->getSingleColumnResult();
     }
 
-    public function add(Entity $entity, int $lastVisited = 0): void
+    public function add(Entity $entity, int $lastVisited = 0, bool $flush = true): void
     {
         $space = new EmptySpace();
         $space->setLastVisited($lastVisited);
 
         $entity->setEmptySpace($space);
 
-        $this->save();
+        if ($flush) {
+            $this->save();
+        }
     }
 }

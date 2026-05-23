@@ -73,4 +73,9 @@ abstract class AbstractRepository extends ServiceEntityRepository
     {
         return $this->getEntityManager()->getConnection();
     }
+
+    public function getDatabaseConnection(): Connection
+    {
+        return $this->getConnection();
+    }
 }

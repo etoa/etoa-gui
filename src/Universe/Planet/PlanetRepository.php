@@ -202,7 +202,8 @@ class PlanetRepository extends AbstractRepository
         int $fields,
         string $image,
         int $tempFrom,
-        int $tempTo
+        int $tempTo,
+        bool $flush = true
     ): void {
         $planet = new Planet();
         $planet->setPlanetType($planetType);
@@ -213,7 +214,9 @@ class PlanetRepository extends AbstractRepository
 
         $entity->setPlanet($planet);
 
-        $this->save();
+        if ($flush) {
+            $this->save();
+        }
     }
 
     public function setResources(

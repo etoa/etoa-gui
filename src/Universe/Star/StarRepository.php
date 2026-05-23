@@ -44,13 +44,15 @@ class StarRepository extends AbstractRepository
         return $data !== false ? new Star($data) : null;
     }
 
-    public function add(Entity $entity, SolarType $type): void
+    public function add(Entity $entity, SolarType $type, bool $flush = true): void
     {
         $star = new Star();
         $star->setSolarType($type);
         $entity->setStar($star);
 
-        $this->save();
+        if ($flush) {
+            $this->save();
+        }
     }
 
     public function update(int $id, ?string $name, int $typeId = null): bool

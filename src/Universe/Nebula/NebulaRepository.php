@@ -28,14 +28,16 @@ class NebulaRepository extends AbstractRepository
             ->getSingleColumnResult();
     }
 
-    public function add(Entity $entity, int $resCrystal): void
+    public function add(Entity $entity, int $resCrystal, bool $flush = true): void
     {
         $nebula = new Nebula();
         $nebula->setResCrystal($resCrystal);
 
         $entity->setNebula($nebula);
 
-        $this->save();
+        if ($flush) {
+            $this->save();
+        }
     }
 
     public function update(

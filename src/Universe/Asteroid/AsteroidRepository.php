@@ -28,7 +28,7 @@ class AsteroidRepository extends AbstractRepository
             ->getSingleColumnResult();
     }
 
-    public function add(Entity $entity, int $resMetal, int $resCrystal, int $resPlastic): void
+    public function add(Entity $entity, int $resMetal, int $resCrystal, int $resPlastic, bool $flush = true): void
     {
         $asteroid = new Asteroid();
         $asteroid->setResMetal($resMetal);
@@ -37,7 +37,9 @@ class AsteroidRepository extends AbstractRepository
 
         $entity->setAsteroid($asteroid);
 
-        $this->save();
+        if ($flush) {
+            $this->save();
+        }
     }
 
     public function update(
