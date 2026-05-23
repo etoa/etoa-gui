@@ -159,6 +159,7 @@ class UserTwigSubscriber implements EventSubscriberInterface
             ];
         } else {
             $currentPlanetData = [
+                'currentPlanetId' => 0,
                 'currentPlanetName' => 'Unbekannt',
                 'planetList' => [],
                 'nextPlanetId' => 0,

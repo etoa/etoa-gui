@@ -2,18 +2,24 @@
 
 namespace EtoA\Controller\External;
 
-use EtoA\Controller\AbstractLegacyShowController;
+use EtoA\Core\Configuration\ConfigurationService;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
-class LoginController extends AbstractLegacyShowController
+class LoginController extends AbstractController
 {
     protected ?string $pageTitle = 'Einloggen';
+
+    public function __construct(ConfigurationService $config)
+    {
+    }
 
     #[Route('/login', name: 'external.login')]
     public function index(Request $request): Response
     {
+        return $this->redirectToRoute('game.login');
         $loginUrl = $this->config->get('loginurl');
         if (filled($loginUrl)) {
             return $this->redirect($loginUrl);
