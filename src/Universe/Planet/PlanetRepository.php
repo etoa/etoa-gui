@@ -155,7 +155,7 @@ class PlanetRepository extends AbstractRepository
         $qry = $this->createQueryBuilder('q')
             ->innerJoin('App:PlanetType', 't', 'WITH', 'q.planetType = t.id AND t.habitable = 1')
             ->innerJoin('App:Entity', 'e', 'WITH', 'q.entity = e.id')
-            ->innerJoin('App:Cell', 'c', 'WITH', 'e.id = c.id')
+            ->innerJoin('App:Cell', 'c', 'WITH', 'e.cell = c.id')
             ->orderBy('Rand()')
             ->setMaxResults(1);
 

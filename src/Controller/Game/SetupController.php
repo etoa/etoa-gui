@@ -25,9 +25,6 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use EtoA\Universe\Star\StarRepository;
-use EtoA\Universe\Planet\PlanetTypeRepository;
-use EtoA\Universe\Star\SolarTypeRepository;
-use EtoA\Race\RaceDataRepository;
 use EtoA\Support\StringUtils;
 use EtoA\Universe\Resources\ResIcons;
 use EtoA\Universe\Resources\ResourceNames;
@@ -75,7 +72,7 @@ class SetupController extends AbstractGameController
     }
 
     #[Route('/game/setup/sector', name: 'game.setup.sector')]
-    public function setupSector(Request $request): Response
+    public function setupSector(): Response
     {
         if($this->getUser()->getData()->isSetup()) {
             return $this->redirectToRoute('game.setup.finished');
