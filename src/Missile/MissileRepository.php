@@ -3,12 +3,13 @@
 namespace EtoA\Missile;
 
 use Doctrine\Persistence\ManagerRegistry;
+use EtoA\Core\AbstractRepository;
 use EtoA\Entity\Missile;
 use EtoA\Entity\MissileListItem;
 use EtoA\Entity\Planet;
 use EtoA\Entity\User;
 
-class MissileRepository extends \EtoA\Core\AbstractRepository
+class MissileRepository extends AbstractRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
@@ -69,12 +70,10 @@ class MissileRepository extends \EtoA\Core\AbstractRepository
 
     public function searchOne(MissileListSearch $search): ?MissileListItem
     {
-        $data = $this->applySearchSortLimit($this->createQueryBuilder('q'), $search)
-            ->select('*')
-            ->from('missilelist')
-            ->fetchAssociative();
-
-        return $data !== false ? MissileListItem::createFromArray($data) : null;
+        return $this->applySearchSortLimit($this->createQueryBuilder('q'), $search)
+            ->setMaxResults(1)
+            ->getQuery()
+            ->getOneOrNullResult();
     }
 
     /**

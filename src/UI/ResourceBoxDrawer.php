@@ -81,7 +81,7 @@ class ResourceBoxDrawer
             . $this->getResourceRow($style4, ResourceNames::FOOD, "/build/images/resources/food.png", $planet->getResFood(), $planet->getStoreFood(), $planet->getProdFood())
             . $this->getResourceRow($style5, "Bevölkerung", "/build/images/resources/people.png", $planet->getPeople(), $planet->getPeoplePlace(), $planet->getProdPeople())
 
-            . "<td class=\"$style6\" " . mTT(ResourceNames::POWER, "<img width=\"40px\" height=\"40px\" src=\"build/images/resources/power.png\" style=\"float:left;margin-right:5px;\"/> <b>Produktion:</b> " . StringUtils::formatNumber($planet->getProdPower()) . "<br/><b>Verfügbar:</b> " . StringUtils::formatNumber($power_rest) . "<br/><b>Verbrauch:</b> " . StringUtils::formatNumber($planet->getUsePower()) . "<br style=\"clear:both;\"/>") . ">" . StringUtils::formatNumber($power_rest) . "</td>
+            . "<td class=\"$style6\" " . mTT(ResourceNames::POWER, "<img width=\"40px\" height=\"40px\" src=\"/build/images/resources/power.png\" style=\"float:left;margin-right:5px;\"/> <b>Produktion:</b> " . StringUtils::formatNumber($planet->getProdPower()) . "<br/><b>Verfügbar:</b> " . StringUtils::formatNumber($power_rest) . "<br/><b>Verbrauch:</b> " . StringUtils::formatNumber($planet->getUsePower()) . "<br style=\"clear:both;\"/>") . ">" . StringUtils::formatNumber($power_rest) . "</td>
         </tr></table>";
 
         return $rtn;

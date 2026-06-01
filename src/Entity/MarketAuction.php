@@ -499,4 +499,29 @@ class MarketAuction
 
         return $this;
     }
+
+    public function isCurrency0(): ?bool
+    {
+        return $this->currency0;
+    }
+
+    public function isCurrency1(): ?bool
+    {
+        return $this->currency1;
+    }
+
+    public function isCurrency2(): ?bool
+    {
+        return $this->currency2;
+    }
+
+    public function isCurrency3(): ?bool
+    {
+        return $this->currency3;
+    }
+
+    public function isCurrency4(): ?bool
+    {
+        return $this->currency4;
+    }
 }

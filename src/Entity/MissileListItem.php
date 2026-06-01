@@ -19,7 +19,7 @@ class MissileListItem
     private ?User $user = null;
 
     #[ORM\JoinColumn(name: 'missilelist_entity_id', referencedColumnName: 'id')]
-    #[ORM\ManyToOne(targetEntity: Planet::class)]
+    #[ORM\ManyToOne(targetEntity: Planet::class, inversedBy: 'missilelist')]
     private ?Planet $entity = null;
 
     #[ORM\JoinColumn(name: 'missilelist_missile_id', referencedColumnName: 'missile_id')]

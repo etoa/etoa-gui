@@ -1,0 +1,183 @@
+{% extends 'layout/game.html.twig' %}
+{% block content %}
+    <h1>Raketensilo (Stufe {{ level }}) des Planeten {{ name }} </h1>
+    <twig:ResourceBox/>
+
+    {% if flights.values %}
+        <twig:Table title="Abgefeuerte Raketen">
+            {% block table_content %}
+                <tr>
+                    <th>Ziel</th>
+                    <th>Flugdauer</th>
+                    <th>Ankunftszeit</th>
+                    <th>Raketen</th>
+                    <th>Optionen</th>
+                </tr>
+                {% for flight in flights %}
+                    <tr>
+                        <td>{{ flight.targetPlanetName }}</td>
+                        <td>
+                            {% if flight.landTime - now >= 0 %}
+                                {{ formatTimespan(flight.landTime - now) }}
+                            {% else %}
+                                Im Ziel
+                            {% endif %}
+                        <td>{{ formatTimestamp(flight.landTime) }}</td>
+                        <td>
+                            {% for object in flight.flightObjects %}
+                                {{ formatNumber(object.count) }} {{ object.missile.name }} <br/>
+                            {% endfor %}
+                        </td>
+                        <td>
+                            <a href="?page=page&amp;selfdestruct=flight->id"
+                               onclick="return confirm('Sollen die gewählten Raketen wirklich selbstzerstört werden?')">Selbstzerstörung</a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            {% endblock %}
+        </twig:Table>
+    {% endif %}
+
+    {{ form_start(form) }}
+    <twig:Table title="Silobelegung">
+        {% block table_content %}
+            <tr>
+            <td style="padding:0;height:10px;">
+            <img
+            src="{{ asset('/build/images/poll3.jpg') }}" style="height:10px;width:{{ (cnt / maxSpace * 100)|round(0, 'ceil') }}%;" alt="poll" />
+        </tr>
+        <tr>
+        <td style="text-align:center;">
+            {{ formatNumber(cnt) }} von {{ formatNumber(maxSpace) }}, {{ (cnt / maxSpace * 100)|round }}%
+            </td>
+            </tr>
+        {% endblock %}
+    </twig:Table>
+
+    <twig:Table title="Raketen verwalten">
+        {% block table_content %}
+            {% for missile in availableMissiles %}
+                <tr>
+                    <th colspan="5">{{ missile.name }}</th>
+                </tr>
+                <tr>
+                    <td height="120" rowspan="5">
+                        <a href="HELP_URL &amp;id=missile->id " title="Info zu dieser Rakete anzeigen">
+                            <img src="{{ missile.getImagePath('middle') }}" width="120" height="120"/></a>
+                    </td>
+                    <td colspan="4">
+                        {{ missile.shortDescription }}
+                    </td>
+                </tr>
+                <tr>
+                    <th>Geschwindigkeit:</th>
+                    <td>
+                        {% if missile.speed > 0 %}
+                            {{ formatNumber(missile.speed) }}
+                        {% else %}
+                            -
+                        {% endif %}
+                    </td>
+                    <th rowspan="2">Vorhanden:</th>
+                    <td rowspan="2">{{ formatNumber(missile.amount) }}</td>
+                </tr>
+                <tr>
+                    <th>Reichweite:</th>
+                    <td>
+                        {% if missile.range > 0 %}
+                            {{ formatNumber(missile.range) }} AE
+                        {% else %}
+                            -
+                        {% endif %}
+                    </td>
+                </tr>
+                <tr>
+                    <th>
+                        {% if missile.def > 0 %}
+                            Sprengköpfe
+                        {% else %}
+                            Schaden
+                        {% endif %}
+                    </th>
+                    <td>
+                        {% if missile.def > 0 %}
+                            {{ formatNumber(missile.def) }}
+                        {% elseif missile.damage > 0 %}
+                            {{ formatNumber(missile.damage) }};
+                        {% else %}
+                            0
+                        {% endif %}
+                    </td>
+                    <th rowspan="2">Kaufen:</th>
+                    <td rowspan="2">
+                        {{ form_widget(form.children[missile.id])|raw }}
+                        <br>
+                        <a href="javascript:;"
+                           onclick="document.getElementById('{{ missile.id }}').value={{ missile.maxBuild }}">max</a>
+                    </td>
+                <tr>
+                    <th>EMP:</th>
+                    <td>
+                        {% if missile.deactivate > 0 %}
+                            {{ formatTimespan(missile.deactivate) }}
+                        {% else %}
+                            Nein
+                        {% endif %}
+                    </td>
+                </tr>
+                <tr>
+                    <th height=" 20">{{ constant('EtoA\\Universe\\Resources\\ResourceNames::METAL') }} :</th>
+                    <th height="20">{{ constant('EtoA\\Universe\\Resources\\ResourceNames::CRYSTAL') }} :</th>
+                    <th height="20">{{ constant('EtoA\\Universe\\Resources\\ResourceNames::PLASTIC') }} :</th>
+                    <th height="20">{{ constant('EtoA\\Universe\\Resources\\ResourceNames::FUEL') }} :</th>
+                    <th height="20">{{ constant('EtoA\\Universe\\Resources\\ResourceNames::FOOD') }}</th>
+                </tr>
+                <tr>
+                    <td height="20" {{ missile.ressStyleMetal }}>
+                        {{ formatNumber(missile.costsMetal) }}
+                    </td>
+                    <td height="20" {{ missile.ressStyleCrystal }}>
+                        {{ formatNumber(missile.costsCrystal) }}
+                    </td>
+                    <td height="20" {{ missile.ressStylePlastic }}>
+                        {{ formatNumber(missile.costsPlastic) }}
+                    </td>
+                    <td height="20" {{ missile.ressStyleFuel }}>
+                        {{ formatNumber(missile.costsFuel) }}
+                    </td>
+                    <td height="20" {{ missile.ressStyleFood }}>
+                        {{ formatNumber(missile.costsFood) }}
+                    </td>
+                </tr>
+            {% endfor %}
+        {% endblock %}
+    </twig:Table>
+    <br/>
+    {{ form_widget(form.buy)}} &nbsp;
+    {{ form_widget(form.scrap)}}
+    {{ form_end(form) }}
+    <br/><br><br>
+
+    {% if cnt %}
+        {% if battleBan %}
+            <twig:Box title="Kampfsperre">
+                {% block content %}
+                    Es ist momentan nicht möglich andere Spieler anzugreifen. Grund: {{BBCodeToHTML(param1('battleban'))}}<br>Die Sperre dauert vom
+                    {{ formatTimestamp(param1('battleban_time')) }} bis am
+                    {{ formatTimestamp(param2('battleban_time')) }}!
+                {% endblock %}
+            </twig:Box>
+        {% else %}
+            {% if {{ flights|length < maxFlights}} %}
+
+            {% else %}
+                <twig:Box title="Information">
+                    {% block content %}
+                        Baue zuerst dein Raketensilo aus um mehr Raketen zu starten ({{ configValue('missile_silo_flights_per_level') }} Angriff pro Stufe)!
+                    {% endblock %}
+                </twig:Box>
+            {% endif %}
+        {% endif %}
+    {% endif %}
+
+{% endblock %}

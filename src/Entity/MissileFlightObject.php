@@ -14,7 +14,7 @@ class MissileFlightObject
     private ?int $id = null;
 
     #[ORM\JoinColumn(name: 'obj_flight_id', referencedColumnName: 'flight_id')]
-    #[ORM\ManyToOne(targetEntity: MissileFlight::class)]
+    #[ORM\ManyToOne(targetEntity: MissileFlight::class,inversedBy: 'flightObjects')]
     private ?MissileFlight $flight = null;
 
     #[ORM\JoinColumn(name: 'obj_missile_id', referencedColumnName: 'missile_id')]

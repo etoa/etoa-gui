@@ -183,6 +183,16 @@ class Planet extends AbstractEntity implements ObjectWithImage
     private Collection $shiplist;
 
     #[Ignore]
+    #[ORM\OneToMany(mappedBy: 'entityFrom', targetEntity: MissileFlight::class)]
+    #[ORM\JoinColumn(name: 'id', referencedColumnName: 'flight_entity_from')]
+    private Collection $missileFlights;
+
+    #[Ignore]
+    #[ORM\OneToMany(mappedBy: 'entity', targetEntity: MissileListItem::class)]
+    #[ORM\JoinColumn(name: 'id', referencedColumnName: 'missilelist_id')]
+    private Collection $missilelist;
+
+    #[Ignore]
     private ?PlanetService $planetService = null;
 
     public function __serialize(): array
@@ -206,6 +216,8 @@ class Planet extends AbstractEntity implements ObjectWithImage
         $this->buildlist = new ArrayCollection();
         $this->deflist = new ArrayCollection();
         $this->shiplist = new ArrayCollection();
+        $this->missileFlights = new ArrayCollection();
+        $this->missilelist = new ArrayCollection();
     }
 
     public function displayName(): string
@@ -850,5 +862,65 @@ class Planet extends AbstractEntity implements ObjectWithImage
     public function setPlanetService(PlanetService $planetService): void
     {
         $this->planetService = $planetService;
+    }
+
+    /**
+     * @return Collection<int, MissileFlight>
+     */
+    public function getMissileFlights(): Collection
+    {
+        return $this->missileFlights;
+    }
+
+    public function addMissileFlight(MissileFlight $missileFlight): static
+    {
+        if (!$this->missileFlights->contains($missileFlight)) {
+            $this->missileFlights->add($missileFlight);
+            $missileFlight->setEntityFrom($this);
+        }
+
+        return $this;
+    }
+
+    public function removeMissileFlight(MissileFlight $missileFlight): static
+    {
+        if ($this->missileFlights->removeElement($missileFlight)) {
+            // set the owning side to null (unless already changed)
+            if ($missileFlight->getEntityFrom() === $this) {
+                $missileFlight->setEntityFrom(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, MissileListItem>
+     */
+    public function getMissilelist(): Collection
+    {
+        return $this->missilelist;
+    }
+
+    public function addMissilelist(MissileListItem $missilelist): static
+    {
+        if (!$this->missilelist->contains($missilelist)) {
+            $this->missilelist->add($missilelist);
+            $missilelist->setEntity($this);
+        }
+
+        return $this;
+    }
+
+    public function removeMissilelist(MissileListItem $missilelist): static
+    {
+        if ($this->missilelist->removeElement($missilelist)) {
+            // set the owning side to null (unless already changed)
+            if ($missilelist->getEntity() === $this) {
+                $missilelist->setEntity(null);
+            }
+        }
+
+        return $this;
     }
 }

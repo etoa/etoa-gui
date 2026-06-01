@@ -5,7 +5,14 @@ namespace EtoA\Controller\Game;
 use EtoA\Building\BuildingId;
 use EtoA\Building\BuildingListItemRepository;
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Missile\MissileDataRepository;
+use EtoA\Missile\MissileListSearch;
+use EtoA\Missile\MissileRepository;
+use EtoA\Missile\MissileService;
+use EtoA\Support\StringUtils;
 use EtoA\Universe\Planet\PlanetRepository;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -17,7 +24,10 @@ class MissileController extends AbstractGameController
     public function __construct(
         private readonly BuildingListItemRepository $buildingListItemRepository,
         private readonly PlanetRepository $planetRepository,
-        private readonly ConfigurationService $configurationService
+        private readonly ConfigurationService $configurationService,
+        private readonly MissileDataRepository $missileDataRepository,
+        private readonly MissileRepository $missileRepository,
+        private readonly MissileService $missileService
     )
     {
     }
@@ -26,42 +36,21 @@ class MissileController extends AbstractGameController
     public function list(Request $request): Response
     {
         $cu = $this->getUser()->getData();
-        $cp = $cp = $this->planetRepository->find($request->getSession()->get('cpid'));
+        $planet = $this->planetRepository->find($request->getSession()->get('cpid'));
 
         // Gebäude Level und Arbeiter laden
-        $missileBuilding = $this->buildingListItemRepository->getEntityBuilding($cu->getId(), $cp, BuildingId::MISSILE->value);
+        $missileBuilding = $this->buildingListItemRepository->getEntityBuilding($cu->getId(), $planet, BuildingId::MISSILE->value);
 
-// Prüfen ob Gebäude gebaut ist
+        // Prüfen ob Gebäude gebaut ist
         if ($missileBuilding && $missileBuilding->getCurrentLevel() > 0) {
             // New exponential missile number algorithm by river
             // $max_space = per_level * algo_base ^ (silo_level - 1)
             $max_space = ceil($this->configurationService->getInt('missile_silo_missiles_per_level') * pow($this->configurationService->getFloat('missile_silo_missiles_algo_base'), $missileBuilding->getCurrentLevel() - 1));
             $max_flights = $missileBuilding->getCurrentLevel() * $this->configurationService->getInt('missile_silo_flights_per_level');
 
-            // Titel
-            echo "<h1>Raketensilo (Stufe " . $missileBuilding->currentLevel . ") des Planeten " . $planet->name . "</h1>";
+            if ($planet->getProdPower() - $planet->getUsePower() >= 0 && $planet->getProdPower() > 0 && $missileBuilding->getProdPercent() === "1.00") {
+                if (!$missileBuilding->isDeactivated()) {
 
-            // Ressourcen anzeigen
-            echo $resourceBoxDrawer->getHTML($planet);
-
-            if ($planet->prodPower - $planet->usePower >= 0 && $planet->prodPower > 0 && $missileBuilding->prodPercent === 1) {
-                if ($missileBuilding->isDeactivated()) {
-
-                    // Requirements
-                    /** @var MissileRequirementRepository $missileRequirementRepository */
-                    $missileRequirementRepository = $app[MissileRequirementRepository::class];
-                    $requirements = $missileRequirementRepository->getAll();
-                    $builing_something = false;
-
-                    // Gebäudeliste laden
-                    $buildlist = $buildingRepository->getBuildingLevels($planet->id);
-
-                    // Technologieliste laden
-                    /** @var TechnologyRepository $technologyRepository */
-                    $technologyRepository = $app[TechnologyRepository::class];
-                    $techlist = $technologyRepository->getTechnologyLevels($cu->getId());
-
-                    // Self destruct flight
                     if (isset($_GET['selfdestruct']) && $_GET['selfdestruct'] > 0) {
                         if ($missileFlightRepository->deleteFlight((int) $_GET['selfdestruct'], $planet->id)) {
                             success_msg("Die Raketen haben sich selbst zerstört!");
@@ -69,18 +58,7 @@ class MissileController extends AbstractGameController
                     }
 
                     // Load missiles
-                    /** @var MissileDataRepository $missileDataRepository */
-                    $missileDataRepository = $app[MissileDataRepository::class];
-                    $missiles = $missileDataRepository->getMissiles();
-
-                    // Load list
-                    /** @var MissileRepository $missileRepository */
-                    $missileRepository = $app[MissileRepository::class];
-                    $missilelist = $missileRepository->getMissilesCounts($cu->getId(), $planet->id);
-                    $cnt = 0;
-                    foreach ($missilelist as $count) {
-                        $cnt += $count;
-                    }
+                    $missiles = $this->missileDataRepository->getMissiles();
 
                     // Launch missiles
                     if (isset($_POST['launch']) && checker_verify() && $cnt > 0) {
@@ -120,207 +98,56 @@ class MissileController extends AbstractGameController
                         }
                     }
 
-                    // Load flights
-                    $flights = $missileFlightRepository->getFlights(MissileFlightSearch::create()->entityFrom($planet->id));
-                    $fcnt = count($flights);
-
-                    // Kaufen
-                    if (isset($_POST['buy']) && checker_verify()) {
-                        if (count($_POST['missile_count']) > 0) {
-                            $buy = 0;
-                            $valid = false;
-                            $buymissiles = array();
-                            foreach ($_POST['missile_count'] as $k => $v) {
-                                $v = intval($v);
-                                $k = intval($k);
-                                if ($v > 0) {
-                                    $valid = true;
-                                    if ($v + $cnt <= $max_space) {
-                                        $bc = $v;
-                                    } else {
-                                        $bc = $max_space - $cnt;
-                                    }
-                                    $bc = max($bc, 0);
-                                    if ($bc > 0) {
-                                        $buymissiles[$k] = $bc;
-                                    }
-                                    $cnt += $bc;
-                                }
-                            }
-
-                            if ($valid) {
-                                $bc = 0;
-                                foreach ($buymissiles as $k => $v) {
-                                    $bc += $v;
-
-                                    $mcosts = [];
-                                    $mcosts[0] = $missiles[$k]->costsMetal * $v;
-                                    $mcosts[1] = $missiles[$k]->costsCrystal * $v;
-                                    $mcosts[2] = $missiles[$k]->costsPlastic * $v;
-                                    $mcosts[3] = $missiles[$k]->costsFuel * $v;
-                                    $mcosts[4] = $missiles[$k]->costsFood * $v;
-
-                                    if (
-                                        $planet->resMetal >= $mcosts[0] &&
-                                        $planet->resCrystal >= $mcosts[1] &&
-                                        $planet->resPlastic >= $mcosts[2] &&
-                                        $planet->resFuel >= $mcosts[3] &&
-                                        $planet->resFood >= $mcosts[4]
-                                    ) {
-                                        $missileRepository->addMissile($k, $v, $cu->getId(), $planet->id);
-                                        $missilelist[$k] = $v + ($missilelist[$k] ?? 0);
-
-                                        $planetRepo->addResources($planet->id, -$mcosts[0], -$mcosts[1], -$mcosts[2], -$mcosts[3], -$mcosts[4]);
-                                        success_msg($v . " " . $missiles[$k]->name . " wurden gekauft!");
-
-                                        $app['dispatcher']->dispatch(new \EtoA\Missile\Event\MissileBuy($k, $v), \EtoA\Missile\Event\MissileBuy::BUY_SUCCESS);
-                                    } else {
-                                        error_msg("Konnte " . $missiles[$k]->name . " nicht kaufen, zu wenig Ressourcen!");
-                                    }
-                                }
-                                if ($bc == 0) {
-                                    error_msg("Es konten keine Raketen gekauft werden, zuwenig Platz!");
-                                }
-                            } else {
-                                error_msg("Keine oder ungültige Anzahl gewählt!");
-                            }
-                        } else {
-                            error_msg("Keine Raketen gewählt!");
-                        }
+                    $missilelist = $planet->getMissilelist();
+                    $cnt = 0;
+                    foreach ($missilelist as $item) {
+                        $cnt += $item->getCount();
                     }
 
-                    // Remove
-                    if (isset($_POST['scrap']) && checker_verify()) {
-                        if (count($_POST['missile_count']) > 0) {
-                            $buy = 0;
-                            $valid = false;
-                            foreach ($_POST['missile_count'] as $k => $v) {
-
-                                $v = StringUtils::parseFormattedNumber($v);
-                                $k = intval($k);
-
-                                if ($v > 0) {
-                                    $valid = true;
-                                    $bc = min($v, $missilelist[$k]);
-
-                                    $missileRepository->addMissile($k, -$bc, $cu->getId(), $planet->id);
-                                    $missilelist[$k] -= $bc;
-                                    $cnt -= $bc;
-                                    success_msg($bc . " " . $missiles[$k]->name . " wurden verschrottet!");
-                                }
-                            }
-                            if (!$valid) {
-                                error_msg("Keine oder ungültige Anzahl gewählt!");
-                            }
-                        } else {
-                            error_msg("Keine Raketen gewählt!");
-                        }
-                    }
-
-
-                    $cstr = checker_init();
-                    // Flüge anzeigen
-                    if ($fcnt > 0) {
-                        $missileNames = $missileDataRepository->getMissileNames(true);
-                        $time = time();
-                        tableStart("Abgefeuerte Raketen");
-                        echo "<tr><th>Ziel</th><th>Flugdauer</th><th>Ankunftszeit</th><th>Raketen</th><th>Optionen</th></tr>";
-                        foreach ($flights as $flight) {
-                            $countdown = ($flight->landTime - $time >= 0) ? StringUtils::formatTimespan($flight->landTime - $time) : 'Im Ziel';
-                            echo '<tr><td>' . $flight->targetPlanetName . '</td>
-                    <td>' . $countdown . '</td>
-                    <td>' . StringUtils::formatDate($flight->landTime) . '</td>
-                    <td>';
-                            foreach ($flight->missiles as $missileId => $count) {
-                                echo StringUtils::formatNumber($count) . ' ' . $missileNames[$missileId] . '<br/>';
-                            }
-                            echo '</td>
-                    <td><a href="?page=' . $page . '&amp;selfdestruct=' . $flight->id . '" onclick="return confirm(\'Sollen die gewählten Raketen wirklich selbstzerstört werden?\')">Selbstzerstörung</a></td></tr>';
-                        }
-                        tableEnd();
-                    }
-
+                    $form = $this->createFormBuilder();
 
                     // Raketen anzeigen
                     if (count($missiles) > 0) {
-                        if ($max_space > 0) {
-                            $bar1_red = min(ceil($cnt / $max_space * 200), 200);
-                        } else {
-                            $bar1_red = 0;
-                        }
+                        $availableMissiles = [];
 
-                        echo '<form action="?page=' . $page . '" method="post">';
-                        echo $cstr;
-
-                        // Rechnet %-Werte für Tabelle
-                        $store_width = ceil($cnt / $max_space * 100);
-
-                        tableStart("Silobelegung");
-                        echo '<tr>
-                                <tdstyle="padding:0px;height:10px;"><img src="images/poll3.jpg" style="height:10px;width:' . $store_width . '%;" alt="poll" />
-                            </tr>
-                            <tr>
-                                <td style="text-align:center;">
-                                    ' . StringUtils::formatNumber($cnt) . ' von ' . StringUtils::formatNumber($max_space) . ', ' . round($cnt / $max_space * 100, 0) . '%
-                            </tr>';
-                        tableEnd();
-
-                        tableStart("Raketen verwalten");
-
-                        $cnt2 = 0;
                         foreach ($missiles as $missile) {
-
-                            // Check requirements for this building
-                            $requirements_passed = true;
-                            foreach ($requirements->getBuildingRequirements($missile->id) as $requirement) {
-                                if (!isset($buildlist[$requirement->requiredBuildingId]) || $buildlist[$requirement->requiredBuildingId] < $requirement->requiredLevel) {
-                                    $requirements_passed = false;
-                                }
-                            }
-
-                            foreach ($requirements->getTechnologyRequirements($missile->id) as $requirement) {
-                                if (!isset($techlist[$requirement->requiredTechnologyId]) || $techlist[$requirement->requiredTechnologyId] < $requirement->requiredLevel) {
-                                    $requirements_passed = false;
-                                }
-                            }
-
-                            if ($requirements_passed) {
+                            if($this->missileService->checkRequirements($missile,$cu,$planet )) {
                                 //Errechnet wie viele Raketen von diesem Typ maximal gekauft werden können mit den aktuellen Rohstoffen
 
                                 // Silokapazität
                                 $store = $max_space - $cnt;
 
                                 //Titan
-                                if ($missile->costsMetal > 0) {
-                                    $build_cnt_metal = floor($planet->resMetal / $missile->costsMetal);
+                                if ($missile->getCostsMetal() > 0) {
+                                    $build_cnt_metal = floor($planet->getResMetal() / $missile->getCostsMetal());
                                 } else {
                                     $build_cnt_metal = 99999999999;
                                 }
 
                                 //Silizium
-                                if ($missile->costsCrystal > 0) {
-                                    $build_cnt_crystal = floor($planet->resCrystal / $missile->costsCrystal);
+                                if ($missile->getCostsCrystal() > 0) {
+                                    $build_cnt_crystal = floor($planet->getResCrystal() / $missile->getCostsCrystal());
                                 } else {
                                     $build_cnt_crystal = 99999999999;
                                 }
 
                                 //PVC
-                                if ($missile->costsPlastic > 0) {
-                                    $build_cnt_plastic = floor($planet->resPlastic / $missile->costsPlastic);
+                                if ($missile->getCostsPlastic() > 0) {
+                                    $build_cnt_plastic = floor($planet->getResPlastic() / $missile->getCostsPlastic());
                                 } else {
                                     $build_cnt_plastic = 99999999999;
                                 }
 
                                 //Tritium
-                                if ($missile->costsFuel > 0) {
-                                    $build_cnt_fuel = floor($planet->resFuel / $missile->costsFuel);
+                                if ($missile->getCostsFuel() > 0) {
+                                    $build_cnt_fuel = floor($planet->getResFuel() / $missile->getCostsFuel());
                                 } else {
                                     $build_cnt_fuel = 99999999999;
                                 }
 
                                 //Nahrung
-                                if ($missile->costsFood > 0) {
-                                    $build_cnt_food = floor($planet->resFood / $missile->costsFood);
+                                if ($missile->getCostsFood() > 0) {
+                                    $build_cnt_food = floor($planet->getResFood() / $missile->getCostsFood());
                                 } else {
                                     $build_cnt_food = 99999999999;
                                 }
@@ -329,52 +156,55 @@ class MissileController extends AbstractGameController
                                 $missile_max_build = min($build_cnt_metal, $build_cnt_crystal, $build_cnt_plastic, $build_cnt_fuel, $build_cnt_food, $store);
 
                                 // Grösste Zahl die eingegeben werden kann (Da man auch verschrotten kann)
-                                $available_missles = isset($missilelist[$missile->id]) ? $missilelist[$missile->id] : 0;
-                                $missile_max_number = max($missile_max_build, $available_missles);
+                                $available = intval($this->missileRepository->findOneBy(['entity'=>$planet,'missile'=>$missile])?->getCount());
+                                $missile_max_number = max($missile_max_build, $available);
+
+                                $missile->amount = $available;
+                                $missile->maxBuild = $missile_max_build;
 
                                 //Tippbox Nachricht generieren
                                 //X Anlagen baubar
                                 if ($missile_max_build > 0) {
-                                    $tm_cnt = "Es k&ouml;nnen maximal " . StringUtils::formatNumber($missile_max_build) . " Raketen gekauft werden.";
+                                    $tm_cnt = "Es können maximal " . StringUtils::formatNumber($missile_max_build) . " Raketen gekauft werden.";
                                 }
                                 //Zu wenig Felder.
                                 elseif ($store == 0) {
                                     $tm_cnt = "Das Silo ist zu klein für weitere Raketen!";
                                 }
                                 //Zuwenig Rohstoffe. Wartezeit errechnen
-                                elseif ($missile_max_build == 0 && $store != 0) {
+                                elseif ($missile_max_build === 0) {
                                     //Wartezeit Titan
                                     $bwait = [];
-                                    if ($planet->prodMetal > 0) {
-                                        $bwait['metal'] = ceil(($missile->costsMetal - $planet->resMetal) / $planet->prodMetal * 3600);
+                                    if ($planet->getProdMetal() > 0) {
+                                        $bwait['metal'] = ceil(($missile->getCostsMetal() - $planet->getResMetal()) / $planet->getProdMetal() * 3600);
                                     } else {
                                         $bwait['metal'] = 0;
                                     }
 
                                     //Wartezeit Silizium
-                                    if ($planet->prodCrystal > 0) {
-                                        $bwait['crystal'] = ceil(($missile->costsCrystal - $planet->resCrystal) / $planet->prodCrystal * 3600);
+                                    if ($planet->getProdCrystal() > 0) {
+                                        $bwait['crystal'] = ceil(($missile->getCostsCrystal() - $planet->getResCrystal()) / $planet->getProdCrystal() * 3600);
                                     } else {
                                         $bwait['crystal'] = 0;
                                     }
 
                                     //Wartezeit PVC
-                                    if ($planet->prodPlastic > 0) {
-                                        $bwait['plastic'] = ceil(($missile->costsPlastic - $planet->resPlastic) / $planet->prodPlastic * 3600);
+                                    if ($planet->getProdPlastic() > 0) {
+                                        $bwait['plastic'] = ceil(($missile->getCostsPlastic() - $planet->getResPlastic()) / $planet->getProdPlastic() * 3600);
                                     } else {
                                         $bwait['plastic'] = 0;
                                     }
 
                                     //Wartezeit Tritium
-                                    if ($planet->prodFuel > 0) {
-                                        $bwait['fuel'] = ceil(($missile->costsFuel - $planet->resFuel) / $planet->prodFuel * 3600);
+                                    if ($planet->getProdFuel() > 0) {
+                                        $bwait['fuel'] = ceil(($missile->getCostsFuel() - $planet->getResFuel()) / $planet->getProdFuel() * 3600);
                                     } else {
                                         $bwait['fuel'] = 0;
                                     }
 
                                     //Wartezeit Nahrung
-                                    if ($planet->prodFood > 0) {
-                                        $bwait['food'] = ceil(($missile->costsFood - $planet->resFood) / $planet->prodFood * 3600);
+                                    if ($planet->getProdFood() > 0) {
+                                        $bwait['food'] = ceil(($missile->getCostsFood() - $planet->getResFood()) / $planet->getProdFood() * 3600);
                                     } else {
                                         $bwait['food'] = 0;
                                     }
@@ -382,191 +212,178 @@ class MissileController extends AbstractGameController
                                     //Maximale Wartezeit ermitteln
                                     $bwmax = max($bwait['metal'], $bwait['crystal'], $bwait['plastic'], $bwait['fuel'], $bwait['food']);
 
-                                    $tm_cnt = "Rohstoffe verf&uuml;gbar in " . StringUtils::formatTimespan($bwmax) . "";
+                                    $tm_cnt = "Rohstoffe verfügbar in " . StringUtils::formatTimespan($bwmax);
                                 } else {
                                     $tm_cnt = "";
                                 }
 
                                 //Stellt Rohstoff Rot dar, wenn es von diesem zu wenig auf dem Planeten hat
                                 //Titan
-                                if ($missile->costsMetal > $planet->resMetal) {
-                                    $ress_style_metal = "style=\"color:red;\"";
+                                if ($missile->getCostsMetal() > $planet->getResMetal()) {
+                                    $missile->ressStyleMetal = "style=color:red;";
                                 } else {
-                                    $ress_style_metal = "";
+                                    $missile->ressStyleMetal = "";
                                 }
 
                                 //Silizium
-                                if ($missile->costsCrystal > $planet->resCrystal) {
-                                    $ress_style_crystal = "style=\"color:red;\"";
+                                if ($missile->getCostsCrystal() > $planet->getResCrystal()) {
+                                    $missile->ressStyleCrystal = "style=color:red;";
                                 } else {
-                                    $ress_style_crystal = "";
+                                    $missile->ressStyleCrystal = "";
                                 }
 
                                 //PVC
-                                if ($missile->costsPlastic > $planet->resPlastic) {
-                                    $ress_style_plastic = "style=\"color:red;\"";
+                                if ($missile->getCostsPlastic() > $planet->getResPlastic()) {
+                                    $missile->ressStylePlastic = "style=color:red;";
                                 } else {
-                                    $ress_style_plastic = "";
+                                    $missile->ressStylePlastic = "";
                                 }
 
                                 //Tritium
-                                if ($missile->costsFuel > $planet->resFuel) {
-                                    $ress_style_fuel = "style=\"color:red;\"";
+                                if ($missile->getCostsFuel() > $planet->getResFuel()) {
+                                    $missile->ressStyleFuel = "style=color:red;";
                                 } else {
-                                    $ress_style_fuel = "";
+                                    $missile->ressStyleFuel = "";
                                 }
 
                                 //Nahrung
-                                if ($missile->costsFood > $planet->resFood) {
-                                    $ress_style_food = "style=\"color:red;\"";
+                                if ($missile->getCostsFood() > $planet->getResFood()) {
+                                    $missile->ressStyleFood = "style=color:red;";
                                 } else {
-                                    $ress_style_food = "";
+                                    $missile->ressStyleFood = "";
                                 }
 
-                                // Volle Ansicht
-                                if ($properties->itemShow == 'full') {
-                                    if ($cnt2 > 0) {
-                                        echo "<tr>
-                                        <td colspan=\"5\" style=\"height:5px;\"></td>
-                                </tr>";
-                                    }
+                                $form = $form->add($missile->getId(), TextType::class, [
+                                    'attr' => [
+                                        'size' => 5,
+                                        'maxlength' => 9,
+                                        'onKeyUp' => "FormatNumber(this.id,this.value, $missile_max_number, '', '');",
+                                        'onMouseOut' => "hideTT()",
+                                        'onMouseOver' => "showTT('','".StringUtils::replaceBR(StringUtils::encodeDBStringToJS($tm_cnt))."',1,event,this)",
+                                    ],
+                                    'data'=>0
+                                ]);
 
-                                    $d_img = $missile->getImagePath('middle');
-                                    echo "<tr>
-                                <th colspan=\"5\">" . $missile->name . "</th>
-                            </tr>
-                            <tr>
-                                <td width=\"120\" height=\"120\" rowspan=\"5\">";
-                                    //Bild mit Link zur Hilfe darstellen
-                                    echo "<a href=\"" . HELP_URL . "&amp;id=" . $missile->id . "\" title=\"Info zu dieser Rakete anzeigen\">
-                                <img src=\"" . $d_img . "\" width=\"120\" height=\"120\" border=\"0\" /></a>";
-                                    echo "</td>
-                                <td colspan=\"4\" valign=\"top\">" . $missile->shortDescription . "</td>
-                            </tr>
-                            <tr>
-                                <th>Geschwindigkeit:</th>
-                                <td>";
-                                    if ($missile->speed > 0) {
-                                        echo "" . StringUtils::formatNumber($missile->speed) . "";
-                                    } else {
-                                        echo "-";
-                                    }
-                                    echo "</td>
-                                <th rowspan=\"2\">Vorhanden:</th>
-                                <td rowspan=\"2\">" . StringUtils::formatNumber($available_missles) . "</td>
-                            </tr>
-                            <tr>
-                                <th>Reichweite:</th>
-                                <td>";
-                                    if ($missile->range > 0) {
-                                        echo "" . StringUtils::formatNumber($missile->range) . " AE";
-                                    } else {
-                                        echo "-";
-                                    }
-                                    echo "</td>
-                            </tr>
-                            <tr>
-                                <th>";
-
-                                    if ($missile->def > 0) {
-                                        echo "Sprengköpfe";
-                                    } elseif ($missile->damage > 0) {
-                                        echo "Schaden";
-                                    } elseif ($missile->deactivate > 0) {
-                                        echo "Schaden";
-                                    }
-
-                                    echo "</th>
-                                <td>";
-
-                                    if ($missile->def > 0) {
-                                        echo StringUtils::formatNumber($missile->def);
-                                    } elseif ($missile->damage > 0) {
-                                        echo StringUtils::formatNumber($missile->damage);
-                                    } else {
-                                        echo "0";
-                                    }
-
-                                    echo "</td>
-                                <th rowspan=\"2\">Kaufen:</th>
-                            <td rowspan=\"2\">
-                                        <input type=\"text\" value=\"0\" id=\"missile_count_" . $missile->id . "\" name=\"missile_count[" . $missile->id . "]\" size=\"5\" maxlength=\"9\" " . tm("", $tm_cnt) . " onkeyup=\"FormatNumber(this.id,this.value, " . $missile_max_number . ", '', '');\"/><br><a href=\"javascript:;\" onclick=\"document.getElementById('missile_count_" . $missile->id . "').value=" . $missile_max_build . ";\">max</a>
-                            </td>";
-                                    echo "<tr>
-                            <th>EMP:</th>
-                            <td>";
-                                    if ($missile->deactivate > 0) {
-                                        echo StringUtils::formatTimespan($missile->deactivate);
-                                    } else {
-                                        echo "Nein";
-                                    }
-                                    echo "</td>
-                                        </tr>";
-
-                                    echo "</tr>";
-                                    echo "<tr>
-                                <th height=\"20\" width=\"110\">" . ResourceNames::METAL . ":</th>
-                                <th height=\"20\" width=\"97\">" . ResourceNames::CRYSTAL . ":</th>
-                                <th height=\"20\" width=\"98\">" . ResourceNames::PLASTIC . ":</th>
-                                <th height=\"20\" width=\"97\">" . ResourceNames::FUEL . ":</th>
-                                <th height=\"20\" width=\"98\">" . ResourceNames::FOOD . "</th></tr>";
-                                    echo "<tr>
-                                <td height=\"20\" width=\"110\" " . $ress_style_metal . ">
-                                    " . StringUtils::formatNumber($missile->costsMetal) . "
-                                </td>
-                                <td height=\"20\" width=\"25%\" " . $ress_style_crystal . ">
-                                    " . StringUtils::formatNumber($missile->costsCrystal) . "
-                                </td>
-                                <td height=\"20\" width=\"25%\" " . $ress_style_plastic . ">
-                                    " . StringUtils::formatNumber($missile->costsPlastic) . "
-                                </td>
-                                <td height=\"20\" width=\"25%\" " . $ress_style_fuel . ">
-                                    " . StringUtils::formatNumber($missile->costsFuel) . "
-                                </td>
-                                <td height=\"20\" width=\"25%\" " . $ress_style_food . ">
-                                    " . StringUtils::formatNumber($missile->costsFood) . "
-                                </td>
-                            </tr>";
-                                }
-
-                                //Einfache Ansicht der Schiffsliste
-                                else {
-                                    $d_img = $missile->getImagePath('middle');
-                                    echo "<tr>
-                                    <td>";
-                                    //Bild mit Link zur Hilfe darstellen
-                                    echo "<a href=\"" . HELP_URL . "&amp;id=" . $missile->id . "\"><img src=\"" . $d_img . "\" width=\"40\" height=\"40\" border=\"0\" /></a></td>";
-                                    echo "<th width=\"40%\">
-                                        " . $missile->name . "<br/>
-                                        <span class=\"textSmall\" style=\"font-weight:500;\">
-                                        <b>Vorhanden:</b> " . StringUtils::formatNumber($missilelist[$missile->id]) . "</span></th>
-                                    <td width=\"10%\" " . $ress_style_metal . ">" . StringUtils::formatNumber($missile->costsMetal) . "</td>
-                                    <td width=\"10%\" " . $ress_style_crystal . ">" . StringUtils::formatNumber($missile->costsCrystal) . "</td>
-                                    <td width=\"10%\" " . $ress_style_plastic . ">" . StringUtils::formatNumber($missile->costsPlastic) . "</td>
-                                    <td width=\"10%\" " . $ress_style_fuel . ">" . StringUtils::formatNumber($missile->costsFuel) . "</td>
-                                    <td width=\"10%\" " . $ress_style_food . ">" . StringUtils::formatNumber($missile->costsFood) . "</td>
-                                    <td>
-                                        <input type=\"text\" value=\"0\" id=\"missile_count_" . $missile->id . "\" name=\"missile_count[" . $missile->id . "]\" size=\"5\" maxlength=\"9\" " . tm("", $tm_cnt) . " tabindex=\"0\" onkeyup=\"FormatNumber(this.id,this.value, " . $missile_max_number . ", '', '');\"/><br><a href=\"javascript:;\" onclick=\"document.getElementById('missile_count_" . $missile->id . "').value=" . $missile_max_build . ";\">max</a>
-                                    </td>
-                                </tr>";
-                                }
-
-                                $cnt2++;
+                                $availableMissiles[] = $missile;
                             }
                         }
-                        tableEnd();
-                        echo '<br/><input type="submit" name="buy" value="Ausgewählte Anzahl kaufen" /> &nbsp; ';
-                        echo '<input type="submit" name="scrap" value="Ausgewählte Anzahl verschrotten" onclick="return confirm(\'Sollen die gewählten Raketen wirklich verschrottet werden? Es werden keine Ressourcen zurückerstattet!\')" /></form><br/><br><br>';
 
-                        if ($cnt > 0) {
+                        $form = $form
+                            ->add('buy', SubmitType::class, [
+                                'label' => 'Ausgewählte Anzahl kaufen',
+                            ])
+                            ->add('scrap', SubmitType::class, [
+                                'label' => 'Ausgewählte Anzahl verschrotten',
+                                'attr' => [
+                                    'onClick' => "return confirm('Sollen die gewählten Raketen wirklich verschrottet werden? Es werden keine Ressourcen zurückerstattet!')"
+                                ]
+                            ])
+                            ->getForm()
+                            ->handleRequest($request);
 
-                            // Kampfsperre prüfen
-                            if ($config->getBoolean('battleban') && $config->param1Int('battleban_time') <= time() && $config->param2Int('battleban_time') > time()) {
-                                iBoxStart("Kampfsperre");
-                                echo "Es ist momentan nicht m&ouml;glich andere Spieler anzugreifen. Grund: " . BBCodeUtils::toHTML($config->param1('battleban')) . "<br>Die Sperre dauert vom " . date("d.m.Y", $config->param1Int('battleban_time')) . " um " . date("H:i", $config->param1Int('battleban_time')) . " Uhr bis am " . date("d.m.Y", $config->param2Int('battleban_time')) . " um " . date("H:i", $config->param2Int('battleban_time')) . " Uhr!";
-                                iBoxEnd();
-                            } else {
-                                if ($fcnt < $max_flights) {
+                        if ($form->isSubmitted() && $form->isValid()) {
+                            //Kaufen
+                            if($form->get('buy')->isClicked()) {
+                                $valid = false;
+                                $buymissiles = array();
+                                foreach ($form->getData() as $k => $v) {
+                                    $v = intval($v);
+                                    $k = intval($k);
+                                    if ($v > 0) {
+                                        $valid = true;
+                                        if ($v + $cnt <= $max_space) {
+                                            $bc = $v;
+                                        } else {
+                                            $bc = $max_space - $cnt;
+                                        }
+                                        $bc = max($bc, 0);
+                                        if ($bc > 0) {
+                                            $buymissiles[$k] = $bc;
+                                        }
+                                        $cnt += $bc;
+                                    }
+                                }
+
+                                if ($valid) {
+                                    $bc = 0;
+                                    foreach ($buymissiles as $k => $v) {
+                                        $bc += $v;
+                                        $missile = $this->missileDataRepository->find($k);
+
+                                        if($this->missileService->checkRequirements($missile,$cu,$planet )) {
+                                            $mcosts = [];
+                                            $mcosts[0] = $missile->getCostsMetal() * $v;
+                                            $mcosts[1] = $missile->getCostsCrystal() * $v;
+                                            $mcosts[2] = $missile->getCostsPlastic() * $v;
+                                            $mcosts[3] = $missile->getCostsFuel() * $v;
+                                            $mcosts[4] = $missile->getCostsFood() * $v;
+
+                                            if (
+                                                $planet->getResMetal() >= $mcosts[0] &&
+                                                $planet->getResCrystal() >= $mcosts[1] &&
+                                                $planet->getResPlastic() >= $mcosts[2] &&
+                                                $planet->getResFuel() >= $mcosts[3] &&
+                                                $planet->getResFood() >= $mcosts[4]
+                                            ) {
+                                                $this->missileRepository->addMissile($missile, $v, $cu, $planet);
+                                                $this->planetRepository->addResources($planet, -$mcosts[0], -$mcosts[1], -$mcosts[2], -$mcosts[3], -$mcosts[4]);
+                                                $this->addFlash('success', $v . " " . $missile->getName() . " wurden gekauft!");
+                                            } else {
+                                                $this->addFlash('error',"Konnte " . $missile->getName() . " nicht kaufen, zu wenig Ressourcen!");
+                                            }
+                                        } else {
+                                            $this->addFlash('error','Rakete nicht vorhanden!');
+                                        }
+                                    }
+                                    if ($bc == 0) {
+                                        $this->addFlash('error','Es konten keine Raketen gekauft werden, zuwenig Platz!');
+                                    }
+                                } else {
+                                    $this->addFlash('error',"Keine oder ungültige Anzahl gewählt!");
+                                }
+                           }
+
+                            // Remove
+                            if($form->get('scrap')->isClicked()) {
+                                $valid = false;
+                                foreach ($form->getData() as $k => $v) {
+                                    $v = StringUtils::parseFormattedNumber($v);
+                                    $k = intval($k);
+
+                                    if ($v > 0) {
+                                        $valid = true;
+                                        $search = new MissileListSearch();
+                                        $missilelist = $this->missileRepository->searchOne($search->missileId($k)->userId($cu)->entityId($planet));
+                                        $bc = min($v, $missilelist->getCount());
+
+                                        $missilelist->setCount($missilelist->getCount()-$bc);
+                                        $this->missileRepository->save();
+
+                                        $cnt -= $bc;
+                                        $this->addFlash('success',$bc . " " . $missilelist->getMissile()->getName() . " wurden verschrottet!");
+                                    }
+                                }
+
+                                if (!$valid) {
+                                    $this->addFlash('error',"Keine oder ungültige Anzahl gewählt!");
+                                }
+                            }
+                        }
+
+                        return $this->render('game/missiles/missiles.html.twig',[
+                            'flights' => $planet->getMissileFlights(),
+                            'availableMissiles' => $availableMissiles,
+                            'cnt' => $cnt,
+                            'maxSpace' => $max_space,
+                            'form' => $form,
+                            'name' => $planet->displayName(),
+                            'level' => $missileBuilding->getCurrentLevel(),
+                            'battleBan' => $this->configurationService->getBoolean('battleban') && $this->configurationService->param1Int('battleban_time') <= time() && $this->configurationService->param2Int('battleban_time') > time(),
+                            'maxFlights' => $max_flights
+                        ]);
+
+
+                        /*
 
                                     // Bookmarks laden
                                     $bookmarks = array();
@@ -685,27 +502,36 @@ class MissileController extends AbstractGameController
                                 " . $keyup_command . "
                             }
                             </script>";
-                                } else {
-                                    info_msg("Baue zuerst dein Raketensilo aus um mehr Raketen zu starten (" . MISSILE_SILO_FLIGHTS_PER_LEVEL . " Angriff pro Stufe)!");
-                                }
                             }
-                        }
+                        */
                     } else {
-                        info_msg("Keine Raketen verfügbar!");
+                        return $this->render('game/error.html.twig',[
+                            'msg' => 'Keine Raketen verfügbar!',
+                            'path' => $this->generateUrl('game.overview'),
+                            'headline' => 'Raketensilo'
+                        ]);
                     }
                 } else {
-                    info_msg("Dieses Gebäude ist noch bis " . StringUtils::formatDate($missileBuilding->deactivated) . " deaktiviert!");
+                    return $this->render('game/error.html.twig',[
+                        'msg' => "Dieses Gebäude ist noch bis " . StringUtils::formatDate($missileBuilding->getDeactivated()) . " deaktiviert!",
+                        'path' => $this->generateUrl('game.overview'),
+                        'headline' => 'Raketensilo'
+                    ]);
                 }
             } else {
-                info_msg("Zu wenig Energie verfügbar! Gebäude ist deaktiviert!");
+                return $this->render('game/error.html.twig',[
+                    'msg' => 'Zu wenig Energie verfügbar! Gebäude ist deaktiviert!',
+                    'path' => $this->generateUrl('game.overview'),
+                    'headline' => 'Raketensilo'
+                ]);
             }
         } else {
             // Titel
-            echo "<h1>Raketensilo des Planeten " . $planet->name . "</h1>";
-
-            // Ressourcen anzeigen
-            echo $resourceBoxDrawer->getHTML($planet);
-            info_msg("Das Raketensilo wurde noch nicht gebaut!");
+            return $this->render('game/error.html.twig',[
+                'msg' => 'Das Raketensilo wurde noch nicht gebaut!',
+                'path' => $this->generateUrl('game.overview'),
+                'headline' => 'Raketensilo'
+            ]);
         }
     }
 }

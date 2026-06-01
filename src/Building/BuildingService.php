@@ -150,13 +150,13 @@ class BuildingService
                             $style['metal'] = $style['crystal'] = $style['plastic'] = $style['food'] = "";
                         }
 
-                        if (!$it->current()->bl?->getLevel()) {
+                        if (!$it->current()->bl?->getCurrentLevel()) {
                             $subtitle = "Noch nicht gebaut";
-                        } elseif ($it->current()->bl->getLevel() === $it->current()->getLastLevel) {
+                        } elseif ($it->current()->bl->getCurrentLevel() === $it->current()->getLastLevel()) {
                             $subtitle = 'Vollständig ausgebaut';
                             $tmtext = '';
                         } else {
-                            $subtitle = 'Stufe ' . $it->current()->level;
+                            $subtitle = 'Stufe ' . $it->current()->bl->getCurrentLevel();
                         }
                     }
 
