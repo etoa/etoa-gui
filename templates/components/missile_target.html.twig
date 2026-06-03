@@ -1,0 +1,72 @@
+{% import 'macros.html.twig' as macros %}
+
+<div
+        {{ attributes }}
+        data-action="change->live#update"
+>
+    {{ form_start(form) }}
+        <twig:Table title="Raketen starten">
+            {% block table_content %}
+
+                <tr>
+                    <th style="width:260px;">Raketen wählen</th>
+                    <th colspan="2" style="width:440px;">Ziel wählen</th>
+                </tr>
+                <tr>
+                    <td rowspan="6">
+                        {% for missile in form.missilelist %}
+                            {% if missile.vars.value.missile.launchable %}
+                                {{ form_widget(missile.children.count) }}
+                                {{ missile.vars.value.missile.name }} ({{ missile.vars.value.count }} vorhanden)
+                            {% endif %}
+                        {% else %}
+                            Momentan befinden sich keine startbaren Raketen in deinem Silo!
+                        {% endfor %}
+                    </td>
+                    <th>:</th>
+                    <td>
+                        {{ form_widget(outerScope.form.csx) }}&nbsp;/&nbsp;
+                        {{ form_widget(outerScope.form.csy) }}&nbsp;&nbsp;:&nbsp;&nbsp;
+                        {{ form_widget(outerScope.form.ccx) }}&nbsp;/&nbsp;
+                        {{ form_widget(outerScope.form.ccy) }}&nbsp;&nbsp;:&nbsp;&nbsp;
+                        {{ form_widget(form.psp) }}
+                    </td>
+                </tr>
+
+                <tr>
+                    <th>Favorit wählen:</th>
+                    <td>
+                        {{ form_widget(outerScope.form.bookmark) }}
+                    </td>
+                </tr>
+
+                <tr>
+                    <th>Zielinfo:</th>
+                    <td id="targetinfo">
+                        {{ outerScope.this.info }}
+                    </td>
+                </tr>
+                <tr>
+                    <th>Entfernung:</th>
+                    <td id="distance">
+                        {{ outerScope.this.distance }}
+                    </td>
+                </tr>
+                <tr>
+                    <th>Geschwindigkeit:</th>
+                    <td id="speed">
+                        {{ outerScope.this.speed }}
+                    </td>
+                </tr>
+                <tr>
+                    <th>Zeit:</th>
+                    <td id="time">
+                        {{ outerScope.this.duration }}
+                    </td>
+                </tr>
+            {% endblock %}
+        </twig:Table>
+        {{ form_widget(form.launch) }}
+        {{ form_widget(form._token) }}
+        {{ form_end(form, {render_rest:false}) }}
+</div>

@@ -168,8 +168,8 @@
                 {% endblock %}
             </twig:Box>
         {% else %}
-            {% if {{ flights|length < maxFlights}} %}
-
+            {% if flights|length < maxFlights %}
+                <twig:MissileTarget/>
             {% else %}
                 <twig:Box title="Information">
                     {% block content %}
