@@ -2,6 +2,8 @@
 
 namespace EtoA\Universe\Entity;
 
+use EtoA\Entity\User;
+
 class EntityLabelSearch extends EntitySearch
 {
     public static function create(): EntityLabelSearch
@@ -9,7 +11,7 @@ class EntityLabelSearch extends EntitySearch
         return new EntityLabelSearch();
     }
 
-    public function planetUserId(int $planetUserId): self
+    public function planetUserId(int|User $planetUserId): self
     {
         $this->parts[] = 'planets.user = :planetUserId';
         $this->parameters['planetUserId'] = $planetUserId;
