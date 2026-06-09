@@ -27,6 +27,9 @@ class MissileFlight
     #[ORM\OneToMany(mappedBy: 'flight', targetEntity: MissileFlightObject::class, cascade: ['persist', 'remove'])]
     private Collection $flightObjects;
 
+    #[ORM\Column(name: "flight_starttime", type: "integer")]
+    private int $startTime;
+
     #[ORM\Column(name: "flight_landtime", type: "integer")]
     private int $landTime;
 
@@ -38,6 +41,18 @@ class MissileFlight
     public function getId(): ?int
     {
         return $this->id;
+    }
+
+    public function getStartTime(): ?int
+    {
+        return $this->startTime;
+    }
+
+    public function setStartTime(int $startTime): static
+    {
+        $this->startTime = $startTime;
+
+        return $this;
     }
 
     public function getLandTime(): ?int

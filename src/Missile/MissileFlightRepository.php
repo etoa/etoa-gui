@@ -5,6 +5,8 @@ namespace EtoA\Missile;
 use Doctrine\Persistence\ManagerRegistry;
 use EtoA\Core\AbstractRepository;
 use EtoA\Entity\MissileFlight;
+use EtoA\Entity\MissileFlightObject;
+use EtoA\Entity\Planet;
 
 class MissileFlightRepository extends AbstractRepository
 {
@@ -27,39 +29,27 @@ class MissileFlightRepository extends AbstractRepository
     /**
      * @param array<int, int> $missiles
      */
-    public function startFlight(int $fromEntity, int $toEntity, int $duration, array $missiles): int
+    public function startFlight(Planet $fromEntity, Planet $toEntity, int $duration, array $missiles): void
     {
-        $this->createQueryBuilder('q')
-            ->insert('missile_flights')
-            ->values([
-                'flight_entity_from' => ':fromEntity',
-                'flight_entity_to' => ':toEntity',
-                'flight_starttime' => 'UNIX_TIMESTAMP()',
-                'flight_landtime' => 'UNIX_TIMESTAMP() + :duration',
-            ])
-            ->setParameters([
-                'fromEntity' => $fromEntity,
-                'toEntity' => $toEntity,
-                'duration' => $duration,
-            ])->executeQuery();
+        $item = new MissileFlight();
+        $item->setEntityFrom($fromEntity);
+        $item->setTarget($toEntity);
+        $item->setStartTime(time());
+        $item->setLandTime(time()+$duration);
 
-        $flightId = (int) $this->getConnection()->lastInsertId();
-        foreach ($missiles as $missileId => $count) {
-            $this->createQueryBuilder('q')
-                ->insert('missile_flights_obj')
-                ->values([
-                    'obj_flight_id' => ':flightId',
-                    'obj_missile_id' => ':missileId',
-                    'obj_cnt' => ':count',
-                ])
-                ->setParameters([
-                    'flightId' => $flightId,
-                    'missileId' => $missileId,
-                    'count' => $count,
-                ])->executeQuery();
+        $this->persist($item);
+
+        foreach ($missiles as $missile) {
+            $flightObj = new MissileFlightObject();
+            $flightObj->setFlight($item);
+            $flightObj->setMissile($missile->getMissile());
+            $flightObj->setCount($missile->getCount());
+
+            $this->persist($flightObj);
+            $item->addFlightObject($flightObj);
         }
 
-        return $flightId;
+        $this->save();
     }
 
     public function deleteFlight(MissileFlight $missileFlight): void

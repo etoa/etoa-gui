@@ -5,10 +5,10 @@ namespace EtoA\Components\Core;
 use EtoA\Bookmark\BookmarkRepository;
 use EtoA\Controller\Game\AbstractGameController;
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\DTO\MissileLaunchDto;
 use EtoA\Entity\Entity;
-use EtoA\Fleet\FleetLaunch;
 use EtoA\Fleet\FleetLaunchService;
-use EtoA\Form\Type\Core\MissileItemType;
+use EtoA\Missile\MissileFlightRepository;
 use EtoA\Missile\MissileRepository;
 use EtoA\Ship\ShipListRepository;
 use EtoA\Ship\ShipTransformRepository;
@@ -21,11 +21,9 @@ use EtoA\Universe\Planet\PlanetRepository;
 use EtoA\User\UserUniverseDiscoveryService;
 use Symfony\Component\Form\ChoiceList\Loader\CallbackChoiceLoader;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
-use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormInterface;
-use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Serializer\SerializerInterface;
@@ -34,6 +32,7 @@ use Symfony\UX\LiveComponent\Attribute\LiveAction;
 use Symfony\UX\LiveComponent\Attribute\LiveProp;
 use Symfony\UX\LiveComponent\ComponentWithFormTrait;
 use Symfony\UX\LiveComponent\DefaultActionTrait;
+use Symfony\UX\TwigComponent\Attribute\ExposeInTemplate;
 
 #[AsLiveComponent(template: 'components/missile_target.html.twig')]
 class MissileTarget extends AbstractGameController
@@ -61,6 +60,27 @@ class MissileTarget extends AbstractGameController
     #[LiveProp]
     public bool $launchable = true;
 
+    #[LiveProp(writable: true, onUpdated: 'updateByField')]
+    public ?int $csx = null;
+
+    #[LiveProp(writable: true, onUpdated: 'updateByField')]
+    public ?int $csy = null;
+
+    #[LiveProp(writable: true, onUpdated: 'updateByField')]
+    public ?int $ccx = null;
+
+    #[LiveProp(writable: true, onUpdated: 'updateByField')]
+    public ?int $ccy = null;
+
+    #[LiveProp(writable: true, onUpdated: 'updateByField')]
+    public ?int $psp = null;
+
+    #[LiveProp(writable: true, onUpdated: 'updateByFavorite')]
+    public ?int $bookmark = null;
+
+    #[LiveProp(writable: true, onUpdated: 'updateByField')]
+    public array $count = [];
+
     public function __construct(
         private readonly ShipTransformRepository      $shipTransformRepository,
         private readonly PlanetRepository             $planetRepository,
@@ -73,26 +93,31 @@ class MissileTarget extends AbstractGameController
         private readonly UserUniverseDiscoveryService $userUniverseDiscoveryService,
         private readonly EntityService                $entityService,
         private readonly SerializerInterface          $serializer,
-        private readonly MissileRepository            $missileRepository
+        private readonly MissileRepository            $missileRepository,
+        private readonly MissileFlightRepository      $missileFlightRepository
     )
     {
     }
 
+    /*
+        For some reason form values don't update properly after entering a missile number.
+        TODO: refactor, maybe use a DTO
+    */
     protected function instantiateForm(): FormInterface
     {
-        $request = $this->requestStack->getCurrentRequest();
-        $entity = $this->entityRepository->find($request->getSession()->get('cpid'));
+        $entity = $this->getCurrentEntity();
         $obj = $this;
-        $missilelist = $entity->getPlanet()->getMissilelist()->getValues();
+        $missilelist = $this->getMissilelist();
+
         $user = $entity->getPlanet()->getUser();
 
-        $csx = $entity->getCell()->getSx();
-        $csy = $entity->getCell()->getSy();
-        $ccx = $entity->getCell()->getCx();
-        $ccy = $entity->getCell()->getCy();
-        $psp = $entity->getPos();
+        $this->csx = $this->csx ?? $entity->getCell()->getSx();
+        $this->csy = $this->csy ?? $entity->getCell()->getSy();
+        $this->ccx = $this->ccx ?? $entity->getCell()->getCx();
+        $this->ccy = $this->ccy ?? $entity->getCell()->getCy();
+        $this->psp = $this->psp ?? $entity->getPos();
 
-        return $this->createFormBuilder(['missilelist' => $missilelist])
+        $form = $this->createFormBuilder()
             ->add(
                 'csx', TextType::class, [
                 'label' => false,
@@ -101,11 +126,9 @@ class MissileTarget extends AbstractGameController
                     'size' => "2",
                     'maxlength' => "2",
                     'title' => "Sektor X-Koordinate",
-                    'data-action' => "live#action",
-                    'data-live-action-param' => "debounce(2000)|updateByField"
+                    'data-model' => "debounce(1000)|csx"
                 ],
-                'mapped' => false,
-                'data' => $csx
+                'data' => $this->csx
             ])
             ->add(
                 'csy', TextType::class, [
@@ -114,12 +137,10 @@ class MissileTarget extends AbstractGameController
                     'onkeydown' => "return nurZahlen(event);detectChangeRegister(this,'t2')",
                     'size' => "2",
                     'maxlength' => "2",
-                    'title' => "Sektor X-Koordinate",
-                    'data-action' => "live#action",
-                    'data-live-action-param' => "debounce(2000)|updateByField"
+                    'title' => "Sektor Y-Koordinate",
+                    'data-model' => "debounce(1000)|csy"
                 ],
-                'mapped' => false,
-                'data' => $csy
+                'data' => $this->csy
             ])
             ->add(
                 'ccx', TextType::class, [
@@ -128,12 +149,10 @@ class MissileTarget extends AbstractGameController
                     'onkeydown' => "return nurZahlen(event);detectChangeRegister(this,'t2');",
                     'size' => "2",
                     'maxlength' => "2",
-                    'title' => "Sektor X-Koordinate",
-                    'data-action' => "live#action",
-                    'data-live-action-param' => "debounce(2000)|updateByField"
+                    'title' => "Cell X-Koordinate",
+                    'data-model' => "debounce(1000)|ccx"
                 ],
-                'mapped' => false,
-                'data' => $ccx
+                'data' => $this->ccx
             ])
             ->add(
                 'ccy', TextType::class, [
@@ -142,12 +161,10 @@ class MissileTarget extends AbstractGameController
                     'onkeydown' => "return nurZahlen(event);detectChangeRegister(this,'t2');",
                     'size' => "2",
                     'maxlength' => "2",
-                    'title' => "Sektor X-Koordinate",
-                    'data-action' => "live#action",
-                    'data-live-action-param' => "debounce(2000)|updateByField"
+                    'title' => "Cell Y-Koordinate",
+                    'data-model' => "debounce(1000)|ccy"
                 ],
-                'mapped' => false,
-                'data' => $ccy
+                'data' => $this->ccy
             ])
             ->add(
                 'psp', TextType::class, [
@@ -156,12 +173,10 @@ class MissileTarget extends AbstractGameController
                     'onkeydown' => "return nurZahlen(event);detectChangeRegister(this,'t2');",
                     'size' => "2",
                     'maxlength' => "2",
-                    'title' => "Sektor X-Koordinate",
-                    'data-action' => "live#action",
-                    'data-live-action-param' => "debounce(2000)|updateByField"
+                    'title' => "Position",
+                    'data-model' => "debounce(1000)|psp"
                 ],
-                'mapped' => false,
-                'data' => $psp
+                'data' => $this->psp
             ])
             ->add('bookmark', ChoiceType::class, [
                 'choice_loader' => new CallbackChoiceLoader(static function () use ($obj, $user): array {
@@ -182,110 +197,162 @@ class MissileTarget extends AbstractGameController
                 'placeholder' => 'Wählen...',
                 'required' => false,
                 'attr' => [
-                    'data-action' => "live#action",
-                    'data-live-action-param' => "updateByFavorite"
-                ]
-            ])
-            ->add('missilelist', CollectionType::class, [
-                'entry_type' => MissileItemType::class,
-            ])
-            ->add('launch', SubmitType::class, [
-                'label' => 'Starten',
-                'attr' => [
-                    'data-action' => 'live#action:prevent',
-                    'data-live-action-param' => 'launch'
-                ]
-            ])
+                    'data-model' => "bookmark"
+                ],
+                'data' => $this->bookmark
+            ]);
+
+        //TODO: use collection type instead
+        foreach ($missilelist as $item) {
+            if ($item->getMissile()->isLaunchable() && $item->getCount() > 0) {
+                if (!array_key_exists($item->getId(), $this->count))
+                    $this->count[$item->getId()] = 0;
+                $form = $form->add(
+                    $item->getId(), TextType::class, [
+                    'label' => false,
+                    'attr' => [
+                        'size' => 4,
+                        'onkeyup' => "FormatNumber(this.id,this.value,'" . $item->getCount() . "','','')",
+                        'data-model' => "count[" . $item->getId() . "]",
+                        'data-action' => "live#action",
+                        'data-live-action-param' => "debounce(1000)|updateByField"
+                    ],
+                ]);
+            }
+        }
+
+        return $form->add('launch', SubmitType::class, [
+            'label' => 'Starten',
+            'attr' => [
+                'data-action' => 'live#action:prevent',
+                'data-live-action-param' => 'launch'
+            ]
+        ])
             ->getForm();
     }
 
-    #[LiveAction]
-    public function updateByFavorite(): void
+    #[ExposeInTemplate]
+    public function getMissilelist()
     {
-        $entity = $this->entityRepository->find($this->formValues['bookmark']);
-
-        $this->updateValues($entity);
+        $entity = $this->getCurrentEntity();
+        return $entity->getPlanet()->getMissilelist()->getValues();
     }
 
-    #[LiveAction]
-    public function updateByField(): void
+    public function updateByFavorite($previousValue): void
     {
-        $sx = $this->formValues['csx'];
-        $sy = $this->formValues['csy'];
-        $cx = $this->formValues['ccx'];
-        $cy = $this->formValues['ccy'];
-        $pos = $this->formValues['psp'];
-
-        if ($sx > 0 && $sy > 0 && $cx > 0 && $cy > 0 && $pos >= 0) {
-            $entity = $this->entityRepository->findByCoordinates(new EntityCoordinates($sx, $sy, $cx, $cy, $pos));
+        if ($this->bookmark && $this->bookmark !== $previousValue) {
+            $entity = $this->entityRepository->find($this->bookmark);
 
             $this->updateValues($entity);
         }
     }
 
     #[LiveAction]
-    public function launch(): RedirectResponse
+    public function updateByField(): void
     {
-        $this->submitForm();/*
-        if($this->fleetLaunch->getTargetEntity()) {
-            $this->fleetLaunch->setSpeedPercent($this->formValues['speed']);
-            $this->fleetLaunch->setLeader(null);
-            $request = $this->requestStack->getCurrentRequest();
-            $session = $request->getSession();
+        if ($this->csx > 0 && $this->csy > 0 && $this->ccx > 0 && $this->ccy > 0 && $this->psp >= 0) {
+            $entity = $this->entityRepository->findByCoordinates(new EntityCoordinates($this->csx, $this->csy, $this->ccx, $this->ccy, $this->psp));
 
-            $session->set('fleetLaunch',$this->serializer->serialize($this->fleetLaunch, 'json', [
-                'circular_reference_handler' => function ($object) {
-                    if(is_a($object,AbstractEntity::class)) {
-                        return $object->getEntity()->getId();
-                    }
-                    return $object->getId();
-                },
-                'ignored_attributes' => ['__initializer__', '__cloner__', '__isInitialized__', 'lazyObjectState', 'lazyObjectInitialized', 'lazyObjectAsInitialized'],
-                'skip_null_values' => true,
-            ]));
-
-            return $this->redirectToRoute('game.haven.action');
+            $this->updateValues($entity);
         }
-*/
-        return $this->redirectToRoute('game.haven.target');
+    }
+
+    #[LiveAction]
+    public function launch()
+    {
+        $launch = array();
+        $speed = 0;
+
+        foreach ($this->count as $id => $v) {
+            $number = StringUtils::parseFormattedNumber($v);
+
+            if ($number > 0) {
+                $ownEntity = $this->getCurrentEntity();
+                $item = $this->missileRepository->findOneBy(['id' => $id, 'entity' => $ownEntity->getPlanet()]);
+                if ($item) {
+                    $t = min($item->getCount(), $number);
+                    if ($t > 0) {
+                        if ($speed === 0) {
+                            $speed = $item->getMissile()->getSpeed();
+                        } else {
+                            $speed = min($item->getMissile()->getSpeed(), $speed);
+                        }
+
+                        $launchItem = new MissileLaunchDto();
+                        $launchItem->setMissile($item->getMissile());
+                        $launchItem->setCount($t);
+                        $launch[] = $launchItem;
+                    }
+                }
+            }
+        }
+
+        if (count($launch) > 0) {
+            $entity = $this->entityRepository->findByCoordinates(new EntityCoordinates($this->csx, $this->csy, $this->ccx, $this->ccy, $this->psp));
+
+            $targetCoordinates = new EntityCoordinates($entity->getCell()->getSx(), $entity->getCell()->getSy(), $entity->getCell()->getCx(), $entity->getCell()->getCy(), $entity->getPos());
+            $sourceCoordinates = new EntityCoordinates($ownEntity->getCell()->getSx(), $ownEntity->getCell()->getSy(), $ownEntity->getCell()->getCx(), $ownEntity->getCell()->getCy(), $ownEntity->getPos());
+
+            $distanceValue = $this->entityService->distanceByCoords($sourceCoordinates, $targetCoordinates);
+            $timeforflight = $distanceValue / $speed * 3600;
+
+            // Save flight
+            $this->missileFlightRepository->startFlight($ownEntity->getPlanet(), $entity->getPlanet(), $timeforflight, $launch);
+
+            foreach ($launch as $item) {
+                // Update list
+                $this->missileRepository->removeMissile($item->getMissile(), $item->getCount(),  $ownEntity->getPlanet());
+            }
+            $this->addFlash('success','Raketen gestartet!');
+
+            return $this->redirectToRoute('game.missiles');
+        } else {
+            $this->addFlash('error','Raketen konnten nicht gestartet werden, keine Raketen gewählt!');
+        }
     }
 
     private function updateValues(?Entity $entity): void
     {
-        $this->submitForm();
         // Total selected missiles
         $total = 0;
         $speed = 0;
         $range = 0;
+        $this->launchable = true;
 
-        foreach ($this->formValues['missilelist'] as $item) {
-            // Calc speed
-            if (!isset($speed) && $item['count'] > 0) {
-                $speed = $item['speed'];
-                $total += $item['count'];
-            } elseif ($item['count'] > 0) {
-                $speed = min($item['speed'], $speed);
-                $total += $item['count'];
-            }
+        $ownEntity = $this->getCurrentEntity();
 
-            // Calc range
-            if (!isset($range) && $item['count'] > 0) {
-                $range = $item['range'];
-            } elseif ($item['count'] > 0) {
-                $range = min($item['range'], $range);
+        foreach ($this->count as $id => $v) {
+            $item = $this->missileRepository->findOneBy(['id' => $id, 'entity' => $ownEntity->getPlanet()]);
+
+            if ($item?->getMissile()->isLaunchable()) {
+                $number = StringUtils::parseFormattedNumber($v);
+
+                // Calc speed
+                if ($speed === 0 && $number > 0) {
+                    $speed = $item->getMissile()->getSpeed();
+                    $total += min($number, $item->getCount());
+                } elseif ($number > 0) {
+                    $speed = min($item->getMissile()->getSpeed(), $speed);
+                    $total += $total += min($number, $item->getCount());
+                }
+
+                // Calc range
+                if ($range === 0 && $number > 0) {
+                    $range = $item->getMissile()->getRange();
+                } elseif ($number > 0) {
+                    $range = min($item->getMissile()->getRange(), $range);
+                }
             }
         }
 
-        if($total > 0) {
-            if ($entity->getCode() === EntityType::PLANET) {
-                $request = $this->requestStack->getCurrentRequest();
+        if ($total > 0) {
+            if ($entity?->getCode() === EntityType::PLANET) {
                 $planet = $entity->getPlanet();
                 $this->info = $planet->getName() ? '<b>Planet:</b> ' . $planet->getName() : '<i>Unbenannter Planet</i>';
-                $ownEntity = $this->entityRepository->find($request->getSession()->get('cpid'));
 
                 if ($planet->getUser()) {
-                    $this->info .= '<b>Besitzer:</b> ' . $planet->getUser()->getNick();
-                    if ($ownEntity->getPlanet() == $planet) {
+                    $this->info .= ' <b>Besitzer:</b> ' . $planet->getUser()->getNick();
+                    if ($ownEntity->getPlanet() === $planet) {
                         $this->info .= ' (Eigener Planet)';
                         $this->color['targetinfo'] = '#f00';
                         $this->launchable = false;
@@ -297,29 +364,23 @@ class MissileTarget extends AbstractGameController
                     $this->color['targetinfo'] = '#f00';
                 }
 
-                if ($entity) {
-                    $targetCoordinates = new EntityCoordinates($entity->getCell()->getSx(), $entity->getCell()->getSy(), $entity->getCell()->getCx(), $entity->getCell()->getCy(), $entity->getPos());
-                    $sourceCoordinates = new EntityCoordinates($ownEntity->getCell()->getSx(), $ownEntity->getCell()->getSy(), $ownEntity->getCell()->getCx(), $ownEntity->getCell()->getCy(), $ownEntity->getPos());
+                $targetCoordinates = new EntityCoordinates($entity->getCell()->getSx(), $entity->getCell()->getSy(), $entity->getCell()->getCx(), $entity->getCell()->getCy(), $entity->getPos());
+                $sourceCoordinates = new EntityCoordinates($ownEntity->getCell()->getSx(), $ownEntity->getCell()->getSy(), $ownEntity->getCell()->getCx(), $ownEntity->getCell()->getCy(), $ownEntity->getPos());
 
-                    $distanceValue = $this->entityService->distanceByCoords($sourceCoordinates, $targetCoordinates);
-                    $timeforflight = $distanceValue / $speed * 3600;
-                    $distance = sprintf('%s AE', StringUtils::formatNumber($distanceValue));
-                } else {
-                    $distanceValue = -1;
-                    $distance = '-';
-                    $timeforflight = null;
-                }
+                $distanceValue = $this->entityService->distanceByCoords($sourceCoordinates, $targetCoordinates);
+                $timeforflight = $distanceValue / $speed * 3600;
+                $distance = sprintf('%s AE', StringUtils::formatNumber($distanceValue));
 
                 $this->duration = StringUtils::formatTimespan($timeforflight);
                 $this->distance = $distance;
 
                 if ($distanceValue === -1) {
                     $this->color['distance'] = '#f00';
-                    $launch = false;
+                    $this->launchable = false;
                 } elseif ($distanceValue > $range) {
                     $this->color['distance'] = '#f00';
                     $this->distance .= ' (zu weit entfernt, ' . StringUtils::formatNumber($range) . ' max)';
-                    $launch = false;
+                    $this->launchable = false;
                 } else {
                     $this->color['distance'] = '#0f0';
                 }
@@ -334,7 +395,13 @@ class MissileTarget extends AbstractGameController
             }
         } else {
             $this->info = 'Keine Raketen gewählt!';
-            $launch = false;
+            $this->launchable = false;
         }
+    }
+
+    private function getCurrentEntity(): Entity
+    {
+        $request = $this->requestStack->getCurrentRequest();
+        return $this->entityRepository->find($request?->getSession()?->get('cpid'));
     }
 }

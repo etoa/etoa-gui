@@ -11,14 +11,10 @@ use Symfony\Component\Messenger\Handler\MessageHandlerInterface;
 
 class CheckMissilesHandler implements MessageHandlerInterface
 {
-    private MissileFlightRepository $missileFlightRepository;
-    private MissileBattleHandler $missileBattleHandler;
-
-    public function __construct(MissileFlightRepository $missileFlightRepository, MissileBattleHandler $missileBattleHandler)
-    {
-        $this->missileFlightRepository = $missileFlightRepository;
-        $this->missileBattleHandler = $missileBattleHandler;
-    }
+    public function __construct(
+        private readonly MissileFlightRepository $missileFlightRepository,
+        private readonly MissileBattleHandler $missileBattleHandler)
+    {}
 
     public function __invoke(CheckMissilesTask $task): SuccessResult
     {

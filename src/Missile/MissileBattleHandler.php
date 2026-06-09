@@ -191,7 +191,7 @@ class MissileBattleHandler
                     // EMP
                     $time = time();
                     foreach ($attackingMissiles as $attackingMissile) {
-                        if ($attackingMissile->getDeactivate() > 0) {
+                        if ($attackingMissile['emp'] > 0) {
                             $toBeDeactivated = $this->buildingRepository->getDeactivatableBuilding($flight->getTarget());
                             if ($toBeDeactivated !== null) {
                                 $msg_a .= "Das Gebäude " . $toBeDeactivated['building_name'] . " wurde für " . StringUtils::formatTimespan($attackingMissile->getDeactivate()) . " deaktiviert!\n";

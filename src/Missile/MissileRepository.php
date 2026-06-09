@@ -34,6 +34,14 @@ class MissileRepository extends AbstractRepository
         $this->save();
     }
 
+    public function removeMissile(Missile $missile, int $amount, Planet $entity): void
+    {
+        $item = $this->findOneBy(['missile' => $missile, 'entity' => $entity]);
+        $item->setCount($item->getCount()-min($item->getCount(), $amount));
+
+        $this->save();
+    }
+
     public function countEmpty(): int
     {
         return $this->count(['count'=>0]);

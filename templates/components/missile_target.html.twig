@@ -1,9 +1,6 @@
 {% import 'macros.html.twig' as macros %}
 
-<div
-        {{ attributes }}
-        data-action="change->live#update"
->
+<div {{ attributes }}>
     {{ form_start(form) }}
         <twig:Table title="Raketen starten">
             {% block table_content %}
@@ -14,10 +11,11 @@
                 </tr>
                 <tr>
                     <td rowspan="6">
-                        {% for missile in form.missilelist %}
-                            {% if missile.vars.value.missile.launchable %}
-                                {{ form_widget(missile.children.count) }}
-                                {{ missile.vars.value.missile.name }} ({{ missile.vars.value.count }} vorhanden)
+                        {% for missile in outerScope.missilelist %}
+                            {% if missile.missile.launchable and missile.count > 0 %}
+                                {{ form_widget(form[missile.id]) }}
+                                {{ missile.missile.name }} ({{ missile.count }} vorhanden)
+                                <br>
                             {% endif %}
                         {% else %}
                             Momentan befinden sich keine startbaren Raketen in deinem Silo!
@@ -42,19 +40,19 @@
 
                 <tr>
                     <th>Zielinfo:</th>
-                    <td id="targetinfo">
-                        {{ outerScope.this.info }}
+                    <td id="targetinfo" {% if color['targetinfo'] is defined %} style="color:{{ color['targetinfo'] }}" {% endif %}>
+                        {{ outerScope.this.info|raw }}
                     </td>
                 </tr>
                 <tr>
                     <th>Entfernung:</th>
-                    <td id="distance">
+                    <td id="distance" {% if color['distance'] is defined %} style="color:{{ color['distance'] }}" {% endif %}>
                         {{ outerScope.this.distance }}
                     </td>
                 </tr>
                 <tr>
                     <th>Geschwindigkeit:</th>
-                    <td id="speed">
+                    <td id="speed" {% if color['speed'] is defined %} style="color:{{ color['speed'] }}" {% endif %}>
                         {{ outerScope.this.speed }}
                     </td>
                 </tr>
@@ -66,7 +64,9 @@
                 </tr>
             {% endblock %}
         </twig:Table>
-        {{ form_widget(form.launch) }}
+        {% if this.launchable %}
+            {{ form_widget(form.launch) }}
+        {% endif %}
         {{ form_widget(form._token) }}
         {{ form_end(form, {render_rest:false}) }}
 </div>

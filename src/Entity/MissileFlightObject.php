@@ -21,7 +21,8 @@ class MissileFlightObject
     #[ORM\ManyToOne(targetEntity: Missile::class)]
     private ?Missile $missile = null;
 
-    private ?int $count = null;
+    #[ORM\Column(name: "obj_cnt", type: "integer")]
+    private ?int $count = 0;
 
     public function getId(): ?int
     {

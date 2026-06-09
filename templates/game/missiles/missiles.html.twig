@@ -15,10 +15,10 @@
                 </tr>
                 {% for flight in flights %}
                     <tr>
-                        <td>{{ flight.targetPlanetName }}</td>
+                        <td>{{ flight.target.displayName }}</td>
                         <td>
-                            {% if flight.landTime - now >= 0 %}
-                                {{ formatTimespan(flight.landTime - now) }}
+                            {% if flight.landTime - date().timestamp >= 0 %}
+                                {{ formatTimespan(flight.landTime - date().timestamp) }}
                             {% else %}
                                 Im Ziel
                             {% endif %}
@@ -29,8 +29,8 @@
                             {% endfor %}
                         </td>
                         <td>
-                            <a href="?page=page&amp;selfdestruct=flight->id"
-                               onclick="return confirm('Sollen die gewählten Raketen wirklich selbstzerstört werden?')">Selbstzerstörung</a>
+                            <a href="{{ path('game.missiles.destroy',{id:flight.id}) }}"
+                               onclick="return confirm('Sollen die gewählten Raketen wirklich selbst zerstört werden?')">Selbstzerstörung</a>
                         </td>
                     </tr>
                 {% endfor %}

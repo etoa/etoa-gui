@@ -24,7 +24,7 @@ class MissileItemType extends AbstractType
                         'size' => 4,
                         'onkeyup'=> "FormatNumber(this.id,this.value,'".$event->getData()->getCount(). "','','')",
                         'data-action' => "live#action",
-                        'data-live-action-param' => "debounce(2000)|updateByField"
+                        'data-live-action-param' => "debounce(2000)|defer|onFormChange"
                     ],
                     'data' => 0,
                     'mapped' => false
