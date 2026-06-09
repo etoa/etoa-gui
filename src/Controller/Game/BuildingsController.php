@@ -26,9 +26,11 @@ class BuildingsController extends AbstractGameController
         if($planet->getUser() !== $this->getUser()->getData()) {
             return $this->redirectToRoute('game.overview');
         }
+        $buildingData = $this->buildingService->getBuildingData();
+        
         return $this->render('game/buildings/list.html.twig', [
             'planet' => $planet,
-            'render' => $this->buildingService->renderBuilding()
+            'buildingData' => $buildingData
         ]);
     }
 }

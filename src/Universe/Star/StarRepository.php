@@ -6,6 +6,7 @@ namespace EtoA\Universe\Star;
 
 use Doctrine\Persistence\ManagerRegistry;
 use EtoA\Core\AbstractRepository;
+use EtoA\Entity\Cell;
 use EtoA\Entity\Entity;
 use EtoA\Entity\SolarType;
 use EtoA\Entity\Star;
@@ -28,20 +29,18 @@ class StarRepository extends AbstractRepository
             ->getSingleColumnResult();
     }
 
-    public function findStarForCell(int $cellId): ?Star
+    public function findStarForCell(int|Cell $cellId): ?Star
     {
-        $data = $this->createQueryBuilder('q')
-            ->select('s.*')
-            ->from('stars', 's')
-            ->innerJoin('s', 'entities', 'e', 'e.id = s.id')
-            ->where('e.cell_id = :cellId')
+        return $this->createQueryBuilder('q')
+            ->innerJoin('App:Entity', 'e', 'WITH', 'e.id = IDENTITY(q.entity)')
+            ->where('e.cell = :cellId')
             ->andWhere('e.pos = 0')
             ->setParameters([
                 'cellId' => $cellId,
             ])
-            ->fetchAssociative();
-
-        return $data !== false ? new Star($data) : null;
+            ->setMaxResults(1)
+            ->getQuery()
+            ->getOneOrNullResult();
     }
 
     public function add(Entity $entity, SolarType $type, bool $flush = true): void

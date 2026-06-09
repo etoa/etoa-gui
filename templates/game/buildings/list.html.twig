@@ -1,6 +1,115 @@
 {% extends 'game/buildings/buildings.html.twig' %}
 
 {% block buildings %}
-    {{ render|raw }}
+    {% if buildingData.categories is empty %}
+        <p>Keine Gebäude verfügbar.</p>
+    {% else %}
+        <form action="?page=" method="post">
+            <div>
+                {% for category in buildingData.categories %}
+                    <table style="width:{{ buildingData.tableWidth }}" class="tb {{ buildingData.isCompact ? 'compact' : '' }}">
+                        <caption>{{ category.name }}</caption>
+                        {% if buildingData.isCompact %}
+                            <tr>
+                                <th colspan="2">Gebäude</th>
+                                <th>Zeit</th>
+                                <th>{{ constant('EtoA\\Universe\\Resources\\ResourceNames::METAL') }}</th>
+                                <th>{{ constant('EtoA\\Universe\\Resources\\ResourceNames::CRYSTAL') }}</th>
+                                <th>{{ constant('EtoA\\Universe\\Resources\\ResourceNames::PLASTIC') }}</th>
+                                <th>{{ constant('EtoA\\Universe\\Resources\\ResourceNames::FUEL') }}</th>
+                                <th>{{ constant('EtoA\\Universe\\Resources\\ResourceNames::FOOD') }}</th>
+                                <th>Ausbau</th>
+                            </tr>
+                        {% endif %}
 
+                        {% if buildingData.isCompact %}
+                            {# Compact view - list style #}
+                            {% for building in category.buildings %}
+                                <tr>
+                                    <td class='buildingCellImage'>
+                                        <a href="{{ buildingData.helpUrl }}&amp;id={{ building.id }}">
+                                            <img class="{{ building.filterStyleClass }} buildingImageSmall" src="{{ building.img }}" border="0" />
+                                        </a>
+                                    </td>
+                                    <th class='buildingCellName'>
+                                        <span style="font-weight:500">{{ building.name }}<br/>
+                                        Stufe:</span> {{ building.level|number_format }}
+                                    </th>
+                                    {% if not building.requirementsPassed or building.isMaxLevel %}
+                                        <td style="color:#999" colspan="7" {{ tm(building.name, building.subtitle ~ '<br/>' ~ building.tmtext)|raw }}>
+                                            {{ building.subtitle }}
+                                        </td>
+                                    {% elseif building.buildType == 4 or building.buildType == 3 %}
+                                        <td id="buildtime_{{ building.id }}" style="vertical-align:middle;">-</td>
+                                        <td colspan="5" id="progressbar_{{ building.id }}" style="text-align:center;vertical-align:middle;font-weight:bold;"></td>
+                                        <td id="buildcancel_{{ building.id }}">
+                                            <input type="hidden" name="id[{{ building.id }}]" value="{{ building.id }}">
+                                            <input type="submit" class="button" name="command_cbuild[{{ building.id }}]" value="Bau abbrechen" onclick="if (this.value=='Bau abbrechen'){return confirm('Wirklich abbrechen?');}">
+                                        </td>
+                                        <script type="text/javascript">
+                                            countDown("buildtime_{{ building.id }}", {{ building.endTime }}, "buildcancel_{{ building.id }}");
+                                            jsProgressBar("progressbar_{{ building.id }}", {{ building.startTime }}, {{ building.endTime }});
+                                        </script>
+                                    {% else %}
+                                        <td class="buildingCellTime">{{ formatTimespan(building.buildTime) }}</td>
+                                        {% if building.waitArr %}
+                                            {{ building.waitArr.string|raw }}
+                                        {% endif %}
+                                        {% if building.tmtext != "" or building.isUnderConstruction %}
+                                            <td style="color:red;" {{ tm(building.name, building.subtitle ~ '<br/>' ~ building.tmtext)|raw }}>Bauen</td>
+                                        {% else %}
+                                            <td>
+                                                <input type="hidden" name="id[{{ building.id }}]" value="{{ building.id }}">
+                                                <input type="submit" class="button" name="command_build[{{ building.id }}]" value="Ausbauen">
+                                            </td>
+                                        {% endif %}
+                                    {% endif %}
+                                </tr>
+                            {% endfor %}
+                        {% else %}
+                            {# Full view - grid style #}
+                            {% set rowCnt = 0 %}
+                            {% for building in category.buildings %}
+                                {% if rowCnt == 0 %}
+                                    <tr>
+                                {% endif %}
+                                <td style="width:{{ buildingData.cellWidth }}px;height:{{ buildingData.cellWidth }}px;padding:0;">
+                                    <div style="position:relative;height:{{ buildingData.cellWidth }}px;overflow:hidden;">
+                                        <div class="buildOverviewObjectTitle">{{ building.name }}</div>
+                                        <a href="?page=id={{ building.id }}" {{ tm(building.name, '<b>' ~ building.subtitle ~ '</b><br/>' ~ building.tmtext ~ building.shortComment)|raw }} style="display:block;height:180px;">
+                                            <img class="{{ building.filterStyleClass }}" src="{{ building.img }}"/>
+                                        </a>
+                                        {% if building.currentLevel or (building.currentLevel == 0 and building.buildType == 3) %}
+                                            <div class="buildOverviewObjectLevel" style="color:{{ building.color }}">{{ building.currentLevel }}</div>
+                                        {% endif %}
+                                    </div>
+                                </td>
+                                {% set rowCnt = rowCnt + 1 %}
+                                {% if rowCnt == buildingData.numBuildingsPerRow %}
+                                    </tr>
+                                    {% set rowCnt = 0 %}
+                                {% endif %}
+                            {% endfor %}
+
+                            {# Fill up missing cols and end row for full view #}
+                            {% if rowCnt < buildingData.numBuildingsPerRow and rowCnt > 0 %}
+                                {% for x in 0..(buildingData.numBuildingsPerRow - rowCnt - 1) %}
+                                    <td class="buildOverviewObjectNone" style="width:{{ buildingData.cellWidth }}px;padding:0;">&nbsp;</td>
+                                {% endfor %}
+                                </tr>
+                            {% endif %}
+                        {% endif %}
+
+                        {% if category.buildings is empty %}
+                            <tr>
+                                <td colspan="{{ buildingData.numBuildingsPerRow }}" style="text-align:center;border:0;width:100%">
+                                    <i>In dieser Kategorie kann momentan noch nichts gebaut werden!</i>
+                                </td>
+                            </tr>
+                        {% endif %}
+                    </table>
+                {% endfor %}
+            </div>
+        </form>
+    {% endif %}
 {% endblock %}

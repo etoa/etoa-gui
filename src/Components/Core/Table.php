@@ -38,7 +38,7 @@ class Table
         $userId = $this->user?->getId();
         if ($userId !== null) {
             $properties = $this->userPropertiesRepository->getOrCreateProperties($userId);
-            if ($properties->cssStyle == "Graphite") {
+            if ($properties->getCssStyle() == "Graphite") {
                 return "width:650px";
             }
         }

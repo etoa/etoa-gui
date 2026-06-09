@@ -323,7 +323,7 @@ class BuildList implements IteratorAggregate
                     return false;
                 }
 
-                if ($requirement->getTech() && $requirement->getLevel() > $this->technologyListItemRepository->findOneBy(['user'=>$this->owner,'technology'=>$requirement->getTech()])?->getLevel()) {
+                if ($requirement->getTech() && $requirement->getLevel() > $this->technologyListItemRepository->findOneBy(['user'=>$this->owner,'technology'=>$requirement->getTech()])?->getCurrentLevel()) {
                     return false;
                 }
             }
