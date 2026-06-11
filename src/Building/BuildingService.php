@@ -3,6 +3,7 @@
 namespace EtoA\Building;
 
 use EtoA\Core\ObjectWithImage;
+use EtoA\Entity\Building;
 use EtoA\Support\StringUtils;
 use EtoA\Technology\TechnologyDataRepository;
 use EtoA\Universe\Planet\PlanetRepository;
@@ -14,7 +15,6 @@ use EtoA\Specialist\SpecialistService;
 
 class BuildingService
 {
-    //TODO: could need some improvements+cleanup
     public function __construct(
         private readonly Security                   $security,
         private readonly UserPropertiesRepository   $userPropertiesRepository,
@@ -32,7 +32,7 @@ class BuildingService
     {
     }
 
-    public function getBuildingData(): array
+    public function getBuildingsData(): array
     {
         $buildingTypeNames = $this->buildingTypeDataRepository->getTypeNames();
         if (count($buildingTypeNames) === 0) {
@@ -68,9 +68,6 @@ class BuildingService
                 $img = $isCompact ? $this->imgPathSmall($building->getId()) : $this->imgPathMiddle($building->getId());
 
                 $filterStyleClass = "";
-                $subtitle = "";
-                $tmtext = "";
-                $color = '#fff';
                 $buildType = $building->bl?->getBuildType();
                 $currentLevel = $building->bl?->getCurrentLevel() ?? 0;
                 $nextLevel = $currentLevel + 1;
@@ -157,6 +154,11 @@ class BuildingService
             'tableWidth' => $isCompact ? '' : 'auto',
             'helpUrl' => '?page=help&site=buildings',
         ];
+    }
+
+    public function getBuildingData(Building $building): array
+    {
+        dd($this->buildList->item($building->getId()));
     }
 
     private function getWaitingTimeData($costs, $planet): array

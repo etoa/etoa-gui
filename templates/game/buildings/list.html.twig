@@ -76,7 +76,7 @@
                                 <td style="width:{{ buildingData.cellWidth }}px;height:{{ buildingData.cellWidth }}px;padding:0;">
                                     <div style="position:relative;height:{{ buildingData.cellWidth }}px;overflow:hidden;">
                                         <div class="buildOverviewObjectTitle">{{ building.name }}</div>
-                                        <a href="?page=id={{ building.id }}" {{ tm(building.name, '<b>' ~ building.subtitle ~ '</b><br/>' ~ building.tmtext ~ building.shortComment)|raw }} style="display:block;height:180px;">
+                                        <a href="{{ path('game.buildings.show',{id:building.id}) }}" {{ tm(building.name, '<b>' ~ building.subtitle ~ '</b><br/>' ~ building.tmtext ~ building.shortComment)|raw }} style="display:block;height:180px;">
                                             <img class="{{ building.filterStyleClass }}" src="{{ building.img }}"/>
                                         </a>
                                         {% if building.currentLevel or (building.currentLevel == 0 and building.buildType == 3) %}
