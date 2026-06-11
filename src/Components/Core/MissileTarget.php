@@ -232,7 +232,7 @@ class MissileTarget extends AbstractGameController
     }
 
     #[ExposeInTemplate]
-    public function getMissilelist()
+    public function getMissilelist(): array
     {
         $entity = $this->getCurrentEntity();
         return $entity->getPlanet()->getMissilelist()->getValues();
