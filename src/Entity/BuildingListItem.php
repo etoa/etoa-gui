@@ -47,8 +47,8 @@ class BuildingListItem
     #[ORM\Column(name: "buildlist_people_working", type: "integer")]
     private int $peopleWorking = 0;
 
-    #[ORM\Column(name: "buildlist_people_working_status", type: "smallint")]
-    private int $peopleWorkingStatus = 0;
+    #[ORM\Column(name: "buildlist_people_working_status", type: "boolean")]
+    private bool $peopleWorkingStatus = false;
 
     #[ORM\Column(name: "buildlist_deactivated", type: "integer")]
     private int $deactivated = 0;
@@ -143,12 +143,12 @@ class BuildingListItem
         return $this;
     }
 
-    public function getPeopleWorkingStatus(): ?int
+    public function getPeopleWorkingStatus(): ?bool
     {
         return $this->peopleWorkingStatus;
     }
 
-    public function setPeopleWorkingStatus(int $peopleWorkingStatus): static
+    public function setPeopleWorkingStatus(bool $peopleWorkingStatus): static
     {
         $this->peopleWorkingStatus = $peopleWorkingStatus;
 

@@ -4,6 +4,7 @@ namespace EtoA\Controller\Game;
 
 use EtoA\Building\BuildingService;
 use EtoA\Entity\Building;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use EtoA\Universe\Planet\PlanetRepository;
@@ -46,12 +47,55 @@ class BuildingsController extends AbstractGameController
             return $this->redirectToRoute('game.buildings');
         }
 
-        $buildingData = $this->buildingService->getBuildingsData();
+        $form = $this->createFormBuilder()
+            ->add('build', SubmitType::class)
+            ->add('demolish', SubmitType::class, [
+                'label' => 'Abreisen',
+                'attr' => [
+                    'onclick' => "if (this.value=='Abreisen'){return confirm('Wirklich abbrechen?');}"
+                ]
+            ])
+            ->add('cancelBuild', SubmitType::class, [
+                'label' => 'Bau abbrechen',
+                'attr' => [
+                    'onclick' => "if (this.value=='Bau abbrechen'){return confirm('Wirklich abbrechen?');}"
+                ]
+            ])
+            ->add('cancelDemolish', SubmitType::class, [
+                'label' => 'Abriss abbrechen',
+                'attr' => [
+                    'onclick' => "if (this.value=='Abriss abbrechen'){return confirm('Wirklich abbrechen?');}"
+                ]
+            ])
+            ->getForm()
+            ->handleRequest($request);
+
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            if($form->get('build')->isClicked()) {
+                if ($this->buildingService->build($building)) {
+                    $this->addFlash('success','Bauauftrag wurde erfolgreich gestartet!');
+                } else {
+                    $this->addFlash('error','Gebäude nicht baubar!');
+                }
+            }
+
+            if($form->get('cancelBuild')->isClicked()) {
+                if ($this->buildingService->cancelBuild($building->bl)) {
+                    $this->addFlash('success','Bauauftrag wurde erfolgreich abgebrochen!');
+                } else {
+                    $this->addFlash('error','Bauauftrag kann nicht mehr abgebrochen werden, die Arbeit ist bereits fertiggestellt!');
+                }
+            }
+        }
+
+        $buildingData = $this->buildingService->getBuildingData($building);
 
         return $this->render('game/buildings/show.html.twig', [
             'planet' => $planet,
             'building' => $building,
             'buildingData' => $buildingData,
+            'form' => $form
         ]);
     }
 }

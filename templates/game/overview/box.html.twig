@@ -31,7 +31,7 @@
 
             {% if foreignFleets.visibleFleets|length > 1  %}
                 <td>
-                    <a href="?page=fleets" style=" {{ result.getAttitude }}"><b>{{ foreignFleets.visibleFleets|length }}</b> fremde Flotten</a>
+                    <a href="?page=fleets" style=" {{ foreignFleets.getAttitude }}"><b>{{ foreignFleets.visibleFleets|length }}</b> fremde Flotten</a>
                 </td>
             {% elseif foreignFleets.visibleFleets|length == 1  %}
                 <td>

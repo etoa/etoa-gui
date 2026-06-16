@@ -107,6 +107,15 @@ class BuildList implements IteratorAggregate
         $list = $this->buildingDataRepository->getBuildingsWithBuildList($cp);
 
         foreach ($list as $arr) {
+            if(!$arr?->bl) {
+                $item = new BuildingListItem();
+                $item->setBuilding($arr);
+                $item->setUser($this->owner);
+                $item->setEntity($cp);
+
+                $arr->bl = $item;
+            }
+
             $this->items[$arr->getId()] = $arr;
 
             if (($arr->bl?->getBuildType() === 3 || $arr->bl?->getBuildType() === 4) && $arr->bl?->getEndTime() > time()) {
@@ -138,8 +147,8 @@ class BuildList implements IteratorAggregate
         if ($this->items == null)
             $this->load();
         if (isset($this->items[$bid])) {
-            if ($this->items[$bid]->getDeactivated() > time()) {
-                return $this->items[$bid]->getDeactivated();
+            if ($this->items[$bid]->bl->getDeactivated() > time()) {
+                return $this->items[$bid]->bl->getDeactivated();
             }
         }
         return false;
@@ -205,7 +214,7 @@ class BuildList implements IteratorAggregate
         return false;
     }
 
-    function cancelBuild($bid)
+    function cancelBuild($bid): bool
     {
         if (isset($this->items[$bid])) {
             $this->errorMsg =  $this->items[$bid]->cancelBuild();
@@ -256,7 +265,7 @@ class BuildList implements IteratorAggregate
                         && $cst['costs4'] <= $this->entity->getRes1(4)
                     ) {
                         // check fields
-                        if ($this->items[$bid]->building->fields == 0 || $cp->fields_used + $this->items[$bid]->building->fields <= $cp->fields + $cp->fields_extra) {
+                        if ($this->items[$bid]->getFields() === 0 || $this->items[$bid]->bl->getEntity()->getFieldsUsed() + $this->items[$bid]->getFields() <= $this->items[$bid]->bl->getEntity()->getFields() + $this->items[$bid]->bl->getEntity()->getFieldsExtra()) {
                             if ($this->requirementsPassed($bid))
                                 $this->items[$bid]->buildableStatus = 1;
                             else {
@@ -297,11 +306,11 @@ class BuildList implements IteratorAggregate
                 $cst = $this->items[$bid]->getDemolishCosts();
                 // Check costs
                 if (
-                    $cst['costs0'] <= $this->entity->getRes1(0)
-                    && $cst['costs1'] <= $this->entity->getRes1(1)
-                    && $cst['costs2'] <= $this->entity->getRes1(2)
-                    && $cst['costs3'] <= $this->entity->getRes1(3)
-                    && $cst['costs4'] <= $this->entity->getRes1(4)
+                    $cst['costs0'] <= $this->items[$bid]->bl->getEntity()->getResMetal()
+                    && $cst['costs1'] <= $this->items[$bid]->bl->getEntity()->getResCrystal()
+                    && $cst['costs2'] <= $this->items[$bid]->bl->getEntity()->getResPlastic()
+                    && $cst['costs3'] <= $this->items[$bid]->bl->getEntity()->getResFuel()
+                    && $cst['costs4'] <= $this->items[$bid]->bl->getEntity()->getResFood()
                 ) {
                     return true;
                 } else

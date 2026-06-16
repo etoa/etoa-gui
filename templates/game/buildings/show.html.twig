@@ -1,6 +1,185 @@
 {% extends 'game/buildings/buildings.html.twig' %}
 
 {% block buildings %}
+    {% if buildingData.building is defined %}
+        {% set info = buildingData.building %}
+        {% set options = buildingData.options %}
+        
+        {# Building Information #}
+        <table class="tb " style="width:100%">
+            <caption>
+                {{ info.name }} {% if info.currentLevel > 0 %} {{ info.currentLevel }} {% endif %}
+                {% if info.status.text %} <span style='color:{{ info.status.color }}'>{{ info.status.text }}</span>{% endif %}
+            </caption>
+            <tr>
+                <td rowspan="3" style="width:220px;background:#000;vertical-align:middle;">
+                    <a href="{{ buildingData.helpUrl }}">
+                        <img src="{{ info.image }}" alt="{{ info.name }}" style="width:220px;height:220px" />
+                    </a>
+                </td>
+                <td colspan="2" style="vertical-align:top;height:150px;">
+                    {{ info.description|raw }}
+                </td>
+            </tr>
+            <tr>
+                <th style="width:250px;height:20px;">Platzverbrauch pro Ausbaustufe:</th>
+                <td>{{ info.fieldsPerLevel }} {{ info.fieldsPerLevel != 1 ? 'Felder' : 'Feld' }}</td>
+            </tr>
+            <tr>
+                <th style="width:250px;height:20px;">Platzverbrauch total:</th>
+                <td>{{ info.fieldsTotalUsed }} {{ info.fieldsTotalUsed != 1 ? 'Felder' : 'Feld' }}</td>
+            </tr>
+        </table>
 
+        {# Build Options #}
+        {% if options.requirementsNotMet is defined and options.requirementsNotMet %}
+            <div>
+                Gebäude kann nicht (aus)gebaut werden, <a href="?page=techtree">Voraussetzungen</a> nicht erfüllt!<br/><br/>
+            </div>
+        {% else %}
+            {{ form_start(form) }}
+                <twig:Table title="Bauoptionen">
+                    {% block table_content %}
+                        <tr>
+                            <th>Aktion</th>
+                            <th>{{ constant('EtoA\\Universe\\Resources\\ResIcons::TIME')|raw }} Zeit</th>
+                            <th>{{ constant('EtoA\\Universe\\Resources\\ResIcons::METAL')|raw }}</th>
+                            <th>{{ constant('EtoA\\Universe\\Resources\\ResIcons::CRYSTAL')|raw }}</th>
+                            <th>{{ constant('EtoA\\Universe\\Resources\\ResIcons::PLASTIC')|raw }}</th>
+                            <th>{{ constant('EtoA\\Universe\\Resources\\ResIcons::FUEL')|raw }}</th>
+                            <th>{{ constant('EtoA\\Universe\\Resources\\ResIcons::FOOD')|raw }}</th>
+                            <th>{{ constant('EtoA\\Universe\\Resources\\ResIcons::POWER')|raw }}</th>
+                        </tr>
 
+                        {# Build Action #}
+                        {% if options.canBuild %}
+                            {% if options.isBuildable %}
+                                <tr>
+                                    <td>
+                                        {{ form_widget(form.build,{label: info.currentLevel == 0 ? 'Bauen' : 'Ausbauen' }) }}
+                                    </td>
+                                    <td>{{ formatTimespan(options.buildCosts.time) }}</td>
+                                    {% for resource in ['metal', 'crystal', 'plastic', 'fuel', 'food'] %}
+                                        <td{% if not options.buildCosts.resources[resource].sufficient %} style="color:red;"{% endif %}>
+                                            {{ options.buildCosts.resources[resource].cost|number_format }}
+                                        </td>
+                                    {% endfor %}
+                                    <td>{{ options.buildCosts.power|number_format }}</td>
+                                </tr>
+                            {% else %}
+                                {% if options.buildCosts %}
+                                    <tr>
+                                        <td style="color:red;">{{ info.currentLevel == 0 ? 'Bauen' : 'Ausbauen' }}</td>
+                                        <td>{{ formatTimespan(options.buildCosts.time) }}</td>
+                                        {% for resource in ['metal', 'crystal', 'plastic', 'fuel', 'food'] %}
+                                            <td{% if not options.buildCosts.resources[resource].sufficient %} style="color:red;"{% endif %}>
+                                                {{ options.buildCosts.resources[resource].cost|number_format }}
+                                            </td>
+                                        {% endfor %}
+                                        <td>{{ options.buildCosts.power|number_format }}</td>
+                                    </tr>
+                                {% endif %}
+                                {% if options.buildError %}
+                                    <tr>
+                                        <td colspan="8">
+                                            <i>{{ options.buildError }}</i>
+                                        </td>
+                                    </tr>
+                                {% endif %}
+                            {% endif %}
+                        {% endif %}
+
+                        {# Demolish Action #}
+                        {% if options.canDemolish %}
+                            {% if options.isDemolishable %}
+                                <tr class="demolishActionContainer">
+                                    <td>
+                                        {{ form_widget(form.demolish) }}
+                                    </td>
+                                    <td>{{ formatTimespan(options.demolishCosts.time) }}</td>
+                                    {% for resource in ['metal', 'crystal', 'plastic', 'fuel', 'food'] %}
+                                        <td{% if not options.demolishCosts.resources[resource].sufficient %} style="color:red;"{% endif %}>
+                                            {{ options.demolishCosts.resources[resource].cost|number_format }}
+                                        </td>
+                                    {% endfor %}
+                                    <td>{{ options.demolishCosts.power|number_format }}</td>
+                                </tr>
+                            {% else %}
+                                <tr class="demolishActionContainer">
+                                    <td style="color:red;">Abreissen</td>
+                                    <td>{{ formatTimespan(options.demolishCosts.time) }}</td>
+                                    {% for resource in ['metal', 'crystal', 'plastic', 'fuel', 'food'] %}
+                                        <td{% if not options.demolishCosts.resources[resource].sufficient %} style="color:red;"{% endif %}>
+                                            {{ options.demolishCosts.resources[resource].cost|number_format }}
+                                        </td>
+                                    {% endfor %}
+                                    <td>{{ options.demolishCosts.power|number_format }}</td>
+                                </tr>
+                                {% if options.demolishError %}
+                                    <tr class="demolishActionContainer">
+                                        <td colspan="8">
+                                            <i>{{ options.demolishError }}</i>
+                                        </td>
+                                    </tr>
+                                {% endif %}
+                            {% endif %}
+                        {% endif %}
+
+                        {# Cancel Build #}
+                        {% if options.canCancelBuild %}
+                            <tr>
+                                <td id="buildcancel_{{ info.id }}">
+                                   {{ form_widget(form.cancelBuild) }}
+                                </td>
+                                <td id="buildtime_{{ info.id }}" style="vertical-align:middle;">-</td>
+                                <td colspan="6" id="progressbar_{{ info.id }}" style="text-align:center;vertical-align:middle;font-weight:bold;"></td>
+                            </tr>
+                            {% if options.nextLevelCosts %}
+                                <tr>
+                                    <td>Nächste Stufe:</td>
+                                    <td>{{ formatTimespan(options.nextLevelCosts.time) }}</td>
+                                    {% for resource in ['metal', 'crystal', 'plastic', 'fuel', 'food'] %}
+                                        <td>{{ options.nextLevelCosts.resources[resource].cost|number_format }}</td>
+                                    {% endfor %}
+                                    <td>{{ options.nextLevelCosts.power|number_format }}</td>
+                                </tr>
+                            {% endif %}
+                            <script type="text/javascript">
+                                countDown("buildtime_{{ info.id }}", {{ options.buildEndTime }}, "buildcancel_{{ info.id }}");
+                                jsProgressBar("progressbar_{{ info.id }}", {{ options.buildStartTime }}, {{ options.buildEndTime }});
+                            </script>
+                        {% endif %}
+
+                        {# Cancel Demolish #}
+                        {% if options.canCancelDemolish %}
+                            <tr>
+                                <td id="buildcancel_{{ info.id }}">
+                                    {{ form_widget(form.cancelDemolish) }}
+                                </td>
+                                <td id="buildtime_{{ info.id }}" style="vertical-align:middle;">-</td>
+                                <td colspan="6" id="progressbar_{{ info.id }}" style="text-align:center;vertical-align:middle;font-weight:bold;"></td>
+                            </tr>
+                            <script type="text/javascript">
+                                countDown("buildtime_{{ info.id }}", {{ options.buildEndTime }}, "buildcancel_{{ info.id }}");
+                                jsProgressBar("progressbar_{{ info.id }}", {{ options.buildStartTime }}, {{ options.buildEndTime }});
+                            </script>
+                        {% endif %}
+                    {% endblock %}
+                </twig:Table>
+
+                {% if options.canDemolish %}
+                    <div>
+                        Falls mehr Platz benötigt wird, kann dieses Gebäude
+                        <a href="javascript:;" onclick="$('.demolishActionContainer').show();$(this).parent().hide();return false;">abgerissen</a> werden.
+                    </div>
+                    <script type="text/javascript">
+                        $(function() {
+                            $('.demolishActionContainer').hide();
+                        });
+                    </script>
+                {% endif %}
+                {{ form_widget(form._token) }}
+            {{ form_end(form,{render_rest:false}) }}
+        {% endif %}
+    {% endif %}
 {% endblock %}

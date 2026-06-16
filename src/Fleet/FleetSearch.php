@@ -69,7 +69,13 @@ class FleetSearch extends AbstractSearch
     public function planetUser(User $user): self
     {
         $this->parts[] = 'q.entityTo IN (:planets)';
-        $this->parameters['planets'] = $user->getPlanets();
+
+        $ids = [];
+        foreach ($user->getPlanets()->getValues() as $item) {
+            $ids = $item->getEntity()->getId();
+        }
+
+        $this->parameters['planets'] = $ids;
 
         return $this;
     }

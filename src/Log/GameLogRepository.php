@@ -4,6 +4,8 @@ namespace EtoA\Log;
 
 use Doctrine\Persistence\ManagerRegistry;
 use EtoA\Core\AbstractRepository;
+use EtoA\Entity\Alliance;
+use EtoA\Entity\Entity;
 use EtoA\Entity\GameLog;
 use EtoA\Entity\User;
 
@@ -25,45 +27,23 @@ class GameLogRepository extends AbstractRepository
             ->execute();
     }
 
-    public function add(int $facility, int $severity, string $message, int $userId, int $allianceId, int $entityId, int $objectId = 0, int $status = 0, int $level = 0): void
+    public function add(int $facility, int $severity, string $message, User $user, ?Alliance $alliance, Entity $entity, int $objectId = 0, int $status = 0, int $level = 0): void
     {
-        $this->getConnection()->executeQuery('INSERT DELAYED INTO logs_game (
-				facility,
-				severity,
-				timestamp,
-				message,
-				ip,
-				user_id,
-				alliance_id,
-				entity_id,
-				object_id,
-				status,
-				level
-			) VALUES (
-                :facility,
-                :severity,
-                :timestamp,
-                :message,
-                :ip,
-                :userId,
-                :allianceId,
-                :entityId,
-                :objectId,
-                :status,
-                :level
-            )', [
-            'facility' => $facility,
-            'severity' => $severity,
-            'timestamp' => time(),
-            'message' => $message,
-            'ip' => (string) $_SERVER['REMOTE_ADDR'],
-            'userId' => $userId,
-            'allianceId' => $allianceId,
-            'entityId' => $entityId,
-            'objectId' => $objectId,
-            'status' => $status,
-            'level' => $level,
-        ]);
+        $item = new GameLog();
+        $item->setFacility($facility);
+        $item->setSeverity($severity);
+        $item->setMessage($message);
+        $item->setTimestamp(time());
+        $item->setUser($user);
+        $item->setAlliance($alliance);
+        $item->setEntity($entity);
+        $item->setObject($objectId);
+        $item->setStatus($status);
+        $item->setLevel($level);
+        $item->setIp((string) $_SERVER['REMOTE_ADDR']);
+
+        $this->persist($item);
+        $this->save();
     }
 
     public function cleanup(int $threshold): int

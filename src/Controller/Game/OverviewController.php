@@ -124,7 +124,6 @@ class OverviewController extends AbstractGameController
 
         //Liest alle Planeten des Besitzers aus und gibt benötigte infos
         $userPlanets = $this->planetRepository->getUserPlanets($this->getUser()->getId());
-        $buildingNames = $this->buildingDataRepository->getBuildingNames(true);
         $shipNames = $this->shipDataRepository->getShipNames(true);
         $defenseNames = $this->defenseDataRepository->getDefenseNames(true);
 
@@ -152,7 +151,7 @@ class OverviewController extends AbstractGameController
                 $building_zeit = "(" . $building_h . "h " . $building_m . "m " . $building_s . "s)";
 
                 $building_time = $building_zeit;
-                $building_name = $buildingNames[$entry->getBuilding()->getId()];
+                $building_name = $entry->getBuilding()->getName();
 
                 // Zeigt Ausbaulevel bei Abriss
                 if ($entry->getBuildType() == 4) {

@@ -196,26 +196,14 @@ class BuildingListItemRepository extends AbstractRepository
         return $data !== false ? $data : null;
     }
 
-    public function updateBuildingListEntry(int $id, int $level, int $type, int $start, int $end): bool
+    public function updateBuildingListEntry(BuildingListItem $item, int $level, int $type, int $start, int $end): void
     {
-        $affected = $this->createQueryBuilder('q')
-            ->update('buildlist')
-            ->set('buildlist_current_level', ':level')
-            ->set('buildlist_build_type', ':type')
-            ->set('buildlist_build_start_time', ':start')
-            ->set('buildlist_build_end_time', ':end')
-            ->where('buildlist_id = :id')
-            ->setParameters([
-                'level' => $level,
-                'type' => $type,
-                'start' => $start,
-                'end' => $end,
-                'id' => $id,
-            ])
-            ->executeQuery()
-            ->rowCount();
+        $item->setCurrentLevel($level);
+        $item->setBuildType($type);
+        $item->setStartTime($start);
+        $item->setEndTime($end);
 
-        return $affected > 0;
+        $this->save();
     }
 
     public function updateUserForEntity(User $newUser, Planet $entity): void
@@ -494,22 +482,13 @@ class BuildingListItemRepository extends AbstractRepository
             ->executeQuery();
     }
 
-    public function markBuildingWorkingStatus(int $userId, int $entityId, int $buildingId, bool $working): bool
+    public function markBuildingWorkingStatus(User $user, Planet $entity, Building|int $building, bool $working): void
     {
-        return (bool)$this->createQueryBuilder('q')
-            ->update('buildlist')
-            ->set('buildlist_people_working_status', ':status')
-            ->where('buildlist_building_id = :buildingId')
-            ->andWhere('buildlist_user_id = :userId')
-            ->andWhere('buildlist_entity_id = :entityId')
-            ->setParameters([
-                'buildingId' => $buildingId,
-                'entityId' => $entityId,
-                'userId' => $userId,
-                'status' => (int)$working,
-            ])
-            ->executeQuery()
-            ->rowCount();
+
+        $item = $this->findOneBy(['building'=>$building,'user'=>$user,'entity'=>$entity]);
+        $item->setPeopleWorkingStatus($working);
+
+        $this->save();
     }
 
     /**

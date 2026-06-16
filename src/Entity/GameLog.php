@@ -33,7 +33,7 @@ class GameLog
     #[ORM\Column(type: "integer")]
     private int $status;
 
-    #[ORM\JoinColumn(name: 'id', referencedColumnName: 'id')]
+    #[ORM\JoinColumn(name: 'entity_id', referencedColumnName: 'id')]
     #[ORM\ManyToOne(targetEntity: Entity::class)]
     private ?Entity $entity = null;
 
