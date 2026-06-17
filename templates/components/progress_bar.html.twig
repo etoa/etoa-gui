@@ -1,0 +1,5 @@
+<script type="text/javascript">
+    $(function () {
+        updateProgressBar('#{{ element }}', {{ (startTime)|round(0, 'floor') }}, {{ (endTime)|round(0, 'ceil') }}, {{ date().timestamp }});
+    });
+</script>

@@ -144,10 +144,10 @@
                                     <td>{{ options.nextLevelCosts.power|number_format }}</td>
                                 </tr>
                             {% endif %}
-                            <script type="text/javascript">
-                                countDown("buildtime_{{ info.id }}", {{ options.buildEndTime }}, "buildcancel_{{ info.id }}");
-                                jsProgressBar("progressbar_{{ info.id }}", {{ options.buildStartTime }}, {{ options.buildEndTime }});
-                            </script>
+                            {% component 'countdown' with {element: 'buildtime_'~info.id, targettime:options.buildEndTime, elementToSetEmpty: 'buildcancel_'~info.id } %}
+                            {% endcomponent %}
+                            {% component 'progress_bar' with {element: 'progressbar_'~info.id, startTime:options.buildStartTime, endTime:options.buildEndTime} %}
+                            {% endcomponent %}
                         {% endif %}
 
                         {# Cancel Demolish #}
@@ -159,10 +159,10 @@
                                 <td id="buildtime_{{ info.id }}" style="vertical-align:middle;">-</td>
                                 <td colspan="6" id="progressbar_{{ info.id }}" style="text-align:center;vertical-align:middle;font-weight:bold;"></td>
                             </tr>
-                            <script type="text/javascript">
-                                countDown("buildtime_{{ info.id }}", {{ options.buildEndTime }}, "buildcancel_{{ info.id }}");
-                                jsProgressBar("progressbar_{{ info.id }}", {{ options.buildStartTime }}, {{ options.buildEndTime }});
-                            </script>
+                            {% component 'countdown' with {element: 'buildtime_'~info.id, targettime:options.buildEndTime, elementToSetEmpty: 'buildcancel_'~info.id } %}
+                            {% endcomponent %}
+                            {% component 'progress_bar' with {element: 'progressbar_'~info.id, startTime:options.buildStartTime, endTime:options.buildEndTime} %}
+                            {% endcomponent %}
                         {% endif %}
                     {% endblock %}
                 </twig:Table>

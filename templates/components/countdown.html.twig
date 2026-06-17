@@ -1,0 +1,6 @@
+<script type="text/javascript">
+    if (document.getElementById('{{ element }}') != null) {
+        cnt["{{ element }}"] = 0;
+        setCountdown('{{ element }}', {{ date().timestamp }}, {{ targettime }}, '{{ elementToSetEmpty }}');
+    }
+</script>
