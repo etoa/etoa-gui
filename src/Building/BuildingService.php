@@ -98,7 +98,7 @@ class BuildingService
                     $color = '#0f0';
                     $filterStyleClass = $useImageFilter ? "filter-building" : "";
                 } elseif ($buildType === 4) {
-                    $subtitle = "Abriss auf Stufe " . ($building->level - 1);
+                    $subtitle = "Abriss auf Stufe " . ($building->bl->getCurrentLevel() - 1);
                     $tmtext = "<span style=\"color:#f90\">Wird abgerissen!<br/>Dauer: " . StringUtils::formatTimespan($building->bl->getEndTime() - time()) . "</span><br/>";
                     $color = '#f90';
                     $filterStyleClass = $useImageFilter ? "filter-destructing" : "";
@@ -249,8 +249,8 @@ class BuildingService
                 'demolishCosts' => $demolishCosts,
                 'nextLevelCosts' => $nextLevelCosts,
                 'isUnderConstruction' => $this->isUnderConstruction($item->bl),
-                'buildEndTime' => $item->endTime ?? 0,
-                'buildStartTime' => $item->startTime ?? 0,
+                'buildEndTime' => $item->bl->getEndTime() ?? 0,
+                'buildStartTime' => $item->bl->getStartTime() ?? 0,
             ];
         } else {
             $buildOptions = [
@@ -603,6 +603,87 @@ class BuildingService
 
             //Log Speichern
             $this->gameLogRepository->add(GameLogFacility::BUILD, LogSeverity::INFO, $log_text, $cu, $cu?->getAlliance(), $cp->getEntity(), $item->getBuilding()->getId(), 1, $item->getCurrentLevel());
+
+            return true;
+        } else
+            return false;
+    }
+
+    public function demolish(BuildingListItem $item): bool
+    {
+        if ($this->checkDemolishable($item)) {
+
+            $costs = $this->getDemolishCosts($item);
+            $item->setStartTime(time());
+            $item->setEndTime($item->getStartTime()+$costs->time);
+            $item->setBuildType(4);
+            $cp = $item->getEntity();
+
+            $this->buildingListItemRepository->updateBuildingListEntry($item, $item->getCurrentLevel(), $item->getBuildType(), $item->getStartTime(), $item->getEndTime());
+            $this->planetRepository->addResources($cp, -$costs->metal, -$costs->crystal, -$costs->plastic, -$costs->fuel, -$costs->food);
+
+            //Log schreiben
+            $log_text = "[b]Gebäudeabriss[/b]
+
+        [b]Abrissdauer:[/b] " . StringUtils::formatTimespan($costs->time) . "
+        [b]Ende:[/b] " . date("d.m.Y H:i:s", $item->getEndTime()) . "
+
+        [b]Kosten[/b]
+        [b]" . ResourceNames::METAL . ":[/b] " . StringUtils::formatNumber($costs->metal) . "
+        [b]" . ResourceNames::CRYSTAL . ":[/b] " . StringUtils::formatNumber($costs->crystal) . "
+        [b]" . ResourceNames::PLASTIC . ":[/b] " . StringUtils::formatNumber($costs->plastic) . "
+        [b]" . ResourceNames::FUEL . ":[/b] " . StringUtils::formatNumber($costs->fuel) . "
+        [b]" . ResourceNames::FOOD . ":[/b] " . StringUtils::formatNumber($costs->food) . "
+
+        [b]Restliche Rohstoffe auf dem Planeten[/b]
+        [b]" . ResourceNames::METAL . ":[/b] " . StringUtils::formatNumber($cp->getResMetal()) . "
+        [b]" . ResourceNames::CRYSTAL . ":[/b] " . StringUtils::formatNumber($cp->getResCrystal()) . "
+        [b]" . ResourceNames::PLASTIC . ":[/b] " . StringUtils::formatNumber($cp->getResPlastic()) . "
+        [b]" . ResourceNames::FUEL . ":[/b] " . StringUtils::formatNumber($cp->getResFuel()) . "
+        [b]" . ResourceNames::FOOD . ":[/b] " . StringUtils::formatNumber($cp->getResFood());
+
+            //Log Speichern
+            $this->gameLogRepository->add(GameLogFacility::BUILD, LogSeverity::INFO, $log_text, $item->getUser(), $item->getUser()?->getAlliance(), $cp->getEntity(), $item->getBuilding()->getId(), 4, $item->getCurrentLevel());
+            return true;
+        }
+
+        return false;
+    }
+
+    public function cancelDemolish(BuildingListItem $item): bool
+    {
+        if ($item->getEndTime() > time()) {
+            $costs = $this->getDemolishCosts($item);
+            $fac = ($item->getEndTime() - time()) / ($item->getEndTime() - $item->getStartTime());
+            $cp = $item->getEntity();
+            $cu = $item->getUser();
+
+            $this->buildingListItemRepository->updateBuildingListEntry($item, $item->getCurrentLevel(), 0, 0, 0);
+            $this->planetRepository->addResources($cp, $costs->metal * $fac, $costs->crystal * $fac, $costs->plastic * $fac, $costs->fuel * $fac, $costs->food * $fac);
+
+            //Log schreiben
+            $log_text = "[b]Gebäudeabriss Abbruch[/b]
+
+            [b]Start des Gebädes:[/b] " . date("d.m.Y H:i:s", $item->getStartTime()) . "
+            [b]Ende des Gebädes:[/b] " . date("d.m.Y H:i:s", $item->getEndTime()) . "
+
+            [b]Erhaltene Rohstoffe[/b]
+            [b]Faktor:[/b] " . $fac . "
+            [b]" . ResourceNames::METAL . ":[/b] " . StringUtils::formatNumber($costs->metal * $fac) . "
+            [b]" . ResourceNames::CRYSTAL . ":[/b] " . StringUtils::formatNumber($costs->crystal * $fac) . "
+            [b]" . ResourceNames::PLASTIC . ":[/b] " . StringUtils::formatNumber($costs->plastic * $fac) . "
+            [b]" . ResourceNames::FUEL . ":[/b] " . StringUtils::formatNumber($costs->fuel * $fac) . "
+            [b]" . ResourceNames::FOOD . ":[/b] " . StringUtils::formatNumber($costs->food * $fac) . "
+
+            [b]Rohstoffe auf dem Planeten[/b]
+            [b]" . ResourceNames::METAL . ":[/b] " . StringUtils::formatNumber($cp->getResMetal()) . "
+            [b]" . ResourceNames::CRYSTAL . ":[/b] " . StringUtils::formatNumber($cp->getResCrystal()) . "
+            [b]" . ResourceNames::PLASTIC . ":[/b] " . StringUtils::formatNumber($cp->getResPlastic()) . "
+            [b]" . ResourceNames::FUEL . ":[/b] " . StringUtils::formatNumber($cp->getResFuel()) . "
+            [b]" . ResourceNames::FOOD . ":[/b] " . StringUtils::formatNumber($cp->getResFood());
+
+            //Log Speichern
+            $this->gameLogRepository->add(GameLogFacility::BUILD, LogSeverity::INFO, $log_text, $cu, $cu?->getAlliance(), $cp->getEntity(), $item->getBuilding()->getId(), 2, $item->getCurrentLevel());
 
             return true;
         } else

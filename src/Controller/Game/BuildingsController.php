@@ -87,6 +87,22 @@ class BuildingsController extends AbstractGameController
                     $this->addFlash('error','Bauauftrag kann nicht mehr abgebrochen werden, die Arbeit ist bereits fertiggestellt!');
                 }
             }
+
+            if($form->get('demolish')->isClicked()) {
+                if ($this->buildingService->demolish($building->bl)) {
+                    $this->addFlash('success','Abbruchauftrag wurde erfolgreich gestartet!');
+                } else {
+                    $this->addFlash('error','Gebäude nicht abreissbar!');
+                }
+            }
+
+            if($form->get('cancelDemolish')->isClicked()) {
+                if ($this->buildingService->cancelDemolish($building->bl)) {
+                    $this->addFlash('success','Abbruchauftrag wurde erfolgreich abgebrochen!');
+                } else {
+                    $this->addFlash('error','Abbruchauftrag kann nicht mehr abgebrochen werden, die Arbeit ist bereits fertiggestellt!');
+                }
+            }
         }
 
         $buildingData = $this->buildingService->getBuildingData($building);
