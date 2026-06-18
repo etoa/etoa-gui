@@ -18,13 +18,7 @@ class ShipCategoryRepository extends AbstractRepository
      */
     public function getAllCategories(): array
     {
-        $data = $this->createQueryBuilder('q')
-            ->select('*')
-            ->from('ship_cat')
-            ->orderBy('cat_order')
-            ->fetchAllAssociative();
-
-        return array_map(fn ($row) => new ShipCategory($row), $data);
+        return $this->findBy([],['order'=>'DESC']);
     }
 
     /**

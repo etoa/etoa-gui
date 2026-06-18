@@ -1,0 +1,11 @@
+{% extends 'layout/game.html.twig' %}
+{% block content %}
+    <h1>Raumschiffswerft des Planeten {{ planet.displayName }}</h1>
+
+    <twig:ResourceBox/>
+
+
+
+    {% block shipyard %}
+    {% endblock %}
+{% endblock %}

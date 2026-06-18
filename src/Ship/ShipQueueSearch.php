@@ -30,7 +30,7 @@ class ShipQueueSearch extends AbstractSearch
         return $this;
     }
 
-    public function entityId(Planet $entity): self
+    public function entityId(Planet|int $entity): self
     {
         $this->parts[] = 'q.entity = :entity';
         $this->parameters['entity'] = $entity;
