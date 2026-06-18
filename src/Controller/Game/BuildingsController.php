@@ -4,6 +4,7 @@ namespace EtoA\Controller\Game;
 
 use EtoA\Building\BuildingService;
 use EtoA\Entity\Building;
+use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -47,7 +48,7 @@ class BuildingsController extends AbstractGameController
             return $this->redirectToRoute('game.buildings');
         }
 
-        $form = $this->createFormBuilder()
+        $form = $this->container->get('form.factory')->createNamed('building_form',FormType::class)
             ->add('build', SubmitType::class)
             ->add('demolish', SubmitType::class, [
                 'label' => 'Abreisen',
@@ -67,7 +68,6 @@ class BuildingsController extends AbstractGameController
                     'onclick' => "if (this.value=='Abriss abbrechen'){return confirm('Wirklich abbrechen?');}"
                 ]
             ])
-            ->getForm()
             ->handleRequest($request);
 
 
