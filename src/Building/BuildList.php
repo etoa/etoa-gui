@@ -98,9 +98,9 @@ class BuildList implements IteratorAggregate
 
     private function load(): void
     {
-        $this->owner = $this->security->getUser()->getData();
         $request = $this->requestStack->getCurrentRequest();
         $cp = $this->planetRepository->find($request->getSession()->get('cpid'));
+        $this->owner = $cp->getUser();
         self::$GENTECH = $this->technologyListItemRepository->getTechnologyLevel($this->owner, TechnologyId::GEN)??0;
         $this->items = array();
 

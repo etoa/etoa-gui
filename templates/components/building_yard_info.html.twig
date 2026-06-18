@@ -95,10 +95,15 @@
                     <tr>
                         <td colspan="2" style="text-align:center;">
                             <div id="changeWorkingPeopleError" style="display:none;"></div>
+                            {{ form_widget(form.save) }}&nbsp;
+                            {% if outerScope.showOptimization %}
+                                {{ form_widget(form.optimize) }}
+                            {% endif %}
                         </td>
                     </tr>
                 {% endblock %}
             </twig:Table>
-        {{ form_end(form) }}
+            {{ form_widget(form._token) }}
+        {{ form_end(form,{render_rest:false}) }}
     </div>
 </div>

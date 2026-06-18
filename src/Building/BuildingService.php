@@ -2,18 +2,20 @@
 
 namespace EtoA\Building;
 
+use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Core\ObjectWithImage;
 use EtoA\Entity\Building;
 use EtoA\Entity\BuildingListItem;
+use EtoA\Entity\Planet;
 use EtoA\Log\GameLogFacility;
 use EtoA\Log\GameLogRepository;
 use EtoA\Log\LogSeverity;
 use EtoA\Support\StringUtils;
 use EtoA\Technology\TechnologyDataRepository;
+use EtoA\Technology\TechnologyId;
 use EtoA\Technology\TechnologyListItemRepository;
 use EtoA\Universe\Planet\PlanetRepository;
 use EtoA\Universe\Resources\PreciseResources;
-use EtoA\Universe\Resources\ResIcons;
 use EtoA\Universe\Resources\ResourceNames;
 use EtoA\Universe\Star\StarRepository;
 use EtoA\User\UserPropertiesRepository;
@@ -37,7 +39,8 @@ class BuildingService
         private readonly SpecialistService            $specialistService,
         private readonly StarRepository               $starRepository,
         private readonly TechnologyListItemRepository $technologyListItemRepository,
-        private readonly GameLogRepository            $gameLogRepository
+        private readonly GameLogRepository            $gameLogRepository,
+        private readonly ConfigurationService         $configurationService
     )
     {
     }
@@ -248,7 +251,7 @@ class BuildingService
                 'buildCosts' => $buildCosts,
                 'demolishCosts' => $demolishCosts,
                 'nextLevelCosts' => $nextLevelCosts,
-                'isUnderConstruction' => $this->isUnderConstruction($item->bl),
+                'isUnderConstruction' => $this->isUnderConstruction($item->bl->getEntity()),
                 'buildEndTime' => $item->bl->getEndTime() ?? 0,
                 'buildStartTime' => $item->bl->getStartTime() ?? 0,
             ];
@@ -386,7 +389,7 @@ class BuildingService
     private function checkBuildable(BuildingListItem $buildingListItem, bool $uncheckConstruction = false): int
     {
         // check all the buildings
-        if (!$this->isUnderConstruction($buildingListItem) || $uncheckConstruction) {
+        if (!$this->isUnderConstruction($buildingListItem->getEntity()) || $uncheckConstruction) {
             // check max level
             if ($buildingListItem->getCurrentLevel() < $buildingListItem->getBuilding()->getLastLevel()) {
                 // Build context for cost calculation
@@ -427,11 +430,15 @@ class BuildingService
         return $buildableStatus;
     }
 
-    private function isUnderConstruction(BuildingListItem $buildingListItem): bool
+    public function isUnderConstruction(Planet $planet): bool
     {
-        if (($buildingListItem->getBuildType() === 3 || $buildingListItem->getBuildType() === 4) && $buildingListItem->getEndTime() > time()) {
-            return true;
+        $buildings = $this->buildingListItemRepository->findBy(['entity'=>$planet]);
+        foreach ($buildings as $building) {
+            if (($building->getBuildType() === 3 || $building->getBuildType() === 4) && $building->getEndTime() > time()) {
+                return true;
+            }
         }
+
         return false;
     }
 
@@ -482,7 +489,7 @@ class BuildingService
     private function checkDemolishable(BuildingListItem $item): bool
     {
         if (!$this->getDeactivated($item)) {
-            if (!$this->isUnderConstruction($item)) {
+            if (!$this->isUnderConstruction($item->getEntity())) {
                 $cst = $this->getDemolishCosts($item);
 
                 // Check costs
@@ -573,7 +580,7 @@ class BuildingService
         if ($item->getEndTime() > time()) {
             $cp = $item->getEntity();
             $cu = $item->getUser();
-            $costs = $this->getBuildCosts($item,$item->getCurrentLevel());
+            $costs = $this->getBuildCosts($item, $item->getCurrentLevel());
             $fac = ($item->getEndTime() - time()) / ($item->getEndTime() - $item->getStartTime());
 
             $this->buildingListItemRepository->updateBuildingListEntry($item, $item->getCurrentLevel(), 0, 0, 0);
@@ -615,7 +622,7 @@ class BuildingService
 
             $costs = $this->getDemolishCosts($item);
             $item->setStartTime(time());
-            $item->setEndTime($item->getStartTime()+$costs->time);
+            $item->setEndTime($item->getStartTime() + $costs->time);
             $item->setBuildType(4);
             $cp = $item->getEntity();
 
@@ -688,5 +695,21 @@ class BuildingService
             return true;
         } else
             return false;
+    }
+
+    public function getPeopleOptimized(BuildingListItem $buildingListItem): float
+    {
+        $bc = $this->getBuildCosts($buildingListItem, $buildingListItem->getCurrentLevel() + 1);
+
+        $maxReduction = $bc->time - $bc->time * $this->minBuildTimeFactor();
+
+        return ceil($maxReduction / $this->configurationService->getInt('people_work_done'));
+    }
+
+    public function minBuildTimeFactor(): float
+    {
+        $user = $this->security->getUser()->getData();
+        $gentech = $this->technologyListItemRepository->getTechnologyLevel($user, TechnologyId::GEN) ?? 0;
+        return (0.1 - ($gentech / 100));
     }
 }

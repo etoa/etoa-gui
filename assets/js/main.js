@@ -1070,16 +1070,16 @@ function updatePeopleWorkingBox(people, time, food) {
   var error = "";
   people = parseFloat(people.replace(/`/g, ""));
   food = parseFloat(food.replace(/`/g, ""));
-  if (people != -1) {
+  if (people !== -1) {
     if (people > peopleFree) people = peopleFree;
     food = people * foodRequired;
     time = people * workDone;
   }
-  else if (food != -1) {
+  else if (food !== -1) {
     people = Math.floor(food / foodRequired);
     time = people * workDone;
   }
-  else if (time != -1) {
+  else if (time !== -1) {
     if (is_tf(time)) {
       time = parseFloat(tf_back(time));
       people = Math.floor(time / workDone);
@@ -1093,7 +1093,7 @@ function updatePeopleWorkingBox(people, time, food) {
     error = "Nicht genug freie Arbeiter vorhanden!";
   //else if (food > foodAvaiable)
   //	error = "Nicht genug Nahrung vorhanden!";
-  else if (peopleOptimized != 0 && people > peopleOptimized)
+  else if (peopleOptimized !== 0 && people > peopleOptimized)
     error = "Mehr Arbeiter als notwendig ausgewählt!";
 
   if (error.length > 0) {
@@ -1105,7 +1105,11 @@ function updatePeopleWorkingBox(people, time, food) {
     $('#submit_people_form').show();
   }
 
-  document.getElementById('peopleWorking').value = FormatNumber('return', people, peopleFree, '', '');
+  let element = document.getElementById('peopleWorking');
+
+  element.value = FormatNumber('return', people, peopleFree, '', '');
+  element.dispatchEvent(new Event('change', { bubbles: true }));
+
   document.getElementById('foodUsing').value = FormatNumber('return', food, 0, '', '');
   document.getElementById('timeReduction').value = formatTimespan(time);
 }

@@ -4,6 +4,8 @@ namespace EtoA\Components\Core;
 
 use EtoA\Building\BuildingId;
 use EtoA\Building\BuildingListItemRepository;
+use EtoA\Building\BuildingService;
+use EtoA\Building\BuildList;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Entity\Planet;
 use EtoA\Entity\User;
@@ -12,6 +14,7 @@ use EtoA\Technology\TechnologyId;
 use EtoA\Technology\TechnologyListItemRepository;
 use EtoA\Universe\Planet\PlanetRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\Extension\Core\Type\ButtonType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -39,7 +42,9 @@ class BuildingYardInfo extends AbstractController
         private readonly TechnologyListItemRepository $technologyListItemRepository,
         private readonly ConfigurationService         $configurationService,
         private readonly RequestStack                 $requestStack,
-        private readonly PlanetRepository             $planetRepository
+        private readonly PlanetRepository             $planetRepository,
+        private readonly BuildingService              $buildingService,
+        private readonly BuildList                    $buildList
     )
     {
     }
@@ -60,8 +65,7 @@ class BuildingYardInfo extends AbstractController
     #[ExposeInTemplate]
     public function isCurrentlyBuilding(): bool
     {
-        $base = $this->buildingListItemRepository->findOneBy(['entity' => $this->getCurrentEntity(), 'building' => BuildingId::BUILDING]);
-        return ($base?->getPeopleWorkingStatus() === 1) || !$base;
+        return $this->buildingService->isUnderConstruction($this->getCurrentEntity());
     }
 
     protected function instantiateForm(): FormInterface
@@ -107,11 +111,17 @@ class BuildingYardInfo extends AbstractController
                 ],
                 'data' => StringUtils::formatNumber($foodRequired * $peopleWorking)
             ])
-            ->add('send', SubmitType::class, [
+            ->add('save', SubmitType::class, [
                 'label' => 'Speichern',
                 'attr' => [
                     'data-action' => 'live#action:render',
                     'data-live-action-param' => "save"
+                ]
+            ])
+            ->add('optimize', ButtonType::class, [
+                'label' => 'Optimieren',
+                'attr' => [
+                    'onclick'=>"updatePeopleWorkingBox('".$this->getPeopleOptimized()."','-1','^-1')"
                 ]
             ])
             ->getForm();
@@ -147,6 +157,23 @@ class BuildingYardInfo extends AbstractController
     {
         $request = $this->requestStack->getCurrentRequest();
         return $this->planetRepository->find($request?->getSession()?->get('cpid'));
+    }
+
+    #[ExposeInTemplate]
+    public function showOptimization(): bool
+    {
+        $request = $this->requestStack->getCurrentRequest();
+        return $request->attributes->has('id');
+    }
+
+    public function getPeopleOptimized(): float
+    {
+        $request = $this->requestStack->getCurrentRequest();
+        if($request->attributes->has('id')) {
+            $item = $this->buildList->item($request->attributes->get('id'))->bl;
+            return $this->buildingService->getPeopleOptimized($item);
+        }
+        return 0;
     }
 
     #[PreMount]
