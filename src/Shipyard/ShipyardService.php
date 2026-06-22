@@ -36,7 +36,8 @@ class ShipyardService
         private readonly ShipDataRepository           $shipDataRepository,
         private readonly TechnologyListItemRepository $technologyListItemRepository,
         private readonly ShipListRepository           $shipListRepository,
-        private readonly FleetShipRepository          $fleetShipRepository
+        private readonly FleetShipRepository          $fleetShipRepository,
+        private readonly string $projectDir,
     )
     {
     }
@@ -120,7 +121,7 @@ class ShipyardService
                 'startTime' => $absolute_starttime,
                 'endTime' => $absolute_starttime + $data->getEndTime() - $data->getStartTime(),
                 'remaining' => $data->getEndTime() - $time,
-                'cancelable' => $this->getCancelResFactor() > 0,
+                'cancelable' => $this->getCancelResFactor() > 0
             ];
 
             $absolute_starttime = $data->getEndTime();
@@ -227,7 +228,7 @@ class ShipyardService
         return [
             'id' => $shipData->getId(),
             'name' => $shipData->getName(),
-            'image' => $shipData->getImagePath('small'),
+            'image' => $shipData->getImagePath(),
             'imageMedium' => $shipData->getImagePath('medium'),
             'shortComment' => $shipData->getShortComment(),
             'special' => $shipData->isSpecial(),
@@ -252,6 +253,7 @@ class ShipyardService
             'maxCount' => $shipData->getMaxCount(),
             'waitTimes' => $waitTimes,
             'hasQueue' => $hasQueue,
+            'model' => file_exists($this->projectDir.'/public/build/models/ship/ship'.$shipData->getId().'.glb')?'/build/models/ship/ship'.$shipData->getId().'.glb':false
         ];
     }
 

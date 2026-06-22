@@ -1,6 +1,7 @@
 {% extends 'game/shipyard/shipyard.html.twig' %}
 
 {% block shipyard_content %}
+    <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/4.0.0/model-viewer.min.js"></script>
     {{ form_start(sortForm) }}
     <twig:Box title="Filter">
         {% block content %}
@@ -136,13 +137,17 @@
                             </tr>
                             <tr>
                                 <td class='shipCellImage' height="120" rowspan="3">
-                                    {% if ship.special %}
-                                        <img src="{{ ship.imageMedium }}" width="120" height="120"/>
+                                    {% if ship.model %}
+                                        <model-viewer src="{{ asset(ship.model) }}" ar shadow-intensity="1" camera-controls touch-action="pan-y"></model-viewer>
                                     {% else %}
-                                        <a href="?page=help&amp;id={{ ship.id }}"
-                                           title="Info zu diesem Schiff anzeigen">
+                                        {% if ship.special %}
                                             <img src="{{ ship.imageMedium }}" width="120" height="120"/>
-                                        </a>
+                                        {% else %}
+                                            <a href="?page=help&amp;id={{ ship.id }}"
+                                               title="Info zu diesem Schiff anzeigen">
+                                                <img src="{{ ship.imageMedium }}" width="120" height="120"/>
+                                            </a>
+                                        {% endif %}
                                     {% endif %}
                                 </td>
                                 <td class='shipCellDescription' colspan="4" valign="top">{{ ship.shortComment }}</td>
