@@ -1,11 +1,11 @@
 {% extends 'layout/game.html.twig' %}
 {% block content %}
-    <h1>Raumschiffswerft des Planeten {{ planet.displayName }}</h1>
+    <h1>Raumschiffswerft (Stufe {{ level }}) des Planeten {{ planet.displayName }}</h1>
 
     <twig:ResourceBox/>
 
+    <twig:ShipYardInfo/>
 
-
-    {% block shipyard %}
+    {% block shipyard_content %}
     {% endblock %}
 {% endblock %}

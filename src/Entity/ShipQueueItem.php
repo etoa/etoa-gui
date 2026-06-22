@@ -32,16 +32,16 @@ class ShipQueueItem
     private int $count;
 
     #[ORM\Column(name: "queue_starttime", type: "integer")]
-    private int $startTime;
+    private int $startTime = 0;
 
     #[ORM\Column(name: "queue_endtime", type: "integer")]
-    private int $endTime;
+    private int $endTime = 0;
 
     #[ORM\Column(name: "queue_objtime", type: "integer")]
-    private int $objectTime;
+    private int $objectTime = 0;
 
     #[ORM\Column(name: "queue_build_type", type: "integer")]
-    private int $buildType;
+    private int $buildType = 0;
 
     public static function createFromData(array $data): ShipQueueItem
     {

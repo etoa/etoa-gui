@@ -5,6 +5,8 @@ namespace EtoA\Ship;
 use Doctrine\Persistence\ManagerRegistry;
 use EtoA\Core\AbstractRepository;
 use EtoA\Entity\Entity;
+use EtoA\Entity\Planet;
+use EtoA\Entity\Ship;
 use EtoA\Entity\ShipQueueItem;
 use EtoA\Entity\User;
 
@@ -47,30 +49,19 @@ class ShipQueueRepository extends AbstractRepository
         return array_map(fn ($row) => ShipQueueItem::createFromData($row), $data);
     }
 
-    public function add(int $userId, int $shipId, int $entityId, int $count, int $startTime, int $endTime, int $objectTime): int
+    public function add(User $user, Ship $ship, Planet $entity, int $count, int $startTime, int $endTime, int $objectTime): void
     {
-        $this->createQueryBuilder('q')
-            ->insert('ship_queue')
-            ->values([
-                'queue_user_id' => ':userId',
-                'queue_ship_id' => ':shipId',
-                'queue_entity_id' => ':entityId',
-                'queue_cnt' => ':count',
-                'queue_starttime' => ':startTime',
-                'queue_endtime' => ':endTime',
-                'queue_objtime' => ':objTime',
-            ])
-            ->setParameters([
-                'userId' => $userId,
-                'shipId' => $shipId,
-                'entityId' => $entityId,
-                'count' => $count,
-                'startTime' => $startTime,
-                'endTime' => $endTime,
-                'objTime' => $objectTime,
-            ])->executeQuery();
+        $item = new ShipQueueItem();
+        $item->setUser($user);
+        $item->setShip($ship);
+        $item->setEntity($entity);
+        $item->setCount($count);
+        $item->setStartTime($startTime);
+        $item->setEndTime($endTime);
+        $item->setObjectTime($objectTime);
 
-        return (int) $this->getConnection()->lastInsertId();
+        $this->persist($item);
+        $this->save();
     }
 
     public function getQueueItem(int $id): ?ShipQueueItem
@@ -143,13 +134,10 @@ class ShipQueueRepository extends AbstractRepository
             ->executeQuery();
     }
 
-    public function deleteQueueItem(int $id): void
+    public function deleteQueueItem(ShipQueueItem $item): void
     {
-        $this->createQueryBuilder('q')
-            ->delete('ship_queue')
-            ->where('queue_id = :id')
-            ->setParameter('id', $id)
-            ->executeQuery();
+        $this->remove($item);
+        $this->save();
     }
 
     public function freezeConstruction(int $userId): void

@@ -73,7 +73,7 @@ class ShipSearch extends AbstractSearch
     public function special(bool $special): ShipSearch
     {
         $this->parts[] = 'q.special = :special';
-        $this->parameters['special'] = (int) $special;
+        $this->parameters['special'] = $special;
 
         return $this;
     }

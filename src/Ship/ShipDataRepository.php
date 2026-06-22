@@ -7,6 +7,14 @@ use Doctrine\Persistence\ManagerRegistry;
 use EtoA\Core\AbstractRepository;
 use EtoA\Entity\Ship;
 
+/**
+ * @extends ServiceEntityRepository<Ship>
+ *
+ * @method Ship|null find($id, $lockMode = null, $lockVersion = null)
+ * @method Ship|null findOneBy(array $criteria, array $orderBy = null)
+ * @method Ship[]    findAll()
+ * @method Ship[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ */
 class ShipDataRepository extends AbstractRepository
 {
     public function __construct(ManagerRegistry $registry)

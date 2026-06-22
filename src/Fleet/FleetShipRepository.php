@@ -224,4 +224,17 @@ class FleetShipRepository extends AbstractRepository
             ->fetchAllKeyValue());
     }
 
+    public function getByUserAndShip(int|User $userId, int|Ship $ship): array
+    {
+        return $this->createQueryBuilder('q')
+            ->innerJoin('App:Fleet', 'f', 'with', 'f.id = q.fleet AND f.user = :userId')
+            ->andWhere('q.ship = :ship')
+            ->setParameters([
+                'userId' => $userId,
+                'ship' => $ship
+            ])
+            ->getQuery()
+            ->execute();
+    }
+
 }

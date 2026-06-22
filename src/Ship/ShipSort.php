@@ -13,13 +13,13 @@ class ShipSort extends AbstractSort
         "structure" => "Struktur",
         "shield" => "Schild",
         "speed" => "Geschwindigkeit",
-        "time2start" => "Startzeit",
-        "time2land" => "Landezeit",
+        "timeToStart" => "Startzeit",
+        "timeToLand" => "Landezeit",
         "capacity" => "Kapazität",
-        "costs_metal" => "Titan",
-        "costs_crystal" => "Silizium",
-        "costs_plastic" => "PVC",
-        "costs_fuel" => "Tritium",
+        "costsMetal" => "Titan",
+        "costsCrystal" => "Silizium",
+        "costsPlastic" => "PVC",
+        "costsFuel" => "Tritium",
     ];
 
     public static function id(): ShipSort
@@ -34,20 +34,20 @@ class ShipSort extends AbstractSort
 
     public static function category(): ShipSort
     {
-        return new ShipSort(['ship_cat_id' => null, 'ship_order' => null, 'ship_name' => null]);
+        return new ShipSort(['q.cat' => null, 'q.order' => null, 'q.name' => null]);
     }
 
     public static function haven(): ShipSort
     {
-        return new ShipSort(['special_ship' => 'DESC', 'ship_launchable' => 'DESC', 'ship_name' => null]);
+        return new ShipSort(['q.special' => 'DESC', 'q.launchable' => 'DESC', 'q.name' => null]);
     }
 
     public static function specialWithUserSort(string $userSort, string $order): ShipSort
     {
         if (isset(self::USER_SORT_VALUES[$userSort])) {
-            return new ShipSort(['special_ship' => 'DESC', 'ship_' . $userSort => $order]);
+            return new ShipSort(['q.special' => 'DESC','q.'. $userSort => $order]);
         }
 
-        return new ShipSort(['special_ship' => 'DESC', 'ship_name' => null]);
+        return new ShipSort(['q.special' => 'DESC', 'q.name' => null]);
     }
 }

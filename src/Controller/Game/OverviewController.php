@@ -45,7 +45,6 @@ class OverviewController extends AbstractGameController
         private readonly ForeignFleetService              $foreignFleetLoader,
         private readonly TechnologyDataRepository         $technologyDataRepository,
         private readonly TechnologyListItemRepository     $technologyRepository,
-        private readonly BuildingDataRepository           $buildingDataRepository,
         private readonly ShipDataRepository               $shipDataRepository,
         private readonly DefenseDataRepository            $defenseDataRepository,
         private readonly BuildingListItemRepository       $buildingRepository,
@@ -124,7 +123,6 @@ class OverviewController extends AbstractGameController
 
         //Liest alle Planeten des Besitzers aus und gibt benötigte infos
         $userPlanets = $this->planetRepository->getUserPlanets($this->getUser()->getId());
-        $shipNames = $this->shipDataRepository->getShipNames(true);
         $defenseNames = $this->defenseDataRepository->getDefenseNames(true);
 
         $shipyard_rest_time = [];
@@ -180,7 +178,7 @@ class OverviewController extends AbstractGameController
                 //Verbleibende Zeit bis zur fertigstellung des aktuellen Auftrages
                 $shipyard_rest_time[$userPlanet->getEntity()->getId()] = $queueItem->getEndTime() - time();
                 //Schiffsname
-                $shipyard_name[$userPlanet->getEntity()->getId()] = $shipNames[$queueItem->getShip()->getId()];
+                $shipyard_name[$userPlanet->getEntity()->getId()] = $queueItem->getShip()->getName();
 
                 //infos über den raumschiffswerft
                 $shipyard_h = floor($shipyard_rest_time[$userPlanet->getEntity()->getId()] / 3600);

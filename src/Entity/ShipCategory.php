@@ -17,7 +17,7 @@ class ShipCategory
     #[ORM\Column(name: "cat_name", type: "string")]
     private string $name;
 
-    #[ORM\Column(name: "cat_border", type: "integer")]
+    #[ORM\Column(name: "cat_order", type: "integer")]
     private int $order;
 
     #[ORM\Column(name: "cat_color", type: "string")]
