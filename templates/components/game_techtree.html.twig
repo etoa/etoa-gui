@@ -1,0 +1,48 @@
+<div
+        {{ attributes }}
+>
+    {{ form_start(form) }}
+    {{ form_row(form.obj) }}
+    {{ form_end(form) }}
+
+    <twig:Box title="Grafische Darstellung">
+            <div id="reqInfo" style="width:100%;text-align:center; color:#fff;border:none;margin:0 auto;">
+                {% set object = outerScope.this.object %}
+
+                {% if outerScope.this.requiredObjects|length > 0 %}
+                    <div class="techtreeItemContainer techtreeParentBranches">
+                        {% for item in this.requiredObjects %}
+                            <div class="techtreeItem"
+                                 style="background:url('{{ item.building?item.building.getImagePath('medium'):item.tech.getImagePath('medium') }}');">
+                                <div class="techtreeItemLevel">Lvl <b>{{ item.level }}</b></div>
+                                <a href="javascript:;" onclick="" style="height:100%;display:block;"></a>
+                                <div class="techtreeItemName">{{ item.building?item.building.name:item.tech.name }}</div>
+                            </div>
+                        {% endfor %}
+                        <br style="clear:both;"/>
+                    </div>
+
+                    <div style="margin:0 auto;">wird benötigt für</div>
+                {% endif %}
+
+                <div class="techtreeMainItem" style="background:url('{{ object.getImagePath('medium') }}');">
+                    <div class="techtreeItemName">{{ object.name }}</div>
+                </div>
+
+                {% if outerScope.this.allowedObjects|length > 0 %}
+                    <div style="margin:10px auto;">ermöglicht</div>
+                    <div class="techtreeItemContainer  techtreeChildBranches">
+                        {% for item in outerScope.this.allowedObjects %}
+                            <div class="techtreeItem" style="background:url('{{ item.obj.getImagePath('medium') }}');">
+                                <div class="techtreeItemLevel">Lvl <b>{{ item.level }}</b></div>
+                                <a href="javascript:;" onclick="" style="height:100%;display:block;"></a>
+                                <div class="techtreeItemName">{{ item.obj.name }}</div>
+                            </div>
+                        {% endfor %}
+                        <br style="clear:both;"/>
+                    </div>
+                {% endif %}
+            </div>
+
+    </twig:Box>
+</div>

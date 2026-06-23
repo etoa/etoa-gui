@@ -46,9 +46,9 @@ class TechTreeComponent extends AbstractController
     ) {
     }
 
-    public function getObject(): Missile|Ship|Defense|Technology|Building
+    public function getObject(): Missile|Ship|Defense|Technology|Building|null
     {
-        return $this->form->get('obj')->getData();
+        return $this->form->get('obj')?->getData();
     }
 
     public function getRequiredObjects():array {
