@@ -1,4 +1,18 @@
 {% extends 'layout/game.html.twig' %}
 {% block content %}
-    {{ component('techtree') }}
+    <h1>Technikbaum des Planeten {{ planet.displayName }}</h1>
+
+    {% set tabs = {
+        "game.techtree.general" : "Grafik",
+        "game.techtree.building" : "Gebäude",
+        "game.techtree.tech" : "Technologien",
+        "game.techtree.ships" : "Schiffe",
+        "game.techtree.defense" : "Verteidigung",
+        "game.techtree.missile" : "Raketen",
+    } %}
+
+    <twig:tabmenu data="{{ tabs }}" active="{{ app.request.attributes.get('_route') }}"/>
+
+    {% block techtree %}
+    {% endblock %}
 {% endblock %}
