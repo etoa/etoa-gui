@@ -203,7 +203,7 @@ class OverviewController extends AbstractGameController
                 //Verbleibende Zeit bis zur fertigstellung des aktuellen Auftrages
                 $defense_rest_time[$userPlanet->getEntity()->getId()] = $queueItem->getEndTime() - time();
                 //Defname
-                $defense_name[$userPlanet->getEntity()->getId()] = $defenseNames[$queueItem->getDefense()];
+                $defense_name[$userPlanet->getEntity()->getId()] = $queueItem->getDefense()->getName();
 
                 // Infos über die Waffenfabrik
                 $defense_h = floor($defense_rest_time[$userPlanet->getEntity()->getId()] / 3600);

@@ -29,39 +29,22 @@ class DefenseQueueItem
     private ?Defense $defense = null;
 
     #[ORM\Column(name: "queue_cnt", type: "integer")]
-    private int $count;
+    private int $count = 0;
 
     #[ORM\Column(name: "queue_starttime", type: "integer")]
-    private int $startTime;
+    private int $startTime = 0;
 
     #[ORM\Column(name: "queue_endtime", type: "integer")]
-    private int $endTime;
+    private int $endTime = 0;
 
     #[ORM\Column(name: "queue_objtime", type: "integer")]
-    private int $objectTime;
+    private int $objectTime = 0;
 
     #[ORM\Column(name: "queue_build_type", type: "integer")]
-    private int $buildType;
+    private int $buildType = 0;
 
     #[ORM\Column(name: "queue_user_click_time", type: "integer")]
-    private int $userClickTime;
-
-    public static function createFromData(array $data): DefenseQueueItem
-    {
-        $item = new DefenseQueueItem();
-        $item->id = (int) $data['queue_id'];
-        $item->userId = (int) $data['queue_user_id'];
-        $item->defenseId = (int) $data['queue_def_id'];
-        $item->entityId = (int) $data['queue_entity_id'];
-        $item->count = (int) $data['queue_cnt'];
-        $item->startTime = (int) $data['queue_starttime'];
-        $item->endTime = (int) $data['queue_endtime'];
-        $item->objectTime = (int) $data['queue_objtime'];
-        $item->buildType = (int) $data['queue_build_type'];
-        $item->userClickTime = (int) $data['queue_user_click_time'];
-
-        return $item;
-    }
+    private int $userClickTime = 0;
 
     public function getId(): ?int
     {

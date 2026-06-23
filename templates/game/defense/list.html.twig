@@ -1,0 +1,260 @@
+{% extends 'game/defense/defense.html.twig' %}
+
+{% block defense_content %}
+    <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/4.0.0/model-viewer.min.js"></script>
+    {{ form_start(sortForm) }}
+    <twig:Box title="Filter">
+        {% block content %}
+            <div style="text-align:center;">
+                {{ form_widget(sortForm.itemOrderDef) }}
+                {{ form_widget(sortForm.itemOrderWay) }}
+                {{ form_widget(sortForm.submit) }}
+            </div>
+        {% endblock %}
+    </twig:Box>
+    {{ form_end(sortForm) }}
+
+    {# Build Queue #}
+    {% if defenseData.queue is not empty %}
+        <table class="tb" style="width:100%">
+            <caption>Bauliste</caption>
+            {# Current Item #}
+            {% if defenseData.queue.current is defined %}
+                <tr>
+                    <th colspan="2">Aktuell</th>
+                    <th>Start</th>
+                    <th>Ende</th>
+                    <th colspan="2">Verbleibend</th>
+                </tr>
+                <tr>
+                    <td colspan="2">{{ defenseData.queue.current.name }}</td>
+                    <td>{{ defenseData.queue.current.startTime|date('d.m.Y H:i') }}</td>
+                    <td>{{ defenseData.queue.current.endTime|date('d.m.Y H:i') }}</td>
+                    <td colspan="2">{{ formatTimespan(defenseData.queue.current.remaining) }}</td>
+                </tr>
+            {% endif %}
+
+            {# Queue Items #}
+            <tr>
+                <th style="width:40px;">Anzahl</th>
+                <th style='width:100%'>Bauauftrag</th>
+                <th>Start</th>
+                <th>Ende</th>
+                <th>Verbleibend</th>
+                <th>Aktionen</th>
+            </tr>
+            {% for item in defenseData.queue.items %}
+                <tr>
+                    <td>{{ item.count }}</td>
+                    <td>{{ item.name }}</td>
+                    <td style='white-space: nowrap;'>{{ item.startTime|date('d.m.Y H:i') }}</td>
+                    <td style='white-space: nowrap;'>{{ item.endTime|date('d.m.Y H:i') }}</td>
+                    <td style='white-space: nowrap;'>{{ formatTimespan(item.remaining) }}</td>
+                    <td>
+                        {% if item.cancelable %}
+                            <a href="{{ path('game.defense.cancel',{id:item.id}) }}"
+                               onclick="return confirm('Soll dieser Auftrag wirklich abgebrochen werden?');">Abbrechen</a>
+                        {% else %}
+                            -
+                        {% endif %}
+                    </td>
+                </tr>
+            {% endfor %}
+        </table>
+    {% endif %}
+
+    {# defense Categories #}
+    {% if defenseData.hasDefenses %}
+        {{ form_start(defenseForm) }}
+            {% for category in defenseData.categories %}
+                <table style="width:100%" class="tb defenseCategory {{ defenseData.compactView ? 'compact' : '' }}">
+                    <caption>{{ category.name }}</caption>
+
+                    {% if defenseData.compactView %}
+                        {# Compact View Header #}
+                        <tr>
+                            <th colspan="2" class="tbltitle">Schiff</th>
+                            <th class="tbltitle">Zeit</th>
+                            <th class="tbltitle">{{ constant('EtoA\\Universe\\Resources\\ResourceNames::METAL') }}</th>
+                            <th class="tbltitle">{{ constant('EtoA\\Universe\\Resources\\ResourceNames::CRYSTAL') }}</th>
+                            <th class="tbltitle">{{ constant('EtoA\\Universe\\Resources\\ResourceNames::PLASTIC') }}</th>
+                            <th class="tbltitle">{{ constant('EtoA\\Universe\\Resources\\ResourceNames::FUEL') }}</th>
+                            <th class="tbltitle">{{ constant('EtoA\\Universe\\Resources\\ResourceNames::FOOD') }}</th>
+                            <th class="tbltitle">Anzahl</th>
+                        </tr>
+
+                        {# Compact View defenses #}
+                        {% for defense in category.defenses %}
+                            <tr>
+                                <td class='defenseCellImage'>
+                                        <a href="?page=help&amp;id={{ defense.id }}"><img src="{{ defense.image }}"
+                                                                                       class='defenseImageSmall'/></a>
+                                </td>
+                                <th class='defenseCellName'>
+                                    <span style="font-weight:500">{{ defense.name }}<br/>
+                                    Gebaut:</span> {{ defense.defenseCount|number_format }}
+                                </th>
+                                <td width="13%">{{ formatTimespan(defense.buildTime) }}</td>
+                                <td width="10%"
+                                    {% if defense.costs.metal > defense.available.metal %}style="color:red;"{% endif %}>{{ defense.costs.metal|number_format }}</td>
+                                <td width="10%"
+                                    {% if defense.costs.crystal > defense.available.crystal %}style="color:red;"{% endif %}>{{ defense.costs.crystal|number_format }}</td>
+                                <td width="10%"
+                                    {% if defense.costs.plastic > defense.available.plastic %}style="color:red;"{% endif %}>{{ defense.costs.plastic|number_format }}</td>
+                                <td width="10%"
+                                    {% if defense.costs.fuel > defense.available.fuel %}style="color:red;"{% endif %}>{{ defense.costs.fuel|number_format }}</td>
+                                <td width="10%"
+                                    {% if defense.costs.food > defense.available.food %}style="color:red;"{% endif %}>{{ defense.costs.food|number_format }}</td>
+                                <td>
+                                    {% if defense.defenseCount >= defense.maxCount and defense.maxCount != 0 %}
+                                        Max
+                                    {% else %}
+                                        {% if defense.maxBuildable > 0 %}
+                                            {% set attr = {
+                                                'onmouseover': 'showTT("","Es können maximal '~defense.maxBuildable~' Anlagen gebaut werden",1,event,this);'
+                                            }%}
+                                        {% else %}
+                                            {% set attr = {
+                                                'onmouseover': 'showTT("","Rohstoffe verfügbar in '~formatTimespan(max(defense.waitTimes))~'",1,event,this);'
+                                            }%}
+                                        {% endif %}
+                                        {{ form_widget(defenseForm[defense.id],{'attr': attr}) }} Stück
+                                        <br><a href="javascript:;"
+                                               onclick="document.getElementById('build_count_{{ defense.id }}').value={{ defense.maxBuildable }};">max</a>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    {% else %}
+                        {# Full View defenses #}
+                        {% for defense in category.defenses %}
+                            <tr class='defenseRowName'>
+                                <th colspan="5" height="20">{{ defense.name }}</th>
+                            </tr>
+                            <tr>
+                                <td class='defenseCellImage' height="120" rowspan="3">
+                                    {% if defense.model %}
+                                        <model-viewer src="{{ asset(defense.model) }}" ar shadow-intensity="1" camera-controls touch-action="pan-y"></model-viewer>
+                                    {% else %}
+                                        <a href="?page=help&amp;id={{ defense.id }}"
+                                           title="Info zu diesem Schiff anzeigen">
+                                            <img src="{{ defense.imageMedium }}" width="120" height="120"/>
+                                        </a>
+                                    {% endif %}
+                                </td>
+                                <td class='defenseCellDescription' colspan="4" valign="top">{{ defense.shortComment }}</td>
+                            </tr>
+                            <tr>
+                                <th height="30">Vorhanden:</th>
+                                <td colspan="3">{{ defense.defenseCount|number_format }}</td>
+                            </tr>
+                            <tr>
+                                <th height="30">Bauzeit</th>
+                                <td>{{ formatTimespan(defense.buildTime) }}</td>
+                                {% if defense.defenseCount >= defense.maxCount and defense.maxCount != 0 %}
+                                    <th height="30" colspan="2"><i>Maximalanzahl erreicht</i></th>
+                                {% else %}
+                                    <th height="30">In Auftrag geben:</th>
+                                    <td>
+                                        {% if defense.maxBuildable > 0 %}
+                                            {% set attr = {
+                                                'onmouseover': 'showTT("","Es können maximal '~defense.maxBuildable~' Schiffe gebaut werden",1,event,this);'
+                                            }%}
+                                        {% else %}
+                                            {% set attr = {
+                                                'onmouseover': 'showTT("","Rohstoffe verfügbar in '~formatTimespan(max(defense.waitTimes))~'",1,event,this);'
+                                            }%}
+                                        {% endif %}
+                                        {{ form_widget(defenseForm[defense.id],{'attr': attr}) }} Stück
+                                        <br><a href="javascript:;"
+                                               onclick="document.getElementById('defense_form_{{ defense.id }}').value={{ defense.maxBuildable }};">max</a>
+                                        {% if not defense.hasQueue %}
+                                            &nbsp;<a href=""
+                                                     onclick="if(document.getElementById('changePeople').style.display==='none') {toggleBox('changePeople')};updatePeopleWorkingBox('{{ defense.peopleOptimized }}','-1','^-1');">optimieren</a>
+                                        {% endif %}
+                                    </td>
+                                {% endif %}
+                            </tr>
+                            <tr>
+                                <th height="20"
+                                    width="110">{{ constant('EtoA\\Universe\\Resources\\ResourceNames::METAL') }}:
+                                </th>
+                                <th height="20"
+                                    width="97">{{ constant('EtoA\\Universe\\Resources\\ResourceNames::CRYSTAL') }}:
+                                </th>
+                                <th height="20"
+                                    width="98">{{ constant('EtoA\\Universe\\Resources\\ResourceNames::PLASTIC') }}:
+                                </th>
+                                <th height="20"
+                                    width="97">{{ constant('EtoA\\Universe\\Resources\\ResourceNames::FUEL') }}:
+                                </th>
+                                <th height="20"
+                                    width="98">{{ constant('EtoA\\Universe\\Resources\\ResourceNames::FOOD') }}</th>
+                            </tr>
+                            <tr>
+                                <td height="20" width="110"
+                                        {% if defense.costs.metal > defense.available.metal %}
+                                            style="color:red;"
+                                            {{ tm("Fehlender Rohstoff",formatNumber(
+                                                defense.costs.metal - defense.available.metal)~' '~constant('EtoA\\Universe\\Resources\\ResourceNames::METAL')~'<br />Bereit in '~formatTimespan(defense.waitTimes.metal)
+                                            )|raw }}
+                                        {% endif %}
+                                >
+                                    {{ defense.costs.metal|number_format }}
+                                </td>
+                                <td height="20" width="25%"
+                                        {% if defense.costs.crystal > defense.available.crystal %}
+                                            style="color:red;"
+                                            {{ tm("Fehlender Rohstoff",formatNumber(
+                                                defense.costs.crystal - defense.available.crystal)~' '~constant('EtoA\\Universe\\Resources\\ResourceNames::CRYSTAL')~'<br />Bereit in '~formatTimespan(defense.waitTimes.crystal)
+                                            )|raw }}
+                                        {% endif %}
+                                >
+                                    {{ defense.costs.crystal|number_format }}
+                                </td>
+                                <td height="20" width="25%"
+                                        {% if defense.costs.plastic > defense.available.plastic %}
+                                            style="color:red;"
+                                            {{ tm("Fehlender Rohstoff",formatNumber(
+                                                defense.costs.plastic - defense.available.plastic)~' '~constant('EtoA\\Universe\\Resources\\ResourceNames::PLASTIC')~'<br />Bereit in '~formatTimespan(defense.waitTimes.plastic)
+                                            )|raw }}
+                                        {% endif %}
+                                >
+                                    {{ defense.costs.plastic|number_format }}
+                                </td>
+                                <td height="20" width="25%"
+                                        {% if defense.costs.fuel > defense.available.fuel %}
+                                            style="color:red;"
+                                            {{ tm("Fehlender Rohstoff",formatNumber(
+                                                defense.costs.fuel - defense.available.fuel)~' '~constant('EtoA\\Universe\\Resources\\ResourceNames::FUEL')~'<br />Bereit in '~formatTimespan(defense.waitTimes.fuel)
+                                            )|raw }}
+                                        {% endif %}
+                                >
+                                    {{ defense.costs.fuel|number_format }}
+                                </td>
+                                <td height="20" width="25%"
+                                        {% if defense.costs.food > defense.available.food %}
+                                            style="color:red;"
+                                            {{ tm("Fehlender Rohstoff",formatNumber(
+                                                defense.costs.food - defense.available.food)~' '~constant('EtoA\\Universe\\Resources\\ResourceNames::FOOD')~'<br />Bereit in '~formatTimespan(defense.waitTimes.food)
+                                            )|raw }}
+                                        {% endif %}
+                                >
+                                    {{ defense.costs.food|number_format }}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    {% endif %}
+                </table>
+            {% endfor %}
+
+            {% if defenseData.categories|length > 0 %}
+                {{ form_widget(defenseForm.submit) }}<br/><br/>
+            {% endif %}
+            {{ form_widget(defenseForm._token) }}
+        {{ form_end(defenseForm,{render_rest:false}) }}
+    {% else %}
+        <p>Es können noch keine Anlagen gebaut werden! Baue zuerst die benötigten Gebäude und erforsche die
+            erforderlichen Technologien!</p>
+    {% endif %}
+{% endblock %}

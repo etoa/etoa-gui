@@ -54,7 +54,7 @@ class DefenseSearch extends AbstractSearch
 
     public function raceOrNull(Race|int $raceId): self
     {
-        $this->parts[] = 'q.race IS NULL OR q.race = :raceIdOrNull';
+        $this->parts[] = 'q.race IS NULL OR q.race = 0 OR q.race = :raceIdOrNull';
         $this->parameters['raceIdOrNull'] = $raceId;
 
         return $this;

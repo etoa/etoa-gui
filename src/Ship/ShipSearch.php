@@ -107,7 +107,7 @@ class ShipSearch extends AbstractSearch
 
     public function raceOrNull(Race|int $raceId): ShipSearch
     {
-        $this->parts[] = 'q.race = 0 OR q.race = :raceIdOrNull';
+        $this->parts[] = 'q.race = 0 OR q.race IS NULL OR q.race = :raceIdOrNull';
         $this->parameters['raceIdOrNull'] = $raceId;
 
         return $this;

@@ -30,7 +30,7 @@ class DefenseQueueSearch extends AbstractSearch
         return $this;
     }
 
-    public function entity(Planet $entity): self
+    public function entity(Planet|int $entity): self
     {
         $this->parts[] = 'q.entity = :entity';
         $this->parameters['entity'] = $entity;

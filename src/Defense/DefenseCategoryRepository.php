@@ -18,13 +18,7 @@ class DefenseCategoryRepository extends AbstractRepository
      */
     public function getAllCategories(): array
     {
-        $data = $this->createQueryBuilder('q')
-            ->select('*')
-            ->from('def_cat')
-            ->orderBy('cat_order')
-            ->fetchAllAssociative();
-
-        return array_map(fn ($row) => new DefenseCategory($row), $data);
+        return $this->findBy([],['order'=>'DESC']);
     }
 
     /**

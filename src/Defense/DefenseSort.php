@@ -14,10 +14,10 @@ class DefenseSort extends AbstractSort
         "weapon" => "Waffen",
         "structure" => "Struktur",
         "shield" => "Schild",
-        "costs_metal" => "Titan",
-        "costs_crystal" => "Silizium",
-        "costs_plastic" => "PVC",
-        "costs_fuel" => "Tritium",
+        "costsMetal" => "Titan",
+        "costsCrystal" => "Silizium",
+        "costsPlastic" => "PVC",
+        "costsFuel" => "Tritium",
     ];
 
     public static function id(): DefenseSort

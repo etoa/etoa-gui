@@ -1,0 +1,106 @@
+<div {{ attributes }}>
+    <twig:Table title="Bauhof-Infos">
+        {% block table_content %}
+            <colgroup>
+                <col style="width:400px;"/>
+            </colgroup>
+            {% if outerScope.user.specialist and outerScope.user.specialist.costsDefense != 1 %}
+                <tr>
+                    <td>Kostenreduktion durch {{ outerScope.user.specialist.name }}:</td>
+                    <td>{{ formatPercentString(outerScope.user.specialist.costsDefense) }}</td>
+                </tr>
+            {% endif %}
+            {% if outerScope.user.specialist and outerScope.user.specialist.timeDefense != 1 %}
+                <tr>
+                    <td>Bauzeitverringerung durch {{ outerScope.user.specialist.name }}:</td>
+                    <td>{{ formatPercentString(outerScope.user.specialist.timeDefense) }}</td>
+                </tr>
+            {% endif %}
+            <tr>
+                <td>Eingestellte Arbeiter:</td>
+                <td>
+                    <span id="people_working">
+                        {% if outerScope.working == 0 %}
+                            0
+                        {% else %}
+                            {{ formatNumber(outerScope.working) }}
+                        {% endif %}
+                        {% if not outerScope.isCurrentlyBuilding %}
+                            <a href="javascript:;" onclick="toggleBox('changePeople');">[Ändern]</a>
+                        {% endif %}
+                    </span>
+                </td>
+            </tr>
+            {% if outerScope.working > 0 %}
+                <tr>
+                    <td>Zeitreduktion durch Arbeiter pro Auftrag:</td>
+                    <td>
+                        <span id="people_work_done">{{ formatTimespan(configValue('people_work_done') * outerScope.working) }}</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Nahrungsverbrauch durch Arbeiter pro Auftrag:</td>
+                    <td>
+                        <span id="people_food_require">{{ formatNumber(configValue('people_food_require') * outerScope.working) }}</span>
+                    </td>
+                </tr>
+            {% endif %}
+            {% if outerScope.genTechLevel > 0 %}
+                <tr>
+                    <td>Gentechnologie:</td>
+                    <td>{{ outerScope.genTechLevel }}</td>
+                </tr>
+                <tr>
+                    <td>Minimale Bauzeit (mit Arbeiter):</td>
+                    <td>Bauzeit * {{ 0.1 - (outerScope.genTechLevel / 100) }}</td>
+                </tr>
+            {% endif %}
+            <tr>
+                <td>Bauzeitverringerung:</td>
+                <td>{{ outerScope.timeBonusString }}</td>
+            </tr>
+            <tr>
+                {{ outerScope.returnString|raw }}
+            </tr>
+        {% endblock %}
+    </twig:Table>
+
+    <div id="changePeople" style="display:none;">
+        {{ form_start(form) }}
+            {{ form_widget(form.peopleOptimized,{id:'peopleOptimized'}) }}
+            {{ form_widget(form.peopleFree,{id:'peopleFree'}) }}
+            {{ form_widget(form.foodAvailable,{id:'foodAvaiable'}) }}
+            {{ form_widget(form.foodRequired,{id:'foodRequired'}) }}
+            {{ form_widget(form.workDone,{id:'workDone'}) }}
+
+            <twig:Table title="Bauhof-Infos">
+                {% block table_content %}
+                    <tr>
+                        <th>Eingestellte Arbeiter</th>
+                        <td>
+                            {{ form_widget(form.peopleWorking,{id:'peopleWorking'}) }}
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>Zeitreduktion</th>
+                        <td>
+                            {{ form_widget(form.timeReduction,{id:'timeReduction'}) }}
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>Nahrungsverbrauch</th>
+                        <td>
+                            {{ form_widget(form.foodUsing,{id:'foodUsing'}) }}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2" style="text-align:center;">
+                            <div id="changeWorkingPeopleError" style="display:none;"></div>
+                            {{ form_widget(form.save) }}&nbsp;
+                        </td>
+                    </tr>
+                {% endblock %}
+            </twig:Table>
+        {{ form_end(form) }}
+    </div>
+</div>
