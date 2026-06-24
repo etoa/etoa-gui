@@ -1,0 +1,44 @@
+{% extends 'game/help/help.html.twig' %}
+
+{% block help %}
+    <h2>Übersicht</h2>
+
+    Hier findest du Informationen zu verschiedenen Objekten des Spiels:<br/><br/>
+
+    <twig:Table title="Ressourcen">
+        {% block table_content %}
+            <tr>
+                {% for link in links %}
+                    <td style="text-align:center;width:{{ (100 / (links|length))|round(0, 'floor') }}%">
+                        <a href="{{ path(link.url) }}">{{ link.label }}</a>
+                    </td>
+                {% endfor %}
+            </tr>
+        {% endblock %}
+    </twig:Table>
+
+    <twig:Table title="Externe Ressourcen">
+        {% block table_content %}
+            <tr>
+                {% for link in links %}
+                    <td style="text-align:center;width:{{ (100 / (links|length))|round(0, 'floor') }}%">
+                        <a href="{{ path(link.url) }}">{{ link.label }}</a>
+                    </td>
+                {% endfor %}
+            </tr>
+        {% endblock %}
+    </twig:Table>
+
+    {% for cat,data in helpNav %}
+        <twig:Table title="cat">
+            {% block table_content %}
+                {% for title,item in data %}
+                    <tr>
+                        <td width="35%"><b><a href="?$link &site= $item[0]">{{ title }}</b></td>
+                        <td>{{ item[1] }}</td>
+                    </tr>
+                {% endfor %}
+            {% endblock %}
+        </twig:Table>
+    {% endfor %}
+{% endblock %}
