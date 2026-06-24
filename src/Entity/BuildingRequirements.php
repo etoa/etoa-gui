@@ -4,9 +4,10 @@ namespace EtoA\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use EtoA\Building\BuildingRequirementRepository;
+use EtoA\Core\AbstractRequirements;
 
 #[ORM\Entity(repositoryClass: BuildingRequirementRepository::class)]
-class BuildingRequirements
+class BuildingRequirements implements AbstractRequirements
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]

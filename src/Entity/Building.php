@@ -7,11 +7,12 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use EtoA\Building\BuildingRepository;
 use EtoA\Core\ObjectWithImage;
+use EtoA\Core\ObjectWithRequirements;
 use EtoA\Universe\Resources\BaseResources;
 
 #[ORM\Entity(repositoryClass: BuildingRepository::class)]
 #[ORM\Table(name: 'buildings')]
-class Building implements ObjectWithImage
+class Building implements ObjectWithImage, ObjectWithRequirements
 {
     public function __construct() {
         $this->objectRequirements = new ArrayCollection();

@@ -2,6 +2,7 @@
 
 namespace EtoA\Components\Core;
 
+use Doctrine\Common\Util\ClassUtils;
 use EtoA\Building\BuildingDataRepository;
 use EtoA\Building\BuildingRequirementRepository;
 use EtoA\Defense\DefenseDataRepository;
@@ -22,6 +23,8 @@ use EtoA\Technology\TechnologyRequirementRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormInterface;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
+use Symfony\UX\LiveComponent\Attribute\LiveAction;
+use Symfony\UX\LiveComponent\Attribute\LiveArg;
 use Symfony\UX\LiveComponent\ComponentWithFormTrait;
 use Symfony\UX\LiveComponent\DefaultActionTrait;
 
@@ -79,6 +82,43 @@ class TechTreeComponent extends AbstractController
         }
 
         return $allowedObjects;
+    }
+
+    #[LiveAction]
+    public function selectObject(#[LiveArg] int $objectId, #[LiveArg] string $objectType): void
+    {
+        $repository = match($objectType) {
+            'building' => $this->buildingDataRepository,
+            'technology' => $this->technologyDataRepository,
+            'ship' => $this->shipDataRepository,
+            'defense' => $this->defenseDataRepository,
+            'missile' => $this->missileDataRepository,
+            default => throw new \InvalidArgumentException('Invalid object type'),
+        };
+
+        $object = $repository->find($objectId);
+        if ($object) {
+            $this->formValues['obj'] = match(ClassUtils::getClass($object)) {
+                Building::class => 'b-' . $object->getId(),
+                Technology::class => 't-' . $object->getId(),
+                Ship::class => 's-' . $object->getId(),
+                Defense::class => 'd-' . $object->getId(),
+                Missile::class => 'm-' . $object->getId(),
+                default => '',
+            };
+        }
+    }
+
+    public function getObjectType(mixed $object): string
+    {
+        return match(ClassUtils::getClass($object)) {
+            Building::class => 'building',
+            Technology::class => 'technology',
+            Ship::class => 'ship',
+            Defense::class => 'defense',
+            Missile::class => 'missile',
+            default => throw new \InvalidArgumentException('Unknown object type'),
+        };
     }
 
     protected function instantiateForm(): FormInterface

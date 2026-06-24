@@ -13,28 +13,28 @@ class BuildingSearch extends AbstractSearch
 
     public function withProductionOrPowerUse(): self
     {
-        $this->parts[] = 'building_prod_metal > 0 OR building_prod_crystal > 0 OR building_prod_plastic > 0 OR building_prod_fuel > 0 OR building_prod_food > 0 OR building_power_use > 0';
+        $this->parts[] = 'q.prodMetal > 0 OR q.prodCrystal > 0 OR q.prodPlastic > 0 OR q.prodFuel > 0 OR q.prodFood > 0 OR q.powerUse > 0';
 
         return $this;
     }
 
     public function withPowerProduction(): self
     {
-        $this->parts[] = 'building_prod_power > 0';
+        $this->parts[] = 'q.prodPower > 0';
 
         return $this;
     }
 
     public function storage(): self
     {
-        $this->parts[] = 'building_store_metal > 0 OR building_store_crystal > 0 OR building_store_plastic > 0 OR building_store_fuel > 0 OR building_store_food > 0';
+        $this->parts[] = 'q.storeMetal > 0 OR q.storeCrystal > 0 OR q.storePlastic > 0 OR q.storeFuel > 0 OR q.storeFood > 0';
 
         return $this;
     }
 
     public function show(): self
     {
-        $this->parts[] = 'building_show = 1';
+        $this->parts[] = 'q.show = 1';
 
         return $this;
     }

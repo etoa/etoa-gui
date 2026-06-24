@@ -6,11 +6,12 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use EtoA\Core\ObjectWithImage;
+use EtoA\Core\ObjectWithRequirements;
 use EtoA\Defense\DefenseDataRepository;
 use EtoA\Universe\Resources\BaseResources;
 
 #[ORM\Entity(repositoryClass: DefenseDataRepository::class)]
-class Defense implements ObjectWithImage
+class Defense implements ObjectWithImage, ObjectWithRequirements
 {
     public function __construct() {
         $this->objectRequirements = new ArrayCollection();

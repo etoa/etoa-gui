@@ -3,10 +3,11 @@
 namespace EtoA\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use EtoA\Core\AbstractRequirements;
 use EtoA\Missile\MissileRequirementRepository;
 
 #[ORM\Entity(repositoryClass: MissileRequirementRepository::class)]
-class MissileRequirements
+class MissileRequirements implements AbstractRequirements
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]

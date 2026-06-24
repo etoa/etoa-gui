@@ -3,10 +3,11 @@
 namespace EtoA\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use EtoA\Core\AbstractRequirements;
 use EtoA\Ship\ShipRequirementRepository;
 
 #[ORM\Entity(repositoryClass: ShipRequirementRepository::class)]
-class ShipRequirements
+class ShipRequirements implements AbstractRequirements
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]

@@ -6,12 +6,13 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use EtoA\Core\ObjectWithImage;
+use EtoA\Core\ObjectWithRequirements;
 use EtoA\Missile\MissileDataRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: MissileDataRepository::class)]
 #[ORM\Table(name: 'missiles')]
-class Missile implements ObjectWithImage
+class Missile implements ObjectWithImage, ObjectWithRequirements
 {
     public function __construct() {
         $this->objectRequirements = new ArrayCollection();

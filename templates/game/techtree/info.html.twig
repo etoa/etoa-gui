@@ -1,0 +1,32 @@
+{% extends 'game/techtree/techtree.html.twig' %}
+
+{% block techtree %}
+    {% for category in data %}
+        <twig:Table title="{{ category.name }}">
+            {% block table_content %}
+                {% for item in category.items %}
+                    {% for requirement in item.requirements %}
+                        <tr>
+                            {% if loop.first %}
+                                <td width="200" rowspan="{{ item.requirements|length }}">
+                                    <b>{{ item.name }}</b>
+                                </td>
+                            {% endif %}
+                            <td style="color:{{ requirement.passed?'#0f0':'#f00' }};border-right:none;border-top:none; {% if not loop.last %}border-bottom:none;{% endif %}" width="130">{{ requirement.item.name }}</td>
+                            <td style="color:{{ requirement.passed?'#0f0':'#f00' }};border-left:none;border-top:none; {% if not loop.last %}border-bottom:none;{% endif %}" width="70">Stufe {{ requirement.level }}</td>
+                        </tr>
+                    {% else %}
+                        <tr>
+                            <td width="200">
+                                <b>{{ item.name }}</b>
+                            </td>
+                            <td colspan="2">
+                                <i>Keine Voraussetzungen nötig</i>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                {% endfor %}
+            {% endblock %}
+        </twig:Table>
+    {% endfor %}
+{% endblock %}

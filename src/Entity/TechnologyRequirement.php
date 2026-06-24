@@ -3,12 +3,13 @@
 namespace EtoA\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use EtoA\Core\AbstractRequirements;
 use EtoA\Technology\TechnologyRequirementRepository;
 
 #[ORM\Entity(repositoryClass: TechnologyRequirementRepository::class)]
 #[ORM\Table(name: 'tech_requirements')]
 
-class TechnologyRequirement
+class TechnologyRequirement implements AbstractRequirements
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]

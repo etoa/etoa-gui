@@ -6,11 +6,12 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use EtoA\Core\ObjectWithImage;
+use EtoA\Core\ObjectWithRequirements;
 use EtoA\Technology\TechnologyDataRepository;
 
 #[ORM\Entity(repositoryClass: TechnologyDataRepository::class)]
 #[ORM\Table(name: 'technologies')]
-class Technology implements ObjectWithImage
+class Technology implements ObjectWithImage, ObjectWithRequirements
 {
 
     public function __construct() {

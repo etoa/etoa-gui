@@ -3,11 +3,12 @@
 namespace EtoA\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use EtoA\Core\AbstractRequirements;
 use EtoA\Defense\DefenseRequirementRepository;
 
 #[ORM\Entity(repositoryClass: DefenseRequirementRepository::class)]
 #[ORM\Table(name: 'def_requirements')]
-class DefenseRequirements
+class DefenseRequirements implements AbstractRequirements
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]

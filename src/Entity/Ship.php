@@ -5,13 +5,14 @@ namespace EtoA\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use EtoA\Core\ObjectWithImage;
+use EtoA\Core\ObjectWithRequirements;
 use EtoA\Ship\ShipDataRepository;
 use EtoA\Universe\Resources\BaseResources;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: ShipDataRepository::class)]
 #[ORM\Table(name: 'ships')]
-class Ship implements ObjectWithImage
+class Ship implements ObjectWithImage, ObjectWithRequirements
 {
     public function __construct() {
         $this->objectRequirements = new ArrayCollection();
