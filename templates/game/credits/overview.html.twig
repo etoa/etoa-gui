@@ -1,0 +1,28 @@
+{% extends 'layout/game.html.twig' %}
+{% block content %}
+    {% if credits and credits.enabled %}
+        <twig:Box>
+            {{ BBCodeToHTML(credits.content) }}
+        </twig:Box>
+    {% endif %}
+
+    <p>Wir danken den folgenden Open-Source Projekten für ihre tolle und wertvolle Arbeit:</p>
+    <twig:Table>
+        {% block table_content %}
+            <tr>
+                <th>Projekt</th>
+                <th>Beschreibung</th>
+                <th>Website</th>
+            </tr>
+            {% for tp in thirdparty %}
+                <tr>
+                    <td>{{ tp.name }}</td>
+                    <td>{{ tp.description }}</td>
+                    <td>
+                        <a href="{{ tp.url }}" target="_blank">{{ tp.url }}</a>
+                    </td>
+                </tr>
+            {% endfor %}
+        {% endblock %}
+    </twig:Table>
+{% endblock %}
