@@ -1,0 +1,35 @@
+{% extends 'game/help/help.html.twig' %}
+
+{% block help %}
+    {% for type in buildingsWithType %}
+        <twig:Table title="{{ type.name }}">
+            {% block table_content %}
+                {% for building in type.buildings %}
+                    <tr>
+                        <td style="width:40px;padding:0;background:#000;vertical-align:middle;">
+                            <a href="?$link&amp;site=$site&id= $building->id ">
+                                <img src="{{ building.getImagePath('small') }}"
+                                     style="width:40px;height:40px;background:#000;margin:0;"
+                                     alt="Bild {{ building.name }}"
+                                     />
+                            </a>
+                        </td>
+                        <td style="width:130px;">
+                            <a href="?$link&amp;site=$site&amp;id= $building->id "><b>{{ building.name }}</a>
+                        </td>
+                        <td>{{ BBCodeToHTML(building.shortComment)|raw }}</td>
+                        <td style="width:90px">
+                            {% if building.fields === 0 %}
+                                <b>Keine Felder</b>
+                            {% elseif building.fields === 1 %}
+                                <b>{{ building.fields }} Feld</b>
+                            {% else %}
+                                <b>{{ building.fields }} Felder</b>
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
+            {% endblock %}
+        </twig:Table>
+    {% endfor %}
+{% endblock %}

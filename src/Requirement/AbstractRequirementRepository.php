@@ -39,7 +39,7 @@ abstract class AbstractRequirementRepository extends AbstractRepository
     public function getRequiredByBuilding(int|Building $buildingId): array
     {
         return $this->createQueryBuilder('q')
-            ->innerJoin('App:Building', 'b', 'WITH', 'q.building=b.id')
+            ->innerJoin('App:Building', 'b', 'WITH', 'q.obj=b.id')
             ->where('q.building = :id')
             ->andWhere('b.show = 1')
             ->setParameter('id', $buildingId)
@@ -54,7 +54,7 @@ abstract class AbstractRequirementRepository extends AbstractRepository
     public function getRequiredByTechnology(int|Technology $technologyId): array
     {
         return $this->createQueryBuilder('q')
-            ->innerJoin('App:Technology', 'b', 'WITH', 'q.tech=b.id')
+            ->innerJoin('App:Technology', 'b', 'WITH', 'q.obj=b.id')
             ->where('q.tech = :id')
             ->andWhere('b.show = 1')
             ->setParameter('id', $technologyId)

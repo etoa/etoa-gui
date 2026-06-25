@@ -1,47 +1,55 @@
 <div
         {{ attributes }}
 >
-    {{ form_start(form) }}
-    {{ form_row(form.obj) }}
-    {{ form_end(form) }}
+    {% if this.showSelection %}
+        {{ form_start(form) }}
+        {{ form_row(form.obj) }}
+        {{ form_end(form) }}
+    {% endif %}
 
-    <twig:Box title="Grafische Darstellung">
-            <div id="reqInfo" style="width:100%;text-align:center; color:#fff;border:none;margin:0 auto;">
-                {% if outerScope.this.requiredObjects|length > 0 %}
-                    <div class="techtreeItemContainer techtreeParentBranches">
-                        {% for item in outerScope.this.requiredObjects %}
-                            {% set reqObject = item.building ?? item.tech %}
-                            <div class="techtreeItem"
-                                 style="background:url('{{ item.building?item.building.getImagePath('medium'):item.tech.getImagePath('medium') }}');">
-                                <div class="techtreeItemLevel">Lvl <b>{{ item.level }}</b></div>
-                                <a href="javascript:;" data-action="live#action" data-live-action-param="selectObject" data-live-object-id-param="{{ reqObject.id }}" data-live-object-type-param="{{ outerScope.this.getObjectType(reqObject) }}" style="height:100%;display:block;"></a>
-                                <div class="techtreeItemName">{{ item.building?item.building.name:item.tech.name }}</div>
-                            </div>
-                        {% endfor %}
-                        <br style="clear:both;"/>
-                    </div>
-
-                    <div style="margin:0 auto;">wird benötigt für</div>
-                {% endif %}
-
-                <div class="techtreeMainItem" style="background:url('{{ outerScope.this.object.getImagePath('medium') }}');">
-                    <div class="techtreeItemName">{{ outerScope.this.object.name }}</div>
+    <twig:Box title="{{ this.headline }}">
+        <div id="reqInfo" style="width:100%;text-align:center; color:#fff;border:none;margin:0 auto;">
+            {% if outerScope.this.requiredObjects|length > 0 %}
+                <div class="techtreeItemContainer techtreeParentBranches">
+                    {% for item in outerScope.this.requiredObjects %}
+                        {% set reqObject = item.building ?? item.tech %}
+                        <div class="techtreeItem"
+                             style="background:url('{{ item.building?item.building.getImagePath('medium'):item.tech.getImagePath('medium') }}');">
+                            <div class="techtreeItemLevel">Lvl <b>{{ item.level }}</b></div>
+                            <a href="javascript:;" data-action="live#action" data-live-action-param="selectObject"
+                               data-live-object-id-param="{{ reqObject.id }}"
+                               data-live-object-type-param="{{ outerScope.this.getObjectType(reqObject) }}"
+                               style="height:100%;display:block;"></a>
+                            <div class="techtreeItemName">{{ item.building?item.building.name:item.tech.name }}</div>
+                        </div>
+                    {% endfor %}
+                    <br style="clear:both;"/>
                 </div>
 
-                {% if outerScope.this.allowedObjects|length > 0 %}
-                    <div style="margin:10px auto;">ermöglicht</div>
-                    <div class="techtreeItemContainer  techtreeChildBranches">
-                        {% for item in outerScope.this.allowedObjects %}
-                            <div class="techtreeItem" style="background:url('{{ item.obj.getImagePath('medium') }}');">
-                                <div class="techtreeItemLevel">Lvl <b>{{ item.level }}</b></div>
-                                <a href="javascript:;" data-action="live#action" data-live-action-param="selectObject" data-live-object-id-param="{{ item.obj.id }}" data-live-object-type-param="{{ outerScope.this.getObjectType(item.obj) }}" style="height:100%;display:block;"></a>
-                                <div class="techtreeItemName">{{ item.obj.name }}</div>
-                            </div>
-                        {% endfor %}
-                        <br style="clear:both;"/>
-                    </div>
-                {% endif %}
+                <div style="margin:0 auto;">wird benötigt für</div>
+            {% endif %}
+
+            <div class="techtreeMainItem"
+                 style="background:url('{{ outerScope.this.object.getImagePath('medium') }}');">
+                <div class="techtreeItemName">{{ outerScope.this.object.name }}</div>
             </div>
 
+            {% if outerScope.this.allowedObjects|length > 0 %}
+                <div style="margin:10px auto;">ermöglicht</div>
+                <div class="techtreeItemContainer  techtreeChildBranches">
+                    {% for item in outerScope.this.allowedObjects %}
+                        <div class="techtreeItem" style="background:url('{{ item.obj.getImagePath('medium') }}');">
+                            <div class="techtreeItemLevel">Lvl <b>{{ item.level }}</b></div>
+                            <a href="javascript:;" data-action="live#action" data-live-action-param="selectObject"
+                               data-live-object-id-param="{{ item.obj.id }}"
+                               data-live-object-type-param="{{ outerScope.this.getObjectType(item.obj) }}"
+                               style="height:100%;display:block;"></a>
+                            <div class="techtreeItemName">{{ item.obj.name }}</div>
+                        </div>
+                    {% endfor %}
+                    <br style="clear:both;"/>
+                </div>
+            {% endif %}
+        </div>
     </twig:Box>
 </div>

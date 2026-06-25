@@ -4,6 +4,7 @@ namespace EtoA\Components\Core;
 
 use Doctrine\Common\Util\ClassUtils;
 use EtoA\Building\BuildingDataRepository;
+use EtoA\Building\BuildingId;
 use EtoA\Building\BuildingRequirementRepository;
 use EtoA\Defense\DefenseDataRepository;
 use EtoA\Defense\DefenseRequirementRepository;
@@ -25,6 +26,7 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
 use Symfony\UX\LiveComponent\Attribute\LiveAction;
 use Symfony\UX\LiveComponent\Attribute\LiveArg;
+use Symfony\UX\LiveComponent\Attribute\LiveProp;
 use Symfony\UX\LiveComponent\ComponentWithFormTrait;
 use Symfony\UX\LiveComponent\DefaultActionTrait;
 
@@ -33,6 +35,9 @@ class TechTreeComponent extends AbstractController
 {
     use ComponentWithFormTrait;
     use DefaultActionTrait;
+
+    #[LiveProp(writable: true, hydrateWith: 'hydrateData', dehydrateWith: 'dehydrateData')]
+    public mixed $item = null;
 
     public function __construct(
         private readonly BuildingDataRepository          $buildingDataRepository,
@@ -124,7 +129,20 @@ class TechTreeComponent extends AbstractController
     protected function instantiateForm(): FormInterface
     {
         return $this->createFormBuilder()
-            ->add('obj', TechTreeSelectionType::class, ['label' => false])
+            ->add('obj', TechTreeSelectionType::class, [
+                'label' => false,
+                'data' => $this->data??$this->buildingDataRepository->find(BuildingId::BUILDING->value)
+            ])
             ->getForm();
+    }
+
+    public function dehydrateData(mixed $item)
+    {
+        return $item;
+    }
+
+    public function hydrateData($item): mixed
+    {
+        return $item->getId();
     }
 }

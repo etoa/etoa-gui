@@ -35,17 +35,9 @@ class BuildingDataRepository extends AbstractRepository
             ->execute();
     }
 
-    public function getBuilding(int $buildingId): ?Building
+    public function getBuilding(int|Building $buildingId): ?Building
     {
-        $data = $this->createQueryBuilder('q')
-            ->select('b.*')
-            ->from('buildings', 'b')
-            ->andWhere('b.building_id = :building_id')
-            ->andWhere('b.building_show=1')
-            ->setParameter('building_id', $buildingId)
-            ->fetchAssociative();
-
-        return $data !== false ? new Building($data) : null;
+        return $this->findOneBy(['building'=>$buildingId,'show'=>true]);
     }
 
     /**
@@ -53,17 +45,14 @@ class BuildingDataRepository extends AbstractRepository
      */
     public function getBuildingsByType(int $type): array
     {
-        $data = $this->createQueryBuilder('q')
-            ->select('b.*')
-            ->from('buildings', 'b')
-            ->andWhere('b.building_type_id = :type')
-            ->andWhere('b.building_show=1')
+        return $this->createQueryBuilder('q')
+            ->andWhere('q.type = :type')
+            ->andWhere('q.show=1')
             ->setParameter('type', $type)
-            ->orderBy('b.building_order')
-            ->addOrderBy('b.building_name')
-            ->fetchAllAssociative();
-
-        return array_map(fn ($row) => new Building($row), $data);
+            ->orderBy('q.order')
+            ->addOrderBy('q.name')
+            ->getQuery()
+            ->execute();
     }
 
     /**

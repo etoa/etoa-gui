@@ -74,20 +74,9 @@ class BuildingListItemRepository extends AbstractRepository
             ->execute();
     }
 
-    public function getBuildingLevel(int $userId, int $buildingId, int $entityId): int
+    public function getBuildingLevel(Building|int $building, Planet $entity): int
     {
-        return (int)$this->createQueryBuilder('q')
-            ->select('buildlist_current_level')
-            ->from('buildlist')
-            ->where('buildlist_building_id = :buildingId')
-            ->andWhere('buildlist_user_id = :userId')
-            ->andWhere('buildlist_entity_id = :entityId')
-            ->setParameters([
-                'userId' => $userId,
-                'buildingId' => $buildingId,
-                'entityId' => $entityId,
-            ])
-            ->fetchOne();
+        return $this->findOneBy(['entity'=>$entity,'building'=>$building])?->getCurrentLevel??0;
     }
 
     public function getHighestBuildingLevel(int $userId, int $buildingId): int
