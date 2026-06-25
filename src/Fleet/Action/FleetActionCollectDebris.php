@@ -26,7 +26,7 @@ class FleetActionCollectDebris extends FleetAction
         $this->allianceAction = false;
     }
 
-    function allowOnHoliday()
+    function allowOnHoliday(): bool
     {
         return true;
     }
@@ -46,5 +46,15 @@ class FleetActionCollectDebris extends FleetAction
 
     function returningAction()
     {
+    }
+
+    public function getAttitudeString()
+    {
+        return parent::$attitudeString[$this->attitude];
+    }
+
+    public function getAttitudeColor()
+    {
+        return parent::$attitudeColor[$this->attitude];
     }
 }

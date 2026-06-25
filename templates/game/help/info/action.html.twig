@@ -1,0 +1,20 @@
+{% extends 'game/help/help.html.twig' %}
+
+{% block help %}
+    Alle Schiffsaktionen in der Übersicht:<br/><br/>
+
+    {% for a,attitude in attitudes %}
+        <table class="tb" style="width:100%">
+            <caption>
+                <span style="color:{{ attitudeColor[a] }}" > {{ attitudeString[a] }}</span>
+            </caption>
+            {% for data in attitude  %}
+                <tr>
+                    <td class="tbltitle" width="25%">{{ data.name }}</td>
+                    <td class="tbldata"> {{ data.desc|raw }}</td>
+                    <td class="tbldata" width="60"><a href="{{ path('game.help.action.detail',{code:data.code}) }}">Anzeigen</a></td>
+                </tr>
+            {% endfor %}
+        </table>
+    {% endfor %}
+{% endblock %}

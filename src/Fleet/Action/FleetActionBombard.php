@@ -43,4 +43,14 @@ class FleetActionBombard extends FleetAction
     function returningAction()
     {
     }
+
+    public function getAttitudeString()
+    {
+        return parent::$attitudeString[$this->attitude];
+    }
+
+    public function getAttitudeColor()
+    {
+        return parent::$attitudeColor[$this->attitude];
+    }
 }

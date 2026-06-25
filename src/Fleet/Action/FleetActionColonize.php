@@ -43,4 +43,14 @@ Es ist zu beachten, dass man maximal 15 Planeten kontrollieren kann! Bei einer e
     function returningAction()
     {
     }
+
+    public function getAttitudeString()
+    {
+        return parent::$attitudeString[$this->attitude];
+    }
+
+    public function getAttitudeColor()
+    {
+        return parent::$attitudeColor[$this->attitude];
+    }
 }

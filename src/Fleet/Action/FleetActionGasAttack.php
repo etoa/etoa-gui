@@ -42,4 +42,14 @@ Die Chance einen erfolgreichen Gasangriff durchzuf&uuml;hren erh&ouml;ht sich, i
     function returningAction()
     {
     }
+
+    public function getAttitudeString()
+    {
+        return parent::$attitudeString[$this->attitude];
+    }
+
+    public function getAttitudeColor()
+    {
+        return parent::$attitudeColor[$this->attitude];
+    }
 }

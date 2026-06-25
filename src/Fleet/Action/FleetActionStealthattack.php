@@ -42,4 +42,14 @@ Bedingt jedoch, dass keine anderen Schiffe mitfliegen. Bis heute gibt es noch ke
     function returningAction()
     {
     }
+
+    public function getAttitudeString()
+    {
+        return parent::$attitudeString[$this->attitude];
+    }
+
+    public function getAttitudeColor()
+    {
+        return parent::$attitudeColor[$this->attitude];
+    }
 }

@@ -30,7 +30,6 @@ use EtoA\Fleet\Action\FleetActionSpyattack;
 use EtoA\Fleet\Action\FleetActionStealthattack;
 use EtoA\Fleet\Action\FleetActionSupport;
 use EtoA\Fleet\Action\FleetActionTransport;
-use function Symfony\Component\VarDumper\Caster\AmqpCaster;
 
 abstract class FleetAction
 {
@@ -67,7 +66,7 @@ abstract class FleetAction
     //
 
     // Update this list when adding a new class. This makes the getList() faster
-    static private $sublist = array(
+    static private array $sublist = array(
         "transport",
         "fetch",
         "collectdebris",
@@ -98,34 +97,36 @@ abstract class FleetAction
     );
 
     // Colors for different attitudes
-    static public $attitudeColor = array("#ff0", "#0f0", "#f90", "#f00", "#999");
-    static public $attitudeString = array("Neutral", "Friedlich", "Aggressiv", "Feindlich", "Unbekannt");
+    static public array $attitudeColor = array("#ff0", "#0f0", "#f90", "#f00", "#999");
+    static public array $attitudeString = array("Neutral", "Friedlich", "Aggressiv", "Feindlich", "Unbekannt");
 
     // Status descriptions
-    static public $statusCode = array("Hinflug", "R&uuml;ckflug", "Abgebrochen", "Allianz");
+    static public array $statusCode = array("Hinflug", "R&uuml;ckflug", "Abgebrochen", "Allianz");
 
     //
     // Class variables
     //
 
-    protected $code;    // Flight code
-    protected $name;    // Name
-    protected $desc;     // Short description of the action
-    protected $longDesc;     // Long description of the action
+    protected string $code;    // Flight code
+    protected string $name;    // Name
+    protected string $desc;     // Short description of the action
+    protected string $longDesc;     // Long description of the action
 
-    protected $attitude;    // 0: Neutral, 1: Peacefull, 2: A bit hostile 3: Very hostile
-    protected $visible;    // True: Visible to other players, False: Hidden for other players
-    protected $exclusive; // True: Only ships with this action can take part in the fleet except special ships
+    protected int $attitude;    // 0: Neutral, 1: Peacefull, 2: A bit hostile 3: Very hostile
+    protected bool $visible;    // True: Visible to other players, False: Hidden for other players
+    protected bool $exclusive; // True: Only ships with this action can take part in the fleet except special ships
 
-    protected $allowPlayerEntities;
-    protected $allowOwnEntities;
-    protected $allowNpcEntities;
-    protected $allowSourceEntity;
-    protected $allowActivePlayerEntities;
+    protected bool $allowPlayerEntities;
+    protected bool $allowOwnEntities;
+    protected bool $allowNpcEntities;
+    protected bool $allowSourceEntity;
+    protected bool $allowActivePlayerEntities;
+    protected bool $allowAllianceEntities;
 
-    protected $cancelable = true;
-    protected $visibleSource = true;
-    protected $sourceCode = 'u';
+    protected bool $cancelable = true;
+    protected bool $visibleSource = true;
+    protected string $sourceCode = 'u';
+    protected bool $allianceAction;
 
     //
     // Abstract methods
@@ -139,21 +140,24 @@ abstract class FleetAction
 
     abstract function returningAction();
 
+    abstract public function getAttitudeString();
+    abstract public function getAttitudeColor();
+
     //
     // Getters
     //
 
-    function code()
+    function code(): string
     {
         return $this->code;
     }
 
-    function name()
+    function name(): string
     {
         return $this->name;
     }
 
-    function color()
+    function color(): string
     {
         return self::$attitudeColor[$this->attitude];
     }
@@ -163,84 +167,84 @@ abstract class FleetAction
         return "<span style=\"color:" . self::$attitudeColor[$this->attitude] . "\">" . $this->name . "</span>";
     }
 
-    function desc()
+    function desc(): string
     {
         return $this->desc;
     }
 
-    function longDesc()
+    function longDesc(): string
     {
         return $this->longDesc;
     }
 
-    function attitude()
+    function attitude(): int
     {
         return $this->attitude;
     }
 
-    function visible()
+    function visible(): bool
     {
         return $this->visible;
     }
 
-    function exclusive()
+    function exclusive(): bool
     {
         return $this->exclusive;
     }
 
-    function cancelable()
+    function cancelable(): bool
     {
         return $this->cancelable;
     }
 
-    function visibleSource()
+    function visibleSource(): bool
     {
         return $this->visibleSource;
     }
 
-    function sourceCode()
+    function sourceCode(): string
     {
         return $this->sourceCode;
     }
 
     // Overwritable functions
-    function displayName()
+    function displayName(): string
     {
         return $this->name;
     }
 
     // Other functions
-    function allowPlayerEntities()
+    function allowPlayerEntities(): bool
     {
         return $this->allowPlayerEntities;
     }
 
-    function allowActivePlayerEntities()
+    function allowActivePlayerEntities(): bool
     {
         return $this->allowActivePlayerEntities;
     }
 
-    function allowOwnEntities()
+    function allowOwnEntities(): bool
     {
         return $this->allowOwnEntities;
     }
 
-    function allowNpcEntities()
+    function allowNpcEntities(): bool
     {
         return $this->allowNpcEntities;
     }
 
-    function allowSourceEntity()
+    function allowSourceEntity(): bool
     {
         return $this->allowSourceEntity;
     }
 
-    function allowAllianceEntities()
+    function allowAllianceEntities(): bool
     {
         return $this->allowAllianceEntities;
     }
 
-    function allowOnHoliday()
+    function allowOnHoliday(): bool
     {
         return false;
     }
@@ -284,7 +288,8 @@ abstract class FleetAction
                 default => 'EtoA\Fleet\Action\FleetAction' . ucfirst($code),
             };
             try {
-                return new $className();
+                if(class_exists($className))
+                    return new $className();
             } catch (\Exception $e) {
                 echo "Problem mit Flottenaktion $code ($className)!<br/>";
             }

@@ -1,0 +1,34 @@
+{% extends 'game/help/help.html.twig' %}
+
+{% block help %}
+
+    {% if action %}
+        <twig:Box title="{{ action.name }}">
+            {{ action.desc|raw }}<br/><br/>{{ action.longDesc|raw }}
+            <br/><br/><b>Gesinnung:</b>
+            <span style="color: {{ action.attitudeColor }}">{{ action.attitudeString }}</span>
+            <br/><b>Sichtbarkeit:</b>{{ action.visible ? 'Für das Ziel sichtbar.' : 'Nur für mich sichtbar.' }}
+            <br/><b>Exklusiv:</b>{{ action.exclusive ? 'Ja, nur Spezialschiffe oder Schiffe mit dieser Fähigkeit dürfen
+            mitfliegen.' : 'Nein, alle Schiffe können mitfliegen.' }}
+        </twig:Box>
+        <twig:Table title="Schiffe">
+            {% block table_content %}
+                {% for id,shipName in shipNames %}
+                    <tr>
+                        <td class="tbldata">
+                            <a href=" HELP_URL &amp;id= $shipId ">{{ shipName.name }}</a>
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td class="tbldata">Keine bekannten Schiffe haben diese Aktion</td>
+                    </tr>
+                {% endfor %}
+            {% endblock %}
+        </twig:Table>
+    {% endif %}
+    &nbsp;
+    <a href="{{ path('game.help.action') }}">
+        <input type="button" value="Schiffsaktionen" onclick="document.location='?$link&amp;site=action'"/>
+    </a>
+{% endblock %}

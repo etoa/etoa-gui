@@ -26,7 +26,7 @@ class FleetActionFakeattack extends FleetAction
         $this->allianceAction = false;
     }
 
-    function displayName()
+    function displayName(): string
     {
         return "Angriff";
     }
@@ -45,5 +45,15 @@ class FleetActionFakeattack extends FleetAction
 
     function returningAction()
     {
+    }
+
+    public function getAttitudeString()
+    {
+        return parent::$attitudeString[$this->attitude];
+    }
+
+    public function getAttitudeColor()
+    {
+        return parent::$attitudeColor[$this->attitude];
     }
 }

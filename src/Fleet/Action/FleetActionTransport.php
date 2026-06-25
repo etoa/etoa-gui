@@ -43,4 +43,14 @@ Baue spezielle Transporter, um kostengünstig zu transportieren.";
     function returningAction()
     {
     }
+
+    public function getAttitudeString()
+    {
+        return parent::$attitudeString[$this->attitude];
+    }
+
+    public function getAttitudeColor()
+    {
+        return parent::$attitudeColor[$this->attitude];
+    }
 }
