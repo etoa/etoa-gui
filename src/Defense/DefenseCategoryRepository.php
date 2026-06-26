@@ -18,7 +18,7 @@ class DefenseCategoryRepository extends AbstractRepository
      */
     public function getAllCategories(): array
     {
-        return $this->findBy([],['order'=>'DESC']);
+        return $this->findBy([],['order'=>'ASC']);
     }
 
     /**

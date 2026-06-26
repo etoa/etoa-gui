@@ -1,0 +1,93 @@
+{% extends 'game/help/help.html.twig' %}
+
+{% block help %}
+
+    <h2>Verteidigung</h2>
+
+    {% block breadcrumbs %}
+        {{ component('breadcrumbs', { items: [
+            { label: 'Hilfe', url: path('game.help.overview') },
+            { label: 'Verteidigung', url: path('game.help.defense') },
+        ], title:"Du befindest dich hier:"}) }}
+    {% endblock %}<br/>
+
+    {% if defense %}
+        <twig:Table title="{{ defense.name }}">
+            {% block table_content %}
+                <tr>
+                    <td width="220" class="tbltitle"><img src="{{ defense.getImagePath('other') }}" width="220" height="220"
+                                                          alt="Verteidigung"/>
+                    </td>
+                    <td class="tbldata">{{ BBCodeToHTML(defense.longComment)|raw }}</td>
+                </tr>
+                <tr>
+                    <td class="tbltitle">Rasse</td>
+                    <td class="tbldata">
+                        {% if defense.race and defense.race.id > 0 %}
+                            {{ defense.race.name }}
+                        {% else %}
+                            -
+                        {% endif %}
+                    </td>
+                </tr>
+                <tr>
+                    <td class="tbltitle">{{ constant('EtoA\\Universe\\Resources\\ResIcons::METAL')|raw }} {{ constant('EtoA\\Universe\\Resources\\ResourceNames::METAL') }}</td>
+                    <td class="tbldata">{{ formatNumber(defense.costsMetal) }}</td>
+                </tr>
+                <tr>
+                    <td class="tbltitle">{{ constant('EtoA\\Universe\\Resources\\ResIcons::CRYSTAL')|raw }} {{ constant('EtoA\\Universe\\Resources\\ResourceNames::CRYSTAL') }}</td>
+                    <td class="tbldata">{{ formatNumber(defense.costsCrystal) }}</td>
+                </tr>
+                <tr>
+                    <td class="tbltitle">{{ constant('EtoA\\Universe\\Resources\\ResIcons::PLASTIC')|raw }} {{ constant('EtoA\\Universe\\Resources\\ResourceNames::PLASTIC') }}</td>
+                    <td class="tbldata">{{ formatNumber(defense.costsPlastic) }}</td>
+                </tr>
+                <tr>
+                    <td class="tbltitle">{{ constant('EtoA\\Universe\\Resources\\ResIcons::FUEL')|raw }} {{ constant('EtoA\\Universe\\Resources\\ResourceNames::FUEL') }}</td>
+                    <td class="tbldata">{{ formatNumber(defense.costsFuel) }}</td>
+                </tr>
+                <tr>
+                    <td class="tbltitle">{{ constant('EtoA\\Universe\\Resources\\ResIcons::FOOD')|raw }} {{ constant('EtoA\\Universe\\Resources\\ResourceNames::FOOD') }}</td>
+                    <td class="tbldata">{{ formatNumber(defense.costsFood) }}</td>
+                </tr>
+                <tr>
+                    <td class="tbltitle">Struktur</td>
+                    <td class="tbldata">{{ formatNumber(defense.structure) }}</td>
+                </tr>
+                <tr>
+                    <td class="tbltitle">Abwehrschild</td>
+                    <td class="tbldata">{{ formatNumber(defense.shield) }}</td>
+                </tr>
+                <tr>
+                    <td class="tbltitle">Schusskraft</td>
+                    <td class="tbldata">{{ formatNumber(defense.weapon) }}</td>
+                </tr>
+                <tr>
+                    <td class="tbltitle">Reparatur</td>
+                    <td class="tbldata">{{ formatNumber(defense.heal) }}</td>
+                </tr>
+                <tr>
+                    <td class="tbltitle">Platzverbrauch</td>
+                    <td class="tbldata">{{ formatNumber(defense.fields) }} Felder</td>
+                </tr>
+                <tr>
+                    <td class="tbltitle">Max. Anzahl</td>
+                    <td class="tbldata">{{ formatNumber(defense.maxCount) }}</td>
+                </tr>
+            {% endblock %}
+        </twig:Table>
+
+        {% if ship %}
+            <twig:Box title="Transformation">
+                Diese Verteidigungsanlage lässt sich auf ein Schiff verladen:<br/><br/>
+                <a href="?link&amp;site=shipyard&amp;id= ship.id ">{{ ship.name }}</a>
+            </twig:Box>
+        {% endif %}
+
+        <twig:game_techtree title="Technikbaum" item="{{ defense }}" showSelection="{{ false }}"/>
+    {% endif %}
+    &nbsp;
+    <a href="{{ path('game.help.defense') }}">
+        <input type="button" value="Verteidigungsübersicht"/>
+    </a>
+{% endblock %}

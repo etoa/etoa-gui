@@ -5,6 +5,7 @@ namespace EtoA\Ship;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 use EtoA\Core\AbstractRepository;
+use EtoA\Entity\Defense;
 use EtoA\Entity\Ship;
 
 /**
@@ -237,19 +238,17 @@ class ShipDataRepository extends AbstractRepository
         return array_map(fn ($row) => new Ship($row), $data);
     }
 
-    public function getTransformedShipForDefense(int $defenseId): ?Ship
+    public function getTransformedShipForDefense(int|Defense $defenseId): ?Ship
     {
-        $data = $this->createQueryBuilder('q')
-            ->select('s.*')
-            ->from('ships', 's')
-            ->innerJoin('s', 'obj_transforms', 't', 't.ship_id=s.ship_id')
-            ->where('t.def_id = :defenseId')
+        return $this->createQueryBuilder('q')
+            ->innerJoin('App:ShipTransform', 't', 'WITH', 't.ship=q.id')
+            ->where('t.defense = :defenseId')
             ->setParameters([
                 'defenseId' => $defenseId,
             ])
-            ->fetchAssociative();
-
-        return $data !== false ? new Ship($data) : null;
+            ->setMaxResults(1)
+            ->getQuery()
+            ->getOneOrNullResult();
     }
 
     /**

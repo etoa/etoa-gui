@@ -1,0 +1,54 @@
+{% extends 'game/help/help.html.twig' %}
+
+{% block help %}
+    <h2>Verteidigung</h2>
+
+    {% block breadcrumbs %}
+        {{ component('breadcrumbs', { items: [
+            { label: 'Hilfe', url: path('game.help.overview') },
+            { label: 'Verteidigung', url: path('game.help.defense') },
+        ], title:"Du befindest dich hier:"}) }}
+    {% endblock %}<br/>
+
+    {% for category in categoryWithDefenses %}
+        {% if category.defenses|length > 0 %}
+            <twig:Table title="{{ category.category }}">
+                {% block table_content %}
+                    <tr>
+                        <th colspan="2"><a href="{{ path('game.help.defense',{order:'name'}) }}">Name</a></th>
+                        <th><a href="{{ path('game.help.defense',{order:'race'}) }}">Rasse</a></th>
+                        <th><a href="{{ path('game.help.defense',{order:'fields'}) }}">Felder</a></th>
+                        <th><a href="{{ path('game.help.defense',{order:'weapon'}) }}">Waffen</a></th>
+                        <th><a href="{{ path('game.help.defense',{order:'structure'}) }}">Struktur</a></th>
+                        <th><a href="{{ path('game.help.defense',{order:'schild'}) }}">Schild</a></th>
+                        <th><a href="{{ path('game.help.defense',{order:'heal'}) }}">Reparatur</a></th>
+                        <th><a href="{{ path('game.help.defense',{order:'points'}) }}">Wert</a></th>
+                    </tr>
+                    {% for defense in category.defenses %}
+                        <tr>
+                            <td class="tbldata" style="width:40px;background:#000;">
+                                <a href="{{ path('game.help.defense.detail',{id:defense.id}) }}">
+                                    <img src="{{ defense.getImagePath('small') }}" alt="Verteidigung" width="40" height="40"/>
+                                </a>
+                            </td>
+                            <td>
+                                <a href="{{ path('game.help.defense.detail',{id:defense.id}) }}">{{ defense.name }}</a></td>
+                            <td>
+                                {% if defense.race and defense.race.id > 0 %}
+                                    {{ defense.race.name }}
+                                {% else %}
+                                    -
+                                {% endif %}
+                            <td>{{ formatNumber(defense.fields) }}</td>
+                            <td>{{ formatNumber(defense.weapon) }}</td>
+                            <td>{{ formatNumber(defense.structure) }}</td>
+                            <td>{{ formatNumber(defense.shield) }}</td>
+                            <td>{{ formatNumber(defense.heal) }}</td>
+                            <td>{{ formatNumber(defense.points) }}</td>
+                        </tr>
+                    {% endfor %}
+                {% endblock %}
+            </twig:Table>
+        {% endif %}
+    {% endfor %}
+{% endblock %}

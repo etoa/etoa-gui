@@ -5,6 +5,7 @@ namespace EtoA\Defense;
 use Doctrine\Persistence\ManagerRegistry;
 use EtoA\Core\AbstractRepository;
 use EtoA\Entity\Defense;
+use EtoA\Entity\DefenseCategory;
 
 class DefenseDataRepository extends AbstractRepository
 {
@@ -97,19 +98,16 @@ class DefenseDataRepository extends AbstractRepository
     /**
      * @return Defense[]
      */
-    public function getDefenseByCategory(int $categoryId): array
+    public function getDefenseByCategory(int|DefenseCategory $categoryId, $sortBy = 'order', $order = 'ASC'): array
     {
-        $data = $this->createQueryBuilder('q')
-            ->select('*')
-            ->from('defense')
-            ->where('def_cat_id = :categoryId')
-            ->andWhere('def_buildable = 1')
-            ->andWhere('def_show = 1')
+        return $this->createQueryBuilder('q')
+            ->where('q.cat = :categoryId')
+            ->andWhere('q.buildable = 1')
+            ->andWhere('q.show = 1')
             ->setParameter('categoryId', $categoryId)
-            ->orderBy('def_order')
-            ->fetchAllAssociative();
-
-        return array_map(fn ($row) => new Defense($row), $data);
+            ->orderBy("q.$sortBy",$order)
+            ->getQuery()
+            ->execute();
     }
 
     /**

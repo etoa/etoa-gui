@@ -7,12 +7,16 @@ use EtoA\Building\BuildingCostContext;
 use EtoA\Building\BuildingDataRepository;
 use EtoA\Building\BuildingTypeDataRepository;
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Defense\DefenseCategoryRepository;
+use EtoA\Defense\DefenseDataRepository;
 use EtoA\Entity\Building;
+use EtoA\Entity\Defense;
 use EtoA\Fleet\FleetAction;
 use EtoA\Ship\ShipDataRepository;
 use EtoA\Support\ExternalUrl;
 use EtoA\Support\StringUtils;
 use EtoA\Universe\Resources\ResourceNames;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -24,7 +28,9 @@ class HelpController extends AbstractGameController
         private readonly BuildingDataRepository     $buildingDataRepository,
         private readonly ConfigurationService       $configurationService,
         private readonly BuildingCostCalculator     $buildingCostCalculator,
-        private readonly BuildingCostContext        $buildingCostContext
+        private readonly BuildingCostContext        $buildingCostContext,
+        private readonly DefenseCategoryRepository  $defenseCategoryRepository,
+        private readonly DefenseDataRepository      $defenseDataRepository
     )
     {
     }
@@ -168,7 +174,7 @@ class HelpController extends AbstractGameController
         if ($building->getId() === 1) {
             $infos['title'] = "Produktion von " . ResourceNames::METAL . " (ohne Boni)";
 
-           return $this->renderProductionBuilding($building, $infos);
+            return $this->renderProductionBuilding($building, $infos);
         } // Siliziummine
         elseif ($building->getId() === 2) {
             $infos['title'] = "Produktion von " . ResourceNames::CRYSTAL . " (ohne Boni)";
@@ -234,31 +240,31 @@ class HelpController extends AbstractGameController
             $baseStoreMetal = $this->buildingDataRepository->getBuilding(6)->getStoreMetal();
             $infos['title'] = "Lagerkapazität (inklusive Planetenbasiskapazität (" . StringUtils::formatNumber($baseStoreMetal) . ") und Standardkapazität (" . StringUtils::formatNumber($this->configurationService->getInt("def_store_capacity")) . ") des Planeten)";
 
-            return $this->renderStorageBuilding($building,$infos);
+            return $this->renderStorageBuilding($building, $infos);
         } // Siliziumspeicher
         elseif ($building->getId() === 17) {
             $baseStoreCrystal = $this->buildingDataRepository->getBuilding(6)->getStoreCrystal();
             $infos['title'] = "Lagerkapazität (inklusive Planetenbasiskapazität (" . StringUtils::formatNumber($baseStoreCrystal) . ") und Standardkapazität (" . StringUtils::formatNumber($this->configurationService->getInt("def_store_capacity")) . ") des Planeten)";
 
-            return $this->renderStorageBuilding($building,$infos);
+            return $this->renderStorageBuilding($building, $infos);
         } // Lagerhalle
         elseif ($building->getId() === 18) {
             $baseStorePlastic = $this->buildingDataRepository->getBuilding(6)->getStorePlastic();
             $infos['title'] = "Kapazität inklusive Planetenbasiskapazität (" . StringUtils::formatNumber($baseStorePlastic) . ") und Standardkapazität (" . StringUtils::formatNumber($this->configurationService->getInt("def_store_capacity")) . ")";
 
-            return $this->renderStorageBuilding($building,$infos);
+            return $this->renderStorageBuilding($building, $infos);
         } // Nahrungssilos
         elseif ($building->getId() === 19) {
             $baseStoreFood = $this->buildingDataRepository->getBuilding(6)->getStoreFood();
             $infos['title'] = "Lagerkapazität (inklusive Planetenbasiskapazität (" . StringUtils::formatNumber($baseStoreFood) . ") und Standardkapazität (" . StringUtils::formatNumber($this->configurationService->getInt("def_store_capacity")) . ") des Planeten)";
 
-            return $this->renderStorageBuilding($building,$infos);
+            return $this->renderStorageBuilding($building, $infos);
         } // Tritiumsilo
         elseif ($building->getId() === 20) {
             $baseStoreFuel = $this->buildingDataRepository->getBuilding(6)->getStoreFuel();
             $infos['title'] = "Lagerkapazität (inklusive Planetenbasiskapazität (" . StringUtils::formatNumber($baseStoreFuel) . ") und Standardkapazität (" . StringUtils::formatNumber($this->configurationService->getInt("def_store_capacity")) . ") des Planeten)";
 
-            return $this->renderStorageBuilding($building,$infos);
+            return $this->renderStorageBuilding($building, $infos);
         } // Orbitalplatform
         elseif ($building->getId() === 22) {
             $infos['title'] = "Zusätzliche Felder";
@@ -301,7 +307,7 @@ class HelpController extends AbstractGameController
             ]);
         }
 
-        return $this->render('game/error.html.twig',[
+        return $this->render('game/error.html.twig', [
             'msg' => 'Gebäude nicht gefunden!',
             'path' => $this->generateUrl('game.help.buildings'),
             'headline' => 'Hilfe'
@@ -666,10 +672,39 @@ class HelpController extends AbstractGameController
             ]
         ];
 
-        return $this->render('game/help/info/textformat.html.twig',[
+        return $this->render('game/help/info/textformat.html.twig', [
             'bb' => $bb,
             'kt' => $kt,
             'fl' => $fl
+        ]);
+    }
+
+    #[Route('/game/help/defense', name: 'game.help.defense')]
+    public function defense(Request $request): Response
+    {
+        $sortBy = $request->get('order')??'order';
+
+        /** @var DefenseCategoryRepository $defenseCategoryRepository */
+        $defenseCategories = $this->defenseCategoryRepository->getAllCategories();
+        $categoryWithDefenses = [];
+
+        foreach ($defenseCategories as $defenseCategory) {
+            $defenses = $this->defenseDataRepository->getDefenseByCategory($defenseCategory,$sortBy);
+            $categoryWithDefenses[$defenseCategory->getId()]['category'] = $defenseCategory->getName();
+            $categoryWithDefenses[$defenseCategory->getId()]['defenses'] = $defenses;
+        }
+
+        return $this->render('game/help/info/defense.html.twig', [
+            'categoryWithDefenses' => $categoryWithDefenses
+        ]);
+    }
+
+    #[Route('/game/help/defense/{id}', name: 'game.help.defense.detail')]
+    public function defenseDetail(?Defense $defense): Response
+    {
+        return $this->render('game/help/info/defenseDetail.html.twig', [
+            'defense' => $defense,
+            'ship' => $this->shipDataRepository->getTransformedShipForDefense($defense)
         ]);
     }
 
@@ -677,7 +712,7 @@ class HelpController extends AbstractGameController
     {
         $levels = [];
         $resources = ['Metal', 'Crystal', 'Plastic', 'Fuel', 'Food', 'Power'];
-        $maxLevel = min(31,$building->getLastLevel()+1);
+        $maxLevel = min(31, $building->getLastLevel() + 1);
 
         for ($level = 1; $level < $maxLevel; $level++) {
             foreach ($resources as $resource) {
@@ -696,7 +731,7 @@ class HelpController extends AbstractGameController
     {
         $levels = [];
         $resources = ['Metal', 'Crystal', 'Plastic', 'Fuel', 'Food'];
-        $maxLevel = min(31,$building->getLastLevel()+1);
+        $maxLevel = min(31, $building->getLastLevel() + 1);
 
         for ($level = 1; $level < $maxLevel; $level++) {
             foreach ($resources as $resource) {
@@ -706,7 +741,7 @@ class HelpController extends AbstractGameController
                 $power_use = round($building->getPowerUse() * pow($building->getProductionFactor(), $level - 1));
                 $fields_provide = round($building->getFieldsProvide() * pow($building->getProductionFactor(), $level - 1));
                 $prod_items[strtolower($resource)] = $prod_item;
-                $levels[$level] = ['prod_items' => $prod_items,'base_store'=>$baseStore, 'power_use' => $power_use, 'fields_provide' => $fields_provide];
+                $levels[$level] = ['prod_items' => $prod_items, 'base_store' => $baseStore, 'power_use' => $power_use, 'fields_provide' => $fields_provide];
             }
         }
 
@@ -718,12 +753,12 @@ class HelpController extends AbstractGameController
         $levels = [];
         $resources = ['Res', 'FleetSpace'];
 
-        for ($level = 1; $level < $building->getLastLevel()+1; $level++) {
+        for ($level = 1; $level < $building->getLastLevel() + 1; $level++) {
             foreach ($resources as $resource) {
                 $getRessource = "getBunker$resource";
                 $prod_item = round($building->{$getRessource}() * pow($building->getStoreFactor(), $level - 1));
                 $prod_items[strtolower($resource)] = $prod_item;
-                $levels[$level] = ['prod_items' => $prod_items,'fleet_count'=>round($building->getBunkerFleetCount() * pow($building->getStoreFactor(), $level - 1))];
+                $levels[$level] = ['prod_items' => $prod_items, 'fleet_count' => round($building->getBunkerFleetCount() * pow($building->getStoreFactor(), $level - 1))];
             }
         }
 
@@ -734,7 +769,7 @@ class HelpController extends AbstractGameController
     {
         $costs = [];
         for ($x = 0; $x < min(30, $building->getLastLevel()); $x++) {
-            $costs[] = $this->buildingCostCalculator->calculate($building,$x, $this->buildingCostContext);
+            $costs[] = $this->buildingCostCalculator->calculate($building, $x, $this->buildingCostContext);
         }
 
         return $costs;

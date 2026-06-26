@@ -25,28 +25,6 @@ class ShipTransform
     #[ORM\Column(name:"num_def", type: "integer")]
     private int $numberOfDefense;
 
-    public static function createFromShip(array $data): ShipTransform
-    {
-        $transform = new ShipTransform();
-        $transform->shipId = (int) $data['ship_id'];
-        $transform->defenseId = (int) $data['def_id'];
-        $transform->availableShips = (int) $data['count'];
-        $transform->numberOfDefense = (int) $data['num_def'];
-
-        return $transform;
-    }
-
-    public static function createFromDefense(array $data): ShipTransform
-    {
-        $transform = new ShipTransform();
-        $transform->shipId = (int) $data['ship_id'];
-        $transform->defenseId = (int) $data['def_id'];
-        $transform->availableDefense = (int) $data['count'];
-        $transform->numberOfDefense = (int) $data['num_def'];
-
-        return $transform;
-    }
-
     public function getId(): ?int
     {
         return $this->id;
