@@ -275,14 +275,32 @@ class HelpController extends AbstractGameController
         elseif ($building->getId() === 25) {
             $infos['title'] = "Energieverbrauch (ohne Boni)";
             $infos['levels'] = $this->generateStorageLevels($building);
+            $infos['costs'] = $this->generateBuildingCosts($building);
+
+            return $this->render('game/help/info/buildings/silo.html.twig', [
+                'building' => $building,
+                'infos' => $infos
+            ]);
         } // Rohstoffbunker
         elseif ($building->getId() === 26) {
             $infos['title'] = "Bunkern von Rohstoffen";
             $infos['levels'] = $this->generateBunkerLevels($building);
+            $infos['costs'] = $this->generateBuildingCosts($building);
+
+            return $this->render('game/help/info/buildings/bunker_ress.html.twig', [
+                'building' => $building,
+                'infos' => $infos
+            ]);
         } // Flottenbunker
         elseif ($building->getId() === 27) {
             $infos['title'] = "Bunkern von Schiffen";
             $infos['levels'] = $this->generateBunkerLevels($building);
+            $infos['costs'] = $this->generateBuildingCosts($building);
+
+            return $this->render('game/help/info/buildings/bunker_fleet.html.twig', [
+                'building' => $building,
+                'infos' => $infos
+            ]);
         }
 
     }
@@ -291,8 +309,9 @@ class HelpController extends AbstractGameController
     {
         $levels = [];
         $resources = ['Metal', 'Crystal', 'Plastic', 'Fuel', 'Food', 'Power'];
+        $maxLevel = min(31,$building->getLastLevel()+1);
 
-        for ($level = 1; $level < 31; $level++) {
+        for ($level = 1; $level < $maxLevel; $level++) {
             foreach ($resources as $resource) {
                 $getProd = "getProd$resource";
                 $prod_item = round($building->{$getProd}() * pow($building->getProductionFactor(), $level - 1));
@@ -309,8 +328,9 @@ class HelpController extends AbstractGameController
     {
         $levels = [];
         $resources = ['Metal', 'Crystal', 'Plastic', 'Fuel', 'Food'];
+        $maxLevel = min(31,$building->getLastLevel()+1);
 
-        for ($level = 1; $level < 31; $level++) {
+        for ($level = 1; $level < $maxLevel; $level++) {
             foreach ($resources as $resource) {
                 $getRessource = "getStore$resource";
                 $baseStore = $this->buildingDataRepository->getBuilding(6)->{$getRessource}();
@@ -330,12 +350,12 @@ class HelpController extends AbstractGameController
         $levels = [];
         $resources = ['Res', 'FleetSpace'];
 
-        for ($level = 1; $level < $building->getLastLevel(); $level++) {
+        for ($level = 1; $level < $building->getLastLevel()+1; $level++) {
             foreach ($resources as $resource) {
-                $getRessource = "bunker$resource";
-                $prod_item = round($building->{$getRessource} * pow($building->getStoreFactor(), $level - 1));
+                $getRessource = "getBunker$resource";
+                $prod_item = round($building->{$getRessource}() * pow($building->getStoreFactor(), $level - 1));
                 $prod_items[strtolower($resource)] = $prod_item;
-                $levels[$level] = ['prod_items' => $prod_items];
+                $levels[$level] = ['prod_items' => $prod_items,'fleet_count'=>round($building->getBunkerFleetCount() * pow($building->getStoreFactor(), $level - 1))];
             }
         }
 
