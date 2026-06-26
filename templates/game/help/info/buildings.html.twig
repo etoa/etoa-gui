@@ -1,6 +1,15 @@
 {% extends 'game/help/help.html.twig' %}
 
 {% block help %}
+    <h2>Gebäude</h2>
+
+    {% block breadcrumbs %}
+        {{ component('breadcrumbs', { items: [
+            { label: 'Hilfe', url: path('game.help.overview') },
+            { label: 'Gebäude', url: path('game.help.buildings') },
+        ], title:"Du befindest dich hier:"}) }}
+    {% endblock %}<br/>
+
     {% for type in buildingsWithType %}
         <twig:Table title="{{ type.name }}">
             {% block table_content %}

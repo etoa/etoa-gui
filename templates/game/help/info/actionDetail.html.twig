@@ -2,6 +2,15 @@
 
 {% block help %}
 
+    <h2>Schiffsaktionen</h2>
+
+    {% block breadcrumbs %}
+        {{ component('breadcrumbs', { items: [
+            { label: 'Hilfe', url: path('game.help.overview') },
+            { label: 'Schiffsaktionen', url: path('game.help.actions') },
+        ], title:"Du befindest dich hier:"}) }}
+    {% endblock %}<br/>
+
     {% if action %}
         <twig:Box title="{{ action.name }}">
             {{ action.desc|raw }}<br/><br/>{{ action.longDesc|raw }}

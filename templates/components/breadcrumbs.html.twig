@@ -1,5 +1,14 @@
 <div class="breadcrumbs">
+    {% if title %}
+        {{ title }}
+    {% endif %}
+
     {% for item in items %}
-        <a href="{{ item.url }}">{{ item.label }}</a>{% if not loop.last %} &raquo; {% endif %}
+        {% if app.request.pathInfo == item.url %}
+            {{ item.label }}
+        {% else %}
+            <a href="{{ item.url }}">{{ item.label }}</a>
+        {% endif %}
+        {% if not loop.last %} &raquo; {% endif %}
     {% endfor %}
 </div>

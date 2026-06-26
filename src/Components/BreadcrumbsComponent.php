@@ -8,4 +8,5 @@ use Symfony\UX\TwigComponent\Attribute\AsTwigComponent;
 class BreadcrumbsComponent
 {
     public array $items = [];
+    public string $title;
 }

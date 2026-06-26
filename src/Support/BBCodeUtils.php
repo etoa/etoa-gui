@@ -110,7 +110,7 @@ class BBCodeUtils
         $string = preg_replace('#\[img\]([^\[]*)\[/img\]#i', '<img src="\1" alt="\1" border="0" />', $string);
         $string = preg_replace('#\[img ([0-9]*) ([0-9]*)\]([^\[]*)\[/img]#i', '<img src="\3" alt="\3" width="\1" height="\2" border="0" />', $string);
         $string = preg_replace('#\[img ([0-9]*)\]([^\[]*)\[/img]#i', '<img src="\2" alt="\2" width="\1" border="0" />', $string);
-        $string = preg_replace('#\[flag ([^\[]*)\]#i', '<img src="images/flags/' . strtolower('\1') . '.gif" border="0" alt="Flagge \1" class=\"flag\" />', $string);
+        $string = preg_replace('#\[flag ([^\[]*)\]#i', '<img src="/build/images/flags/' . strtolower('\1') . '.gif" border="0" alt="Flagge \1" class=\"flag\" />', $string);
         $string = preg_replace('#\[thumb ([0-9]*)\]([^\[]*)\[/thumb]#i', '<a href="\2"><img src="\2" alt="\2" width="\1" border="0" /></a>', $string);
 
         $string = preg_replace("#^http://([^ ,\n]*)#i", "[url]http://\\1[/url]", $string);
@@ -150,28 +150,28 @@ class BBCodeUtils
         if (!defined('SMILIE_DIR')) {
             define('SMILIE_DIR', "images/smilies");
         }
-        $string = str_replace(' :) ', '<img src="/images/smilies/smile.gif" style="border:none;" alt="Smilie" title="Smilie" />', $string);
-        $string = str_replace(' :-) ', '<img src="/images/smilies/smile.gif" style="border:none;" alt="Smilie" title="Smilie" />', $string);
-        $string = str_replace(' ;) ', '<img src="/images/smilies/wink.gif" style="border:none;" alt="Smilie" title="Smilie" />', $string);
-        $string = str_replace(' ;-) ', '<img src="/images/smilies/wink.gif" style="border:none;" alt="Smilie" title="Smilie" />', $string);
-        $string = str_replace(' :p ', '<img src="/images/smilies/tongue.gif" style="border:none;" alt="Smilie" title="Smilie" />', $string);
-        $string = str_replace(' :-p ', '<img src="/images/smilies/tongue.gif" style="border:none;" alt="Smilie" title="Smilie" />', $string);
-        $string = str_replace(' :P ', '<img src="/images/smilies/tongue.gif" style="border:none;" alt="Smilie" title="Smilie" />', $string);
-        $string = str_replace(' :-P ', '<img src="/images/smilies/tongue.gif" style="border:none;" alt="Smilie" title="Smilie" />', $string);
-        $string = str_replace(' :0 ', '<img src="/images/smilies/laugh.gif" style="border:none;" alt="Smilie" title="Smilie" />', $string);
-        $string = str_replace(' :D ', '<img src="/images/smilies/biggrin.gif" style="border:none;" alt="Smilie" title="Smilie" />', $string);
-        $string = str_replace(' :-D ', '<img src="/images/smilies/biggrin.gif" style="border:none;" alt="Smilie" title="Smilie" />', $string);
-        $string = str_replace(' :( ', '<img src="/images/smilies/frown.gif" style="border:none;" alt="Smilie" title="Smilie" />', $string);
-        $string = str_replace(' :-( ', '<img src="/images/smilies/frown.gif" style="border:none;" alt="Smilie" title="Smilie" />', $string);
-        $string = str_replace(' 8) ', '<img src="/images/smilies/cool.gif" style="border:none;" alt="Smilie" title="Smilie" />', $string);
-        $string = str_replace(' 8-) ', '<img src="/images/smilies/cool.gif" style="border:none;" alt="Smilie" title="Smilie" />', $string);
-        $string = str_replace(' :angry: ', '<img src="/images/smilies/angry.gif" style="border:none;" alt="Smilie" title="Smilie" />', $string);
-        $string = str_replace(' :sad: ', '<img src="/images/smilies/sad.gif" style="border:none;" alt="Smilie" title="Smilie" />', $string);
-        $string = str_replace(' :anger: ', '<img src="/images/smilies/anger.gif" style="border:none;" alt="Smilie" title="Smilie" />', $string);
-        $string = str_replace(' :pst: ', '<img src="/images/smilies/pst.gif" style="border:none;" alt="Smilie" title="Smilie" />', $string);
-        $string = str_replace(' :holy: ', '<img src="/images/smilies/holy.gif" style="border:none;" alt="Smilie" title="Smilie" />', $string);
-        $string = str_replace(' :cool: ', '<img src="/images/smilies/cool.gif" style="border:none;" alt="Smilie" title="Smilie" />', $string);
-        $string = str_replace(' :rolleyes: ', '<img src="/images/smilies/rolleyes.gif" style="border:none;" alt="Smilie" title="Smilie" />', $string);
+        $string = str_replace(' :) ', '<img src="/build/images/smilies/smile.gif" style="border:none;" alt="Smilie" title="Smilie" />', $string);
+        $string = str_replace(' :-) ', '<img src="/build/images/smilies/smile.gif" style="border:none;" alt="Smilie" title="Smilie" />', $string);
+        $string = str_replace(' ;) ', '<img src="/build/images/smilies/wink.gif" style="border:none;" alt="Smilie" title="Smilie" />', $string);
+        $string = str_replace(' ;-) ', '<img src="/build/images/smilies/wink.gif" style="border:none;" alt="Smilie" title="Smilie" />', $string);
+        $string = str_replace(' :p ', '<img src="/build/images/smilies/tongue.gif" style="border:none;" alt="Smilie" title="Smilie" />', $string);
+        $string = str_replace(' :-p ', '<img src="/build/images/smilies/tongue.gif" style="border:none;" alt="Smilie" title="Smilie" />', $string);
+        $string = str_replace(' :P ', '<img src="/build/images/smilies/tongue.gif" style="border:none;" alt="Smilie" title="Smilie" />', $string);
+        $string = str_replace(' :-P ', '<img src="/build/images/smilies/tongue.gif" style="border:none;" alt="Smilie" title="Smilie" />', $string);
+        $string = str_replace(' :0 ', '<img src="/build/images/smilies/laugh.gif" style="border:none;" alt="Smilie" title="Smilie" />', $string);
+        $string = str_replace(' :D ', '<img src="/build/images/smilies/biggrin.gif" style="border:none;" alt="Smilie" title="Smilie" />', $string);
+        $string = str_replace(' :-D ', '<img src="/build/images/smilies/biggrin.gif" style="border:none;" alt="Smilie" title="Smilie" />', $string);
+        $string = str_replace(' :( ', '<img src="/build/images/smilies/frown.gif" style="border:none;" alt="Smilie" title="Smilie" />', $string);
+        $string = str_replace(' :-( ', '<img src="/build/images/smilies/frown.gif" style="border:none;" alt="Smilie" title="Smilie" />', $string);
+        $string = str_replace(' 8) ', '<img src="/build/images/smilies/cool.gif" style="border:none;" alt="Smilie" title="Smilie" />', $string);
+        $string = str_replace(' 8-) ', '<img src="/build/images/smilies/cool.gif" style="border:none;" alt="Smilie" title="Smilie" />', $string);
+        $string = str_replace(' :angry: ', '<img src="/build/images/smilies/angry.gif" style="border:none;" alt="Smilie" title="Smilie" />', $string);
+        $string = str_replace(' :sad: ', '<img src="/build/images/smilies/sad.gif" style="border:none;" alt="Smilie" title="Smilie" />', $string);
+        $string = str_replace(' :anger: ', '<img src="/build/images/smilies/anger.gif" style="border:none;" alt="Smilie" title="Smilie" />', $string);
+        $string = str_replace(' :pst: ', '<img src="/build/images/smilies/pst.gif" style="border:none;" alt="Smilie" title="Smilie" />', $string);
+        $string = str_replace(' :holy: ', '<img src="/build/images/smilies/holy.gif" style="border:none;" alt="Smilie" title="Smilie" />', $string);
+        $string = str_replace(' :cool: ', '<img src="/build/images/smilies/cool.gif" style="border:none;" alt="Smilie" title="Smilie" />', $string);
+        $string = str_replace(' :rolleyes: ', '<img src="/build/images/smilies/rolleyes.gif" style="border:none;" alt="Smilie" title="Smilie" />', $string);
 
         $string = preg_replace('#\[font ([^\[]*)\]#i', '<font style=\"font-family:\1">', $string);
         $string = preg_replace('#\[color ([^\[]*)\]#i', '<font style=\"color:\1">', $string);

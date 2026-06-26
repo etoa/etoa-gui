@@ -13,8 +13,6 @@ use EtoA\Ship\ShipDataRepository;
 use EtoA\Support\ExternalUrl;
 use EtoA\Support\StringUtils;
 use EtoA\Universe\Resources\ResourceNames;
-use phpDocumentor\Reflection\Types\This;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -303,6 +301,376 @@ class HelpController extends AbstractGameController
             ]);
         }
 
+        return $this->render('game/error.html.twig',[
+            'msg' => 'Gebäude nicht gefunden!',
+            'path' => $this->generateUrl('game.help.buildings'),
+            'headline' => 'Hilfe'
+        ]);
+    }
+
+    #[Route('/game/help/crypto', name: 'game.help.crypto')]
+    public function crypto(): Response
+    {
+        return $this->render('game/help/info/crypto.html.twig');
+    }
+
+    #[Route('/game/help/textformat', name: 'game.help.textformat')]
+    public function textformat(): Response
+    {
+        $bb = [
+            [
+                'm' => "Text <b>fett</b> schreiben",
+                'b' => "[b]EtoA[/b]"
+            ],
+            [
+                'm' => "Text <b>unterstreichen</b>",
+                'b' => "[u]EtoA[/u]"
+            ],
+            [
+                'm' => "Text <b>kursiv</b> schreiben",
+                'b' => "[i]EtoA[/i]"
+            ],
+            [
+                'm' => '<b>Verschiedenfarbig</b> schreiben (<a href="#colors">Farbliste</a>)',
+                'b' => "[color=red]EtoA[/color]"
+            ],
+            [
+                'm' => "<b>Grösse</b> ändern",
+                'b' => "[size=15]EtoA[/size]"
+            ],
+            [
+                'm' => "<b>Schriftart</b> ändern",
+                'b' => "[font=times]EtoA[/font]"
+            ],
+            [
+                'm' => "<b>Textausrichtung</b> ändern: zentriert",
+                'b' => "[center]EtoA[/center]"
+            ],
+            [
+                'm' => "<b>Textausrichtung</b> ändern: rechtsbündig",
+                'b' => "[right]EtoA[/right]"
+            ],
+            [
+                'm' => "<b>E-Mail</b> Link erstellen <b>(Adresse sichtbar)</b>",
+                'b' => "[email]mail@etoa.ch[/email]"
+            ],
+            [
+                'm' => "<b>E-Mail</b> Link erstellen <b>(Adresse unsichtbar)</b>",
+                'b' => "[email=mail@etoa.ch]EtoA[/email]"
+            ],
+            [
+                'm' => "<b>Link</b> zu einer Homepage erstellen <b>(Adresse sichtbar)</b>",
+                'b' => "[url]http://www.etoa.ch[/url]"
+            ],
+            [
+                'm' => "<b>Link</b> zu einer Homepage erstellen <b>(Adresse unsichtbar)</b>",
+                'b' => "[url=http://www.etoa.ch]EtoA[/url]"
+            ],
+            [
+                'm' => "<b>Bild</b> einfügen auf einer Homepage <b>(Bild sichtbar)</b>",
+                'b' => "[img]http://etoa.ch/images/logo_mini.gif[/img]"
+            ],
+            [
+                'm' => "<b>Anklickbares</b> Bild einfügen",
+                'b' => "[url=http://etoa.ch/images/logo_mini.gif][img]http://etoa.ch/images/logo_mini.gif[/img][/url]"
+            ],
+            [
+                'm' => "<b>Interner Link</b>",
+                'b' => "Erkunde das [page=cell&id=635]System 635[/page] mit dem [page=help&site=shipyard&id=71]AURIGA Explorer[/page] und schreib mir eine [page=messages&mode=new]Nachricht[/page] mit den Resultaten!"
+            ],
+            [
+                'm' => "<b>Link</b> zu einem Bild im Internet einfügen <b>(Bild nicht sichtbar)</b>",
+                'b' => "[url=http://etoa.ch/images/logo_mini.gif]EtoA Logo[/url]"
+            ],
+            [
+                'm' => "Text <b>zitieren (ohne Autor)</b>",
+                'b' => "[quote]EtoA[/quote]"
+            ],
+            [
+                'm' => "Text <b>zitieren (mit Autor)</b>",
+                'b' => "[quote=Hans Muster]EtoA[/quote]"
+            ],
+            [
+                'm' => "Blockcode: <b>Zentriert</b> den Text und verwendet die Schriftart <b>Courier New</b> (praktisch für Programmcode)",
+                'b' => "[bc]EtoA ist ein Onlinebrowsergame[/bc]"
+            ],
+            [
+                'm' => "Liste erstellen: Aufzählung <b>ohne</b> Nummerierung; beliebig viele Elemente möglich",
+                'b' => "[list][*]Andorianer[*]Minbari[*]Vorgonen[*]etc.[/list]"
+            ],
+            [
+                'm' => "Liste erstellen: Aufzählung <b>mit nummerischer</b> Nummerierung; beliebig viele Elemente möglich",
+                'b' => "[nlist][*]Andorianer[*]Minbari[*]Vorgonen[*]etc.[/nlist]"
+            ],
+            [
+                'm' => "Liste erstellen: Aufzählung <b>mit nummerischer</b> Nummerierung; beliebig viele Elemente möglich",
+                'b' => "[list=1][*]Andorianer[*]Minbari[*]Vorgonen[*]etc.[/list]"
+            ],
+            [
+                'm' => "Liste erstellen: Aufzählung <b>mit alphabetischer</b> Nummerierung; beliebig viele Elemente möglich",
+                'b' => "[alist][*]Andorianer[*]Minbari[*]Vorgonen[*]etc.[/alist]"
+            ],
+            [
+                'm' => "Liste erstellen: Aufzählung <b>mit alphabetischer</b> Nummerierung; beliebig viele Elemente möglich",
+                'b' => "[list=a][*]Andorianer[*]Minbari[*]Vorgonen[*]etc.[/list]"
+            ],
+            [
+                'm' => "Liste erstellen: Aufzählung <b>mit römischer</b> Nummerierung; beliebig viele Elemente möglich",
+                'b' => "[rlist][*]Andorianer[*]Minbari[*]Vorgonen[*]etc.[/rlist]"
+            ],
+            [
+                'm' => "Liste erstellen: Aufzählung <b>mit römischer</b> Nummerierung; beliebig viele Elemente möglich",
+                'b' => "[list=I][*]Andorianer[*]Minbari[*]Vorgonen[*]etc.[/list]"
+            ],
+            [
+                'm' => '<b>Flagge</b> eines Landes einfügen oder Kantons einfügen (<a href="#flags">Flaggen</a>)',
+                'b' => "[flag ch-be] liegt in der [flag ch]",
+            ]
+        ];
+
+        $kt = [
+            [
+                'n' => "Argau",
+                'f' => "[flag ch-ag]"
+            ],
+            [
+                'n' => "Appenzell Innerrhode",
+                'f' => "[flag ch-ai]"
+            ],
+            [
+                'n' => "Appenzell Ausserrhoden",
+                'f' => "[flag ch-ar]"
+            ],
+            [
+                'n' => "Bern",
+                'f' => "[flag ch-be]"
+            ],
+            [
+                'n' => "Basel Land",
+                'f' => "[flag ch-bl]"
+            ],
+            [
+                'n' => "Basel Stadt",
+                'f' => "[flag ch-bs]",
+            ],
+            [
+                'n' => "Graubünden",
+                'f' => "[flag ch-gr]"
+            ],
+            [
+                'n' => "Jura",
+                'f' => "[flag ch-ju]"
+            ],
+            [
+                'n' => "Luzern",
+                'f' => "[flag ch-lu]"
+            ],
+            [
+                'n' => "Nidwalden",
+                'f' => "[flag ch-nw]",
+            ],
+            [
+                'n' => "Obwalden",
+                'f' => "[flag ch-ow]"
+            ],
+            [
+                'n' => "Schaffhausen",
+                'f' => "[flag ch-sh]"
+            ],
+            [
+                'n' => "Schwyz",
+                'f' => "[flag ch-sz]"
+            ],
+            [
+                'n' => "Solothurn",
+                'f' => "[flag ch-so]"
+            ],
+            [
+                'n' => "Thurgau",
+                'f' => "[flag ch-tg]"
+            ],
+            [
+                'n' => "Tessin",
+                'f' => "[flag ch-ti]"
+            ],
+            [
+                'n' => "Uri",
+                'f' => "[flag ch-ur]"
+            ],
+            [
+                'n' => "Waadt",
+                'f' => "[flag ch-vd]"
+            ],
+            [
+                'n' => "Wallis",
+                'f' => "[flag ch-vs]"
+            ],
+            [
+                'n' => "Zug",
+                'f' => "[flag ch-zg]"
+            ],
+            [
+                'n' => "Zürich",
+                'f' => "[flag ch-zh]"
+            ],
+            [
+                'n' => "Genf",
+                'f' => "[flag ch-ge]"
+            ]
+        ];
+
+        $fl = [
+            [
+                'n' => "Schweiz",
+                'f' => "[flag ch]"
+            ],
+            [
+                'n' => "Argentinien",
+                'f' => "[flag ar]"
+            ],
+            [
+                'n' => "Österreich",
+                'f' => "[flag at]"
+            ],
+            [
+                'n' => "Australien",
+                'f' => "[flag au]"
+            ],
+            [
+                'n' => "Beneluxstaaten",
+                'f' => "[flag benelux]"
+            ],
+            [
+                'n' => "Bulgarien",
+                'f' => "[flag bg]"
+            ],
+            [
+                'n' => "Brasilien",
+                'f' => "[flag br]"
+            ],
+            [
+                'n' => "Kanada",
+                'f' => "[flag ca]"
+            ],
+            [
+                'n' => "China",
+                'f' => "[flag cn]"
+            ],
+            [
+                'n' => "Tschechien",
+                'f' => "[flag cz]"
+            ],
+            [
+                'n' => "Deutschland",
+                'f' => "[flag de]"
+            ],
+            [
+                'n' => "Dänemark",
+                'f' => "[flag dk]"
+            ],
+            [
+                'n' => "Estland",
+                'f' => "[flag ee]"
+            ],
+            [
+                'n' => "Europa",
+                'f' => "[flag eu]"
+            ],
+            [
+                'n' => "Finnland",
+                'f' => "[flag fi]"
+            ],
+            [
+                'n' => "Frankreich",
+                'f' => "[flag fr]"
+            ],
+            [
+                'n' => "Grossbritannien",
+                'f' => "[flag gb]"
+            ],
+            [
+                'n' => "Griechenland",
+                'f' => "[flag gr]"
+            ],
+            [
+                'n' => "Kroatien",
+                'f' => "[flag hr]"
+            ],
+            [
+                'n' => "Israel",
+                'f' => "[flag il]"
+            ],
+            [
+                'n' => "Indien",
+                'f' => "[flag in]"
+            ],
+            [
+                'n' => "Japan",
+                'f' => "[flag jp]"
+            ],
+            [
+                'n' => "Südkorea",
+                'f' => "[flag kp]"
+            ],
+            [
+                'n' => "Luxemburg",
+                'f' => "[flag lu]"
+            ],
+            [
+                'n' => "Lettland",
+                'f' => "[flag lv]"
+            ],
+            [
+                'n' => "Niederlande",
+                'f' => "[flag nl]"
+            ],
+            [
+                'n' => "Norwegen",
+                'f' => "[flag no]"
+            ],
+            [
+                'n' => "Polen",
+                'f' => "[flag pl]"
+            ],
+            [
+                'n' => "Russland",
+                'f' => "[flag ru]"
+            ],
+            [
+                'n' => "Schweden",
+                'f' => "[flag se]"
+            ],
+            [
+                'n' => "Slowakei",
+                'f' => "[flag sk]"
+            ],
+            [
+                'n' => "Spanien",
+                'f' => "[flag sp]"
+            ],
+            [
+                'n' => "Türkei",
+                'f' => "[flag ty]"
+            ],
+            [
+                'n' => "USA",
+                'f' => "[flag us]"
+            ],
+            [
+                'n' => "Vatikan",
+                'f' => "[flag vn]"
+            ],
+            [
+                'n' => "Welt",
+                'f' => "[flag world]"
+            ]
+        ];
+
+        return $this->render('game/help/info/textformat.html.twig',[
+            'bb' => $bb,
+            'kt' => $kt,
+            'fl' => $fl
+        ]);
     }
 
     private function generateProductionLevels(Building $building): array

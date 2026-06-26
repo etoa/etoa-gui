@@ -1,6 +1,15 @@
 {% extends 'game/help/help.html.twig' %}
 
 {% block help %}
+    <h2>Schiffsaktionen</h2>
+
+    {% block breadcrumbs %}
+        {{ component('breadcrumbs', { items: [
+            { label: 'Hilfe', url: path('game.help.overview') },
+            { label: 'Schiffsaktionen', url: path('game.help.action') },
+        ], title:"Du befindest dich hier:"}) }}
+    {% endblock %}<br/>
+
     Alle Schiffsaktionen in der Übersicht:<br/><br/>
 
     {% for a,attitude in attitudes %}
