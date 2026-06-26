@@ -131,18 +131,45 @@ class TechTreeComponent extends AbstractController
         return $this->createFormBuilder()
             ->add('obj', TechTreeSelectionType::class, [
                 'label' => false,
-                'data' => $this->data??$this->buildingDataRepository->find(BuildingId::BUILDING->value)
+                'data' => $this->item??$this->buildingDataRepository->find(BuildingId::BUILDING->value)
             ])
             ->getForm();
     }
 
-    public function dehydrateData(mixed $item)
+    public function dehydrateData(mixed $item): ?array
     {
-        return $item;
+        if ($item === null) {
+            return null;
+        }
+
+        return [
+            'type' => match(ClassUtils::getClass($item)) {
+                Building::class => 'building',
+                Technology::class => 'technology',
+                Ship::class => 'ship',
+                Defense::class => 'defense',
+                Missile::class => 'missile',
+                default => throw new \InvalidArgumentException('Unknown object type'),
+            },
+            'id' => $item->getId(),
+        ];
     }
 
-    public function hydrateData($item): mixed
+    public function hydrateData(?array $data): mixed
     {
-        return $item->getId();
+        if ($data === null) {
+            return null;
+        }
+
+        $repository = match($data['type']) {
+            'building' => $this->buildingDataRepository,
+            'technology' => $this->technologyDataRepository,
+            'ship' => $this->shipDataRepository,
+            'defense' => $this->defenseDataRepository,
+            'missile' => $this->missileDataRepository,
+            default => throw new \InvalidArgumentException('Invalid object type'),
+        };
+
+        return $repository->find($data['id']);
     }
 }

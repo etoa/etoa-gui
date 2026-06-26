@@ -24,19 +24,15 @@
             {% block table_content %}
                 <tr>
                     <th>Stufe</th>
-                    <th>Produktion</th>
-                    <th>Energie</th>
+                    <th>Wohnplatz</th>
+                    <th>Wohnplatz mit Grundbonus und Planetenbasis</th>
                 </tr>
                 {% for level,data in infos.levels %}
-                    {% for item in data.prod_items %}
-                        {% if item > 0 %}
-                            <tr>
-                                <td>{{ level }}</td>
-                                <td>{{ formatNumber(item) }}</td>
-                                <td>{{ formatNumber(data.power_use) }}</td>
-                            </tr>
-                        {% endif %}
-                    {% endfor %}
+                    <tr>
+                        <td>{{ level }}</td>
+                        <td>{{ formatNumber(data.prod_item) }}</td>
+                        <td>{{ formatNumber(data.place) }}</td>
+                    </tr>
                 {% endfor %}
             {% endblock %}
         </twig:Table>

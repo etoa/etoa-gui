@@ -35,9 +35,9 @@ class BuildingDataRepository extends AbstractRepository
             ->execute();
     }
 
-    public function getBuilding(int|Building $buildingId): ?Building
+    public function getBuilding(int $buildingId): ?Building
     {
-        return $this->findOneBy(['building'=>$buildingId,'show'=>true]);
+        return $this->findOneBy(['id'=>$buildingId,'show'=>true]);
     }
 
     /**

@@ -11,7 +11,7 @@
                              alt="Bild {{ infos.building.name }}"/>
                     </th>
                     <td colspan="2">
-                        <div>{{ BBCodeToHTML(infos.building.longComment) }}</div>
+                        <div>{{ BBCodeToHTML(infos.building.longComment)|raw }}</div>
                     </td>
                 </tr>
                 <tr>
@@ -24,19 +24,23 @@
             {% block table_content %}
                 <tr>
                     <th>Stufe</th>
-                    <th>Produktion</th>
-                    <th>Energie</th>
+                    <th>Felder</th>
+                    <th>Energieverbrauch</th>
+                    <th>Speicher {{ constant('EtoA\\Universe\\Resources\\ResourceNames::METAL') }}</th>
+                    <th>Speicher {{ constant('EtoA\\Universe\\Resources\\ResourceNames::CRYSTAL') }}</th>
+                    <th>Speicher {{ constant('EtoA\\Universe\\Resources\\ResourceNames::PLASTIC') }}</th>
                 </tr>
                 {% for level,data in infos.levels %}
-                    {% for item in data.prod_items %}
-                        {% if item > 0 %}
-                            <tr>
-                                <td>{{ level }}</td>
-                                <td>{{ formatNumber(item) }}</td>
-                                <td>{{ formatNumber(data.power_use) }}</td>
-                            </tr>
-                        {% endif %}
-                    {% endfor %}
+                    <tr>
+                        <td>{{ level }}</td>
+                        <td>{{ formatNumber(data.fields_provide) }}</td>
+                        <td>{{ formatNumber(data.power_use) }}</td>
+                        {% for item in data.prod_items %}
+                            {% if item > 0 %}
+                                <td>{{ formatNumber(item+data.base_store+configValue('def_store_capacity')) }}</td>
+                            {% endif %}
+                        {% endfor %}
+                    </tr>
                 {% endfor %}
             {% endblock %}
         </twig:Table>

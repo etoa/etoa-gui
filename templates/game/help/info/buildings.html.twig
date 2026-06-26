@@ -15,7 +15,7 @@
                             </a>
                         </td>
                         <td style="width:130px;">
-                            <a href="?$link&amp;site=$site&amp;id= $building->id "><b>{{ building.name }}</a>
+                            <a href="{{ path('game.help.buildings.detail',{building:building.id}) }}"><b>{{ building.name }}</a>
                         </td>
                         <td>{{ BBCodeToHTML(building.shortComment)|raw }}</td>
                         <td style="width:90px">

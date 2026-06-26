@@ -11,7 +11,7 @@
                              alt="Bild {{ infos.building.name }}"/>
                     </th>
                     <td colspan="2">
-                        <div>{{ BBCodeToHTML(infos.building.longComment) }}</div>
+                        <div>{{ BBCodeToHTML(infos.building.longComment)|raw }}</div>
                     </td>
                 </tr>
                 <tr>
@@ -25,7 +25,6 @@
                 <tr>
                     <th>Stufe</th>
                     <th>Produktion</th>
-                    <th>Energie</th>
                 </tr>
                 {% for level,data in infos.levels %}
                     {% for item in data.prod_items %}
@@ -33,7 +32,6 @@
                             <tr>
                                 <td>{{ level }}</td>
                                 <td>{{ formatNumber(item) }}</td>
-                                <td>{{ formatNumber(data.power_use) }}</td>
                             </tr>
                         {% endif %}
                     {% endfor %}

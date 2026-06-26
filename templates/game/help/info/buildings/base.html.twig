@@ -23,21 +23,45 @@
         <twig:Table title="{{ infos.title }}">
             {% block table_content %}
                 <tr>
-                    <th>Stufe</th>
-                    <th>Produktion</th>
-                    <th>Energie</th>
+                    <th>Rohstoff</th>
+                    <th>Prod.</th>
+                    <th>Lager</th>
                 </tr>
-                {% for level,data in infos.levels %}
-                    {% for item in data.prod_items %}
-                        {% if item > 0 %}
-                            <tr>
-                                <td>{{ level }}</td>
-                                <td>{{ formatNumber(item) }}</td>
-                                <td>{{ formatNumber(data.power_use) }}</td>
-                            </tr>
-                        {% endif %}
-                    {% endfor %}
-                {% endfor %}
+                <tr>
+                    <td>{{ constant('EtoA\\Universe\\Resources\\ResourceNames::METAL') }}</td>
+                    <td>{{ formatNumber(building.prodMetal) }}</td>
+                    <td>{{ formatNumber(building.storeMetal) }}</td>
+                </tr>
+                <tr>
+                    <td>{{ constant('EtoA\\Universe\\Resources\\ResourceNames::CRYSTAL') }}</td>
+                    <td>{{ formatNumber(building.prodCrystal) }}</td>
+                    <td>{{ formatNumber(building.storeCrystal) }}</td>
+                </tr>
+                <tr>
+                    <td>{{ constant('EtoA\\Universe\\Resources\\ResourceNames::PLASTIC') }}</td>
+                    <td>{{ formatNumber(building.prodPlastic) }}</td>
+                    <td>{{ formatNumber(building.storePlastic) }}</td>
+                </tr>
+                <tr>
+                    <td>{{ constant('EtoA\\Universe\\Resources\\ResourceNames::FUEL') }}</td>
+                    <td>{{ formatNumber(building.prodFuel) }}</td>
+                    <td>{{ formatNumber(building.storeFuel) }}</td>
+                </tr>
+                <tr>
+                    <td>{{ constant('EtoA\\Universe\\Resources\\ResourceNames::FOOD') }}</td>
+                    <td>{{ formatNumber(building.prodFood) }}</td>
+                    <td>{{ formatNumber(building.storeFood) }}</td>
+                </tr>
+                <tr>
+                    <td>Bewohner</td>
+                    <td>-</td>
+                    <td>{{ formatNumber(building.peoplePlace) }} Plätze</td>
+                </tr>
+                <tr>
+                    <td>Energie</td>
+                    <td>{{ formatNumber(building.prodPower) }}</td>
+                    <td>-</td>
+                </tr>
             {% endblock %}
         </twig:Table>
         <twig:Table title="Kostenentwicklung (Faktor: {{ building.buildCostsFactor }})">
