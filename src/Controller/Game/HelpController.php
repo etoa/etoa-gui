@@ -787,6 +787,15 @@ class HelpController extends AbstractGameController
         ]);
     }
 
+    #[Route('/game/help/population', name: 'game.help.population')]
+    public function population(Request $request): Response
+    {
+        return $this->render('game/help/info/population.html.twig',[
+            'buildingNames' => $this->buildingDataRepository->getBuildingNamesHavingPlaceForPeople(),
+            'cpid' => $request->getSession()->get('cpid')
+        ]);
+    }
+
     private function generateProductionLevels(Building $building): array
     {
         $levels = [];

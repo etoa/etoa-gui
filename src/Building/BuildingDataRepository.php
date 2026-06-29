@@ -88,12 +88,12 @@ class BuildingDataRepository extends AbstractRepository
     public function getBuildingNamesHavingPlaceForPeople(): array
     {
         return $this->createQueryBuilder('q')
-            ->select('building_id, building_name')
-            ->from('buildings')
-            ->where('building_people_place > 0')
-            ->orderBy('building_order')
-            ->addOrderBy('building_name')
-            ->fetchAllKeyValue();
+            ->select('q.id, q.name')
+            ->where('q.peoplePlace > 0')
+            ->orderBy('q.order')
+            ->addOrderBy('q.name')
+            ->getQuery()
+            ->execute();
     }
 
     /**

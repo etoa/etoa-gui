@@ -1,0 +1,38 @@
+{% extends 'game/help/help.html.twig' %}
+
+{% block help %}
+    <h2>Bewohner</h2>
+    {% block breadcrumbs %}
+        {{ component('breadcrumbs', { items: [
+            { label: 'Hilfe', url: path('game.help.overview') },
+            { label: 'Bewohner', url: path('game.help.population') },
+        ], title:"Du befindest dich hier:"}) }}
+    {% endblock %}
+    <twig:Box title="Bevölkerung">
+        <div>
+            Jeder Planet hat Bewohner, mit welchen man die Bauzeit von Gebäuden, Forschungen, Schiffen und
+            Verteidigungsanlagen senken kann. Pro Arbeiter, die unter "<a
+                    href="{{ path('game.population',{id:cpid}) }}">Bevölkerung</a>"
+            zugeteilt werden, vermindert sich die Zeit um 3
+            Sekunden. Jedoch brauchen die Arbeiter auch Nahrung. Pro Arbeit, die sie erledigen müssen, verlangen sie
+            12t Nahrung, welche direkt nach dem Baustart vom Planetenkonto abgezogen werden. Wenn ihr den Bau abbrecht,
+            bekommt ihr gerechterweise den prozentualen Anteil an Nahrung wieder zurück.<br>
+            Es ist ausserdem zu beachten, dass nicht unendlich schnell gebaut oder geforscht werden kann. Die minimale
+            Bau- und Forschzeit beträgt 10% der normalen Zeit, was eine Zeiteinsparung von 90% bedeutet!
+        </div>
+    </twig:Box>
+    <twig:Box title="Wohnraum">
+        <div>
+            Auf einem Planeten ist die Grösse der Bevölkerung begrenzt. Es gibt einen Grundwohnraum für
+            <b>{{ formatNumber(configValue('user_start_people')) }}</b> Menschen auf jedem Planeten. Dieser Wert kann
+            durch folgende Gebäude gesteigert werden:<br/>
+            <ul>
+                {% for building in buildingNames %}
+                    <li>
+                        <a href="{{ path('game.help.buildings.detail',{building:building.id}) }}">{{ building.name }}</a>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </twig:Box>
+{% endblock %}
