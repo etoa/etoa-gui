@@ -34,16 +34,13 @@ class PlanetTypeRepository extends AbstractRepository
     /**
      * @return PlanetType[]
      */
-    public function getPlanetTypes(string $order = 'type_name', string $sort = 'ASC'): array
+    public function getPlanetTypes(string $order = 'name', string $sort = 'ASC'): array
     {
-        $data = $this->createQueryBuilder('q')
-            ->select('p.*')
-            ->from('planet_types', 'p')
-            ->andWhere('p.type_consider = 1')
-            ->orderBy('p.' . $order, $sort)
-            ->fetchAllAssociative();
-
-        return array_map(fn ($row) => new PlanetType($row), $data);
+        return $this->createQueryBuilder('q')
+            ->andWhere('q.consider = 1')
+            ->orderBy("q.$order", $sort)
+            ->getQuery()
+            ->execute();
     }
 
     public function isHabitable(int $typeId): bool

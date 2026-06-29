@@ -1,0 +1,66 @@
+{% extends 'game/help/help.html.twig' %}
+
+{% block help %}
+    <h2>Planeten</h2>
+
+    {% block breadcrumbs %}
+        {{ component('breadcrumbs', { items: [
+            { label: 'Hilfe', url: path('game.help.overview') },
+            { label: 'Planeten', url: path('game.help.planets') },
+        ], title:"Du befindest dich hier:"}) }}
+    {% endblock %}<br/>
+
+    <twig:Table title="Planetenboni">
+        {% block table_content %}
+            <tr>
+                <th colspan="2">
+                    <a href="{{ path('game.help.planets',{order:'name'}) }}">Name</a>
+                </th>
+                <th>
+                    <a href="{{ path('game.help.planets',{order:'metal'}) }}">{{ constant('EtoA\\Universe\\Resources\\ResourceNames::METAL') }}</a>
+                </th>
+                <th>
+                    <a href="{{ path('game.help.planets',{order:'crystal'}) }}">{{ constant('EtoA\\Universe\\Resources\\ResourceNames::CRYSTAL') }}</a>
+                </th>
+                <th>
+                    <a href="{{ path('game.help.planets',{order:'plastic'}) }}">{{ constant('EtoA\\Universe\\Resources\\ResourceNames::PLASTIC') }}</a>
+                </th>
+                <th>
+                    <a href="{{ path('game.help.planets',{order:'fuel'}) }}">{{ constant('EtoA\\Universe\\Resources\\ResourceNames::FUEL') }}</a>
+                </th>
+                <th>
+                    <a href="{{ path('game.help.planets',{order:'food'}) }}">{{ constant('EtoA\\Universe\\Resources\\ResourceNames::FOOD') }}</a>
+                </th>
+                <th>
+                    <a href="{{ path('game.help.planets',{order:'power'}) }}">Energie</a>
+                </th>
+                <th>
+                    <a href="{{ path('game.help.planets',{order:'people'}) }}">Wachstum</a>
+                </th>
+                <th>
+                    <a href="{{ path('game.help.planets',{order:'researchTime'}) }}">Forschungszeit</a>
+                </th>
+                <th>
+                    <a href="{{ path('game.help.planets',{order:'buildTime'}) }}">Bauzeit</a>
+                </th>
+            </tr>
+            {% for planetType in planetTypes %}
+                <tr>
+                    <td class="tbldata" style="width:40px;background:#000;" {{ planetType.ttImage.toString|raw }}>
+                        <img src="{{ planetType.imagePath }}" alt="Verteidigung" width="40" height="40"/>
+                    </td>
+                    <td {{ planetType.ttPlanet.toString|raw }}>{{ planetType.name }}</td>
+                    <td>{{ formatPercentString(planetType.metal) }}</td>
+                    <td>{{ formatPercentString(planetType.crystal) }}</td>
+                    <td>{{ formatPercentString(planetType.plastic) }}</td>
+                    <td>{{ formatPercentString(planetType.fuel) }}</td>
+                    <td>{{ formatPercentString(planetType.food) }}</td>
+                    <td>{{ formatPercentString(planetType.power) }}</td>
+                    <td>{{ formatPercentString(planetType.people) }}</td>
+                    <td>{{ formatPercentString(planetType.researchTime) }}</td>
+                    <td>{{ formatPercentString(planetType.buildTime) }}</td>
+                </tr>
+            {% endfor %}
+        {% endblock %}
+    </twig:Table>
+{% endblock %}

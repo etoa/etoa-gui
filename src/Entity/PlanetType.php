@@ -62,14 +62,11 @@ class PlanetType implements ObjectWithImage
 
     public function getImagePath(string $type = "small", int $imageNumber = 1): string
     {
-        switch ($type) {
-            case 'small':
-                return self::BASE_PATH . "/planets/planet" . $this->id . '_' . $imageNumber . "_small.png";
-            case 'medium':
-                return self::BASE_PATH . "/planets/planet" . $this->id . '_' . $imageNumber . "_middle.png";
-            default:
-                return self::BASE_PATH . "/planets/planet" . $this->id . '_' . $imageNumber . ".png";
-        }
+        return match ($type) {
+            'small' => self::BASE_PATH . "/planets/planet" . $this->id . '_' . $imageNumber . "_small.png",
+            'medium' => self::BASE_PATH . "/planets/planet" . $this->id . '_' . $imageNumber . "_middle.png",
+            default => self::BASE_PATH . "/planets/planet" . $this->id . '_' . $imageNumber . ".png",
+        };
     }
 
     public function getId(): ?int

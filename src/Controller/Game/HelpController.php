@@ -16,6 +16,8 @@ use EtoA\Ship\ShipDataRepository;
 use EtoA\Support\ExternalUrl;
 use EtoA\Support\RuntimeDataStore;
 use EtoA\Support\StringUtils;
+use EtoA\UI\Tooltip;
+use EtoA\Universe\Planet\PlanetTypeRepository;
 use EtoA\Universe\Resources\ResourceNames;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -32,7 +34,8 @@ class HelpController extends AbstractGameController
         private readonly BuildingCostContext        $buildingCostContext,
         private readonly DefenseCategoryRepository  $defenseCategoryRepository,
         private readonly DefenseDataRepository      $defenseDataRepository,
-        private readonly RuntimeDataStore           $runtimeDataStore
+        private readonly RuntimeDataStore           $runtimeDataStore,
+        private readonly PlanetTypeRepository       $planetTypeRepository
     )
     {
     }
@@ -724,9 +727,63 @@ class HelpController extends AbstractGameController
             $currentRates[$i] = $this->runtimeDataStore->get('market_rate_' . $i, "1");
         }
 
-        return $this->render('game/help/info/rates.html.twig',[
+        return $this->render('game/help/info/rates.html.twig', [
             'currentRates' => $currentRates,
             'resourceNames' => ResourceNames::NAMES
+        ]);
+    }
+
+    #[Route('/game/help/missile', name: 'game.help.missile')]
+    public function missile(): Response
+    {
+        return $this->render('game/help/info/missile.html.twig');
+    }
+
+    #[Route('/game/help/multi', name: 'game.help.multi')]
+    public function multi(): Response
+    {
+        return $this->render('game/help/info/multi_sitting.html.twig');
+    }
+
+    #[Route('/game/help/planets', name: 'game.help.planets')]
+    public function planets(Request $request): Response
+    {
+        $planetTypes = [];
+        foreach ($this->planetTypeRepository->getPlanetTypes($request->get('order') ?? 'name') as $planetType) {
+            $ttPlanet = new Tooltip();
+            $x = mt_rand(1, 5);
+            $ttPlanet->addIcon($planetType->getImagePath('small', $x));
+            $ttPlanet->addTitle($planetType->getName());
+            if ($planetType->isHabitable())
+                $ttPlanet->addGoodCond("Bewohnbar");
+            else
+                $ttPlanet->addBadCond("Unbewohnbar");
+            if ($planetType->isCollectGas())
+                $ttPlanet->addGoodCond("Ermöglicht " . ResourceNames::FUEL . "abbau");
+            $ttPlanet->addComment($planetType->getComment());
+
+            $ttImage = new Tooltip();
+            $ttImage->addImage($planetType->getImagePath('other', $x));
+
+            $planetTypes[] = [
+                'name' => $planetType->getName(),
+                'metal' => $planetType->getMetal(),
+                'crystal' => $planetType->getCrystal(),
+                'plastic' => $planetType->getPlastic(),
+                'fuel' => $planetType->getFuel(),
+                'food' => $planetType->getFood(),
+                'power' => $planetType->getPower(),
+                'people' => $planetType->getPeople(),
+                'researchTime' => $planetType->getResearchTime(),
+                'buildTime' => $planetType->getBuildTime(),
+                'ttPlanet' => $ttPlanet,
+                'ttImage' => $ttImage,
+                'imagePath' => $planetType->getImagePath('small', $x)
+            ];
+        }
+
+        return $this->render('game/help/info/planets.html.twig', [
+            'planetTypes' => $planetTypes
         ]);
     }
 
