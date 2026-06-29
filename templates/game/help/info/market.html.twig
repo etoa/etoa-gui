@@ -1,0 +1,155 @@
+{% extends 'game/help/help.html.twig' %}
+
+{% block help %}
+    <h2>Markt</h2>
+    {% block breadcrumbs %}
+        {{ component('breadcrumbs', { items: [
+            { label: 'Hilfe', url: path('game.help.overview') },
+            { label: 'Markt', url: path('game.help.market') },
+        ], title:"Du befindest dich hier:"}) }}
+    {% endblock %}
+    <twig:Box title="Markt">
+        <div>
+            Der Marktplatz, das Handelszentrum von Andromeda.<br>
+            Baue den Marktplatz aus, um Zugang zum <a href="?page=market">Markt</a> zu erhalten und somit in das Reich
+            der Händler einzutauchen.
+            Erwerbe Waren von anderen Spielern oder stelle deine eigenen Angebote ein. Je höher du den Markt ausgebaut
+            hast, desto mehr Angebote kannst du einstellen und desto mehr Handelsmöglichkeiten hast du: <br>Stufe
+            {{ configValue('min_market_level_res') }} →
+            Rohstoffhandel<br>Stufe {{ configValue('min_market_level_ship') }} → Schiffshandel<br>Stufe
+            {{ configValue('min_market_level_auction') }} → Auktionen<br>
+            Wird ein Handel erfolgreich abgeschlossen, so werden die Waren in den nächsten paar Minuten an die
+            betroffenen Spieler versendet.
+        </div>
+    </twig:Box>
+    <twig:Box title="Die verschiedenen Funktionen">
+        <div>
+            <b>Angebote aufgeben</b><br>
+            Hier kannst du eigene Angebote in den Markt stellen.<br><br>
+            <ul>
+                <i>Rohstoffhandel:</i><br>
+                Der Markt bietet die Möglichkeit Rohstoffe zu kaufen oder verkaufen. Wenn du Rohstoffe verkaufen willst,
+                gib die gewünschte Anzahl in das entsprechende Eingabefeld ein und definiere einen Preis dafür.
+                Es ist aber darauf zu achten, dass der Markt einen Mindest- sowie einen Maximalbetrag festlegt der nicht
+                unter- bzw. überschritten werden kann.
+                Dieser Wert wird aus der Summe der zu verkaufenden Rohstoffe, welche mit den aktuellen Rohstoffkursen
+                verrechnet wurden, gebildet.<br>
+                Der Mindestpreis beträgt beim Rohstoffhandel {{ (configValue('res_price_factor_min') * 100) }}% und der
+                Maximalpreis
+                {{ (configValue('res_price_factor_max') * 100) }}% des Gesamtwertes. Der Markt rechnet dir immer diese
+                Mindest- und
+                Höchstpreise aus.<br>
+                Beim Rohstoffhandel fallen dem Verkäufer die Marktgebühren ( {{ ((configValue('market_sell_tax') - 1) *
+                100) }} %) zur Last, welche sich auf die maximal zu verkaufenden Rohstoffmengen auswirken. Es ist also
+                nicht möglich 100 % der aktuellen Rohstoffe auf dem Planeten zum Verkauf anzubieten!<br>
+                Wird das Angebot nicht innerhalb von {{ configValue('market_response_time') }} Tagen verkauft, so wird
+                es automatisch gelöscht. Du erhältst danach aber nur noch einen gewissen Prozentsatz zurück. Dieser Wert
+                ist der gleiche, wie wenn du das Angebot manuell zurückziehst!
+            </ul>
+            <br>
+            <ul>
+                <i>Schiffshandel:</i><br>
+                Der Markt bietet auch die Möglichkeit Schiffe zu kaufen oder verkaufen. Wenn du ein Schiff verkaufen
+                willst, wähle das gewünschte Schiff aus dem Optionsfeld aus und bestimme die Anzahl, die du verkaufen
+                willst. Nun kannst du den Preis der Schiffe festlegen. Die Zahlen, die bereits in den Feldern stehen,
+                sollen nur als Hilfe dienen, um dich über den Wert der Schiffe zu informieren. Diese Zahlen können
+                beliebig geändert werden!
+                Es ist aber darauf zu achten, dass auch bei dieser Art von Handel der Markt einen Mindest- sowie einen
+                Maximalbetrag festlegt, der nicht unter- bzw. überschritten werden kann.
+                Dieser Wert wird aus der Summe der Baurohstoffe errechnet, welche alle Schiffe zusammen gekostet haben
+                (exklusiv Nahrung).
+                Der Mindestpreis beträgt beim Schiffshandel {{ (configValue('auction_price_factor_min') * 100) }} % und
+                der Maximalpreis {{ (configValue('auction_price_factor_max') * 100) }} % des Gesamtwertes.<br>
+                Der Schiffshandel ist von den Marktgebühren ausgeschlossen, sowohl Käufer als auch Verkäufer zahlen
+                keine Zuschläge!<br>
+                Wird das Angebot nicht innerhalb von {{ configValue('market_response_time') }} Tagen verkauft, so wird
+                es
+                automatisch gelöscht. Du erhältst danach aber nur noch einen gewissen Prozentsatz zurück. Dieser Wert
+                ist der gleiche, wie wenn du das Angebot manuell zurückziehst!
+            </ul>
+            <br>
+            <ul>
+                <i>Auktionen:</i><br>
+                Diese neuartige Form von Handel erlaubt dir, Rohstoffe zu versteigern.
+                Das Ziel einer Auktion ist es, seine Waren zum bestmöglichen Preis zu verkaufen. Im Auktionsformular
+                kannst du, wie beim Rohstoffhandel, die Mengen Rohstoffe angeben, die du versteigern willst.<br>
+                Unter dem Abschnitt "Preis" kannst du angeben, welche Rohstoffe du für dein Angebot haben willst. Mach
+                einen Haken bei den Rohstoffarten mit denen bezahlt werden soll.<br>
+                Unter dem Abschnitt "Dauer" wird die Dauer der Auktion festgelegt. Anders als beim normalen Verkauf
+                sind die Auktionen zeitlich begrenzt!<br>
+                Die Mindestdauer bei einer Auktion beträgt {{ configValue('auction_min_duration') }} Tage. Diese Zeit
+                kann nach Wunsch
+                verlängert werden.<br>
+                Ist alles ausgefüllt, was nötig ist, kannst du die Auktion starten und ab diesem Zeitpunkt ist die
+                Auktion im Handel.
+                Die anderen Spieler haben nun die Möglichkeit bei der Auktion zu bieten. Der Gewinner ist, wer nach
+                Ablauf der Zeit das höchste Gebot aufweist, oder derjenige, der als erstes bereit ist, den
+                Maximalbetrag zu zahlen!<br>
+                Wie auch beim Schiffs- und Rohstoffhandel gibt es bei den Auktionen einen Mindest- und Maximalbetrag,
+                der für die angebotene Ware zu zahlen ist.
+                Das Mindestgebot liegt hier bei {{ (configValue('auction_price_factor_min') * 100) }} % und das Höchstgebot bei
+                {{ (configValue('auction_price_factor_max') * 100) }} %.<br>
+                Wenn ein Spieler diese {{ (configValue('auction_price_factor_max') * 100) }} % bietet, ist er der
+                sofortige Gewinner der
+                Auktion und somit ist die Auktion beendet. Ansonsten ist der Höchstbietende nach Ablauf der Zeit der
+                Gewinner.<br>
+                Hat in der ganzen Zeit kein Spieler bei deiner Auktion geboten so ist die Auktion ebenfalls beendet und
+                du bekommst deine Waren mit dem Restwert zurückerstattet.<br>
+                Ist ein Sieger bekannt und die Auktion wird als "Beendet" angesehen, so sind die Waren an die
+                betroffenen Spieler gesendet. Das Angebot bleibt aber aus Sicherheitsgründen noch für
+                {{ configValue('market_auction_delay_time') }}
+                Stunden sichtbar!
+                Nach den abgelaufenen {{ configValue('market_auction_delay_time') }} Stunden wird das Angebot endgültig
+                gelöscht.
+            </ul>
+            <br><br>
+            <b>Eigene Angebote</b><br>
+            Hier stehen alle deine Angebote, die du momentan am Laufen hast und hier kannst du sie auch aufheben, falls
+            sich kein Käufer blicken lässt, oder du dich vertippt hast.
+            Aber Achtung! Du erhältst nur noch einen gewissen Prozentsatz vom Angebot zurück. Je höher du den Markt
+            ausgebaut hast, desto mehr bekommst du von deinen Waren zurückerstattet.<br>
+            Eine Auktion kann nur zurückgenommen werden, wenn noch niemand geboten hat.<br>
+            Die eingestellten Angebote werden ausserdem nach {{ configValue('market_response_time') }} Tagen automatisch
+            gelöscht, wenn sie vorher nicht gekauft wurden (Auktionen ausgeschlossen)!<br><br><br>
+            <b>Angebotssuche</b><br><br>
+            <ul>
+                <i>Rohstoffe</i><br>
+                Auflistung aller Rohstoffangebote, die momentan im Handel sind.
+                Die eigenen Angebote werden nicht angezeigt!
+                Nach einem Kauf werden die Waren "sofort" gesendet und das Angebot wird gelöscht.<br>
+                Mithilfe vom Filter lassen sich die angezeigten Angebote sortieren bzw. filtern.
+            </ul>
+            <br>
+            <ul>
+                <i>Schiffe</i><br>
+                Auflistung aller Schiffsangebote, die momentan im Handel sind.
+                Die eigenen Angebote werden nicht angezeigt!
+                Nach einem Kauf werden die Waren "sofort" gesendet und das Angebot wird gelöscht.<br>
+                Mithilfe vom Filter lassen sich die angezeigten Angebote sortieren bzw. filtern.
+            </ul>
+            <br>
+            <ul>
+                <i>Auktionen</i><br>
+                Auflistung aller Auktionen, die momentan im Handel sind.
+                Die eigenen Auktionen werden nicht angezeigt!<br>
+                Mithilfe vom Filter lassen sich die angezeigten Auktionen sortieren bzw. filtern.
+                Um bei einer Auktion mitzubieten, musst du in den Rohstofffeldern einen Betrag angeben, welcher grösser
+                als das momentane Höchstgebot oder mindestens so gross wie das Mindestgebot ist.<br>
+                Wird eine Auktion angezeigt, für die man gar nicht mehr bieten kann, so ist diese bereits verkauft und
+                wird nur noch aus Sicherheitsgründen angezeigt!
+            </ul>
+        </div>
+    </twig:Box>
+    <twig:Box title="Rohstoffkurse">
+        <div>
+            Wie einige Male erwähnt, rechnet der Markt der Wert eines Angebots mit speziellen Rohstoffkursen.<br>
+            Diese werden durch das Prinzip von "Angebot und Nachfrage" erstellt und sind folglich variable Werte, die
+            immer auf dem aktuellen Stand sind!<br>
+            Am Anfang haben alle Rohstoffarten denselben Kurs (1). Wird jetzt vermehrt von einer Art angeboten (grosses
+            Angebot), so sink der Wert dieses Rohstoffes und die Folge daraus ist eine Verteuerung vom Rest. Wird ein
+            Rohstoff viel verlangt (grosse Nachfrage) so steigt der Kurs von diesem und die anderen Rohstoffe sinken im
+            Preis.<br>
+            Eine Tabelle zu den aktuellen Kursen findest du {{ component('popup', { path: 'game.help.rates', title:"hier"}) }}.
+        </div>
+    </twig:Box>
+{% endblock %}

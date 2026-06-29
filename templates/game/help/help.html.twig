@@ -1,7 +1,22 @@
-{% extends 'layout/game.html.twig' %}
-{% block content %}
+{% extends app.request.query.get('popup')
+    ? 'layout/base.html.twig'
+    : 'layout/game.html.twig' %}
+
+{% set currentContent %}
     <h1>Hilfe</h1>
 
     {% block help %}
     {% endblock %}
-{% endblock %}
+{% endset %}
+
+{% if app.request.query.get('popup') %}
+    {% set bodyTopStuff %}
+        <div id="contentwrap">
+            {{ currentContent }}
+        </div>
+    {% endset %}
+{% else %}
+    {% set content %}
+        {{ currentContent }}
+    {% endset %}
+{% endif %}

@@ -14,6 +14,7 @@ use EtoA\Entity\Defense;
 use EtoA\Fleet\FleetAction;
 use EtoA\Ship\ShipDataRepository;
 use EtoA\Support\ExternalUrl;
+use EtoA\Support\RuntimeDataStore;
 use EtoA\Support\StringUtils;
 use EtoA\Universe\Resources\ResourceNames;
 use Symfony\Component\HttpFoundation\Request;
@@ -30,7 +31,8 @@ class HelpController extends AbstractGameController
         private readonly BuildingCostCalculator     $buildingCostCalculator,
         private readonly BuildingCostContext        $buildingCostContext,
         private readonly DefenseCategoryRepository  $defenseCategoryRepository,
-        private readonly DefenseDataRepository      $defenseDataRepository
+        private readonly DefenseDataRepository      $defenseDataRepository,
+        private readonly RuntimeDataStore           $runtimeDataStore
     )
     {
     }
@@ -682,14 +684,14 @@ class HelpController extends AbstractGameController
     #[Route('/game/help/defense', name: 'game.help.defense')]
     public function defense(Request $request): Response
     {
-        $sortBy = $request->get('order')??'order';
+        $sortBy = $request->get('order') ?? 'order';
 
         /** @var DefenseCategoryRepository $defenseCategoryRepository */
         $defenseCategories = $this->defenseCategoryRepository->getAllCategories();
         $categoryWithDefenses = [];
 
         foreach ($defenseCategories as $defenseCategory) {
-            $defenses = $this->defenseDataRepository->getDefenseByCategory($defenseCategory,$sortBy);
+            $defenses = $this->defenseDataRepository->getDefenseByCategory($defenseCategory, $sortBy);
             $categoryWithDefenses[$defenseCategory->getId()]['category'] = $defenseCategory->getName();
             $categoryWithDefenses[$defenseCategory->getId()]['defenses'] = $defenses;
         }
@@ -705,6 +707,26 @@ class HelpController extends AbstractGameController
         return $this->render('game/help/info/defenseDetail.html.twig', [
             'defense' => $defense,
             'ship' => $this->shipDataRepository->getTransformedShipForDefense($defense)
+        ]);
+    }
+
+    #[Route('/game/help/market', name: 'game.help.market')]
+    public function market(): Response
+    {
+        return $this->render('game/help/info/market.html.twig');
+    }
+
+    #[Route('/game/help/rates', name: 'game.help.rates')]
+    public function rates(): Response
+    {
+        $currentRates = [];
+        foreach (array_keys(ResourceNames::NAMES) as $i) {
+            $currentRates[$i] = $this->runtimeDataStore->get('market_rate_' . $i, "1");
+        }
+
+        return $this->render('game/help/info/rates.html.twig',[
+            'currentRates' => $currentRates,
+            'resourceNames' => ResourceNames::NAMES
         ]);
     }
 

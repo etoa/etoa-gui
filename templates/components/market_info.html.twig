@@ -38,7 +38,9 @@
         {% endif %}
         <tr>
             <th>Rohstoffkurse:</th>
-            <td> popUp("Details anzeigen", "page=help&amp;site=rates") </td>
+            <td>
+                {{ component('popup', { path: 'game.help.rates', title:"Details anzeigen"}) }}<br>
+            </td>
         </tr>
     {% endblock %}
 </twig:Table>

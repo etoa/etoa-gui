@@ -1,0 +1,71 @@
+{% extends 'game/help/help.html.twig' %}
+
+{% block help %}
+    <h2>Rohstoffkurse</h2>
+    {% block breadcrumbs %}
+        {{ component('breadcrumbs', { items: [
+            { label: 'Hilfe', url: path('game.help.overview') },
+            { label: 'Rohstoffkurse', url: path('game.help.rates') },
+        ], title:"Du befindest dich hier:"}) }}
+    {% endblock %}
+    <br>
+    Die Rohstoffkurse sind dynamisch und ändern sich automatisch je nach dem<br/>
+    wie gross das Angebot und die Nachfrage
+    nach einem Rohstoff im Markt ist.<br/><br/>
+    <twig:Table>
+        {% block table_content %}
+            <tr>
+                <th style="width:15%"></th>
+                {% for resourceName in resourceNames %}
+                    <th style="width:17%">{{ resourceName }}</th>
+                {% endfor %}
+            </tr>
+            {% for id,resourceName in resourceNames %}
+                <tr>
+                    <th>{{ resourceName }}</th>
+                    {% for id2,resourceName2 in resourceNames %}
+                        {% if id == id2 %}
+                            <td>-</td>
+                        {% else %}
+                            <td {{ colorizeMarketRate((currentRates[id]
+                                / currentRates[id2])|round(2))|raw }}>{{ (currentRates[id] / currentRates[id2])|round(2) }}</td>
+                        {% endif %}
+                    {% endfor %}
+                </tr>
+            {% endfor %}
+        {% endblock %}
+    </twig:Table>
+    <br/>
+
+    <b>Beispiel:</b> Eine Tonne {{ resourceNames[0] }} hat den Wert von {{ (currentRates[0] / currentRates[1])|round(2) }} Tonnen {{ resourceNames[1] }}.
+    <br/>
+    Für eine Tonne {{ resourceNames[1] }} muss man {{ (currentRates[1] / currentRates[0])|round(2) }} Tonnen {{ resourceNames[0] }} aufwenden.
+    <br/><br/>
+    <b>Legende:</b><br/><br/> kleiner Bedarf/grosses Angebot
+    <span style="background:#0f0;width:50px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+    <span style="background:#ff0;width:50px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+    <span style="background:#fa0;width:50px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+    <span style="background:#f70;width:50px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+    <span style="background:#f40;width:50px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+    grosser Bedarf/kleines Angebot
+    <br/><br/>
+
+    <div style="text-align:center;">
+        <twig:Table style="width:200px;">
+            {% block table_content %}
+                <tr>
+                    <th>Rohstoff</th>
+                    <th>Absoluter Kurs</th>
+                </tr>
+                {% for id,resourceName in resourceNames %}
+                    <tr>
+                        <th>{{ resourceName }}</th>
+                        <td {{ colorizeMarketRate(currentRates[id])|raw }}>{{ currentRates[id] }}</td>
+                    </tr>
+                {% endfor %}
+            {% endblock %}
+        </twig:Table>
+        <br/>
+        <img src="{{ path('images.market') }}" alt="Kursverlauf"/>
+    </div><br/>
+{% endblock %}

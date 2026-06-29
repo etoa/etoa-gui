@@ -71,6 +71,7 @@ class TwigExtension extends AbstractExtension
             new TwigFunction('icon', [$this, 'icon']),
             new TwigFunction('banner', [$this, 'getBannerValues']),
             new TwigFunction('formatPercentString', [$this, 'formatPercentString']),
+            new TwigFunction('colorizeMarketRate', [$this, 'colorizeMarketRate']),
         ];
     }
 
@@ -259,5 +260,24 @@ class TwigExtension extends AbstractExtension
     public function formatPercentString($val, bool $colors = false, bool $inverse = false):string
     {
         return StringUtils::formatPercentString($val, $colors, $inverse);
+    }
+
+    public function colorizeMarketRate($r):string
+    {
+        $b = " style=\"color:#000;background:";
+
+        $e = "\"";
+        if ($r < 0.5)
+            return $b . "#0f0" . $e;
+        if ($r < 1)
+            return $b . "#ff0" . $e;
+        if ($r > 5)
+            return $b . "#f40" . $e;
+        if ($r > 2.5)
+            return $b . "#f70" . $e;
+        if ($r > 1)
+            return $b . "#fa0" . $e;
+
+        return '';
     }
 }
