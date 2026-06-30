@@ -1,0 +1,26 @@
+{% extends 'game/help/help.html.twig' %}
+
+{% block help %}
+    <h2>Einstellungen</h2>
+    {% block breadcrumbs %}
+        {{ component('breadcrumbs', { items: [
+            { label: 'Hilfe', url: path('game.help.overview') },
+            { label: 'Einstellungen', url: path('game.help.settings') },
+        ], title:"Du befindest dich hier:"}) }}
+    {% endblock %}
+    <br>
+    <twig:Table title="Grundeinstellungen">
+        {% block table_content %}
+            <tr>
+                <th>Name</th>
+                <th>Wert</th>
+            </tr>
+            {% for key,value in items %}
+                <tr>
+                    <td>{{ key }}</td>
+                    <td>{{ value }}</td>
+                </tr>
+            {% endfor %}
+        {% endblock %}
+    </twig:Table>
+{% endblock %}
