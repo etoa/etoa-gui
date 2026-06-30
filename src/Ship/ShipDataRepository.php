@@ -8,6 +8,7 @@ use EtoA\Core\AbstractRepository;
 use EtoA\Entity\Defense;
 use EtoA\Entity\Race;
 use EtoA\Entity\Ship;
+use EtoA\Entity\ShipCategory;
 
 /**
  * @extends ServiceEntityRepository<Ship>
@@ -203,18 +204,15 @@ class ShipDataRepository extends AbstractRepository
     /**
      * @return Ship[]
      */
-    public function getShipsByCategory(int $shipCategory, string $order = 'ship_order', string $sort = 'ASC'): array
+    public function getShipsByCategory(int|ShipCategory $shipCategory, string $order = 'order', string $sort = 'ASC'): array
     {
-        $data = $this->createQueryBuilder('q')
-            ->select('*')
-            ->from('ships')
-            ->where('ship_cat_id = :category')
-            ->andWhere('ship_show=1')
+        return $this->createQueryBuilder('q')
+            ->where('q.cat = :category')
+            ->andWhere('q.show=1')
             ->setParameter('category', $shipCategory)
-            ->orderBy($order, $sort)
-            ->fetchAllAssociative();
-
-        return array_map(fn ($row) => new Ship($row), $data);
+            ->orderBy("q.$order", $sort)
+            ->getQuery()
+            ->execute();
     }
 
     /**

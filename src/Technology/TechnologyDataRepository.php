@@ -5,6 +5,7 @@ namespace EtoA\Technology;
 use Doctrine\Persistence\ManagerRegistry;
 use EtoA\Core\AbstractRepository;
 use EtoA\Entity\Technology;
+use EtoA\Entity\TechnologyType;
 
 class TechnologyDataRepository extends AbstractRepository
 {
@@ -68,16 +69,13 @@ class TechnologyDataRepository extends AbstractRepository
     /**
      * @return Technology[]
      */
-    public function getTechnologiesByType(int $typeId): array
+    public function getTechnologiesByType(int|TechnologyType $typeId): array
     {
-        $data = $this->createQueryBuilder('q')
-            ->select('*')
-            ->from('technologies')
-            ->where('tech_show = 1')
-            ->andWhere('tech_type_id = :typeId')
+        return $this->createQueryBuilder('q')
+            ->where('q.show = 1')
+            ->andWhere('q.type = :typeId')
             ->setParameter('typeId', $typeId)
-            ->fetchAllAssociative();
-
-        return array_map(fn (array $row) => new Technology($row), $data);
+            ->getQuery()
+            ->execute();
     }
 }

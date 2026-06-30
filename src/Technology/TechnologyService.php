@@ -269,7 +269,7 @@ class TechnologyService
         return ob_get_clean();
     }
 
-    private function calcTechCosts(Technology $technology, $l, $fac = 1)
+    public function calcTechCosts(Technology $technology, $l, $fac = 1): array
     {
         // Baukostenberechnung          Baukosten = Grundkosten * (Kostenfaktor ^ Ausbaustufe)
         $bc = array();

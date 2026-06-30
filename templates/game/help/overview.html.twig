@@ -30,7 +30,7 @@
     </twig:Table>
 
     {% for cat,data in helpNav %}
-        <twig:Table title="cat">
+        <twig:Table title="{{ cat }}">
             {% block table_content %}
                 {% for title,item in data %}
                     <tr>

@@ -15,13 +15,21 @@ use EtoA\Entity\Building;
 use EtoA\Entity\Defense;
 use EtoA\Entity\Planet;
 use EtoA\Entity\Race;
+use EtoA\Entity\Ship;
+use EtoA\Entity\Technology;
 use EtoA\Fleet\FleetAction;
 use EtoA\Race\RaceDataRepository;
+use EtoA\Ship\ShipCategoryRepository;
 use EtoA\Ship\ShipDataRepository;
 use EtoA\Ship\ShipListRepository;
+use EtoA\Ship\ShipRequirementRepository;
+use EtoA\Support\BBCodeUtils;
 use EtoA\Support\ExternalUrl;
 use EtoA\Support\RuntimeDataStore;
 use EtoA\Support\StringUtils;
+use EtoA\Technology\TechnologyDataRepository;
+use EtoA\Technology\TechnologyService;
+use EtoA\Technology\TechnologyTypeRepository;
 use EtoA\UI\Tooltip;
 use EtoA\Universe\Planet\PlanetTypeRepository;
 use EtoA\Universe\Resources\ResourceNames;
@@ -44,7 +52,12 @@ class HelpController extends AbstractGameController
         private readonly PlanetTypeRepository       $planetTypeRepository,
         private readonly BuildingListItemRepository $buildingListItemRepository,
         private readonly ShipListRepository         $shipListRepository,
-        private readonly RaceDataRepository         $raceDataRepository
+        private readonly RaceDataRepository         $raceDataRepository,
+        private readonly TechnologyTypeRepository   $technologyTypeRepository,
+        private readonly TechnologyDataRepository   $technologyDataRepository,
+        private readonly ShipRequirementRepository  $shipRequirementRepository,
+        private readonly TechnologyService          $technologyService,
+        private readonly ShipCategoryRepository     $shipCategoryRepository
     )
     {
     }
@@ -863,6 +876,131 @@ class HelpController extends AbstractGameController
         ]);
     }
 
+    #[Route('/game/help/research', name: 'game.help.research')]
+    public function research(): Response
+    {
+        $technologyTypes = $this->technologyTypeRepository->getTypes();
+        $typesWithTechs = [];
+
+        foreach ($technologyTypes as $technologyType) {
+            $techs = $this->technologyDataRepository->getTechnologiesByType($technologyType);
+            $typesWithTechs[$technologyType->getId()]['category'] = $technologyType->getName();
+            $typesWithTechs[$technologyType->getId()]['techs'] = $techs;
+        }
+
+        return $this->render('game/help/info/research.html.twig', [
+            'typesWithTechs' => $typesWithTechs
+        ]);
+    }
+
+    #[Route('/game/help/research/{id}', name: 'game.help.research.detail')]
+    public function researchDetail(?Technology $technology): Response
+    {
+        return $this->render('game/help/info/researchDetail.html.twig', [
+            'technology' => $technology,
+            'ships' => $this->shipRequirementRepository->findBy(['tech' => $technology]),
+            'costs' => $this->generateTechnologyCosts($technology)
+        ]);
+    }
+
+    #[Route('/game/help/resources', name: 'game.help.resources')]
+    public function resources(): Response
+    {
+        return $this->render('game/help/info/resources.html.twig');
+    }
+
+    #[Route('/game/help/settings', name: 'game.help.settings')]
+    public function settings(): Response
+    {
+        $items = [
+            "Max. Spieler" => $this->configurationService->param2Int('enable_register'),
+            "Urlaubsmodus Mindestdauer" => $this->configurationService->getInt('hmode_days'),
+            "Einheiten/Userpunkte" => $this->configurationService->param1Int('points_update'),
+            "Userpunkte/Allianzpunkte" => $this->configurationService->param2Int('points_update'),
+            "Tage bis zur endgültigen Löschung eines Accounts" => $this->configurationService->getInt('user_delete_days'),
+            "Spieler werden inaktiv nach (in Tagen)" => $this->configurationService->getInt('user_inactive_days'),
+            "Löschung wegen Inaktivität nach (in Tagen)" => $this->configurationService->param1Int('user_inactive_days'),
+            "Timeout in Sekunden" => $this->configurationService->getInt('user_timeout'),
+            "Globaler Bauzeitfaktor" => $this->configurationService->getInt('global_time'),
+            "Startzeitfaktor" => $this->configurationService->getFloat('flight_start_time'),
+            "Landezeitfaktor" => $this->configurationService->getFloat('flight_land_time'),
+            "Flugzeitfaktor" => $this->configurationService->getFloat('flight_flight_time'),
+            "Verteidigungsbauzeitfaktor" => $this->configurationService->getFloat('def_build_time'),
+            "Gebäudebauzeitfaktor" => $this->configurationService->getFloat('build_build_time'),
+            "Forschungszeitfaktor" => $this->configurationService->getFloat('res_build_time'),
+            "Schiffbauzeitfaktor" => $this->configurationService->getFloat('ship_build_time'),
+            "Minimale Planetentemperatur" => $this->configurationService->param1Int('planet_temp'),
+            "Maximale Planetentemperatur" => $this->configurationService->param2Int('planet_temp'),
+            "Minimale Feldanzahl" => $this->configurationService->param1Int('planet_fields'),
+            "Maximale Feldanzahl" => $this->configurationService->param2Int('planet_fields'),
+            "Minimale Planetenanzahl" => $this->configurationService->param1Int('num_planets'),
+            "Maximale Planetenanzahl" => $this->configurationService->param2Int('num_planets'),
+            "Maximale Planeten/User" => $this->configurationService->getInt('user_max_planets'),
+            "Verteidigungswiederherstellung" => $this->configurationService->getFloat('def_restore_percent'),
+            "Verteidigung ins Trümmerfeld" => $this->configurationService->getFloat('def_wf_percent'),
+            "Schiffe ins Trümmerfeld" => $this->configurationService->getFloat('ship_wf_percent'),
+            "Noobschutz: Minimale Punkte" => $this->configurationService->getInt('user_attack_min_points'),
+            "Noobschutz: Verhältnis %" => $this->configurationService->getInt('user_attack_percentage'),
+            "Dauer eines Krieges (in Stunden)" => $this->configurationService->getInt('alliance_war_time'),
+            "Nahrungsverbrauch pro Arbeiter" => $this->configurationService->getInt('people_food_require'),
+            "Bevölkerungswachstum" => $this->configurationService->getFloat('people_multiply'),
+        ];
+
+        return $this->render('game/help/info/settings.html.twig', ['items' => $items]);
+    }
+
+    #[Route('/game/help/shipyard', name: 'game.help.shipyard')]
+    public function shipyard(Request $request): Response
+    {
+        $sortBy = $request->get('order') ?? 'order';
+
+        $shipCategories = $this->shipCategoryRepository->getAllCategories();
+        $categoryWithShips = [];
+        $tooltip = new Tooltip();
+
+        foreach ($shipCategories as $shipCategory) {
+            $ships = [];
+            $shipData = $this->shipDataRepository->getShipsByCategory($shipCategory, $sortBy);
+            $categoryWithShips[$shipCategory->getId()]['category'] = $shipCategory->getName();
+            foreach ($shipData as $ship) {
+                $tooltip->addTitle($ship->getName());
+                $tooltipText = BBCodeUtils::toHTML($ship->getShortComment()) . "<br/><br/>" . $this->shipRanking($ship);
+                $tooltip->addText($tooltipText);
+
+                $ships[] = [
+                    'id' => $ship->getId(),
+                    'name' => $ship->getName(),
+                    'race' => $ship->getRace(),
+                    'capacity' => $ship->getCapacity(),
+                    'speed' => $ship->getSpeed(),
+                    'fuelUse' => $ship->getFuelUse(),
+                    'weapon' => $ship->getWeapon(),
+                    'structure' => $ship->getStructure(),
+                    'shield' => $ship->getShield(),
+                    'pilots' => $ship->getPilots(),
+                    'heal' => $ship->getHeal(),
+                    'points' => $ship->getPoints(),
+                    'tooltip' => $tooltip,
+                    'image' => $ship->getImagePath()
+                ];
+            }
+
+            $categoryWithShips[$shipCategory->getId()]['ships'] = $ships;
+        }
+
+        return $this->render('game/help/info/shipyard.html.twig',
+            [
+                'categoryWithShips' => $categoryWithShips
+            ]
+        );
+    }
+
+    #[Route('/game/help/shipyard/{id}', name: 'game.help.shipyard.detail')]
+    public function shipyardDetail(Ship $ship): Response
+    {
+
+    }
+
     private function generateProductionLevels(Building $building): array
     {
         $levels = [];
@@ -930,6 +1068,16 @@ class HelpController extends AbstractGameController
         return $costs;
     }
 
+    private function generateTechnologyCosts(Technology $technology): array
+    {
+        $costs = [];
+        for ($x = 0; $x < min(30, $technology->getLastLevel()); $x++) {
+            $costs[] = $this->technologyService->calcTechCosts($technology, $x);
+        }
+
+        return $costs;
+    }
+
     private function renderProductionBuilding(Building $building, array $infos): Response
     {
         $infos['levels'] = $this->generateProductionLevels($building);
@@ -951,5 +1099,41 @@ class HelpController extends AbstractGameController
             'building' => $building,
             'infos' => $infos
         ]);
+    }
+
+    private function shipRanking(Ship $ship):string
+    {
+        ob_start();
+        echo "<table class=\"tb\">";
+        echo "<tr><th>Struktur:</th><td>" . $this->rankingStars($ship->getStructure(), 20000) . "</td></tr>";
+        echo "<tr><th>Schilder:</th><td>" . $this->rankingStars($ship->getShield(), 25000) . "</td></tr>";
+        echo "<tr><th>Waffen:</th><td>" . $this->rankingStars($ship->getWeapon(), 50000) . "</td></tr>";
+        echo "<tr><th>Speed:</th><td>" . $this->rankingStars($ship->getSpeed(), 5000) . "</td></tr>";
+        echo "<tr><th>Kapazität:</th><td>" . $this->rankingStars($ship->getCapacity(), 100000) . "</td></tr>";
+        echo "<tr><th>Reisekosten:</th><td>" . $this->rankingStars($ship->getFuelUse(), 60) . "</td></tr>";
+        echo "</table>";
+        $s = ob_get_contents();
+        ob_end_clean();
+        return $s;
+    }
+
+    private function rankingStars($val, $max2): string
+    {
+        $max = $max2;
+        $img = "star_r";
+
+        $t = $max / 5;
+        $s = "";
+        for ($x = 0; $x < 5; $x++) {
+            if ($val == 0)
+                $s .= "<img src=\"public/build/images/star_g.gif\" />";
+            elseif ($val > 3 * $max)
+                $s .= "<img src=\"public/build/images/star_y.gif\" />";
+            elseif ($val > $t * $x)
+                $s .= "<img src=\"public/build/images/" . $img . ".gif\" />";
+            else
+                $s .= "<img src=\"public/build/images/star_g.gif\" />";
+        }
+        return $s;
     }
 }

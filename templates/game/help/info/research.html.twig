@@ -1,0 +1,35 @@
+{% extends 'game/help/help.html.twig' %}
+
+{% block help %}
+    <h2>Technologien</h2>
+
+    {% block breadcrumbs %}
+        {{ component('breadcrumbs', { items: [
+            { label: 'Hilfe', url: path('game.help.overview') },
+            { label: 'Technologien', url: path('game.help.research') },
+        ], title:"Du befindest dich hier:"}) }}
+    {% endblock %}<br/>
+
+    {% for category in typesWithTechs %}
+        {% if category.techs|length > 0 %}
+            <twig:Table title="{{ category.category }}">
+                {% block table_content %}
+                    {% for technology in category.techs %}
+                        <tr>
+                            <td style="width:40px;padding:0;background:#000">
+                                <a href="{{ path('game.help.research.detail',{id:technology.id}) }}">
+                                    <img src="{{ technology.getImagePath('small') }}" width="40" height="40"
+                                         alt="Bild {{ technology.name }}"/>
+                                </a>
+                            </td>
+                            <td style="width:160px;">
+                                <a href="{{ path('game.help.research.detail',{id:technology.id}) }}">{{ technology.name }}</a>
+                            </td>
+                            <td>{{ technology.shortComment|raw }}</td>
+                        </tr>
+                    {% endfor %}
+                {% endblock %}
+            </twig:Table>
+        {% endif %}
+    {% endfor %}
+{% endblock %}
