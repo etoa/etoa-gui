@@ -1,0 +1,60 @@
+{% extends 'game/help/help.html.twig' %}
+
+{% block help %}
+    <h2>Schiffe</h2>
+
+    {% block breadcrumbs %}
+        {{ component('breadcrumbs', { items: [
+            { label: 'Hilfe', url: path('game.help.overview') },
+            { label: 'Schiffe', url: path('game.help.shipyard') },
+        ], title:"Du befindest dich hier:"}) }}
+    {% endblock %}<br/>
+
+    {% for category in categoryWithShips %}
+        {% if category.ships|length > 0 %}
+            <twig:Table title="{{ category.category }}">
+                {% block table_content %}
+                    <tr>
+                        <th colspan="2"><a href="{{ path('game.help.shipyard',{order:'name'}) }}">Name</a></th>
+                        <th><a href="{{ path('game.help.shipyard',{order:'race'}) }}">Rasse</a></th>
+                        <th><a href="{{ path('game.help.shipyard',{order:'capacity'}) }}">Kapazität</a></th>
+                        <th><a href="{{ path('game.help.shipyard',{order:'speed'}) }}">Speed</a></th>
+                        <th><a href="{{ path('game.help.shipyard',{order:'fuelUse'}) }}">Treibstoff</a></th>
+                        <th><a href="{{ path('game.help.shipyard',{order:'weapon'}) }}">Waffen</a></th>
+                        <th><a href="{{ path('game.help.shipyard',{order:'structure'}) }}">Struktur</a></th>
+                        <th><a href="{{ path('game.help.shipyard',{order:'shield'}) }}">Schild</a></th>
+                        <th><a href="{{ path('game.help.shipyard',{order:'pilots'}) }}">Piloten</a></th>
+                        <th><a href="{{ path('game.help.shipyard',{order:'heal'}) }}">Reparatur</a></th>
+                        <th><a href="{{ path('game.help.shipyard',{order:'points'}) }}">Wert</a></th>
+                    </tr>
+                    {% for ship in category.ships %}
+                        <tr>
+                            <td class="tbldata" style="width:40px;background:#000;">
+                                <a href="{{ path('game.help.shipyard.detail',{id:ship.id}) }}">
+                                    <img src="{{ ship.image }}" alt="Schiffsbild" width="40" height="40"/>
+                                </a>
+                            </td>
+                            <td {{ ship.tooltip.toString }}>
+                                <a href="{{ path('game.help.shipyard.detail',{id:ship.id}) }}">{{ ship.name }}</a></td>
+                            <td>
+                                {% if ship.race and ship.race.id > 0 %}
+                                    {{ ship.race.name }}
+                                {% else %}
+                                    -
+                                {% endif %}
+                            <td>{{ formatNumber(ship.capacity) }}</td>
+                            <td>{{ formatNumber(ship.speed) }}</td>
+                            <td>{{ formatNumber(ship.fuelUse) }}</td>
+                            <td>{{ formatNumber(ship.weapon) }}</td>
+                            <td>{{ formatNumber(ship.structure) }}</td>
+                            <td>{{ formatNumber(ship.shield) }}</td>
+                            <td>{{ formatNumber(ship.pilots) }}</td>
+                            <td>{{ formatNumber(ship.heal) }}</td>
+                            <td>{{ formatNumber(ship.points) }}</td>
+                        </tr>
+                    {% endfor %}
+                {% endblock %}
+            </twig:Table>
+        {% endif %}
+    {% endfor %}
+{% endblock %}
