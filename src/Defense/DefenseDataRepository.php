@@ -6,6 +6,7 @@ use Doctrine\Persistence\ManagerRegistry;
 use EtoA\Core\AbstractRepository;
 use EtoA\Entity\Defense;
 use EtoA\Entity\DefenseCategory;
+use EtoA\Entity\Race;
 
 class DefenseDataRepository extends AbstractRepository
 {
@@ -80,19 +81,16 @@ class DefenseDataRepository extends AbstractRepository
     /**
      * @return Defense[]
      */
-    public function getDefenseByRace(int $raceId): array
+    public function getDefenseByRace(int|Race $raceId): array
     {
-        $data = $this->createQueryBuilder('q')
-            ->select('*')
-            ->from('defense')
-            ->where('def_race_id = :raceId')
-            ->andWhere('def_buildable = 1')
-            ->andWhere('def_show = 1')
+        return $this->createQueryBuilder('q')
+            ->where('q.race = :raceId')
+            ->andWhere('q.buildable = 1')
+            ->andWhere('q.show = 1')
             ->setParameter('raceId', $raceId)
-            ->orderBy('def_order')
-            ->fetchAllAssociative();
-
-        return array_map(fn ($row) => new Defense($row), $data);
+            ->orderBy('q.order')
+            ->getQuery()
+            ->execute();
     }
 
     /**

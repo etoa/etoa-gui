@@ -1,0 +1,139 @@
+{% extends 'game/help/help.html.twig' %}
+
+{% block help %}
+
+    <h2>Rassen</h2>
+
+    {% block breadcrumbs %}
+        {{ component('breadcrumbs', { items: [
+            { label: 'Hilfe', url: path('game.help.overview') },
+            { label: 'Rassen', url: path('game.help.races') },
+        ], title:"Du befindest dich hier:"}) }}
+    {% endblock %}<br/><br/>
+
+    {% if race %}
+        {{ BBCodeToHTML(race.comment) }}<br/><br/>
+
+        <twig:Table width="300">
+            {% block table_content %}
+                <tr>
+                    <th colspan="2">St&auml;rken / Schw&auml;chen:</th>
+                </tr>
+                {% if race.metal !== 1.0 %}
+                    <tr>
+                        <th>{{ constant('EtoA\\Universe\\Resources\\ResIcons::METAL')|raw }} Produktion
+                            von {{ constant('EtoA\\Universe\\Resources\\ResourceNames::METAL')|raw }}:
+                        </th>
+                        <td>{{ formatPercentString(race.metal, true)|raw }}</td>
+                    </tr>
+                {% endif %}
+                {% if race.crystal !== 1.0 %}
+                    <tr>
+                        <th>{{ constant('EtoA\\Universe\\Resources\\ResIcons::CRYSTAL')|raw }} Produktion
+                            von {{ constant('EtoA\\Universe\\Resources\\ResourceNames::CRYSTAL')|raw }}:
+                        </th>
+                        <td>{{ formatPercentString(race.crystal, true)|raw }}</td>
+                    </tr>
+                {% endif %}
+                {% if race.plastic !== 1.0 %}
+                    <tr>
+                        <th>{{ constant('EtoA\\Universe\\Resources\\ResIcons::PLASTIC')|raw }} Produktion
+                            von {{ constant('EtoA\\Universe\\Resources\\ResourceNames::PLASTIC')|raw }}:
+                        </th>
+                        <td>{{ formatPercentString(race.plastic, true)|raw }}</td>
+                    </tr>
+                {% endif %}
+                {% if race.fuel !== 1.0 %}
+                    <tr>
+                        <th>{{ constant('EtoA\\Universe\\Resources\\ResIcons::FUEL')|raw }} Produktion
+                            von {{ constant('EtoA\\Universe\\Resources\\ResourceNames::FUEL')|raw }}:
+                        </th>
+                        <td>{{ formatPercentString(race.fuel, true)|raw }}</td>
+                    </tr>
+                {% endif %}
+                {% if race.food !== 1.0 %}
+                    <tr>
+                        <th>{{ constant('EtoA\\Universe\\Resources\\ResIcons::FOOD')|raw }} Produktion
+                            von {{ constant('EtoA\\Universe\\Resources\\ResourceNames::FOOD')|raw }}:
+                        </th>
+                        <td>{{ formatPercentString(race.food, true)|raw }}</td>
+                    </tr>
+                {% endif %}
+                {% if race.power !== 1.0 %}
+                    <tr>
+                        <th>{{ constant('EtoA\\Universe\\Resources\\ResIcons::POWER')|raw }} Produktion von Energie:
+                        </th>
+                        <td>{{ formatPercentString(race.power, true)|raw }}</td>
+                    </tr>
+                {% endif %}
+                {% if race.population !== 1.0 %}
+                    <tr>
+                        <th>{{ constant('EtoA\\Universe\\Resources\\ResIcons::PEOPLE')|raw }} Bevölkerungswachstum:</th>
+                        <td>{{ formatPercentString(race.population, true)|raw }}</td>
+                    </tr>
+                {% endif %}
+                {% if race.researchTime !== 1.0 %}
+                    <tr>
+                        <th>{{ constant('EtoA\\Universe\\Resources\\ResIcons::TIME')|raw }} Forschungszeit:</th>
+                        <td>{{ formatPercentString(race.researchTime, true, true)|raw }}</td>
+                    </tr>
+                {% endif %}
+                {% if race.buildTime !== 1.0 %}
+                    <tr>
+                        <th>{{ constant('EtoA\\Universe\\Resources\\ResIcons::TIME')|raw }} Bauzeit:</th>
+                        <td>{{ formatPercentString(race.buildTime, true, true)|raw }}</td>
+                    </tr>
+                {% endif %}
+                {% if race.fleetTime !== 1.0 %}
+                    <tr>
+                        <th>{{ constant('EtoA\\Universe\\Resources\\ResIcons::TIME')|raw }} Fluggeschwindigkeit:</th>
+                        <td>{{ formatPercentString(race.fleetTime, true)|raw }}</td>
+                    </tr>
+                {% endif %}
+            {% endblock %}
+        </twig:Table>
+        {% if ships|length > 0 %}
+            <twig:Table width="500">
+                {% block table_content %}
+                    <tr>
+                        <th colspan="3">Spezielle Schiffe:</th>
+                    </tr>
+                    {% for ship in ships %}
+                        <tr>
+                            <td style="background:black;"><img src="{{ ship.getImagePath() }}"
+                                                               style="width:40px;height:40px;border:none;"
+                                                               alt="{{ ship.name }}"/>
+                            </td>
+                            <th style="width:180px;">{{ ship.name }}</th>
+                            <td>{{ BBCodeToHTML(ship.shortComment) }}</td>
+                        </tr>
+                    {% endfor %}
+                {% endblock %}
+            </twig:Table>
+        {% endif %}
+        {% if defenses|length > 0 %}
+            <twig:Table width="500">
+                {% block table_content %}
+                    <tr>
+                        <th colspan="3">Spezielle Verteidigung:</th>
+                    </tr>
+                    {% for defense in defenses %}
+                        <tr>
+                            <td style="background:black;">
+                                <img src="{{ defense.getImagePath('small') }}"
+                                     style="width:40px;height:40px;border:none;"
+                                     alt="{{ defense.name }}"/>
+                            </td>
+                            <th style="width:180px;">{{ defense.name }}</th>
+                            <td>{{ BBCodeToHTML(defense.shortComment) }}</td>
+                        </tr>
+                    {% endfor %}
+                {% endblock %}
+            </twig:Table>
+        {% endif %}
+    {% endif %}
+    &nbsp;
+    <a href="{{ path('game.help.races') }}">
+        <input type="button" value="Rassenübersicht"/>
+    </a>
+{% endblock %}

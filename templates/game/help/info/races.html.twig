@@ -1,0 +1,85 @@
+{% extends 'game/help/help.html.twig' %}
+
+{% block help %}
+    <h2>Rassen</h2>
+
+    {% block breadcrumbs %}
+        {{ component('breadcrumbs', { items: [
+            { label: 'Hilfe', url: path('game.help.overview') },
+            { label: 'Rassen', url: path('game.help.races') },
+        ], title:"Du befindest dich hier:"}) }}
+    {% endblock %}<br/>
+
+    <twig:Table title="Kurzinformation">
+        {% block table_content %}
+            <tr>
+                <th>Name</th>
+                <th>Kurzbeschreibung</th>
+            </tr>
+            {% for race in races %}
+                <tr>
+                    <td>
+                        <a href="?$link&amp;site=races&amp;id=">{{ race.name }}</a>
+                    </td>
+                    <td>
+                        {{ BBCodeToHTML(race.shortComment)|raw }}
+                    </td>
+                </tr>
+            {% endfor %}
+        {% endblock %}
+    </twig:Table>
+    <twig:Table title="Bonus-Malus Vergleichstabelle">
+        {% block table_content %}
+            <tr>
+                <th>
+                    <a href="{{ path('game.help.races',{order:'name'}) }}">Name</a>
+                </th>
+                <th>
+                    <a href="{{ path('game.help.races',{order:'metal'}) }}">{{ constant('EtoA\\Universe\\Resources\\ResourceNames::METAL') }}</a>
+                </th>
+                <th>
+                    <a href="{{ path('game.help.races',{order:'crystal'}) }}">{{ constant('EtoA\\Universe\\Resources\\ResourceNames::CRYSTAL') }}</a>
+                </th>
+                <th>
+                    <a href="{{ path('game.help.races',{order:'plastic'}) }}">{{ constant('EtoA\\Universe\\Resources\\ResourceNames::PLASTIC') }}</a>
+                </th>
+                <th>
+                    <a href="{{ path('game.help.races',{order:'fuel'}) }}">{{ constant('EtoA\\Universe\\Resources\\ResourceNames::FUEL') }}</a>
+                </th>
+                <th>
+                    <a href="{{ path('game.help.races',{order:'food'}) }}">{{ constant('EtoA\\Universe\\Resources\\ResourceNames::FOOD') }}</a>
+                </th>
+                <th>
+                    <a href="{{ path('game.help.races',{order:'power'}) }}">Energie</a>
+                </th>
+                <th>
+                    <a href="{{ path('game.help.races',{order:'people'}) }}">Wachstum</a>
+                </th>
+                <th>
+                    <a href="{{ path('game.help.races',{order:'researchTime'}) }}">Forschungszeit</a>
+                </th>
+                <th>
+                    <a href="{{ path('game.help.races',{order:'buildTime'}) }}">Bauzeit</a>
+                </th>
+                <th>
+                    <a href="{{ path('game.help.races',{order:'fleetTime'}) }}">Fluggeschwindigkeit</a>
+                </th>
+            </tr>
+            {% for race in races %}
+                <tr>
+                    <td class="tbltitle">{{ race.name }}</td>
+                    <td>{{ formatPercentString(race.metal) }}</td>
+                    <td>{{ formatPercentString(race.crystal) }}</td>
+                    <td>{{ formatPercentString(race.plastic) }}</td>
+                    <td>{{ formatPercentString(race.fuel) }}</td>
+                    <td>{{ formatPercentString(race.food) }}</td>
+                    <td>{{ formatPercentString(race.power) }}</td>
+                    <td>{{ formatPercentString(race.population) }}</td>
+                    <td>{{ formatPercentString(race.researchTime) }}</td>
+                    <td>{{ formatPercentString(race.buildTime) }}</td>
+                    <td>{{ formatPercentString(race.fleetTime) }}</td>
+                </tr>
+            {% endfor %}
+        {% endblock %}
+    </twig:Table>
+{% endblock %}
