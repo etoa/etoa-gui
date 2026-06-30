@@ -93,14 +93,15 @@ class BuildingListItemRepository extends AbstractRepository
             ->fetchOne();
     }
 
-    public function getNumberOfBuildings(int $buildingId): int
+    public function getNumberOfBuildings(int|Building $buildingId): int
     {
         return (int)$this->createQueryBuilder('q')
-            ->select('COUNT(buildlist_id)')
-            ->from('buildlist')
-            ->where('buildlist_building_id = :buildingId')
+            ->select('COUNT(q.id)')
+            ->where('q.building = :buildingId')
             ->setParameter('buildingId', $buildingId)
-            ->fetchOne();
+            ->setMaxResults(1)
+            ->getQuery()
+            ->getOneOrNullResult();
     }
 
     public function countSearch(BuildingListItemSearch $search = null): int

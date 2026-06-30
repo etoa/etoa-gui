@@ -26,14 +26,15 @@ class ShipListRepository extends AbstractRepository
         parent::__construct($registry, ShipListItem::class);
     }
 
-    public function getNumberOfShips(int $shipId): int
+    public function getNumberOfShips(int|Ship $shipId): int
     {
         return (int) $this->createQueryBuilder('q')
-            ->select('COUNT(shiplist_id)')
-            ->from('shiplist')
-            ->where('shiplist_ship_id = :shipId')
+            ->select('COUNT(q.id)')
+            ->where('q.ship = :shipId')
             ->setParameter('shipId', $shipId)
-            ->fetchOne();
+            ->setMaxResults(1)
+            ->getQuery()
+            ->getOneOrNullResult();
     }
 
     /**

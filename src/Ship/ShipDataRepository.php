@@ -6,6 +6,7 @@ use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 use EtoA\Core\AbstractRepository;
 use EtoA\Entity\Defense;
+use EtoA\Entity\Race;
 use EtoA\Entity\Ship;
 
 /**
@@ -164,14 +165,11 @@ class ShipDataRepository extends AbstractRepository
      */
     public function getShipWithPowerProduction(): array
     {
-        $data = $this->createQueryBuilder('q')
-            ->select('*')
-            ->from('ships')
-            ->where('ship_prod_power > 0')
-            ->orderBy('ship_order')
-            ->fetchAllAssociative();
-
-        return array_map(fn ($row) => new Ship($row), $data);
+        return $this->createQueryBuilder('q')
+            ->where('q.powerProduction > 0')
+            ->orderBy('q.order')
+            ->getQuery()
+            ->execute();
     }
 
     /**
@@ -222,20 +220,17 @@ class ShipDataRepository extends AbstractRepository
     /**
      * @return Ship[]
      */
-    public function getShipsByRace(int $raceId): array
+    public function getShipsByRace(int|Race $raceId): array
     {
-        $data = $this->createQueryBuilder('q')
-            ->select('*')
-            ->from('ships')
-            ->where('ship_race_id = :raceId')
-            ->andWhere('ship_buildable = 1')
-            ->andWhere('ship_show = 1')
-            ->andWhere('special_ship = 0')
+        return $this->createQueryBuilder('q')
+            ->where('q.race = :raceId')
+            ->andWhere('q.buildable = 1')
+            ->andWhere('q.show = 1')
+            ->andWhere('q.special = 0')
             ->setParameter('raceId', $raceId)
-            ->orderBy('ship_order')
-            ->fetchAllAssociative();
-
-        return array_map(fn ($row) => new Ship($row), $data);
+            ->orderBy('q.order')
+            ->getQuery()
+            ->execute();
     }
 
     public function getTransformedShipForDefense(int|Defense $defenseId): ?Ship

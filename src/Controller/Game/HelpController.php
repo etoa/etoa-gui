@@ -5,14 +5,20 @@ namespace EtoA\Controller\Game;
 use EtoA\Building\BuildingCostCalculator;
 use EtoA\Building\BuildingCostContext;
 use EtoA\Building\BuildingDataRepository;
+use EtoA\Building\BuildingListItemRepository;
 use EtoA\Building\BuildingTypeDataRepository;
+use EtoA\Building\BuildingTypeId;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Defense\DefenseCategoryRepository;
 use EtoA\Defense\DefenseDataRepository;
 use EtoA\Entity\Building;
 use EtoA\Entity\Defense;
+use EtoA\Entity\Planet;
+use EtoA\Entity\Race;
 use EtoA\Fleet\FleetAction;
+use EtoA\Race\RaceDataRepository;
 use EtoA\Ship\ShipDataRepository;
+use EtoA\Ship\ShipListRepository;
 use EtoA\Support\ExternalUrl;
 use EtoA\Support\RuntimeDataStore;
 use EtoA\Support\StringUtils;
@@ -35,7 +41,10 @@ class HelpController extends AbstractGameController
         private readonly DefenseCategoryRepository  $defenseCategoryRepository,
         private readonly DefenseDataRepository      $defenseDataRepository,
         private readonly RuntimeDataStore           $runtimeDataStore,
-        private readonly PlanetTypeRepository       $planetTypeRepository
+        private readonly PlanetTypeRepository       $planetTypeRepository,
+        private readonly BuildingListItemRepository $buildingListItemRepository,
+        private readonly ShipListRepository         $shipListRepository,
+        private readonly RaceDataRepository         $raceDataRepository
     )
     {
     }
@@ -790,9 +799,67 @@ class HelpController extends AbstractGameController
     #[Route('/game/help/population', name: 'game.help.population')]
     public function population(Request $request): Response
     {
-        return $this->render('game/help/info/population.html.twig',[
+        return $this->render('game/help/info/population.html.twig', [
             'buildingNames' => $this->buildingDataRepository->getBuildingNamesHavingPlaceForPeople(),
             'cpid' => $request->getSession()->get('cpid')
+        ]);
+    }
+
+    #[Route('/game/help/power', name: 'game.help.power')]
+    public function power(): Response
+    {
+        $buildings = [];
+
+        foreach ($this->buildingDataRepository->getBuildingsByType(BuildingTypeId::POWER) as $building) {
+            $sum = $this->buildingListItemRepository->getNumberOfBuildings($building);
+            $buildings[] = [
+                'name' => $building->getName(),
+                'prodPower' => $building->getProdPower(),
+                'buildCostsFactor' => $building->getBuildCostsFactor(),
+                'productionFactor' => $building->getProductionFactor(),
+                'fields' => $building->getFields(),
+                'sum' => StringUtils::formatNumber($sum)
+            ];
+        }
+
+        $ships = [];
+
+        foreach ($this->shipDataRepository->getShipWithPowerProduction() as $ship) {
+            $sum = $this->shipListRepository->getNumberOfShips($ship);
+
+            $tpb1 = Planet::getSolarPowerBonus($this->configurationService->param1Int('planet_temp'), $this->configurationService->param1Int('planet_temp') + $this->configurationService->getInt('planet_temp'));
+            $tpb2 = Planet::getSolarPowerBonus($this->configurationService->param2Int('planet_temp') - $this->configurationService->getInt('planet_temp'), $this->configurationService->param2Int('planet_temp'));
+
+            $ships[] = [
+                'name' => $ship->getName(),
+                'powerProduction' => $ship->getPowerProduction() . " ($tpb1 bis $tpb2)",
+                'sum' => StringUtils::formatNumber($sum)
+            ];
+        }
+
+        return $this->render('game/help/info/power.html.twig', [
+            'buildings' => $buildings,
+            'ships' => $ships
+        ]);
+    }
+
+    #[Route('/game/help/races', name: 'game.help.races')]
+    public function races(Request $request): Response
+    {
+        $sortBy = $request->get('order') ?? 'name';
+
+        return $this->render('game/help/info/races.html.twig', [
+            'races' => $this->raceDataRepository->getActiveRaces($sortBy)
+        ]);
+    }
+
+    #[Route('/game/help/races/{id}', name: 'game.help.races.detail')]
+    public function raceDetail(?Race $race): Response
+    {
+        return $this->render('game/help/info/racesDetail.html.twig', [
+            'race' => $race,
+            'ships' => $this->shipDataRepository->getShipsByRace($race),
+            'defenses' => $this->defenseDataRepository->getDefenseByRace($race)
         ]);
     }
 

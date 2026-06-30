@@ -70,10 +70,10 @@ class PowerProductionImageGenerator
             $startX = $areaOriginX;
             $startY = $areaOriginY;
             for ($level = 0; $level <= self::NUM_LEVELS; $level++) {
-                $costs1 = $building->costsMetal + $building->costsCrystal + $building->costsPlastic + $building->costsFuel + $building->costsFood;
-                $prod1 = $building->prodPower;
-                $costsLvl = round($costs1 * pow($building->buildCostsFactor, $level - 1));
-                $prodLvl = round($prod1 * pow($building->productionFactor, $level - 1));
+                $costs1 = $building->getCostsMetal() + $building->getCostsCrystal() + $building->getCostsPlastic() + $building->getCostsFuel() + $building->getCostsFood();
+                $prod1 = $building->getProdPower();
+                $costsLvl = round($costs1 * pow($building->getBuildCostsFactor(), $level - 1));
+                $prodLvl = round($prod1 * pow($building->getProductionFactor(), $level - 1));
                 $ratio = round($costsLvl / $prodLvl, 1);
 
                 $newX = $areaOriginX + ($stepX * $level);
@@ -83,8 +83,8 @@ class PowerProductionImageGenerator
                 $startY = $newY;
             }
 
-            imagestring($im, 2, $strx, $height - self::LEGEND_HEIGHT, $building->name, $lineCol[$i % 7]);
-            $strx += (imagefontwidth(2) * strlen($building->name)) + 10;
+            imagestring($im, 2, $strx, $height - self::LEGEND_HEIGHT, $building->getName(), $lineCol[$i % 7]);
+            $strx += (imagefontwidth(2) * strlen($building->getName())) + 10;
             $i++;
         }
 
@@ -93,8 +93,8 @@ class PowerProductionImageGenerator
         $strx = self::PADDING_LEFT;
 
         foreach ($ships as $ship) {
-            $costs1 = $ship->costsMetal + $ship->costsCrystal + $ship->costsPlastic + $ship->costsFuel + $ship->costsFood;
-            $prod1 = $ship->powerProduction;
+            $costs1 = $ship->getCostsMetal() + $ship->getCostsCrystal() + $ship->getCostsPlastic() + $ship->getCostsFuel() + $ship->getCostsFood();
+            $prod1 = $ship->getPowerProduction();
             $ratio = round($costs1 / $prod1, 1);
             imageline($im, $areaOriginX, (int)($areaOriginY - (($ratio / $maxRatio) * $areaH)), $areaOriginX + $areaW, (int)($areaOriginY - (($ratio / $maxRatio) * $areaH)), $lineCol[$i % 7]);
 
@@ -106,8 +106,8 @@ class PowerProductionImageGenerator
             $ratio = round($costs1 / ($prod1 + $tpb2), 1);
             ImageUtil::dashedLine($im, $areaOriginX, $areaOriginY - (($ratio / $maxRatio) * $areaH), $areaOriginX + $areaW, $areaOriginY - (($ratio / $maxRatio) * $areaH), $lineCol[$i % 7], $colWhite);
 
-            imagestring($im, 2, $strx, $height - self::LEGEND_HEIGHT / 2, $ship->name, $lineCol[$i % 7]);
-            $strx += (imagefontwidth(2) * strlen($ship->name . " ("));
+            imagestring($im, 2, $strx, $height - self::LEGEND_HEIGHT / 2, $ship->getName(), $lineCol[$i % 7]);
+            $strx += (imagefontwidth(2) * strlen($ship->getName() . " ("));
             $i++;
         }
 

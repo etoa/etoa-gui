@@ -1,0 +1,47 @@
+{% extends 'game/help/help.html.twig' %}
+
+{% block help %}
+    <h2>Energie</h2>
+    {% block breadcrumbs %}
+        {{ component('breadcrumbs', { items: [
+            { label: 'Hilfe', url: path('game.help.overview') },
+            { label: 'Energie', url: path('game.help.power') },
+        ], title:"Du befindest dich hier:"}) }}
+    {% endblock %}
+    <br>
+    <twig:Table title="Energieproduktion">
+        {% block table_content %}
+            <tr><td colspan="6">
+                    <img src="{{ path('images.power_production') }}" alt="Graph" />
+                </td></tr>
+            <tr>
+                <th>Produktionsanlage</th>
+                <th>Prod Lvl 1</th>
+                <th>Kostenfaktor</th>
+                <th>Prodfaktor</th>
+                <th>Felder/Lvl</th>
+                <th>Total gebaut</th>
+            </tr>
+            {% for building in buildings %}
+                <tr>
+                    <td>{{ building.name }}</td>
+                    <td>{{ building.prodPower }}</td>
+                    <td>{{ building.buildCostsFactor }}</td>
+                    <td>{{ building.productionFactor }}</td>
+                    <td>{{ building.fields }}</td>
+                    <td>{{ building.sum }}</td>
+                </tr>
+            {% endfor %}
+            {% for ship in ships %}
+                <tr>
+                    <td>{{ ship.name }}</td>
+                    <td>{{ ship.powerProduction }}</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td>{{ ship.sum }}</td>
+                </tr>
+            {% endfor %}
+        {% endblock %}
+    </twig:Table>
+{% endblock %}
