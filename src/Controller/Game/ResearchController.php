@@ -36,8 +36,6 @@ class ResearchController extends AbstractGameController
             return $this->render('game/research/list.html.twig',[
                 'planet' => $cp,
                 'researchBuilding' => $researchBuilding,
-                'genBuilding' => $this->buildingListItemRepository->findOneBy(['entity'=>$cp, 'building'=>BuildingId::PEOPLE])??new BuildingListItem(),
-                'genTechLevel' => $this->technologyListItemRepository->findOneBy(['user'=>$this->getUser()->getData(),'technology'=>TechnologyId::GEN])?->getCurrentLevel(),
                 'render' => $this->technologyService->renderResearch()
              ]);
         }

@@ -280,4 +280,34 @@ class TechnologyService
         $bc['food'] = $fac * $technology->getCostsFood() * pow($technology->getBuildCostsFactor(), $l);
         return $bc;
     }
+
+    public function isCurrentlyResearching(): bool
+    {
+        $user = $this->security->getUser()->getData();
+        $userTechnologies = $this->technologyListItemRepository->findForUser($user);
+
+        foreach ($userTechnologies as $userTechnology) {
+            if ($userTechnology->getBuildType() > 2) {
+                if ($userTechnology->getTechnology()->getId() !== TechnologyId::GEN)
+                    return true;
+            }
+        }
+
+        return false;
+    }
+
+    public function isCurrentlyGenResearching(): bool
+    {
+        $user = $this->security->getUser()->getData();
+        $userTechnologies = $this->technologyListItemRepository->findForUser($user);
+
+        foreach ($userTechnologies as $userTechnology) {
+            if ($userTechnology->getBuildType() > 2) {
+                if ($userTechnology->getTechnology()->getId() === TechnologyId::GEN)
+                    return true;
+            }
+        }
+
+        return false;
+    }
 }

@@ -1,0 +1,133 @@
+<div {{ attributes }}>
+    <twig:Table title="Allgemeine-Infos">
+        {% block table_content %}
+            <colgroup>
+                <col style="width:400px;"/>
+            </colgroup>
+            {% if outerScope.user.specialist and outerScope.user.specialist.costsTechnologies != 1 %}
+                <tr>
+                    <td>Kostenreduktion durch {{ outerScope.user.specialist.name }}:</td>
+                    <td>{{ formatPercentString(outerScope.user.specialist.costsTechnologies) }}</td>
+                </tr>
+            {% endif %}
+            {% if outerScope.user.specialist and outerScope.user.specialist.timeTechnologies != 1 %}
+                <tr>
+                    <td>Bauzeitverringerung durch {{ outerScope.user.specialist.name }}:</td>
+                    <td>{{ formatPercentString(outerScope.user.specialist.timeTechnologies) }}</td>
+                </tr>
+            {% endif %}
+            {% if outerScope.genTechLevel > 0 %}
+                <tr>
+                    <td>Gentechnologie:</td>
+                    <td>{{ outerScope.genTechLevel }}</td>
+                </tr>
+                <tr>
+                    <td>Minimale Forschungszeit (mit Arbeiter):</td>
+                    <td>Forschungszeit * {{ 0.1 - (outerScope.genTechLevel / 100) }}</td>
+                </tr>
+            {% endif %}
+        {% endblock %}
+    </twig:Table>
+    <twig:Table title="Labor-Infos">
+        {% block table_content %}
+            <colgroup>
+                <col span="3" style="width:400px;"/>
+            </colgroup>
+            <tr>
+                <th></th>
+                <th>Normal</th>
+                <th>Gentech</th>
+            </tr>
+            <tr>
+                <td>Eingestellte Arbeiter:</td>
+                <td>
+                    <span id="people_working">
+                        {% if outerScope.working == 0 %}
+                            0
+                        {% else %}
+                            {{ formatNumber(outerScope.working) }}
+                        {% endif %}
+                        {% if not outerScope.isCurrentlyResearching and outerScope.showOptimization %}
+                            <a href="javascript:;" onclick="toggleBox('changePeople');">[Ändern]</a>
+                        {% endif %}
+                    </span>
+                </td>
+                <td>
+                    <span id="people_working_gen">
+                        {% if outerScope.workingGen == 0 %}
+                            0
+                        {% else %}
+                            {{ formatNumber(outerScope.workingGen) }}
+                        {% endif %}
+                        {% if not outerScope.isCurrentlyGenResearching and outerScope.showOptimization %}
+                            <a href="javascript:;" onclick="toggleBox('changePeople');">[Ändern]</a>
+                        {% endif %}
+                    </span>
+                </td>
+            </tr>
+            {% if outerScope.working > 0 or outerScope.workingGen %}
+                <tr>
+                    <td>Zeitreduktion durch Arbeiter pro Auftrag:</td>
+                    <td>
+                        <span id="people_work_done">{{ formatTimespan(configValue('people_work_done') * outerScope.working) }}</span>
+                   </td>
+                    <td>
+                        <span id="people_work_done_gen">{{ formatTimespan(configValue('people_work_done') * outerScope.workingGen) }}</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Nahrungsverbrauch durch Arbeiter pro Auftrag:</td>
+                    <td>
+                        <span id="people_food_require">{{ formatNumber(configValue('people_food_require') * outerScope.working) }}</span>
+                    </td>
+                    <td>
+                        <span id="people_food_require_gen">{{ formatNumber(configValue('people_food_require') * outerScope.workingGen) }}</span>
+                    </td>
+                </tr>
+            {% endif %}
+        {% endblock %}
+    </twig:Table>
+
+    <div id="changePeople" style="display:none;">
+        {{ form_start(form) }}
+            {{ form_widget(form.peopleOptimized,{id:'peopleOptimized'}) }}
+            {{ form_widget(form.peopleFree,{id:'peopleFree'}) }}
+            {{ form_widget(form.foodAvailable,{id:'foodAvaiable'}) }}
+            {{ form_widget(form.foodRequired,{id:'foodRequired'}) }}
+            {{ form_widget(form.workDone,{id:'workDone'}) }}
+
+            <twig:Table title="Bauhof-Infos">
+                {% block table_content %}
+                    <tr>
+                        <th>Eingestellte Arbeiter</th>
+                        <td>
+                            {{ form_widget(form.peopleWorking,{id:'peopleWorking'}) }}
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>Zeitreduktion</th>
+                        <td>
+                            {{ form_widget(form.timeReduction,{id:'timeReduction'}) }}
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>Nahrungsverbrauch</th>
+                        <td>
+                            {{ form_widget(form.foodUsing,{id:'foodUsing'}) }}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2" style="text-align:center;">
+                            <div id="changeWorkingPeopleError" style="display:none;"></div>
+                            {{ form_widget(form.save) }}&nbsp;
+                            {% if outerScope.showOptimization %}
+                                {{ form_widget(form.optimize) }}
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endblock %}
+            </twig:Table>
+            {{ form_widget(form._token) }}
+        {{ form_end(form,{render_rest:false}) }}
+    </div>
+</div>

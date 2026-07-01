@@ -10,11 +10,10 @@ use EtoA\Entity\Entity;
 use EtoA\Entity\Technology;
 use EtoA\Entity\TechnologyListItem;
 use EtoA\Entity\User;
-use EtoA\Universe\Entity\EntityRepository;
 
 class TechnologyListItemRepository extends AbstractRepository
 {
-    public function __construct(ManagerRegistry $registry, private readonly EntityRepository $entityRepository)
+    public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, TechnologyListItem::class);
     }
