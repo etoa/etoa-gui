@@ -34,7 +34,7 @@
                                     <img src="{{ ship.image }}" alt="Schiffsbild" width="40" height="40"/>
                                 </a>
                             </td>
-                            <td {{ ship.tooltip.toString }}>
+                            <td {{ ship.tooltip.toString|raw }}>
                                 <a href="{{ path('game.help.shipyard.detail',{id:ship.id}) }}">{{ ship.name }}</a></td>
                             <td>
                                 {% if ship.race and ship.race.id > 0 %}

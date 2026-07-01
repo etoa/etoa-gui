@@ -1,0 +1,129 @@
+{% extends 'game/help/help.html.twig' %}
+
+{% block help %}
+    <h2>Spezialisten</h2>
+    {% block breadcrumbs %}
+        {{ component('breadcrumbs', { items: [
+            { label: 'Hilfe', url: path('game.help.overview') },
+            { label: 'Spezialisten', url: path('game.help.specialists') },
+        ], title:"Du befindest dich hier:"}) }}
+    {% endblock %}
+    <twig:Box title="Info">
+        Spezialisten können für eine fixe Zeitdauer angestellt werden und verstärken während dieser Zeit
+        dein Imperium in eine bestimmte Richtung. Sie können erst ab einer bestimmten Punktzahl eingestellt werden. Von
+        jedem Typ
+        ist nur eine gewisse Anzahl verfügbar. Ebenfalls steigt der Preis mit steigender Nachfrage, nach einem
+        bestimmten Spezialisten. Die
+        Einstellung geschieht per sofort, und nach Ablauf der Anstellung verlässt der Spezialist dein Imperium wieder.
+        Es kann immer nur ein Spezialist gleichzeitig angestellt werden. Man kann aber einen Spezialisten vorzeitig
+        entlassen,
+        um Platz für einen neuen zu schaffen; man erhält in diesem Fall aber keine Ressourcen zurück.
+    </twig:Box>
+    <twig:Table title="Info">
+        {% block table_content %}
+            <tr>
+                <th>Name</th>
+                <th>Beschreibung</th>
+                <th>Effekt</th>
+                <th>Grundpreis</th>
+            </tr>
+            {% for specialist in specialists %}
+                <tr>
+                    <th style="width:140px;">{{ specialist.name }}<br/>
+                        <span style="font-size:8pt;font-weight:500;">
+                            Ab {{ formatNumber(specialist.pointsRequirement) }} Punkten<br/>
+                            Anstellbar für {{ specialist.days }} Tage
+                        </span>
+                    </th>
+                    <td>{{ specialist.description }}</td>
+                    <td style="width:220px;">
+                        {% if specialist.prodMetal !== 1.0 %}
+                            {{ formatPercentString(specialist.prodMetal, true)|raw }} {{ constant('EtoA\\Universe\\Resources\\ResourceNames::METAL') }} produktion
+                            <br/>
+                        {% endif %}
+                        {% if specialist.prodCrystal !== 1.0 %}
+                            {{ formatPercentString(specialist.prodCrystal, true)|raw }} {{ constant('EtoA\\Universe\\Resources\\ResourceNames::CRYSTAL') }} produktion
+                            <br/>
+                        {% endif %}
+                        {% if specialist.prodPlastic !== 1.0 %}
+                            {{ formatPercentString(specialist.prodPlastic, true)|raw }} {{ constant('EtoA\\Universe\\Resources\\ResourceNames::PLASTIC') }} produktion
+                            <br/>
+                        {% endif %}
+                        {% if specialist.prodFuel !== 1.0 %}
+                            {{ formatPercentString(specialist.prodFuel, true)|raw }} {{ constant('EtoA\\Universe\\Resources\\ResourceNames::FUEL') }} produktion
+                            <br/>
+                        {% endif %}
+                        {% if specialist.prodFood !== 1.0 %}
+                            {{ formatPercentString(specialist.prodFood, true)|raw }} {{ constant('EtoA\\Universe\\Resources\\ResourceNames::FOOD') }} produktion
+                            <br/>
+                        {% endif %}
+                        {% if specialist.prodPower !== 1.0 %}
+                            {{ formatPercentString(specialist.prodPower, true)|raw }} Stromerzeugung<br/>
+                        {% endif %}
+                        {% if specialist.prodPeople !== 1.0 %}
+                            {{ formatPercentString(specialist.prodPeople, true)|raw }} Bevölkerungswachstum<br/>
+                        {% endif %}
+                        {% if specialist.timeTechnologies !== 1.0 %}
+                            {{ formatPercentString(specialist.timeTechnologies, true, true)|raw }} Forschungszeit<br/>
+                        {% endif %}
+                        {% if specialist.timeBuildings !== 1.0 %}
+                            {{ formatPercentString(specialist.timeBuildings, true, true)|raw }} Gebäudebauzeit<br/>
+                        {% endif %}
+                        {% if specialist.timeDefense !== 1.0 %}
+                            {{ formatPercentString(specialist.timeDefense, true, true)|raw }} Verteidigungsbauzeit<br/>
+                        {% endif %}
+                        {% if specialist.timeShips !== 1.0 %}
+                            {{ formatPercentString(specialist.timeShips, true, true)|raw }} Schiffsbauzeit<br/>
+                        {% endif %}
+                        {% if specialist.costsBuildings !== 1.0 %}
+                            {{ formatPercentString(specialist.costsBuildings, true, true)|raw }} Gebäudekosten<br/>
+                        {% endif %}
+                        {% if specialist.costsDefense !== 1.0 %}
+                            {{ formatPercentString(specialist.costsDefense, true, true)|raw }} Verteidigungskosten<br/>
+                        {% endif %}
+                        {% if specialist.costsShips !== 1.0 %}
+                            {{ formatPercentString(specialist.costsShips, true, true)|raw }} Schiffsbaukosten<br/>
+                        {% endif %}
+                        {% if specialist.costsTechnologies !== 1.0 %}
+                            {{ formatPercentString(specialist.costsTechnologies, true, true)|raw }} Forschungskosten<br/>
+                        {% endif %}
+                        {% if specialist.fleetSpeed !== 1.0 %}
+                            {{ formatPercentString(specialist.fleetSpeed, true)|raw }} Flottengeschwindigkeit<br/>
+                        {% endif %}
+                        {% if specialist.fleetMax !== 0 %}
+                            <span style="color:#0f0;">+{{ specialist.fleetMax }}</span> zusätzliche Flotten<br/>
+                        {% endif %}
+                        {% if specialist.defenseRepair !== 1.0 %}
+                            {{ formatPercentString(specialist.defenseRepair, true)|raw }} Verteidigungswiederherstellung
+                            <br/>
+                        {% endif %}
+                        {% if specialist.spyLevel !== 0 %}
+                            <span style="color:#0f0;">+{{ specialist.spyLevel }}</span> zusätzliche Spionagelevel<br/>
+                        {% endif %}
+                        {% if specialist.tarnLevel !== 0 %}
+                            <span style="color:#0f0;">+{{ specialist.tarnLevel }}</span> zusätzliche Tarnlevel<br/>
+                        {% endif %}
+                        {% if specialist.tradeTime !== 1.0 %}
+                            {{ formatPercentString(specialist.tradeTime, true)|raw }} Handelsflottengeschwindigkeit<br/>
+                        {% endif %}
+                        {% if specialist.tradeBonus !== 1.0 %}
+                            {{ formatPercentString(specialist.tradeBonus, true, true)|raw }} Handelskosten<br/>
+                        {% endif %}
+                    </td>
+                    <td style="width:120px;">
+                        {{ formatNumber(specialist.costsMetal) }} {{ constant('EtoA\\Universe\\Resources\\ResourceNames::METAL') }}
+                        <br/>
+                        {{ formatNumber(specialist.costsCrystal) }} {{ constant('EtoA\\Universe\\Resources\\ResourceNames::CRYSTAL') }}
+                        <br/>
+                        {{ formatNumber(specialist.costsPlastic) }} {{ constant('EtoA\\Universe\\Resources\\ResourceNames::PLASTIC') }}
+                        <br/>
+                        {{ formatNumber(specialist.costsFuel) }} {{ constant('EtoA\\Universe\\Resources\\ResourceNames::FUEL') }}
+                        <br/>
+                        {{ formatNumber(specialist.costsFood) }} {{ constant('EtoA\\Universe\\Resources\\ResourceNames::FOOD') }}
+                        <br/>
+                    </td>
+                </tr>
+            {% endfor %}
+        {% endblock %}
+    </twig:Table>
+{% endblock %}

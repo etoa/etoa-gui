@@ -1,0 +1,97 @@
+{% extends 'game/help/help.html.twig' %}
+
+{% block help %}
+    <h2>Raketen</h2>
+    {% block breadcrumbs %}
+        {{ component('breadcrumbs', { items: [
+            { label: 'Hilfe', url: path('game.help.overview') },
+            { label: 'Raketen', url: path('game.help.missiles') },
+        ], title:"Du befindest dich hier:"}) }}
+    {% endblock %}<br/>
+
+    {% if missile %}
+        <twig:Table title="{{ missile.name }}">
+            {% block table_content %}
+                <tr>
+                    <td width="220" class="tbltitle"><img src="{{ missile.getImagePath('other') }}"
+                                                          width="220" height="220" alt="Raketen"/>
+                    </td>
+                    <td class="tbldata">{{ BBCodeToHTML(missile.longDescription) }}</td>
+                </tr>
+                <tr>
+                    <td colspan="2" style="height:30px;"></td>
+                </tr>
+                <tr>
+                    <th class="tbltitle" colspan="2" style="text-align:center">Kosten und technische Daten</th>
+                </tr>
+                <tr>
+                    <td class="tbltitle">{{ constant('EtoA\\Universe\\Resources\\ResIcons::METAL')|raw }} {{ constant('EtoA\\Universe\\Resources\\ResourceNames::METAL') }}</td>
+                    <td class="tbldata">{{ formatNumber(missile.costsMetal) }}</td>
+                </tr>
+                <tr>
+                    <td class="tbltitle">{{ constant('EtoA\\Universe\\Resources\\ResIcons::CRYSTAL')|raw }}  {{ constant('EtoA\\Universe\\Resources\\ResourceNames::CRYSTAL') }}</td>
+                    <td class="tbldata">{{ formatNumber(missile.costsCrystal) }}</td>
+                </tr>
+                <tr>
+                    <td class="tbltitle">{{ constant('EtoA\\Universe\\Resources\\ResIcons::PLASTIC')|raw }}  {{ constant('EtoA\\Universe\\Resources\\ResourceNames::PLASTIC') }}</td>
+                    <td class="tbldata">{{ formatNumber(missile.costsPlastic) }}</td>
+                </tr>
+                <tr>
+                    <td class="tbltitle">{{ constant('EtoA\\Universe\\Resources\\ResIcons::FUEL')|raw }}  {{ constant('EtoA\\Universe\\Resources\\ResourceNames::FUEL') }}</td>
+                    <td class="tbldata">{{ formatNumber(missile.costsFuel) }}</td>
+                </tr>
+                <tr>
+                    <td class="tbltitle">{{ constant('EtoA\\Universe\\Resources\\ResIcons::FOOD')|raw }}  {{ constant('EtoA\\Universe\\Resources\\ResourceNames::FOOD') }}</td>
+                    <td class="tbldata">{{ formatNumber(missile.costsFood) }}</td>
+                </tr>
+                <tr>
+                    <td class="tbltitle">Geschwindigkeit</td>
+                    <td class="tbldata">{{ formatNumber(missile.speed) }} AE/h</td>
+                </tr>
+                <tr>
+                    <td class="tbltitle">Reichweite</td>
+                    <td class="tbldata">{{ formatNumber(missile.range) }} AE</td>
+                </tr>
+                <tr>
+                    <td class="tbltitle">Schaden</td>
+                    <td class="tbldata">
+                    {% if missile.damage === 0 %}
+                        Nein
+                    {% else %}
+                        {{ formatNumber(missile.damage) }}
+                    {% endif %}
+                    </td>
+                </tr>
+                <tr>
+                    <td class="tbltitle">Verteidigung</td>
+                    <td class="tbldata">
+                        {% if missile.def > 0 %}
+                            Ja, {{ formatNumber(missile.def) }}
+                            {% if missile.def === 1 %}
+                                Sprengkopf
+                            {% else %}
+                                Sprengköpfe
+                            {% endif %}
+                        {% else %}
+                            Nein
+                        {% endif %}
+                    </td>
+                </tr>
+                <tr>
+                    <td class="tbltitle">EMP-Schaden</td>
+                    <td class="tbldata">
+                        {% if missile.deactivate > 0 %}
+                            Ja, deaktiviert Gebäude für {{ formatTimespan(missile.deactivate) }}
+                        {% else %}
+                            Kein EMP-Angriff möglich
+                        {% endif %}
+                    </td>
+                </tr>
+            {% endblock %}
+        </twig:Table>
+    {% endif %}
+    &nbsp;
+    <a href="{{ path('game.help.missiles') }}">
+        <input type="button" value="Raketenübersicht"/>
+    </a>
+{% endblock %}

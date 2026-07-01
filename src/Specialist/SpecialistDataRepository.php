@@ -43,13 +43,6 @@ class SpecialistDataRepository extends AbstractRepository
      */
     public function getActiveSpecialists(): array
     {
-        $data = $this->createQueryBuilder('q')
-            ->select('s.*')
-            ->from('specialists', 's')
-            ->where('s.specialist_enabled = 1')
-            ->orderBy('s.specialist_name')
-            ->fetchAllAssociative();
-
-        return array_map(fn (array $row) => new Specialist($row), $data);
+        return $this->findBy(['enabled'=>true],['name'=>'ASC']);
     }
 }

@@ -1,0 +1,66 @@
+{% extends 'game/help/help.html.twig' %}
+
+{% block help %}
+    <h2>Sterne</h2>
+
+    {% block breadcrumbs %}
+        {{ component('breadcrumbs', { items: [
+            { label: 'Hilfe', url: path('game.help.overview') },
+            { label: 'Sterne', url: path('game.help.stars') },
+        ], title:"Du befindest dich hier:"}) }}
+    {% endblock %}<br/>
+
+    <twig:Table title="Planetenboni">
+        {% block table_content %}
+            <tr>
+                <th colspan="2">
+                    <a href="{{ path('game.help.stars',{order:'name'}) }}">Name</a>
+                </th>
+                <th>
+                    <a href="{{ path('game.help.stars',{order:'metal'}) }}">{{ constant('EtoA\\Universe\\Resources\\ResourceNames::METAL') }}</a>
+                </th>
+                <th>
+                    <a href="{{ path('game.help.stars',{order:'crystal'}) }}">{{ constant('EtoA\\Universe\\Resources\\ResourceNames::CRYSTAL') }}</a>
+                </th>
+                <th>
+                    <a href="{{ path('game.help.stars',{order:'plastic'}) }}">{{ constant('EtoA\\Universe\\Resources\\ResourceNames::PLASTIC') }}</a>
+                </th>
+                <th>
+                    <a href="{{ path('game.help.stars',{order:'fuel'}) }}">{{ constant('EtoA\\Universe\\Resources\\ResourceNames::FUEL') }}</a>
+                </th>
+                <th>
+                    <a href="{{ path('game.help.stars',{order:'food'}) }}">{{ constant('EtoA\\Universe\\Resources\\ResourceNames::FOOD') }}</a>
+                </th>
+                <th>
+                    <a href="{{ path('game.help.stars',{order:'power'}) }}">Energie</a>
+                </th>
+                <th>
+                    <a href="{{ path('game.help.stars',{order:'people'}) }}">Wachstum</a>
+                </th>
+                <th>
+                    <a href="{{ path('game.help.stars',{order:'researchTime'}) }}">Forschungszeit</a>
+                </th>
+                <th>
+                    <a href="{{ path('game.help.stars',{order:'buildTime'}) }}">Bauzeit</a>
+                </th>
+            </tr>
+            {% for solarType in solarTypes %}
+                <tr>
+                    <td class="tbldata" style="width:40px;background:#000;">
+                        <img src="{{ solarType.imagePath }}" alt="Verteidigung" width="40" height="40"/>
+                    </td>
+                    <td {{ tm(solarType.name,solarType.comment)|raw }}><b>{{ solarType.name }}</b></td>
+                    <td>{{ formatPercentString(solarType.metal, true)|raw }}</td>
+                    <td>{{ formatPercentString(solarType.crystal, true)|raw }}</td>
+                    <td>{{ formatPercentString(solarType.plastic, true)|raw }}</td>
+                    <td>{{ formatPercentString(solarType.fuel, true)|raw }}</td>
+                    <td>{{ formatPercentString(solarType.food, true)|raw }}</td>
+                    <td>{{ formatPercentString(solarType.power, true)|raw }}</td>
+                    <td>{{ formatPercentString(solarType.people, true)|raw }}</td>
+                    <td>{{ formatPercentString(solarType.researchTime, true, true)|raw }}</td>
+                    <td>{{ formatPercentString(solarType.buildTime, true, true)|raw }}</td>
+                </tr>
+            {% endfor %}
+        {% endblock %}
+    </twig:Table>
+{% endblock %}

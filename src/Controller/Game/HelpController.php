@@ -13,16 +13,19 @@ use EtoA\Defense\DefenseCategoryRepository;
 use EtoA\Defense\DefenseDataRepository;
 use EtoA\Entity\Building;
 use EtoA\Entity\Defense;
+use EtoA\Entity\Missile;
 use EtoA\Entity\Planet;
 use EtoA\Entity\Race;
 use EtoA\Entity\Ship;
 use EtoA\Entity\Technology;
 use EtoA\Fleet\FleetAction;
+use EtoA\Missile\MissileDataRepository;
 use EtoA\Race\RaceDataRepository;
 use EtoA\Ship\ShipCategoryRepository;
 use EtoA\Ship\ShipDataRepository;
 use EtoA\Ship\ShipListRepository;
 use EtoA\Ship\ShipRequirementRepository;
+use EtoA\Specialist\SpecialistDataRepository;
 use EtoA\Support\BBCodeUtils;
 use EtoA\Support\ExternalUrl;
 use EtoA\Support\RuntimeDataStore;
@@ -33,6 +36,7 @@ use EtoA\Technology\TechnologyTypeRepository;
 use EtoA\UI\Tooltip;
 use EtoA\Universe\Planet\PlanetTypeRepository;
 use EtoA\Universe\Resources\ResourceNames;
+use EtoA\Universe\Star\SolarTypeRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -57,7 +61,10 @@ class HelpController extends AbstractGameController
         private readonly TechnologyDataRepository   $technologyDataRepository,
         private readonly ShipRequirementRepository  $shipRequirementRepository,
         private readonly TechnologyService          $technologyService,
-        private readonly ShipCategoryRepository     $shipCategoryRepository
+        private readonly ShipCategoryRepository     $shipCategoryRepository,
+        private readonly SpecialistDataRepository   $specialistDataRepository,
+        private readonly SolarTypeRepository        $solarTypeRepository,
+        private readonly MissileDataRepository      $missileDataRepository
     )
     {
     }
@@ -130,7 +137,7 @@ class HelpController extends AbstractGameController
                 "Raketen" => array('missile_system', 'Wie das Raketensystem funktioniert?'),
                 "Raumkarte" => array('space', 'Wie ist das Universum aufgebaut?'),
                 "Spezialpunkte" => array('specialpoints', 'Wie man Spezialpunkte und Titel erwerben kann?'),
-                "Spionage" => array('spy_info', 'Wie das Spionagesystem funktioniert?'),
+                "Spionage" => array('spy', 'Wie das Spionagesystem funktioniert?'),
                 "Statistik" => array('stats', 'Was sind Statistiken und wie werden sie berechnet?'),
                 "Technikbaum" => array('techtree', 'Wie lese ich daraus die Voraussetzungen ab?'),
                 "Textformatierung" => array('textformat', 'Wie man Text formatieren kann (BBcode)?'),
@@ -755,13 +762,31 @@ class HelpController extends AbstractGameController
         ]);
     }
 
-    #[Route('/game/help/missile', name: 'game.help.missile')]
-    public function missile(): Response
+    #[Route('/game/help/missiles', name: 'game.help.missiles')]
+    public function missiles(): Response
     {
-        return $this->render('game/help/info/missile.html.twig');
+        return $this->render('game/help/info/missiles.html.twig', [
+            'missiles' => $this->missileDataRepository->getMissiles()
+        ]);
     }
 
-    #[Route('/game/help/multi', name: 'game.help.multi')]
+    #[Route('/game/help/missiles/{id}', name: 'game.help.missiles.detail')]
+    public function missilesDetail(Missile $missile): Response
+    {
+        return $this->render('game/help/info/missilesDetail.html.twig',
+            [
+                'missile' => $missile
+            ]
+        );
+    }
+
+    #[Route('/game/help/missile_system', name: 'game.help.missile_system')]
+    public function missileSystem(): Response
+    {
+        return $this->render('game/help/info/missile_system.html.twig');
+    }
+
+    #[Route('/game/help/multi', name: 'game.help.multi_sitting')]
     public function multi(): Response
     {
         return $this->render('game/help/info/multi_sitting.html.twig');
@@ -956,13 +981,12 @@ class HelpController extends AbstractGameController
 
         $shipCategories = $this->shipCategoryRepository->getAllCategories();
         $categoryWithShips = [];
-        $tooltip = new Tooltip();
-
         foreach ($shipCategories as $shipCategory) {
             $ships = [];
             $shipData = $this->shipDataRepository->getShipsByCategory($shipCategory, $sortBy);
             $categoryWithShips[$shipCategory->getId()]['category'] = $shipCategory->getName();
             foreach ($shipData as $ship) {
+                $tooltip = new Tooltip();
                 $tooltip->addTitle($ship->getName());
                 $tooltipText = BBCodeUtils::toHTML($ship->getShortComment()) . "<br/><br/>" . $this->shipRanking($ship);
                 $tooltip->addText($tooltipText);
@@ -998,7 +1022,88 @@ class HelpController extends AbstractGameController
     #[Route('/game/help/shipyard/{id}', name: 'game.help.shipyard.detail')]
     public function shipyardDetail(Ship $ship): Response
     {
+        $actions = array_filter(explode(",", $ship->getActions()));
+        $factoredActions = [];
 
+        foreach ($actions as $i) {
+            $factoredActions[] = FleetAction::createFactory($i);
+        }
+
+        return $this->render('game/help/info/shipyardDetail.html.twig',
+            [
+                'ship' => $ship,
+                'shipRanking' => $this->shipRanking($ship),
+                'actions' => $factoredActions,
+                'technologies' => $this->shipRequirementRepository->getRequiredSpeedTechnologies($ship)
+            ]
+        );
+    }
+
+    #[Route('/game/help/space', name: 'game.help.space')]
+    public function space(): Response
+    {
+        return $this->render('game/help/info/space.html.twig');
+    }
+
+    #[Route('/game/help/specialists', name: 'game.help.specialists')]
+    public function specialists(): Response
+    {
+        $specialists = $this->specialistDataRepository->getActiveSpecialists();
+
+        return $this->render('game/help/info/specialists.html.twig', [
+            'specialists' => $specialists
+        ]);
+    }
+
+    #[Route('/game/help/specialpoints', name: 'game.help.specialpoints')]
+    public function specialpoints(): Response
+    {
+        return $this->render('game/help/info/specialpoints.html.twig');
+    }
+
+    #[Route('/game/help/spy', name: 'game.help.spy')]
+    public function spy(): Response
+    {
+        $ships = $this->shipDataRepository->getShipsWithAction('spy');
+
+        return $this->render('game/help/info/spy.html.twig', [
+            'ships' => $ships
+        ]);
+    }
+
+    #[Route('/game/help/stars', name: 'game.help.stars')]
+    public function stars(Request $request): Response
+    {
+        $sortBy = $request->get('order') ?? 'name';
+        $stars = $this->solarTypeRepository->getSolarTypes($sortBy);
+
+        return $this->render('game/help/info/stars.html.twig', [
+            'solarTypes' => $stars
+        ]);
+    }
+
+    #[Route('/game/help/stats', name: 'game.help.stats')]
+    public function stats(): Response
+    {
+        return $this->render('game/help/info/stats.html.twig');
+    }
+
+    #[Route('/game/help/techtree', name: 'game.help.techtree')]
+    public function techtree(): Response
+    {
+        return $this->render('game/help/info/techtree.html.twig');
+    }
+
+    #[Route('/game/help/tempbonus', name: 'game.help.tempbonus')]
+    public function tempbonus(): Response
+    {
+        return $this->render('game/help/info/tempbonus.html.twig');
+    }
+
+    #[Route('/game/help/u_mod', name: 'game.help.u_mod')]
+    public function u_mod(): Response
+    {
+        return $this->render('game/help/info/u_mod.html.twig');
     }
 
     private function generateProductionLevels(Building $building): array
@@ -1101,7 +1206,7 @@ class HelpController extends AbstractGameController
         ]);
     }
 
-    private function shipRanking(Ship $ship):string
+    private function shipRanking(Ship $ship): string
     {
         ob_start();
         echo "<table class=\"tb\">";
@@ -1126,13 +1231,13 @@ class HelpController extends AbstractGameController
         $s = "";
         for ($x = 0; $x < 5; $x++) {
             if ($val == 0)
-                $s .= "<img src=\"public/build/images/star_g.gif\" />";
+                $s .= "<img src=\"/build/images/star_g.gif\" />";
             elseif ($val > 3 * $max)
-                $s .= "<img src=\"public/build/images/star_y.gif\" />";
+                $s .= "<img src=\"/build/images/star_y.gif\" />";
             elseif ($val > $t * $x)
-                $s .= "<img src=\"public/build/images/" . $img . ".gif\" />";
+                $s .= "<img src=\"/build/images/" . $img . ".gif\" />";
             else
-                $s .= "<img src=\"public/build/images/star_g.gif\" />";
+                $s .= "<img src=\"/build/images/star_g.gif\" />";
         }
         return $s;
     }

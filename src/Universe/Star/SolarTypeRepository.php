@@ -36,16 +36,13 @@ class SolarTypeRepository extends AbstractRepository
     /**
      * @return SolarType[]
      */
-    public function getSolarTypes(string $order = 'sol_type_name', string $sort = 'ASC'): array
+    public function getSolarTypes(string $order = 'name', string $sort = 'ASC'): array
     {
-        $data = $this->createQueryBuilder('q')
-            ->select('s.*')
-            ->from('sol_types', 's')
-            ->andWhere('s.sol_type_consider = 1')
-            ->orderBy('s.' . $order, $sort)
-            ->fetchAllAssociative();
-
-        return array_map(fn ($row) => new SolarType($row), $data);
+        return $this->createQueryBuilder('q')
+            ->andWhere('q.consider = 1')
+            ->orderBy("q.$order" , $sort)
+            ->getQuery()
+            ->execute();
     }
 
     public function getName(int $id): ?string

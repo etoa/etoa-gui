@@ -1,0 +1,22 @@
+{% extends 'game/help/help.html.twig' %}
+
+{% block help %}
+    <h2>Spielerstatistiken</h2>
+    {% block breadcrumbs %}
+        {{ component('breadcrumbs', { items: [
+            { label: 'Hilfe', url: path('game.help.overview') },
+            { label: 'Spielerstatistiken', url: path('game.help.stats') },
+        ], title:"Du befindest dich hier:"}) }}
+    {% endblock %}
+    <twig:Box title="Spielerstatistiken">
+        Die Tabellen auf der Statistikseite zeigen eine Rangliste der Spieler und Allianzen. Sie ist geordnet nach
+        Punkten (absteigend) und Registrierdatum (absteigend). Die Punkte werden nach verbauten Rohstoffen berechnet.
+        Dies gilt für gebaute Gebäude, Schiffe und Verteidigungsanlagen und für erforschte Technologien.
+        Jedoch wird Nahrung, die zur Bauzeitreduktion verwendet wird, nicht mit einberechnet. In den Detailstatistiken
+        wird aufgeführt wie gut die Spieler in den einzelnen Teilbereichen sind. Die Allianzen bekommen ebenfalls
+        Punkte, die nach den Punkten der Allianzmitglieder berechnet werden.
+        <br/><br/>
+        Punkteberechnung: Spieler: Pro 1'000 verbaute Rohstoffe gibt es 1 Punkt. Allianz: Pro 100 Punkte eines
+        Allianzmitgliedes bekommt die Allianz 1 Punkt. (Spielerpunkte geteilt durch 100)
+    </twig:Box>
+{% endblock %}

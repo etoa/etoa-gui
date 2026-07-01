@@ -7,7 +7,7 @@
     {% block breadcrumbs %}
         {{ component('breadcrumbs', { items: [
             { label: 'Hilfe', url: path('game.help.overview') },
-            { label: 'Schiffsaktionen', url: path('game.help.actions') },
+            { label: 'Schiffsaktionen', url: path('game.help.action') },
         ], title:"Du befindest dich hier:"}) }}
     {% endblock %}<br/>
 
@@ -22,10 +22,10 @@
         </twig:Box>
         <twig:Table title="Schiffe">
             {% block table_content %}
-                {% for id,shipName in shipNames %}
+                {% for shipName in shipNames %}
                     <tr>
                         <td class="tbldata">
-                            <a href=" HELP_URL &amp;id= $shipId ">{{ shipName.name }}</a>
+                            <a href="{{ path('game.help.shipyard.detail',{id:shipName.id}) }}">{{ shipName.name }}</a>
                         </td>
                     </tr>
                 {% else %}

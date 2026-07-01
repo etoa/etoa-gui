@@ -49,16 +49,16 @@
                     <td class="tbldata" style="width:40px;background:#000;" {{ planetType.ttImage.toString|raw }}>
                         <img src="{{ planetType.imagePath }}" alt="Verteidigung" width="40" height="40"/>
                     </td>
-                    <td {{ planetType.ttPlanet.toString|raw }}>{{ planetType.name }}</td>
-                    <td>{{ formatPercentString(planetType.metal) }}</td>
-                    <td>{{ formatPercentString(planetType.crystal) }}</td>
-                    <td>{{ formatPercentString(planetType.plastic) }}</td>
-                    <td>{{ formatPercentString(planetType.fuel) }}</td>
-                    <td>{{ formatPercentString(planetType.food) }}</td>
-                    <td>{{ formatPercentString(planetType.power) }}</td>
-                    <td>{{ formatPercentString(planetType.people) }}</td>
-                    <td>{{ formatPercentString(planetType.researchTime) }}</td>
-                    <td>{{ formatPercentString(planetType.buildTime) }}</td>
+                    <td {{ planetType.ttPlanet.toString|raw }}><b>{{ planetType.name }}</b></td>
+                    <td>{{ formatPercentString(planetType.metal, true)|raw }}</td>
+                    <td>{{ formatPercentString(planetType.crystal, true)|raw }}</td>
+                    <td>{{ formatPercentString(planetType.plastic, true)|raw }}</td>
+                    <td>{{ formatPercentString(planetType.fuel, true)|raw }}</td>
+                    <td>{{ formatPercentString(planetType.food, true)|raw }}</td>
+                    <td>{{ formatPercentString(planetType.power, true)|raw }}</td>
+                    <td>{{ formatPercentString(planetType.people, true)|raw }}</td>
+                    <td>{{ formatPercentString(planetType.researchTime, true, true)|raw }}</td>
+                    <td>{{ formatPercentString(planetType.buildTime, true, true)|raw }}</td>
                 </tr>
             {% endfor %}
         {% endblock %}

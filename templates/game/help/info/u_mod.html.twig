@@ -1,0 +1,26 @@
+{% extends 'game/help/help.html.twig' %}
+
+{% block help %}
+    <h2>Urlaubsmodus</h2>
+    {% block breadcrumbs %}
+        {{ component('breadcrumbs', { items: [
+            { label: 'Hilfe', url: path('game.help.overview') },
+            { label: 'Urlaubsmodus', url: path('game.help.u_mod') },
+        ], title:"Du befindest dich hier:"}) }}
+    {% endblock %}
+    <twig:Box title="Urlaubsmodus">
+        <div>
+            Wenn ein User seinen Account {{ param1('user_inactive_days') }} Tage nicht benutzt, wird er vom System gelöscht!
+            Ist man aus irgendeinem Grund verhindert zu spielen, gibt es die Möglichkeit in den Urlaubsmodus zu treten.
+            Unter <a href="{{ path('game.config.misc') }}">Einstellungen</a> ist dieser aktivierbar. Einmal aktiviert, könnt ihr für
+            {{ configValue('hmode_days') }} Tage nicht Spielen! Nach den abgelaufenen {{ configValue('hmode_days') }} Tagen
+            habt ihr die Option den U-Mod zu deaktivieren und somit am Spiel wieder teilzunehmen.
+            Nach {{ param1('hmode_days') }} Tagen Urlaubsmodus wird der Account inaktiv und kann von anderen
+            Spielern angegriffen werden.<br>
+            Wenn ihr euch im Urlaubsmodus befindet, wird die Produktion still gelegt und ihr bekommt keine Ressourcen
+            mehr.
+            Ausserdem kann man den U-Mod erst aktivieren, wenn keine Flotten zu euch fliegen.<br>
+            User, die sich im U-Mod befinden, können nicht von anderen Spielern angegriffen werden!
+        </div>
+    </twig:Box>
+{% endblock %}

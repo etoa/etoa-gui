@@ -1,0 +1,16 @@
+{% extends 'game/help/help.html.twig' %}
+
+{% block help %}
+    <h2>Technikbaum</h2>
+    {% block breadcrumbs %}
+        {{ component('breadcrumbs', { items: [
+            { label: 'Hilfe', url: path('game.help.overview') },
+            { label: 'Technikbaum', url: path('game.help.techtree') },
+        ], title:"Du befindest dich hier:"}) }}
+    {% endblock %}
+    <twig:Box title="Technikbaum">
+        Auf diesen Seiten siehst du, welche Objekte man bauen kann und welche Voraussetzungen diese Objekte haben. Rot
+        bedeutet, dass die erforderliche Stufe dieses Objekts noch nicht erreicht ist, grün bedeutet, dass die Stufe
+        erreicht ist.
+    </twig:Box>
+{% endblock %}

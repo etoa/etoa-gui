@@ -1,0 +1,129 @@
+{% extends 'game/help/help.html.twig' %}
+
+{% block help %}
+    <h2>Spionagesystem</h2>
+    {% block breadcrumbs %}
+        {{ component('breadcrumbs', { items: [
+            { label: 'Hilfe', url: path('game.help.overview') },
+            { label: 'Spionagesystem', url: path('game.help.spy') },
+        ], title:"Du befindest dich hier:"}) }}
+    {% endblock %}
+    <twig:Box title="Spionage">
+        Du hast die Möglichkeit Planeten anderer Spieler mit Hilfe von Spionagesonden auszuspionieren.<br>
+        Je höher die "Spionagetechnik" ist, desto mehr Informationen kannst du über den gegnerischen Planeten
+        herausfinden.<br>
+        Ebenfalls kannst du mithilfe dieser Technik Informationen zu fremden Flotten, die zu einem deiner Planeten
+        fliegen, herausfinden.
+        Die Spionage klappt aber nicht immer, sie kann auch abgewehrt werden. Der Abwehrwert setzt sich aus
+        verschiedenen Faktoren, unter anderem
+        der Tarntechnik, der Spionagetechnik, der Anzahl Sonden sowohl des spionierenden als auch des auszuspionierenden
+        Spielers zusammen. Ebenfalls wird
+        überall ein Zufallswert mitberechnet.
+        Im Folgenden eine Liste, die zeigt, welche Informationen eine Technologiestufe der Technik "Spionagetechnik"
+        über fremde Flotten und Planeten liefert:
+    </twig:Box>
+    <twig:Table title="Infos über gegnerische Planeten">
+        {% block table_content %}
+            <tr>
+                <td class="tbltitle">Stufe</td>
+                <td class="tbltitle" width="90%">Infos über...</td>
+            </tr>
+            <tr>
+                <td class="tbldata" valign="top">
+                    <b>{{ constant('EtoA\\Technology\\SpyActionLevel::SHOW_BUILDINGS') }}</b>
+                </td>
+                <td class="tbldata" width="90%">... die Gebäude</td>
+            </tr>
+            <tr>
+                <td class="tbldata" valign="top">
+                    <b>{{ constant('EtoA\\Technology\\SpyActionLevel::SHOW_RESEARCH') }}</b>
+                </td>
+                <td class="tbldata" width="90%">... die Forschung</td>
+            </tr>
+            <tr>
+                <td class="tbldata" valign="top">
+                    <b>{{ constant('EtoA\\Technology\\SpyActionLevel::SHOW_DEFENSE') }}</b>
+                </td>
+                <td class="tbldata" width="90%">... die Verteidigung</td>
+            </tr>
+            <tr>
+                <td class="tbldata" valign="top">
+                    <b>{{ constant('EtoA\\Technology\\SpyActionLevel::SHOW_SHIPS') }}</b>
+                </td>
+                <td class="tbldata" width="90%">... die Schiffe</td>
+            </tr>
+            <tr>
+                <td class="tbldata" valign="top">
+                    <b>{{ constant('EtoA\\Technology\\SpyActionLevel::SHOW_RESSOURCES') }}</b>
+                </td>
+                <td class="tbldata" width="90%">... die Ressourcen</td>
+            </tr>
+            <tr>
+                <td class="tbldata" valign="top"><b>{{ constant('EtoA\\Technology\\SpyActionLevel::SHOW_SUPPORT') }}</b>
+                </td>
+                <td class="tbldata" width="90%">... die unterstützenden Schiffe</td>
+            </tr>
+        {% endblock %}
+    </twig:Table>
+    <twig:Table title="Infos über gegnerische Flotten">
+        {% block table_content %}
+            <tr>
+                <td class="tbltitle">Stufe</td>
+                <td class="tbltitle" width="90%">Möglichkeiten</td>
+            </tr>
+            <tr>
+                <td class="tbldata" valign="top"><b>0</b></td>
+                <td class="tbldata" width="90%">Es wird gar nichts angezeigt.</td>
+            </tr>
+            <tr>
+                <td class="tbldata" valign="top">
+                    <b>{{ constant('EtoA\\Technology\\SpyTechFleetLevel::SHOW_ATTITUDE') }}</b>
+                </td>
+                <td class="tbldata" width="90%">Die Gesinnung (friedlich, feindlich) der Flotte wird angezeigt.</td>
+            </tr>
+            <tr>
+                <td class="tbldata" valign="top">
+                    <b>{{ constant('EtoA\\Technology\\SpyTechFleetLevel::SHOW_NUMBER') }}</b>
+                </td>
+                <td class="tbldata" width="90%">Du siehst, wie viele Schiffe in der Flotte sind.</td>
+            </tr>
+            <tr>
+                <td class="tbldata" valign="top">
+                    <b>{{ constant('EtoA\\Technology\\SpyTechFleetLevel::SHOW_SHIPS') }}</b>
+                </td>
+                <td class="tbldata" width="90%">Du siehst, welche Schiffstypen in der Flotte sind.</td>
+            </tr>
+            <tr>
+                <td class="tbldata" valign="top">
+                    <b>{{ constant('EtoA\\Technology\\SpyTechFleetLevel::SHOW_NUMBER_OF_SHIPS') }}</b>
+                </td>
+                <td class="tbldata" width="90%">Du siehst, wie viele Schiffe von jedem Typ in der Flotte sind.</td>
+            </tr>
+            <tr>
+                <td class="tbldata" valign="top">
+                    <b>{{ constant('EtoA\\Technology\\SpyTechFleetLevel::SHOW_ACTION') }}</b>
+                </td>
+                <td class="tbldata" width="90%">Mit dieser Stufe kannst du auch die geplante Aktion (Angreifen,
+                    Spionieren etc) der Flotte sehen.
+                </td>
+            </tr>
+        {% endblock %}
+    </twig:Table>
+    <twig:Table title="Infos über Spionagesonden">
+        {% block table_content %}
+            <tr>
+                <td class="tbltitle">Name</td>
+                <td class="tbltitle" colspan="2" width="90%">Beschreibung</td>
+            </tr>
+            {% for ship in ships %}
+                <tr>
+                    <td class="tbldata">{{ ship.name }}</td>
+                    <td class="tbldata">{{ ship.shortComment }}</td>
+                    <td class="tbldata">
+                        <a href="{{ path('game.help.shipyard.detail',{id:ship.id}) }}">Mehr Infos</a>
+                    </td>
+                </tr>
+            {% endfor %}
+        {% endblock %}
+    </twig:Table>
+{% endblock %}

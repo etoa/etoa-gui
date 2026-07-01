@@ -1,0 +1,43 @@
+{% extends 'game/help/help.html.twig' %}
+
+{% block help %}
+    <h2>Raketen</h2>
+    {% block breadcrumbs %}
+        {{ component('breadcrumbs', { items: [
+            { label: 'Hilfe', url: path('game.help.overview') },
+            { label: 'Raketen', url: path('game.help.missiles') },
+        ], title:"Du befindest dich hier:"}) }}
+    {% endblock %}
+    <twig:Table title="Übersicht">
+        {% block table_content %}
+            <tr>
+            <th class="tbltitle" colspan="2">Name</th>
+            <th class="tbltitle">Kurzbeschreibung</th>
+            <th class="tbltitle">Geschwindigkeit</th>
+            <th class="tbltitle">Reichweite</th>
+            <th class="tbltitle">Schaden</th>
+            <th class="tbltitle">Verteidigung</th>
+            {% for missile in missiles %}
+                <tr>
+                    <td class="tbldata" style="width:40px;background:#000">
+                        <a href="{{ path('game.help.missiles.detail',{id:missile.id}) }}">
+                            <img src="{{ missile.getImagePath }}" alt="Raketen" width="40" height="40"/>
+                        </a>
+                    </td>
+                    <td class="tbltitle">{{ missile.name }}</td>
+                    <td class="tbldata">{{ missile.shortDescription }}</td>
+                    <td class="tbldata">{{ formatNumber(missile.speed) }} AE/h</td>
+                    <td class="tbldata">{{ formatNumber(missile.range) }} AE</td>
+                    <td class="tbldata">
+                        {% if missile.def > 0 %}
+                            {{ formatNumber(missile.def) }}
+                        {% else %}
+                            Kein
+                        {% endif %}
+                    </td>
+                    <td class="tbldata">{{ formatNumber(missile.damage) }}</td>
+                </tr>
+            {% endfor %}
+        {% endblock %}
+    </twig:Table>
+{% endblock %}

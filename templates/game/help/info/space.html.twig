@@ -1,0 +1,25 @@
+{% extends 'game/help/help.html.twig' %}
+
+{% block help %}
+    <h2>Galaxie und Sonnensysteme</h2>
+    {% block breadcrumbs %}
+        {{ component('breadcrumbs', { items: [
+            { label: 'Hilfe', url: path('game.help.overview') },
+            { label: 'Galaxie und Sonnensysteme', url: path('game.help.space') },
+        ], title:"Du befindest dich hier:"}) }}
+    {% endblock %}
+    <twig:Box title="Raumkarte">
+        <div>
+            Der Raum ist unterteilt in Sektoren und Zellen. Jeder Sektor und jede Zelle haben eine X und eine Y
+            Koordinate, mit denen sie sich identifizieren lassen. Eine Zelle kann entweder ein Sonnensystem mit
+            Planeten, ein Asteroidenfeld, einen interstellaren Nebel oder Wurmloch beinhalten oder kann einfach leer
+            sein.
+        </div>
+    </twig:Box>
+    <twig:Box title="Sonnensystem">
+        <div>
+            In jedem Sonnensystem hat es Planeten, welche besiedelt werden können. Planeten haben unterschiedliche
+            Feldermengen (jedes Gebäude braucht eine gewisse Menge Felder) und unterschiedliche Planetentypen.
+        </div>
+    </twig:Box>
+{% endblock %}

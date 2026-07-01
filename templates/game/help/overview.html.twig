@@ -34,7 +34,7 @@
             {% block table_content %}
                 {% for title,item in data %}
                     <tr>
-                        <td width="35%"><b><a href="?$link &site= $item[0]">{{ title }}</b></td>
+                        <td width="35%"><b><a href="{{path('game.help.'~item[0])}}">{{ title }}</b></td>
                         <td>{{ item[1] }}</td>
                     </tr>
                 {% endfor %}
