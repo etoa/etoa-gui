@@ -8,6 +8,7 @@ use Doctrine\ORM\Mapping as ORM;
 use EtoA\Core\ObjectWithImage;
 use EtoA\Core\ObjectWithRequirements;
 use EtoA\Technology\TechnologyDataRepository;
+use EtoA\Universe\Resources\BaseResources;
 
 #[ORM\Entity(repositoryClass: TechnologyDataRepository::class)]
 #[ORM\Table(name: 'technologies')]
@@ -91,6 +92,18 @@ class Technology implements ObjectWithImage, ObjectWithRequirements
             default:
                 return self::BASE_PATH . "/technologies/technology".$this->id.".png";
         }
+    }
+
+    public function getCosts(): BaseResources
+    {
+        $costs = new BaseResources();
+        $costs->metal = $this->costsMetal;
+        $costs->crystal = $this->costsCrystal;
+        $costs->plastic = $this->costsPlastic;
+        $costs->fuel = $this->costsFuel;
+        $costs->food = $this->costsFood;
+
+        return $costs;
     }
 
     public function getId(): ?int

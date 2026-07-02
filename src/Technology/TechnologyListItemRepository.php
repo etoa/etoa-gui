@@ -104,32 +104,13 @@ class TechnologyListItemRepository extends AbstractRepository
         $this->save();
     }
 
-    public function updateBuildStatus(int $userId, int $entityId, int $technologyId, int $status, int $startTime, int $endTime): bool
+    public function updateBuildStatus(TechnologyListItem $technologyListItem, int $status, int $startTime, int $endTime): void
     {
-        return (bool) $this->getConnection()->executeQuery('INSERT INTO techlist (
-                techlist_user_id,
-                techlist_entity_id,
-                techlist_tech_id,
-                techlist_build_type,
-                techlist_build_start_time,
-                techlist_build_end_time
-            ) VALUES (
-                :userId,
-                :entityId,
-                :technologyId,
-                :status,
-                :startTime,
-                :endTime
-            ) ON DUPLICATE KEY
-            UPDATE techlist_entity_id = :entityId, techlist_build_type = :status, techlist_build_start_time = :startTime, techlist_build_end_time = :endTime;
-        ', [
-            'userId' => $userId,
-            'entityId' => $entityId,
-            'technologyId' => $technologyId,
-            'status' => $status,
-            'startTime' => $startTime,
-            'endTime' => $endTime,
-        ])->rowCount();
+        $technologyListItem->setBuildType($status);
+        $technologyListItem->setStartTime($startTime);
+        $technologyListItem->setEndTime($endTime);
+
+        $this->save();
     }
 
     public function countResearchInProgress(int $userId, int $entityId): bool
@@ -149,17 +130,19 @@ class TechnologyListItemRepository extends AbstractRepository
             ->getFirstResult();
     }
 
-    public function isTechInProgress(int $userId, int $technologyId): bool
+    public function isTechInProgress(int|User $userId, int|Technology $technologyId): bool
     {
         return (bool) $this->createQueryBuilder('q')
             ->select('1')
-            ->where('techlist_user_id = :userId')
-            ->andWhere('techlist_build_type > 2')
-            ->andWhere('techlist_tech_id = :techId')
+            ->where('q.user = :userId')
+            ->andWhere('q.buildType > 2')
+            ->andWhere('q.tech = :techId')
             ->setParameters([
                 'userId' => $userId,
                 'techId' => $technologyId,
             ])
+            ->getQuery()
+            ->setMaxResults(1)
             ->getFirstResult();
     }
 

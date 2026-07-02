@@ -29,7 +29,7 @@ class TechnologyListItem
     private Entity $entity;
 
     #[ORM\Column(name: "techlist_current_level", type: "smallint")]
-    private int $currentLevel;
+    private int $currentLevel = 0;
 
     #[ORM\Column(name: "techlist_build_type", type: "smallint")]
     private int $buildType = 0;

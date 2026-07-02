@@ -5,11 +5,12 @@ namespace EtoA\Components\Core;
 use EtoA\Building\BuildingId;
 use EtoA\Building\BuildingListItemRepository;
 use EtoA\Building\BuildingService;
-use EtoA\Building\BuildList;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Entity\Planet;
+use EtoA\Entity\TechnologyListItem;
 use EtoA\Entity\User;
 use EtoA\Support\StringUtils;
+use EtoA\Technology\TechnologyDataRepository;
 use EtoA\Technology\TechnologyId;
 use EtoA\Technology\TechnologyListItemRepository;
 use EtoA\Technology\TechnologyService;
@@ -38,6 +39,9 @@ class ResearchInfo extends AbstractController
     #[LiveProp]
     public User|null $user = null;
 
+    #[LiveProp]
+    public ?int $techId = null;
+
     public function __construct(
         private readonly BuildingListItemRepository   $buildingListItemRepository,
         private readonly TechnologyListItemRepository $technologyListItemRepository,
@@ -45,8 +49,8 @@ class ResearchInfo extends AbstractController
         private readonly RequestStack                 $requestStack,
         private readonly PlanetRepository             $planetRepository,
         private readonly BuildingService              $buildingService,
-        private readonly BuildList                    $buildList,
-        private readonly TechnologyService            $technologyService
+        private readonly TechnologyService            $technologyService,
+        private readonly TechnologyDataRepository     $technologyDataRepository
     )
     {
     }
@@ -86,8 +90,8 @@ class ResearchInfo extends AbstractController
     protected function instantiateForm(): FormInterface
     {
         $planet = $this->getCurrentEntity();
-        $peopleWorking = $this->getWorking();
-        $peopleFree = floor($planet->getPeople()) - $this->buildingListItemRepository->getTotalPeopleWorking($planet) + $peopleWorking;
+        $peopleWorking = $this->isGen() ? $this->getWorkingGen() : $this->getWorking();
+        $peopleFree = floor($planet->getPeople()) - $this->buildingListItemRepository->getTotalPeopleWorking($planet) + $this->getWorkingGen() + $this->getWorking();
         $workDone = $this->configurationService->getInt('people_work_done');
         $foodRequired = $this->configurationService->getInt('people_food_require');
 
@@ -146,17 +150,27 @@ class ResearchInfo extends AbstractController
     public function save(): void
     {
         $this->submitForm();
+        $lab = null;
+        $planet = $this->getCurrentEntity();
 
-        if (!$this->isCurrentlyBuilding()) {
-            $planet = $this->getCurrentEntity();
-            $base = $this->buildingListItemRepository->findOneBy(['entity' => $planet, 'building' => BuildingId::BUILDING]);
+        if ($this->techId) {
+            if ($this->isGen()) {
+                if (!$this->isCurrentlyGenResearching())
+                    $lab = $this->buildingListItemRepository->findOneBy(['entity' => $planet, 'building' => BuildingId::PEOPLE]);
+            } else {
+                if (!$this->isCurrentlyResearching())
+                    $lab = $this->buildingListItemRepository->findOneBy(['entity' => $planet, 'building' => BuildingId::TECHNOLOGY]);
+            }
+        }
+
+        if ($lab) {
             $peopleWorking = $this->getWorking();
 
             $free = floor($planet->getPeople()) - $this->buildingListItemRepository->getTotalPeopleWorking($planet) + $peopleWorking;
             $people = (int)$this->getForm()->get('peopleWorking')->getData();
 
             if ($free >= $people) {
-                $base->setPeopleWorking($people);
+                $lab->setPeopleWorking($people);
                 $this->buildingListItemRepository->save();
                 $this->addFlash('success', "Arbeiter zugeteilt!");
             } else {
@@ -185,8 +199,15 @@ class ResearchInfo extends AbstractController
     {
         $request = $this->requestStack->getCurrentRequest();
         if ($request->attributes->has('id')) {
-            $item = $this->buildList->item($request->attributes->get('id'))->bl;
-            return $this->buildingService->getPeopleOptimized($item);
+            $item = $this->technologyListItemRepository->findOneBy(['technology' => $request->attributes->get('id'), 'user' => $this->user]);
+
+            if (!$item) {
+                $item = new TechnologyListItem();
+                $item->setCurrentLevel(0);
+                $item->setTechnology($this->technologyDataRepository->find($request->attributes->get('id')));
+            }
+
+            return $this->technologyService->getPeopleOptimized($item);
         }
         return 0;
     }
@@ -194,7 +215,40 @@ class ResearchInfo extends AbstractController
     #[PreMount]
     public function preMount(): void
     {
+        $request = $this->requestStack->getCurrentRequest();
+        if ($request->attributes->has('id')) {
+            $this->techId = $request->attributes->get('id');
+        }
         $this->user = $this->getUser()->getData();
+    }
+
+    #[ExposeInTemplate]
+    public function getTimeBonusString(): string
+    {
+        $lab = $this->buildingListItemRepository->findOneBy(['entity' => $this->getCurrentEntity(), 'building' => BuildingId::TECHNOLOGY]);
+        $need_bonus_level = $lab->getCurrentLevel() - $this->configurationService->param1Int('build_time_boni_forschungslabor');
+
+        if ($need_bonus_level <= 0) {
+            $time_boni_factor = 1;
+        } else {
+            $time_boni_factor = 1 - ($need_bonus_level * ($this->configurationService->getInt('build_time_boni_forschungslabor') / 100));
+        }
+
+        if ($need_bonus_level >= 0) {
+            return StringUtils::formatPercentString($time_boni_factor) . " durch Stufe " . $lab->getCurrentLevel() . " (-" . ((1 - $this->configurationService->param2Float('build_time_boni_forschungslabor')) * 100) . "% maximum)";
+        } else {
+            return "Stufe " . $this->configurationService->getInt('build_time_boni_forschungslabor') . " erforderlich!";
+        }
+    }
+
+    #[ExposeInTemplate]
+    public function isGen(): bool
+    {
+        if ($this->techId === TechnologyId::GEN) {
+            return true;
+        }
+
+        return false;
     }
 
     private function getDataModelValue(): ?string

@@ -13,6 +13,8 @@ class BuildingCostContext
     public ?Race $race = null;
     public ?Specialist $specialist = null;
     public ?SolarType $solarType = null;
+    public int $peopleWorking = 0;
+    public int $gentech = 0;
 
     public static function admin(): BuildingCostContext
     {

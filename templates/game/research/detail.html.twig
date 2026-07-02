@@ -1,56 +1,146 @@
 {% extends 'game/research/research.html.twig' %}
 
 {% block research %}
-    <twig:Table title="{{ technology.technology.name~" "~technology.currentLevel }}">
-    {% block table_content %}
-        <tr>
-            <td rowspan="3" style="background:#000;;vertical-align:middle;">
-                {% if technology.technology.id == 3 %}
-                    <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/4.0.0/model-viewer.min.js"></script>
-
-                    <model-viewer src="{{ asset('/build/models/textured_sphere.glb') }}" ar shadow-intensity="1" camera-controls touch-action="pan-y"></model-viewer>
-                {% else %}
-                    <a href="">
-                        <img src="{{ technology.technology.getImagePath('other') }}" alt="{{ technology.technology.name }}" style="border:none;width:220px;height:220px"/>
+    {% if render.technology is defined %}
+        {% set info = render.technology %}
+        {% set options = render.options %}
+        
+        {# Technology Information #}
+        <table class="tb" style="width:100%">
+            <caption>
+                {{ info.name }} {% if info.currentLevel > 0 %}{{ info.currentLevel }}{% endif %}
+                {% if info.status.text %}<span style='color:{{ info.status.color }}'>{{ info.status.text }}</span>{% endif %}
+            </caption>
+            <tr>
+                <td rowspan="3" style="background:#000;vertical-align:middle;">
+                    <a href="{{ render.helpUrl }}">
+                        <img src="{{ info.image }}" alt="{{ info.name }}" style="width:220px;height:220px" />
                     </a>
-                {% endif %}
-            </td>
-            <td colspan="2">{{ BBCodeToHTML(technology.technology.shortComment)|raw }}</td>
-        </tr>
-        <tr>
-            <th height="20">Status:</th>
-            {% if technology.buildType == 3 %}
-                <td id="buildstatus" style="color:#0f0;">Wird erforscht</td>
-            {% else %}
-                <td id="buildstatus">Untätig</td>
-            {% endif %}
-        </tr>
-        <tr>
-            <th height="20">Stufe:</th>
-            {% if technology.currentLevel > 0 %}
-                <td id="buildlevel">{{ technology.currentLevel }}</td>
-             {% else %}
-                 <td id="buildlevel">Noch nicht erforscht</td>
-            {% endif %}
-        </tr>
-    {% endblock %}
-    </twig:Table>
-    <twig:Table title="Forschoptionen">
-    {% block table_content %}
-        <tr>
-            <th>Aktion</th>
-            <th>Zeit</th>
-            <th> {{ constant('EtoA\\Universe\\Resources\\ResourceNames::METAL') }} </th>
-            <th> {{ constant('EtoA\\Universe\\Resources\\ResourceNames::CRYSTAL') }} </th>
-            <th> {{ constant('EtoA\\Universe\\Resources\\ResourceNames::PLASTIC') }} </th>
-            <th> {{ constant('EtoA\\Universe\\Resources\\ResourceNames::FUEL') }} </th>
-            <th> {{ constant('EtoA\\Universe\\Resources\\ResourceNames::FOOD') }} </th>
-        </tr>
-    {% endblock %}
-    </twig:Table>
-    
-    <input type="submit" name="command_show" value="Aktualisieren" /> &nbsp;
-    <a href="{{ path('game.research') }}">
-        <input type="button" value="Zurück zur Übersicht"/>
-    </a>
+                </td>
+                <td colspan="2" style="vertical-align:top;height:150px;">
+                    {{ info.description|raw }}
+                </td>
+            </tr>
+            <tr>
+                <th style="width:250px;height:20px;">Status:</th>
+                <td id="buildstatus">
+                    {% if info.status.text %}
+                        <span style="color:{{ info.status.color }}">{{ info.status.text }}</span>
+                    {% else %}
+                        Untätig
+                    {% endif %}
+                </td>
+            </tr>
+            <tr>
+                <th style="width:250px;height:20px;">Stufe:</th>
+                <td id="buildlevel">
+                    {% if info.currentLevel > 0 %}
+                        {{ info.currentLevel }}
+                    {% else %}
+                        Noch nicht erforscht
+                    {% endif %}
+                </td>
+            </tr>
+        </table>
+
+        {# Research Options #}
+        {% if options.requirementsNotMet is defined and options.requirementsNotMet %}
+            <div>
+                Technologie kann nicht erforscht werden, <a href="?page=techtree">Voraussetzungen</a> nicht erfüllt!<br/><br/>
+            </div>
+        {% else %}
+            {{ form_start(form) }}
+                <table class="tb">
+                    <caption>Forschoptionen</caption>
+                    <tr>
+                        <th style="width:16%">Aktion</th>
+                        <th style="width:14%">{{ constant('EtoA\\Universe\\Resources\\ResIcons::TIME')|raw }} Zeit</th>
+                        <th style="width:14%">{{ constant('EtoA\\Universe\\Resources\\ResIcons::METAL')|raw }}</th>
+                        <th style="width:14%">{{ constant('EtoA\\Universe\\Resources\\ResIcons::CRYSTAL')|raw }}</th>
+                        <th style="width:14%">{{ constant('EtoA\\Universe\\Resources\\ResIcons::PLASTIC')|raw }}</th>
+                        <th style="width:14%">{{ constant('EtoA\\Universe\\Resources\\ResIcons::FUEL')|raw }}</th>
+                        <th style="width:14%">{{ constant('EtoA\\Universe\\Resources\\ResIcons::FOOD')|raw }}</th>
+                    </tr>
+
+                    {# Research Action #}
+                    {% if options.canResearch %}
+                        {% if info.currentLevel >= info.maxLevel %}
+                            <tr>
+                                <td colspan="7"><i>Keine Weiterentwicklung möglich.</i></td>
+                            </tr>
+                        {% elseif options.researchError %}
+                            <tr>
+                                <td style="color:red;">Erforschen</td>
+                                <td>{{ formatTimespan(options.researchCosts.time) }}</td>
+                                {% for resource in ['metal', 'crystal', 'plastic', 'fuel', 'food'] %}
+                                    <td{% if not options.researchCosts.resources[resource].sufficient %} style="color:red;"{% endif %}>
+                                        {{ options.researchCosts.resources[resource].cost|number_format }}
+                                    </td>
+                                {% endfor %}
+                            </tr>
+                            <tr>
+                                <td colspan="7"><i>{{ options.researchError }}</i></td>
+                            </tr>
+                        {% elseif options.isResearchable %}
+                            <tr>
+                                <td>
+                                    {{ form_widget(form.research) }}
+                                </td>
+                                <td>{{ formatTimespan(options.researchCosts.time) }}</td>
+                                {% for resource in ['metal', 'crystal', 'plastic', 'fuel', 'food'] %}
+                                    <td{% if not options.researchCosts.resources[resource].sufficient %} style="color:red;"{% endif %}>
+                                        {{ options.researchCosts.resources[resource].cost|number_format }}
+                                    </td>
+                                {% endfor %}
+                            </tr>
+                        {% else %}
+                            <tr>
+                                <td style="color:red;">Erforschen</td>
+                                <td>{{ formatTimespan(options.researchCosts.time) }}</td>
+                                {% for resource in ['metal', 'crystal', 'plastic', 'fuel', 'food'] %}
+                                    <td{% if not options.researchCosts.resources[resource].sufficient %} style="color:red;"{% endif %}>
+                                        {{ options.researchCosts.resources[resource].cost|number_format }}
+                                    </td>
+                                {% endfor %}
+                            </tr>
+                            <tr>
+                                <td colspan="7"><i>Keine Weiterentwicklung möglich, zuwenig Rohstoffe!</i></td>
+                            </tr>
+                        {% endif %}
+                    {% endif %}
+
+                    {# Cancel Research #}
+                    {% if options.canCancelResearch %}
+                        <tr>
+                            <td id="buildcancel">
+                                {{ form_widget(form.cancelResearch) }}
+                            </td>
+                            <td id="buildtime" style="vertical-align:middle;">-</td>
+                            <td colspan="5" id="progressbar" style="text-align:center;vertical-align:middle;font-weight:bold;"></td>
+                        </tr>
+                        {% if options.nextLevelCosts %}
+                            <tr>
+                                <td>Nächste Stufe:</td>
+                                <td>{{ formatTimespan(options.nextLevelCosts.time) }}</td>
+                                {% for resource in ['metal', 'crystal', 'plastic', 'fuel', 'food'] %}
+                                    <td>{{ options.nextLevelCosts.resources[resource].cost|number_format }}</td>
+                                {% endfor %}
+                            </tr>
+                        {% endif %}
+                        {% component 'countdown' with {element: 'buildtime', targettime: options.researchEndTime, elementToSetEmpty: 'buildcancel'} %}
+                        {% endcomponent %}
+                        {% component 'progress_bar' with {element: 'progressbar', startTime: options.researchStartTime, endTime: options.researchEndTime} %}
+                        {% endcomponent %}
+                    {% endif %}
+                </table>
+                
+                <br/>
+                {{ form_widget(form.refresh) }} &nbsp;
+                <a href="{{ path('game.research') }}">
+                    <input type="button" value="Zurück zur Übersicht"/>
+                </a>
+                {{ form_widget(form._token) }}
+            {{ form_end(form, {render_rest: false}) }}
+        {% endif %}
+    {% endif %}
 {% endblock %}

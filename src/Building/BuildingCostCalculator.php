@@ -23,6 +23,7 @@ class BuildingCostCalculator
         }
 
         $costs->time = $this->calculateBuildTime($costs, $context);
+        $costs->food = $costs->food + $context->peopleWorking * $this->config->getInt('people_food_require');
 
         return $costs;
     }
@@ -48,6 +49,11 @@ class BuildingCostCalculator
             $factor += $context->solarType->getBuildTime() - 1;
         }
 
-        return (int) ($time * $factor);
+        $buildTime = ($time * $factor);
+
+        $timeMin = $buildTime * (0.1 - ($context->gentech / 100));
+        $buildTime = $buildTime - $context->peopleWorking * $this->config->getInt('people_work_done');
+
+        return (int) max($timeMin,$buildTime);
     }
 }
