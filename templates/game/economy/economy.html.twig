@@ -1,63 +1,443 @@
 {% extends 'layout/game.html.twig' %}
+{% import 'macros.html.twig' as macros %}
 
 {% block content %}
-    <h1>Wirtschaft des Planeten {{ planet.name }}</h1>
-    <twig:ResourceBox/>
-    {% if prodIncludingBoni %}
-        {{ form_start(form) }}
-            <twig:Table title="Rohstoffproduktion und Energieverbrauch">
-                {% block table_content %}
-                    <tr>
-                        <th style="width:200px;">Gebäude</th>
-                        <th class="resmetalcolor"> {{ constant('EtoA\\Universe\\Resources\\ResourceNames::METAL') }} </th>
-                        <th class="rescrystalcolor"> {{ constant('EtoA\\Universe\\Resources\\ResourceNames::CRYSTAL') }} </th>
-                        <th class="resplasticcolor"> {{ constant('EtoA\\Universe\\Resources\\ResourceNames::PLASTIC') }} </th>
-                        <th class="resfuelcolor"> {{ constant('EtoA\\Universe\\Resources\\ResourceNames::FUEL') }} </th>
-                        <th class="resfoodcolor"> {{ constant('EtoA\\Universe\\Resources\\ResourceNames::FOOD') }} </th>
-                        <th class="respowercolor" colspan="2"> {{ constant('EtoA\\Universe\\Resources\\ResourceNames::POWER') }} </th>
-                    </tr>
-                    {% for key,prod in prodIncludingBoni %}
-                        <tr>
-                            <td>
-                                {{ prod.name }} ({{ prod.level }})
-                                {% if prod.prod == 0 %}
-                                    <br/><span style="color:red;" class='textSmall'>Produktion ausgeschaltet!</span>
-                                {% endif %}
-                            </td>
-                                {% for resourceKey in resourceKeys %}
-                                    {% if resourceKey == 'fuel' %}
-                                        <td {{ tm(
-                                            "Grundproduktion ohne Boni", formatNumber(bareBuildingProduction[key][resourceKey]|round(0, 'floor'))~
-                                            ' t/h '~'<br/>'~fuelBonus)|raw}}>
-                                            {{ formatNumber(prod[resourceKey]) }}
-                                        </td>
-                                    {% else %}
-                                        <td {{ tm(
-                                            "Grundproduktion ohne Boni", formatNumber(bareBuildingProduction[key][resourceKey]|round(0, 'floor'))~
-                                            ' t/h')|raw}}>
-                                            {{ formatNumber(prod[resourceKey]) }}
-                                        </td>
-                                    {% endif %}
-                                {% endfor %}
-                            <td
-                                {% if prod['power'] %}
-                                    style="color:#f00"
-                                {% endif %}
-                            >
-                                {{ prod['power'] }}
-                            </td>
-                            <td>
-                                {{ form_widget(form[key]) }}
-                                {% if prod['type'] == constant('EtoA\\Building\\BuildingTypeId::RES') %}
-                                {% elseif key == constant('EtoA\\Building\\BuildingId::MISSILE') or constant('EtoA\\Building\\BuildingId::CRYPTO') %}
-                                {% else %}
+    <h1>Wirtschaftsübersicht des Planeten {{ planet.displayName }}</h1>
 
-                                {% endif%}
+    <twig:ResourceBox/>
+    {{ form_start(form) }}
+
+    {# Rohstoffproduktion und Energieverbrauch #}
+    {% if producingBuildings|length > 0 %}
+        <twig:Table title="Rohstoffproduktion und Energieverbrauch">
+            {% block table_content %}
+                <tr>
+                    <th style="width:200px;">Gebäude</th>
+                    <th class="resmetalcolor">{{ constant('EtoA\\Universe\\Resources\\ResourceNames::METAL') }}</th>
+                    <th class="rescrystalcolor">{{ constant('EtoA\\Universe\\Resources\\ResourceNames::CRYSTAL') }}</th>
+                    <th class="resplasticcolor">{{ constant('EtoA\\Universe\\Resources\\ResourceNames::PLASTIC') }}</th>
+                    <th class="resfuelcolor">{{ constant('EtoA\\Universe\\Resources\\ResourceNames::FUEL') }}</th>
+                    <th class="resfoodcolor">{{ constant('EtoA\\Universe\\Resources\\ResourceNames::FOOD') }}</th>
+                    <th class="respowercolor"
+                        colspan="2">{{ constant('EtoA\\Universe\\Resources\\ResourceNames::POWER') }}</th>
+                </tr>
+                {% for building in producingBuildings %}
+                    <tr>
+                        <td>
+                            {{ building.name }} ({{ building.level }})
+                            {% if building.prodPercent == 0 %}
+                                <br/><span style="color:red;" class="textSmall">Produktion ausgeschaltet!</span>
+                            {% endif %}
+                        </td>
+                        {% for key in resourceKeys %}
+                            <td {{ tm('Grundproduktion ohne Boni',formatNumber(building.bareProd[key])~' t/h')|raw }}>
+                                {{ formatNumber(building.prodWithBoni[key],true)|raw }}
                             </td>
-                        </tr>
+                        {% endfor %}
+                        <td{% if building.powerUse > 0 %} style="color:#f00"{% endif %}>
+                            {{ formatNumber(building.powerUse) }}
+                        </td>
+                        <td>
+                            {% if building.productionPercentOptions|length > 0 %}
+                                {{ form_widget(form[building.id]) }}
+                                &nbsp; <img
+                                    src="{{ path('images.progress',{value:(building.prodPercent * 100)|round,w:50}) }}"
+                                    alt="progress"/>
+                            {% else %}
+                                &nbsp;
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
+                {% if boost is not null %}
+                    <tr>
+                        <th style="height:2px;" colspan="{{ resourceKeys|length + 3 }}"></th>
+                    </tr>
+                    <tr>
+                        <th>TOTAL Produktion</th>
+                        {% for key in resourceKeys %}
+                            <td style="color:#0f0"
+                                title="Grundproduktion ohne Boni: {{ formatNumber(boost.baseProduction[key]) }} t/h">
+                                {{ formatNumber(totalProduction[key]) }}
+                            </td>
+                        {% endfor %}
+                        <td style="color:#f00">{{ formatNumber(powerUsedFormatted) }}</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <th>Boost ({{ boost.factor }})</th>
+                        {% for key in resourceKeys %}
+                            <td style="color:#0f0">{{ formatNumber(boost.production[key]) }}</td>
+                        {% endfor %}
+                        <td style="color:#f00">-</td>
+                        <td></td>
+                    </tr>
+                {% endif %}
+                <tr>
+                    <th style="height:2px;" colspan="{{ resourceKeys|length + 3 }}"></th>
+                </tr>
+                <tr>
+                    <th>TOTAL pro Stunde</th>
+                    {% for key in resourceKeys %}
+                        <td style="color:#0f0">{{ formatNumber(totalProduction[key]) }}</td>
                     {% endfor %}
-                {% endblock %}
-            </twig:Table>
-        {{ form_end(form) }}
+                    <td style="color:#f00">{{ formatNumber(powerUsedFormatted) }}</td>
+                    <td rowspan="3" style="color:#f00;vertical-align:middle;">
+                        {{ form_widget(form.save) }}
+                    </td>
+                </tr>
+                <tr>
+                    <th>TOTAL pro Tag</th>
+                    {% for key in resourceKeys %}
+                        <td style="color:#0f0">{{ formatNumber(totalProductionDay[key]) }}</td>
+                    {% endfor %}
+                    <td style="color:#f00">-</td>
+                </tr>
+                <tr>
+                    <th>TOTAL pro Woche</th>
+                    {% for key in resourceKeys %}
+                        <td style="color:#0f0">{{ formatNumber(totalProductionWeek[key]) }}</td>
+                    {% endfor %}
+                    <td style="color:#f00">-</td>
+                </tr>
+                {% if insufficientPower %}
+                    <tr>
+                        <td colspan="{{ resourceKeys|length + 3 }}" style="color:#f00; text-align:center;">
+                            Zuwenig Energie! {{ powerUsed|number_format(0, ',', '`') }} benötigt,
+                            {{ powerProduced|number_format(0, ',', '`') }} verfügbar.
+                            Gesamtproduktion wird auf {{ (powerEfficiency * 100)|number_format(3) }}% gesenkt!
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>TOTAL</th>
+                        {% for key in resourceKeys %}
+                            <td>{{ totalProduction[key]|number_format(0, ',', '`') }}</td>
+                        {% endfor %}
+                        <td colspan="2">{{ powerProduced|number_format(0, ',', '`') }}</td>
+                    </tr>
+                {% endif %}
+            {% endblock %}
+        </twig:Table>
+    {% else %}
+        <div class="error">Es wurden noch keine Produktionsgebäude gebaut!</div>
     {% endif %}
+    <div>
+        <a href="{{ path('game.specialists') }}">
+            <input type="button" value="Spezialisten"/>
+        </a>&nbsp;
+        <a href="{{ path('game.planetstats') }}">
+            <input type="button"
+                   value="Ressourcen aller Planeten anzeigen" onclick="" title='Ressourcen aller Planeten anzeigen (Kürzel: [P])'/>
+        </a>&nbsp;
+        {{ form_widget(form.calc) }}
+    </div>
+    {{ form_end(form) }}
+    {# Rohstoffbunker #}
+    {% if bunker is not null %}
+        <div class="ibox">
+            <div class="ibhead">Rohstoffbunker</div>
+            <div class="ibbody">
+                In deinem <b>{{ bunker.name }}</b> der Stufe <b>{{ bunker.level }}</b> werden bei einem
+                Angriff <b>{{ bunker.capacity|number_format(0, ',', '`') }}</b> Ressourcen gesichert!
+            </div>
+        </div>
+    {% endif %}
+
+    {# Energieproduktion #}
+    <twig:Table title="Energieproduktion">
+        {% block table_content %}
+            <tr>
+                <th style="width:230px;">Gebäude</th>
+                <th colspan="3">{{ constant('EtoA\\Universe\\Resources\\ResIcons::POWER')|raw }} Energie</th>
+            </tr>
+            {% for building in powerProducingBuildings %}
+                <tr>
+                    <th>{{ building.name }} ({{ building.level }})</th>
+                    <td colspan="3">{{ building.production|number_format(0, ',', '`') }}</td>
+                </tr>
+            {% endfor %}
+            {% for ship in powerProducingShips %}
+                <tr>
+                    <th>{{ ship.name }} ({{ ship.count|number_format(0, ',', '`') }})</th>
+                    <td colspan="3">
+                        {{ ship.production|number_format(0, ',', '`') }}
+                        (Energie pro Satellit: {{ ship.perShip|number_format(2) }} = {{ ship.basePower }} Basis,
+                        <span style="color:{% if ship.solarBonus >= 0 %}#0f0{% else %}#f00{% endif %}">
+                        {% if ship.solarBonus > 0 %}+{% endif %}{{ ship.solarBonus }}
+                    </span> bedingt durch Entfernung zur Sonne,
+                        {% if ship.bonusFactor >= 1 %}+{% endif %}{{ ((ship.bonusFactor - 1) * 100)|number_format(0) }}%
+                        durch Energiebonus)
+                    </td>
+                </tr>
+            {% endfor %}
+            <tr>
+                <th style="height:2px;" colspan="4"></th>
+            </tr>
+            <tr>
+                <th>TOTAL produziert</th>
+                <td colspan="3">{{ powerProduced|number_format(0, ',', '`') }}</td>
+            </tr>
+            {% if powerProduced > 0 %}
+                <tr>
+                    <th>Benutzt</th>
+                    <td>{{ powerUsed|number_format(0, ',', '`') }}</td>
+                    <td>{{ powerUsedPercent }}%</td>
+                    <td><img src="{{ path('images.progress',{value:(powerUsedPercent),r1:50,w:100}) }}" alt="progress"/>
+                    </td>
+                </tr>
+                <tr>
+                    <th>Verfügbar</th>
+                    <td{% if powerFree < 0 %} style="color:#f00"{% else %} style="color:#0f0"{% endif %}>
+                        {{ powerFree|number_format(0, ',', '`') }}
+                    </td>
+                    <td{% if powerFree < 0 %} style="color:#f00"{% else %} style="color:#0f0"{% endif %}>
+                        {{ powerFreePercent }}%
+                    </td>
+                    <td><img src="{{ path('images.progress',{value:(powerFreePercent),w:100}) }}" alt="progress"/></td>
+                </tr>
+            {% endif %}
+        {% endblock %}
+    </twig:Table>
+    {# Lagerkapazität #}
+    {% if storageBuildings|length > 0 %}
+        <twig:Table title="Lagerkapazität">
+            {% block table_content %}
+                <tr>
+                    <th style="width:160px">Gebäude</th>
+                    <th>{{ constant('EtoA\\Universe\\Resources\\ResIcons::METAL')|raw }} Titan</th>
+                    <th>{{ constant('EtoA\\Universe\\Resources\\ResIcons::CRYSTAL')|raw }} Silizium</th>
+                    <th>{{ constant('EtoA\\Universe\\Resources\\ResIcons::PLASTIC')|raw }} PVC</th>
+                    <th>{{ constant('EtoA\\Universe\\Resources\\ResIcons::FUEL')|raw }} Tritium</th>
+                    <th>{{ constant('EtoA\\Universe\\Resources\\ResIcons::FOOD')|raw }} Nahrung</th>
+                </tr>
+                <tr>
+                    <th>Grundkapazität</th>
+                    {% for i in 0..4 %}
+                        <td>{{ baseStorageCapacity|number_format(0, ',', '`') }}</td>
+                    {% endfor %}
+                </tr>
+
+                {% for building in storageBuildings %}
+                    <tr>
+                        <th>{{ building.name }} ({{ building.level }})</th>
+                        {% for i in 0..4 %}
+                            <td>{{ building.storage[i]|number_format(0, ',', '`') }}</td>
+                        {% endfor %}
+                    </tr>
+                {% endfor %}
+                <tr>
+                    <th style="height:2px;" colspan="6"></th>
+                </tr>
+                <tr>
+                    <th>TOTAL</th>
+                    {% for i in 0..4 %}
+                        <td>{{ formatNumber(storageTotal[i],true)|raw }}</td>
+                    {% endfor %}
+                </tr>
+                <tr>
+                    <th>Benutzt</th>
+                    <td><img src="{{ path('images.progress',{value:(storageUsagePercent.metal),r:1,w:100}) }}"
+                             alt="progress"/></td>
+                    <td><img src="{{ path('images.progress',{value:(storageUsagePercent.crystal),r:1,w:100}) }}"
+                             alt="progress"/></td>
+                    <td><img src="{{ path('images.progress',{value:(storageUsagePercent.plastic),r:1,w:100}) }}"
+                             alt="progress"/></td>
+                    <td><img src="{{ path('images.progress',{value:(storageUsagePercent.fuel),r:1,w:100}) }}"
+                             alt="progress"/></td>
+                    <td><img src="{{ path('images.progress',{value:(storageUsagePercent.food),r:1,w:100}) }}"
+                             alt="progress"/></td>
+                </tr>
+            {% endblock %}
+        </twig:Table>
+    {% endif %}
+
+    {# Boni #}
+    <twig:Table title="Boni">
+        {% block table_content %}
+            <tr>
+                <th>Rohstoff</th>
+                <th>{{ boni.planet.name }}</th>
+                <th>{{ boni.race.name }}</th>
+                <th>{{ boni.star.name }}</th>
+                {% if boni.specialist is not null %}
+                    <th>{{ boni.specialist.name }}</th>
+                {% endif %}
+                <th>Technologie</th>
+                <th>TOTAL</th>
+            </tr>
+            <tr>
+                <td>{{ constant('EtoA\\Universe\\Resources\\ResIcons::METAL')|raw }} Produktion
+                    {{ constant('EtoA\\Universe\\Resources\\ResourceNames::METAL') }}</td>
+                <td>{{ formatPercentString((boni.planet.metal),true)|raw }}</td>
+                <td>{{ formatPercentString((boni.race.metal),true)|raw }}</td>
+                <td>{{ formatPercentString((boni.star.metal),true)|raw }}</td>
+                {% if boni.specialist is not null %}
+                    <td>{{ formatNumber((boni.specialist.prodMetal),true)|raw }}</td>
+                {% endif %}
+                <td>-</td>
+                <td>
+                    {% set totalMetal = {0: boni.planet.metal, 1: boni.race.metal, 2: boni.star.metal, 3: (boni.specialist ? boni.specialist.prodMetal : 1)} %}
+                    {{ formatPercentString(totalMetal,true)|raw }}
+                </td>
+            </tr>
+            <tr>
+                <td>{{ constant('EtoA\\Universe\\Resources\\ResIcons::CRYSTAL')|raw }} Produktion
+                    {{ constant('EtoA\\Universe\\Resources\\ResourceNames::CRYSTAL') }}</td>
+                <td>{{ formatPercentString((boni.planet.crystal),true)|raw }}</td>
+                <td>{{ formatPercentString((boni.race.crystal),true)|raw }}</td>
+                <td>{{ formatPercentString((boni.star.crystal),true)|raw }}</td>
+                {% if boni.specialist is not null %}
+                    <td>{{ formatPercentString(boni.specialist.prodCrystal,true)|raw }}</td>
+                {% endif %}
+                <td>-</td>
+                <td>
+                    {% set totalCrystal = {0: boni.planet.crystal, 1: boni.race.crystal, 2: boni.star.crystal, 3: (boni.specialist ? boni.specialist.prodCrystal : 1)} %}
+                    {{ formatPercentString(totalCrystal,true)|raw }}
+                </td>
+            </tr>
+            <tr>
+                <td>{{ constant('EtoA\\Universe\\Resources\\ResIcons::PLASTIC')|raw }} Produktion
+                    {{ constant('EtoA\\Universe\\Resources\\ResourceNames::PLASTIC') }}</td>
+                <td>{{ formatPercentString(boni.planet.plastic,true)|raw }}</td>
+                <td>{{ formatPercentString(boni.race.plastic,true)|raw }}</td>
+                <td>{{ formatPercentString(boni.star.plastic,true)|raw }}</td>
+                {% if boni.specialist is not null %}
+                    <td>{{ formatPercentString(boni.specialist.prodPlastic,true)|raw }}</td>
+                {% endif %}
+                <td>-</td>
+                <td>
+                    {% set totalPlastic = {0: boni.planet.plastic, 1: boni.race.plastic, 2: boni.star.plastic, 3: (boni.specialist ? boni.specialist.prodPlastic : 1)} %}
+                    {{ formatPercentString(totalPlastic,true)|raw }}
+                </td>
+            </tr>
+            <tr>
+                <td>{{ constant('EtoA\\Universe\\Resources\\ResIcons::FUEL')|raw }} Produktion
+                    {{ constant('EtoA\\Universe\\Resources\\ResourceNames::FUEL') }}</td>
+                <td>{{ formatPercentString(boni.planet.fuel,true)|raw }}</td>
+                <td>{{ formatPercentString(boni.race.fuel,true)|raw }}</td>
+                <td>{{ formatPercentString(boni.star.fuel,true)|raw }}</td>
+                {% if boni.specialist is not null %}
+                    <td>{{ formatPercentString(boni.specialist.prodFuel,true)|raw }}</td>
+                {% endif %}
+                <td>-</td>
+                <td>
+                    {% set totalFuel = {0: boni.planet.fuel, 1: boni.race.fuel, 2: boni.star.fuel, 3: (boni.specialist ? boni.specialist.prodFuel : 1)} %}
+                    {{ formatPercentString(totalFuel,true)|raw }}
+                </td>
+            </tr>
+            <tr>
+                <td>{{ constant('EtoA\\Universe\\Resources\\ResIcons::FOOD')|raw }} Produktion
+                    {{ constant('EtoA\\Universe\\Resources\\ResourceNames::FOOD') }}</td>
+                <td>{{ formatPercentString(boni.planet.food,true)|raw }}</td>
+                <td>{{ formatPercentString(boni.race.food,true)|raw }}</td>
+                <td>{{ formatPercentString(boni.star.food,true)|raw }}</td>
+                {% if boni.specialist is not null %}
+                    <td>{{ formatPercentString(boni.specialist.prodFood,true)|raw }}</td>
+                {% endif %}
+                <td>-</td>
+                <td>
+                    {% set totalFood = {0: boni.planet.food, 1: boni.race.food, 2: boni.star.food, 3: (boni.specialist ? boni.specialist.prodFood : 1)} %}
+                    {{ formatPercentString(totalFood,true)|raw }}
+                </td>
+            </tr>
+            <tr>
+                <td>{{ constant('EtoA\\Universe\\Resources\\ResIcons::POWER')|raw }} Produktion Energie</td>
+                <td>{{ formatPercentString(boni.planet.power,true)|raw }}</td>
+                <td>{{ formatPercentString(boni.race.power,true)|raw }}</td>
+                <td>{{ formatPercentString(boni.star.power,true)|raw }}</td>
+                {% if boni.specialist is not null %}
+                    <td>{{ formatPercentString(boni.specialist.prodPower,true)|raw }}</td>
+                {% endif %}
+                <td>{{ formatPercentString(boni.energyTech,true)|raw }}</td>
+                <td>
+                    {% set totalPower = {0: boni.planet.power, 1: boni.race.power, 2: boni.star.power, 3: (boni.specialist ? boni.specialist.prodPower : 1), 4: boni.energyTech } %}
+                    {{ formatPercentString(totalPower,true)|raw }}
+                </td>
+            </tr>
+            <tr>
+                <td>{{ constant('EtoA\\Universe\\Resources\\ResIcons::PEOPLE')|raw }} Bevölkerungswachstum</td>
+                <td>{{ formatPercentString(boni.planet.population,true)|raw }}</td>
+                <td>{{ formatPercentString(boni.race.population,true)|raw }}</td>
+                <td>{{ formatPercentString(boni.star.population,true)|raw }}</td>
+                {% if boni.specialist is not null %}
+                    <td>{{ formatPercentString(boni.specialist.prodPeople,true)|raw }}</td>
+                {% endif %}
+                <td>-</td>
+                <td>
+                    {% set totalPopulation = {0:boni.planet.population,1: boni.race.population,2: boni.star.population,3: (boni.specialist ? boni.specialist.prodPeople : 1)} %}
+                    {{ formatPercentString(totalPopulation,true)|raw }}
+                </td>
+            </tr>
+            <tr>
+                <td>{{ constant('EtoA\\Universe\\Resources\\ResIcons::TIME')|raw }} Forschungszeit</td>
+                <td>{{ formatPercentString(boni.planet.researchtime,true,true)|raw }}</td>
+                <td>{{ formatPercentString(boni.race.researchTime,true,true)|raw }}</td>
+                <td>{{ formatPercentString(boni.star.researchtime,true,true)|raw }}</td>
+                {% if boni.specialist is not null %}
+                    <td>{{ formatPercentString(boni.specialist.timeTechnologies,true,true)|raw }}</td>
+                {% endif %}
+                <td>-</td>
+                <td>
+                    {% set totalResearch = {0: boni.planet.researchtime, 1: boni.race.researchTime,2: boni.star.researchtime,3: (boni.specialist ? boni.specialist.timeTechnologies : 1)} %}
+                    {{ formatPercentString(totalResearch,true,true)|raw }}
+                </td>
+            </tr>
+            <tr>
+                <td>{{ constant('EtoA\\Universe\\Resources\\ResIcons::TIME')|raw }} Bauzeit (Gebäude)</td>
+                <td>{{ formatPercentString(boni.planet.buildtime,true,true)|raw }}</td>
+                <td>{{ formatPercentString(boni.race.buildTime,true,true)|raw }}</td>
+                <td>{{ formatPercentString(boni.star.buildtime,true,true)|raw }}</td>
+                {% if boni.specialist is not null %}
+                    <td>{{ formatPercentString(boni.specialist.timeBuildings,true,true)|raw }}</td>
+                {% endif %}
+                <td>-</td>
+                <td>
+                    {% set totalBuildTime = {0:boni['planet']['buildtime'],1:boni['race']['buildTime'],2:boni['star']['buildtime'],3:(boni['specialist'] ? boni['specialist']['timeBuildings'] : 1)} %}
+                    {{ formatPercentString(totalBuildTime,true,true)|raw }}
+                </td>
+            </tr>
+            <tr>
+                <td>{{ constant('EtoA\\Universe\\Resources\\ResIcons::TIME')|raw }} Bauzeit (Schiffe)</td>
+                <td>-</td>
+                <td>-</td>
+                <td>-</td>
+                {% if boni.specialist is not null %}
+                    <td>{{ formatPercentString(boni.specialist.timeShips,true)|raw }}%</td>
+                {% endif %}
+                <td>-</td>
+                <td>
+                    {% set totalShipTime = boni.specialist ? boni.specialist.timeShips : 1 %}
+                    {{ formatPercentString(totalShipTime,true)|raw }}
+                </td>
+            </tr>
+            <tr>
+                <td>{{ constant('EtoA\\Universe\\Resources\\ResIcons::TIME')|raw }} Bauzeit (Verteidigung)</td>
+                <td>-</td>
+                <td>-</td>
+                <td>-</td>
+                {% if boni.specialist is not null %}
+                    <td>{{ formatPercentString(boni.specialist.timeDefense,true)|raw }}</td>
+                {% endif %}
+                <td>-</td>
+                <td>
+                    {% set totalDefenseTime = boni.specialist ? boni.specialist.timeDefense : 1 %}
+                    {{ formatPercentString(totalDefenseTime,true)|raw }}
+                </td>
+            </tr>
+            <tr>
+                <td>{{ constant('EtoA\\Universe\\Resources\\ResIcons::TIME')|raw }} Fluggeschwindigkeit</td>
+                <td>-</td>
+                <td>{{ formatPercentString(boni.race.fleetTime,true)|raw }}</td>
+                <td>-</td>
+                {% if boni.specialist is not null %}
+                    <td>{{ formatPercentString(boni.specialist.fleetSpeed,true)|raw }}</td>
+                {% endif %}
+                <td>-</td>
+                <td>
+                    {% set totalFleetSpeed = {0:boni.race.fleetTime, 1:(boni.specialist ? boni.specialist.fleetSpeed : 1)} %}
+                    {{ formatPercentString(totalFleetSpeed,true)|raw }}
+                </td>
+            </tr>
+        {% endblock %}
+    </twig:Table>
 {% endblock %}

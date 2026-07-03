@@ -68,7 +68,7 @@
     <section id="nav-planet">
       <span class="section-label">Planet</span>
       <a class="button-blue" href="{{ path('game.planetoverview.overview') }}" title="Informationen">Informationen</a>
-      <a class="button-blue" href="{{ path('game.planetstats') }}" title="Wirtschaft (Kürzel: [p])">Wirtschaft</a>
+      <a class="button-blue" href="{{ path('game.economy',{id:currentPlanetId}) }}" title="Wirtschaft (Kürzel: [p])">Wirtschaft</a>
       <a class="button-blue" href="{{ path('game.population',{id:currentPlanetId}) }}" title="Bevölkerung (Kürzel: [B])">Bevölkerung</a>
       <a class="button-blue" href="{{ path('game.techtree.general') }}" title="Technikbaum">Technikbaum</a>
       <a class="button-blue" href="{{ path('game.haven.show') }}" title="Raumschiffhafen (Kürzel: [h])">Raumschiffhafen</a>

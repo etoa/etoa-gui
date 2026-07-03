@@ -73,7 +73,7 @@
             <a href="{{ path('game.defense') }}" class="right-tip" data-tips=" Waffenfabrik {% if enableKeybinds %}[d] {% endif %}" id="navdefense"></a>
             <a href="{{ path('game.missiles') }}" class="right-tip" data-tips=" Raketensilo {% if enableKeybinds %}[r] {% endif %}" id="navmissiles"></a>
 
-            <a href="{{ path('game.planetstats') }}" class="top-tip" data-tips=" Wirtschaft {% if enableKeybinds %}[p] {% endif %}" id="naveconomy"></a>
+            <a href="{{ path('game.economy',{id:currentPlanetId}) }}" class="top-tip" data-tips=" Wirtschaft {% if enableKeybinds %}[p] {% endif %}" id="naveconomy"></a>
             <a href="{{ path('game.population',{id:currentPlanetId}) }}" class="top-tip" data-tips=" Bewohner {% if enableKeybinds %}[B] {% endif %}" id="navpopulation"></a>
             <a href="{{ path('game.planetoverview.overview') }}" class="top-tip" data-tips=" Planeteninfo " id="navplanetoverview"></a>
             <a href="?page=techtree" class="top-tip" data-tips=" Technikbaum " id="navtechtree"></a>

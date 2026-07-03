@@ -242,9 +242,9 @@ class TwigExtension extends AbstractExtension
         return $this->networkNameService->getHost($ip);
     }
 
-    public function formatNumber(float $number): string
+    public function formatNumber(float $number, bool $colorize = false): string
     {
-        return StringUtils::formatNumber($number);
+        return StringUtils::formatNumber($number, $colorize);
     }
 
     public function browser(string $userAgent): Parser

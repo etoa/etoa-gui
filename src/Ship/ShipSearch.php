@@ -115,7 +115,7 @@ class ShipSearch extends AbstractSearch
 
     public function producesPower(): self
     {
-        $this->parts[] = 'q.prodPower > 0';
+        $this->parts[] = 'q.powerProduction > 0';
 
         return $this;
     }

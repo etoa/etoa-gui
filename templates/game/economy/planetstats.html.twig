@@ -3,47 +3,123 @@
 
 {% block content %}
     <h1>Wirtschaftsübersicht</h1>
-    <twig:Table title="Rohstoffe und Bewohner">
-    {% block table_content %}
-        <tr>
-            <th>Name:</th>
-            <th>{{ constant('EtoA\\Universe\\Resources\\ResourceNames::METAL') }}</th>
-            <th>{{ constant('EtoA\\Universe\\Resources\\ResourceNames::CRYSTAL') }}</th>
-            <th>{{ constant('EtoA\\Universe\\Resources\\ResourceNames::PLASTIC') }}</th>
-            <th>{{ constant('EtoA\\Universe\\Resources\\ResourceNames::FUEL') }}</th>
-            <th>{{ constant('EtoA\\Universe\\Resources\\ResourceNames::FOOD') }}</th>
-            <th>Bewohner</th>
-        </tr>
-        {{ ress|raw }}
-    {% endblock %}
-    </twig:Table>
-    <twig:Table title="Produktion">
-    {% block table_content %}
-        <tr>
-            <th>Name:</th>
-            <th>{{ constant('EtoA\\Universe\\Resources\\ResourceNames::METAL') }}</th>
-            <th>{{ constant('EtoA\\Universe\\Resources\\ResourceNames::CRYSTAL') }}</th>
-            <th>{{ constant('EtoA\\Universe\\Resources\\ResourceNames::PLASTIC') }}</th>
-            <th>{{ constant('EtoA\\Universe\\Resources\\ResourceNames::FUEL') }}</th>
-            <th>{{ constant('EtoA\\Universe\\Resources\\ResourceNames::FOOD') }}</th>
-            <th>Energie</th>
-        </tr>
-        {{ prod|raw }}
-    {% endblock %}
-    </twig:Table>
-    <twig:Table title="Produktion">
-    {% block table_content %}
-        <tr>
-            <td style="color:#f00">Minimum</td>
-            <td style="color:#0f0">Maximum</td>
-            <td style="font-style:italic">Speicher bald voll</td>
-            <td style="font-weight:bold">Speicher voll</td>
-        </tr>
-    {% endblock %}
+
+    {% if planetResourcesData.planets is defined %}
+        <twig:Table title="Rohstoffe und Bewohner">
+            {% block table_content %}
+                <tr>
+                    <th>Planet</th>
+                    <th>{{ constant('EtoA\\Universe\\Resources\\ResourceNames::METAL')|raw }}</th>
+                    <th>{{ constant('EtoA\\Universe\\Resources\\ResourceNames::CRYSTAL')|raw }}</th>
+                    <th>{{ constant('EtoA\\Universe\\Resources\\ResourceNames::PLASTIC')|raw }}</th>
+                    <th>{{ constant('EtoA\\Universe\\Resources\\ResourceNames::FUEL')|raw }}</th>
+                    <th>{{ constant('EtoA\\Universe\\Resources\\ResourceNames::FOOD')|raw }}</th>
+                    <th>Bewohner</th>
+                </tr>
+                {% for planet in planetResourcesData.planets %}
+                    <tr>
+                        <td>
+                            <a href="{{ path('game.economy', {'id': planet.entityId}) }}">
+                                {{ planet.name }}
+                            </a>
+                        </td>
+                        {% for key in planetResourcesData.resourceKeys %}
+                            <td
+                                    {% if planetResourcesData.maxResources[key] == planet.resources[key] %}
+                                        style="color:#0f0"
+                                    {% elseif planetResourcesData.minResources[key] == planet.resources[key] %}
+                                        style="color:#f00"
+                                    {% endif %}
+                                    {% if planet.resources[key] < planet.storage[key] and planet.timeToFull[key] > 0 %}
+                                        {% if key == 'people' %}
+                                            {{ tm('Speicher','Wachstum pro Stunde: '~ planet.peopleGrowthPerHour)|raw }}
+                                        {% else %}
+                                            {{ tm('','Speicher voll in '~ formatTimespan(planet.timeToFull[key]))|raw }}
+                                        {% endif %}
+                                    {% else %}
+                                        {{ tm('Speicher','Speicher voll!')|raw }}
+                                    {% endif %}
+                            >
+                                {% if planet.resources[key] >= planet.storage[key] or planet.timeToFull[key] == 0 %}
+                                    <b>{{ planet.resources[key]|number_format }}</b>
+                                {% else %}
+                                    {% if planet.timeToFull[key] < 43200 %}
+                                        <i>{{ planet.resources[key]|number_format }}</i>
+                                    {% else %}
+                                        {{ planet.resources[key]|number_format }}
+                                    {% endif %}
+                                {% endif %}
+                            </td>
+                        {% endfor %}
+                    </tr>
+                {% endfor %}
+                <tr>
+                    <td colspan="7"></td>
+                </tr>
+                <tr>
+                    <th>Total</th>
+                    {% for key in planetResourcesData.resourceKeys %}
+                        <td>{{ planetResourcesData.totals[key]|number_format }}</td>
+                    {% endfor %}
+                </tr>
+                <tr>
+                    <th>Durchschnitt</th>
+                    {% for key in planetResourcesData.resourceKeys %}
+                        <th>{{ planetResourcesData.averages[key]|number_format }}</th>
+                    {% endfor %}
+                </tr>
+            {% endblock %}
+        </twig:Table>
+        <twig:Table title="Produktion">
+            {% block table_content %}
+                <tr>
+                    <th>Name:</th>
+                    <th>{{ constant('EtoA\\Universe\\Resources\\ResourceNames::METAL') }}</th>
+                    <th>{{ constant('EtoA\\Universe\\Resources\\ResourceNames::CRYSTAL') }}</th>
+                    <th>{{ constant('EtoA\\Universe\\Resources\\ResourceNames::PLASTIC') }}</th>
+                    <th>{{ constant('EtoA\\Universe\\Resources\\ResourceNames::FUEL') }}</th>
+                    <th>{{ constant('EtoA\\Universe\\Resources\\ResourceNames::FOOD') }}</th>
+                    <th>Energie</th>
+                </tr>
+                {% for planet in planetResourcesData.planets %}
+                    <tr>
+                        <td>
+                            <a href="{{ path('game.economy', {'id': planet.entityId}) }}">
+                                {{ planet.name }}
+                            </a>
+                        </td>
+                        {% for key in planetResourcesData.resourceKeys %}
+                            {% if key === 'people' %}
+                                {% set key = 'energy' %}
+                            {% endif %}
+                            <td
+                                    {% if planetResourcesData.maxProduction[key] == planet.production[key] %}
+                                        style="color:#0f0"
+                                    {% elseif planetResourcesData.minProduction[key] == planet.production[key] %}
+                                        style="color:#f00"
+                                    {% endif %}
+                            >
+                                {{ planet.production[key]|number_format }}
+                            </td>
+                        {% endfor %}
+                    </tr>
+                {% endfor %}
+            {% endblock %}
+        </twig:Table>
+    {% endif %}
+    <twig:Table title="Legende">
+        {% block table_content %}
+            <tr>
+                <td style="color:#f00">Minimum</td>
+                <td style="color:#0f0">Maximum</td>
+                <td style="font-style:italic">Speicher bald voll</td>
+                <td style="font-weight:bold">Speicher voll</td>
+            </tr>
+        {% endblock %}
     </twig:Table>
     <div><br/>
         <a href="{{ path('game.economy',{'id':id}) }}">
-            <input type="button" value="Wirtschaft des aktuellen Planeten anzeigen" />
+            <input type="button" value="Wirtschaft des aktuellen Planeten anzeigen"/>
         </a>
     </div>
 {% endblock %}

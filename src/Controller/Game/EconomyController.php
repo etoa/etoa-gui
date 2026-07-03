@@ -4,19 +4,16 @@ namespace EtoA\Controller\Game;
 
 use EtoA\Backend\BackendMessageService;
 use EtoA\Building\BuildingListItemRepository;
-use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Defense\DefenseQueueRepository;
 use EtoA\Economy\EconomyService;
-use EtoA\Entity\Entity;
+use EtoA\Entity\Planet;
 use EtoA\Fleet\FleetRepository;
 use EtoA\Fleet\FleetStatus;
 use EtoA\Specialist\SpecialistDataRepository;
 use EtoA\Specialist\SpecialistService;
 use EtoA\Support\StringUtils;
 use EtoA\Technology\TechnologyListItemRepository;
-use EtoA\Universe\Entity\EntityRepository;
 use EtoA\Universe\Planet\PlanetRepository;
-use EtoA\Universe\Resources\ResourceNames;
 use EtoA\User\UserRepository;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
@@ -29,7 +26,6 @@ class EconomyController extends AbstractGameController
 {
     public function __construct(
         private readonly BuildingListItemRepository $buildingListItemRepository,
-        private readonly EntityRepository $entityRepository,
         private readonly UserRepository $userRepository,
         private readonly SpecialistService $specialistService,
         private readonly PlanetRepository $planetRepository,
@@ -44,114 +40,84 @@ class EconomyController extends AbstractGameController
     }
 
     #[Route('/game/economy/{id}', name: 'game.economy')]
-    public function economy(Request $request, Entity $entity = null): Response {
-        $producingBuildingsItem = $this->buildingListItemRepository->findWithProductionOrPowerUse($entity);
+    public function economy(Request $request, ?Planet $entity = null): Response {
+        $id = $request->getSession()->get('cpid');
 
-        $cnt = array(
-            "metal" => 0,
-            "crystal" => 0,
-            "plastic" => 0,
-            "fuel" => 0,
-            "food" => 0
-        );
-        $prodIncludingBoni = [];
-        $powerUsed = 0;
+        if(!$entity || $entity->getUser() !== $this->getUser()->getData()) {
+            return $this->render('game/error.html.twig',[
+                'msg' => 'Dieser Planet existiert nicht oder er gehört nicht dir!',
+                'path' => $this->generateUrl('game.overview'),
+                'headline' => 'Wirtschaftsübersicht'
+            ]);
+        }
 
-        $pwrcnt = 0;
-
-        $resourceKeys = ['metal', 'crystal', 'plastic', 'fuel', 'food'];
-        $cp = $entity->getType();
-        $race = $this->getUser()->getData()->getRace();
-        $specialist = $this->getUser()->getData()->getSpecialist();
-        $star = $this->entityRepository->findOneBy(['code'=>'s','cell'=>$entity->getCell()])?->getType();
-        $bareBuildingProduction = [];
-        $baseResourceProd = [];
+        $data = $this->economyService->getPlanetEconomyData();
 
         $form = $this->createFormBuilder();
 
-
-        foreach ($producingBuildingsItem as $producingBuilding) {
-            $form = $form->add($producingBuilding->getBuilding()->getId(), ChoiceType::class, [
-                'choices' => [
-                    '100%' => 1
-                ]
-            ]);
-
-            // update base resource production, used later for boost calculation.
-            foreach ($resourceKeys as $resourceKey) {
-                $bareBuildingProduction[$producingBuilding->getBuilding()->getId()][$resourceKey] = $prodIncludingBoni[$producingBuilding->getBuilding()->getId()][$resourceKey] = $producingBuilding->getBuilding()->{'getProd' . $resourceKey}() * pow($producingBuilding->getBuilding()->getProductionFactor(), $producingBuilding->getCurrentLevel() - 1);
-                $baseResourceProd[$producingBuilding->getBuilding()->getId()][$resourceKey] = $bareBuildingProduction[$producingBuilding->getBuilding()->getId()][$resourceKey] * $producingBuilding->getProdPercent();
+        foreach ($data['producingBuildings'] as $item) {
+            if($item['productionPercentOptions']) {
+                $options = [];
+                $selected = null;
+                foreach ($item['productionPercentOptions'] as $option) {
+                    $options[(string)$option['value']] = $option['label'];
+                    if($option['selected'])
+                        $selected = $option['value'];
+                }
+                $form = $form->add($item['id'], ChoiceType::class, [
+                    'choices' => array_flip($options),
+                    'data' => $selected
+                ]);
             }
-
-            $bareBuildingProduction[$producingBuilding->getBuilding()->getId()]['name'] = $prodIncludingBoni[$producingBuilding->getBuilding()->getId()]['name'] = $producingBuilding->getBuilding()->getName();
-
-            // Addieren der Planeten-, Rassen- und Spezialistenboni
-            if ($bareBuildingProduction[$producingBuilding->getBuilding()->getId()]['metal'] != "") {
-                $boni = $cp->getPlanetType()->getMetal() - 1 + $race->getMetal() - 1 + $star->getSolarType()->getMetal() - 1 + ($specialist !== null ? $specialist->getProdMetal() : 1) - 1;
-                $prodIncludingBoni[$producingBuilding->getBuilding()->getId()]['metal'] += $bareBuildingProduction[$producingBuilding->getBuilding()->getId()]['metal'] * $boni;
-            }
-            if ($bareBuildingProduction[$producingBuilding->getBuilding()->getId()]['crystal'] != "") {
-                $boni = $cp->getPlanetType()->getCrystal() - 1 + $race->getCrystal() - 1 + $star->getSolarType()->getCrystal() - 1 + ($specialist !== null ? $specialist->getProdCrystal() : 1) - 1;
-                $prodIncludingBoni[$producingBuilding->getBuilding()->getId()]['crystal'] += $bareBuildingProduction[$producingBuilding->getBuilding()->getId()]['crystal'] * $boni;
-            }
-            if ($bareBuildingProduction[$producingBuilding->getBuilding()->getId()]['plastic'] != "") {
-                $boni = $cp->getPlanetType()->getPlastic() - 1 + $race->getPlastic() - 1 + $star->getSolarType()->getPlastic() - 1 + ($specialist !== null ? $specialist->getProdPlastic() : 1) - 1;
-                $prodIncludingBoni[$producingBuilding->getBuilding()->getId()]['plastic'] += $bareBuildingProduction[$producingBuilding->getBuilding()->getId()]['plastic'] * $boni;
-            }
-            if ($bareBuildingProduction[$producingBuilding->getBuilding()->getId()]['fuel'] != "") {
-                $boni = $cp->getPlanetType()->getFuel() - 1 + $race->getFuel() - 1 + $star->getSolarType()->getFuel() - 1 + ($specialist !== null ? $specialist->getProdFuel() : 1) - 1 + $cp->getFuelProductionBonusFactor() * -1;
-                $prodIncludingBoni[$producingBuilding->getBuilding()->getId()]['fuel'] += $bareBuildingProduction[$producingBuilding->getBuilding()->getId()]['fuel'] * $boni;
-            }
-            if ($bareBuildingProduction[$producingBuilding->getBuilding()->getId()]['food'] != "") {
-                $boni = $cp->getPlanetType()->getFood() - 1 + $race->getFood() - 1 + $star->getSolarType()->getFood() - 1 + ($specialist !== null ? $specialist->getProdFood() : 1) - 1;
-                $prodIncludingBoni[$producingBuilding->getBuilding()->getId()]['food'] += $bareBuildingProduction[$producingBuilding->getBuilding()->getId()]['food'] * $boni;
-            }
-
-
-            foreach ($resourceKeys as $resourceKey) {
-                // apply production percent
-                $prodIncludingBoni[$producingBuilding->getBuilding()->getId()][$resourceKey] *= $producingBuilding->getCurrentLevel();
-                // add to total
-                $cnt[$resourceKey] += floor($prodIncludingBoni[$producingBuilding->getBuilding()->getId()][$resourceKey]);
-            }
-
-            $building_power_use = floor($producingBuilding->getBuilding()->getPowerUse() * pow($producingBuilding->getBuilding()->getProductionFactor(), $producingBuilding->getCurrentLevel() - 1));
-            $prodIncludingBoni[$producingBuilding->getBuilding()->getId()]['power'] = StringUtils::formatNumber(ceil($building_power_use * $producingBuilding->getProdPercent()));
-            $prodIncludingBoni[$producingBuilding->getBuilding()->getId()]['prod'] = $producingBuilding->getProdPercent();
-            $prodIncludingBoni[$producingBuilding->getBuilding()->getId()]['level'] = $producingBuilding->getCurrentLevel();
-            $prodIncludingBoni[$producingBuilding->getBuilding()->getId()]['type'] = $producingBuilding->getBuilding()->getType()->getId();
-
-            //KälteBonusString
-            $fuelBonus = "Kältebonus: ";
-            $spw = $cp->fuelProductionBonus();
-            if ($spw >= 0) {
-                $fuelBonus .= "<span style=\"color:#0f0\">+" . $spw . "%</span>";
-            } else {
-                $fuelBonus .= "<span style=\"color:#f00\">" . $spw . "%</span>";
-            }
-            $fuelBonus .= " " . ResourceNames::FUEL . "-Produktion";
-
-
         }
-
-        $form = $form->add('send', SubmitType::class, [
-            'label' => 'Senden'
-        ])
+        $form = $form
+            ->add('calc', SubmitType::class, ['label' => 'Neu Berechnen'])
+            ->add('save', SubmitType::class, [
+                'label' => 'Speichern',
+                'attr' => [
+                    'class' => 'button textSmall'
+                ]
+            ])
             ->getForm()
             ->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) { }
+        if ($form->isSubmitted() && $form->isValid()) {
+            if($form->get('calc')->isClicked()) {
+                $this->backendMessageService->updatePlanet($id);
+                $this->addFlash('success',"Planet wird neu berechnet!");
+            }
+            if($form->get('save')->isClicked()) {
+                $updated = false;
 
-        $pwrcnt += $building_power_use * $producingBuilding->getProdPercent();
+                foreach ($form->all() as $buildingId => $child) {
+                    if(is_int($id)) {
+                        $item = $this->buildingListItemRepository->findOneBy(['building'=>$buildingId,'entity'=>$id]);
+                        $val = $child->getViewData();
 
-        return $this->render('game/economy/economy.html.twig', [
-            'bareBuildingProduction' => $bareBuildingProduction,
-            'prodIncludingBoni' => $prodIncludingBoni,
-            'planet' => $cp,
-            'resourceKeys' => $resourceKeys,
-            'fuelBonus' => $fuelBonus,
+                        if($item && $item->getProdPercent() !== $val) {
+                            $val = floatval($val);
+                            if ($val > 1) $val = 1;
+                            if ($val < 0) $val = 0;
+                            $item->setProdPercent($val);
+                            $this->buildingListItemRepository->save();
+                            $updated = true;
+                        }
+                    }
+                }
+
+                if($updated) {
+                    $this->addFlash('success',"Änderungen gespeichert!");
+                    // Send
+                    $this->backendMessageService->updatePlanet($id);
+                    return $this->redirectToRoute('game.economy',['id'=>$id]);
+                }
+            }
+        }
+
+        return $this->render('game/economy/economy.html.twig', array_merge($data, [
+            'id' => $id,
             'form' => $form
-        ]);
+        ]));
     }
 
     #[Route('/game/specialists', name: 'game.specialists')]
@@ -336,8 +302,7 @@ class EconomyController extends AbstractGameController
     #[Route('/game/planetstats', name: 'game.planetstats')]
     public function planetStats(Request $request): Response {
         return $this->render('game/economy/planetstats.html.twig', [
-            'ress' => $this->economyService->renderRess(),
-            'prod' => $this->economyService->renderProduction(),
+            'planetResourcesData' => $this->economyService->getPlanetResourcesData(),
             'id' => $request->getSession()->get('cpid')
         ]);
     }

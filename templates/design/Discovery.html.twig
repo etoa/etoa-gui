@@ -130,7 +130,7 @@
                    onmouseup="changeImages('nb_technikbuam', '{{ templateDir }}/images/nb_technikbuam-over.gif'); return true;">
                     <img width="164px" height="21px" name="nb_technikbuam" src="{{ templateDir }}/images/nb_technikbuam.gif" alt="Technikbaum" /></a></div>
             <div class="nb-wirtschaft_">
-                <a href="{{ path('game.planetstats') }}"
+                <a href="{{ path('game.economy',{id:currentPlanetId}) }}"
                    onmouseover="changeImages('nb_wirtschaft', '{{ templateDir }}/images/nb_wirtschaft-over.gif'); return true;"
                    onmouseout="changeImages('nb_wirtschaft', '{{ templateDir }}/images/nb_wirtschaft.gif'); return true;"
                    onmousedown="changeImages('nb_wirtschaft', '{{ templateDir }}/images/nb_wirtschaft-down.gif'); return true;"

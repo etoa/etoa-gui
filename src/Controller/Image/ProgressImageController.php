@@ -15,7 +15,7 @@ class ProgressImageController extends AbstractImageController
     {
     }
 
-    #[Route('/images/progress/{value}', name: 'images.progress')]
+    #[Route('game/images/progress/{value}', name: 'images.progress')]
     public function mapImage(Request $request, int $value): Response
     {
         return self::createImageResponse(fn() => $this->generator->create(

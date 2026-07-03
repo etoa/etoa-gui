@@ -3,7 +3,6 @@
 namespace EtoA\Form\Type\Core;
 
 use EtoA\Alliance\AllianceRankRepository;
-use EtoA\Entity\AllianceRank;
 use EtoA\Entity\User;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Form\AbstractType;
