@@ -142,15 +142,13 @@ class CellRepository extends AbstractRepository
      */
     public function getUserCellIds(int $userId): array
     {
-        $data = $this->createQueryBuilder('q')
+        return $this->createQueryBuilder('q')
             ->select('DISTINCT q.id')
             ->innerJoin('App:Entity', 'e', 'WITH', 'q.id = e.id')
-            ->innerJoin('App:Planet', 'p', 'WITH', 'p.id = e.id AND p.user = :user')
+            ->innerJoin('App:Planet', 'p', 'WITH', 'p.entity = e.id AND p.user = :user')
             ->setParameter('user', $userId)
             ->getQuery()
             ->execute();
-
-        return $data;
     }
 
     /**
