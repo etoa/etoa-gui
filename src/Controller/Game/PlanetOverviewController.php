@@ -11,6 +11,7 @@ use EtoA\Technology\TechnologyId;
 use EtoA\Technology\TechnologyListItemRepository;
 use EtoA\Universe\Planet\PlanetRepository;
 use EtoA\Universe\Planet\PlanetService;
+use EtoA\Universe\Star\StarRepository;
 use EtoA\User\UserService;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
@@ -23,13 +24,14 @@ use Symfony\Component\Validator\Constraints\NotBlank;
 class PlanetOverviewController extends AbstractGameController
 {
     public function __construct(
-        private readonly PlanetRepository $planetRepository,
+        private readonly PlanetRepository             $planetRepository,
         private readonly TechnologyListItemRepository $technologyListItemRepository,
-        private readonly TechnologyDataRepository $technologyDataRepository,
-        private readonly UserService $userService,
-        private readonly FleetRepository $fleetRepository,
-        private readonly ShipListRepository $shipListRepository,
-        private readonly PlanetService $planetService
+        private readonly TechnologyDataRepository     $technologyDataRepository,
+        private readonly UserService                  $userService,
+        private readonly FleetRepository              $fleetRepository,
+        private readonly ShipListRepository           $shipListRepository,
+        private readonly PlanetService                $planetService,
+        private readonly StarRepository               $starRepository
     )
     {
     }
@@ -39,13 +41,14 @@ class PlanetOverviewController extends AbstractGameController
     {
         $cp = $this->planetRepository->find($request->getSession()->get('cpid'));
 
-        if($cp && $cp->getUser() === $this->getUser()->getData()) {
-            return $this->render('game/planetoverview/overview_overview.html.twig',[
-                'planet' => $cp
+        if ($cp && $cp->getUser() === $this->getUser()->getData()) {
+            return $this->render('game/planetoverview/overview_overview.html.twig', [
+                'planet' => $cp,
+                'star' => $this->starRepository->findStarForCell($cp->getEntity()->getCell())
             ]);
         }
 
-        return $this->render('game/error.html.twig',[
+        return $this->render('game/error.html.twig', [
             'msg' => 'Dieser Planet existiert nicht oder er gehört nicht dir!',
             'path' => $this->generateUrl('game.overview'),
             'headline' => 'Übersicht'
@@ -57,13 +60,13 @@ class PlanetOverviewController extends AbstractGameController
     {
         $cp = $this->planetRepository->find($request->getSession()->get('cpid'));
 
-        if($cp && $cp->getUser() === $this->getUser()->getData()) {
+        if ($cp && $cp->getUser() === $this->getUser()->getData()) {
             $form = $this->createFormBuilder($cp)
                 ->add('name', TextType::class, [
                     'attr' => [
                         'maxlength' => 15
                     ],
-                    'constraints'=> new NotBlank([
+                    'constraints' => new NotBlank([
                         'message' => 'Du musst einen Text eingeben!',
                     ]),
                 ])
@@ -82,13 +85,13 @@ class PlanetOverviewController extends AbstractGameController
                 $this->planetRepository->save();
             }
 
-            return $this->render('game/planetoverview/overview_name.html.twig',[
+            return $this->render('game/planetoverview/overview_name.html.twig', [
                 'planet' => $cp,
                 'form' => $form
             ]);
         }
 
-        return $this->render('game/error.html.twig',[
+        return $this->render('game/error.html.twig', [
             'msg' => 'Dieser Planet existiert nicht oder er gehört nicht dir!',
             'path' => $this->generateUrl('game.overview'),
             'headline' => 'Übersicht'
@@ -100,13 +103,13 @@ class PlanetOverviewController extends AbstractGameController
     {
         $cp = $this->planetRepository->find($request->getSession()->get('cpid'));
 
-        if($cp && $cp->getUser() === $this->getUser()->getData()) {
-            return $this->render('game/planetoverview/overview_fields.html.twig',[
+        if ($cp && $cp->getUser() === $this->getUser()->getData()) {
+            return $this->render('game/planetoverview/overview_fields.html.twig', [
                 'planet' => $cp,
             ]);
         }
 
-        return $this->render('game/error.html.twig',[
+        return $this->render('game/error.html.twig', [
             'msg' => 'Dieser Planet existiert nicht oder er gehört nicht dir!',
             'path' => $this->generateUrl('game.overview'),
             'headline' => 'Übersicht'
@@ -119,7 +122,7 @@ class PlanetOverviewController extends AbstractGameController
         $cp = $this->planetRepository->find($request->getSession()->get('cpid'));
         $cu = $this->getUser()->getData();
 
-        if($cp && $cp->getUser() === $cu) {
+        if ($cp && $cp->getUser() === $cu) {
             $bonusStructure = 0;
             $bonusShield = 0;
             $bonusWeapon = 0;
@@ -181,7 +184,7 @@ class PlanetOverviewController extends AbstractGameController
             ]);
         }
 
-        return $this->render('game/error.html.twig',[
+        return $this->render('game/error.html.twig', [
             'msg' => 'Dieser Planet existiert nicht oder er gehört nicht dir!',
             'path' => $this->generateUrl('game.overview'),
             'headline' => 'Übersicht'
@@ -194,17 +197,17 @@ class PlanetOverviewController extends AbstractGameController
         $cp = $this->planetRepository->find($request->getSession()->get('cpid'));
         $cu = $this->getUser()->getData();
 
-        if($cp && $cp->getUser() === $cu) {
-            $shield_tech_level = $this->technologyListItemRepository->findOneBy(['technology'=>TechnologyId::SHILED,'user'=>$cu])?->getCurrentLevel() ?? 0;
+        if ($cp && $cp->getUser() === $cu) {
+            $shield_tech_level = $this->technologyListItemRepository->findOneBy(['technology' => TechnologyId::SHILED, 'user' => $cu])?->getCurrentLevel() ?? 0;
             $shield_tech_a = 1 + ($shield_tech_level / 10);
 
-            $structure_tech_level = $this->technologyListItemRepository->findOneBy(['technology'=>TechnologyId::STRUCTURE,'user'=>$cu])?->getCurrentLevel() ?? 0;
+            $structure_tech_level = $this->technologyListItemRepository->findOneBy(['technology' => TechnologyId::STRUCTURE, 'user' => $cu])?->getCurrentLevel() ?? 0;
             $structure_tech_a = 1 + ($structure_tech_level / 10);
 
-            $weapon_tech_level = $this->technologyListItemRepository->findOneBy(['technology'=>TechnologyId::WEAPON,'user'=>$cu])?->getCurrentLevel() ?? 0;
+            $weapon_tech_level = $this->technologyListItemRepository->findOneBy(['technology' => TechnologyId::WEAPON, 'user' => $cu])?->getCurrentLevel() ?? 0;
             $weapon_tech_a = 1 + ($weapon_tech_level / 10);
 
-            $heal_tech_level = $this->technologyListItemRepository->findOneBy(['technology'=>TechnologyId::REGENA,'user'=>$cu])?->getCurrentLevel() ?? 0;
+            $heal_tech_level = $this->technologyListItemRepository->findOneBy(['technology' => TechnologyId::REGENA, 'user' => $cu])?->getCurrentLevel() ?? 0;
             $heal_tech_a = 1 + ($heal_tech_level / 10);
 
             $totalStructure = 0;
@@ -221,7 +224,7 @@ class PlanetOverviewController extends AbstractGameController
                 $totalHeal += $deflist->getCount() * $deflist->getDefense()->getHeal();
             }
 
-            return $this->render('game/planetoverview/overview_defense.html.twig',[
+            return $this->render('game/planetoverview/overview_defense.html.twig', [
                 'planet' => $cp,
                 'totalStructure' => $totalStructure,
                 'totalShield' => $totalShield,
@@ -243,7 +246,7 @@ class PlanetOverviewController extends AbstractGameController
             ]);
         }
 
-        return $this->render('game/error.html.twig',[
+        return $this->render('game/error.html.twig', [
             'msg' => 'Dieser Planet existiert nicht oder er gehört nicht dir!',
             'path' => $this->generateUrl('game.overview'),
             'headline' => 'Übersicht'
@@ -275,26 +278,23 @@ class PlanetOverviewController extends AbstractGameController
                                     'path' => $this->generateUrl('game.overview'),
                                     'headline' => 'Übersicht'
                                 ]);
-                            }
-                            else {
-                                return $this->render('game/error.html.twig',[
-                                    'msg' =>  "Der Planet ist aktuell nicht ausgewählt oder er gehört nicht dir!",
+                            } else {
+                                return $this->render('game/error.html.twig', [
+                                    'msg' => "Der Planet ist aktuell nicht ausgewählt oder er gehört nicht dir!",
                                     'path' => $this->generateUrl('game.planetoverview.overview'),
                                     'headline' => 'Übersicht'
                                 ]);
                             }
-                        }
-                        else {
-                            return $this->render('game/error.html.twig',[
-                                'msg' =>  "Kolonie kann nicht gelöscht werden da Schiffe von/zu diesem Planeten unterwegs sind!",
+                        } else {
+                            return $this->render('game/error.html.twig', [
+                                'msg' => "Kolonie kann nicht gelöscht werden da Schiffe von/zu diesem Planeten unterwegs sind!",
                                 'path' => $this->generateUrl('game.planetoverview.overview'),
                                 'headline' => 'Übersicht'
                             ]);
                         }
-                    }
-                    else {
-                        return $this->render('game/error.html.twig',[
-                            'msg' =>  "Kolonie kann nicht gelöscht werden da noch Schiffe auf dem Planeten stationiert sind oder Schiffe noch im Bau sind!",
+                    } else {
+                        return $this->render('game/error.html.twig', [
+                            'msg' => "Kolonie kann nicht gelöscht werden da noch Schiffe auf dem Planeten stationiert sind oder Schiffe noch im Bau sind!",
                             'path' => $this->generateUrl('game.planetoverview.overview'),
                             'headline' => 'Übersicht'
                         ]);
@@ -306,16 +306,16 @@ class PlanetOverviewController extends AbstractGameController
                     'form' => $form
                 ]);
             } else {
-                return $this->render('game/error.html.twig',[
-                    'msg' =>  "Die Kolonie kann wegen eines kürzlich stattgefundenen Besitzerwechsels<br/>
+                return $this->render('game/error.html.twig', [
+                    'msg' => "Die Kolonie kann wegen eines kürzlich stattgefundenen Besitzerwechsels<br/>
                                erst ab <b>" . StringUtils::formatDate($threshold) . "</b> gelöscht werden!",
                     'path' => $this->generateUrl('game.planetoverview.overview'),
                     'headline' => 'Übersicht'
                 ]);
             }
         } else {
-            return $this->render('game/error.html.twig',[
-                'msg' =>  "Dies ist ein Hauptplanet! Hauptplaneten können nicht aufgegeben werden!",
+            return $this->render('game/error.html.twig', [
+                'msg' => "Dies ist ein Hauptplanet! Hauptplaneten können nicht aufgegeben werden!",
                 'path' => $this->generateUrl('game.planetoverview.overview'),
                 'headline' => 'Übersicht'
             ]);
@@ -344,8 +344,8 @@ class PlanetOverviewController extends AbstractGameController
 
                         $this->userService->addToUserLog($cu, "planets", "{nick} wählt [b]" . $entity->toString() . "[/b] als neuen Hauptplanet aus.", false);
 
-                        return $this->render('game/success.html.twig',[
-                            'msg' =>  "<b>" .$planet->getName() . "</b> ist nun dein Hauptplanet!",
+                        return $this->render('game/success.html.twig', [
+                            'msg' => "<b>" . $planet->getName() . "</b> ist nun dein Hauptplanet!",
                             'path' => $this->generateUrl('game.planetoverview.overview'),
                             'headline' => 'Übersicht'
                         ]);
@@ -355,25 +355,25 @@ class PlanetOverviewController extends AbstractGameController
                     return $this->render('game/planetoverview/overview_change_main.html.twig', [
                         'planet' => $planet,
                         'form' => $form
-                        ]);
+                    ]);
                 } else {
-                    return $this->render('game/error.html.twig',[
-                        'msg' =>  "Du kannst deinen Hauptplaneten nur ein Mal ändern!",
+                    return $this->render('game/error.html.twig', [
+                        'msg' => "Du kannst deinen Hauptplaneten nur ein Mal ändern!",
                         'path' => $this->generateUrl('game.planetoverview.overview'),
                         'headline' => 'Übersicht'
                     ]);
                 }
             } else {
-                return $this->render('game/error.html.twig',[
-                    'msg' =>  "Die Kolonie kann wegen eines kürzlich stattgefundenen Besitzerwechsels<br/>
+                return $this->render('game/error.html.twig', [
+                    'msg' => "Die Kolonie kann wegen eines kürzlich stattgefundenen Besitzerwechsels<br/>
                                erst ab <b>" . StringUtils::formatDate($threshold) . "</b> zu deinem Hauptplaneten gemacht werden!",
                     'path' => $this->generateUrl('game.planetoverview.overview'),
                     'headline' => 'Übersicht'
                 ]);
             }
         } else {
-            return $this->render('game/error.html.twig',[
-                'msg' =>  "Dies ist bereits ein Hauptplanet!",
+            return $this->render('game/error.html.twig', [
+                'msg' => "Dies ist bereits ein Hauptplanet!",
                 'path' => $this->generateUrl('game.planetoverview.overview'),
                 'headline' => 'Übersicht'
             ]);

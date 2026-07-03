@@ -30,8 +30,8 @@ use EtoA\Support\BBCodeUtils;
 use EtoA\Support\ExternalUrl;
 use EtoA\Support\RuntimeDataStore;
 use EtoA\Support\StringUtils;
+use EtoA\Technology\TechnologyCostCalculator;
 use EtoA\Technology\TechnologyDataRepository;
-use EtoA\Technology\TechnologyService;
 use EtoA\Technology\TechnologyTypeRepository;
 use EtoA\UI\Tooltip;
 use EtoA\Universe\Planet\PlanetTypeRepository;
@@ -60,11 +60,11 @@ class HelpController extends AbstractGameController
         private readonly TechnologyTypeRepository   $technologyTypeRepository,
         private readonly TechnologyDataRepository   $technologyDataRepository,
         private readonly ShipRequirementRepository  $shipRequirementRepository,
-        private readonly TechnologyService          $technologyService,
         private readonly ShipCategoryRepository     $shipCategoryRepository,
         private readonly SpecialistDataRepository   $specialistDataRepository,
         private readonly SolarTypeRepository        $solarTypeRepository,
-        private readonly MissileDataRepository      $missileDataRepository
+        private readonly MissileDataRepository      $missileDataRepository,
+        private readonly TechnologyCostCalculator   $technologyCostCalculator
     )
     {
     }
@@ -1177,7 +1177,7 @@ class HelpController extends AbstractGameController
     {
         $costs = [];
         for ($x = 0; $x < min(30, $technology->getLastLevel()); $x++) {
-            $costs[] = $this->technologyService->calcTechCosts($technology, $x);
+            $costs[] = $this->technologyCostCalculator->calculate($technology, $x, $this->buildingCostContext);
         }
 
         return $costs;

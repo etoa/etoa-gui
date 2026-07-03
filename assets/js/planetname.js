@@ -524,10 +524,11 @@ function ScanLine(sLine) {
   return sLine;
 }
 
-export default function (id) {
+function GenPlot()
+{
   sLine = GetFrom(GetArray("SEED"));
 
   sLine = ScanLine(sLine)
 
-  document.getElementById(id).value = sLine;
+  document.getElementById('planet_name').value = sLine;
 }

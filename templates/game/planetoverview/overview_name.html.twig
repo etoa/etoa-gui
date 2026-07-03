@@ -2,26 +2,27 @@
 {% import 'macros.html.twig' as macros %}
 
 {% block overview %}
+    <script type="text/javascript" src="{{ asset('build/js/planetname.js') }}"></script>
     <div id="tabName">
-        {{ form_start(changeForm) }}
+        {{ form_start(form) }}
             <twig:Table title="Name und Beschreibung ändern:">
             {% block table_content %}
                 <tr>
                     <th>Name:</th>
                     <td>
-                        {{ form_widget(changeForm.name )}}&nbsp;
+                        {{ form_widget(form.name,{id:'planet_name'})}}&nbsp;
                         <a href="javascript:" onclick="GenPlot();">Name generieren</a>
                     </td>
                 </tr>
                 <tr>
                     <th>Beschreibung:</th>
                     <td>
-                        {{ form_widget(changeForm.description) }}
+                        {{ form_widget(form.description) }}
                     </td>
                 </tr>
             {% endblock %}
             </twig:Table>
-            {{ form_widget(changeForm.save) }}
-        {{ form_end(changeForm) }}
+            {{ form_widget(form.save) }}
+        {{ form_end(form) }}
     </div>
 {% endblock %}

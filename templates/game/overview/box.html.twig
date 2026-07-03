@@ -43,11 +43,11 @@
 
             {% if technologyInProgress  %}
                 <td>
-                    <a href="?page=research&amp;change_entity={{ technologyInProgress.entityId }}" id="tech_counter">
+                    <a href="?page=research&amp;change_entity={{ technologyInProgress.entity.id }}" id="tech_counter">
                         {% if technologyInProgress.endTime - date().timestamp <= 0  %}
                             {{ technologyNames[technologyInProgress.technologyId ]}} Fertig
                         {% else %}
-                            <script type="text/javascript">time({{ technologyInProgress.endTime - date().timestamp }}, 'tech_counter', 0, '{{ technologyNames[technologyInProgress.technologyId] }}  TIME');</script>
+                            <script type="text/javascript">time({{ technologyInProgress.endTime - date().timestamp }}, 'tech_counter', 0, '{{ technologyInProgress.technology.name }}  TIME');</script>
                         {% endif %}
                     </a>
                 </td>
@@ -67,7 +67,7 @@
                         {% if genTechnologyInProgress.endTime - date().timestamp <= 0  %}
                             {{ technologyNames[genTechnologyInProgress.technologyId ]}} Fertig
                         {% else %}
-                            <script type="text/javascript">time({{ technologyInProgress.endTime - date().timestamp }}, 'tech_gen', 0, '{{ technologyNames[genTechnologyInProgress.technologyId] }}  TIME');</script>
+                            <script type="text/javascript">time({{ technologyInProgress.endTime - date().timestamp }}, 'tech_gen', 0, '{{ technologyNames[genTechnologyInProgress.technology.id] }}  TIME');</script>
                         {% endif %}
                     </a>
                 </td>

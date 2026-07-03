@@ -45,7 +45,6 @@ class OverviewController extends AbstractGameController
         private readonly ForeignFleetService              $foreignFleetLoader,
         private readonly TechnologyDataRepository         $technologyDataRepository,
         private readonly TechnologyListItemRepository     $technologyRepository,
-        private readonly ShipDataRepository               $shipDataRepository,
         private readonly DefenseDataRepository            $defenseDataRepository,
         private readonly BuildingListItemRepository       $buildingRepository,
         private readonly ShipQueueRepository              $shipQueueRepository,

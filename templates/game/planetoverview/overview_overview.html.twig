@@ -18,15 +18,17 @@
                         <div class="planetOverviewItem">Temperatur</div>
                         {{ planet.tempFrom }} °C bis {{ planet.tempTo }} °C <br style="clear:left;"/>
                         <div class="planetOverviewItem">System</div>
-                        <a href="{{ path('game.cell',{id:planet.entity.cell.id}) }}&hl={{ planet.id }}">
+                        <a href="{{ path('game.cell',{id:planet.entity.cell.id}) }}&hl={{ planet.entity.id }}">
                             {{ planet.entity.coordinatesString }}
                         </a><br style="clear:left;"/>
                         <div class="planetOverviewItem">Kennung</div>
-                        <a href="{{ path('game.entity',{id:planet.id}) }}">
-                            {{ planet.id }}
+                        <a href="{{ path('game.entity',{id:planet.entity.id}) }}">
+                            {{ planet.entity.id }}
                         </a><br style="clear:left;"/>
-                        <div class="planetOverviewItem">Stern</div>  helpLink("stars", cp.starTypeName) <br style="clear:left;"/>
-                        <div class="planetOverviewItem">Planetentyp</div>  helpLink("planets", cp.type()) <br style="clear:left;"/>
+                        <div class="planetOverviewItem">Stern</div>
+                        <a href="{{ path('game.help.stars') }}">{{ star.solarType.name }}</a><br style="clear:left;"/>
+                        <div class="planetOverviewItem">Planetentyp</div>
+                        <a href="{{ path('game.help.planets') }}">{{ planet.planetType.name }}</a><br style="clear:left;"/>
                         <div class="planetOverviewItem">Felder</div>
                         <a href="{{ path('game.planetoverview.fields') }}">
                             {{ formatNumber(planet.fieldsUsed) }}  von  {{ formatNumber(planet.fields) }} benutzt
