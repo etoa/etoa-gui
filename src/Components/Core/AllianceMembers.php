@@ -2,21 +2,22 @@
 
 namespace EtoA\Components\Core;
 
-use EtoA\Design\DesignsService;
-use EtoA\Support\StringUtils;
+use EtoA\Alliance\AllianceRepository;
+use EtoA\Entity\Alliance;
 use EtoA\User\UserStatRepository;
 use EtoA\User\UserStatSearch;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
 use Symfony\UX\LiveComponent\Attribute\LiveProp;
 use Symfony\UX\LiveComponent\DefaultActionTrait;
 use Symfony\UX\LiveComponent\Attribute\LiveAction;
-use Symfony\UX\TwigComponent\Attribute\PreMount;
+use Symfony\UX\TwigComponent\Attribute\ExposeInTemplate;
 
 #[AsLiveComponent(template: 'components/alliance_members.html.twig')]
 class AllianceMembers
 {
     public function __construct(
-        private readonly UserStatRepository $userStatRepository
+        private readonly UserStatRepository $userStatRepository,
+        private readonly AllianceRepository $allianceRepository
     ){}
 
     use DefaultActionTrait;
@@ -26,13 +27,19 @@ class AllianceMembers
     #[LiveProp(writable: true)]
     public bool $show = false;
     #[LiveProp]
-    public array $entries;
+    public array $entries = [];
 
-    #[PreMount]
-    public function preMount(array $data): array
+    #[LiveAction]
+    public function showMembers(): void
     {
-        $search = UserStatSearch::points()->allianceId($data['allianceId']);
-        $data['entries'] = $this->userStatRepository->searchStats($search);
-        return $data;
+        $search = UserStatSearch::points()->allianceId($this->allianceId);
+        $this->show = true;
+        $this->entries = $this->userStatRepository->searchStats($search);
+    }
+
+    #[ExposeInTemplate]
+    public function alliance():Alliance
+    {
+        return $this->allianceRepository->find($this->allianceId);
     }
 }

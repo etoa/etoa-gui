@@ -109,17 +109,20 @@ class AllianceRepository extends AbstractRepository
      */
     public function getAlliancesAcceptingApplications(): array
     {
-        $data = $this->createQueryBuilder('q')
-            ->select("q")
-            ->addSelect('COUNT(u.id) as member_count')
-            ->leftJoin('App:User', 'u', 'WITH', 'u.alliance=q.id')
-            ->where('q.acceptApplications = 1')
-            ->groupBy('q.id')
-            ->orderBy('q.name')
-            ->addOrderBy('q.tag')
+        $data = $this->createQueryBuilder('a')
+            ->select('a', 'COUNT(u.id) as member_count')
+            ->leftJoin('a.members', 'u')
+            ->where('a.acceptApplications = true')
+            ->groupBy('a.id')
+            ->orderBy('a.name')
+            ->addOrderBy('a.tag')
             ->getQuery()
-            ->execute();
-        return array_map(fn (array $row) => new AllianceWithMemberCount($row), $data);
+            ->getResult();
+
+        return array_map(
+            fn (array $row) => new AllianceWithMemberCount($row[0], (int) $row['member_count']),
+            $data
+        );
     }
 
     public function getAlliance(int $allianceId): ?AllianceWithMemberCount
@@ -131,14 +134,14 @@ class AllianceRepository extends AbstractRepository
         $data = $this->createQueryBuilder('q')
             ->select("q")
             ->addSelect('COUNT(u.id) as member_count')
-            ->leftJoin('App:User', 'u', 'WITH', 'u.alliance=q.id')
+            ->leftJoin('q.members', 'u', )
             ->where('q.id = :id')
             ->setParameter('id', $allianceId)
             ->groupBy('q.id')
             ->getQuery()
             ->getOneOrNullResult();
 
-        return $data !== false ? new AllianceWithMemberCount($data) : null;
+        return $data !== false ? new AllianceWithMemberCount($data[0],$data['member_count']) : null;
     }
 
     public function getFounderId(int $allianceId): int

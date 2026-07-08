@@ -20,21 +20,22 @@
                         <td>{{ alliance.name }}</td>
                         <td>{{ alliance.memberCount }}</td>
                         <td>
-                            <a href="{{path('game.alliance.info',{id:alliance.id})}}">Info</a>
-                            <a href="{{path('game.alliance.apply',{id:alliance.id})}}">Bewerben</a>
+                            <a href="{{ path('game.alliance.info',{id:alliance.id}) }}">Info</a>
+                            <a href="{{ path('game.alliance.apply',{id:alliance.id}) }}">Bewerben</a>
                         </td>
                     </tr>
                 {% endfor %}
             {% endblock %}
         </twig:Table>
+        <br>
         {% if  configValue("alliance_max_member_count") %}
-            <p>
-                <b>Hinweis:</b>
-                Eine Allianz darf maximal {{ configValue("alliance_max_member_count") }} Mitglieder haben!
-            </p>
-
+            <b>Hinweis:</b>
+            Eine Allianz darf maximal {{ configValue("alliance_max_member_count") }} Mitglieder haben!
+            <br><br>
+            <a href="{{ path('game.alliance.create') }}">Gründe eine eigene Allianz.</a>
         {% else %}
             {{ macros.errorMessage("Es gibt im Moment keine Allianzen denen man beitreten könnte!") }}
+            <br><br>
             <a href="{{ path('game.alliance.create') }}">Gründe eine eigene Allianz.</a>
         {% endif %}
     {% endif %}
