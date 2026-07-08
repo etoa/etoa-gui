@@ -3,6 +3,7 @@
 namespace EtoA\Components\Core;
 
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Fleet\FleetService;
 use EtoA\Universe\Cell\CellRepository;
 use EtoA\Universe\Entity\EntityRepository;
 use EtoA\Universe\SectorMapRenderer;
@@ -11,23 +12,26 @@ use EtoA\User\UserUniverseDiscoveryService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
 use Symfony\UX\LiveComponent\Attribute\LiveAction;
+use Symfony\UX\LiveComponent\Attribute\LiveArg;
 use Symfony\UX\LiveComponent\Attribute\LiveProp;
 use Symfony\UX\LiveComponent\DefaultActionTrait;
 use Symfony\UX\TwigComponent\Attribute\PreMount;
 
-#[AsLiveComponent(template: 'components/sector_view.html.twig')]
+#[AsLiveComponent(template: 'components/sector_view.html.twig',route: 'live_component_game')]
 class SectorView extends AbstractController
 {
     use DefaultActionTrait;
 
     public function __construct(
-        private readonly CellRepository $cellRepository,
-        private readonly ConfigurationService $config,
+        private readonly CellRepository               $cellRepository,
+        private readonly ConfigurationService         $config,
         private readonly UserUniverseDiscoveryService $userUniverseDiscoveryService,
-        private readonly EntityRepository $entityRepository,
-        private readonly UserRepository $userRepository
+        private readonly EntityRepository             $entityRepository,
+        private readonly UserRepository               $userRepository,
+        private readonly FleetService                 $fleetService
     )
-    {}
+    {
+    }
 
     #[LiveProp(writable: true, onUpdated: 'updateNeighbours')]
     public string $xy;
@@ -36,7 +40,13 @@ class SectorView extends AbstractController
     #[LiveProp]
     public int $userId;
 
-    private function calcNeighbours(string $xy):array
+    #[LiveProp]
+    public string $info = '';
+
+    #[LiveProp]
+    public bool $error = false;
+
+    private function calcNeighbours(string $xy): array
     {
         $sx_num = $this->config->param1Int('num_of_sectors');
         $sy_num = $this->config->param2Int('num_of_sectors');
@@ -104,7 +114,15 @@ class SectorView extends AbstractController
         $sectorMap->setUserCellIDs($this->cellRepository->getUserCellIds($this->userId));
         $sectorMap->setImpersonatedUser($this->userRepository->getUser($this->userId));
         $sectorMap->setCellUrl('cell/');
-        $sectorMap->setUndiscoveredCellJavaScript("xajax_launchExplorerProbe('##ID##')");
         return $sectorMap->render($this->neighbours['sx'], $this->neighbours['sy'], $this->userUniverseDiscoveryService, $this->entityRepository);
+    }
+
+    #[LiveAction]
+    public function launchExplorerProbe(#[LiveArg] int $id): void
+    {
+        $data = $this->fleetService->launchExplorer($id);
+
+        $this->info = $data['info'];
+        $this->error = $data['error'];
     }
 }

@@ -119,15 +119,6 @@ class SectorMapRenderer
      */
     function render($sx, $sy, UserUniverseDiscoveryService $userUniverseDiscoveryService = null, EntityRepository $entityRepository = null): bool|string
     {
-        if ($userUniverseDiscoveryService === null) {
-            // TODO
-            global $app;
-
-            /** @var UserUniverseDiscoveryService $userUniverseDiscoveryService */
-            $userUniverseDiscoveryService = $app[UserUniverseDiscoveryService::class];
-            /** @var EntityRepository $entityRepository */
-            $entityRepository = $app[EntityRepository::class];
-        }
         $entities = $entityRepository->searchEntities(EntitySearch::create()->sx($sx)->sy($sy)->pos(0));
         if (count($entities) === 0) {
             throw new \RuntimeException('Das Universum wurde noch nicht erstellt');
@@ -243,9 +234,9 @@ class SectorMapRenderer
                 $overlayClass = count($overlayClasses) > 0 ? " class=\"" . implode(' ', $overlayClasses) . "\"" : '';
 
                 if ($js != null) {
-                    echo "<a href=\"javascript:;\" onclick=\"" . $js . "\" ";
+                    echo "<a data-action='live#action' data-live-action-param='launchExplorerProbe' href=\"javascript:;\" onclick=\"" . $js . "\" ";
                 } else {
-                    echo "<a href=\"" . $url . "\" ";
+                    echo "<a data-action='live#action' data-live-action-param='launchExplorerProbe' data-live-id-param='".$cells[$xcoords][$ycoords]['cid']."'  href=\"" . $url . "\" ";
                 }
                 echo " style=\"background-image:url('" . $img . "');\"$class$mouseOver>";
                 echo "<img src=\"/build/images/blank.gif\" alt=\"Raumzelle\" " . $title . " data-id=\"" . $cells[$xcoords][$ycoords]['cid'] . "\" $overlayClass/></a>";

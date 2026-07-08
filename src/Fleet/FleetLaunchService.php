@@ -33,6 +33,8 @@ class FleetLaunchService
 {
     public const FLEET_NOCONTROL_NUM = 1;
 
+    public string $error;
+
     public function __construct(
         private readonly ConfigurationService $configurationService,
         private readonly BuildingListItemRepository $buildingListItemRepository,
@@ -142,11 +144,11 @@ class FleetLaunchService
      *
      * >> Step 3 <<
      */
-    public function addShip(ShipListItem $shipListItem, int $cnt)
+    public function addShip(?ShipListItem $shipListItem, int $cnt)
     {
         if ($this->fleetLaunch->isHavenOk()) {
             if (!$this->fleetLaunch->isShipsFixed()) {
-                if ($shipListItem->getCount() > 0) {
+                if ($shipListItem?->getCount() > 0) {
                     $ship = $shipListItem->getShip();
                     $specialist = $this->fleetLaunch->getOwner()->getSpecialist();
 
@@ -395,7 +397,7 @@ class FleetLaunchService
                     $fetch->plastic = $this->getFleetLaunch()->getFetch()[3];
                     $fetch->fuel = $this->getFleetLaunch()->getFetch()[4];
                     $fetch->food = $this->getFleetLaunch()->getFetch()[5];
-                    $fetch->people = $this->getFleetLaunch()->getFetch()[6];
+                    $fetch->people = $this->getFleetLaunch()->getCapacityPeopleLoaded();
 
                     $fid = $this->fleetRepository->add($this->getFleetLaunch()->getOwner(), $time, $this->getFleetLaunch()->getTimeLaunchLand(), $this->getFleetLaunch()->getSourceEntity()->getEntity(), $this->getFleetLaunch()->getTargetEntity(), $this->getFleetLaunch()->getAction(), $status, $resources, $fetch, $this->getFleetLaunch()->getPilots(), $this->getFleetLaunch()->getCosts(), $this->getCostsFood(), $this->getFleetLaunch()->getCostsPower(), $this->getFleetLaunch()->getLeader(), $nextId, $this->getFleetLaunch()->getSupportTime(), $this->getFleetLaunch()->getSupportCostsFuel(), $this->getFleetLaunch()->getSupportCostsFood());
 
@@ -426,7 +428,7 @@ class FleetLaunchService
                     $fetch->plastic = $this->getFleetLaunch()->getFetch()[3];
                     $fetch->fuel = $this->getFleetLaunch()->getFetch()[4];
                     $fetch->food = $this->getFleetLaunch()->getFetch()[5];
-                    $fetch->people = $this->getFleetLaunch()->getFetch()[6];
+                    $fetch->people = $this->getFleetLaunch()->getCapacityPeopleLoaded();
 
                     $this->fleetLogRepository->addLaunch($fid, $this->getFleetLaunch()->getOwner(), $this->getFleetLaunch()->getSourceEntity()->getEntity(), $this->getFleetLaunch()->getTargetEntity(), $time, $this->getFleetLaunch()->getTimeLaunchLand(), $this->getFleetLaunch()->getAction(), $this->getFleetLaunch()->getPilots(), $this->getFleetLaunch()->getCosts() + $this->getFleetLaunch()->getSupportCostsFuel(), $this->getCostsFood() + $this->getFleetLaunch()->getSupportCostsFood(), $resources, $fetch, $shipLog, $this->getFleetLaunch()->getEntityResourceLogStart(), $this->getFleetLaunch()->getSourceEntity()->getResourceLog());
 
@@ -514,7 +516,7 @@ class FleetLaunchService
                 // and the source's and target's alliances aren't at war against each other
                 if (
                     $this->fleetLaunch->getSourceEntity()->getUser() !== $this->fleetLaunch->getTargetEntity()->getOwner() &&
-                    $ai->allianceAction && (
+                    $ai->allianceAction() && (
                         // alliance battle system is disabled
                         !$this->configurationService->getBoolean("abs_enabled") || (
                             // or abs is enabled for alliances at war only
@@ -552,7 +554,7 @@ class FleetLaunchService
                                 || ($this->fleetLaunch->getSourceEntity()->getEntity()->getOwner()->getAlliance()
                                     && ($supportPossible = $this->checkDefNum()))
                             ))) &&
-                    (!$ai->allianceAction || $this->fleetLaunch->getAllianceSlots() > 0 || $allowed) //this last check, checks for every AllianceAction support, alliance if there is a empty slot
+                    (!$ai->allianceAction() || $this->fleetLaunch->getAllianceSlots() > 0 || $allowed) //this last check, checks for every AllianceAction support, alliance if there is a empty slot
                 ) {
                     //Check for exclusive Actions
                     $exclusiceAllowed = true;

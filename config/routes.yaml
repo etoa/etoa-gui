@@ -29,3 +29,8 @@ admin.index:
     keepQueryParams: true
     keepRequestMethod: true
     ignoreAttributes: true
+
+live_component_game:
+  path: /game/_components/{_live_component}/{_live_action}
+  defaults:
+    _live_action: 'get'

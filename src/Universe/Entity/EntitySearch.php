@@ -3,6 +3,7 @@
 namespace EtoA\Universe\Entity;
 
 use EtoA\Core\Database\AbstractSearch;
+use EtoA\Entity\Cell;
 
 class EntitySearch extends AbstractSearch
 {
@@ -30,7 +31,7 @@ class EntitySearch extends AbstractSearch
         return $this;
     }
 
-    public function cellId(int $cellId): static
+    public function cellId(int|Cell $cellId): static
     {
         $this->parts[] = 'c.id = :cellId';
         $this->parameters['cellId'] = $cellId;

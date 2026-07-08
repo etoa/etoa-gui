@@ -257,4 +257,9 @@ class EntityRepository extends AbstractRepository
             )
             ->innerJoin('App:Cell', 'c', 'WITH', 'q.cell = c.id');
     }
+
+    public function getEntities(int|Cell $cellId): array
+    {
+        return $this->findBy(['cell'=>$cellId],['pos'=>'ASC']);
+    }
 }

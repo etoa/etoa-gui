@@ -45,7 +45,7 @@
                 <td>
                     <a href="?page=research&amp;change_entity={{ technologyInProgress.entity.id }}" id="tech_counter">
                         {% if technologyInProgress.endTime - date().timestamp <= 0  %}
-                            {{ technologyNames[technologyInProgress.technologyId ]}} Fertig
+                            {{ technologyInProgress.technology.name}} Fertig
                         {% else %}
                             <script type="text/javascript">time({{ technologyInProgress.endTime - date().timestamp }}, 'tech_counter', 0, '{{ technologyInProgress.technology.name }}  TIME');</script>
                         {% endif %}

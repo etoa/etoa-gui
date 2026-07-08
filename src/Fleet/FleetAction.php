@@ -192,6 +192,11 @@ abstract class FleetAction
         return $this->exclusive;
     }
 
+    function allianceAction(): bool
+    {
+        return $this->allianceAction;
+    }
+
     function cancelable(): bool
     {
         return $this->cancelable;

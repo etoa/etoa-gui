@@ -8,6 +8,6 @@ class EntitySort extends AbstractSort
 {
     public static function pos(): EntitySort
     {
-        return new EntitySort(['pos' => null]);
+        return new EntitySort(['q.pos' => null]);
     }
 }

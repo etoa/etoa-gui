@@ -5,23 +5,37 @@ declare(strict_types=1);
 namespace EtoA\Fleet;
 
 use EtoA\Entity\Fleet;
+use EtoA\Entity\Planet;
 use EtoA\Log\FleetLogRepository;
+use EtoA\Ship\ShipId;
 use EtoA\Ship\ShipListRepository;
+use EtoA\Support\StringUtils;
+use EtoA\Universe\Cell\CellRepository;
 use EtoA\Universe\Entity\EntityRepository;
 use EtoA\Universe\Entity\EntityType;
 use EtoA\Universe\Planet\PlanetRepository;
 use EtoA\Universe\Resources\BaseResources;
+use EtoA\User\UserPropertiesRepository;
+use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class FleetService
 {
     public function __construct(
-        private readonly PlanetRepository $planetRepository,
-        private readonly EntityRepository $entityRepository,
-        private readonly FleetRepository $fleetRepository,
-        private readonly ShipListRepository $shipListRepository,
-        private readonly FleetLogRepository $fleetLogRepository,
-        private readonly FleetShipRepository $fleetShipRepository,
-    ) {}
+        private readonly PlanetRepository         $planetRepository,
+        private readonly EntityRepository         $entityRepository,
+        private readonly FleetRepository          $fleetRepository,
+        private readonly ShipListRepository       $shipListRepository,
+        private readonly FleetLogRepository       $fleetLogRepository,
+        private readonly FleetShipRepository      $fleetShipRepository,
+        private readonly RequestStack             $requestStack,
+        private readonly UserPropertiesRepository $userPropertiesRepository,
+        private readonly FleetLaunchService       $fleetLaunchService,
+        private readonly CellRepository           $cellRepository,
+        private readonly UrlGeneratorInterface    $router,
+    )
+    {
+    }
 
     public function cancel(Fleet $fleet, bool $returning = false): void
     {
@@ -85,9 +99,9 @@ class FleetService
                 if ($fleet->getFleetAction()->cancelable()) {
                     if ($fleet->getId() === $fleet->getLeader()->getId()) {
                         if ($alliance) {
-                            $fleets = $this->fleetRepository->findBy(['leader'=>$fleet]);
+                            $fleets = $this->fleetRepository->findBy(['leader' => $fleet]);
                             foreach ($fleets as $fleetPart) {
-                                $this->cancelFlight($fleetPart,false, true);
+                                $this->cancelFlight($fleetPart, false, true);
                             }
                         } else {
                             $allianceFleets = $this->fleetRepository->search(FleetSearch::create()->leader($fleet->getId())->nextId($fleet->getNextId())->status(FleetStatus::WAITING->value));
@@ -161,14 +175,14 @@ class FleetService
                     $returnFactor = 1 - $passed;
 
                     // Fleet gets unused costs back
-                    $fleet->setResFuel($fleet->getResFuel()+(int) ceil($fleet->getUsageFuel() * $returnFactor));
-                    $fleet->setResFood($fleet->getResFood()+(int) ceil($fleet->getUsageFood() * $returnFactor));
-                    $fleet->setResPower($fleet->getResPower()+(int) ceil($fleet->getUsagePower() * $returnFactor));
+                    $fleet->setResFuel($fleet->getResFuel() + (int)ceil($fleet->getUsageFuel() * $returnFactor));
+                    $fleet->setResFood($fleet->getResFood() + (int)ceil($fleet->getUsageFood() * $returnFactor));
+                    $fleet->setResPower($fleet->getResPower() + (int)ceil($fleet->getUsagePower() * $returnFactor));
 
 
-                    $fleet->setUsageFuel((int) floor($fleet->getUsageFuel() * $passed));
-                    $fleet->setUsageFood((int) floor($fleet->getUsageFood() * $passed));
-                    $fleet->setUsagePower((int) floor($fleet->getUsagePower() * $passed));
+                    $fleet->setUsageFuel((int)floor($fleet->getUsageFuel() * $passed));
+                    $fleet->setUsageFood((int)floor($fleet->getUsageFood() * $passed));
+                    $fleet->setUsagePower((int)floor($fleet->getUsagePower() * $passed));
 
                     $resourcesEnd = new BaseResources();
                     $resourcesEnd->metal = $fleet->getResMetal();
@@ -189,5 +203,62 @@ class FleetService
                 return "Flotte ist bereits beim Ziel angekommen!";
         } else
             return "Flotte ist bereits auf dem Rückflug!";
+    }
+
+    public function launchExplorer(int $cellId): array
+    {
+        /** @var Planet $cp */
+        $request = $this->requestStack->getCurrentRequest();
+        $cp = $this->planetRepository->find($request->getSession()->get('cpid'));
+        $user = $cp->getUser();
+        $error = true;
+
+        $properties = $this->userPropertiesRepository->getOrCreateProperties($user);
+
+        if ($properties->getExploreShip()) {
+            $fleet = new FleetLaunch();
+            $this->fleetLaunchService->setFleetLaunch($fleet);
+            if ($this->fleetLaunchService->checkHaven()) {
+                $item = $this->shipListRepository->findOneBy(['entity' => $cp, 'ship' => $properties->getExploreShip()]);
+                if ($probeCount = $this->fleetLaunchService->addShip($item, $properties->getExploreShipCount())) {
+                    if ($this->fleetLaunchService->fixShips()) {
+                        $tc = $this->cellRepository->find($cellId);
+                        if ($tc) {
+                            $tce = $this->entityRepository->getEntities($tc);
+                            if (isset($tce[0])) {
+                                $ent = $tce[0];
+                                if ($this->fleetLaunchService->setTarget($ent)) {
+                                    if ($this->fleetLaunchService->checkTarget()) {
+                                        if ($this->fleetLaunchService->setAction("explore")) {
+                                            if ($flObj = $this->fleetLaunchService->launch()) {
+                                                $str = "$probeCount Explorer unterwegs. Ankunft in " . StringUtils::formatTimespan($flObj->getRemainingTime());
+                                                $error = false;
+                                            } else
+                                                $str = $this->fleetLaunchService->error;
+                                        } else
+                                            $str = $this->fleetLaunchService->error;
+                                    } else
+                                        $str = $this->fleetLaunchService->error;
+                                } else
+                                    $str = $this->fleetLaunchService->error;
+                            } else {
+                                $str = "Problem beim Finden des Zielobjekts (Objekt 0)!";
+                            }
+                        } else {
+                            $str = "Problem beim Finden des Zielobjekts (Zelle)!";
+                        }
+                    } else {
+                        $str = $this->fleetLaunchService->error;
+                    }
+                } else {
+                    $str = "Auf deinem Planeten befinden sich keine Explorer des <a href='" . $this->router->generate('game.config.game') . "'>gewählten</a> Typs!";
+                }
+            } else {
+                $str = $this->fleetLaunchService->error;
+            }
+        } else {
+            $str = "Du hast noch keinen Standard-Explorer gewählt, überprüfe bitte deine <a href='" . $this->router->generate('game.config.game') . "'>Spieleinstellungen</a>!";
+        }
+        return ['error' => $error, 'info' => $str];
     }
 }

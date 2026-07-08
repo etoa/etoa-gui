@@ -5,10 +5,10 @@
             <tr>
                 <td id="sector_map_nav">
                     <a href="{{ path('game.galaxy') }}">Galaxie</a> »
-                    <select name="sector" data-model="on(change)|xy" >
+                    <select name="sector" data-model="on(change)|xy">
                         {% for x in 1..param1('num_of_sectors') %}
                             {% for y in 1..param2('num_of_sectors') %}
-                                <option value="{{ x }},{{ y }}" >Sektor {{ x }}/{{ y }} </option>
+                                <option value="{{ x }},{{ y }}">Sektor {{ x }}/{{ y }} </option>
                             {% endfor %}
                         {% endfor %}
                     </select>
@@ -23,7 +23,10 @@
                                     <a data-model="xy"
                                        data-value="{{ outerScope.neighbours.sx_tl }},{{ outerScope.neighbours.sy_tl }}"
                                        data-action="live#update" {{ tm('Sektor %s/%s'|format(outerScope.neighbours.sx_tl,outerScope.neighbours.sy_tl),'Sektor %s/%s anzeigen'|format(outerScope.neighbours.sx_tl,outerScope.neighbours.sy_tl))|raw }}>
-                                        <img src="{{ asset('build/images/map/sector_topleft.gif') }}" alt="Sektor {{ outerScope.neighbours.sx_tl }}/{{ outerScope.neighbours.sy_tl }}" onmouseover="$(this).attr('src','{{ asset('build/images/map/sector_topleft_On.gif') }}')" onmouseout="$(this).attr('src','{{ asset('build/images/map/sector_topleft.gif') }}')"/>
+                                        <img src="{{ asset('build/images/map/sector_topleft.gif') }}"
+                                             alt="Sektor {{ outerScope.neighbours.sx_tl }}/{{ outerScope.neighbours.sy_tl }}"
+                                             onmouseover="$(this).attr('src','{{ asset('build/images/map/sector_topleft_On.gif') }}')"
+                                             onmouseout="$(this).attr('src','{{ asset('build/images/map/sector_topleft.gif') }}')"/>
                                     </a>
                                 {% else %}
                                     &nbsp;
@@ -34,7 +37,10 @@
                                     <a data-model="xy"
                                        data-value="{{ outerScope.neighbours.sx_tc }},{{ outerScope.neighbours.sy_tc }}"
                                        data-action="live#update" {{ tm('Sektor %s/%s'|format(outerScope.neighbours.sx_tc,outerScope.neighbours.sy_tc),'Sektor %s/%s anzeigen'|format(outerScope.neighbours.sx_tc,outerScope.neighbours.sy_tc))|raw }}>
-                                        <img src="{{ asset('build/images/map/sector_topcenter.gif') }}" alt="Sektor {{ outerScope.neighbours.sx_tc }}/{{ outerScope.neighbours.sy_tc }}" onmouseover="$(this).attr('src','{{ asset('build/images/map/sector_topcenter_On.gif') }}')" onmouseout="$(this).attr('src','{{ asset('build/images/map/sector_topcenter.gif') }}')"/>
+                                        <img src="{{ asset('build/images/map/sector_topcenter.gif') }}"
+                                             alt="Sektor {{ outerScope.neighbours.sx_tc }}/{{ outerScope.neighbours.sy_tc }}"
+                                             onmouseover="$(this).attr('src','{{ asset('build/images/map/sector_topcenter_On.gif') }}')"
+                                             onmouseout="$(this).attr('src','{{ asset('build/images/map/sector_topcenter.gif') }}')"/>
                                     </a>
                                 {% else %}
                                     &nbsp;
@@ -45,7 +51,10 @@
                                     <a data-model="xy"
                                        data-value="{{ outerScope.neighbours.sx_tr }},{{ outerScope.neighbours.sy_tr }}"
                                        data-action="live#update" {{ tm('Sektor %s/%s'|format(outerScope.neighbours.sx_tr,outerScope.neighbours.sy_tr),'Sektor %s/%s anzeigen'|format(outerScope.neighbours.sx_tr,outerScope.neighbours.sy_tr))|raw }}>
-                                        <img src="{{ asset('build/images/map/sector_topright.gif') }}" alt="Sektor {{ outerScope.neighbours.sx_tr }}/{{ outerScope.neighbours.sy_tr }}" onmouseover="$(this).attr('src','{{ asset('build/images/map/sector_topright_On.gif') }}')" onmouseout="$(this).attr('src','{{ asset('build/images/map/sector_topright.gif') }}')"/>
+                                        <img src="{{ asset('build/images/map/sector_topright.gif') }}"
+                                             alt="Sektor {{ outerScope.neighbours.sx_tr }}/{{ outerScope.neighbours.sy_tr }}"
+                                             onmouseover="$(this).attr('src','{{ asset('build/images/map/sector_topright_On.gif') }}')"
+                                             onmouseout="$(this).attr('src','{{ asset('build/images/map/sector_topright.gif') }}')"/>
                                     </a>
                                 {% else %}
                                     &nbsp;
@@ -58,7 +67,10 @@
                                     <a data-model="xy"
                                        data-value="{{ outerScope.neighbours.sx_ml }},{{ outerScope.neighbours.sy_ml }}"
                                        data-action="live#update" {{ tm('Sektor %s/%s'|format(outerScope.neighbours.sx_ml,outerScope.neighbours.sy_ml),'Sektor %s/%s anzeigen'|format(outerScope.neighbours.sx_ml,outerScope.neighbours.sy_ml))|raw }}>
-                                        <img src="{{ asset('build/images/map/sector_middleleft.gif') }}" alt="Sektor {{ outerScope.neighbours.sx_ml }}/{{ outerScope.neighbours.sy_ml }}" onmouseover="$(this).attr('src','{{ asset('build/images/map/sector_middleleft_On.gif') }}')" onmouseout="$(this).attr('src','{{ asset('build/images/map/sector_middleleft.gif') }}')"/>
+                                        <img src="{{ asset('build/images/map/sector_middleleft.gif') }}"
+                                             alt="Sektor {{ outerScope.neighbours.sx_ml }}/{{ outerScope.neighbours.sy_ml }}"
+                                             onmouseover="$(this).attr('src','{{ asset('build/images/map/sector_middleleft_On.gif') }}')"
+                                             onmouseout="$(this).attr('src','{{ asset('build/images/map/sector_middleleft.gif') }}')"/>
                                     </a>
                                 {% else %}
                                     &nbsp;
@@ -72,7 +84,10 @@
                                     <a data-model="xy"
                                        data-value="{{ outerScope.neighbours.sx_mr }},{{ outerScope.neighbours.sy_mr }}"
                                        data-action="live#update" {{ tm('Sektor %s/%s'|format(outerScope.neighbours.sx_mr,outerScope.neighbours.sy_mr),'Sektor %s/%s anzeigen'|format(outerScope.neighbours.sx_mr,outerScope.neighbours.sy_mr))|raw }}>
-                                        <img src="{{ asset('build/images/map/sector_middleright.gif') }}" alt="Sektor {{ outerScope.neighbours.sx_mr }}/{{ outerScope.neighbours.sy_mr }}" onmouseover="$(this).attr('src','{{ asset('build/images/map/sector_middleright_On.gif') }}')" onmouseout="$(this).attr('src','{{ asset('build/images/map/sector_middleright.gif') }}')"/>
+                                        <img src="{{ asset('build/images/map/sector_middleright.gif') }}"
+                                             alt="Sektor {{ outerScope.neighbours.sx_mr }}/{{ outerScope.neighbours.sy_mr }}"
+                                             onmouseover="$(this).attr('src','{{ asset('build/images/map/sector_middleright_On.gif') }}')"
+                                             onmouseout="$(this).attr('src','{{ asset('build/images/map/sector_middleright.gif') }}')"/>
                                     </a>
                                 {% else %}
                                     &nbsp;
@@ -85,7 +100,10 @@
                                     <a data-model="xy"
                                        data-value="{{ outerScope.neighbours.sx_bl }},{{ outerScope.neighbours.sy_bl }}"
                                        data-action="live#update" {{ tm('Sektor %s/%s'|format(outerScope.neighbours.sx_bl,outerScope.neighbours.sy_bl),'Sektor %s/%s anzeigen'|format(outerScope.neighbours.sx_bl,outerScope.neighbours.sy_bl))|raw }}>
-                                        <img src="{{ asset('build/images/map/sector_bottomleft.gif') }}" alt="Sektor {{ outerScope.neighbours.sx_bl }}/{{ outerScope.neighbours.sy_bl }}" onmouseover="$(this).attr('src','{{ asset('build/images/map/sector_bottomleft_On.gif') }}')" onmouseout="$(this).attr('src','{{ asset('build/images/map/sector_bottomleft.gif') }}')"/>
+                                        <img src="{{ asset('build/images/map/sector_bottomleft.gif') }}"
+                                             alt="Sektor {{ outerScope.neighbours.sx_bl }}/{{ outerScope.neighbours.sy_bl }}"
+                                             onmouseover="$(this).attr('src','{{ asset('build/images/map/sector_bottomleft_On.gif') }}')"
+                                             onmouseout="$(this).attr('src','{{ asset('build/images/map/sector_bottomleft.gif') }}')"/>
                                     </a>
                                 {% else %}
                                     &nbsp;
@@ -97,7 +115,10 @@
                                        data-value="{{ outerScope.neighbours.sx_bc }},{{ outerScope.neighbours.sy_bc }}"
                                        data-action="live#update"
                                             {{ tm('Sektor %s/%s'|format(outerScope.neighbours.sx_bc,outerScope.neighbours.sy_bc),'Sektor %s/%s anzeigen'|format(outerScope.neighbours.sx_bc,outerScope.neighbours.sy_bc))|raw }}>
-                                        <img src="{{ asset('build/images/map/sector_bottomcenter.gif') }}" alt="Sektor {{ outerScope.neighbours.sx_bc }}/{{ outerScope.neighbours.sy_bc }}" onmouseover="$(this).attr('src','{{ asset('build/images/map/sector_bottomcenter_On.gif') }}')" onmouseout="$(this).attr('src','{{ asset('build/images/map/sector_bottomcenter.gif') }}')"/>
+                                        <img src="{{ asset('build/images/map/sector_bottomcenter.gif') }}"
+                                             alt="Sektor {{ outerScope.neighbours.sx_bc }}/{{ outerScope.neighbours.sy_bc }}"
+                                             onmouseover="$(this).attr('src','{{ asset('build/images/map/sector_bottomcenter_On.gif') }}')"
+                                             onmouseout="$(this).attr('src','{{ asset('build/images/map/sector_bottomcenter.gif') }}')"/>
                                     </a>
                                 {% else %}
                                     &nbsp;
@@ -108,7 +129,10 @@
                                     <a data-model="xy"
                                        data-value="{{ outerScope.neighbours.sx_br }},{{ outerScope.neighbours.sy_br }}"
                                        data-action="live#update" {{ tm('Sektor %s/%s'|format(outerScope.neighbours.sx_br,outerScope.neighbours.sy_tc),'Sektor %s/%s anzeigen'|format(outerScope.neighbours.sx_br,outerScope.neighbours.sy_br))|raw }}>
-                                        <img src="{{ asset('build/images/map/sector_bottomright.gif') }}" alt="Sektor {{ outerScope.neighbours.sx_br }}/{{ outerScope.neighbours.sy_br }}" onmouseover="$(this).attr('src','{{ asset('build/images/map/sector_bottomright_On.gif') }}')" onmouseout="$(this).attr('src','{{ asset('build/images/map/sector_bottomright.gif') }}')"/>
+                                        <img src="{{ asset('build/images/map/sector_bottomright.gif') }}"
+                                             alt="Sektor {{ outerScope.neighbours.sx_br }}/{{ outerScope.neighbours.sy_br }}"
+                                             onmouseover="$(this).attr('src','{{ asset('build/images/map/sector_bottomright_On.gif') }}')"
+                                             onmouseout="$(this).attr('src','{{ asset('build/images/map/sector_bottomright.gif') }}')"/>
                                     </a>
                                 {% else %}
                                     &nbsp;
@@ -120,8 +144,19 @@
                 </td>
             </tr>
             <tr>
-                <td>Die Galaxie besteht aus {{ outerScope.neighbours.sx_num }} x {{ outerScope.neighbours.sy_num }} Sektoren.</td>
+                <td>Die Galaxie besteht aus {{ outerScope.neighbours.sx_num }} x {{ outerScope.neighbours.sy_num }}
+                    Sektoren.
+                </td>
             </tr>
         {% endblock %}
     </twig:Table>
+    {% if this.info %}
+        <twig:Box title="Flotten">
+            {% if outerScope.error %}
+                <div style="color:#f90">{{ outerScope.info|raw }}</div>
+            {% else %}
+                <div style="color:#0f0">{{ outerScope.info|raw }}</div>
+            {% endif %}
+        </twig:Box>
+    {% endif %}
 </div>
