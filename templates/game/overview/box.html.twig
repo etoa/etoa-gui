@@ -19,11 +19,11 @@
 
             {% if ownFleets > 1  %}
                 <td>
-                    <a href="?page=fleets" style="color:#0f0"><b>{{ ownFleets }}</b> eigene Flotten</a>
+                    <a href="{{ path('game.fleets') }}" style="color:#0f0"><b>{{ ownFleets }}</b> eigene Flotten</a>
                 </td>
             {% elseif ownFleets == 1  %}
                 <td>
-                    <a href="?page=fleets" style="color:#0f0"><b>{{ ownFleets }}</b> eigene Flotte</a>
+                    <a href="{{ path('game.fleets') }}" style="color:#0f0"><b>{{ ownFleets }}</b> eigene Flotte</a>
                 </td>
             {% else %}
                 <td>Keine eigenen Flotten</td>
@@ -31,11 +31,11 @@
 
             {% if foreignFleets.visibleFleets|length > 1  %}
                 <td>
-                    <a href="?page=fleets" style=" {{ foreignFleets.getAttitude }}"><b>{{ foreignFleets.visibleFleets|length }}</b> fremde Flotten</a>
+                    <a href="{{ path('game.fleets') }}" style=" {{ foreignFleets.getAttitude }}"><b>{{ foreignFleets.visibleFleets|length }}</b> fremde Flotten</a>
                 </td>
             {% elseif foreignFleets.visibleFleets|length == 1  %}
                 <td>
-                    <a href="?page=fleets" style="{{ foreignFleets.getAttitude }}"><b>{{ foreignFleets.visibleFleets|length }}</b> fremde Flotte</a>
+                    <a href="{{ path('game.fleets') }}" style="{{ foreignFleets.getAttitude }}"><b>{{ foreignFleets.visibleFleets|length }}</b> fremde Flotte</a>
                 </td>
             {% else %}
                 <td>Keine fremden Flotten</td>
@@ -99,11 +99,11 @@
 
                 {% if allianceSupportFleetCount > 1  %}
                     <td>
-                        <a href="?page=fleets"><b>{{ allianceSupportFleetCount }}</b> Supportflotten</a>
+                        <a href="{{ path('game.fleets') }}"><b>{{ allianceSupportFleetCount }}</b> Supportflotten</a>
                     </td>
                 {% elseif allianceSupportFleetCount == 1  %}
                     <td>
-                        <a href="?page=fleets"><b>{{ allianceSupportFleetCount }}</b> Supportflotte</a>
+                        <a href="{{ path('game.fleets') }}"><b>{{ allianceSupportFleetCount }}</b> Supportflotte</a>
                     </td>
                 {% else %}
                     <td>Keine Supportflotten</td>
@@ -111,11 +111,11 @@
 
                 {% if allianceAttackFleetCount > 1  %}
                     <td>
-                        <a href="?page=fleets"><b>{{ allianceAttackFleetCount }}</b> Allianzangriffe</a>
+                        <a href="{{ path('game.fleets') }}"><b>{{ allianceAttackFleetCount }}</b> Allianzangriffe</a>
                     </td>
                 {% elseif allianceAttackFleetCount == 1  %}
                     <td>
-                        <a href="?page=fleets"><b>{{ allianceAttackFleetCount }}</b> Allianzangriff</a>
+                        <a href="{{ path('game.fleets') }}"><b>{{ allianceAttackFleetCount }}</b> Allianzangriff</a>
                     </td>
                 {% else %}
                     <td>Keine Allianzangriffe</td>

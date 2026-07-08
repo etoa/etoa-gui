@@ -47,12 +47,12 @@
                 document.getElementById('hbarlogoutslide').style.display='none';
                 return false;"></a>
         {% if fleetAttack > 0 %}
-            <a href="?page=fleets" id="navfleetred" onmouseover="hideAllHbarMenus();"></a>
+            <a href="{{ path('game.fleets') }}" id="navfleetred" onmouseover="hideAllHbarMenus();"></a>
             <script type="text/javascript">
                 Effect.Pulsate('navfleetred',{duration:180,pulses:120,from:0.0});
             </script>
         {% endif %}
-        <a href="?page=fleets" id="navfleet" onmouseover="hideAllHbarMenus();"></a>
+        <a href="{{ path('game.fleets') }}" id="navfleet" onmouseover="hideAllHbarMenus();"></a>
         {% if messages > 0 or newreports > 0 %}
             <a href="?page=messages" id="navmessagesgreen" onmouseover="hideAllHbarMenus();"></a>
             <script type="text/javascript">

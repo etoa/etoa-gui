@@ -26,6 +26,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 class OverviewController extends AbstractAdminController
@@ -47,6 +48,7 @@ class OverviewController extends AbstractAdminController
         private readonly AdminSessionRepository    $adminSessionRepository,
         private readonly AdminUserRepository       $adminUserRepository,
         private readonly EventHandlerManager       $eventHandlerManager,
+        private readonly UrlGeneratorInterface     $router
     )
     {
     }
@@ -68,7 +70,7 @@ class OverviewController extends AbstractAdminController
             }
 
             $fleetBanTitle = "Flottensperre aktiviert";
-            $fleetBanText = "Die Flottensperre wurde aktiviert.<br><br><b>Status:</b> " . $flightban_time_status . "<br><b>Zeit:</b> " . date("d.m.Y H:i", $this->config->param1Int('flightban_time')) . " - " . date("d.m.Y H:i", $this->config->param2Int('flightban_time')) . "<br><b>Grund:</b> " . $this->config->param1('flightban') . "<br><br>Zum deaktivieren: <a href=\"?page=fleets&amp;sub=fleetoptions\">Flottenoptionen</a>";
+            $fleetBanText = "Die Flottensperre wurde aktiviert.<br><br><b>Status:</b> " . $flightban_time_status . "<br><b>Zeit:</b> " . date("d.m.Y H:i", $this->config->param1Int('flightban_time')) . " - " . date("d.m.Y H:i", $this->config->param2Int('flightban_time')) . "<br><b>Grund:</b> " . $this->config->param1('flightban') . "<br><br>Zum Deaktivieren: <a href=" . $this->router->generate('admin.fleets.options') . ">Flottenoptionen</a>";
         }
 
         // Kampfsperre aktiv
@@ -83,7 +85,7 @@ class OverviewController extends AbstractAdminController
             }
 
             $fleetBanTitle = "Kampfsperre aktiviert";
-            $fleetBanText = "Die Kampfsperre wurde aktiviert.<br><br><b>Status:</b> " . $battleban_time_status . "<br><b>Zeit:</b> " . date("d.m.Y H:i", $this->config->param1Int('battleban_time')) . " - " . date("d.m.Y H:i", $this->config->param2Int('battleban_time')) . "<br><b>Grund:</b> " . $this->config->param1('battleban') . "<br><br>Zum deaktivieren: <a href=\"?page=fleets&amp;sub=fleetoptions\">Flottenoptionen</a>";
+            $fleetBanText = "Die Kampfsperre wurde aktiviert.<br><br><b>Status:</b> " . $battleban_time_status . "<br><b>Zeit:</b> " . date("d.m.Y H:i", $this->config->param1Int('battleban_time')) . " - " . date("d.m.Y H:i", $this->config->param2Int('battleban_time')) . "<br><b>Grund:</b> " . $this->config->param1('battleban') . "<br><br>Zum Deaktivieren: <a href=" . $this->router->generate('admin.fleets.options') . ">Flottenoptionen</a>";
         }
 
         //
@@ -155,16 +157,16 @@ class OverviewController extends AbstractAdminController
             ->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            if($form->has('offline') && $form->get('offline')->isClicked()) {
+            if ($form->has('offline') && $form->get('offline')->isClicked()) {
                 $this->config->set('offline', '1');
             }
 
-            if($form->has('save') && $form->get('save')->isClicked()) {
+            if ($form->has('save') && $form->get('save')->isClicked()) {
                 $this->config->set('offline_ips_allow', $form->get('offline_ips_allow')->getData());
                 $this->config->set('offline_message', $form->get('offline_message')->getData());
             }
 
-            if($form->has('online') && $form->get('online')->isClicked()) {
+            if ($form->has('online') && $form->get('online')->isClicked()) {
                 $this->config->set('offline', '0');
             }
         }

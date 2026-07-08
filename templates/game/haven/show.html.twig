@@ -8,9 +8,9 @@
                     <th>Aktive Flotten:</th>
                     <td>
                         {% if fleetLaunch.fleetSlotsUsed > 1 %}
-                            <b>{{ fleetLaunch.fleetSlotsUsed }} </b> Flotten dieses Planeten sind <a href="?page=fleets">unterwegs</a>.
+                            <b>{{ fleetLaunch.fleetSlotsUsed }} </b> Flotten dieses Planeten sind <a href="{{ path('game.fleets') }}">unterwegs</a>.
                         {% elseif fleetLaunch.fleetSlotsUsed == 1 %}
-                            <b>Eine</b> Flotte dieses Planeten ist <a href="?page=fleets">unterwegs</a>.
+                            <b>Eine</b> Flotte dieses Planeten ist <a href="{{ path('game.fleets') }}">unterwegs</a>.
                         {% else %}
                             Es sind <b>keine</b> Flotten dieses Planeten unterwegs.
                         {% endif %}

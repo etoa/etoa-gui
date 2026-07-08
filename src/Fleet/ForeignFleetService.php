@@ -132,7 +132,7 @@ class ForeignFleetService
                     $ships = array();
 
                     if ($foreignFleet->getLeader()) {
-                        $fleetShips = $this->fleetShipRepository->findAllShipsForLeader($foreignFleet->getLeader());
+                        $fleetShips = $this->fleetShipRepository->findAllShipsForLeader($foreignFleet->getLeader()->getUser());
                     } else {
                         $fleetShips = $this->fleetShipRepository->findAllShipsInFleet($foreignFleet);
                     }
