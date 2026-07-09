@@ -1,0 +1,75 @@
+{% extends 'layout/game.html.twig' %}
+{% block content %}
+    <h1>Schiffsübersicht</h1>
+    <br/>
+    <a href="{{ path('game.fleets') }}">
+        <input type="button" value="Flotten anzeigen" />
+    </a>&nbsp;
+    <a href="{{ path('game.fleets') }}">
+        <input type="button" value="Allianzflotten anzeigen" />
+    </a>&nbsp;
+    
+    <twig:Table title="Schiffe" class="compact">
+        {% block table_content %}
+            <tr>
+                <th colspan="2">Schiff</th>
+                <th width="100">Im Orbit</th>
+                <th width="100">Eingebunkert</th>
+                <th width="100">Im Bau</th>
+                <th width="100">Im All</th>
+            </tr>
+            {% for stat in shipStats %}
+                <tr>
+                    <td class="shipCellImage" style="background:#000">
+                        {% if stat.ship.special %}
+                            <a href="?page=ship_upgrade&amp;id={{ stat.ship.id }}" title="Zum Upgrademenu">
+                                <img src="{{ stat.ship.imagePath }}" class="shipImageSmall"/>
+                            </a>
+                        {% else %}
+                            <a href="{{ path('game.help.shipyard',{id:stat.ship.id}) }}" title="Info zu diesem Schiff anzeigen">
+                                <img src="{{ stat.ship.imagePath }}" class="shipImageSmall"/>
+                            </a>
+                        {% endif %}
+                    </td>
+                    <td>{{ stat.ship.name }}</td>
+
+                    {# Im Orbit #}
+                    <td {% if stat.orbitDetails %}{{ tm('Anzahl',stat.orbitDetails)|raw }} {% endif %}>
+                        {% if stat.orbitTotal > 0 %}
+                            {{ formatNumber(stat.orbitTotal) }}
+                        {% else %}
+                            &nbsp;
+                        {% endif %}
+                    </td>
+
+                    {# Eingebunkert #}
+                    <td {% if stat.bunkeredDetails %}{{ tm('Anzahl',stat.bunkeredDetails)|raw }}{% endif %}>
+                        {% if stat.bunkeredTotal > 0 %}
+                            {{ formatNumber(stat.bunkeredTotal) }}
+                        {% else %}
+                            &nbsp;
+                        {% endif %}
+                    </td>
+
+                    {# Im Bau #}
+                    <td {% if stat.queueDetails %}title="Anzahl: {% for detail in stat.queueDetails %}<b>{{ detail.name }}</b>: {{ formatNumber(detail.count) }}<br>{% endfor %}"{% endif %}>
+                        {% if stat.queueTotal > 0 %}
+                            {{ formatNumber(stat.queueTotal) }}
+                        {% else %}
+                            &nbsp;
+                        {% endif %}
+                    </td>
+
+                    {# Im All #}
+                    <td>
+                        {% if stat.fleetTotal > 0 %}
+                            {{ formatNumber(stat.fleetTotal) }}
+                        {% else %}
+                            &nbsp;
+                        {% endif %}
+                    </td>
+                </tr>
+            {% endfor %}
+        {% endblock %}
+    </twig:Table>
+{% endblock %}
