@@ -46,7 +46,7 @@ class FleetController extends AbstractGameController
 
         return $this->render('game/fleets/fleets_fleets.html.twig',[
             'ownFleets' => $ownFleets,
-            'foreignFleets' => $this->foreignFleetService->renderForeignFleets(),
+            'foreignFleets' => $this->foreignFleetService->getForeignFleetsData(),
             'userUniverseDiscoveryService' => $this->userUniverseDiscoveryService
         ]);
     }

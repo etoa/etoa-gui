@@ -10,6 +10,7 @@ use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Defense\DefenseQueueRepository;
 use EtoA\Defense\DefenseRepository;
 use EtoA\Entity\Planet;
+use EtoA\Entity\User;
 use EtoA\Fleet\FleetAction;
 use EtoA\Log\LogFacility;
 use EtoA\Log\LogRepository;
@@ -34,7 +35,7 @@ class PlanetService
     /**
      * @return array<int,string>
      */
-    public function getUserPlanetNames(int $userId): array
+    public function getUserPlanetNames(int|User $userId): array
     {
         $data = array();
         foreach ($this->repository->getUserPlanets($userId) as $planet) {

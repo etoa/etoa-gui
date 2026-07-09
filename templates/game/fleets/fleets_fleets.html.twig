@@ -63,8 +63,8 @@
 
 
     {# Gegnerische Flotten #}
-    {% if foreignFleets %}
-        {{ foreignFleets|raw }}
+    {% if foreignFleets.visibleFleets %}
+        {% include 'game/fleets/foreign_fleets.html.twig' %}
     {% else %}
         {{ macros.message("Fremde Flotten","Es sind keine fremden Flotten zu deinen Planeten unterwegs!") }}
     {% endif %}

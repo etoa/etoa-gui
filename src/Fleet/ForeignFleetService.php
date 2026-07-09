@@ -91,128 +91,81 @@ class ForeignFleetService
         return $result;
     }
 
-    public function renderForeignFleets():string
+    public function getForeignFleetsData(): ForeignFleets
     {
-        //
-        // Gegnerische Flotten
-        //
-        $header = 0;
         $foreignFleets = $this->getVisibleFleets($this->security->getUser()->getData());
 
-        ob_start();
-        if (count($foreignFleets->visibleFleets) > 0) {
-            $show_num = 0;
-            echo '<table class="tb"><caption>Fremde Flotten</caption>';
-            foreach ($foreignFleets->visibleFleets as $foreignFleet) {
-                // Is the attitude visible?
-                $action = FleetAction::createFactory($foreignFleet->getAction());
-                if (SpyTechFleetLevel::SHOW_ATTITUDE <= $foreignFleets->userSpyLevel) {
-                    $attitude = $action->attitude();
-                } else {
-                    $attitude = 4;
-                }
-                $attitudeColor = FleetAction::$attitudeColor[$attitude];
-                $attitudeString = FleetAction::$attitudeString[$attitude];
-
-                // Is the number of ships visible?
-                if (SpyTechFleetLevel::SHOW_NUMBER <= $foreignFleets->userSpyLevel) {
-                    $show_num = 1;
-
-                    $shipsCount = $this->fleetShipRepository->countShipsInFleet($foreignFleet);
-                } else {
-                    $shipsCount = -1;
-                }
-
-                //Opfer sieht die einzelnen Schiffstypen in der Flotte
-                $shipStr = array();
-                $showShips = false;
-
-                if (SpyTechFleetLevel::SHOW_SHIPS <= $foreignFleets->userSpyLevel) {
-                    $showShips = true;
-                    $ships = array();
-
-                    if ($foreignFleet->getLeader()) {
-                        $fleetShips = $this->fleetShipRepository->findAllShipsForLeader($foreignFleet->getLeader()->getUser());
-                    } else {
-                        $fleetShips = $this->fleetShipRepository->findAllShipsInFleet($foreignFleet);
-                    }
-
-                    foreach ($fleetShips as $fleetShip) {
-                        $shipId = $fleetShip->getShipFaked() > 0 ? $fleetShip->getShipFaked() : $fleetShip->getShip()->getId();
-                        if (!isset($ships[$shipId])) {
-                            $ships[$shipId] = 0;
-                        }
-
-                        $ships[$shipId] += $fleetShip->getCount();
-                    }
-
-                    foreach ($ships as $sid => $scnt) {
-                        $str = "";
-
-                        //Opfer sieht die genau Anzahl jedes Schifftypes in einer Flotte
-                        if (SpyTechFleetLevel::SHOW_NUMBER_OF_SHIPS <= $foreignFleets->userSpyLevel) {
-                            $str = "" . $scnt . " ";
-                        }
-                        $str .= "" .  $this->shipDataRepository->find($sid)->getName();
-                        $shipStr[] = $str;
-                    }
-                }
-
-                // Show action
-                if (SpyTechFleetLevel::SHOW_ACTION <= $foreignFleets->userSpyLevel) {
-                    $shipAction = $action->displayName();
-                } else {
-                    $shipAction = $attitudeString;
-                }
-
-                if ($header != 1) {
-                    echo "<tr>
-                        <th>Start / Ziel</th>
-                        <th>Startzeit / Landezeit</th>
-                        <th>Gesinnung</th>
-                        <th>Spieler</th>
-                        </tr>";
-                    $header = 1;
-                }
-
-                $source = $foreignFleet->getEntityFrom();
-                $target = $foreignFleet->getEntityTo();
-                echo "<tr>
-                    <td><b>" . $source->codeString() . "</b>
-                    <a href=\"?page=cell&amp;id=" . $source->getCell()->getId() . "&amp;hl=" . $source->getId() . "\">" . $source->toString() . "</a><br/>";
-                echo "<b>" . $target->codeString() . "</b>
-                    <a href=\"?page=cell&amp;id=" . $target->getCell()->getId() . "&amp;hl=" . $target->getId() . "\">" . $target->toString() . "</a></td>";
-                echo "<td>
-                    " . date("d.m.y, H:i:s", $foreignFleet->getLaunchTime()) . "<br/>";
-                echo date("d.m.y, H:i:s", $foreignFleet->getLandTime()) . "</td>";
-                echo "<td>
-                    <span style=\"color:" . $attitudeColor . "\">
-                    " . $shipAction . "
-                    </span> [" . FleetAction::$statusCode[$foreignFleet->getStatus()] . "]<br/>";
-                echo "<td>
-                    <a href=\"?page=messages&mode=new&message_user_to=" . $foreignFleet->getUser()->getId() . "\">" . $foreignFleet->getUser()->getNick() . "</a>
-                    </td>";
-                echo "</tr>";
-                if ($show_num == 1) {
-                    echo "<tr><td colspan=\"4\">";
-                    echo "<b>Anzahl:</b> " . $shipsCount . "";
-                    if ($showShips) {
-                        echo ";<br><b>Schiffe:</b> ";
-                        $count = false;
-                        foreach ($shipStr as $value) {
-                            if ($count) {
-                                echo ", ";
-                            } else {
-                                $count = true;
-                            }
-                            echo $value;
-                        }
-                    }
-                    echo "</td></tr>";
-                }
-                echo '</table>';
-            }
+        if (count($foreignFleets->visibleFleets) === 0) {
+            return $foreignFleets;
         }
-        return ob_get_clean();
+
+        // Transform Fleet entities to ForeignFleetData DTOs with enriched information
+        $enrichedFleets = [];
+        foreach ($foreignFleets->visibleFleets as $fleet) {
+            $action = FleetAction::createFactory($fleet->getAction());
+            
+            // Determine attitude based on spy level
+            if (SpyTechFleetLevel::SHOW_ATTITUDE <= $foreignFleets->userSpyLevel) {
+                $attitude = $action->attitude();
+            } else {
+                $attitude = 4;
+            }
+            
+            $attitudeColor = FleetAction::$attitudeColor[$attitude];
+            $attitudeString = FleetAction::$attitudeString[$attitude];
+            $statusCode = FleetAction::$statusCode[$fleet->getStatus()];
+            
+            // Determine ship action display
+            if (SpyTechFleetLevel::SHOW_ACTION <= $foreignFleets->userSpyLevel) {
+                $shipAction = $action->displayName();
+            } else {
+                $shipAction = $attitudeString;
+            }
+            
+            // Add ships count if visible
+            $shipsCount = null;
+            if (SpyTechFleetLevel::SHOW_NUMBER <= $foreignFleets->userSpyLevel) {
+                $shipsCount = $this->fleetShipRepository->countShipsInFleet($fleet);
+            }
+
+            // Add ship details if visible
+            $ships = null;
+            $showShipNumbers = false;
+            if (SpyTechFleetLevel::SHOW_SHIPS <= $foreignFleets->userSpyLevel) {
+                $ships = [];
+
+                if ($fleet->getLeader()) {
+                    $fleetShips = $this->fleetShipRepository->findAllShipsForLeader($fleet->getLeader()->getUser());
+                } else {
+                    $fleetShips = $this->fleetShipRepository->findAllShipsInFleet($fleet);
+                }
+
+                foreach ($fleetShips as $fleetShip) {
+                    $shipId = $fleetShip->getShipFaked() > 0 ? $fleetShip->getShipFaked() : $fleetShip->getShip()->getId();
+                    if (!isset($ships[$shipId])) {
+                        $ships[$shipId] = ['count' => 0, 'name' => ''];
+                    }
+
+                    $ships[$shipId]['count'] += $fleetShip->getCount();
+                    $ships[$shipId]['name'] = $this->shipDataRepository->find($shipId)->getName();
+                }
+
+                $showShipNumbers = SpyTechFleetLevel::SHOW_NUMBER_OF_SHIPS <= $foreignFleets->userSpyLevel;
+            }
+
+            $enrichedFleets[] = new ForeignFleetData(
+                fleet: $fleet,
+                attitudeColor: $attitudeColor,
+                attitudeString: $attitudeString,
+                statusCode: $statusCode,
+                shipAction: $shipAction,
+                shipsCount: $shipsCount,
+                ships: $ships,
+                showShipNumbers: $showShipNumbers
+            );
+        }
+
+        $foreignFleets->visibleFleets = $enrichedFleets;
+        return $foreignFleets;
     }
 }

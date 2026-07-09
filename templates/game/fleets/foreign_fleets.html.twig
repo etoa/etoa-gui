@@ -1,0 +1,48 @@
+{% if foreignFleets.visibleFleets|length > 0 %}
+    <table class="tb">
+        <caption>Fremde Flotten</caption>
+        <tr>
+            <th>Start / Ziel</th>
+            <th>Startzeit / Landezeit</th>
+            <th>Gesinnung</th>
+            <th>Spieler</th>
+        </tr>
+        {% for fleetData in foreignFleets.visibleFleets %}
+            <tr>
+                <td>
+                    <b>{{ fleetData.fleet.entityFrom.codeString }}</b>
+                    <a href="?page=cell&amp;id={{ fleetData.fleet.entityFrom.cell.id }}&amp;hl={{ fleetData.fleet.entityFrom.id }}">{{ fleetData.fleet.entityFrom.toString }}</a><br/>
+                    <b>{{ fleetData.fleet.entityTo.codeString }}</b>
+                    <a href="?page=cell&amp;id={{ fleetData.fleet.entityTo.cell.id }}&amp;hl={{ fleetData.fleet.entityTo.id }}">{{ fleetData.fleet.entityTo.toString }}</a>
+                </td>
+                <td>
+                    {{ fleetData.fleet.launchTime|date('d.m.y, H:i:s') }}<br/>
+                    {{ fleetData.fleet.landTime|date('d.m.y, H:i:s') }}
+                </td>
+                <td>
+                    <span style="color:{{ fleetData.attitudeColor }}">
+                        {{ fleetData.shipAction }}
+                    </span> [{{ fleetData.statusCode }}]
+                </td>
+                <td>
+                    <a href="?page=messages&mode=new&message_user_to={{ fleetData.fleet.user.id }}">{{ fleetData.fleet.user.nick }}</a>
+                </td>
+            </tr>
+            {% if fleetData.shipsCount is not null %}
+                <tr>
+                    <td colspan="4">
+                        <b>Anzahl:</b> {{ fleetData.shipsCount }}
+                        {% if fleetData.ships is not null %}
+                            ;<br><b>Schiffe:</b>
+                            {% for shipId, shipData in fleetData.ships %}
+                                {% if not loop.first %}, {% endif %}
+                                {% if fleetData.showShipNumbers %}{{ shipData.count }} {% endif %}{{ shipData.name }}
+                            {% endfor %}
+                        {% endif %}
+                    </td>
+                </tr>
+            {% endif %}
+        {% endfor %}
+    </table>
+{% endif %}
+
