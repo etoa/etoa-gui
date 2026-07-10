@@ -1,0 +1,8 @@
+{% extends 'layout/game.html.twig' %}
+{% block content %}
+    <h1>Schiffsupgrade-Menu</h1>
+    <br/>
+    {% include 'game/shipupgrade/shipdata.html.twig' %}
+    {{ form_start(form) }}
+    {{ form_end(form) }}
+{% endblock %}

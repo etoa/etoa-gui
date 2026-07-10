@@ -298,6 +298,20 @@ class ShipListRepository extends AbstractRepository
             ->getSingleScalarResult();
     }
 
+    /**
+     * @return array<int, ShipListItem>
+     */
+    public function getSpecialShipsForUser(int|User $userId): array
+    {
+        return $this->createQueryBuilder('q')
+            ->innerJoin('q.ship', 's')
+            ->where('q.user = :userId')
+            ->andWhere('s.special = 1')
+            ->setParameter('userId', $userId)
+            ->getQuery()
+            ->execute();
+    }
+
     public function cleanUp(): int
     {
         return $this->createQueryBuilder('q')

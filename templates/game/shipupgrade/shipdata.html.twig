@@ -1,0 +1,45 @@
+{% for shipData in shipsData %}
+    <twig:Table title="{{ shipData.ship.name }}">
+        {% block table_content %}
+            <tr>
+                <th style="width:220px;">
+                    <a href="{{ path('game.ships.upgrade.detail',{id:shipData.item.id}) }}">
+                        <img src="{{ shipData.ship.getImagePath('other') }}" width="220"
+                             height="220"
+                             alt="Klicke hier um ins Upgrade Menu zu gelangen"
+                             title="Klicke hier um ins Upgrade Menu zu gelangen"
+                        /></a>
+                </th>
+                <td colspan="3">{{ BBCodeToHTML(shipData.ship.longComment)|raw }}</td>
+            </tr>
+            <tr>
+                <th class="tbltitle">Level</th>
+                {% if shipData.ship.specialMaxLevel <= shipData.initLevel and shipData.ship.specialMaxLevel > 0 %}
+                    <td>{{ shipData.initLevel }} (max.)</td>
+                {% else %}
+                    {% if shipData.level - shipData.initLevel <= 0 %}
+                        <td>{{ shipData.initLevel }} (+{{ shipData.level - shipData.initLevel }})</td>
+                    {% else %}
+                        <td style="color:green;">{{ shipData.initLevel }} (+{{ shipData.level - shipData.initLevel }})
+                        </td>
+                    {% endif %}
+                {% endif %}
+                <td>Level des Schiffes</td>
+            </tr>
+            <tr>
+                <th class="tbltitle">Erfahrung</th>
+                <td>{{ formatNumber(shipData.item.specialShipExp) }}</td>
+                <td>Erfahrung des Schiffes</td>
+            </tr>
+            <tr>
+                <th class="tbltitle">Ben. Erfahrung</th>
+                {% if shipData.ship.specialMaxLevel <= shipData.initLevel and shipData.ship.specialMaxLevel > 0 %}
+                    <td>-</td>
+                {% else %}
+                    <td>{{ formatNumber(shipData.expForNextLevel) }}</td>
+                {% endif %}
+                <td>Benötigte Erfahrung bis zum nächsten LevelUp</td>
+            </tr>
+        {% endblock %}
+    </twig:Table>
+{% endfor %}
