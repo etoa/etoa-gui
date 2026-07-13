@@ -106,7 +106,7 @@ class UserSittingRepository extends AbstractRepository
     {
         return (bool)$this->createQueryBuilder('q')
             ->select('1')
-            ->where('q.userId = :userId')
+            ->where('q.user = :userId')
             ->andWhere('(q.dateFrom < :from AND :from < q.dateTo) OR (q.dateFrom < :to AND :to < q.dateTo)')
             ->setParameters([
                 'userId' => $userId,
@@ -122,7 +122,7 @@ class UserSittingRepository extends AbstractRepository
     {
         return (int)$this->createQueryBuilder('q')
             ->select('SUM(CEIL((q.dateTo - q.dateFrom) / 86400))')
-            ->where('q.userId = :userId')
+            ->where('q.user = :userId')
             ->setParameters([
                 'userId' => $userId,
             ])
