@@ -170,7 +170,7 @@ class Ship implements ObjectWithImage, ObjectWithRequirements
     private float $specialBonusTarn;
 
     #[ORM\Column(name: "special_ship_bonus_antrax", type: "float")]
-    private float $specialBonusAntrax;
+    private float $specialBonusAnthrax;
 
     #[ORM\Column(name: "special_ship_bonus_forsteal", type: "float")]
     private float $specialBonusForsteal;
@@ -179,7 +179,7 @@ class Ship implements ObjectWithImage, ObjectWithRequirements
     private float $specialBonusBuildDestroy;
 
     #[ORM\Column(name: "special_ship_bonus_antrax_food", type: "float")]
-    private float $specialBonusAntraxFood;
+    private float $specialBonusAnthraxFood;
 
     #[ORM\Column(name: "special_ship_bonus_deactivade", type: "float")]
     private float $specialBonusDeactivate;
@@ -804,14 +804,14 @@ class Ship implements ObjectWithImage, ObjectWithRequirements
         return $this;
     }
 
-    public function getSpecialBonusAntrax(): ?float
+    public function getSpecialBonusAnthrax(): ?float
     {
-        return $this->specialBonusAntrax;
+        return $this->specialBonusAnthrax;
     }
 
-    public function setSpecialBonusAntrax(float $specialBonusAntrax): static
+    public function setSpecialBonusAnthrax(float $specialBonusAnthrax): static
     {
-        $this->specialBonusAntrax = $specialBonusAntrax;
+        $this->specialBonusAnthrax = $specialBonusAnthrax;
 
         return $this;
     }
@@ -840,14 +840,14 @@ class Ship implements ObjectWithImage, ObjectWithRequirements
         return $this;
     }
 
-    public function getSpecialBonusAntraxFood(): ?float
+    public function getSpecialBonusAnthraxFood(): ?float
     {
-        return $this->specialBonusAntraxFood;
+        return $this->specialBonusAnthraxFood;
     }
 
-    public function setSpecialBonusAntraxFood(float $specialBonusAntraxFood): static
+    public function setSpecialBonusAnthraxFood(float $specialBonusAnthraxFood): static
     {
-        $this->specialBonusAntraxFood = $specialBonusAntraxFood;
+        $this->specialBonusAnthraxFood = $specialBonusAnthraxFood;
 
         return $this;
     }

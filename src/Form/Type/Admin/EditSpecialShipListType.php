@@ -3,7 +3,6 @@
 namespace EtoA\Form\Type\Admin;
 
 use EtoA\Entity\Ship;
-use EtoA\Ship\ShipDataRepository;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\FormBuilderInterface;
 
@@ -79,7 +78,7 @@ class EditSpecialShipListType extends EditShipListType
                 ]);
         }
 
-        if ($ship->getSpecialBonusAntrax() > 0) {
+        if ($ship->getspecialBonusAnthrax() > 0) {
             $builder
                 ->add('specialShipBonusAnthrax', IntegerType::class, [
                     'label' => 'Giftgas',
@@ -100,10 +99,10 @@ class EditSpecialShipListType extends EditShipListType
                 ]);
         }
 
-        if ($ship->getSpecialBonusAntraxFood() > 0) {
+        if ($ship->getspecialBonusAnthraxFood() > 0) {
             $builder
                 ->add('specialShipBonusAnthraxFood', IntegerType::class, [
-                    'label' => 'Antrax',
+                    'label' => 'Anthrax',
                 ]);
         }
 

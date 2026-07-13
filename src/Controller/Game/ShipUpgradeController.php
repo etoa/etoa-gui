@@ -5,7 +5,9 @@ namespace EtoA\Controller\Game;
 use EtoA\Entity\ShipListItem;
 use EtoA\Ship\ShipListRepository;
 use EtoA\Ship\ShipXpCalculator;
+use Symfony\Component\Form\ChoiceList\Loader\CallbackChoiceLoader;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -25,8 +27,6 @@ class ShipUpgradeController extends AbstractGameController
     {
         //Listet alle spezial Schiffe auf die der user besitzt
         $shipList = $this->shipListRepository->getSpecialShipsForUser($this->getUser()->getData());
-        $data = [];
-
         if (count($shipList) > 0) {
             return $this->render('game/shipupgrade/list.html.twig', [
                 'shipsData' => $this->buildData($shipList)
@@ -43,192 +43,163 @@ class ShipUpgradeController extends AbstractGameController
     #[Route('/game/ships/upgrade/{id}', name: 'game.ships.upgrade.detail')]
     public function detail(Request $request, ?ShipListItem $shipListItem): Response
     {
-        if($shipListItem && $shipListItem->getUser() === $this->getUser()->getData())
-        {
+        if ($shipListItem && $shipListItem->getUser() === $this->getUser()->getData()) {
             $specialShip = $shipListItem->getShip();
+            $data = $this->buildData([$shipListItem]);
+            $texts = [
+                'weapon' => [
+                    'label' => 'Waffen',
+                    'text' => 'Waffenbonus im Kampf'
+                ],
+                'structure' => [
+                    'label' => 'Panzerung',
+                    'text' => 'Struktur im Kampf'
+                ],
+                'shield' => [
+                    'label' => 'Schild',
+                    'text' => 'Schildbonus im Kampf'
+                ],
+                'speed' => [
+                    'label' => 'Speed',
+                    'text' => 'Erhöht den Speed der ganzen Flotte'
+                ],
+                'pilots' => [
+                    'label' => 'Besatzung',
+                    'text' => 'Verringert die benötigten Piloten der Flotte'
+                ],
+                'capacity' => [
+                    'label' => 'Kapazität',
+                    'text' => 'Erhöht die Kapazität der ganzen Flotte'
+                ],
+                'tarn' => [
+                    'label' => 'Tarnung',
+                    'text' => 'Ermöglicht eine absolute Tarnung der Flotte'
+                ],
+                'heal' => [
+                    'label' => 'Heilung',
+                    'text' => 'Heilbonus im Kampf'
+                ],
+                'anthrax' => [
+                    'label' => 'Giftgas',
+                    'text' => 'Erhöht Giftgaseffekt'
+                ],
+                'forsteal' => [
+                    'label' => 'Spionageangriff',
+                    'text' => 'Erhöht die Erfolgschancen beim Spionageangriff'
+                ],
+                'buildDestroy' => [
+                    'label' => 'Bombardieren',
+                    'text' => 'Erhöht Bombardierungschancen'
+                ],
+                'anthraxFood' => [
+                    'label' => 'Antrax',
+                    'text' => 'Erhöht Antraxeffekt'
+                ],
+                'deactivate' => [
+                    'label' => 'Deaktivieren',
+                    'text' => 'Erhöht Deaktivierungschancen'
+                ],
+                'readiness' => [
+                    'label' => 'Bereitschaft',
+                    'text' => 'Verringert die Start- und Landezeit der ganzen Flotte'
+                ]
+            ];
 
-            $form = $this->createFormBuilder($specialShip)
-                ->add('specialBonusWeapon', ChoiceType::class, [
+            $form = $this->createFormBuilder()
+                ->add('bonus', ChoiceType::class, [
                     'expanded' => true,
-                    'choices' => [
-                       '' => ''
-                    ],
-                    'label' => false
+                    'choice_loader' => new CallbackChoiceLoader(static function () use ($specialShip): array {
+                        $ref = new \ReflectionClass($specialShip);
+                        $allMethods = $ref->getMethods();
+                        $getSpecialSkills = [];
+
+                        foreach ($allMethods as $method) {
+                            $name = $method->getName();
+
+                            if (str_starts_with($name, 'getSpecialBonus')) {
+                                if ($method->invoke($specialShip) > 0)
+                                    // would be so much easier if ship and shiplist had the property name for special skills
+                                    $getSpecialSkills[] = lcfirst(str_replace('getSpecialBonus', '', $name));
+                            }
+                        }
+
+                        return $getSpecialSkills;
+                    }),
+                    'label' => false,
                 ])
-                ->add('specialBonusStructure', ChoiceType::class, [
-                    'expanded' => true,
-                    'choices' => [
-                        '' => '',
-                    ],
-                    'label' => false
+                ->add('save', SubmitType::class, [
+                    'label' => 'Gewähltes Upgrade durchführen',
                 ])
                 ->getForm()
                 ->handleRequest($request);
 
-            if($form->isSubmitted() && $form->isValid()) { }
+            if ($form->isSubmitted() && $form->isValid()) {
+                switch ($form->getData()['bonus']) {
+                    case 'weapon':
+                        $shipListItem->setSpecialShipBonusWeapon($shipListItem->getSpecialShipBonusWeapon() + 1);
+                        break;
+                    case 'structure':
+                        $shipListItem->setSpecialShipBonusStructure($shipListItem->getSpecialShipBonusStructure() + 1);
+                        break;
+                    case 'shield':
+                        $shipListItem->setSpecialShipBonusShield($shipListItem->getSpecialShipBonusShield() + 1);
+                        break;
+                    case 'heal':
+                        $shipListItem->setSpecialShipBonusHeal($shipListItem->getSpecialShipBonusHeal() + 1);
+                        break;
+                    case 'capacity':
+                        $shipListItem->setSpecialShipBonusCapacity($shipListItem->getSpecialShipBonusCapacity() + 1);
+                        break;
+                    case 'speed':
+                        $shipListItem->setSpecialShipBonusSpeed($shipListItem->getSpecialShipBonusSpeed() + 1);
+                        break;
+                    case 'pilots':
+                        $shipListItem->setSpecialShipBonusPilots($shipListItem->getSpecialShipBonusPilots() + 1);
+                        break;
+                    case 'tarn':
+                        $shipListItem->setSpecialShipBonusTarn($shipListItem->getSpecialShipBonusTarn() + 1);
+                        break;
+                    case 'anthrax':
+                        $shipListItem->setSpecialShipBonusAnthrax($shipListItem->getSpecialShipBonusAnthrax() + 1);
+                        break;
+                    case 'forsteal':
+                        $shipListItem->setSpecialShipBonusForSteal($shipListItem->getSpecialShipBonusForSteal() + 1);
+                        break;
+                    case 'buildDestroy':
+                        $shipListItem->setSpecialShipBonusBuildDestroy($shipListItem->getSpecialShipBonusBuildDestroy() + 1);
+                        break;
+                    case 'anthraxFood':
+                        $shipListItem->setSpecialShipBonusAnthraxFood($shipListItem->getSpecialShipBonusAnthraxFood() + 1);
+                        break;
+                    case 'deactivate':
+                        $shipListItem->setSpecialShipBonusDeactivate($shipListItem->getSpecialShipBonusDeactivate() + 1);
+                        break;
+                    case 'readiness':
+                        $shipListItem->setSpecialShipBonusReadiness($shipListItem->getSpecialShipBonusReadiness() + 1);
+                        break;
+                    default:
+                        throw new \RuntimeException('Invalid special ability: ' . $form->getData()['bonus']);
+                }
+                $shipListItem->setSpecialShipLevel($shipListItem->getSpecialShipLevel() + 1);
 
-/*
-            echo "<form action=\"?page=$page&amp;id=" . $specialShip->id . "\" method=\"post\">";
+                if ($data[0]['level'] - $data[0]['initLevel'] > 0 &&
+                    (
+                        $data[0]['ship']->getSpecialMaxLevel() > $data[0]['initLevel']
+                        || $data[0]['ship']->getSpecialMaxLevel() === 0
+                    )
+                ) {
+                    $this->shipListRepository->save();
 
-            //Zeigt alle Bonis die das Schiff upgraden kann
-            tableStart("Bonis");
-            echo "
-                 <tr>
-                     <th width=\"25%\">Skill</th>
-                     <th width=\"10%\">Bonus</th>
-                     <th width=\"63%\">Info</th>
-                     <th width=\"2%\">LvL</th>
-                 </tr>
-                 ";
+                    $this->addFlash('success', "Upgrade erfolgreich durchgeführt!");
+                }
 
-
-            // Waffentechnik Bonus
-            if ($specialShip->specialBonusWeapon > 0) {
-                echo "<tr>
-                         <th>Waffen (" . $item->specialShipBonusWeapon . ")</th>
-                         <td>" . (round($item->specialShipBonusWeapon * $specialShip->specialBonusWeapon * 100, 1)) . "%</td>
-                         <td>Waffenbonus im Kampf (" . ($specialShip->specialBonusWeapon * 100) . "% pro Level)</td>
-                         <td style=\"text-align:center;vertical-align:middle;\"><input type=\"radio\" name=\"upgrade\" value=\"weapon\" border=\"0\"></td>
-                     </tr>";
+                return $this->redirectToRoute('game.ships.upgrade.detail', ['id' => $shipListItem->getId()]);
             }
-            // Struktur Bonus
-            if ($specialShip->specialBonusStructure > 0) {
-                echo "<tr>
-                         <th>Panzerung (" . $item->specialShipBonusStructure . ")</th>
-                         <td>" . (round($item->specialShipBonusStructure * $specialShip->specialBonusStructure * 100, 1)) . "%</td>
-                         <td>Struktur im Kampf (" . ($specialShip->specialBonusStructure * 100) . "% pro Level)</td>
-                         <td style=\"text-align:center;vertical-align:middle;\"><input type=\"radio\" name=\"upgrade\" value=\"structure\" border=\"0\"></td>
-                     </tr>";
-            }
-            // Schild Bonus
-            if ($specialShip->specialBonusShield > 0) {
-                echo "<tr>
-                         <th>Schild (" . $item->specialShipBonusShield . ")</th>
-                         <td>" . (round($item->specialShipBonusShield * $specialShip->specialBonusShield * 100, 1)) . "%</td>
-                         <td>Schildbonus im Kampf (" . ($specialShip->specialBonusShield * 100) . "% pro Level)</td>
-                         <td style=\"text-align:center;vertical-align:middle;\"><input type=\"radio\" name=\"upgrade\" value=\"shield\" border=\"0\"></td>
-                     </tr>";
-            }
-            // kapazitäts Bonus
-            if ($specialShip->specialBonusCapacity > 0) {
-                echo "<tr>
-                         <th>Kapazität (" . $item->specialShipBonusCapacity . ")</th>
-                         <td>" . (round($item->specialShipBonusCapacity * $specialShip->specialBonusCapacity * 100, 1)) . "%</td>
-                         <td>Erhöht die Kapazität der ganzen Flotte (" . ($specialShip->specialBonusCapacity * 100) . "% pro Level)</td>
-                         <td style=\"text-align:center;vertical-align:middle;\"><input type=\"radio\" name=\"upgrade\" value=\"capacity\" border=\"0\"></td>
-                     </tr>";
-            }
-            // Speed Bonus
-            if ($specialShip->specialBonusSpeed > 0) {
-                echo "<tr>
-                         <th>Speed (" . $item->specialShipBonusSpeed . ")</th>
-                         <td>" . (round($item->specialShipBonusSpeed * $specialShip->specialBonusSpeed * 100, 1)) . "%</td>
-                         <td>Erhöht den Speed der ganzen Flotte (" . ($specialShip->specialBonusSpeed * 100) . "% pro Level)</td>
-                         <td style=\"text-align:center;vertical-align:middle;\"><input type=\"radio\" name=\"upgrade\" value=\"speed\" border=\"0\"></td>
-                     </tr>";
-            }
-            // Tarn Bonus
-            if ($specialShip->specialBonusTarn > 0) {
-                echo "<tr>
-                         <th>Tarnung (" . $item->specialShipBonusTarn . ")</th>
-                         <td>" . (round($item->specialShipBonusTarn * $specialShip->specialBonusTarn * 100, 1)) . "%</td>
-                         <td>Ermöglicht eine absolute Tarnung der Flotte (" . ($specialShip->specialBonusTarn * 100) . "% pro Level)</td>
-                         <td style=\"text-align:center;vertical-align:middle;\"><input type=\"radio\" name=\"upgrade\" value=\"tarn\" border=\"0\"></td>
-                     </tr>";
-            }
-            // Piloten Bonus
-            if ($specialShip->specialBonusPilots > 0) {
-                echo "<tr>
-                         <th>Besatzung (" . $item->specialShipBonusPilots . ")</th>
-                         <td>" . (round($item->specialShipBonusPilots * $specialShip->specialBonusPilots * 100, 1)) . "%</td>
-                         <td>Verringert die benötigten Piloten der Flotte (" . ($specialShip->specialBonusPilots * 100) . "% pro Level)</td>
-                         <td style=\"text-align:center;vertical-align:middle;\"><input type=\"radio\" name=\"upgrade\" value=\"pilots\" border=\"0\"></td>
-                     </tr>";
-            }
-            // Heal Bonus
-            if ($specialShip->specialBonusHeal > 0) {
-                echo "<tr>
-                         <th>Heilung (" . $item->specialShipBonusHeal . ")</th>
-                         <td>" . (round($item->specialShipBonusHeal * $specialShip->specialBonusHeal * 100, 1)) . "%</td>
-                         <td>Heilbonus im Kampf (" . ($specialShip->specialBonusHeal * 100) . "% pro Level)</td>
-                         <td style=\"text-align:center;vertical-align:middle;\"><input type=\"radio\" name=\"upgrade\" value=\"heal\" border=\"0\"></td>
-                     </tr>";
-            }
-            // Giftgas Bonus
-            if ($specialShip->specialBonusAntrax > 0) {
-                echo "<tr>
-                         <th>Giftgas (" . $item->specialShipBonusAnthrax . ")</th>
-                         <td>" . (round($item->specialShipBonusAnthrax * $specialShip->specialBonusAntrax * 100, 1)) . "%</td>
-                         <td>Erhöht Giftgaseffekt (" . ($specialShip->specialBonusAntrax * 100) . "% pro Level)</td>
-                         <td style=\"text-align:center;vertical-align:middle;\"><input type=\"radio\" name=\"upgrade\" value=\"heal\" border=\"0\"></td>
-                     </tr>";
-            }
-            // Techklau Bonus
-            if ($specialShip->specialBonusForsteal > 0) {
-                echo "<tr>
-                         <th>Spionageangriff (" . $item->specialShipBonusForSteal . ")</th>
-                         <td>" . (round($item->specialShipBonusForSteal * $specialShip->specialBonusForsteal * 100, 1)) . "%</td>
-                         <td>Erhöht die Erfolgschancen beim Spionageangriff (" . ($specialShip->specialBonusForsteal * 100) . "% pro Level)</td>
-                         <td style=\"text-align:center;vertical-align:middle;\"><input type=\"radio\" name=\"upgrade\" value=\"forsteal\" border=\"0\"></td>
-                     </tr>";
-            }
-            // Bombardieren Bonus
-            if ($specialShip->specialBonusBuildDestroy > 0) {
-                echo "<tr>
-                         <th>Bombardieren (" . $item->specialShipBonusBuildDestroy . ")</th>
-                         <td>" . (round($item->specialShipBonusBuildDestroy * $specialShip->specialBonusBuildDestroy * 100, 1)) . "%</td>
-                         <td>Erhöht Bombardierungschancen (" . ($specialShip->specialBonusBuildDestroy * 100) . "% pro Level)</td>
-                         <td style=\"text-align:center;vertical-align:middle;\"><input type=\"radio\" name=\"upgrade\" value=\"build_destroy\" border=\"0\"></td>
-                     </tr>";
-            }
-            // Antrax Bonus
-            if ($specialShip->specialBonusAntraxFood > 0) {
-                echo "<tr>
-                         <th>Antrax (" . $item->specialShipBonusAnthraxFood . ")</th>
-                         <td>" . (round($item->specialShipBonusAnthraxFood * $specialShip->specialBonusAntraxFood * 100, 1)) . "%</td>
-                         <td>Erhöht Antraxeffekt (" . ($specialShip->specialBonusAntraxFood * 100) . "% pro Level)</td>
-                         <td style=\"text-align:center;vertical-align:middle;\"><input type=\"radio\" name=\"upgrade\" value=\"antrax_food\" border=\"0\"></td>
-                     </tr>";
-            }
-            // Deaktivieren Bonus
-            if ($specialShip->specialBonusDeactivate > 0) {
-                echo "<tr>
-                         <th>Deaktivieren (" . $item->specialShipBonusDeactivate . ")</th>
-                         <td>" . (round($item->specialShipBonusDeactivate * $specialShip->specialBonusDeactivate * 100, 1)) . "%</td>
-                         <td>Erhöht Deaktivierungschancen (" . ($specialShip->specialBonusDeactivate * 100) . "% pro Level)</td>
-                         <td style=\"text-align:center;vertical-align:middle;\"><input type=\"radio\" name=\"upgrade\" value=\"deactivade\" border=\"0\"></td>
-                     </tr>";
-            }
-            // Readyness Bonus
-            if ($specialShip->specialBonusReadiness > 0) {
-                echo "<tr>
-                         <th>Bereitschaft (" . $item->specialShipBonusReadiness . ")</th>
-                         <td>" . (round($item->specialShipBonusReadiness * $specialShip->specialBonusReadiness * 100, 1)) . "%</td>
-                         <td>Verringert die Start- und Landezeit der ganzen Flotte (" . ($specialShip->specialBonusReadiness * 100) . "% pro Level)</td>
-                         <td style=\"text-align:center;vertical-align:middle;\"><input type=\"radio\" name=\"upgrade\" value=\"readiness\" border=\"0\"></td>
-                     </tr>";
-            }
-
-
-
-            tableEnd();
-
-            //Level Button anzeigen, wenn genügend EXP vorhaden
-            if ($level - $init_level > 0 && ($specialShip->specialMaxLevel > $init_level || $specialShip->specialMaxLevel === 0)) {
-                echo "<input type=\"hidden\" name=\"id\" value=\"" . $specialShip->id . "\">";
-                echo "<input type=\"submit\" class=\"button\" name=\"submit_upgrade\" value=\"Gewähltes Upgrade duchführen\" /><br><br>";
-            }
-            echo "</form>";
-
-
-            echo "<input type=\"button\" value=\"Zurück zur Übersicht\" onclick=\"document.location='?page=ship_upgrade'\" />";
-
-*/
-
 
             return $this->render('game/shipupgrade/detail.html.twig', [
-                'shipsData' => $this->buildData([$shipListItem]),
-                'form' => $form
+                'shipsData' => $data,
+                'form' => $form,
+                'texts' => $texts
             ]);
         }
 
@@ -246,11 +217,10 @@ class ShipUpgradeController extends AbstractGameController
         foreach ($shipList as $item) {
             $ship = $item->getShip();
             $init_level = $item->getSpecialShipLevel();
-            $init_exp = $item->getSpecialShipExp();
-
+            $init_exp = $item->getSpecialShipExp();;
             //Errechnet das Level aus den momentanen erfahrungen (exp)
-            $level = ShipXpCalculator::levelByXp($ship->getSpecialNeedExp(),$ship->getSpecialExpFactor(),$item->getSpecialShipExp());
-            $exp_for_next_level = ShipXpCalculator::levelByXp($ship->getSpecialNeedExp(),$ship->getSpecialExpFactor(),$level);
+            $level = ShipXpCalculator::levelByXp($ship->getSpecialNeedExp(), $ship->getSpecialExpFactor(), $item->getSpecialShipExp());
+            $exp_for_next_level = ShipXpCalculator::xpByLevel($ship->getSpecialNeedExp(), $ship->getSpecialExpFactor(), $level);
 
             $data[] = [
                 'ship' => $ship,

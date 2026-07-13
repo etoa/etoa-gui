@@ -3,6 +3,40 @@
     <h1>Schiffsupgrade-Menu</h1>
     <br/>
     {% include 'game/shipupgrade/shipdata.html.twig' %}
+
     {{ form_start(form) }}
-    {{ form_end(form) }}
+    <twig:Table title="Boni">
+        {% block table_content %}
+            <tr>
+                <th width="25%">Skill</th>
+                <th width="10%">Bonus</th>
+                <th width="63%">Info</th>
+                <th width="2%">LvL</th>
+            </tr>
+            {% for child in form.bonus.children %}
+                <tr>
+                    <th>{{ texts[child.vars.value].label }} ({{ attribute(shipsData.0.item, 'specialShipBonus'~child.vars.value) }})</th>
+                    <td>{{ (attribute(shipsData.0.item, 'specialShipBonus'~child.vars.value) * attribute(shipsData.0.ship, 'specialBonus'~child.vars.value) * 100)|round(1) }}
+                        %
+                    </td>
+                    <td>{{ texts[child.vars.value].text }} ({{ attribute(shipsData.0.ship, 'specialBonus'~child.vars.value) * 100 }}%
+                        pro Level)
+                    </td>
+                    <td style="text-align:center;vertical-align:middle;">
+                        {{ form_widget(child) }}
+                    </td>
+                </tr>
+            {% endfor %}
+        {% endblock %}
+    </twig:Table>
+        {% if shipsData.0.level - shipsData.0.initLevel > 0 and (shipsData.0.ship.specialMaxLevel > shipsData.0.initLevel or shipsData.0.ship.specialMaxLevel === 0) %}
+            {{form_widget(form.save)}}<br>
+            <br>
+        {% endif %}
+    {{ form_widget(form._token) }}
+    {{ form_end(form,{render_rest:false}) }}
+    <a href="{{ path('game.ships.upgrade') }}">
+        <input type="button" value="Zurück zur Übersicht"/>
+    </a>
+
 {% endblock %}
