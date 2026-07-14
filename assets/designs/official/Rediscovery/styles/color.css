@@ -4,7 +4,10 @@
 a,
 select,
 input,
+button,
 textarea,
 #tutorialContainer, #quest-app {
     color: white;
 }
+
+input[type="datetime-local"] {color: black}

@@ -52,7 +52,7 @@
                     </tr>
                 {% endblock %}
             </twig:Table>
-            <p>Mit dem Speichern dieses Eintrags werden die entsprechenden Sittingtage von deinem Account abgezogen.<br/><br/>{{ form_widget(form.save) }}<a href="{{ path('game.config.sitting') }}"><input type="button" value="Abbrechen"></a></p>
+            <p>Mit dem Speichern dieses Eintrags werden die entsprechenden Sittingtage von deinem Account abgezogen.<br/><br/>{{ form_widget(form.save) }} <a href="{{ path('game.config.sitting') }}"><input type="button" value="Abbrechen"></a></p>
         {{ form_end(form) }}
     {%  else %}
         <a href="{{ path('game.config.sitting') }}"><input type="button" value="Zurück"></a>
