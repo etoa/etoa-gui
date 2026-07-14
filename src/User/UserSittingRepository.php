@@ -150,7 +150,7 @@ class UserSittingRepository extends AbstractRepository
         $sitting = $this->createQueryBuilder('q')
             ->set('date_to', 'UNIX_TIMESTAMP()')
             ->where('q.id = :id')
-            ->andWhere('q.userId = :userId')
+            ->andWhere('q.user = :userId')
             ->andWhere('q.dateFrom < :time')
             ->andWhere('q.dateTo > :time')
             ->setParameters([
