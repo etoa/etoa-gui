@@ -2,6 +2,7 @@
 
 namespace EtoA\Security\Player;
 
+use EtoA\User\UserSittingRepository;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -25,7 +26,8 @@ class PlayerAuthenticator extends AbstractAuthenticator implements Authenticatio
         private readonly PlayerUserProvider                 $userProvider,
         private readonly PlayerAuthenticationSuccessHandler $authenticationSuccessHandler,
         private readonly PlayerAuthenticationFailureHandler $authenticationFailureHandler,
-        private readonly UrlGeneratorInterface              $urlGenerator
+        private readonly UrlGeneratorInterface              $urlGenerator,
+        private readonly UserSittingRepository              $sittingRepository
     )
     {
     }
@@ -41,8 +43,15 @@ class PlayerAuthenticator extends AbstractAuthenticator implements Authenticatio
         $credentials = $this->getCredentials($request);
 
         return new Passport(
-            new UserBadge($credentials['username'], function ($username): CurrentPlayer {
-                return $this->userProvider->loadUserByIdentifier($username);
+            new UserBadge($credentials['username'], function ($username) use ($credentials, &$sitting): CurrentPlayer {
+                $user = $this->userProvider->loadUserByIdentifier($username);
+                $activeSitting = $this->sittingRepository->getActiveUserEntry($user->getData());
+                if ($activeSitting !== null && password_verify($credentials['password'], $activeSitting->getPassword())) {
+                    $sitting = $activeSitting;
+                    return $this->userProvider->loadUserByIdentifierWithSitting($username, $sitting);
+                }
+                
+                return $user;
             }),
             new PasswordCredentials($credentials['password']),
             [

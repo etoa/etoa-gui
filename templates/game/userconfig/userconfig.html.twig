@@ -14,10 +14,16 @@
         "game.config.banner" : "Banner",
         "game.config.misc" : "Sonstiges"
     } %}
-    {% if warnings %}
+    {% if warnings|length>0 %}
         {% set tabs = tabs|merge({ "game.config.warnings": "Verwarnungen"}) %}
     {% endif %}
     <twig:tabmenu data="{{ tabs }}" active="{{ app.request.attributes.get('_route') }}"/>
-    {% block config %}
-    {% endblock %}
+
+    {% if is_granted('ROLE_PLAYER') and not is_granted('ROLE_PLAYER_SITTER') %}
+        {% block config %}
+        {% endblock %}
+    {% else %}
+        {% import 'macros.html.twig' as macros %}
+        {{ macros.errorMessage('Im Sittermodus ist dieser Bereich gesperrt!') }}
+    {% endif %}
 {% endblock %}
