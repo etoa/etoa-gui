@@ -2,7 +2,6 @@
 
 namespace EtoA\Controller\Game;
 
-use Doctrine\ORM\EntityManagerInterface;
 use EtoA\Admin\AllianceBoardAvatar;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Entity\UserSitting;
@@ -26,7 +25,6 @@ use EtoA\Support\StringUtils;
 use EtoA\User\ProfileImage;
 use EtoA\User\UserHolidayService;
 use EtoA\User\UserLoginFailureRepository;
-use EtoA\User\UserMultiRepository;
 use EtoA\User\UserPropertiesRepository;
 use EtoA\User\UserRepository;
 use EtoA\User\UserService;
@@ -353,23 +351,28 @@ class UserConfigController extends AbstractGameController
     }
 
     #[Route('/game/config/sitting', name: 'game.config.sitting')]
-    public function sitting(Request $request, UserMultiRepository $userMultiRepository, UserSittingRepository $userSittingRepository): Response
+    public function sitting(Request $request, UserSittingRepository $userSittingRepository): Response
     {
-        $multiEntries = $userMultiRepository->getUserEntries($this->getUser()->getData(), true);
-        $form = $this->createFormBuilder(['userMultis' => $multiEntries])
+        $user = $this->getUser()->getData();
+
+        $form = $this->createFormBuilder($user)
             ->add('save', SubmitType::class, ['label' => 'Übernehmen'])
             ->add('userMultis', CollectionType::class, array(
                 'entry_type' => MultiViewType::class,
                 'label' => false,
                 'allow_add' => true,
-                'allow_delete' => true
+                'allow_delete' => true,
+                'by_reference' => false,
             ))
             ->getForm();
 
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+
+            $this->userRepository->save();
             // User löschen
+            /*
             foreach ($form->get('userMultis') as $userMulti) {
                 if ($userMulti->get('delMulti')->getData()) {
                     $entry = $userMultiRepository->getUserEntry($this->getUser()->getId(), $userMulti->getData()->multiUserId);
@@ -388,7 +391,7 @@ class UserConfigController extends AbstractGameController
                         $this->redirectToRoute('game.config.sitting');
                     }
                 }
-            }
+            }*/
         }
 
         if ($request->get('remove_sitting') && intval($request->get('remove_sitting')) > 0) {

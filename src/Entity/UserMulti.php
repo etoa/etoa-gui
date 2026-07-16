@@ -15,20 +15,20 @@ class UserMulti
 
     #[ORM\JoinColumn(name: 'user_id', referencedColumnName: 'user_id')]
     #[ORM\ManyToOne(targetEntity: User::class, cascade: ['persist'], inversedBy: 'userMultis')]
-    private User $user;
+    private ?User $user;
 
     #[ORM\JoinColumn(name: 'multi_id', referencedColumnName: 'user_id')]
     #[ORM\ManyToOne(targetEntity: User::class)]
-    private User $multiUser;
+    private ?User $multiUser;
 
     #[ORM\Column(name: 'connection')]
-    private string $reason;
+    private string $reason = '';
 
     #[ORM\Column(name: 'activ')]
-    private bool $active;
+    private bool $active = true;
 
     #[ORM\Column]
-    private int $timestamp;
+    private int $timestamp = 0;
 
     public function getId(): ?int
     {

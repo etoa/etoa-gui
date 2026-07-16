@@ -1722,6 +1722,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function addUserMulti(UserMulti $userMulti): static
     {
         if (!$this->userMultis->contains($userMulti)) {
+            $userMulti->setUser($this);
+            $userMulti->setTimestamp(time());
             $this->userMultis->add($userMulti);
             $userMulti->setUser($this);
         }
@@ -1732,9 +1734,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function removeUserMulti(UserMulti $userMulti): static
     {
         if ($this->userMultis->removeElement($userMulti)) {
-            // set the owning side to null (unless already changed)
             if ($userMulti->getUser() === $this) {
-                $userMulti->setUser(null);
+                $userMulti->setActive(false);
             }
         }
 
