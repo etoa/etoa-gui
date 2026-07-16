@@ -4,6 +4,7 @@ namespace EtoA\Controller\Game;
 
 use EtoA\Admin\AllianceBoardAvatar;
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Entity\User;
 use EtoA\Entity\UserSitting;
 use EtoA\Form\Type\Core\AvatarUploadType;
 use EtoA\Form\Type\Core\DesignType;
@@ -33,6 +34,7 @@ use EtoA\User\UserSessionRepository;
 use EtoA\User\UserSessionSearch;
 use EtoA\User\UserSittingRepository;
 use Symfony\Bundle\SecurityBundle\Security;
+use Symfony\Component\Form\Event\PreSetDataEvent;
 use Symfony\Component\Form\Extension\Core\Type\ButtonType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
@@ -46,6 +48,7 @@ use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\FormEvents;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -355,7 +358,7 @@ class UserConfigController extends AbstractGameController
     {
         $user = $this->getUser()->getData();
 
-        $form = $this->createFormBuilder($user)
+        $formBuilder = $this->createFormBuilder($user)
             ->add('save', SubmitType::class, ['label' => 'Übernehmen'])
             ->add('userMultis', CollectionType::class, array(
                 'entry_type' => MultiViewType::class,
@@ -363,35 +366,27 @@ class UserConfigController extends AbstractGameController
                 'allow_add' => true,
                 'allow_delete' => true,
                 'by_reference' => false,
-            ))
-            ->getForm();
+            ));
 
+        $formBuilder->addEventListener(
+            FormEvents::PRE_SET_DATA,
+            function (PreSetDataEvent $event) {
+                $data = $event->getData();
+                if ($data instanceof User) {
+                    $activeMultis = $data->getUserMultis()->filter(fn($multi) => $multi->isActive());
+                    $data->getUserMultis()->clear();
+                    foreach ($activeMultis as $multi) {
+                        $data->getUserMultis()->add($multi);
+                    }
+                }
+            }
+        );
+
+        $form = $formBuilder->getForm();
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-
             $this->userRepository->save();
-            // User löschen
-            /*
-            foreach ($form->get('userMultis') as $userMulti) {
-                if ($userMulti->get('delMulti')->getData()) {
-                    $entry = $userMultiRepository->getUserEntry($this->getUser()->getId(), $userMulti->getData()->multiUserId);
-                    if ($entry !== null) {
-                        if ($entry->getReason() !== '0' && $entry->getMultiUser()->getId() !== 0) {
-                            $userMultiRepository->deleteEntry($entry->getId());
-                        } else {
-                            $userMultiRepository->deactivateEntry($entry->getId());
-                            // Speichert jeden gelöschten multi (soll vor missbrauch schützen -> mutli erstellen -> löschen -> erstellen -> löschen etc.)
-                            $this->userRepository->increaseMultiDeletes($this->getUser()->getId());
-                        }
-                        $msg['success'] = "Eintrag gelöscht!";
-
-                        //removing entity after passing it to the form collection will show outdated values
-                        //TODO: find a way to update form collection
-                        $this->redirectToRoute('game.config.sitting');
-                    }
-                }
-            }*/
         }
 
         if ($request->get('remove_sitting') && intval($request->get('remove_sitting')) > 0) {
