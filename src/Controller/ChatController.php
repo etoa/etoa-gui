@@ -56,18 +56,18 @@ class ChatController extends AbstractController
         if ($ban !== null) {
             return new JsonResponse([
                 'cmd' => 'bn',
-                'msg' => StringUtils::replaceAsciiControlCharsUnicode($ban->reason),
+                'msg' => StringUtils::replaceAsciiControlCharsUnicode($ban->getReason()),
             ]);
         }
 
         $chatUser = $this->chatUserRepository->getChatUser($user->getId());
-        if ($chatUser !== null) {
-            if ($chatUser->kick !== null) {
-                $this->chatUserRepository->deleteUser($user->getId());
+        if ($chatUser) {
+            if ($chatUser->getKick()) {
+                $this->chatUserRepository->deleteUser($user);
 
                 return new JsonResponse([
                     'cmd' => 'ki',
-                    'msg' => StringUtils::replaceAsciiControlCharsUnicode($chatUser->kick),
+                    'msg' => StringUtils::replaceAsciiControlCharsUnicode($chatUser->getKick()),
                 ]);
             }
         } else {
@@ -91,15 +91,15 @@ class ChatController extends AbstractController
         $data['out'] = [];
         foreach ($messages as $message) {
             $data['out'][] = [
-                'id' => $message->id,
-                'text' => StringUtils::replaceAsciiControlChars(htmlspecialchars($message->text)),
-                'time' => date("H:i", $message->timestamp),
-                'color' => $message->color,
-                'userId' => $message->userId,
-                'nick' => $message->nick,
-                'admin' => $message->admin,
+                'id' => $message->getId(),
+                'text' => StringUtils::replaceAsciiControlChars(htmlspecialchars($message->getText())),
+                'time' => date("H:i", $message->getTimestamp()),
+                'color' => $message->getColor(),
+                'userId' => $message->getUser()?->getId(),
+                'nick' => $message->getNick(),
+                'admin' => $message->getAdmin(),
             ];
-            $lastId = $message->id;
+            $lastId = $message->getId();
         }
 
         $data['lastId'] = $lastId;
@@ -134,7 +134,7 @@ class ChatController extends AbstractController
         $ct = $request->query->get('ctext');
 
         // Detect command
-        $words = StringUtils::splitBySpaces($ct);
+        $words = StringUtils::splitBySpaces($ct??'');
         $commandMatch = [];
         // Handle command
         if (count($words) > 0 && preg_match('#^/([a-z]+)$#i', array_shift($words), $commandMatch)) {
@@ -212,7 +212,7 @@ class ChatController extends AbstractController
                 }
 
                 $deleted = $this->chatBanRepository->deleteBan($uid);
-                if ($deleted > 0) {
+                if ($deleted) {
                     return new JsonResponse([
                         'cmd' => 'aa',
                         'msg' => 'Unbanned ' . $words[0] . '!',
@@ -237,9 +237,9 @@ class ChatController extends AbstractController
                 $list = [];
                 foreach ($bans as $ban) {
                     $list[] = [
-                        'nick' => $ban->userNick,
-                        'reason' => $ban->reason,
-                        'date' => StringUtils::formatDate($ban->timestamp),
+                        'nick' => $ban->getUser()->getNick(),
+                        'reason' => $ban->getReason(),
+                        'date' => StringUtils::formatDate($ban->getTimestamp()),
                     ];
                 }
 
@@ -257,7 +257,7 @@ class ChatController extends AbstractController
         }
 
         // Handle normal message
-        $hash = md5($ct);
+        $hash = md5($ct??'');
         // Woo Hoo, Md5 hashtable
         if ($ct != '' && (!isset($_SESSION['lastchatmsg']) || $_SESSION['lastchatmsg'] != $hash)) {
             $this->chatRepository->addMessage($context->getCurrentUser()->getId(), $context->getCurrentUser()->getNick(), $ct, isset($_SESSION['ccolor']) ? '#' . $_SESSION['ccolor'] : '', $admin);

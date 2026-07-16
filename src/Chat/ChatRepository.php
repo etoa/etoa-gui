@@ -14,7 +14,7 @@ class ChatRepository extends AbstractRepository
     }
 
     /**
-     * @return ChatMessage[]
+     * @return Chat[]
      */
     public function getMessagesAfter(int $minId, int $channelId = 0): array
     {

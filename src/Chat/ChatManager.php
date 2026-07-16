@@ -71,7 +71,7 @@ class ChatManager
             return str_replace(
                 array('%nick%'),
                 array($nick),
-                $text->content
+                $text->getContent()
             );
         }
 
@@ -105,8 +105,8 @@ class ChatManager
         $chatUsers = $this->chatUserRepository->getChatUsers();
         foreach ($chatUsers as $chatUser) {
             $data[] = [
-                'id' => $chatUser->id,
-                'nick' => $chatUser->nick,
+                'id' => $chatUser->getUser()->getId(),
+                'nick' => $chatUser->getUser()->getNick(),
             ];
         }
 

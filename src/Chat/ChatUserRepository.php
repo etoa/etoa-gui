@@ -39,16 +39,9 @@ class ChatUserRepository extends AbstractRepository
             ->execute();
     }
 
-    public function getChatUser(int $userId): ?ChatUser
+    public function getChatUser(int|User $userId): ?ChatUser
     {
-        $data = $this->createQueryBuilder('q')
-            ->select('*')
-            ->from('chat_users')
-            ->where('user_id = :userId')
-            ->setParameter('userId', $userId)
-            ->fetchAssociative();
-
-        return $data !== false ? new ChatUser($data) : null;
+        return $this->findOneBy(['user'=>$userId]);
     }
 
     public function updateChatUser(int $userId, string $nick): void
@@ -76,7 +69,7 @@ class ChatUserRepository extends AbstractRepository
         $this->save();
     }
 
-    public function deleteUser(User $user): void
+    public function deleteUser(User|int $user): void
     {
         $chatUser = $this->find($user);
 

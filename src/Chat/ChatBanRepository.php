@@ -17,15 +17,7 @@ class ChatBanRepository extends AbstractRepository
 
     public function getUserBan(int $userId): ?ChatBan
     {
-        $data = $this->createQueryBuilder('q')
-            ->select('b.*', 'u.user_nick')
-            ->from('chat_banns', 'b')
-            ->innerJoin('b', 'users', 'u', 'u.user_id=b.user_id')
-            ->where('b.user_id = :userId')
-            ->setParameter('userId', $userId)
-            ->fetchAssociative();
-
-        return $data !== false ? new ChatBan($data) : null;
+        return $this->find($userId);
     }
 
     /**
@@ -42,7 +34,7 @@ class ChatBanRepository extends AbstractRepository
         return array_map(fn (array $row) => new ChatBan($row), $data);
     }
 
-    public function banUser(User $user, string $reason, bool $forceReason = false): void
+    public function banUser(User|int $user, string $reason, bool $forceReason = false): void
     {
         $ban = $this->find($user);
 
@@ -61,11 +53,16 @@ class ChatBanRepository extends AbstractRepository
         $this->save();
     }
 
-    public function deleteBan(User $user): void
+    public function deleteBan(User|int $user): bool
     {
         $ban = $this->find($user);
 
-        $this->remove($ban);
-        $this->save();
+        if($ban) {
+            $this->remove($ban);
+            $this->save();
+            return true;
+        }
+
+        return false;
     }
 }
