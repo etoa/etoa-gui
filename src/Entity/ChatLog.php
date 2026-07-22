@@ -29,11 +29,11 @@ class ChatLog
     #[ORM\JoinColumn(name: 'user_id', referencedColumnName: 'user_id')]
     private ?User $user = null;
 
-    #[ORM\Column(type: "boolean")]
-    private bool $admin;
+    #[ORM\Column(type: "smallint")]
+    private int $admin = 0;
 
     #[ORM\Column(type: "boolean")]
-    private bool $private;
+    private bool $private = false;
 
     #[ORM\Column]
     private string $channel;
@@ -91,12 +91,12 @@ class ChatLog
         return $this;
     }
 
-    public function getAdmin(): ?bool
+    public function getAdmin(): ?int
     {
         return $this->admin;
     }
 
-    public function setAdmin(bool $admin): static
+    public function setAdmin(int $admin): static
     {
         $this->admin = $admin;
 

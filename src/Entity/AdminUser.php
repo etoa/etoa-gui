@@ -219,4 +219,9 @@ class AdminUser implements PasswordAuthenticatedUserInterface
 
         return $this;
     }
+
+    public function isContact(): ?bool
+    {
+        return $this->isContact;
+    }
 }

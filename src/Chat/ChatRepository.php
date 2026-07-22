@@ -5,6 +5,7 @@ namespace EtoA\Chat;
 use Doctrine\Persistence\ManagerRegistry;
 use EtoA\Core\AbstractRepository;
 use EtoA\Entity\Chat;
+use EtoA\Entity\User;
 
 class ChatRepository extends AbstractRepository
 {
@@ -40,26 +41,18 @@ class ChatRepository extends AbstractRepository
         $this->save();
     }
 
-    public function addMessage(int $userId, string $nick, string $message, string $color, int $admin): void
+    public function addMessage(User $user, string $chatMessage, string $color, int $admin): void
     {
-        $this->createQueryBuilder('q')
-            ->insert('chat')
-            ->values([
-                'timestamp' => ':time',
-                'text' => ':text',
-                'user_id' => ':userId',
-                'nick' => ':nick',
-                'color' => ':color',
-                'admin' => ':admin',
-            ])
-            ->setParameters([
-                'time' => time(),
-                'text' => $message,
-                'userId' => $userId,
-                'nick' => $nick,
-                'color' => $color,
-                'admin' => $admin,
-            ])->executeQuery();
+        $message = new Chat();
+        $message->setTimestamp(time());
+        $message->setText($chatMessage);
+        $message->setUser($user);
+        $message->setNick($user->getNick());
+        $message->setColor($color);
+        $message->setAdmin($admin);
+
+        $this->persist($message);
+        $this->save();
     }
 
     public function cleanupMessage(int $keep): int

@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace EtoA\Entity;
 
-use Doctrine\DBAL\Types\Types;
 use EtoA\Building\BuildingListItemRepository;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -213,5 +212,10 @@ class BuildingListItem
         $this->building = $building;
 
         return $this;
+    }
+
+    public function isPeopleWorkingStatus(): ?bool
+    {
+        return $this->peopleWorkingStatus;
     }
 }

@@ -37,6 +37,18 @@ function setCountdown(elem, time, diff, elemToSetEmpty) {
 }
 
 $( document ).ready(function() {
+  $('#open-chat').click(function(e){
+    e.preventDefault();
+
+    $.ajax({
+      url: '/api/chat/open',
+      method: 'POST',
+      success: function (response) {
+        window.location.reload();
+      },
+    });
+  });
+
   let elements = document.querySelectorAll( '.openReport' );
   elements.forEach((ele)=>{
     ele.addEventListener('click',()=>{setReportRead(ele)})

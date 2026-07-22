@@ -1,14 +1,15 @@
-body {
-  background: #000 url("../images/background.jpg");
+#chatcontainer {
+  background: #000 url("/build/images/background.jpg");
   color: #fff;
   font-family: arial;
   font-size: 9pt;
-  margin: 0px;
-  padding: 0px;
+  margin: 0;
+  padding: 0;
+  width: 350px;
 }
 
-input,
-select {
+#chatcontainer input[type='text'],
+#chatcontainer select {
   border: 1px solid #fff;
   background: #111;
   color: #fff;
@@ -17,7 +18,6 @@ select {
 #chatcontainer {
   position: fixed;
   top: 0;
-  left: 0;
   right: 0;
   bottom: 40px;
   word-wrap: break-word;
@@ -36,6 +36,7 @@ div.serverMessage {
   overflow: auto;
   vertical-align: middle;
   font-family: Verdana, Arial, sans-serif;
+  height: 100%;
 }
 
 #chatitems img {
@@ -70,8 +71,7 @@ div.serverMessage {
 
 #loading {
   position: fixed;
-  left: 0px;
-  right: 0px;
+  right: 0;
   bottom: 30px;
   height: 16px;
   background: black;
@@ -94,13 +94,15 @@ div.serverMessage {
 }
 
 #chatinput {
-  position: fixed;
-  left: 0px;
-  right: 0px;
-  bottom: 0px;
+  right: 0;
+  bottom: 0;
   background: #222;
   height: 20px;
   padding: 5px 5px 5px 5px;
+}
+
+#chatinput form {
+  margin: 0;
 }
 
 #ctext {
@@ -119,7 +121,7 @@ div.serverMessage {
   position: fixed;
   right: 0;
   /* should be #loading bottom +1px */
-  bottom: 31px;
+  bottom: 41px;
   /* not transparent, so it hides oversized msgFail text below */
 }
 
@@ -140,7 +142,7 @@ div.serverMessage {
 #logoutButton {
   position: absolute;
   top: 1px;
-  right: 19px;
+  right: 0;
   z-index: 100;
   font-weight: bold;
   cursor: pointer;

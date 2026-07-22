@@ -245,16 +245,19 @@ class UserTwigSubscriber implements EventSubscriberInterface
 
         $cu = $this->security->getUser();
 
-        $controller = explode('::', $event->getRequest()->attributes->get('_controller'));
+        $controller = $event->getRequest()->attributes->get('_controller');
+        if(is_string($controller)) {
+            $controller = explode('::', $controller);
 
-        //redirect to setup if new account
-        if($cu && !$cu->getData()->isSetup() && !in_array($controller[0],self::WHITELIST)) { //TODO $page != "help" && $page != "contact"
-            $event->setController(fn() => new RedirectResponse(($this->router->generate('game.setup.race'))));
+            //redirect to setup if new account
+            if($cu && !$cu->getData()->isSetup() && !in_array($controller[0],self::WHITELIST)) { //TODO $page != "help" && $page != "contact"
+                $event->setController(fn() => new RedirectResponse(($this->router->generate('game.setup.race'))));
+            }
+
+            //block internal alliance routes if not in alliance
+            if(in_array($controller[0], self::ALLIANCE_BLOCKLIST) && !$cu->getData()->getAlliance())
+                $event->setController(fn() => new RedirectResponse(($this->router->generate('game.alliance'))));
         }
-
-        //block internal alliance routes if not in alliance
-        if(in_array($controller[0], self::ALLIANCE_BLOCKLIST) && !$cu->getData()->getAlliance())
-            $event->setController(fn() => new RedirectResponse(($this->router->generate('game.alliance'))));
     }
 
     private function renderBlocked(RequestEvent $event,string $text, string $image, string $title):void

@@ -6,6 +6,7 @@ use Doctrine\Persistence\ManagerRegistry;
 use EtoA\Entity\ChatLog;
 use EtoA\Core\AbstractRepository;
 use EtoA\Entity\ChatBan;
+use EtoA\Entity\User;
 
 class ChatLogRepository extends AbstractRepository
 {
@@ -40,29 +41,19 @@ class ChatLogRepository extends AbstractRepository
             ->execute();
     }
 
-    public function addLog(int $userId, string $nick, string $text, string $color, int $admin, string $channel = ''): void
+    public function addLog(User $user, string $text, string $color, int $admin, string $channel = ''): void
     {
-        $this->createQueryBuilder('q')
-            ->insert('chat_log')
-            ->values([
-                'timestamp' => ':time',
-                'user_id' => ':userId',
-                'nick' => ':nick',
-                'text' => ':text',
-                'color' => ':color',
-                'admin' => ':admin',
-                'channel' => ':channel',
-            ])
-            ->setParameters([
-                'time' => time(),
-                'userId' => $userId,
-                'nick' => $nick,
-                'text' => $text,
-                'color' => $color,
-                'admin' => $admin,
-                'channel' => $channel,
-            ])
-            ->executeQuery();
+        $log = new ChatLog();
+        $log->setTimestamp(time());
+        $log->setUser($user);
+        $log->setNick($user->getNick());
+        $log->setText($text);
+        $log->setColor($color);
+        $log->setChannel($channel);
+        $log->setAdmin($admin);
+
+        $this->persist($log);
+        $this->save();
     }
 
     public function countBySearch(ChatLogSearch $search = null): int

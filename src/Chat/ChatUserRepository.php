@@ -44,29 +44,34 @@ class ChatUserRepository extends AbstractRepository
         return $this->findOneBy(['user'=>$userId]);
     }
 
-    public function updateChatUser(int $userId, string $nick): void
+    public function updateChatUser(User $user): void
     {
-        $this->getConnection()->executeQuery('
-            INSERT INTO
-				chat_users
-			(user_id, nick, timestamp)
-			VALUES (:userId, :nick, :time)
-			ON DUPLICATE KEY UPDATE timestamp = :time, nick = :nick
-        ', [
-                'userId' => $userId,
-                'nick' => $nick,
-                'time' => time(),
-            ]);
+        $chatUser = $this->findOneBy(['user' => $user]);
+
+        if (!$chatUser) {
+            $chatUser = new ChatUser();
+            $chatUser->setUser($user);
+            $chatUser->setNick($user->getNick());
+
+            $this->persist($chatUser);
+        }
+
+        $chatUser->setTimestamp(time());
+        $this->save();
     }
 
-    public function kickUser(User $user, string $kickMessage): void
+    public function kickUser(User|int $user, string $kickMessage): bool
     {
         $chatUser = $this->find($user);
 
-        if($chatUser)
+        if($chatUser) {
             $chatUser->setKick($kickMessage);
+            $this->save();
 
-        $this->save();
+            return true;
+        }
+
+        return false;
     }
 
     public function deleteUser(User|int $user): void

@@ -41,6 +41,7 @@ class UserSessionSubscriber implements EventSubscriberInterface
                 $this->userSessionManager->unregisterSession($user->getData(), false);
             }
 
+            $session->set('chat',$user->getData()->getUserProperties()->isStartUpChat());
 
             $sessionModel = new UserSession();
             $sessionModel

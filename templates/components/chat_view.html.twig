@@ -1,0 +1,58 @@
+{% if not this.ban and this.showChat %}
+    <div
+            {{ attributes }}
+            data-poll="delay(1000)|default"
+    >
+        <link rel="stylesheet" type="text/css" href="{{ asset('build/web/css/chat.css' ) }}"/>
+
+        <fieldset>
+            <div id="chatcontainer">
+                <button id="logoutButton" data-action="live#action" data-live-action-param="logout" title="Chat schliessen">
+                    X
+                </button>
+                <div id="chatitems">
+                    {% for message in this.messages %}
+                        {% if not message.user %}
+                            <div class="chatmsg systemMessage">
+                                <{{ message.timestamp|date('H:i') }}> {{ message.text }}
+                            </div>
+                        {% else %}
+                            <div class="chatmsg">
+                                {% if message.admin == 1 %}
+                                    <img src="{{ asset('/build/images/star_y.gif') }}" alt="Admin" title="Admin"/>
+                                {% elseif message.admin == 2 %}
+                                    <img src="{{ asset('/build/images/star_g.gif') }}" alt="Chat-Moderator" title="Chat-Moderator"/>
+                                {% elseif message.admin == 3 %}
+                                    <img src="{{ asset('/build/images/star_r.gif') }}" alt="Entwickler" title="Entwickler"/>
+                                {% elseif message.admin == 4 %}
+                                    <img src="{{ asset('/build/images/star_green.gif') }}" alt="Leiter Team Community" title="Leiter Team Community"/>
+                                {% elseif message.admin == 5 %}
+                                    <img src="{{ asset('/build/images/star_c.gif') }}" alt="Entwickler" title="Entwickler"/>
+                                {% endif %}
+                                <<a style="color:{% if message.color %}{{ message.color }}{% else %}#fff{% endif %}"
+                                    href="{{ path('admin.users.view', {id: message.user.id}) }}">{{ message.nick }}</a>
+                                | {{ message.timestamp|date('H:i') }}> {{ message.text }}
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+                <div id="chatinput">
+                    {{ form_start(form) }}
+                    {{ form_widget(form.message) }}
+                    {{ form_end(form) }}
+                </div>
+            </div>
+            <div id="loading">
+                <div id="status">
+                    <span id="usercount">
+                        {% if this.users|length > 0 %}
+                            {{ this.users|length }} User
+                        {% else %}
+                            Keine User online
+                        {% endif %}
+                    </span>
+                </div>
+            </div>
+        </fieldset>
+    </div>
+{% endif %}

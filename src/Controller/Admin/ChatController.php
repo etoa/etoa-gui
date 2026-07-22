@@ -8,7 +8,6 @@ use EtoA\Chat\ChatManager;
 use EtoA\Chat\ChatUserRepository;
 use EtoA\Entity\User;
 use EtoA\Form\Type\Admin\ChatLogSearchType;
-use EtoA\User\UserRepository;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -21,8 +20,7 @@ class ChatController extends AbstractAdminController
         private readonly ChatLogRepository  $chatLogRepository,
         private readonly ChatUserRepository $chatUserRepository,
         private readonly ChatBanRepository  $chatBanRepository,
-        private readonly ChatManager        $chatManager,
-        private readonly UserRepository     $userRepository,
+        private readonly ChatManager        $chatManager
     )
     {
     }

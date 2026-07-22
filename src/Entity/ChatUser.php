@@ -18,7 +18,10 @@ class ChatUser
     private int $timestamp;
 
     #[ORM\Column]
-    private ?string $kick;
+    private string $nick = '';
+
+    #[ORM\Column]
+    private ?string $kick = '';
 
     public function getTimestamp(): ?int
     {
@@ -55,4 +58,18 @@ class ChatUser
 
         return $this;
     }
+
+    public function getNick(): ?string
+    {
+        return $this->nick;
+    }
+
+    public function setNick(string $nick): static
+    {
+        $this->nick = $nick;
+
+        return $this;
+    }
+
+
 }

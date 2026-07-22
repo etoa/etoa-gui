@@ -14,8 +14,7 @@
   <div class="navigation-top">
     <a href="{{ path('game.stats.total') }}" title="Statistiken (Kürzel: [s])">Statistiken</a>
     <a href="{{ etoaUrl('forum') }}" target="_blank" title="Forum">Forum</a>
-    <a href="javascript:"
-       onclick="{{ onClick('chat') }}" title="Chat">Chat</a>
+    <a href=""  id="open-chat" title="Chat">Chat</a>
     <a href="javascript:"
        onclick="{{ onClick('teamspeak') }}" title="Discord">Discord</a>
     <a href="{{ path('game.config.general') }}" title="Einstellungen">Einstellungen</a>
@@ -166,6 +165,7 @@
       {% endblock %}
     </div>
   </div>
+  {{ component('chat_view',{id:'ingame-chat'}) }}
 
 </div>
 {% endblock %}

@@ -30,8 +30,8 @@ class Chat
     #[ORM\JoinColumn(name: 'user_id', referencedColumnName: 'user_id')]
     private ?User $user = null;
 
-    #[ORM\Column(type: "boolean")]
-    private bool $admin = false;
+    #[ORM\Column(type: "smallint")]
+    private int $admin = 0;
 
     #[ORM\Column(type:'integer')]
     private int $channelId = 0;
@@ -89,12 +89,12 @@ class Chat
         return $this;
     }
 
-    public function getAdmin(): ?bool
+    public function getAdmin(): ?int
     {
         return $this->admin;
     }
 
-    public function setAdmin(bool $admin): static
+    public function setAdmin(int $admin): static
     {
         $this->admin = $admin;
 
@@ -123,10 +123,5 @@ class Chat
         $this->user = $user;
 
         return $this;
-    }
-
-    public function isAdmin(): ?bool
-    {
-        return $this->admin;
     }
 }
