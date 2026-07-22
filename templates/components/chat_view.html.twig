@@ -1,8 +1,7 @@
-{% if not this.ban and this.showChat %}
-    <div
-            {{ attributes }}
-            data-poll="delay(1000)|default"
-    >
+<div {{ attributes }}
+        {% if not this.ban and this.showChat %}data-poll="delay(1000)|default"{% endif %}
+>
+    {% if not this.ban and this.showChat %}
         <link rel="stylesheet" type="text/css" href="{{ asset('build/web/css/chat.css' ) }}"/>
 
         <fieldset>
@@ -54,5 +53,5 @@
                 </div>
             </div>
         </fieldset>
-    </div>
-{% endif %}
+    {% endif %}
+</div>
