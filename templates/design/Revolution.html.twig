@@ -113,6 +113,7 @@
             <div id="c_aside">
                 {{ BBCodeToHTML(infoText|default(''))|raw }}
             </div>
+            {{ component('chat_view',{id:'ingame-chat'}) }}
         </aside>
     </div>
 
@@ -156,6 +157,6 @@
 
         <a href="#" id="f_chat" ></a>
         <a href="#" id="f_chat_on" ></a>
-
+        <a href=""  id="open-chat" title="Chat">Chat</a>
     </div>
 {% endblock %}

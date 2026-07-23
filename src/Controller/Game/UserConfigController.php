@@ -33,7 +33,6 @@ use EtoA\User\UserSessionLogRepository;
 use EtoA\User\UserSessionRepository;
 use EtoA\User\UserSessionSearch;
 use EtoA\User\UserSittingRepository;
-use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Form\Event\PreSetDataEvent;
 use Symfony\Component\Form\Extension\Core\Type\ButtonType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
@@ -42,6 +41,7 @@ use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\ColorType;
 use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
+use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
@@ -642,11 +642,10 @@ class UserConfigController extends AbstractGameController
     public function misc(Request              $request,
                          UserHolidayService   $userHolidayService,
                          UserService          $userService,
-                         ConfigurationService $config,
-                         Security             $security): Response
+                         ConfigurationService $config): Response
     {
         $user = $this->getUser()->getData();
-        $form = $this->createFormBuilder($user)
+        $form = $this->container->get('form.factory')->createNamed('hmode_form',FormType::class,$user)
             ->add('deactivate', SubmitType::class, [
                 'label' => 'Urlaubsmodus deaktivieren',
                 'attr' => ['style' => 'color:#0f0']
@@ -654,21 +653,7 @@ class UserConfigController extends AbstractGameController
             ->add('activate', SubmitType::class, [
                 'label' => 'Urlaubsmodus aktivieren',
                 'attr' => ['onclick' => "return confirm('Soll der Urlaubsmodus wirklich aktiviert werden?')"]
-            ])
-            ->add('cancelDelete', SubmitType::class, [
-                'label' => 'Löschantrag aufheben',
-                'attr' => ['style' => 'color:#0f0']
-            ])
-            ->add('confirmDelete', SubmitType::class, [
-                'label' => 'Account löschen'
-            ])
-            ->add('password', PasswordType::class, [
-                'constraints' => [
-                    new SamePasswordConstraint('Falsches Passwort!')
-                ],
-                'mapped' => false,
-            ])
-            ->getForm();
+            ]);
 
         $form->handleRequest($request);
 
@@ -690,22 +675,6 @@ class UserConfigController extends AbstractGameController
                 } else {
                     $msg['error'] = "Urlaubsmodus kann nicht aufgehoben werden!";
                 }
-            }
-
-            if ($form->get('cancelDelete')->isClicked()) {
-                $userService->updateDelete($user, 0);
-                $msg['success'] = "Löschantrag aufgehoben!";
-                $userService->addToUserLog($user, "settings", "{nick} hat seine Accountlöschung aufgehoben.", true);
-                $showButton = true;
-            }
-
-            if ($form->get('confirmDelete')->isClicked()) {
-                $timestamp = time() + ($config->getInt('user_delete_days') * 3600 * 24);
-                $userService->updateDelete($user, $timestamp);
-                $msg['success'] = "Deine Daten werden am " . StringUtils::formatDate(time() + ($config->getInt('user_delete_days') * 3600 * 24)) . " Uhr von unserem System gelöscht! Wir wünschen weiterhin viel Erfolg im Netz!";
-                $userHolidayService->activateHolidayMode($user, true);
-                $userService->addToUserLog($user, "settings", "{nick} hat seinen Account zur Löschung freigegeben.", true);
-                $security->logout();
             }
         }
 

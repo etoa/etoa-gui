@@ -1,10 +1,12 @@
 select,
 input:not([type]),
 input[type="text"],
+input[type="email"],
 input[type="reset"],
 input[type="number"],
 input[type="submit"],
 button[type="submit"],
+button[type="button"],
 input[type="password"],
 input[type="file"],
 input[type="button"],
@@ -26,6 +28,7 @@ select {
 
 input:not([type]),
 input[type="text"],
+input[type="email"],
 input[type="number"],
 input[type="password"],
 textarea {
@@ -36,15 +39,18 @@ textarea {
 
 input[type="submit"],
 button[type="submit"],
+button[type="button"],
 input[type="reset"],
 input[type="button"] {
     background: #222255 url('images/button1.jpg') 100% 100%;
     padding: 0.2rem 0.6rem;
     font-family: Zekton-Bold, sans-serif;
+    white-space:nowrap
 }
 
 input:hover[type="submit"],
 button:hover[type="submit"],
+button:hover[type="button"],
 input:hover[type="reset"],
 input:hover[type="button"]{
     background: #222255 url('images/button2.jpg') 100% 100%;
