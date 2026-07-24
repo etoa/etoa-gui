@@ -86,7 +86,7 @@ class ShipTransformRepository extends AbstractRepository
     private function shipQueryBuilder(int|User $user, Planet|int $entity): QueryBuilder
     {
         return $this->createQueryBuilder('q')
-            ->innerJoin('App:ShipListItem', 'l', 'WITH', 'l.id = q.ship')
+            ->innerJoin('App:ShipListItem', 'l', 'WITH', 'l.ship = q.ship')
             ->where('l.user = :user')
             ->andWhere('l.entity = :entity')
             ->andWhere('l.count > 0')
@@ -99,7 +99,7 @@ class ShipTransformRepository extends AbstractRepository
     private function defenseQueryBuilder(int|User $user, Planet|int $entity): QueryBuilder
     {
         return $this->createQueryBuilder('q')
-            ->innerJoin('App:DefenseListItem', 'l', 'WITH', 'l.id = q.defense')
+            ->innerJoin('App:DefenseListItem', 'l', 'WITH', 'l.defense = q.defense')
             ->where('l.user = :user')
             ->andWhere('l.entity = :entity')
             ->andWhere('l.count > 0')

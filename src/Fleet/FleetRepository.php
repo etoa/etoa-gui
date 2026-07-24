@@ -133,7 +133,7 @@ class FleetRepository extends AbstractRepository
             ->execute();
     }
 
-    public function add(User $user, int $launchTime, int $landTime, Entity $entityFrom, Entity $entityTo, string $action, int $status, BaseResources $resources, BaseResources $fetch = null, int $pilots = 0, int $fuelUsage = 0, int $foodUsage = 0, int $powerUsage = 0, User $leader = null, int $nextId = 0, int $nextActionTime = 0, int $supportFuelUsage = 0, int $supportFoodUsage = 0): Fleet
+    public function add(User $user, int $launchTime, int $landTime, Entity $entityFrom, Entity $entityTo, string $action, int $status, BaseResources $resources, BaseResources $fetch = null, int $pilots = 0, int $fuelUsage = 0, int $foodUsage = 0, int $powerUsage = 0, ?Fleet $leader = null, int $nextId = 0, int $nextActionTime = 0, int $supportFuelUsage = 0, int $supportFoodUsage = 0): Fleet
     {
         $fetch = $fetch !== null ? $fetch : new BaseResources();
 
@@ -175,7 +175,7 @@ class FleetRepository extends AbstractRepository
 
     }
 
-    public function update(Fleet $fleet, int $launchTime, int $landTime, Entity $entityFrom, Entity $entityTo, int $status, User $leader = null, BaseResources $resources = null, int $usageFuel = null, int $usageFood = null): void
+    public function update(Fleet $fleet, int $launchTime, int $landTime, Entity $entityFrom, Entity $entityTo, int $status, ?Fleet $leader = null, BaseResources $resources = null, int $usageFuel = null, int $usageFood = null): void
     {
         $fleet->setLaunchTime($launchTime);
         $fleet->setLandTime($landTime);

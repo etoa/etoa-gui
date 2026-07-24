@@ -5,10 +5,8 @@ namespace EtoA\Universe;
 use EtoA\Admin\AdminUserRepository;
 use EtoA\Alliance\AllianceDiplomacyLevel;
 use EtoA\Alliance\AllianceDiplomacyRepository;
-use EtoA\Alliance\AllianceRepository;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Entity\Report;
-use EtoA\Entity\Wormhole;
 use EtoA\Image\ImageUtil;
 use EtoA\Message\ReportRepository;
 use EtoA\Message\ReportSearch;
@@ -18,7 +16,6 @@ use EtoA\Universe\Entity\EntityType;
 use EtoA\Universe\Planet\PlanetRepository;
 use EtoA\Universe\Resources\ResIcons;
 use EtoA\Universe\Resources\ResourceNames;
-use EtoA\Universe\Star\StarRepository;
 use EtoA\User\UserPropertiesRepository;
 use EtoA\User\UserService;
 use Symfony\Bundle\SecurityBundle\Security;
@@ -44,7 +41,7 @@ class CellRenderer
     public function render(array $entities):string {
         ob_start();
         $cu = $this->security->getUser()->getData();
-        $properties = $this->userPropertiesRepository->getOrCreateProperties($cu->getId());
+        $properties = $this->userPropertiesRepository->getOrCreateProperties($cu);
 
         foreach ($entities as $ent) {
             if ($ent->getPos() == 1) {
@@ -185,13 +182,13 @@ class CellRenderer
                 echo $ent->getType()->getEntityCodeString();
 
             if ($ent->getCode() == EntityType::WORMHOLE) {
-                if ($ent->isPersistent()) {
+                if ($ent->getWormhole()->isPersistent()) {
                     echo " [stabil]";
                 } else {
                     echo " [veränderlich]";
                 }
                 $tent = $ent->getWormhole();
-                echo "<br/>Ziel: <a href=\"?page=cell&amp;id=" . $tent->getCellId() . "\">" . $tent . "</a>";
+                echo "<br/>Ziel: <a href=\"?page=cell&amp;id=" . $tent->getEntity()->getCell()->getId() . "\">" . $tent->getEntity()->toString() . "</a>";
             } elseif ($ent->getCode() == EntityType::PLANET) {
                 $planet = $this->planetRepo->find($ent->getId());
                 if ($planet->hasDebrisField()) {
@@ -207,7 +204,7 @@ class CellRenderer
                 }
             }
             echo "</td>
-                    <td $addstyle><a $class href=\"" . $this->router->generate('game.entity',['id'=>$ent->getId()]) . "\">" . BBCodeUtils::toHTML($ent->displayName()) . "</a></td>
+                    <td $addstyle><a $class href=\"" . $this->router->generate('game.entity',['id'=>$ent->getId()]) . "\">" . BBCodeUtils::toHTML($ent->displayName()??'') . "</a></td>
                     <td $addstyle>";
             if ($owner) {
                 $header = $owner->getNick();
@@ -257,7 +254,7 @@ class CellRenderer
                     $report = $this->reportRepository->searchReport(ReportSearch::create()->userId($cu->id)->type('spy')->entity1Id($ent->id()));
                     if ($report !== null) {
                         $r = Report::createFactory($report);
-                        echo "<span " . tm($r->subject, $r . "<br style=\"clear:both\" />") . "><a href=\"javascript:;\" onclick=\"xajax_launchAnalyzeProbe(" . $ent->id() . ");\" title=\"Analysieren\">" . ImageUtil::icon("spy") . "</a></span>";
+                        echo "<span " . tm($r->getSubject(), $r . "<br style=\"clear:both\" />") . "><a href=\"javascript:;\" onclick=\"xajax_launchAnalyzeProbe(" . $ent->id() . ");\" title=\"Analysieren\">" . ImageUtil::icon("spy") . "</a></span>";
                     } else
                         echo "<a href=\"javascript:;\" onclick=\"xajax_launchAnalyzeProbe(" . $ent->getId() .");\" title=\"Analysieren\">" . ImageUtil::icon("spy") . "</a> ";
                 } else

@@ -68,8 +68,8 @@ class FleetLaunch
     private int $supportTime = 0;
     private int $supportCostsFood = 0;
     private int $supportCostsFuel = 0;
-    private int $supportCostsFuelPerSec = 0;
-    private int $supportCostsFoodPerSec = 0;
+    private float $supportCostsFuelPerSec = 0;
+    private float $supportCostsFoodPerSec = 0;
     private int $fakeId = 0;
     private array $shipActions = [];
     private array $factoredShipActions = [];
@@ -83,7 +83,10 @@ class FleetLaunch
     private int $supportFood = 0;
     private int $supportFuel = 0;
     private string $support = '';
-    private ?User $leader = null;
+    /**
+     * The id of the alliance leader fleet this fleet joins (null = this fleet is the leader / no join)
+     */
+    private ?int $leader = null;
 
 
     /**
@@ -236,15 +239,28 @@ class FleetLaunch
     function setSpeedPercent($perc): void
     {
         $this->speedPercent = max(1, min(100, $perc));
-        $this->duration = $this->distance / ($this->getSpeed()>0?$this->getSpeed():1);    // Calculate duration
-        $this->duration *= 3600;    // Convert to seconds
-        $this->duration += $this->getTimeLaunchLand();    // Add launch and land time
-        $this->duration = ceil($this->duration);
+        $duration = $this->distance / ($this->getSpeed() > 0 ? $this->getSpeed() : 1);    // Calculate duration (hours)
+        $duration *= 3600;    // Convert to seconds
+        $duration += $this->getTimeLaunchLand();    // Add launch and land time
+        $this->duration = (int) ceil($duration);
     }
 
     function getCostsPerHundredAE(): float
     {
         return ceil($this->costsPerHundredAE * $this->speedPercent / 100);
+    }
+
+    /**
+     * Raw (unfactored) values, needed when snapshotting the first flight leg for wormhole jumps
+     */
+    public function getRawSpeed(): float
+    {
+        return $this->speed;
+    }
+
+    public function getRawCostsPerHundredAE(): float
+    {
+        return $this->costsPerHundredAE;
     }
 
     function getTimeLaunchLand(): float
@@ -360,7 +376,7 @@ class FleetLaunch
     function loadPeople($ammount): float|int
     {
         $ammount = max(0, $ammount);
-        $this->capacityPeopleLoaded = floor(min($ammount, $this->capacityPeopleTotal, ($this->pilotsAvailable() - $this->getPilots())));
+        $this->capacityPeopleLoaded = floor(min($ammount, $this->capacityPeopleTotal, ($this->getPilotsAvailable() - $this->getPilots())));
 
         return $this->capacityPeopleLoaded;
     }
@@ -797,22 +813,22 @@ class FleetLaunch
         $this->supportCostsFuel = $supportCostsFuel;
     }
 
-    public function getSupportCostsFuelPerSec(): int
+    public function getSupportCostsFuelPerSec(): float
     {
         return $this->supportCostsFuelPerSec;
     }
 
-    public function setSupportCostsFuelPerSec(int $supportCostsFuelPerSec): void
+    public function setSupportCostsFuelPerSec(float $supportCostsFuelPerSec): void
     {
         $this->supportCostsFuelPerSec = $supportCostsFuelPerSec;
     }
 
-    public function getSupportCostsFoodPerSec(): int
+    public function getSupportCostsFoodPerSec(): float
     {
         return $this->supportCostsFoodPerSec;
     }
 
-    public function setSupportCostsFoodPerSec(int $supportCostsFoodPerSec): void
+    public function setSupportCostsFoodPerSec(float $supportCostsFoodPerSec): void
     {
         $this->supportCostsFoodPerSec = $supportCostsFoodPerSec;
     }
@@ -887,12 +903,12 @@ class FleetLaunch
         $this->action = $action;
     }
 
-    public function getLeader(): ?User
+    public function getLeader(): ?int
     {
         return $this->leader;
     }
 
-    public function setLeader(?User $leader): void
+    public function setLeader(?int $leader): void
     {
         $this->leader = $leader;
     }

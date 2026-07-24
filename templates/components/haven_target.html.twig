@@ -1,109 +1,137 @@
 {% import 'macros.html.twig' as macros %}
+{% set FUEL = constant('EtoA\\Universe\\Resources\\ResourceNames::FUEL') %}
+{% set FOOD = constant('EtoA\\Universe\\Resources\\ResourceNames::FOOD') %}
 
-<div
-    {{ attributes }}
-    data-action="change->live#update"
->
-    {{ form_start(form) }}
-        <twig:Table title="Zielwahl">
-            {% block table_content %}
-                <tr>
-                    <th><b>Startplanet:</b></th>
-                    <td style="padding:2px 2px 3px 6px;background:#000;color:#fff;height:47px;">
-                        <img src="{{ outerScope.this.fleetLaunch.sourceEntity.imagePath }}" style="float:left;">
-                        <br/>&nbsp;&nbsp; {{ outerScope.this.fleetLaunch.sourceEntity.displayName }} ({{ outerScope.this.fleetLaunch.sourceEntity.entityCodeString }} , Besitzer:
-                        {{ outerScope.this.fleetLaunch.owner.nick }})
-                    </td>
-                </tr>
-                <tr id="manuelselect">
-                    <th>Manuelle Eingabe:</th>
-                    <td>
-                        {{ form_widget(outerScope.form.csx) }}&nbsp;/&nbsp;
-                        {{ form_widget(outerScope.form.csy) }}&nbsp;&nbsp;:&nbsp;&nbsp;
-                        {{ form_widget(outerScope.form.ccx) }}&nbsp;/&nbsp;
-                        {{ form_widget(outerScope.form.ccy) }}&nbsp;&nbsp;:&nbsp;&nbsp;
-                        {{ form_widget(form.psp) }}</td>
-                </tr>
-                <tr id="bookmarkselect">
-                    <th>Zielfavoriten:</th>
-                    <td>
-                        {{ form_widget(outerScope.form.bookmark) }}
-                    </td>
-                </tr>
-                <tr id="speedselect">
-                    <th>Speedfaktor:</th>
-                    <td>
-                        {{ form_widget(outerScope.form.speed) }}%
-                    </td>
-                </tr>
-                <tr>
-                    <th id="targettitle">
-                        <b>Ziel-Informationen:</b>
-                    </th>
-                    <td id="targetinfo" style="padding:2px 2px 3px 6px;background:#000;color:#fff;height:47px;">
-                        {% if outerScope.this.targetEntity %}
-                            <img src="{{ outerScope.this.targetEntity.getType.imagePath }}"/>
-                            <br/> {{ outerScope.this.targetEntity.toString }} ({{ outerScope.this.targetEntity.codeString }}, Besitzer: {{ outerScope.this.targetEntity.getOwner }})
-                        {% else %}
-                            <div style="color:#f00">Ziel nicht vorhanden!</div>
-                        {% endif %}
-                    </td>
-                </tr>
-                <tr>
-                    <th>Entfernung:</th>
-                    <td id="distance">{{ outerScope.this.distance }}</td>
-                </tr>
-                <tr>
-                    <th>Kosten/100 AE:</th>
-                    <td id="costae">{{ formatNumber(outerScope.this.fleetLaunch.getCostsPerHundredAE) }} t {{ constant('EtoA\\Universe\\Resources\\ResourceNames::FUEL') }}</td>
-                </tr>
-                <tr>
-                    <th>Geschwindigkeit:</th>
-                    <td id="speed">{{ formatNumber(outerScope.this.fleetLaunch.getSpeed) }} AE/h
-                        {% if outerScope.this.fleetLaunch.sBonusSpeed > 1 %}
-                            (inkl. {{ formatPercentString(outerScope.this.fleetLaunch.sBonusSpeed) }} Mysticum-Bonus)
-                        {% endif %}
-                    </td>
-                </tr>
-                <tr>
-                    <th>Dauer:</th>
-                    <td><span id="duration" style="font-weight:bold;">{{ outerScope.this.duration }}</span> (inkl. Start- und Landezeit von
-                        {{ formatTimespan(outerScope.this.fleetLaunch.getTimeLaunchLand) }} )
-                    </td>
-                </tr>
-                <tr>
-                    <th>Treibstoff:</th>
-                    <td><span id="costs" style="font-weight:bold;">{{ outerScope.this.costs }}</span> (inkl. Start- und Landeverbrauch von
-                        {{ formatNumber(outerScope.this.fleetLaunch.getCostsLaunchLand) }} {{ constant('EtoA\\Universe\\Resources\\ResourceNames::FUEL') }} )
-                    </td>
-                </tr>
-                <tr>
-                    <th>Nahrung:</th>
-                    <td>
-                        <span id="food" style="font-weight:bold;">
-                        {{ outerScope.this.food }}
-                        </span>
-                    </td>
-                </tr>
-                <tr>
-                    <th>Piloten:</th>
-                    <td>{{ formatNumber(outerScope.this.fleetLaunch.getPilots) }}
-                        {% if outerScope.this.fleetLaunch.sBonusPilots != 1 %}
-                            (inkl. {{ formatPercentString(outerScope.this.fleetLaunch.sBonusPilots) }} Mysticum-Bonus)
-                        {% endif %}
-                    </td>
-                </tr>
-                <tr>
-                    <th>Bemerkungen:</th>
-                    <td id="comment">-</td>
-                </tr>
-                <tr id="allianceAttacks" style="display: none;">
+<div {{ attributes }}>
+    <twig:Table title="Zielwahl">
+        {% block table_content %}
+            <tr>
+                <th width="25%"><b>Startplanet:</b></th>
+                <td style="padding:2px 2px 3px 6px;background:#000;color:#fff;height:47px;">
+                    <img src="{{ outerScope.this.fleetLaunch.sourceEntity.getImagePath }}" style="float:left;">
+                    <br/>&nbsp;&nbsp; {{ outerScope.this.fleetLaunch.sourceEntity.displayName }} ({{ outerScope.this.fleetLaunch.sourceEntity.entityCodeString }}, Besitzer:
+                    {{ outerScope.this.fleetLaunch.owner.nick }})
+                </td>
+            </tr>
+            <tr id="manuelselect">
+                <th width="25%">Manuelle Eingabe:</th>
+                <td width="75%">
+                    <input type="text" size="1" maxlength="1" title="Sektor X-Koordinate" autocomplete="off"
+                           value="{{ outerScope.this.csx }}" data-model="debounce(1000)|csx"
+                           onfocus="this.select()" onclick="this.select()" onkeypress="return nurZahlen(event)"/>&nbsp;/&nbsp;
+                    <input type="text" size="1" maxlength="1" title="Sektor Y-Koordinate" autocomplete="off"
+                           value="{{ outerScope.this.csy }}" data-model="debounce(1000)|csy"
+                           onfocus="this.select()" onclick="this.select()" onkeypress="return nurZahlen(event)"/>&nbsp;&nbsp;:&nbsp;&nbsp;
+                    <input type="text" size="2" maxlength="2" title="Zelle X-Koordinate" autocomplete="off"
+                           value="{{ outerScope.this.ccx }}" data-model="debounce(1000)|ccx"
+                           onfocus="this.select()" onclick="this.select()" onkeypress="return nurZahlen(event)"/>&nbsp;/&nbsp;
+                    <input type="text" size="2" maxlength="2" title="Zelle Y-Koordinate" autocomplete="off"
+                           value="{{ outerScope.this.ccy }}" data-model="debounce(1000)|ccy"
+                           onfocus="this.select()" onclick="this.select()" onkeypress="return nurZahlen(event)"/>&nbsp;&nbsp;:&nbsp;&nbsp;
+                    <input type="text" size="2" maxlength="2" title="Position des Planeten im Sonnensystem" autocomplete="off"
+                           value="{{ outerScope.this.psp }}" data-model="debounce(1000)|psp"
+                           onfocus="this.select()" onclick="this.select()" onkeypress="return nurZahlen(event)"/>
+                </td>
+            </tr>
+            <tr id="bookmarkselect">
+                <th width="25%">Zielfavoriten:</th>
+                <td width="75%" align="left">
+                    <select data-model="bookmark">
+                        <option value="">Wählen...</option>
+                        {% for choice in outerScope.this.bookmarkChoices %}
+                            <option value="{{ choice.id }}"{% if outerScope.this.bookmark == choice.id %} selected="selected"{% endif %}>{{ choice.label }}</option>
+                        {% endfor %}
+                    </select>
+                </td>
+            </tr>
+            <tr id="speedselect">
+                <th width="25%">Speedfaktor:</th>
+                <td width="75%" align="left">
+                    <select data-model="speedPercent">
+                        {% for x in 100..1 %}
+                            <option value="{{ x }}"{% if outerScope.this.speedPercent == x %} selected="selected"{% endif %}>{{ x }}</option>
+                        {% endfor %}
+                    </select> %
+                </td>
+            </tr>
+            <tr>
+                <th id="targettitle" width="25%"><b>Ziel-Informationen:</b></th>
+                <td id="targetinfo" style="padding:2px 2px 3px 6px;background:#000;color:#fff;height:47px;">
+                    {% if outerScope.this.targetEntity %}
+                        <img src="{{ outerScope.this.targetEntity.getType.getImagePath }}"/>
+                        <br/> {{ outerScope.this.targetEntity.toString }} ({{ outerScope.this.targetEntity.codeString }}, Besitzer: {{ outerScope.this.targetEntity.displayOwner }})
+                    {% else %}
+                        <div style="color:#f00">Ziel nicht vorhanden!</div>
+                    {% endif %}
+                </td>
+            </tr>
+            <tr>
+                <th>Entfernung:</th>
+                <td id="distance">{{ outerScope.this.distance }}</td>
+            </tr>
+            <tr>
+                <th>Kosten/100 AE:</th>
+                <td id="costae">{{ outerScope.this.costsPerHundredAE }}</td>
+            </tr>
+            <tr>
+                <th>Geschwindigkeit:</th>
+                <td id="speed">{{ outerScope.this.speed }}
+                    {% if outerScope.this.fleetLaunch.sBonusSpeed > 1 %}
+                        (inkl. {{ formatPercentString(outerScope.this.fleetLaunch.sBonusSpeed) }} Mysticum-Bonus)
+                    {% endif %}
+                </td>
+            </tr>
+            <tr>
+                <th>Dauer:</th>
+                <td><span id="duration" style="font-weight:bold;">{{ outerScope.this.duration }}</span> (inkl. Start- und Landezeit von
+                    {{ formatTimespan(outerScope.this.fleetLaunch.getTimeLaunchLand) }} )
+                </td>
+            </tr>
+            <tr>
+                <th>Treibstoff:</th>
+                <td><span id="costs" style="font-weight:bold;">{{ outerScope.this.costs }}</span> (inkl. Start- und Landeverbrauch von
+                    {{ formatNumber(outerScope.this.fleetLaunch.getCostsLaunchLand) }} {{ FUEL }} )
+                </td>
+            </tr>
+            <tr>
+                <th>Nahrung:</th>
+                <td><span id="food" style="font-weight:bold;">{{ outerScope.this.food }}</span></td>
+            </tr>
+            <tr>
+                <th>Piloten:</th>
+                <td>{{ formatNumber(outerScope.this.fleetLaunch.getPilots) }}
+                    {% if outerScope.this.fleetLaunch.sBonusPilots != 1 %}
+                        (inkl. {{ formatPercentString(outerScope.this.fleetLaunch.sBonusPilots) }} Mysticum-Bonus)
+                    {% endif %}
+                </td>
+            </tr>
+            <tr>
+                <th>Bemerkungen:</th>
+                <td id="comment">{{ outerScope.this.allianceComment ?: '-' }}</td>
+            </tr>
+            {% if outerScope.this.allianceAttacks|length > 0 %}
+                <tr id="allianceAttacks">
                     <th>Allianzangriffe:</th>
-                    <td id="alliance">-</td>
+                    <td id="alliance">
+                        {% for f in outerScope.this.allianceAttacks %}
+                            <label style="display:block;">
+                                <input type="radio" name="selectedAllianceAttackId" value="{{ f.id }}" data-model="selectedAllianceAttackId"{% if outerScope.this.selectedAllianceAttackId == f.id %} checked="checked"{% endif %}/>
+                                Flottenleader: {{ f.user.nick }} — Ankunft: {{ f.landTime|date('d.m.y, H:i:s') }}
+                            </label>
+                        {% endfor %}
+                    </td>
                 </tr>
-            {% endblock %}
-        </twig:Table>
-    {{ form_widget(form.submit) }}
-    {{ form_widget(form._token) }}
-    {{ form_end(form, {render_rest:false}) }}
+            {% endif %}
+        {% endblock %}
+    </twig:Table>
+
+    <input type="button" onclick="document.location='{{ path('game.haven.show') }}'" value="&lt;&lt; Zurück zur Schiffauswahl"/>
+    &nbsp;
+    <input type="button" data-action="click->live#action:prevent" data-live-action-param="reset" value="Reset"/>
+    &nbsp;
+    {% if this.wormhole %}
+        <input type="button" data-action="click->live#action:prevent" data-live-action-param="chooseWormhole" value="Wurmloch auswählen"/>
+    {% else %}
+        <input type="button" data-action="click->live#action:prevent" data-live-action-param="chooseAction" value="Weiter zur Aktionsauswahl &gt;&gt;&gt;"/>
+    {% endif %}
 </div>

@@ -3,6 +3,7 @@
 namespace EtoA\Controller\Game;
 
 use EtoA\Bookmark\BookmarkRepository;
+use EtoA\Defense\DefenseRepository;
 use EtoA\Entity\Planet;
 use EtoA\Fleet\FleetAction;
 use EtoA\Fleet\FleetLaunch;
@@ -12,13 +13,10 @@ use EtoA\Ship\ShipListRepository;
 use EtoA\Ship\ShipTransformRepository;
 use EtoA\Support\StringUtils;
 use EtoA\Universe\Entity\AbstractEntity;
-use EtoA\Universe\Entity\EntityCoordinates;
 use EtoA\Universe\Entity\EntityRepository;
 use EtoA\Universe\Planet\PlanetRepository;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -36,7 +34,8 @@ class HavenController extends AbstractGameController
         private readonly ShipListRepository $shipListRepository,
         private readonly FleetLaunchService $fleetLaunchService,
         private readonly EntityRepository $entityRepository,
-        private readonly BookmarkRepository $bookmarkRepository
+        private readonly BookmarkRepository $bookmarkRepository,
+        private readonly DefenseRepository $defenseRepository
     )
     {}
 
@@ -132,7 +131,8 @@ class HavenController extends AbstractGameController
             return $this->render('game/haven/show.html.twig',[
                 'hasMobileObjects'=>$hasMobileObjects,
                 'fleetLaunch' => $this->fleetLaunchService->getFleetLaunch(),
-                'form' => $form
+                'form' => $form,
+                'planet' => $cp
             ]);
         }
 
@@ -146,19 +146,117 @@ class HavenController extends AbstractGameController
     #[Route('/game/haven/transship', name: 'game.haven.transship')]
     public function transship(Request $request):Response
     {
+        /** @var Planet $cp */
+        $cp = $this->planetRepository->find($request->getSession()->get('cpid'));
+        $user = $this->getUser()->getData();
 
+        if (!$this->shipTransformRepository->hasUserTransformableObjects($user, $cp)) {
+            return $this->render('game/haven/transship.html.twig', [
+                'hasMobileObjects' => false,
+                'planet' => $cp,
+                'form' => null,
+                'msg' => ['info' => 'Keine mobilen Anlagen vorhanden!'],
+            ]);
+        }
+
+        // Build transform lookup maps: which defense packs into which carrier ship and vice versa
+        $transformByDefense = [];
+        $transformByShip = [];
+        foreach ($this->shipTransformRepository->findAll() as $transform) {
+            if ($transform->getDefense() !== null) {
+                $transformByDefense[$transform->getDefense()->getId()] = $transform;
+            }
+            if ($transform->getShip() !== null) {
+                $transformByShip[$transform->getShip()->getId()] = $transform;
+            }
+        }
+
+        // The player's transformable defenses and ships on the current planet
+        $loadMobileLists = function () use ($user, $cp, $transformByDefense, $transformByShip): array {
+            $defenses = array_values(array_filter(
+                $this->defenseRepository->getEntityDefenseCounts($user, $cp),
+                fn ($item) => $item->getDefense() !== null && isset($transformByDefense[$item->getDefense()->getId()])
+            ));
+            $ships = array_values(array_filter(
+                $this->shipListRepository->getEntityShipCounts($user, $cp),
+                fn ($item) => $item->getShip() !== null && isset($transformByShip[$item->getShip()->getId()])
+            ));
+
+            return [$defenses, $ships];
+        };
+
+        $buildForm = function (array $mobileDefenses, array $mobileShips) {
+            return $this->createFormBuilder(['defenses' => $mobileDefenses, 'ships' => $mobileShips])
+                ->add('defenses', CollectionType::class, ['entry_type' => CountType::class, 'label' => false])
+                ->add('dtransform', SubmitType::class, ['label' => 'Verladen'])
+                ->add('ships', CollectionType::class, ['entry_type' => CountType::class, 'label' => false])
+                ->add('stransform', SubmitType::class, ['label' => 'Ausladen und installieren'])
+                ->getForm();
+        };
+
+        [$mobileDefenses, $mobileShips] = $loadMobileLists();
+        $form = $buildForm($mobileDefenses, $mobileShips)->handleRequest($request);
+
+        $msg = null;
+        if ($form->isSubmitted() && $form->isValid()) {
+            $transformedCounter = 0;
+
+            if ($form->get('dtransform')->isClicked()) {
+                // Pack defenses onto carrier ships (defense -> ship)
+                foreach ($form->get('defenses')->all() as $child) {
+                    /** @var \EtoA\Entity\DefenseListItem $item */
+                    $item = $child->getData();
+                    $packcount = (int) min(max(0, StringUtils::parseFormattedNumber($child->get('count')->getData())), $item->getCount());
+                    if ($packcount > 0) {
+                        $removed = $this->defenseRepository->removeDefense($item, $packcount);
+                        $this->shipListRepository->addShip($transformByDefense[$item->getDefense()->getId()]->getShip(), $removed, $user, $cp);
+                        $transformedCounter += $packcount;
+                    }
+                }
+                if ($transformedCounter > 0) {
+                    $msg['success'] = "$transformedCounter Verteidigungsanlagen wurden verladen!";
+                }
+            } elseif ($form->get('stransform')->isClicked()) {
+                // Unpack carrier ships into defenses (ship -> defense)
+                foreach ($form->get('ships')->all() as $child) {
+                    /** @var \EtoA\Entity\ShipListItem $item */
+                    $item = $child->getData();
+                    $packcount = (int) min(max(0, StringUtils::parseFormattedNumber($child->get('count')->getData())), $item->getCount());
+                    if ($packcount > 0) {
+                        $removed = $this->shipListRepository->removeShips($item, $packcount);
+                        $this->defenseRepository->addDefense($transformByShip[$item->getShip()->getId()]->getDefense(), $removed, $user, $cp);
+                        $transformedCounter += $packcount;
+                    }
+                }
+                if ($transformedCounter > 0) {
+                    $msg['success'] = "$transformedCounter Verteidigungsanlagen wurden installiert!";
+                }
+            }
+
+            // Re-fetch fresh counts and rebuild the form for display after the mutation
+            [$mobileDefenses, $mobileShips] = $loadMobileLists();
+            $form = $buildForm($mobileDefenses, $mobileShips);
+        }
+
+        return $this->render('game/haven/transship.html.twig', [
+            'hasMobileObjects' => true,
+            'planet' => $cp,
+            'form' => $form,
+            'msg' => $msg,
+        ]);
     }
 
     private function baseCheck():string
     {
         $error = '';
+        // A (non-empty) verification key means the e-mail address is NOT yet confirmed
         if ($this->getUser()->getData()->getVerificationKey()) {
+            $error = 'Solange deine E-Mail Adresse nicht bestätigt ist, kannst du keine Flotten versenden!';
+        }
+        else {
             if(!$this->fleetLaunchService->checkHaven()) {
                $error = $this->fleetLaunchService->getFleetLaunch()->getError();
             }
-        }
-        else {
-            $error = 'Solange deine E-Mail Adresse nicht bestätigt ist, kannst du keine Flotten versenden!';
         }
 
         return $error;
@@ -177,6 +275,7 @@ class HavenController extends AbstractGameController
         if($this->fleetLaunchService->getFleetLaunch()->isShipsFixed()) {
             return $this->render('game/haven/target.html.twig',[
                 'fleetLaunch' => $this->fleetLaunchService->getFleetLaunch(),
+                'planet' => $this->planetRepository->find($session->get('cpid')),
                 'serializedFleetLaunch' => $serializer->serialize($this->fleetLaunchService->getFleetLaunch(), 'json', [
                     'circular_reference_handler' => function ($object) {
                         if(is_a($object,AbstractEntity::class)) {
@@ -192,175 +291,27 @@ class HavenController extends AbstractGameController
     }
 
     #[Route('/game/haven/action', name: 'game.haven.action')]
-    public function action(Request $request,SerializerInterface $serializer): Response
+    public function action(Request $request, SerializerInterface $serializer): Response
     {
         $session = $request->getSession();
-        if($session->has('fleetLaunch')) {
-            $fleetLaunch = $serializer->deserialize($session->get('fleetLaunch'), FleetLaunch::class, 'json', [
-                'allow_extra_attributes' => true,
-            ]);
-
-            //workaround since the serializer does not work with the factory from entity class
-            $targetEntity = $fleetLaunch->getTargetEntity();
-            $entity = $this->entityRepository->findByCoordinates(new EntityCoordinates($targetEntity->getCell()->getSx(),$targetEntity->getCell()->getSy(),$targetEntity->getCell()->getCx(),$targetEntity->getCell()->getCy(), $targetEntity->getPos()));
-
-            $fleetLaunch->setTargetEntity($entity);
-
-            $this->fleetLaunchService->setFleetLaunch($fleetLaunch);
+        if (!$session->has('fleetLaunch')) {
+            return $this->redirectToRoute('game.haven.show');
         }
 
-        if ($this->fleetLaunchService->getFleetLaunch()->isShipsFixed()) {
-            if ($this->fleetLaunchService->checkTarget()) {
-                if ($this->fleetLaunchService->getFleetLaunch()->isShipsFixed() && $this->fleetLaunchService->checkTarget()) {
-                    $form = $this->createFormBuilder()
-                        ->add('actions', ChoiceType::class, [
-                            'choices'  => $this->fleetLaunchService->getAllowedActions(),
-                            'expanded' => true,
-                            'choice_label' => function (FleetAction $choice): string {
-                                return $choice->name();
-                            },
-                            'choice_value' => function (?FleetAction $choice): ?string {
-                                return $choice?->code();
-                            },
-                            'required' => true
-                        ])
-                        ->add('res1',TextType::class, [
-                            'label' =>false,
-                            'attr' => [
-                                'size'=>12,
-                            ],
-                            'data'=>$this->fleetLaunchService->getFleetLaunch()->getLoadedRes(1),
-                            'required' => false
-                        ])
-                        ->add('res2',TextType::class, [
-                            'label' =>false,
-                            'attr' => [
-                                'size'=>12,
-                            ],
-                            'data'=>$this->fleetLaunchService->getFleetLaunch()->getLoadedRes(2),
-                            'required' => true
-                        ])
-                        ->add('res3',TextType::class, [
-                            'label' =>false,
-                            'attr' => [
-                                'size'=>12,
-                            ],
-                            'data'=>$this->fleetLaunchService->getFleetLaunch()->getLoadedRes(3),
-                            'required' => true
-                        ])
-                        ->add('res4',TextType::class, [
-                            'label' =>false,
-                            'attr' => [
-                                'size'=>12,
-                            ],
-                            'data'=>$this->fleetLaunchService->getFleetLaunch()->getLoadedRes(4),
-                            'required' => true
-                        ])
-                        ->add('res5',TextType::class, [
-                            'label' =>false,
-                            'attr' => [
-                                'size'=>12,
-                            ],
-                            'data'=>$this->fleetLaunchService->getFleetLaunch()->getLoadedRes(5),
-                            'required' => true
-                        ])
-                        ->add('res6',TextType::class, [
-                            'label' =>false,
-                            'attr' => [
-                                'size'=>12,
-                            ],
-                            'data' => 0,
-                            'required' => true
-                        ])
-                        ->add('send', SubmitType::class, ['label' => 'Start'])
-                        ->getForm()->handleRequest($request);
+        /** @var FleetLaunch $fleetLaunch */
+        $fleetLaunch = $serializer->deserialize($session->get('fleetLaunch'), FleetLaunch::class, 'json', [
+            'allow_extra_attributes' => true,
+        ]);
 
-                    if ($form->isSubmitted() && $form->isValid()) {
-                        if ($this->fleetLaunchService->setAction($form->get('actions')->getData()->code())) {
-                            $fleet = $this->fleetLaunchService->getFleetLaunch();
-                            if($form->get('actions')->getData()->code() === "fetch") {
-                                $fleet->fetchResource(1, StringUtils::parseFormattedNumber($form->get('res1')->getData()));
-                                $fleet->fetchResource(2, StringUtils::parseFormattedNumber($form->get('res2')->getData()));
-                                $fleet->fetchResource(3, StringUtils::parseFormattedNumber($form->get('res3')->getData()));
-                                $fleet->fetchResource(4, StringUtils::parseFormattedNumber($form->get('res4')->getData()));
-                                $fleet->fetchResource(5, StringUtils::parseFormattedNumber($form->get('res5')->getData()));
-                                $fleet->fetchResource(6, StringUtils::parseFormattedNumber($form->get('res6')->getData()));
-                                $fleet->loadResource(1, 0);
-                                $fleet->loadResource(2, 0);
-                                $fleet->loadResource(3, 0);
-                                $fleet->loadResource(4, 0);
-                                $fleet->loadResource(5, 0);
-                                $fleet->loadPeople(0);
-                            }
-                            else {
-                                $fleet->loadResource(1, StringUtils::parseFormattedNumber($form->get('res1')->getData()));
-                                $fleet->loadResource(2, StringUtils::parseFormattedNumber($form->get('res2')->getData()));
-                                $fleet->loadResource(3, StringUtils::parseFormattedNumber($form->get('res3')->getData()));
-                                $fleet->loadResource(4, StringUtils::parseFormattedNumber($form->get('res4')->getData()));
-                                $fleet->loadResource(5, StringUtils::parseFormattedNumber($form->get('res5')->getData()));
-                            }
-
-                            $duration = $fleet->getDistance() / $fleet->getSpeed();    // Calculate duration
-                            $duration *= 3600;    // Convert to seconds
-                            $duration = ceil($duration);
-                            $maxTime = 0.0;
-                            if (count($fleet->getAFleets()) > 0) {
-                                $maxTime = $fleet->getAFleets()[0]->getLandTime() - time() - $fleet->getTimeLaunchLand() - $fleet->getDuration1();
-                            }
-
-                            //check for alliance+time to join
-                            if (($duration < $maxTime) || $form->get('actions')->getData()->code() !== "alliance" || $maxTime < 0) {
-                                $this->fleetLaunchService->setFleetLaunch($fleet);
-                                if ($fid = $this->fleetLaunchService->launch()) {
-                                    $ac = FleetAction::createFactory($form->get('actions')->getData()->code());
-
-                                    // bugfix - check for alliance added by river
-                                    if ($form->get('actions')->getData()->code() === "alliance" && $fleet->getLeader() == 0 && $fleet->getOwner()->getAlliance() && count($form->get('msgUser')->getData()) > 0) {
-
-                                        /** @var \EtoA\Message\MessageRepository $messageRepository */
-                                        $messageRepository = $app[\EtoA\Message\MessageRepository::class];
-                                        /** @var AllianceRepository $allianceRepository */
-                                        $allianceRepository = $app[AllianceRepository::class];
-
-                                        $fleetOwnerAlliance = $allianceRepository->getAlliance($fleet->owner->allianceId());
-                                        $subject = "Allianzangriff (" . $fleet->targetEntity . ")";
-                                        $text = "[b]Angriffsdaten:[/b][table][tr][td]Flottenkennzeichen:[/td][td]" . $fleetOwnerAlliance->tag . "-" . $fid . "[/td][/tr][tr][td]Flottenleader:[/td][td]" . $fleet->owner->nick . "[/td][/tr][tr][td]Zielplanet:[/td][td]" . $fleet->targetEntity . "[/td][/tr][tr][td]Ankunftszeit:[/td][td]" . date("d.m.y, H:i:s", $fleet->landTime) . "[/td][/tr][/table]" . $form['message_text'];
-                                        foreach ($form['msgUser'] as $uid) {
-                                            $messageRepository->sendFromUserToUser(
-                                                (int)$fleet->ownerId(),
-                                                (int)$uid,
-                                                $subject,
-                                                $text,
-                                                6,
-                                                $fid
-                                            );
-                                        }
-                                    }
-
-                                    $this->fleetLaunchService->getFleetLaunch()->setShipsFixed(false);
-
-                                    return $this->render('game/haven/launch.html.twig', [
-                                        'fleet' => $this->fleetLaunchService->getFleetLaunch(),
-                                        'color' => FleetAction::$attitudeColor[$ac->attitude()],
-                                        'name' => $ac->name()
-                                    ]);
-                                }
-                            }
-                        }
-                    }
-
-                    return $this->render('game/haven/action.html.twig', [
-                        'fleet' => $this->fleetLaunchService->getFleetLaunch(),
-                        'form' => $form
-                    ]);
-                }
-            }
+        // The interactive action selection, cargo loading and launch are handled by
+        // the HavenAction live component (game/haven/action.html.twig).
+        if (!$fleetLaunch->isShipsFixed() || $fleetLaunch->getTargetEntity() === null) {
+            return $this->redirectToRoute('game.haven.show');
         }
 
-
-        return $this->redirectToRoute('game.haven.show');
+        return $this->render('game/haven/action.html.twig', [
+            'planet' => $this->planetRepository->find($session->get('cpid')),
+        ]);
     }
-
-
 
 }

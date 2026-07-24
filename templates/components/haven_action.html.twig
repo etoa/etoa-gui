@@ -1,0 +1,227 @@
+{% import 'macros.html.twig' as macros %}
+{% set FUEL = constant('EtoA\\Universe\\Resources\\ResourceNames::FUEL') %}
+{% set FOOD = constant('EtoA\\Universe\\Resources\\ResourceNames::FOOD') %}
+
+<div {{ attributes }}>
+    {% if this.launched %}
+        <twig:Table>
+            {% block table_content %}
+                <tr><th colspan="2" style="color:#0f0">Flotte gestartet!</th></tr>
+                <tr>
+                    <td style="width:50%"><b>Aktion:</b></td>
+                    <td style="color:{{ outerScope.this.launchColor }}">{{ outerScope.this.launchName }}</td>
+                </tr>
+                <tr><td><b>Ladung: {{ constant('EtoA\\Universe\\Resources\\ResourceNames::METAL') }}</b></td><td>{{ outerScope.this.launchedRes[1] }}</td></tr>
+                <tr><td><b>Ladung: {{ constant('EtoA\\Universe\\Resources\\ResourceNames::CRYSTAL') }}</b></td><td>{{ outerScope.this.launchedRes[2] }}</td></tr>
+                <tr><td><b>Ladung: {{ constant('EtoA\\Universe\\Resources\\ResourceNames::PLASTIC') }}</b></td><td>{{ outerScope.this.launchedRes[3] }}</td></tr>
+                <tr><td><b>Ladung: {{ FUEL }}</b></td><td>{{ outerScope.this.launchedRes[4] }}</td></tr>
+                <tr><td><b>Ladung: {{ FOOD }}</b></td><td>{{ outerScope.this.launchedRes[5] }}</td></tr>
+            {% endblock %}
+        </twig:Table>
+        <input type="button" data-action="click->live#action:prevent" data-live-action-param="reset" value="Weitere Flotte starten"/>
+        &nbsp;
+        <a href="{{ path('game.fleets.info', {id: this.launchedFleetId}) }}">
+            <input type="button" value="Flotte beobachten"/>
+        </a>
+    {% else %}
+        {% if this.errorMessage %}
+            {{ macros.errorMessage(this.errorMessage) }}
+        {% endif %}
+
+        <twig:Table title="Schiffe">
+            {% block table_content %}
+                <tr>
+                    <th>Anzahl</th>
+                    <th>Typ</th>
+                    <th>Piloten</th>
+                    <th>Speed</th>
+                    <th>Kosten / 100 AE</th>
+                </tr>
+                {% for sd in outerScope.this.fleetLaunch.getShips %}
+                    <tr>
+                        <td>{{ formatNumber(sd.count) }}</td>
+                        <td>{{ sd.name }}</td>
+                        <td>{{ formatNumber(sd.pilots) }}</td>
+                        <td>{{ sd.speed > 0 ? (outerScope.this.fleetLaunch.getSpeed / sd.speed * 100 / outerScope.this.fleetLaunch.sBonusSpeed)|round : 0 }}%</td>
+                        <td>{{ formatNumber(sd.costs_per_ae) }} {{ FUEL }}</td>
+                    </tr>
+                {% endfor %}
+                {% if outerScope.this.fleetLaunch.getShips|length > 1 %}
+                    <tr>
+                        <td colspan="5">Schnellere Schiffe nehmen im Flottenverband automatisch die Geschwindigkeit des langsamsten Schiffes an, sie brauchen dafür aber auch entsprechend weniger Treibstoff!</td>
+                    </tr>
+                {% endif %}
+                <tr>
+                    <td colspan="5">Mögliche Aktionen:
+                        {% for action in outerScope.this.fleetLaunch.getFactoredShipActions %}
+                            {{ action|raw }}{% if not loop.last %},{% endif %}
+                        {% endfor %}
+                    </td>
+                </tr>
+            {% endblock %}
+        </twig:Table>
+
+        <twig:Table title="Zielinfos">
+            {% block table_content %}
+                {% if outerScope.this.fleetLaunch.wormholeEntryEntity %}
+                    <tr>
+                        <th width="25%"><b>Wurmloch-Eintrittspunkt:</b></th>
+                        <td style="padding:16px 2px 2px 60px;color:#fff;height:47px;background:#000 url('{{ outerScope.this.fleetLaunch.wormholeEntryEntity.getType.getImagePath }}') no-repeat 3px 3px;">
+                            {{ outerScope.this.fleetLaunch.wormholeEntryEntity.toString }} ({{ outerScope.this.fleetLaunch.wormholeEntryEntity.codeString }}, Besitzer: {{ outerScope.this.fleetLaunch.wormholeEntryEntity.displayOwner }})
+                        </td>
+                    </tr>
+                    <tr>
+                        <th width="25%"><b>Wurmloch-Austrittspunkt:</b></th>
+                        <td style="padding:16px 2px 2px 60px;color:#fff;height:47px;background:#000 url('{{ outerScope.this.fleetLaunch.wormholeExitEntity.getType.getImagePath }}') no-repeat 3px 3px;">
+                            {{ outerScope.this.fleetLaunch.wormholeExitEntity.toString }} ({{ outerScope.this.fleetLaunch.wormholeExitEntity.codeString }}, Besitzer: {{ outerScope.this.fleetLaunch.wormholeExitEntity.displayOwner }})
+                        </td>
+                    </tr>
+                {% endif %}
+                <tr>
+                    <th width="25%"><b>Ziel-Informationen:</b></th>
+                    <td style="padding:16px 2px 2px 60px;color:#fff;height:47px;background:#000 url('{{ outerScope.this.fleetLaunch.targetEntity.getType.getImagePath }}') no-repeat 3px 3px;">
+                        {{ outerScope.this.fleetLaunch.targetEntity.toString }} ({{ outerScope.this.fleetLaunch.targetEntity.codeString }}, Besitzer: {{ outerScope.this.fleetLaunch.targetEntity.displayOwner }})
+                    </td>
+                </tr>
+                <tr><th>Speedfaktor:</th><td>{{ outerScope.this.fleetLaunch.getSpeedPercent }}%</td></tr>
+                <tr><th>Entfernung:</th><td>{{ formatNumber(outerScope.this.fleetLaunch.getDistance) }} AE</td></tr>
+                <tr><th>Dauer:</th><td><span style="font-weight:bold;">{{ formatTimespan(outerScope.this.fleetLaunch.getDuration) }}</span></td></tr>
+                <tr><th>Treibstoff:</th><td><span style="font-weight:bold;">{{ formatNumber(outerScope.this.fleetLaunch.getCosts) }} t {{ FUEL }}</span></td></tr>
+                <tr><th>Nahrung:</th><td><span style="font-weight:bold;">{{ formatNumber(outerScope.this.fleetLaunch.getCostsFood) }} t {{ FOOD }}</span></td></tr>
+                {% if outerScope.this.supportAction %}
+                    <tr><th>Supportzeit:</th><td>{{ formatTimespan(outerScope.this.fleetLaunch.getSupportTime) }}</td></tr>
+                {% endif %}
+            {% endblock %}
+        </twig:Table>
+
+        <twig:Table>
+            {% block table_content %}
+                <tr>
+                    <th>Aktionswahl</th>
+                    <th colspan="2">Ladung</th>
+                </tr>
+                <tr>
+                    <td style="vertical-align:top;width:220px;">
+                        {% for code, ac in outerScope.this.allowedActionObjects %}
+                            <input type="radio" id="haven_action_{{ code }}" name="action" value="{{ code }}" data-model="action"{% if outerScope.this.action == code %} checked="checked"{% endif %}/>
+                            <label for="haven_action_{{ code }}" {{ tm(ac.name, ac.desc)|raw }}>{{ ac|raw }}</label><br/>
+                        {% else %}
+                            <i>Keine Aktion auf dieses Ziel verfügbar!</i><br/>
+                        {% endfor %}
+                        {% if outerScope.this.serviceError %}<br/>{{ outerScope.this.serviceError|raw }}{% endif %}
+                    </td>
+                    <td colspan="2">
+                        <table style="width:100%;">
+                            <tr>
+                                <th style="width:170px;">Freie Kapazität:</th>
+                                <td>{{ formatNumber(outerScope.this.fleetLaunch.getCapacity) }} / {{ formatNumber(outerScope.this.fleetLaunch.getTotalCapacity) }}</td>
+                            </tr>
+                            <tr>
+                                <th>Freie Passagierplätze:</th>
+                                <td>{{ formatNumber(outerScope.this.fleetLaunch.getPeopleCapacity) }} / {{ formatNumber(outerScope.this.fleetLaunch.getTotalPeopleCapacity) }}</td>
+                            </tr>
+
+                            {% if not outerScope.this.fetchMode %}
+                                {% for id in 1..5 %}
+                                    {% set resName = constant('EtoA\\Universe\\Resources\\ResourceNames::' ~ ({1:'METAL',2:'CRYSTAL',3:'PLASTIC',4:'FUEL',5:'FOOD'})[id]) %}
+                                    {% set resIcon = constant('EtoA\\Universe\\Resources\\ResIcons::' ~ ({1:'METAL',2:'CRYSTAL',3:'PLASTIC',4:'FUEL',5:'FOOD'})[id]) %}
+                                    <tr>
+                                        <th>{{ resIcon|raw }} {{ resName }}</th>
+                                        <td>
+                                            <input type="text" id="haven_res{{ id }}" size="12" value="{{ attribute(outerScope.this, 'res' ~ id) }}" data-model="debounce(500)|res{{ id }}"/>
+                                            <a href="javascript:;" data-action="click->live#action:prevent" data-live-action-param="maxRes" data-live-id-param="{{ id }}">max</a>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                                <tr>
+                                    <th>{{ constant('EtoA\\Universe\\Resources\\ResIcons::PEOPLE')|raw }} Passagiere</th>
+                                    <td>
+                                        <input type="text" id="haven_people" size="12" value="{{ outerScope.this.people }}" data-model="debounce(500)|people"/>
+                                        <a href="javascript:;" data-action="click->live#action:prevent" data-live-action-param="maxPeople">max</a>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th id="respercent" style="color:{{ outerScope.this.loadPercent is not null and outerScope.this.loadPercent < 100 ? '#f00' : '#0f0' }};">
+                                        {% if outerScope.this.loadPercent is not null %}&nbsp;Ladung: {{ outerScope.this.loadPercent }}%{% endif %}
+                                    </th>
+                                    <td><a href="javascript:;" data-action="click->live#action:prevent" data-live-action-param="loadAll">Alles einladen</a></td>
+                                </tr>
+                            {% else %}
+                                {% for id in 1..5 %}
+                                    {% set resName = constant('EtoA\\Universe\\Resources\\ResourceNames::' ~ ({1:'METAL',2:'CRYSTAL',3:'PLASTIC',4:'FUEL',5:'FOOD'})[id]) %}
+                                    {% set resIcon = constant('EtoA\\Universe\\Resources\\ResIcons::' ~ ({1:'METAL',2:'CRYSTAL',3:'PLASTIC',4:'FUEL',5:'FOOD'})[id]) %}
+                                    <tr>
+                                        <th>{{ resIcon|raw }} {{ resName }}</th>
+                                        <td>
+                                            <input type="text" id="haven_fetch{{ id }}" size="12" value="{{ attribute(outerScope.this, 'fetch' ~ id) }}" data-model="debounce(500)|fetch{{ id }}"/>
+                                            <a href="javascript:;" data-action="click->live#action:prevent" data-live-action-param="maxFetch" data-live-id-param="{{ id }}">max</a>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                                <tr>
+                                    <th>{{ constant('EtoA\\Universe\\Resources\\ResIcons::PEOPLE')|raw }} Passagiere</th>
+                                    <td>
+                                        <input type="text" id="haven_fetchp" size="12" value="{{ outerScope.this.fetchp }}" data-model="debounce(500)|fetchp"/>
+                                        <a href="javascript:;" data-action="click->live#action:prevent" data-live-action-param="maxFetchp">max</a>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>&nbsp;</th>
+                                    <td><a href="javascript:;" data-action="click->live#action:prevent" data-live-action-param="fetchAll">Alles einladen</a></td>
+                                </tr>
+                            {% endif %}
+
+                            {% if outerScope.this.supportAction %}
+                                <tr>
+                                    <th colspan="2">Supportdauer</th>
+                                </tr>
+                                <tr>
+                                    <td colspan="2">
+                                        <input type="text" size="1" maxlength="2" value="{{ outerScope.this.supportHour }}" data-model="debounce(500)|supportHour" title="Stunden"/> h&nbsp;
+                                        <input type="text" size="1" maxlength="2" value="{{ outerScope.this.supportMin }}" data-model="debounce(500)|supportMin" title="Minuten"/> min&nbsp;
+                                        <input type="text" size="1" maxlength="2" value="{{ outerScope.this.supportSecond }}" data-model="debounce(500)|supportSecond" title="Sekunden"/> s
+                                    </td>
+                                </tr>
+                            {% endif %}
+
+                            {% if outerScope.this.fakeAttack %}
+                                <tr>
+                                    <th colspan="2">Die Schiffe sollen als welche Schiffe getarnt werden?</th>
+                                </tr>
+                                <tr>
+                                    <td colspan="2">
+                                        {% for shipId, shipName in outerScope.this.fakeableShips %}
+                                            <input type="radio" name="fakeShip" value="{{ shipId }}" data-model="fakeShip"{% if outerScope.this.fakeShip == shipId %} checked="checked"{% endif %}/>&nbsp;{{ shipName }}<br/>
+                                        {% endfor %}
+                                    </td>
+                                </tr>
+                            {% endif %}
+
+                            {% if outerScope.this.allianceMessage %}
+                                <tr>
+                                    <th colspan="2">Nachricht an Allianzmitglieder</th>
+                                </tr>
+                                <tr>
+                                    <td><textarea rows="10" cols="55" data-model="debounce(500)|messageText">{{ outerScope.this.messageText }}</textarea></td>
+                                    <td>
+                                        {% for userId, userNick in outerScope.this.allianceMembers %}
+                                            <input type="checkbox" name="msgUser" value="{{ userId }}" data-model="msgUser"{% if userId in outerScope.this.msgUser %} checked="checked"{% endif %}/>&nbsp;{{ userNick }}<br/>
+                                        {% endfor %}
+                                    </td>
+                                </tr>
+                            {% endif %}
+                        </table>
+                    </td>
+                </tr>
+            {% endblock %}
+        </twig:Table>
+
+        <input type="button" data-action="click->live#action:prevent" data-live-action-param="backToTarget" value="&lt;&lt; Zurück zur Zielwahl"/>
+        &nbsp;
+        <input type="button" data-action="click->live#action:prevent" data-live-action-param="reset" value="Reset"/>
+        &nbsp;
+        {% if this.allowedActionObjects|length > 0 %}
+            <input type="button" data-action="click->live#action:prevent" data-live-action-param="launch" value="Start! &gt;&gt;&gt;"/>
+        {% endif %}
+    {% endif %}
+</div>

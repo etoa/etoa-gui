@@ -13,6 +13,7 @@ use EtoA\Entity\Entity;
 use EtoA\Entity\Fleet;
 use EtoA\Entity\Planet;
 use EtoA\Entity\ShipListItem;
+use EtoA\Entity\Wormhole;
 use EtoA\Log\FleetLogRepository;
 use EtoA\Ship\ShipListRepository;
 use EtoA\Ship\ShipRepository;
@@ -20,9 +21,9 @@ use EtoA\Ship\ShipRequirementRepository;
 use EtoA\Support\StringUtils;
 use EtoA\Technology\TechnologyId;
 use EtoA\Technology\TechnologyListItemRepository;
-use EtoA\Universe\Entity\EntityCoordinates;
 use EtoA\Universe\Entity\EntityService;
 use EtoA\Universe\Planet\PlanetRepository;
+use EtoA\Universe\Planet\PlanetService;
 use EtoA\Universe\Resources\BaseResources;
 use EtoA\Universe\Resources\ResourceNames;
 use EtoA\User\UserService;
@@ -33,7 +34,7 @@ class FleetLaunchService
 {
     public const FLEET_NOCONTROL_NUM = 1;
 
-    public string $error;
+    public string $error = '';
 
     public function __construct(
         private readonly ConfigurationService $configurationService,
@@ -52,7 +53,8 @@ class FleetLaunchService
         private readonly ShipListRepository $shipListRepository,
         private readonly FleetShipRepository $fleetShipRepository,
         private readonly FleetLogRepository $fleetLogRepository,
-        private readonly ShipRepository $shipRepository
+        private readonly ShipRepository $shipRepository,
+        private readonly PlanetService $planetService
     )
     {
     }
@@ -262,21 +264,25 @@ class FleetLaunchService
      *
      * >> Step 5.1
      */
-    public function setWormhole(&$ent, $speedPercent = 100)
+    public function setWormhole(Entity $ent, int $speedPercent = 100): bool
     {
-        if ($this->wormholeEnable) {
-            if (is_array($ent->getFleetTargetForwarder())) {
-                $this->wormholeEntryEntity = $ent;
-                $this->wormholeExitEntity = Entity::createFactoryById($this->wormholeEntryEntity->targetId());
-                $this->costsPerHundredAE1 = $this->costsPerHundredAE;
-                $this->speed1 = $this->speed;
-                $this->duration1 = $this->duration - $this->getTimeLaunchLand();
-                $this->speedPercent1 = $this->speedPercent;
+        if ($this->fleetLaunch->isWormholeEnable()) {
+            $type = $ent->getType();
+            if ($type instanceof Wormhole && $type->getTarget()?->getEntity() !== null) {
+                // Snapshot the first flight leg (source -> wormhole entry) before the
+                // parameters get recomputed for the second leg (wormhole exit -> target)
+                $this->fleetLaunch->setWormholeEntryEntity($ent);
+                $this->fleetLaunch->setWormholeExitEntity($type->getTarget()->getEntity());
+                $this->fleetLaunch->setCostsPerHundredAE1((int) $this->fleetLaunch->getRawCostsPerHundredAE());
+                $this->fleetLaunch->setSpeed1((int) $this->fleetLaunch->getRawSpeed());
+                $this->fleetLaunch->setDuration1((int) ($this->fleetLaunch->getDuration() - $this->fleetLaunch->getTimeLaunchLand()));
+                $this->fleetLaunch->setSpeedPercent1($this->fleetLaunch->getSpeedPercent());
                 return true;
-            } else
-                $this->error = "Ungültiges Zielobjekt";
-        } else
-            $this->error = "Wurmlochforschung noch nicht erforscht";
+            }
+            $this->fleetLaunch->setError("Ungültiges Zielobjekt");
+        } else {
+            $this->fleetLaunch->setError("Wurmlochforschung noch nicht erforscht");
+        }
         return false;
     }
 
@@ -373,7 +379,7 @@ class FleetLaunchService
 
                     if ($this->getFleetLaunch()->getAction() === "alliance" && $this->getFleetLaunch()->getLeader()) {
                         $status = 3;
-                        $nextId = $this->getFleetLaunch()->getSourceEntity()->getEntity()->getOwner()->getAlliance();
+                        $nextId = $this->getFleetLaunch()->getSourceEntity()->getEntity()->getOwner()?->getAlliance()?->getId() ?? 0;
                     } elseif ($this->getFleetLaunch()->getAction() === "support") {
                         $status = 0;
                         $nextId = $this->getFleetLaunch()->getSourceEntity()->getEntity()->getId();
@@ -399,7 +405,10 @@ class FleetLaunchService
                     $fetch->food = $this->getFleetLaunch()->getFetch()[5];
                     $fetch->people = $this->getFleetLaunch()->getCapacityPeopleLoaded();
 
-                    $fid = $this->fleetRepository->add($this->getFleetLaunch()->getOwner(), $time, $this->getFleetLaunch()->getTimeLaunchLand(), $this->getFleetLaunch()->getSourceEntity()->getEntity(), $this->getFleetLaunch()->getTargetEntity(), $this->getFleetLaunch()->getAction(), $status, $resources, $fetch, $this->getFleetLaunch()->getPilots(), $this->getFleetLaunch()->getCosts(), $this->getCostsFood(), $this->getFleetLaunch()->getCostsPower(), $this->getFleetLaunch()->getLeader(), $nextId, $this->getFleetLaunch()->getSupportTime(), $this->getFleetLaunch()->getSupportCostsFuel(), $this->getFleetLaunch()->getSupportCostsFood());
+                    // The leader is stored as the leader fleet's id; resolve it to the Fleet entity
+                    $leaderFleet = $this->getFleetLaunch()->getLeader() ? $this->fleetRepository->find($this->getFleetLaunch()->getLeader()) : null;
+
+                    $fid = $this->fleetRepository->add($this->getFleetLaunch()->getOwner(), $time, $this->getFleetLaunch()->getTimeLaunchLand(), $this->getFleetLaunch()->getSourceEntity()->getEntity(), $this->getFleetLaunch()->getTargetEntity(), $this->getFleetLaunch()->getAction(), $status, $resources, $fetch, $this->getFleetLaunch()->getPilots(), $this->getFleetLaunch()->getCosts(), $this->getCostsFood(), $this->getFleetLaunch()->getCostsPower(), $leaderFleet, $nextId, $this->getFleetLaunch()->getSupportTime(), $this->getFleetLaunch()->getSupportCostsFuel(), $this->getFleetLaunch()->getSupportCostsFood());
 
                     $shipLog = "";
                     foreach ($this->getFleetLaunch()->getShips() as $sid => $sda) {
@@ -489,8 +498,14 @@ class FleetLaunchService
         $this->error = '';
         //$allowed =  ($this->sFleets && count($this->sFleets) && ( $this->leaderId>0 || in_array($this->targetEntity->id,$this->sFleets))) ? true : false;
         $allowed = true;
-        // Get possible actions by intersecting ship actions and allowed target actions
-        $actions = array_intersect($this->fleetLaunch->getShipActions(), $this->fleetLaunch->getTargetEntity()->getType()->getAllowedFleetActions());
+        // Get possible actions by intersecting ship actions and allowed target actions.
+        // A Doctrine-hydrated Planet has no injected PlanetService, so its
+        // getAllowedFleetActions() would return an empty list -> ask the service directly.
+        $targetType = $this->fleetLaunch->getTargetEntity()->getType();
+        $targetActions = $targetType instanceof Planet
+            ? $this->planetService->getAllowedFleetActions($targetType)
+            : $targetType->getAllowedFleetActions();
+        $actions = array_intersect($this->fleetLaunch->getShipActions(), $targetActions);
         $actionObjs = array();
         $battleban = false;
         if ($this->configurationService->getBoolean("battleban") && $this->configurationService->param1Int("battleban_time") <= time() && $this->configurationService->param2Int("battleban_time") > time()) {
@@ -548,7 +563,7 @@ class FleetLaunchService
                         (!$this->fleetLaunch->getTargetEntity()->getOwner() && $ai->allowNpcEntities()) ||
                         // * action allows only same-alliance users and source and target user belong to the same alliance (alliance >0 -> they have an alliance) OR same user for no alliance
                         //   this is used only for support, so in case different user there is also a check whether there are available support slots on the planet (checkDefNum)
-                        ($ai->allowAllianceEntities &&
+                        ($ai->allowAllianceEntities() &&
                             $this->fleetLaunch->getSourceEntity()->getEntity()?->getOwner()?->getAlliance() === $this->fleetLaunch->getTargetEntity()?->getOwner()->getAlliance() &&
                             ($this->fleetLaunch->getSourceEntity()->getEntity()->getOwner() === $this->fleetLaunch->getOwner()
                                 || ($this->fleetLaunch->getSourceEntity()->getEntity()->getOwner()->getAlliance()
@@ -568,7 +583,7 @@ class FleetLaunchService
                     }
                     if ($exclusiceAllowed) {
                         if ($this->fleetLaunch->getTargetEntity()->getOwner()) {
-                            if (!$this->fleetLaunch->getOwner()->getHmodTo() || $ai->allowOnHoliday()) {
+                            if (!$this->fleetLaunch->getTargetEntity()->getOwner()->getHmodTo() || $ai->allowOnHoliday()) {
                                 if ($ai->attitude() > 1) {
                                     if (!$battleban) {
                                         if (
@@ -667,47 +682,63 @@ class FleetLaunchService
         $this->planetRepository->removeResources($this->getFleetLaunch()->getSourceEntity(), $resources);
     }
 
-    function getSupportMaxTime(): float
+    public function getSupportMaxTime(): float
     {
-        global $app;
-        /** @var ConfigurationService $config */
-        $config = $app[ConfigurationService::class];
+        $this->fleetLaunch->setSupportCostsFuel(0);
+        $this->fleetLaunch->setSupportCostsFood(0);
 
-        $this->supportCostsFuel = 0;
-        $this->supportCostsFood = 0;
+        $foodPerSec = $this->fleetLaunch->getPilots() * $this->configurationService->getInt('people_food_require') / 36000;
+        $fuelPerSec = $this->fleetLaunch->getRawCostsPerHundredAE() * $this->fleetLaunch->getSpeed() / max(1, $this->fleetLaunch->getSpeedPercent()) / 3600000;
 
-        $this->supportCostsFoodPerSec = $this->pilots * $config->getInt('people_food_require') / 36000;
-        $this->supportCostsFuelPerSec = $this->costsPerHundredAE * $this->getSpeed() / $this->getSpeedPercent() / 3600000;
+        $this->fleetLaunch->setSupportCostsFoodPerSec($foodPerSec);
+        $this->fleetLaunch->setSupportCostsFuelPerSec($fuelPerSec);
 
-        $maxTime = $this->getCapacity() / ($this->supportCostsFuelPerSec + $this->supportCostsFoodPerSec);
+        if ($fuelPerSec + $foodPerSec <= 0) {
+            return 0;
+        }
 
-        $supportTimeFuel = ($this->sourceEntity->getRes(4) - $this->getLoadedRes(4) - $this->getCosts()) / $this->supportCostsFuelPerSec;
+        $maxTime = $this->getCapacity() / ($fuelPerSec + $foodPerSec);
 
-        if ($this->supportCostsFoodPerSec > 0)
-            $supportTimeFood = ($this->sourceEntity->getRes(5) - $this->getLoadedRes(5) - $this->getCostsFood()) / $this->supportCostsFoodPerSec;
-        else
+        $supportTimeFuel = $fuelPerSec > 0
+            ? ($this->fleetLaunch->getSourceEntity()->getResFuel() - $this->fleetLaunch->getLoadedRes(4) - $this->fleetLaunch->getCosts()) / $fuelPerSec
+            : 0;
+
+        if ($foodPerSec > 0) {
+            $supportTimeFood = ($this->fleetLaunch->getSourceEntity()->getResFood() - $this->fleetLaunch->getLoadedRes(5) - $this->getCostsFood()) / $foodPerSec;
+        } else {
             $supportTimeFood = $supportTimeFuel;
+        }
 
-        if ($supportTimeFuel > 0)
+        if ($supportTimeFuel > 0) {
             $maxTime = min($maxTime, min($supportTimeFuel, $supportTimeFood));
-        else
+        } else {
             $maxTime = min($maxTime, $supportTimeFood);
+        }
 
         return floor($maxTime);
     }
 
-    function loadAllianceFleets(): void
+    public function loadAllianceFleets(): void
     {
-        global $app;
+        $this->fleetLaunch->setSupportedAllianceEntities([]);
+        $this->fleetLaunch->setAFleets([]);
 
-        $this->supportedAllianceEntities = array();
-        $this->aFleets = array();
-        if ($this->sourceEntity->ownerAlliance()) {
-            /** @var FleetRepository $fleetRepository */
-            $fleetRepository = $app[FleetRepository::class];
-            $this->aFleets = array_reverse($fleetRepository->search(FleetSearch::create()->isLeader()->actionIn([\EtoA\Fleet\FleetAction::ALLIANCE])->nextId($this->sourceEntity->ownerAlliance())->status(FleetStatus::DEPARTURE)));
+        $alliance = $this->fleetLaunch->getSourceEntity()->getUser()?->getAlliance();
+        if ($alliance !== null) {
+            $this->fleetLaunch->setAFleets(array_reverse($this->fleetRepository->search(
+                FleetSearch::create()
+                    ->isLeader()
+                    ->actionIn([FleetAction::ALLIANCE])
+                    ->nextId($alliance->getId())
+                    ->status(FleetStatus::DEPARTURE->value)
+            )));
 
-            $this->supportedAllianceEntities = $fleetRepository->getEntityToIds(FleetSearch::create()->actionIn([\EtoA\Fleet\FleetAction::SUPPORT])->statusIn([FleetStatus::DEPARTURE, FleetStatus::WAITING])->allianceId($this->sourceEntity->ownerAlliance()));
+            $this->fleetLaunch->setSupportedAllianceEntities($this->fleetRepository->getEntityToIds(
+                FleetSearch::create()
+                    ->actionIn([FleetAction::SUPPORT])
+                    ->statusIn([FleetStatus::DEPARTURE->value, FleetStatus::WAITING->value])
+                    ->alliance($alliance)
+            ));
         }
     }
 
@@ -719,325 +750,46 @@ class FleetLaunchService
     }
 
     // Alliance attack already confirmed
-    function checkAttNum($leaderid): bool
+    public function checkAttNum(int $leaderId): bool
     {
-        global $app;
-        /** @var ConfigurationService $config */
-        $config = $app[ConfigurationService::class];
-
-        if (!$config->getBoolean('alliance_fleets_max_players')) {
+        if (!$this->configurationService->getBoolean('alliance_fleets_max_players')) {
             return true;
         }
         // Check number of users participating in the alliance attack
-        /** @var FleetRepository $fleetRepository */
-        $fleetRepository = $app[FleetRepository::class];
-        $participatingUsers = $fleetRepository->getUserIds(FleetSearch::create()->leader($leaderid));
-        if (count($participatingUsers) < $config->param1Int('alliance_fleets_max_players')) {
+        $participatingUsers = $this->fleetRepository->getUserIds(FleetSearch::create()->leader($leaderId));
+        if (count($participatingUsers) < $this->configurationService->param1Int('alliance_fleets_max_players')) {
             return true;
         }
 
-        return in_array((int) $this->ownerId, $participatingUsers, true);
+        return in_array($this->fleetLaunch->getOwner()->getId(), $participatingUsers, true);
     }
 
-    function checkDefNum(): bool
+    public function checkDefNum(): bool
     {
-        global $app;
-        /** @var ConfigurationService $config */
-        $config = $app[ConfigurationService::class];
-
-        if (!$config->getBoolean('alliance_fleets_max_players')) {
+        if (!$this->configurationService->getBoolean('alliance_fleets_max_players')) {
             return true;
         }
 
         // check the number of supporters on that planet
-        /** @var FleetRepository $fleetRepository */
-        $fleetRepository = $app[FleetRepository::class];
-        $participatingUsers = $fleetRepository->getUserIds(FleetSearch::create()->actionIn([\EtoA\Fleet\FleetAction::SUPPORT])->statusIn([FleetStatus::DEPARTURE, FleetStatus::WAITING])->entityTo($this->targetEntity->id())->notUser($this->targetEntity->ownerId()));
+        $search = FleetSearch::create()
+            ->actionIn([FleetAction::SUPPORT])
+            ->statusIn([FleetStatus::DEPARTURE->value, FleetStatus::WAITING->value])
+            ->entityTo($this->fleetLaunch->getTargetEntity());
+
+        $targetOwner = $this->fleetLaunch->getTargetEntity()->getOwner();
+        if ($targetOwner !== null) {
+            $search->notUser($targetOwner);
+        }
+
+        $participatingUsers = $this->fleetRepository->getUserIds($search);
         // user id is guaranteed to not be the target owner, so the number is reduced
         // by one, because we always have one slot reserved for the planet's owner
-        if (count($participatingUsers) < ($config->param1Int('alliance_fleets_max_players') - 1)) {
+        if (count($participatingUsers) < ($this->configurationService->param1Int('alliance_fleets_max_players') - 1)) {
             return true;
         }
-        // if the maximum of user slots is already reached, we check whether there
-        // is already a support fleet from the same user
-
         // if the user already supports this planet with one fleet, he can
         // send even more fleets to support the same planet
-        return in_array((int) $this->ownerId, $participatingUsers, true);
-    }
-
-    /**
-    * Verify wormhole and show target selector
-    */
-    function havenShowWormhole($form)
-    {
-        // TODO
-        global $app;
-
-        /** @var ConfigurationService $config */
-        $config = $app[ConfigurationService::class];
-        /** @var EntityRepository $entityRepository */
-        $entityRepository = $app[EntityRepository::class];
-        /** @var PlanetRepository $planetRepository */
-        $planetRepository = $app[PlanetRepository::class];
-        /** @var UserUniverseDiscoveryService $userUniverseDiscoveryService */
-        $userUniverseDiscoveryService = $app[UserUniverseDiscoveryService::class];
-        /** @var LogRepository $logRepository */
-        $logRepository = $app[LogRepository::class];
-        /** @var BookmarkRepository $bookmarkRepository */
-        $bookmarkRepository = $app[BookmarkRepository::class];
-
-        /** @var UserRepository $userRepository */
-        $userRepository = $app[UserRepository::class];
-
-        $response = new xajaxResponse();
-
-        // Do some checks
-        if (count($form) > 0) {
-            // Get fleet object
-            /** @var FleetLaunch $fleet */
-            if ($this->fleetLaunch->getWormholeEntryEntity()) {
-                $owner = $this->fleetLaunch->getOwner();
-                $absX = (($form['csx'] - 1) * $config->param1Int('num_of_cells')) + $form['ccx'];
-                $absY = (($form['csy'] - 1) * $config->param2Int('num_of_cells')) + $form['ccy'];
-                $code = $userUniverseDiscoveryService->discovered($owner, $absX, $absY) == 0 ? 'u' : '';
-
-                $entity = $entityRepository->findByCoordinates(new EntityCoordinates($form['csx'], $form['csy'], $form['ccx'], $form['ccy'], $form['psp']));
-                if ($entity) {
-                    //Info Feld des ersten Teiles des Fluges, Tabelle muss vor setWormhole stehen!!
-                    ob_start();
-                    tableStart("Flug bis zum Wurmloch");
-                    echo "<tr><th width=\"25%\"><b>Startplanet:</b></th>
-                            <td style=\"padding:2px 2px 3px 6px;background:#000;color:#fff;height:47px;\">
-                                <img src=\"" . $fleet->sourceEntity->imagePath() . "\" style=\"float:left;\" >
-                                <br/>&nbsp;&nbsp; " . $fleet->sourceEntity . " (" . $fleet->sourceEntity->entityCodeString() . ", Besitzer: " . $fleet->sourceEntity->owner() . ")
-                            </td></tr>
-                        <tr><th width=\"25%\"><b>Wurmloch-Eintrittspunkt:</b></th>
-                            <td style=\"padding:2px 2px 3px 6px;background:#000;color:#fff;height:47px;\">
-                                <img src=\"" . $fleet->targetEntity->imagePath() . "\" style=\"float:left;\" >
-                                <br/>&nbsp;&nbsp; " . $fleet->targetEntity . " (" . $fleet->targetEntity->entityCodeString() . ", Besitzer: " . $fleet->targetEntity->owner() . ")
-                            </td></tr>
-                        <tr><th width=\"25%\"><b>Entfernung:</b></th><td>" . StringUtils::formatNumber($fleet->getDistance()) . " AE" . "</td>
-                        <tr><th width=\"25%\"><b>Kosten/100 AE:</b></th><td>" . StringUtils::formatNumber($fleet->getCostsPerHundredAE()) . " t " . ResourceNames::FUEL . "</td>";
-                    $speedString = StringUtils::formatNumber($fleet->getSpeed()) . " AE/h";
-                    if ($fleet->sBonusSpeed > 1)
-                        $speedString .= " (inkl. " . StringUtils::formatPercentString($fleet->sBonusSpeed, true) . " Mysticum-Bonus)";
-                    echo "<tr><th width=\"25%\"><b>Geschwindigkeit:</b></th><td>" . $speedString . "</td>
-                        <tr><th width=\"25%\"><b>Dauer:</b></th><td>" . StringUtils::formatTimespan($fleet->getDuration()) . " (inkl. Start- und Landezeit von " . StringUtils::formatTimespan($fleet->getTimeLaunchLand()) . ")</td>
-                        <tr><th width=\"25%\"><b>Treibstoff:</b></th><td>" . StringUtils::formatNumber($fleet->getCosts()) . " t " . ResourceNames::FUEL . "  (inkl. Start- und Landeverbrauch von " . StringUtils::formatNumber($fleet->getCostsLaunchLand()) . " " . ResourceNames::FUEL . ")</td>
-                        <tr><th width=\"25%\"><b>Nahrung:</b></th><td>" . StringUtils::formatNumber($fleet->getCostsFood()) . " t " . ResourceNames::FOOD . "</td>
-                        <tr><th width=\"25%\"><b>Piloten:</b></th><td>" . StringUtils::formatNumber($fleet->getPilots()) . "</td>";
-
-                    $response->assign("havenContentTarget", "innerHTML", ob_get_contents());
-
-                    ob_end_clean();
-
-                    if ($this->setWormhole($ent, $form['speed'])) {
-                        ob_start();
-                        echo "<form id=\"targetForm\" onsubmit=\"xajax_havenShowAction(xajax.getFormValues('targetForm'));return false;\" >";
-                        tableStart("Zielwahl nach dem Wurmlochsprung wählen");
-
-                        $csx = $this->fleetLaunch->getSourceEntity()->getEntity()->getCell()->getSx();
-                        $csy = $this->fleetLaunch->getSourceEntity()->getEntity()->getCell()->getSy();
-                        $ccx = $this->fleetLaunch->getSourceEntity()->getEntity()->getCell()->getCx();
-                        $ccy = $this->fleetLaunch->getSourceEntity()->getEntity()->getCell()->getCy();
-                        $psp = $this->fleetLaunch->getSourceEntity()->getEntity()->getPos();
-
-                        //Wurmlochaustritt
-                        echo "<tr><th width=\"25%\"><b>Wurmloch-Austrittspunkt:</b></th>
-                                <td style=\"padding:2px 2px 3px 6px;background:#000;color:#fff;height:47px;\">
-                                    <img src=\"" . $fleet->wormholeExitEntity->imagePath() . "\" style=\"float:left;\" >
-                                    <br/>&nbsp;&nbsp; " . $fleet->wormholeExitEntity . " (" . $fleet->wormholeExitEntity->entityCodeString() . ", Besitzer: " . $fleet->wormholeExitEntity->owner() . ")
-                                </td></tr>";
-                        // Manuelle Auswahl
-                        echo "<tr><th width=\"25%\">Manuelle Eingabe:</th><td width=\"75%\">";
-                        echo "<input type=\"text\"
-                                                    id=\"man_sx\"
-                                                    name=\"man_sx\"
-                                                    size=\"1\"
-                                                    maxlength=\"1\"
-                                                    value=\"$csx\"
-                                                    title=\"Sektor X-Koordinate\"
-                                                    tabindex=\"1\"
-                                                    autocomplete=\"off\"
-                                                    onfocus=\"this.select()\"
-                                                    onclick=\"this.select()\"
-                                                    onkeydown=\"detectChangeRegister(this,'t1');\"
-                                                    onkeyup=\"if (detectChangeTest(this,'t1')) { showLoader('submitbutton');showLoader('targetinfo');xajax_havenTargetInfo(xajax.getFormValues('targetForm')); }\"
-                                                    onkeypress=\"return nurZahlen(event)\"
-                        />&nbsp;/&nbsp;";
-                        echo "<input type=\"text\"
-                                                    id=\"man_sy\"
-                                                    name=\"man_sy\"
-                                                    size=\"1\"
-                                                    maxlength=\"1\"
-                                                    value=\"$csy\"
-                                                    title=\"Sektor Y-Koordinate\"
-                                                    tabindex=\"2\"
-                                                    autocomplete=\"off\"
-                                                    onfocus=\"this.select()\"
-                                                    onclick=\"this.select()\"
-                                                    onkeydown=\"detectChangeRegister(this,'t2');\"
-                                                    onkeyup=\"if (detectChangeTest(this,'t2')) { showLoader('submitbutton');showLoader('targetinfo');xajax_havenTargetInfo(xajax.getFormValues('targetForm')); }\"
-                                                    onkeypress=\"return nurZahlen(event)\"
-                        />&nbsp;&nbsp;:&nbsp;&nbsp;";
-                        echo "<input type=\"text\"
-                                                    id=\"man_cx\"
-                                                    name=\"man_cx\"
-                                                    size=\"2\"
-                                                    maxlength=\"2\"
-                                                    value=\"$ccx\"
-                                                    title=\"Zelle X-Koordinate\"
-                                                    tabindex=\"3\"
-                                                    autocomplete=\"off\"
-                                                    onfocus=\"this.select()\"
-                                                    onclick=\"this.select()\"
-                                                    onkeydown=\"detectChangeRegister(this,'t3');\"
-                                                    onkeyup=\"if (detectChangeTest(this,'t3')) { showLoader('submitbutton');showLoader('targetinfo');xajax_havenTargetInfo(xajax.getFormValues('targetForm')); }\"
-                                                    onkeypress=\"return nurZahlen(event)\"
-                        />&nbsp;/&nbsp;";
-                        echo "<input type=\"text\"
-                                                    id=\"man_cy\"
-                                                    name=\"man_cy\"
-                                                    size=\"2\"
-                                                    maxlength=\"2\"
-                                                    value=\"$ccy\"
-                                                    tabindex=\"4\"
-                                                    autocomplete=\"off\"
-                                                    onfocus=\"this.select()\"
-                                                    onclick=\"this.select()\"
-                                                    onkeydown=\"detectChangeRegister(this,'t4');\"
-                                                    onkeyup=\"if (detectChangeTest(this,'t4')) { showLoader('submitbutton');showLoader('targetinfo');xajax_havenTargetInfo(xajax.getFormValues('targetForm')); }\"
-                                                    onkeypress=\"return nurZahlen(event)\"
-                        />&nbsp;&nbsp;:&nbsp;&nbsp;";
-                        echo "<input type=\"text\"
-                                                    id=\"man_p\"
-                                                    name=\"man_p\"
-                                                    size=\"2\"
-                                                    maxlength=\"2\"
-                                                    value=\"$psp\"
-                                                    title=\"Position des Planeten im Sonnensystem\"
-                                                    tabindex=\"5\"
-                                                    autocomplete=\"off\"
-                                                    onfocus=\"this.select()\"
-                                                    onclick=\"this.select()\"
-                                                    onkeydown=\"detectChangeRegister(this,'t5');\"
-                                                    onkeyup=\"if (detectChangeTest(this,'t5')) { showLoader('submitbutton');showLoader('targetinfo');xajax_havenTargetInfo(xajax.getFormValues('targetForm')); }\"
-                                                    onkeypress=\"return nurZahlen(event)\"
-                        /></td></tr>";
-
-                        echo "<tr id=\"bookmarkselect\"><th width=\"25%\">Zielfavoriten:</th><td width=\"75%\" align=\"left\">";
-                        echo "<select name=\"bookmarks\"
-                                                id=\"bookmarks\"
-                                                onchange=\"showLoader('submitbutton');xajax_havenBookmark(xajax.getFormValues('targetForm'));\"
-                                                tabindex=\"6\"
-                                >\n";
-                        echo "<option value=\"0\"";
-                        echo ">Wählen...</option>";
-
-                        $userPlanets = $planetRepository->getUserPlanetsWithCoordinates($fleet->ownerId());
-                        foreach ($userPlanets as $userPlanet) {
-                            echo "<option value=\"" . $userPlanet->id . "\"";
-                            echo ">Eigener Planet: " . $userPlanet->toString() . "</option>\n";
-                        }
-
-                        $bookmarkedEntities = $bookmarkRepository->getBookmarkedEntities($fleet->ownerId());
-                        if (count($bookmarkedEntities) > 0) {
-                            echo "<option value=\"0\"";
-                            echo ">-------------------------------</option>\n";
-
-                            foreach ($bookmarkedEntities as $bookmarkedEntity) {
-                                echo "<option value=\"" . $bookmarkedEntity->id . "\"";
-                                echo ">" . $bookmarkedEntity->toString() . "</option>\n";
-                            }
-                        }
-                        echo "</select>";
-
-                        echo "</td></tr>";
-
-                        // Speedfaktor
-                        echo "<tr id=\"speedselect\">
-                            <th width=\"25%\">Speedfaktor:</th>
-                            <td width=\"75%\" align=\"left\">";
-                        echo "<select name=\"speed_percent\"
-                                                id=\"duration_percent\"
-                                                onchange=\"showLoader('submitbutton');showLoader('duration');xajax_havenTargetInfo(xajax.getFormValues('targetForm'))\"
-                                                tabindex=\"6\"
-                                >\n";
-                        for ($x = 100; $x > 0; $x -= 1) {
-                            echo "<option value=\"$x\"";
-                            if ($fleet->getSpeedPercent() == $x) echo " selected=\"selected\"";
-                            echo ">" . $x . "</option>\n";
-                        }
-                        echo "</select> %";
-
-                        echo "</td></tr>";
-
-                        // Daten anzeigen
-                        echo "<tr><th id=\"targettitle\" width=\"25%\"><b>Ziel-Informationen:</b></th>
-                            <td id=\"targetinfo\" style=\"padding:2px 2px 3px 6px;background:#000;color:#fff;height:47px;\">
-                                <img src=\"images/loading.gif\" alt=\"Loading\" /> Lade Daten...
-                            </td></tr>";
-                        echo "<tr><th>Entfernung:</th>
-                            <td id=\"distance\">-</td></tr>";
-                        echo "<tr><th width=\"25%\">Kosten/100 AE:</th>
-                            <td id=\"costae\">" . StringUtils::formatNumber($fleet->getCostsPerHundredAE()) . " t " . ResourceNames::FUEL . "</td></tr>";
-                        echo "<tr><th>Geschwindigkeit:</th>
-                            <td id=\"speed\">" . StringUtils::formatNumber($fleet->getSpeed()) . " AE/h";
-                        if ($fleet->sBonusSpeed > 1)
-                            echo " (inkl. " . StringUtils::formatPercentString($fleet->sBonusSpeed, true) . " Mysticum-Bonus)";
-                        echo "</td></tr>";
-                        echo "<tr><th>Dauer:</th>
-                            <td><span id=\"duration\" style=\"font-weight:bold;\">-</span> (inkl. Start- und Landezeit von " . StringUtils::formatTimespan($fleet->getTimeLaunchLand()) . ")</td></tr>";
-                        echo "<tr><th>Treibstoff:</th>
-                            <td><span id=\"costs\" style=\"font-weight:bold;\">-</span> (inkl. Start- und Landeverbrauch von " . StringUtils::formatNumber($fleet->getCostsLaunchLand()) . " " . ResourceNames::FUEL . ")</td></tr>";
-                        echo "<tr><th>Nahrung:</th>
-                            <td><span id=\"food\"  style=\"font-weight:bold;\">-</span></td></tr>";
-                        echo "<tr><th>Piloten:</th>
-                            <td>" . StringUtils::formatNumber($fleet->getPilots());
-                        if ($fleet->sBonusPilots != 1)
-                            echo " (inkl. " . StringUtils::formatPercentString($fleet->sBonusPilots, true, true) . " Mysticum-Bonus)";
-                        echo "</td></tr>";
-                        echo "<tr><th>Bemerkungen:</th>
-                            <td id=\"comment\">-</td></tr>";
-                        echo "<tr id=\"allianceAttacks\" style=\"display: none;\"><th>Allianzangriffe:</th><td id=\"alliance\">-</td></tr>";
-                        tableEnd();
-
-                        echo "<div id=\"submitbutton\"></div>
-                                </form>";
-
-
-                        $response->assign("havenContentWormhole", "innerHTML", ob_get_contents());
-                        $response->assign("havenContentWormhole", "style.display", '');
-
-                        $response->script("document.getElementById('man_sx').focus();");
-                        $response->script("xajax_havenTargetInfo(xajax.getFormValues('targetForm'))");
-
-                        ob_end_clean();
-                    } else {
-                        $response->alert($fleet->error());
-                    }
-                } else {
-                    $response->alert("Ungültiges Ziel!");
-                }
-            } else {
-                include_once(getcwd() . '/inc/bootstrap.inc.php');
-                $logRepository->add(
-                    LogFacility::ILLEGALACTION,
-                    LogSeverity::INFO,
-                    'Der User ' . $_SESSION['user_nick'] . ' versuchte, ein zweites Wurmloch zu &ouml;ffnen' . "\n"
-                    . 'Bereits gesetztes Wurmloch: ' . $fleet->wormholeEntryEntity . ' mit Austrittspunkt ' . $fleet->wormholeExitEntity . "\n"
-                    . 'Zweites Wumloch: ' . $form['man_sx'] . ' / ' . $form['man_sy'] . ' : ' . $form['man_cx'] . ' / ' . $form['man_cy'] . ' : ' . $form['man_p'] . '.'
-                );
-                $response->alert("Wurmloch wurde bereits gesetzt!");
-            }
-
-
-            $_SESSION['haven']['fleetObj'] = serialize($fleet);
-        } else {
-            $response->alert("Fehler! Es wurden keine Ziel gewählt!");
-        }
-        return $response;
+        return in_array($this->fleetLaunch->getOwner()->getId(), $participatingUsers, true);
     }
 
     private function getCapacity(): float|int

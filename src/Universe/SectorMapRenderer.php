@@ -178,7 +178,7 @@ class SectorMapRenderer
                         $tt->addTitle($entity->codeString());
                         $tt->addText("Position: $sx/$sy : $xcoords/$ycoords");
                         if ($entity->getCode() === EntityType::WORMHOLE) {
-                            $tt->addComment("Ziel: " . $entity->getWormhole()->getTarget()->toString() . "</a>");
+                            $tt->addComment("Ziel: " . $entity->getWormhole()->getTarget()->getEntity()->toString() . "</a>");
                         } else {
                             if($entity->displayName())
                                 $tt->addComment($entity->displayName());

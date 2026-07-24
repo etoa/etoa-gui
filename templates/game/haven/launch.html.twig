@@ -17,23 +17,23 @@
                 <td>{{ formatNumber(fleet.getLoadedRes(1)) }}</td>
             </tr>
             <tr>
-                <td><b>Ladung: {{ constant('EtoA\\Universe\\Resources\\ResourceNames::METAL') }}</b></td>
+                <td><b>Ladung: {{ constant('EtoA\\Universe\\Resources\\ResourceNames::CRYSTAL') }}</b></td>
                 <td>{{ formatNumber(fleet.getLoadedRes(2)) }}</td>
             </tr>
             <tr>
-                <td><b>Ladung: {{ constant('EtoA\\Universe\\Resources\\ResourceNames::METAL') }}</b></td>
+                <td><b>Ladung: {{ constant('EtoA\\Universe\\Resources\\ResourceNames::PLASTIC') }}</b></td>
                 <td>{{ formatNumber(fleet.getLoadedRes(3)) }}</td>
             </tr>
             <tr>
-                <td><b>Ladung: {{ constant('EtoA\\Universe\\Resources\\ResourceNames::METAL') }}</b></td>
+                <td><b>Ladung: {{ constant('EtoA\\Universe\\Resources\\ResourceNames::FUEL') }}</b></td>
                 <td>{{ formatNumber(fleet.getLoadedRes(4)) }}</td>
             </tr>
             <tr>
-                <td><b>Ladung: {{ constant('EtoA\\Universe\\Resources\\ResourceNames::METAL') }}</b></td>
+                <td><b>Ladung: {{ constant('EtoA\\Universe\\Resources\\ResourceNames::FOOD') }}</b></td>
                 <td>{{ formatNumber(fleet.getLoadedRes(5)) }}</td>
             </tr>
         {% endblock %}
     </twig:Table>
-        <input type="button" value="Weitere Flotte starten" />
-    &nbsp;   <input type="button" value="Flotte beobachten" />
+        <a href="{{ path('game.haven.show') }}"><input type="button" value="Weitere Flotte starten" /></a>
+    &nbsp;   <a href="{{ path('game.fleets') }}"><input type="button" value="Flotte beobachten" /></a>
 {% endblock %}

@@ -139,7 +139,8 @@ class MessagesController extends AbstractGameController
         if(!$session->get('messagesSent'))
             $session->set('messagesSent',[]);
 
-        if($this->getUser()->getData()->getVerificationKey()) {
+        // A (non-empty) verification key means the e-mail address is NOT yet confirmed
+        if(!$this->getUser()->getData()->getVerificationKey()) {
             if(!$message->getMessageData()) {
                 $messageData = new MessageData();
                 $message->setMessageData($messageData);

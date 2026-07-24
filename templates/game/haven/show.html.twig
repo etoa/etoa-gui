@@ -75,6 +75,7 @@
         {% if form.ships.children %}
             <twig:Table title="Vorhandene Raumschiffe">
                 {% block table_content %}
+                    {% set flightFactor = configValue('flight_flight_time') %}
                     <tr>
                         <th colspan="6">Schiffe wählen</th>
                     </tr>
@@ -89,13 +90,13 @@
                         <tr>
                             {% if ship.vars.data.ship.special %}
                                 <td style="width:40px;background:#000;">
-                                    <a href="?page=ship_upgrade&amp;id=">
+                                    <a href="?page=ship_upgrade&amp;id={{ ship.vars.data.ship.id }}">
                                         <img src="{{ ship.vars.data.ship.getImagePath('small') }}" width="40" height="40" alt="Ship"/>
                                     </a>
                                 </td>
                             {% else %}
                                 <td style="width:40px;background:#000;">
-                                    <a href="?page=help&amp;site=shipyard&amp;id= $shipId">
+                                    <a href="?page=help&amp;site=shipyard&amp;id={{ ship.vars.data.ship.id }}">
                                         <img src="{{ ship.vars.data.ship.getImagePath('small') }}" width="40" height="40" alt="Ship"/>
                                     </a>
                                 </td>
@@ -104,9 +105,9 @@
                                 "<img src=\""~ship.vars.data.ship.getImagePath('medium')~"\" style=\"float:left;margin-right:5px;\">"~
                                 BBCodeToHTML(ship.vars.data.ship.shortComment))|raw }} >
                                 {{ ship.vars.data.ship.name }} </td>
-                            <td> dummy </td>
-                            <td> dummy  </td>
-                            <td>{{ ship.vars.data.count }}</td>
+                            <td>{{ flightFactor > 0 ? formatNumber(ship.vars.data.ship.speed / flightFactor) : formatNumber(ship.vars.data.ship.speed) }} AE/h</td>
+                            <td>{{ formatNumber(ship.vars.data.ship.pilots) }}</td>
+                            <td>{{ formatNumber(ship.vars.data.count) }}</td>
                             <td>
                                 {% if ship.vars.data.ship.launchable and fleetLaunch.pilotsAvailable >= ship.vars.data.ship.pilots %}
                                     {{ form_widget(ship.children.count) }}

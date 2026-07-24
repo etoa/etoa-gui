@@ -1,6 +1,6 @@
 {% extends 'layout/game.html.twig' %}
 {% block content %}
-    <h1>Raumschiffhafen des Planeten ' . $planet->name . '</h1>
+    <h1>Raumschiffhafen des Planeten {{ planet.name }}</h1>
     <twig:ResourceBox/>
 
     {% set tabs = {
