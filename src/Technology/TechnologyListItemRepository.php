@@ -209,7 +209,7 @@ class TechnologyListItemRepository extends AbstractRepository
     {
         $this->createQueryBuilder('q')
             ->set('q.buildType', 'q.buildType - 2')
-            ->where('q.userId = :userId')
+            ->where('q.user = :userId')
             ->andWhere('q.startTime > 0')
             ->setParameters([
                 'userId' => $userId,

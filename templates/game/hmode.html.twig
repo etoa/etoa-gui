@@ -1,0 +1,19 @@
+{% extends 'layout/game.html.twig' %}
+
+{% block content %}
+    <h1>Du befindest dich im Urlaubsmodus</h1>
+    Der Urlaubsmodus dauert bis mindestens: <b>{{ formatTimestamp(app.user.data.hmodTo) }}</b><br/>
+    {% if app.user.data.hmodTo < date().timestamp %}
+        <br/><span style="color:#0f0">Die Minimaldauer ist abgelaufen!</span><br/><br/>
+        <a href="{{ path('game.config.misc') }}">
+            <input type="button" value="Einstellungen" /><br/>
+        </a>
+    {% else %}
+    Zeit bis Deaktivierung möglich ist:
+        <b>
+            {{ formatTimespan(app.user.data.hmodTo - max(date().timestamp, app.user.data.hmodFrom)) }}
+        </b><br/>
+    {% endif %}
+    <br/>Solltest du Fragen oder Probleme mit dem Urlaubsmodus haben,<br/>
+    dann <a href="{{ path('game.contact.list') }}">melde</a> dich bei einem Game-Administrator.
+{% endblock %}

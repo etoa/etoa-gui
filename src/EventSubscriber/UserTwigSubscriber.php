@@ -3,13 +3,20 @@
 namespace EtoA\EventSubscriber;
 
 use EtoA\BuddyList\BuddyListRepository;
+use EtoA\Controller\Admin\MessageController;
 use EtoA\Controller\Game\AllianceBaseController;
 use EtoA\Controller\Game\AllianceBoardController;
 use EtoA\Controller\Game\AllianceDiplomacyController;
 use EtoA\Controller\Game\AllianceInternalController;
+use EtoA\Controller\Game\BuddylistController;
+use EtoA\Controller\Game\ContactController;
+use EtoA\Controller\Game\HelpController;
+use EtoA\Controller\Game\StatsController;
+use EtoA\Controller\Game\TownhallController;
+use EtoA\Controller\Game\UserConfigController;
+use EtoA\Controller\Game\UserinfoController;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Fleet\FleetRepository;
-use EtoA\Fleet\FleetSearch;
 use EtoA\Support\GameUtils;
 use EtoA\Message\MessageRepository;
 use EtoA\Message\ReportRepository;
@@ -36,7 +43,6 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use EtoA\Controller\Game\SetupController;
 use EtoA\Controller\Image\GalaxyMapImageController;
 use EtoA\Fleet\ForeignFleetService;
-use EtoA\User\UserWarningRepository;
 
 class UserTwigSubscriber implements EventSubscriberInterface
 {
@@ -51,7 +57,6 @@ class UserTwigSubscriber implements EventSubscriberInterface
         private readonly FleetRepository                $fleetRepository,
         private readonly MessageRepository              $messageRepository,
         private readonly ReportRepository               $reportRepository,
-        private readonly string                         $projectDir,
         private readonly DesignService                  $designService,
         private readonly ConfigurationService           $config,
         private readonly GameUtils                      $utilities,
@@ -74,7 +79,9 @@ class UserTwigSubscriber implements EventSubscriberInterface
     //Controllers that can accessed before finishing the setup
     const WHITELIST = [
         SetupController::class,
-        GalaxyMapImageController::class
+        GalaxyMapImageController::class,
+        HelpController::class,
+        ContactController::class
     ];
 
     const ALLIANCE_BLOCKLIST = [
@@ -102,14 +109,20 @@ class UserTwigSubscriber implements EventSubscriberInterface
         $mode = $request->query->get('mode', '');
         $infoText = $this->textRepo->find('info');
         $allowed_ips = explode("\n", $this->config->get('offline_ips_allow'));
+        $time = time();
+        $controller = $event->getRequest()->attributes->get('_controller');
 
-        $request->headers->set('cache-control','no-cache, must-revalidate');
+        if(!$controller)
+            return;
 
-        if (!isCLI()) {
-            if(!gettype(require_once $this->projectDir . '/src/xajax/xajax.inc.php') == 'object')
-                $xajax = require_once $this->projectDir . '/src/xajax/xajax.inc.php';
+        if(is_string($controller)) {
+            $controller = explode('::', $controller);
+        }
+        else {
+            $controller[0] = '';
         }
 
+        $request->headers->set('cache-control','no-cache, must-revalidate');
 
         //TODO:refactor
         /*
@@ -197,6 +210,14 @@ class UserTwigSubscriber implements EventSubscriberInterface
             $this->twig->addGlobal($key, $value);
         }
 
+        if (!$this->tutorialUserProgressRepository->find(['userId'=>$cu->getId(), 'tutorialId'=>1])) {
+            $this->twig->addGlobal('tutorial_id', 1);
+        } else if ($cu->getdata()->isSetup() && !$this->tutorialUserProgressRepository->find(['userId'=>$cu->getId(), 'tutorialId'=>2])) {
+            $this->twig->addGlobal('tutorial_id', 2);
+        } elseif ($cu->getdata()->isSetup() && $this->tutorialUserProgressRepository->find(['userId'=>$cu->getId(), 'tutorialId'=>2]) && $this->config->getInt('quest_system_enable')) {
+            //$app['cubicle.quests.initializer']->initialize($this->getUser()->getId()); //TODO migrate quests
+        }
+
         if ($this->config->getBoolean('offline') && !in_array($request->server->get('REMOTE_ADDR'), $allowed_ips, true)) {
             $text = $this->config->get('offline_message') ?
                 BBCodeUtils::toHTML($this->config->get('offline_message')):
@@ -227,13 +248,39 @@ class UserTwigSubscriber implements EventSubscriberInterface
 
             $this->renderBlocked($event,$text,$image,$title);
         }
-
-        if (!$this->tutorialUserProgressRepository->find(['userId'=>$cu->getId(), 'tutorialId'=>1])) {
-            $this->twig->addGlobal('tutorial_id', 1);
-        } else if ($cu->getdata()->isSetup() && !$this->tutorialUserProgressRepository->find(['userId'=>$cu->getId(), 'tutorialId'=>2])) {
-            $this->twig->addGlobal('tutorial_id', 2);
-        } elseif ($cu->getdata()->isSetup() && $this->tutorialUserProgressRepository->find(['userId'=>$cu->getId(), 'tutorialId'=>2]) && $this->config->getInt('quest_system_enable')) {
-            //$app['cubicle.quests.initializer']->initialize($this->getUser()->getId()); //TODO migrate quests
+        elseif (
+            $cu->getData()->getBlockedFrom() > 0 &&
+            $cu->getData()->getBlockedFrom() < $time &&
+            $cu->getData()->getBlockedTo() > $time
+        ) {
+            if(!in_array($controller[0],self::WHITELIST)) {
+                $content = $this->twig->render('game/banned.html.twig');
+                $response = new Response($content);
+                $event->setResponse($response);
+            }
+        }
+        elseif ($cu->getData()->getDeleted()>0) {
+            if(!in_array($controller[0],[ContactController::class,UserConfigController::class])) {
+                //$content = $this->twig->render('game/deletion.html.twig');
+                //$response = new Response($content);
+                //$event->setResponse($response);
+            }
+        }
+        elseif ($cu->getData()->getHmodFrom()>0) {
+            if(!in_array($controller[0],[
+                UserConfigController::class,
+                MessageController::class,
+                StatsController::class,
+                TownhallController::class,
+                BuddylistController::class,
+                UserInfoController::class,
+                ContactController::class,
+                HelpController::class,
+            ])) {
+                $content = $this->twig->render('game/hmode.html.twig');
+                $response = new Response($content);
+                $event->setResponse($response);
+            }
         }
     }
 
@@ -250,7 +297,7 @@ class UserTwigSubscriber implements EventSubscriberInterface
             $controller = explode('::', $controller);
 
             //redirect to setup if new account
-            if($cu && !$cu->getData()->isSetup() && !in_array($controller[0],self::WHITELIST)) { //TODO $page != "help" && $page != "contact"
+            if($cu && !$cu->getData()->isSetup() && !in_array($controller[0],self::WHITELIST)) {
                 $event->setController(fn() => new RedirectResponse(($this->router->generate('game.setup.race'))));
             }
 

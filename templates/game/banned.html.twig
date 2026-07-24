@@ -1,0 +1,16 @@
+{% extends 'layout/game.html.twig' %}
+
+{% block content %}
+    <h1>Dein Account ist gesperrt!</h1>
+    <b>Grund:</b>{{ app.user.data.banReason }}<br/>
+    <b>Zeitraum:</b> <span style="color:#f90">{{ formatTimestamp(app.user.data.blockedFrom) }}</span>
+    bis <span style="color:#0f0">{{ formatTimestamp(app.user.data.blockedTo) }}</span><br/>
+    <b>Gesamtdauer der Sperre:</b>{{ formatTimespan(app.user.data.blockedTo - app.user.data.blockedFrom) }}<br/>
+    <b>Dauer:</b> {{ formatTimespan(app.user.data.blockedTo - max(date().timestamp, app.user.data.blockedFrom)) }}<br/>
+
+    {% if(app.user.data.banAdmin) %}
+        <b>Gesperrt von:</b>{{ app.user.data.banAdmin.nick }}, <a href="mailto:$adminUser->email">{{ app.user.data.banAdmin.email }}</a><br/>
+    {% endif %}
+    <br/>Solltest du Fragen zu dieser Sperrung haben oder dich ungerecht behandelt fühlen,<br/>
+    dann <a href="{{ path('game.contact.list') }}">melde</a> dich bei einem Game-Administrator.
+{% endblock %}

@@ -233,7 +233,7 @@ die Spielleitung";
     public function updateDelete(User $user, int $timestamp): void
     {
         $user->setDeleted($timestamp);
-        $this->userRepository->save($user);
+        $this->userRepository->save();
     }
 
     public function removeInactive(bool $manual = false): int

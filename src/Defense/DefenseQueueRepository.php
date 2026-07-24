@@ -94,7 +94,7 @@ class DefenseQueueRepository extends AbstractRepository
     {
         $this->createQueryBuilder('q')
             ->set('q.buildType', 1)
-            ->where('q.userId = :userId')
+            ->where('q.user = :userId')
             ->setParameters([
                 'userId' => $userId
             ])

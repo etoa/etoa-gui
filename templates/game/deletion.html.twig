@@ -1,0 +1,12 @@
+{% extends 'layout/game.html.twig' %}
+
+{% block content %}
+    <h1>Dein Account ist zut Löschung vorgeschlagen!</h1>
+    Die Löschung erfolgt frühestens um <b>{{ formatTimestamp(app.user.data.deleted) }}</b>!<br/><br/>
+    <a href="{{ path('game.config.misc') }}">
+        <input type="button" value="Löschung aufheben" />
+    </a>
+    <a href="{{ path('game.contact.list') }}">
+        <input type="button" value="Admin kontaktieren" />
+    </a>
+{% endblock %}
