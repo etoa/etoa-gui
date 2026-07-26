@@ -92,7 +92,7 @@ class PopulationController extends AbstractGameController
 
                     if($form->get('free')->isClicked()) {
                         foreach ($workplaces as $workplace) {
-                            if($workplace->getPeopleWorkingStatus() === 0) {
+                            if(!$workplace->getPeopleWorkingStatus()) {
                                 $workplace->setPeopleWorking(0);
                             }
                             $this->buildingListItemRepository->save();
