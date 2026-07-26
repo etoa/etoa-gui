@@ -444,12 +444,18 @@ class BuildingService
 
     private function getBuildCosts(BuildingListItem $item, int $level): PreciseResources
     {
+        $request = $this->requestStack->getCurrentRequest();
+        $planet = $this->planetRepository->find($request->getSession()->get('cpid'));
+        $user = $planet->getUser();
+
         // Build context for cost calculation
         $context = new BuildingCostContext();
         $context->race = $item->getEntity()->getUser()->getRace();
         $context->specialist = $item->getEntity()->getUser()->getSpecialist();
         $context->planetType = $item->getEntity()->getPlanetType();
         $context->solarType = $this->starRepository->findStarForCell($item->getEntity()->getEntity()->getCell())->getSolarType();
+        $context->peopleWorking = $this->getPeopleWorking();
+        $context->gentech = $this->technologyListItemRepository->getTechnologyLevel($user, TechnologyId::GEN) ?? 0;
 
         return $this->buildingCostCalculator->calculate($item->getBuilding(), $level, $context);
     }
@@ -711,5 +717,14 @@ class BuildingService
         $user = $this->security->getUser()->getData();
         $gentech = $this->technologyListItemRepository->getTechnologyLevel($user, TechnologyId::GEN) ?? 0;
         return (0.1 - ($gentech / 100));
+    }
+
+    public function getPeopleWorking()
+    {
+        $request = $this->requestStack->getCurrentRequest();
+        $planet = $this->planetRepository->find($request->getSession()->get('cpid'));
+        $base = $this->buildingListItemRepository->findOneBy(['entity' => $planet, 'building' => BuildingId::BUILDING]);
+
+        return $base?->getPeopleWorking() ?? 0;
     }
 }
