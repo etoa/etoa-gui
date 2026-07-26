@@ -75,7 +75,6 @@
         {% if form.ships.children %}
             <twig:Table title="Vorhandene Raumschiffe">
                 {% block table_content %}
-                    {% set flightFactor = configValue('flight_flight_time') %}
                     <tr>
                         <th colspan="6">Schiffe wählen</th>
                     </tr>
@@ -101,11 +100,17 @@
                                     </a>
                                 </td>
                             {% endif %}
+                            {% set acstr %}
+                                {%- set acts = ship.vars.data.ship.getActions|default('')|split(',')|filter(c => c) -%}
+                                {%- if acts|length > 0 %}<br/><br/><b>Fähigkeiten:</b> {% for code in acts %}{% if fleetActions[code] is defined %}{{ fleetActions[code]|raw }}{% if not loop.last %}, {% endif %}{% endif %}{% endfor %}{% endif -%}
+                            {% endset %}
+                            {% set speedInfo = shipSpeedInfo[ship.vars.data.ship.id] %}
                             <td {{ tm(ship.vars.data.ship.name,
                                 "<img src=\""~ship.vars.data.ship.getImagePath('medium')~"\" style=\"float:left;margin-right:5px;\">"~
-                                BBCodeToHTML(ship.vars.data.ship.shortComment))|raw }} >
+                                BBCodeToHTML(ship.vars.data.ship.shortComment)~acstr~"<br style=\"clear:both;\"/>")|raw }} >
                                 {{ ship.vars.data.ship.name }} </td>
-                            <td>{{ flightFactor > 0 ? formatNumber(ship.vars.data.ship.speed / flightFactor) : formatNumber(ship.vars.data.ship.speed) }} AE/h</td>
+                            {% set speedTooltip %}Grundgeschwindigkeit: {{ formatNumber(speedInfo.baseSpeed) }} AE/h{% for line in speedInfo.lines %}<br/>{{ line.label }}: {{ formatPercentString(line.factor, true)|raw }}{% endfor %}{% endset %}
+                            <td {{ tm("Geschwindigkeit", speedTooltip)|raw }}>{{ formatNumber(speedInfo.displaySpeed) }} AE/h</td>
                             <td>{{ formatNumber(ship.vars.data.ship.pilots) }}</td>
                             <td>{{ formatNumber(ship.vars.data.count) }}</td>
                             <td>

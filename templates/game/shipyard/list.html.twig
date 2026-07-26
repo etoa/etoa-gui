@@ -177,7 +177,7 @@
                                         <br><a href="javascript:;"
                                                onclick="document.getElementById('ship_form_{{ ship.id }}').value={{ ship.maxBuildable }};">max</a>
                                         {% if not ship.hasQueue %}
-                                            &nbsp;<a href=""
+                                            &nbsp;<a href="javascript:this.preventDefault();"
                                                      onclick="if(document.getElementById('changePeople').style.display==='none') {toggleBox('changePeople')};updatePeopleWorkingBox('{{ ship.peopleOptimized }}','-1','^-1');">optimieren</a>
                                         {% endif %}
                                     </td>
