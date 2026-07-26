@@ -12,7 +12,9 @@ use EtoA\Entity\BuildingListItem;
 use EtoA\Entity\Entity;
 use EtoA\Entity\Fleet;
 use EtoA\Entity\Planet;
+use EtoA\Entity\Ship;
 use EtoA\Entity\ShipListItem;
+use EtoA\Entity\User;
 use EtoA\Entity\Wormhole;
 use EtoA\Log\FleetLogRepository;
 use EtoA\Ship\ShipListRepository;
@@ -639,6 +641,49 @@ class FleetLaunchService
     function getCostsFood(): float|int
     {
         return ceil($this->fleetLaunch->getPilots() * $this->configurationService->getInt('people_food_require') / 3600 * $this->fleetLaunch->getDuration());
+    }
+
+    /**
+     * Computes a ship's effective speed and the bonus breakdown (race, specialist, speed
+     * technologies) for the ship-selection tooltip, mirroring the legacy havenShowShips logic.
+     *
+     * @return array{baseSpeed: float, displaySpeed: float, timefactor: float, lines: array<array{label: string, factor: float}>}
+     */
+    public function getShipSpeedBreakdown(Ship $ship, User $owner): array
+    {
+        $specialist = $owner->getSpecialist();
+        $raceFactor = $owner->getRace()?->getFleetTime() ?? 1;
+        $specFactor = $specialist ? ($specialist->getFleetSpeed() ?? 1) : 1;
+
+        $timefactor = $raceFactor + $specFactor - 1;
+        $lines = [];
+        if ($raceFactor != 1) {
+            $lines[] = ['label' => 'Rasse', 'factor' => $raceFactor];
+        }
+        if ($specFactor != 1) {
+            $lines[] = ['label' => 'Spezialist', 'factor' => $specFactor];
+        }
+
+        foreach ($this->shipRequirementRepository->getRequiredSpeedTechnologies($ship) as $requirement) {
+            $level = $this->technologyListItemRepository->findOneBy(['user' => $owner, 'technology' => $requirement->getTech()])?->getCurrentLevel() ?? 0;
+            $diff = $level - $requirement->getLevel();
+            if ($diff > 0) {
+                $timefactor += $diff * 0.1;
+                $lines[] = [
+                    'label' => $requirement->getTech()?->getName() . ' ' . $level,
+                    'factor' => ($diff / 10) + 1,
+                ];
+            }
+        }
+
+        $baseSpeed = $ship->getSpeed() / $this->configurationService->getFloat('flight_flight_time');
+
+        return [
+            'baseSpeed' => $baseSpeed,
+            'displaySpeed' => $baseSpeed * $timefactor,
+            'timefactor' => $timefactor,
+            'lines' => $lines,
+        ];
     }
 
     // subtracts the payload ress (not support/flight fuel and food)

@@ -51,6 +51,12 @@ class HavenController extends AbstractGameController
 
             $ships = $this->shipListRepository->getEntityShipCounts($this->getUser()->getData(), $cp);
 
+            // Per-ship effective speed + bonus breakdown (race/specialist/speed techs) for the tooltip
+            $shipSpeedInfo = [];
+            foreach ($ships as $shipListItem) {
+                $shipSpeedInfo[$shipListItem->getShip()->getId()] = $this->fleetLaunchService->getShipSpeedBreakdown($shipListItem->getShip(), $this->getUser()->getData());
+            }
+
             $form = $this->createFormBuilder(['ships'=>$ships])
                 ->add('ships', CollectionType::class, [
                     'entry_type' => CountType::class,
@@ -132,7 +138,9 @@ class HavenController extends AbstractGameController
                 'hasMobileObjects'=>$hasMobileObjects,
                 'fleetLaunch' => $this->fleetLaunchService->getFleetLaunch(),
                 'form' => $form,
-                'planet' => $cp
+                'planet' => $cp,
+                'fleetActions' => FleetAction::getAll(),
+                'shipSpeedInfo' => $shipSpeedInfo
             ]);
         }
 
