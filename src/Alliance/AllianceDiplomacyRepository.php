@@ -78,7 +78,7 @@ class AllianceDiplomacyRepository extends AbstractRepository
             ->execute();
     }
 
-    public function getDiplomacy(int $id, int $allianceId, int $level = null): ?AllianceDiplomacy
+    public function getDiplomacy(int $id, int $allianceId, ?int $level = null): ?AllianceDiplomacy
     {
         $qb = $this->createQueryBuilder('q')
             ->select('b.*')
@@ -106,7 +106,7 @@ class AllianceDiplomacyRepository extends AbstractRepository
         return $data !== false ? new AllianceDiplomacy($data, $id) : null;
     }
 
-    public function existsDiplomacyBetween(Alliance $alliance, Alliance $otherAlliance, int $level = null): bool
+    public function existsDiplomacyBetween(Alliance $alliance, Alliance $otherAlliance, ?int $level = null): bool
     {
         if ($alliance === $otherAlliance) {
             return false;
@@ -134,7 +134,7 @@ class AllianceDiplomacyRepository extends AbstractRepository
             ->getOneOrNullResult();
     }
 
-    public function updateDiplomacy(AllianceDiplomacy $diplomacy, int $level, string $name, int $points = null, int $date = null): void
+    public function updateDiplomacy(AllianceDiplomacy $diplomacy, int $level, string $name, ?int $points = null, ?int $date = null): void
     {
         $diplomacy->setLevel($level);
         $diplomacy->setName($name);
@@ -190,7 +190,7 @@ class AllianceDiplomacyRepository extends AbstractRepository
             ->execute();
     }
 
-    public function isAtWar(Alliance $alliance, Alliance $atWarWithAlliance = null): bool
+    public function isAtWar(Alliance $alliance, ?Alliance $atWarWithAlliance = null): bool
     {
         $qb = $this->createQueryBuilder('q')
             ->where('q.alliance1= :alliance OR q.alliance2 = :alliance')

@@ -133,7 +133,7 @@ class MissileRepository extends AbstractRepository
             ->execute();
     }
 
-    public function countBySearch(MissileListSearch $search = null): int
+    public function countBySearch(?MissileListSearch $search = null): int
     {
         return (int) $this->applySearchSortLimit($this->createQueryBuilder('q'), $search)
             ->select('COUNT(q)')

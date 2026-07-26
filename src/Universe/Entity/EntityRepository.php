@@ -146,7 +146,7 @@ class EntityRepository extends AbstractRepository
     /**
      * @return Entity[]
      */
-    public function searchEntities(EntitySearch $search, EntitySort $sort = null): array
+    public function searchEntities(EntitySearch $search, ?EntitySort $sort = null): array
     {
         return $this->getEntityCoordinatesQueryBuilder($search, $sort)
             ->getQuery()
@@ -200,7 +200,7 @@ class EntityRepository extends AbstractRepository
     /**
      * @return EntityLabel[]
      */
-    public function searchEntityLabels(EntitySearch $search, EntityLabelSort $sort = null, int $limit = null, int $offset = null): array
+    public function searchEntityLabels(EntitySearch $search, ?EntityLabelSort $sort = null, ?int $limit = null, ?int $offset = null): array
     {
         $data = $this->entityLabelQuerBuilder($search, $sort, $limit, $offset)
             ->getQuery()
@@ -214,7 +214,7 @@ class EntityRepository extends AbstractRepository
         return $entities;
     }
 
-    public function searchEntityLabel(EntitySearch $search, EntityLabelSort $sort = null): ?EntityLabel
+    public function searchEntityLabel(EntitySearch $search, ?EntityLabelSort $sort = null): ?EntityLabel
     {
         $data = $this->entityLabelQuerBuilder($search, $sort, 1)
             ->fetchAssociative();
@@ -222,7 +222,7 @@ class EntityRepository extends AbstractRepository
         return $data !== false ? new EntityLabel($data) : null;
     }
 
-    private function entityLabelQuerBuilder(EntitySearch $search, EntityLabelSort $sort = null, int $limit = null, int $offset = null): QueryBuilder
+    private function entityLabelQuerBuilder(EntitySearch $search, ?EntityLabelSort $sort = null, ?int $limit = null, ?int $offset = null): QueryBuilder
     {
         return $this->getEntityCoordinatesQueryBuilder($search, $sort, $limit, $offset)
             ->select('q')
@@ -230,7 +230,7 @@ class EntityRepository extends AbstractRepository
             ->leftJoin('App:User', 'users', 'WITH', 'users.id = planets.user');
     }
 
-    public function countEntityLabels(EntityLabelSearch $search = null): int
+    public function countEntityLabels(?EntityLabelSearch $search = null): int
     {
         return (int) $this->getEntityCoordinatesQueryBuilder($search)
             ->select('COUNT(q)')
@@ -242,7 +242,7 @@ class EntityRepository extends AbstractRepository
             ->getOneOrNullResult();
     }
 
-    private function getEntityCoordinatesQueryBuilder(EntitySearch $search = null, AbstractSort $sort = null, int $limit = null, int $offset = null): QueryBuilder
+    private function getEntityCoordinatesQueryBuilder(?EntitySearch $search = null, ?AbstractSort $sort = null, ?int $limit = null, ?int $offset = null): QueryBuilder
     {
         return $this->applySearchSortLimit($this->createQueryBuilder('q'), $search, $sort, $limit, $offset)
             ->select(

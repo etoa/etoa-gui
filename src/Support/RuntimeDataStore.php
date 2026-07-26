@@ -15,7 +15,7 @@ class RuntimeDataStore extends AbstractRepository
         parent::__construct($registry, RuntimeData::class);
     }
 
-    public function get(string $key, string $default = null): ?string
+    public function get(string $key, ?string $default = null): ?string
     {
         return $this->findOneBy(['dataKey'=>$key])->getDataValue()??$default;
     }

@@ -33,7 +33,7 @@ class ChatLogRepository extends AbstractRepository
     /**
      * @return ChatLog[]
      */
-    public function search(ChatLogSearch $search = null, int $limit = null, int $offset = null): array
+    public function search(?ChatLogSearch $search = null, ?int $limit = null, ?int $offset = null): array
     {
         return $this->applySearchSortLimit($this->createQueryBuilder('q'), $search, null, $limit, $offset)
             ->orderBy('q.id', 'DESC')
@@ -56,7 +56,7 @@ class ChatLogRepository extends AbstractRepository
         $this->save();
     }
 
-    public function countBySearch(ChatLogSearch $search = null): int
+    public function countBySearch(?ChatLogSearch $search = null): int
     {
         return (int) $this->applySearchSortLimit($this->createQueryBuilder('q'), $search)
             ->select('COUNT(q)')

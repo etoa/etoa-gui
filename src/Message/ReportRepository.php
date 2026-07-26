@@ -41,7 +41,7 @@ class ReportRepository extends AbstractRepository
     /**
      * @return Report[]
      */
-    public function searchReports(ReportSearch $search, int $limit, int $first = null): array
+    public function searchReports(ReportSearch $search, int $limit, ?int $first = null): array
     {
         $qb = $this->createQueryBuilder('q')
             ->orderBy('q.timestamp', 'DESC');
@@ -103,7 +103,7 @@ class ReportRepository extends AbstractRepository
     /**
      * @param int[] $ids
      */
-    public function delete(int $userId, bool $archived, array $ids = null, string $type = null): void
+    public function delete(int $userId, bool $archived, ?array $ids = null, ?string $type = null): void
     {
         if ($ids !== null && count($ids) === 0) {
             return;
@@ -330,7 +330,7 @@ class ReportRepository extends AbstractRepository
             ->execute();
     }
 
-    public function countBySearch(ReportSearch $search = null): int
+    public function countBySearch(?ReportSearch $search = null): int
     {
         return (int) $this->applySearchSortLimit($this->createQueryBuilder('q'), $search)
             ->select('COUNT(q)')

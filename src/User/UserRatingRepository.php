@@ -20,7 +20,7 @@ class UserRatingRepository extends AbstractRepository
     /**
      * @return UserDiplomacyRating[]
      */
-    public function getDiplomacyRating(UserRatingSearch $search = null, UserRatingSort $sort = null, int $limit = null, int $offset = null): array
+    public function getDiplomacyRating(?UserRatingSearch $search = null, ?UserRatingSort $sort = null, ?int $limit = null, ?int $offset = null): array
     {
         return $this->createSpecialRatingQueryBuilder($search, $sort, $limit, $offset)
             ->addSelect('r.diplomacyRating as points')
@@ -32,7 +32,7 @@ class UserRatingRepository extends AbstractRepository
     /**
      * @return UserBattleRating[]
      */
-    public function getBattleRating(UserRatingSearch $search = null, UserRatingSort $sort = null, int $limit = null, int $offset = null): array
+    public function getBattleRating(?UserRatingSearch $search = null, ?UserRatingSort $sort = null, ?int $limit = null, ?int $offset = null): array
     {
         return $this->createSpecialRatingQueryBuilder($search, $sort, $limit, $offset)
             ->addSelect('r.battleRating as points')
@@ -44,7 +44,7 @@ class UserRatingRepository extends AbstractRepository
     /**
      * @return UserTradeRating[]
      */
-    public function getTradeRating(UserRatingSearch $search = null, UserRatingSort $sort = null, int $limit = null, int $offset = null): array
+    public function getTradeRating(?UserRatingSearch $search = null, ?UserRatingSort $sort = null, ?int $limit = null, ?int $offset = null): array
     {
         return $this->createSpecialRatingQueryBuilder($search, $sort, $limit, $offset)
             ->addSelect('r.tradeRating as points')

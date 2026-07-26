@@ -40,7 +40,7 @@ class UserSessionLogRepository extends AbstractRepository
             ->execute();
     }
 
-    public function countLogs(UserSessionSearch $search = null): int
+    public function countLogs(?UserSessionSearch $search = null): int
     {
         return (int) $this->applySearchSortLimit($this->createQueryBuilder('q'), $search)
             ->select('COUNT(q)')
@@ -52,7 +52,7 @@ class UserSessionLogRepository extends AbstractRepository
     /**
      * @return UserSessionLog[]
      */
-    public function getSessionLogs(UserSessionSearch $search, int $limit = null, int $offset = null): array
+    public function getSessionLogs(UserSessionSearch $search, ?int $limit = null, ?int $offset = null): array
     {
         return $this->applySearchSortLimit($this->createQueryBuilder('q'), $search, null, $limit, $offset)
             ->orderBy('q.timeAction', 'DESC')

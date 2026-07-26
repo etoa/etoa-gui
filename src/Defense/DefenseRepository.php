@@ -259,7 +259,7 @@ class DefenseRepository extends AbstractRepository
     /**
      * @return DefenseListItem[]
      */
-    public function search(DefenseListSearch $search, int $limit = null, int $offset = null): array
+    public function search(DefenseListSearch $search, ?int $limit = null, ?int $offset = null): array
     {
         return $this->applySearchSortLimit($this->createQueryBuilder('q'), $search, null, $limit, $offset)
             ->getQuery()
@@ -276,7 +276,7 @@ class DefenseRepository extends AbstractRepository
             ->execute();
     }
 
-    public function countBySearch(DefenseListSearch $search = null): int
+    public function countBySearch(?DefenseListSearch $search = null): int
     {
         return (int) $this->applySearchSortLimit($this->createQueryBuilder('q'), $search)
             ->select('COUNT(q)')

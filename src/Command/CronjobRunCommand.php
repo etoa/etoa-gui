@@ -8,6 +8,7 @@ use EtoA\Log\LogRepository;
 use EtoA\Log\LogSeverity;
 use EtoA\PeriodicTask\EnvelopResultExtractor;
 use EtoA\PeriodicTask\PeriodicTaskCollection;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -16,11 +17,9 @@ use Symfony\Component\Lock\LockFactory;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Stopwatch\Stopwatch;
 
+#[AsCommand(name: 'cronjob:run', description: 'Run tasks based on cronjob schedule')]
 class CronjobRunCommand extends Command
 {
-    protected static $defaultName = 'cronjob:run';
-    protected static $defaultDescription = 'Run tasks based on cronjob schedule';
-
     public function __construct(
         private readonly PeriodicTaskCollection $collection,
         private readonly ConfigurationService   $config,

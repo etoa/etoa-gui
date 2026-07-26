@@ -18,7 +18,7 @@ class DefenseDataRepository extends AbstractRepository
     /**
      * @return array<int, string>
      */
-    public function getDefenseNames(bool $showAll = false, DefenseSort $orderBy = null): array
+    public function getDefenseNames(bool $showAll = false, ?DefenseSort $orderBy = null): array
     {
         $search = null;
         if (!$showAll) {
@@ -32,7 +32,7 @@ class DefenseDataRepository extends AbstractRepository
     /**
      * @return array<int, string>
      */
-    public function searchDefenseNames(DefenseSearch $search = null, DefenseSort $orderBy = null, int $limit = null): array
+    public function searchDefenseNames(?DefenseSearch $search = null, ?DefenseSort $orderBy = null, ?int $limit = null): array
     {
         return $this->applySearchSortLimit($this->createQueryBuilder('q'), $search, $orderBy ?? DefenseSort::name(), $limit)
             ->getQuery()
@@ -119,7 +119,7 @@ class DefenseDataRepository extends AbstractRepository
     /**
      * @return Defense[]
      */
-    public function searchDefense(DefenseSearch $search, DefenseSort $sort = null, int $limit = null): array
+    public function searchDefense(DefenseSearch $search, ?DefenseSort $sort = null, ?int $limit = null): array
     {
         return $this->applySearchSortLimit($this->createQueryBuilder('q'), $search, $sort, $limit)
             ->select()

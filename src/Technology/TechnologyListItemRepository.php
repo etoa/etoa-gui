@@ -21,7 +21,7 @@ class TechnologyListItemRepository extends AbstractRepository
     /**
      * @return TechnologyListItem[]
      */
-    public function findForUser(User $user, int $endTimeAfter = null): array
+    public function findForUser(User $user, ?int $endTimeAfter = null): array
     {
         $qb = $this->createQueryBuilder('q')
             ->where('q.user = :user')
@@ -236,7 +236,7 @@ class TechnologyListItemRepository extends AbstractRepository
     /**
      * @return TechnologyListItem[]
      */
-    public function search(TechnologyListItemSearch $search, int $limit = null, int $offset = null): array
+    public function search(TechnologyListItemSearch $search, ?int $limit = null, ?int $offset = null): array
     {
         return $this->applySearchSortLimit($this->createQueryBuilder('q'), $search, null, $limit, $offset)
             ->getQuery()

@@ -28,7 +28,7 @@ class ShipDataRepository extends AbstractRepository
     /**
      * @return array<int, string>
      */
-    public function getShipNames(bool $showAll = false, ShipSort $orderBy = null): array
+    public function getShipNames(bool $showAll = false, ?ShipSort $orderBy = null): array
     {
         $search = !$showAll ? ShipSearch::create()->show(true)->special(false) : null;
 
@@ -38,7 +38,7 @@ class ShipDataRepository extends AbstractRepository
     /**
      * @return array<int, string>
      */
-    public function searchShipNames(ShipSearch $search = null, ShipSort $orderBy = null, int $limit = null): array
+    public function searchShipNames(?ShipSearch $search = null, ?ShipSort $orderBy = null, ?int $limit = null): array
     {
         $qb = $this->createQueryBuilder('q');
 
@@ -76,7 +76,7 @@ class ShipDataRepository extends AbstractRepository
     /**
      * @return Ship[]
      */
-    public function getAllShips(bool $showAll = false, string $oderBy = null): array
+    public function getAllShips(bool $showAll = false, ?string $oderBy = null): array
     {
         $qb = $this->createQueryBuilder('q');
 
@@ -247,7 +247,7 @@ class ShipDataRepository extends AbstractRepository
     /**
      * @return Ship[]
      */
-    public function searchShips(ShipSearch $search = null, ShipSort $sort = null, int $limit = null): array
+    public function searchShips(?ShipSearch $search = null, ?ShipSort $sort = null, ?int $limit = null): array
     {
         return $this->applySearchSortLimit($this->createQueryBuilder('q'), $search, $sort, $limit)
             ->select()
@@ -255,7 +255,7 @@ class ShipDataRepository extends AbstractRepository
             ->execute();
     }
 
-    public function searchShip(ShipSearch $search = null): ?Ship
+    public function searchShip(?ShipSearch $search = null): ?Ship
     {
         return $this->applySearchSortLimit($this->createQueryBuilder('q'), $search)
             ->setMaxResults(1)

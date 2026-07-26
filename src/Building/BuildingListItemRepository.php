@@ -104,7 +104,7 @@ class BuildingListItemRepository extends AbstractRepository
             ->getOneOrNullResult();
     }
 
-    public function countSearch(BuildingListItemSearch $search = null): int
+    public function countSearch(?BuildingListItemSearch $search = null): int
     {
         return (int)$this->applySearchSortLimit($this->createQueryBuilder(), $search)
             ->select('COUNT(buildlist_id)')
@@ -330,7 +330,7 @@ class BuildingListItemRepository extends AbstractRepository
     /**
      * @return BuildingListItem[]
      */
-    public function search(BuildingListItemSearch $search, int $limit = null, int $offset = null): array
+    public function search(BuildingListItemSearch $search, ?int $limit = null, ?int $offset = null): array
     {
         return $this->applySearchSortLimit($this->createQueryBuilder('q'), $search, null, $limit, $offset)
             ->getQuery()
@@ -340,7 +340,7 @@ class BuildingListItemRepository extends AbstractRepository
     /**
      * @return BuildingListItem[]
      */
-    public function findForUser(User $user, Planet $entity = null, int $endTimeAfter = null): array
+    public function findForUser(User $user, ?Planet $entity = null, ?int $endTimeAfter = null): array
     {
         $qb = $this->createQueryBuilder('q')
             ->where('q.user = :user')
@@ -609,7 +609,7 @@ class BuildingListItemRepository extends AbstractRepository
             ->execute();
     }
 
-    public function countBySearch(BuildingListItemSearch $search = null): int
+    public function countBySearch(?BuildingListItemSearch $search = null): int
     {
         return (int) $this->applySearchSortLimit($this->createQueryBuilder('q'), $search)
             ->select('COUNT(q)')
