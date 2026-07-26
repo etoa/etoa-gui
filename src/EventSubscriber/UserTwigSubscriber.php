@@ -144,7 +144,7 @@ class UserTwigSubscriber implements EventSubscriberInterface
             }
 
             $eid = $event->getRequest()->get('change_entity');
-            if ($eid && in_array($eid, $planets, true)) {
+            if ($eid && in_array(3, $planets)) {
                 $cpid = $eid;
                 $s->set('cpid',$cpid) ;
             } elseif ($s->get('cpid') && in_array((int)$s->get('cpid'), $planets, true)) {

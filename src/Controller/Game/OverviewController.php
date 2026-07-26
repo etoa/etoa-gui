@@ -32,6 +32,7 @@ use EtoA\Defense\DefenseQueueRepository;
 use EtoA\Defense\DefenseQueueSearch;
 use EtoA\User\UserLoginFailureRepository;
 use EtoA\Universe\Resources\ResourceNames;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class OverviewController extends AbstractGameController
 {
@@ -51,7 +52,8 @@ class OverviewController extends AbstractGameController
         private readonly DefenseQueueRepository           $defenseQueueRepository,
         private readonly AllianceBuildListRepository      $allianceBuildListRepository,
         private readonly AllianceTechnologyListRepository $allianceTechnologyListRepository,
-        private readonly UserRepository $userRepository
+        private readonly UserRepository                   $userRepository,
+        private readonly UrlGeneratorInterface            $router
     )
     {
     }
@@ -68,10 +70,10 @@ class OverviewController extends AbstractGameController
         // Admin-Infos
         $infoText = $this->textRepo->find('info');
         // Rathaus
-        $newsCounts = $this->getUser()->getData()->getAlliance() ? $this->allianceNewsRepository->countNewEntriesSince($this->getUser()->getData()->getAlliance(), $this->getUser()->getData()->getLastOnline()):0;
+        $newsCounts = $this->getUser()->getData()->getAlliance() ? $this->allianceNewsRepository->countNewEntriesSince($this->getUser()->getData()->getAlliance(), $this->getUser()->getData()->getLastOnline()) : 0;
 
         // Eigene Flotten
-        $ownFleets = $this->fleetRepository->count(['user'=>$this->getUser()->getData()]);
+        $ownFleets = $this->fleetRepository->count(['user' => $this->getUser()->getData()]);
 
         // Fremde Flotten
         $foreignFleets = $this->foreignFleetLoader->getVisibleFleets($this->getUser()->getData());
@@ -94,7 +96,7 @@ class OverviewController extends AbstractGameController
             $allianceBuildingInProgress = $this->allianceBuildListRepository->getInProgress($this->getUser()->getData()->getAlliance()->getId());
 
             // Supportflotten Flotten
-            $allianceSupportFleetCount = $this->fleetRepository->countFleet(FleetSearch::create()->actionIn([FleetAction::SUPPORT])->userIn($this->userRepository->findBy(['alliance'=>$this->getUser()->getData()->getAlliance()])));
+            $allianceSupportFleetCount = $this->fleetRepository->countFleet(FleetSearch::create()->actionIn([FleetAction::SUPPORT])->userIn($this->userRepository->findBy(['alliance' => $this->getUser()->getData()->getAlliance()])));
 
             // Allianzangriffs
             $allianceAttackFleetCount = $this->fleetRepository->countFleet(FleetSearch::create()->actionIn([FleetAction::ALLIANCE])->nextId($this->getUser()->getData()->getAlliance()->getId())->status(FleetStatus::DEPARTURE->value)->isLeader());
@@ -223,7 +225,7 @@ class OverviewController extends AbstractGameController
             $planet_image_path = $userPlanet->getImagePath('medium');
 
             // Planet bild mit link zum bauhof und der informationen übergabe beim mouseover
-            $planet_link = "<a href=\"?page=buildings&change_entity=" . $userPlanet->getEntity()->getId() . "\"><img id=\"Planet\" src=\"" . $planet_image_path . "\" width=\"" . $pic_width . "\" height=\"" . $pic_height . "\"
+            $planet_link = "<a href=\"" . $this->router->generate('game.buildings',['change_entity'=>$userPlanet->getEntity()->getId()])."\"><img id=\"Planet\" src=\"" . $planet_image_path . "\" width=\"" . $pic_width . "\" height=\"" . $pic_height . "\"
         onMouseOver=\"show_info(
             '" . $userPlanet->getEntity()->getId() . "',
             '" . StringUtils::encodeDBStringToJS($userPlanet->displayName()) . "',
@@ -313,10 +315,10 @@ class OverviewController extends AbstractGameController
             'foreignFleets' => $foreignFleets,
             'technologyInProgress' => $technologyInProgress,
             'genTechnologyInProgress' => $genTechnologyInProgress,
-            'allianceBuildingInProgress' => $allianceBuildingInProgress??null,
-            'allianceSupportFleetCount' => $allianceSupportFleetCount??null,
-            'allianceAttackFleetCount' => $allianceAttackFleetCount??null,
-            'allianceTechnologyInProgress' => $allianceTechnologyInProgress??null,
+            'allianceBuildingInProgress' => $allianceBuildingInProgress ?? null,
+            'allianceSupportFleetCount' => $allianceSupportFleetCount ?? null,
+            'allianceAttackFleetCount' => $allianceAttackFleetCount ?? null,
+            'allianceTechnologyInProgress' => $allianceTechnologyInProgress ?? null,
             'absolute_width' => $absolute_width,
             'absolute_height' => $absolute_height,
             'd_planets' => $d_planets,

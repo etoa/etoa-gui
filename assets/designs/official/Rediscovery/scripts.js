@@ -593,10 +593,6 @@ const viewportScalePrecalculated = parseFloat(document.documentElement.getAttrib
 const app = new App();
 app.updateScaling();
 
-if(!viewportScalePrecalculated) {
-    xajax_viewportScale(app.viewportScale);
-}
-
 document.addEventListener("DOMContentLoaded", () => {
     const appContainer = document.getElementById("app");
     if (appContainer == null) {
