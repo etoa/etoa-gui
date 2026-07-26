@@ -25,7 +25,7 @@ class MailSenderService
      * @param string|string[]|array<string,string>|null $replyTo
      * @throws TransportExceptionInterface
      */
-    public function send(string $subject, string $text, array|string $recipients, array|string $replyTo = null): void
+    public function send(string $subject, string $text, array|string $recipients, array|string|null $replyTo = null): void
     {
         $gameName = AppName::NAME . ' ' . $this->config->get('roundname');
 
@@ -48,7 +48,7 @@ class MailSenderService
      * @param string|string[]|array<string,string>|null $emails
      * @return Address[]
      */
-    private function convertAddressArrays(array|string|null $emails, Address $default = null): array
+    private function convertAddressArrays(array|string|null $emails, ?Address $default = null): array
     {
         if ($emails === null && $default !== null) {
             return [$default];

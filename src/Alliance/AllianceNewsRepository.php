@@ -55,7 +55,7 @@ class AllianceNewsRepository extends AbstractRepository
     /**
      * @return AllianceNews[]
      */
-    public function getNewsEntries(?Alliance $alliance = null, int $limit = null): array
+    public function getNewsEntries(?Alliance $alliance = null, ?int $limit = null): array
     {
         $filter = [];
 
