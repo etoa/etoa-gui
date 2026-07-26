@@ -144,11 +144,11 @@ class CellRepository extends AbstractRepository
     {
         return $this->createQueryBuilder('q')
             ->select('DISTINCT q.id')
-            ->innerJoin('App:Entity', 'e', 'WITH', 'q.id = e.id')
+            ->innerJoin('App:Entity', 'e', 'WITH', 'q.id = e.cell')
             ->innerJoin('App:Planet', 'p', 'WITH', 'p.entity = e.id AND p.user = :user')
             ->setParameter('user', $userId)
             ->getQuery()
-            ->execute();
+            ->getSingleColumnResult();
     }
 
     /**

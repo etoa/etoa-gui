@@ -71,12 +71,12 @@ class CellRenderer
                     $tm_info = "Admin/Entwickler";
                 }
                 // Krieg
-                elseif ($this->allianceDiplomacyRepository->existsDiplomacyBetween($cu->getAlliance()->getId(), $owner->getAlliance()->getId(), AllianceDiplomacyLevel::WAR)) {
+                elseif ($this->allianceDiplomacyRepository->existsDiplomacyBetween($cu->getAlliance(), $owner->getAlliance(), AllianceDiplomacyLevel::WAR)) {
                     $class .= "enemyColor";
                     $tm_info = "Krieg";
                 }
-                // Bündniss
-                elseif ($this->allianceDiplomacyRepository->existsDiplomacyBetween($cu->getAlliance()->getId(), $owner->getAlliance()->getId(), AllianceDiplomacyLevel::BND_CONFIRMED)) {
+                // Bündnis
+                elseif ($this->allianceDiplomacyRepository->existsDiplomacyBetween($cu->getAlliance(), $owner->getAlliance(), AllianceDiplomacyLevel::BND_CONFIRMED)) {
                     $class .= "friendColor";
                     $tm_info = "B&uuml;ndnis";
                 }
@@ -209,7 +209,7 @@ class CellRenderer
             if ($owner) {
                 $header = $owner->getNick();
                 $tm = "Punkte: " . StringUtils::formatNumber($owner->getPoints()) . "<br style=\"clear:both\" />";
-                if ($owner->getAlliance()->getId() > 0) {
+                if ($owner->getAlliance()) {
                     $tm .= "Allianz: " . $owner->getAlliance()->toString() . "<br style=\"clear:both\" />";
                 }
 

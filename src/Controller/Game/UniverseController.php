@@ -191,7 +191,7 @@ class UniverseController extends Game\AbstractGameController
                     return $this->render('game/universe/entity/entity_planet.html.twig',[
                         'rowSpan' => $rowSpan,
                         'planet' => $ent->getType(),
-                        'star' => $this->entityRepository->findOneBy(['code'=>'s','cellId'=>$ent->getCell()->getId()])->getType(),
+                        'star' => $this->entityRepository->findOneBy(['code'=>'s','cell'=>$ent->getCell()->getId()])->getType(),
                         'form' =>$form,
                         'idnext' => $idnext,
                         'idprev' =>$idprev
