@@ -34,7 +34,8 @@ class TechnologyService
         private readonly UrlGeneratorInterface        $router,
         private readonly ConfigurationService         $configurationService,
         private readonly StarRepository               $starRepository,
-        private readonly TechnologyCostCalculator     $technologyCostCalculator
+        private readonly TechnologyCostCalculator     $technologyCostCalculator,
+        private readonly string                       $projectDir,
     )
     {
     }
@@ -229,7 +230,7 @@ class TechnologyService
                             echo "<td style=\"width:120px;height:120px ;padding:0px;\">
                                         <div style=\"position:relative;height:120px;overflow:hidden\">
                                         <div class=\"buildOverviewObjectTitle\">" . $tech->getName() . "</div>";
-                            echo "<a href=\"" . $this->router->generate('game.research.detail', ['id' => $tech->getId()]) . "\" " . tm($tech->getName(), "<b>" . $subtitle . "</b><br/>" . $tmtext . $tech->getShortComment()) . " style=\"display:block;height:180px;\"><img class=\"" . $filterStyleClass . "\" src=\"" . $img . "\"/></a>";
+                            echo "<a href=\"" . $this->router->generate('game.research.detail', ['id' => $tech->getId()]) . "\" " . tm($tech->getName(), "<b>" . $subtitle . "</b><br/>" . $tmtext . $tech->getShortComment()) . " style=\"display:block;\"><img class=\"" . $filterStyleClass . "\" src=\"" . $img . "\"/></a>";
                             if ($b_level > 0 || ($b_level == 0 && isset($techlist[$tech->getId()]) && $techlist[$tech->getId()]->getBuildType() === 3)) {
                                 echo "<div class=\"buildOverviewObjectLevel\" style=\"color:" . $color . "\">" . $b_level . "</div>";
                             }
@@ -334,6 +335,7 @@ class TechnologyService
             'currentLevel' => $technologyListItem->getCurrentLevel(),
             'maxLevel' => $technology->getLastLevel(),
             'status' => $status,
+            'model' => file_exists($this->projectDir . '/public/build/models/technologies/technology' . $technology->getId() . '.glb') ? '/build/models/technologies/technology' . $technology->getId() . '.glb' : false
         ];
 
         $requirementsPassed = $this->requirementsPassed($technology, $cp, $user);
