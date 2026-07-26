@@ -7,7 +7,7 @@ class RemoveOldReportsTask implements PeriodicTaskInterface
     public ?int $threshold;
     public bool $onlyDeleted;
 
-    public function __construct(int $threshold = null, bool $onlyDeleted = false)
+    public function __construct(?int $threshold = null, bool $onlyDeleted = false)
     {
         $this->threshold = $threshold;
         $this->onlyDeleted = $onlyDeleted;

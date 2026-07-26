@@ -48,7 +48,7 @@ class AllianceDiplomacyRepository extends AbstractRepository
     /**
      * @return AllianceDiplomacy[]
      */
-    public function search(AllianceDiplomacySearch $search, int $limit = null): array
+    public function search(AllianceDiplomacySearch $search, ?int $limit = null): array
     {
         return $this->applySearchSortLimit($this->createQueryBuilder('q'), $search, null, $limit)
             ->orderBy('q.date', 'DESC')
@@ -59,7 +59,7 @@ class AllianceDiplomacyRepository extends AbstractRepository
     /**
      * @return AllianceDiplomacy[]
      */
-    public function getDiplomacies(Alliance $alliance, int $level = null): array
+    public function getDiplomacies(Alliance $alliance, ?int $level = null): array
     {
         $qb = $this->createQueryBuilder('q')
             ->where('q.alliance1 = :alliance OR q.alliance2 = :alliance')

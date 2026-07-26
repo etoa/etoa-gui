@@ -6,7 +6,7 @@ class RemoveOldLogsTask implements PeriodicTaskInterface
 {
     public ?int $threshold;
 
-    public function __construct(int $threshold = null)
+    public function __construct(?int $threshold = null)
     {
         $this->threshold = $threshold;
     }

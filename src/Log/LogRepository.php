@@ -33,7 +33,7 @@ class LogRepository extends AbstractRepository
         $log->setFacility($facility);
         $log->setSeverity($severity);
         $log->setTimestamp(time());
-        $log->setIp($request->server->get('REMOTE_ADDR'));
+        $log->setIp($request?->server?->get('REMOTE_ADDR')??'');
         $log->setMessage($message);
 
         $this->persist($log);

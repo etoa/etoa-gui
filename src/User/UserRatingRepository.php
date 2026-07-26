@@ -53,7 +53,7 @@ class UserRatingRepository extends AbstractRepository
             ->execute();
     }
 
-    private function createSpecialRatingQueryBuilder(UserRatingSearch $search = null, UserRatingSort $sort = null, int $limit = null, int $offset = null): QueryBuilder
+    private function createSpecialRatingQueryBuilder(?UserRatingSearch $search = null, ?UserRatingSort $sort = null, ?int $limit = null, ?int $offset = null): QueryBuilder
     {
         return $this->applySearchSortLimit($this->createQueryBuilder('r'), $search, $sort, $limit, $offset)
             ->innerJoin('App:User', 'u', 'WITH', 'r.user = u.id')

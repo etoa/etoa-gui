@@ -22,10 +22,10 @@ class MailSenderService
 
     /**
      * @param string|string[]|array<string,string> $recipients
-     * @param null|string|string[]|array<string,string> $replyTo
+     * @param string|string[]|array<string,string>|null $replyTo
      * @throws TransportExceptionInterface
      */
-    public function send(string $subject, string $text, $recipients, $replyTo = null): void
+    public function send(string $subject, string $text, array|string $recipients, array|string $replyTo = null): void
     {
         $gameName = AppName::NAME . ' ' . $this->config->get('roundname');
 
@@ -56,8 +56,8 @@ class MailSenderService
 
         if (is_array($emails)) {
             $addresses = [];
-            foreach ($emails as $email => $name) {
-                $addresses[] = new Address($email, $name);
+            foreach ($emails as $email) {
+                $addresses[] = new Address($email);
             }
 
             return $addresses;

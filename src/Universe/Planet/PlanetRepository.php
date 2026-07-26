@@ -585,7 +585,7 @@ class PlanetRepository extends AbstractRepository
         return $this->createQueryBuilder('q')
             ->select( "SUM($field) as sum")
             ->addSelect("AVG($field) as avg")
-            ->addSelect('COUNT(q.id) as cnt')
+            ->addSelect('COUNT(IDENTITY(q.entity)) as cnt')
             ->innerJoin('App:User', 'u', 'WITH', 'u.id = q.user')
             ->andWhere('u.ghost = 0')
             ->andWhere('u.hmodFrom = 0')
@@ -661,7 +661,7 @@ class PlanetRepository extends AbstractRepository
     public function getNumberOfOwnedPlanetsByType(): array
     {
         return $this->createQueryBuilder('q')
-            ->select('COUNT(q.id) as cnt')
+            ->select('COUNT(IDENTITY(q.entity)) as cnt')
             ->addSelect('t.name as name')
             ->innerJoin('App:PlanetType', 't', 'WITH', 'q.planetType = t.id')
             ->innerJoin('App:User', 'u', 'WITH', 'q.user = u.id')
