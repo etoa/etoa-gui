@@ -40,7 +40,7 @@ abstract class AbstractRepository extends ServiceEntityRepository
         return $uow->getOriginalEntityData($model);
     }
 
-    protected function applySearchSortLimit(QueryBuilder $qb, AbstractSearch $search = null, AbstractSort $sorts = null, int $limit = null, int $offset = null): QueryBuilder
+    protected function applySearchSortLimit(QueryBuilder $qb, ?AbstractSearch $search = null, ?AbstractSort $sorts = null, ?int $limit = null, ?int $offset = null): QueryBuilder
     {
         if ($search !== null) {
             $qb->setParameters($search->parameters);

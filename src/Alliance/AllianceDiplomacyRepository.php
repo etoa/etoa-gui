@@ -106,7 +106,7 @@ class AllianceDiplomacyRepository extends AbstractRepository
         return $data !== false ? new AllianceDiplomacy($data, $id) : null;
     }
 
-    public function existsDiplomacyBetween(Alliance $alliance, Alliance $otherAlliance, ?int $level = null): bool
+    public function existsDiplomacyBetween(?Alliance $alliance, ?Alliance $otherAlliance, ?int $level = null): bool
     {
         if ($alliance === $otherAlliance) {
             return false;
