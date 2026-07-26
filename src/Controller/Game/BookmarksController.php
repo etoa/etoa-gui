@@ -90,7 +90,8 @@ class BookmarksController extends AbstractGameController
             ->add('comment', TextType::class, [
                 'attr'  => [
                     'size' => 20,
-                    'maxlength' => 200
+                    'maxlength' => 200,
+                    'placeholder' => 'Kommentar'
                 ]
             ])
             ->add('save', SubmitType::class, ['label' => 'Speichern'])
