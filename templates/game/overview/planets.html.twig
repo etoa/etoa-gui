@@ -1,7 +1,7 @@
-<div style="position:relative; left:0; top:0; width:{{ absolute_width }}px; height: {{ absolute_height }}px; vertical-align:middle; margin: 0 auto">
-    <div style="position:relative; left:0; top:0; width:{{ d_planets }}px; height:{{ d_planets }}px; text-align:center; vertical-align:middle;" id="planet_circle_inner_container">
+<div style="position: relative; left: 0; top: 0; vertical-align: middle;" class="planet_circle_outer_container">
+    <div style="position: relative; left: 0; top: 0; text-align: center; vertical-align: middle;" id="planet_circle_inner_container">
         {{ planets|raw }}
-        <table style="text-align:center; vertical-align:middle;margin: 0 auto">
+        <table style="text-align:center; vertical-align:middle;margin: 0 auto; width: 50%; top: 50%; left: 50%; position: absolute; transform: translate(-50%, -50%);">
             <tr>
                 <td colspan="3">&nbsp;</td>
             </tr>
