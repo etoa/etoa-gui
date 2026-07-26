@@ -1,0 +1,11 @@
+{% if not this.status %}
+    <br/>
+    <div class="boxLayout">
+        <div class="infoboxtitle">
+            <span style="color:red;">UPDATEDIENST</span>
+        </div>
+        <div class="infoboxcontent">
+            {{ this.statusMessage }}
+        </div>
+    </div>
+{% endif %}

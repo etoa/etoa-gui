@@ -94,6 +94,7 @@
         <!-- zentraler Inhaltsbereich -->
         <section id="content">
             <div id="contentwrap">
+                <twig:BackendStatusMessage/>
                 {% for type, messages in app.flashes|default([]) %}
                     {% for message in messages %}
                         {{ macros.message('',message,type) }}
