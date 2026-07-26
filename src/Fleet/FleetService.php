@@ -97,7 +97,7 @@ class FleetService
         if ($fleet->getStatus() == 0 || $fleet->getStatus() == 3) {
             if ($fleet->getLandTime() > time() || $is_child) {
                 if ($fleet->getFleetAction()->cancelable()) {
-                    if ($fleet->getId() === $fleet->getLeader()->getId()) {
+                    if ($fleet->getLeader() !== null && $fleet->getId() === $fleet->getLeader()->getId()) {
                         if ($alliance) {
                             $fleets = $this->fleetRepository->findBy(['leader' => $fleet]);
                             foreach ($fleets as $fleetPart) {
@@ -170,7 +170,9 @@ class FleetService
                     }
 
                     $fleet->setStatus(2);
-                    $fleet->setLeader(null);
+                    // Detach from any alliance/support group it was part of; a fleet flying
+                    // home on its own is its own leader (leader_id must never be NULL).
+                    $fleet->setLeader($fleet);
                     $passed = $difftime / $tottime;
                     $returnFactor = 1 - $passed;
 
@@ -193,7 +195,7 @@ class FleetService
                     $resourcesEnd->people = $fleet->getResPeople();
                     $this->fleetLogRepository->addCancel($fleet->getId(), $fleet->getUser()->getId(), $fleet->getEntityTo()->getId(), $fleet->getEntityFrom()->getId(), $logLaunchTime, $logLandTime, $fleet->getAction(), $fleet->getStatus(), $fleet->getPilots(), $fleet->getUsageFuel(), $fleet->getUsageFood(), $resourceStart, $resourcesEnd);
 
-                    $this->fleetRepository->update($fleet, $fleet->getLaunchTime(), $fleet->getLandTime(), $fleet->getEntityFrom(), $fleet->getEntityTo(), $fleet->getStatus(), $fleet->getLeader(), $resourcesEnd, $fleet->getUsageFuel(), $fleet->getUsageFood());
+                    $this->fleetRepository->update($fleet, $fleet->getLaunchTime(), $fleet->getLandTime(), $fleet->getEntityFrom(), $fleet->getEntityTo(), $fleet->getStatus(), $resourcesEnd, $fleet->getUsageFuel(), $fleet->getUsageFood());
                     return true;
 
                 } else {

@@ -171,18 +171,25 @@ class FleetRepository extends AbstractRepository
         $this->persist($fleet);
         $this->save();
 
+        // A fleet always needs a non-null leader_id (the eventhandler daemon reads it as a
+        // plain int); fleets without an explicit leader reference themselves, mirroring the
+        // legacy convention where standalone fleets were their own leader.
+        if ($leader === null) {
+            $fleet->setLeader($fleet);
+            $this->save();
+        }
+
         return $fleet;
 
     }
 
-    public function update(Fleet $fleet, int $launchTime, int $landTime, Entity $entityFrom, Entity $entityTo, int $status, ?Fleet $leader = null, BaseResources $resources = null, int $usageFuel = null, int $usageFood = null): void
+    public function update(Fleet $fleet, int $launchTime, int $landTime, Entity $entityFrom, Entity $entityTo, int $status, BaseResources $resources = null, int $usageFuel = null, int $usageFood = null): void
     {
         $fleet->setLaunchTime($launchTime);
         $fleet->setLandTime($landTime);
         $fleet->setEntityFrom($entityFrom);
         $fleet->setEntityTo($entityTo);
         $fleet->setStatus($status);
-        $fleet->setLeader($leader);
 
         if ($resources) {
             $fleet->setResMetal($resources->metal);
