@@ -103,7 +103,7 @@ class PopulationController extends AbstractGameController
                 $specialist = $this->getUser()->getData()->getSpecialist();
                 $race = $this->getUser()->getData()->getRace();
 
-                // Zählt alle arbeiter die eingetragen snid (besetzt oder nicht) für die anszeige!
+                // Zählt alle arbeiter die eingetragen sind (besetzt oder nicht) für die Anzeige!
                 $peopleWorking = $this->planetService->getTotalPeopleWorking($planet);
 
                 // Infodaten

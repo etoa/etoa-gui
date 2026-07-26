@@ -43,7 +43,7 @@
                     </td>
                     <td>
                         {% if workplace.vars.data.peopleWorkingStatus > 0 %}
-                            {{ workplace.vars.data.peopleWorkingStatus }}
+                            {{ workplace.vars.data.peopleWorking }}
                         {% else %}
                             {{ form_widget(workplace.children.peopleWorking) }}
                         {% endif %}
@@ -62,15 +62,15 @@
             </tr>
             <tr>
                 <td colspan="3">
-                    Wenn einem Geb&auml;ude Arbeiter zugeteilt werden, wird es entsprechend schneller gebaut. Die Arbeiter benötigen jedoch Nahrung.
+                    Wenn einem Gebäude Arbeiter zugeteilt werden, wird es entsprechend schneller gebaut. Die Arbeiter benötigen jedoch Nahrung.
                     Die Zuteilung der Arbeiter kann erst geändert werden, wenn entsprechende Bauaufträge abgeschlossen sind.
                     Die gesamte Nahrung für die Arbeiter wird beim Start eines Bauvorgangs sofort vom Planetenkonto abgezogen.
                 </td>
             </tr>
-
         {% endblock %}
         </twig:Table>
-    {{ form_end(form) }}
+        {{ form_widget(form._token) }}
+    {{ form_end(form,{render_rest:false}) }}
     <twig:Table title="Daten" width="500">
     {% block table_content %}
         <tr>
