@@ -1,0 +1,64 @@
+<div {{ attributes }}>
+    {% if this.bookmarks|length > 0 %}
+        {% set shipNames = this.shipNames %}
+        <twig:Table title="Gespeicherte Favoriten">
+            {% block table_content %}
+                <tr>
+                    <th>Name</th>
+                    <th colspan="2">Ziel</th>
+                    <th>Aktion</th>
+                    <th>Schiffe</th>
+                    <th>Aktionen</th>
+                </tr>
+                {% for bookmark in outerScope.this.bookmarks %}
+                    {% set target = bookmark.target %}
+                    {% set result = outerScope.this.launchResults[bookmark.id]|default(null) %}
+                    <tr>
+                        <td>{{ BBCodeToHTML(bookmark.name)|raw }}</td>
+                        <td style="width:40px;background:#000">
+                            {% if target %}
+                                <img src="{{ target.getType.getImagePath }}" alt="{{ target.codeString }}"/>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if target %}
+                                <a href="{{ path('game.cell', {id: target.cell.id}) }}">{{ target.toString }}</a>
+                            {% else %}
+                                <span style="color:#f00">Ziel nicht vorhanden!</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {%- if bookmark.fleetAction -%}
+                                {{ bookmark.fleetAction|raw }}
+                            {%- else -%}
+                                {{ bookmark.action }}
+                            {%- endif -%}
+                        </td>
+                        <td>
+                            {% for shipId, count in bookmark.ships %}
+                                {{ formatNumber(count) }} {{ shipNames[shipId]|default('Unbekanntes Schiff') }}<br/>
+                            {% endfor %}
+                        </td>
+                        <td class="tbldata">
+                            <a href="#"
+                               data-action="click->live#action:prevent"
+                               data-live-action-param="launch"
+                               data-live-id-param="{{ bookmark.id }}">Starten</a>
+                            <a href="{{ path('game.bookmarks.fleet.edit', {id: bookmark.id}) }}">Bearbeiten</a>
+                            <a href="{{ path('game.bookmarks.fleet.delete', {id: bookmark.id}) }}"
+                               onclick="return confirm('Soll dieser Favorit wirklich gelöscht werden?');">Entfernen</a>
+                            {% if result %}
+                                <div style="color:{{ result.success ? '#0f0' : '#f90' }}">{{ result.message|raw }}</div>
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
+            {% endblock %}
+        </twig:Table>
+    {% else %}
+        <twig:Box title="Information">
+            Noch keine Flottenfavoriten vorhanden!
+            <a href="{{ path('game.bookmarks.new') }}">Jetzt einen anlegen</a>
+        </twig:Box>
+    {% endif %}
+</div>

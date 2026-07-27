@@ -10,34 +10,5 @@
         {{ macros.errorMessage(msg.error) }}
     {% endif %}
 
-    <twig:Table title="Gespeicherte Favoriten">
-        {% block table_content %}
-            <tr>
-                <th>Name</th>
-                <th colspan="2">Ziel</th>
-                <th>Aktion</th>
-                <th>Schiffe</th>
-                <th>Aktionen</th>
-            </tr>
-            {% for bookmark in bookmarks %}
-                <tr>
-                    <td>{{ BBCodeToHTML(bookmark.name) }}</td>
-                    <td style="width:40px;background:#000"><img src="{{ ent.getType.getImagePath }}" /></td>
-                    <td>{{ {{ bookmark.entity.toString }} }}<br/>({{ ent.entityCodeString }})</td>
-                    <td>{{ bookmark.action }}</td>
-                <td>
-                    {# Creating ship-print-string #}
-                    {% for shipId,count in bookmark.ships %}
-                        {{ formatNumber(count) }} {{ shipNames[shipId] }}<br />
-                    {% endfor %}
-                    </td>
-                    <td id="fleet_bm_actions_{{ bookmark.id }}" class="tbldata">
-                        <a href="javascript:" onclick="">Starten</a>
-                        <a href="?page=$page&amp;mode=new&amp;edit=$bookmark->id">Bearbeiten</a>
-                        <a href="?page=$page&amp;mode=$mode&amp;del=$bookmark->id" onclick="return confirm('Soll dieser Favorit wirklich gelöscht werden?');">Entfernen</a>
-                    </td>
-                </tr>
-            {% endfor %}
-        {% endblock %}
-    </twig:Table>
+    <twig:FleetBookmarkList/>
 {% endblock %}

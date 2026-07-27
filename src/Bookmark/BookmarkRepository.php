@@ -7,6 +7,7 @@ namespace EtoA\Bookmark;
 use Doctrine\Persistence\ManagerRegistry;
 use EtoA\Core\AbstractRepository;
 use EtoA\Entity\Bookmark;
+use EtoA\Entity\Entity;
 use EtoA\Entity\User;
 
 class BookmarkRepository extends AbstractRepository
@@ -22,27 +23,33 @@ class BookmarkRepository extends AbstractRepository
     public function findForUser(User $user, BookmarkOrder $order = null): array
     {
         $qb = $this->createQueryBuilder('bookmarks')
-            ->select()
-            ->innerJoin('App:Entity', 'entities', 'WITH', 'bookmarks.entity = entities.id')
+            ->innerJoin('bookmarks.entity', 'entities')
             ->where('bookmarks.user = :user')
-            ->setParameters([
-                'user' => $user,
-            ]);
+            ->setParameter('user', $user);
 
         if ($order !== null) {
-            if ($order->order === BookmarkOrder::ORDER_OWNER) {
+            if ($order->requiresOwnerJoin()) {
                 $qb
-                    ->leftJoin('App:Planet', 'planets', 'WITH', 'bookmarks.entity = planets.id')
-                    ->leftJoin('App:User', 'users', 'WITH', 'planets.user = users.id');
+                    ->leftJoin('entities.planet', 'planets')
+                    ->leftJoin('planets.user', 'users');
             }
 
-            $qb
-                ->orderBy($order->order, $order->direction);
+            $qb->orderBy($order->order, $order->direction);
         }
 
         return $qb
             ->getQuery()
-            ->execute();
+            ->getResult();
+    }
+
+    public function findOneForUser(int $id, User $user): ?Bookmark
+    {
+        return $this->findOneBy(['id' => $id, 'user' => $user]);
+    }
+
+    public function hasBookmark(User $user, Entity $entity): bool
+    {
+        return $this->findOneBy(['user' => $user, 'entity' => $entity]) !== null;
     }
 
     /**

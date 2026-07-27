@@ -27,7 +27,7 @@ class Bookmark
     private ?Entity $entity = null;
 
     #[ORM\Column]
-    private string $comment;
+    private string $comment = '';
 
     public function getId(): ?int
     {

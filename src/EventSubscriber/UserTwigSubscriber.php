@@ -93,6 +93,13 @@ class UserTwigSubscriber implements EventSubscriberInterface
 
     public function onKernelRequest(RequestEvent $event):void
     {
+        // Sub requests (e.g. the sub request per action of a live component batch call)
+        // must not add the twig globals again: as soon as one of them has rendered a
+        // template, twig is initialized and addGlobal() throws.
+        if (!$event->isMainRequest()) {
+            return;
+        }
+
         $token = $this->tokenStorage->getToken();
         if ($token === null || !$token->getUser() instanceof CurrentPlayer) {
             return;

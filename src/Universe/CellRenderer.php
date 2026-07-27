@@ -223,12 +223,12 @@ class CellRenderer
 
             // Favorit
             if ($cu != $owner) {
-                echo "<a href=\"?page=bookmarks&amp;add=" . $ent->getId() . "\" title=\"Zu den Favoriten hinzuf&uuml;gen\">" . ImageUtil::icon("favorite") . "</a> ";
+                echo "<a href=\"" . $this->router->generate('game.bookmarks.add', ['id' => $ent->getId()]) . "\" title=\"Zu den Favoriten hinzuf&uuml;gen\">" . ImageUtil::icon("favorite") . "</a> ";
             }
 
             // Flotte
             if ($ent->getCode() == EntityType::PLANET || $ent->getCode() == EntityType::ASTEROID || $ent->getCode() == EntityType::WORMHOLE || $ent->getCode() == EntityType::NEBULA || $ent->getCode() == EntityType::EMPTY_SPACE) {
-                echo "<a href=\"?page=haven&amp;target=" . $ent->getId() . "\" title=\"Flotte hinschicken\">" . ImageUtil::icon('fleet') . "</a> ";
+                echo "<a href=\"" . $this->router->generate('game.haven.show', ['target' => $ent->getId()]) . "\" title=\"Flotte hinschicken\">" . ImageUtil::icon('fleet') . "</a> ";
             }
 
 
@@ -251,7 +251,7 @@ class CellRenderer
 
             if (in_array("analyze", $ent->getType()->getAllowedFleetActions(), true)) {
                 if ($properties->isShowCellreports()) {
-                    $report = $this->reportRepository->searchReport(ReportSearch::create()->userId($cu->id)->type('spy')->entity1Id($ent->id()));
+                    $report = $this->reportRepository->searchReport(ReportSearch::create()->userId($cu)->type('spy')->entity1Id($ent->getId()));
                     if ($report !== null) {
                         $r = Report::createFactory($report);
                         echo "<span " . tm($r->getSubject(), $r . "<br style=\"clear:both\" />") . "><a href=\"javascript:;\" onclick=\"xajax_launchAnalyzeProbe(" . $ent->id() . ");\" title=\"Analysieren\">" . ImageUtil::icon("spy") . "</a></span>";

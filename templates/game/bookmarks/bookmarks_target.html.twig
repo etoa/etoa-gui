@@ -16,117 +16,34 @@
             <span>Favorit hinzufügen</span>
         </div>
         <div class="infoboxcontent">
-            {{ form_widget(form_new.sectorX) }}
-            {{ form_widget(form_new.sectorY) }}
-            {{ form_widget(form_new.cellX) }}
-            {{ form_widget(form_new.cellY) }}
+            {{ form_widget(form_new.sectorX) }} / {{ form_widget(form_new.sectorY) }}
+            &nbsp;:&nbsp;
+            {{ form_widget(form_new.cellX) }} / {{ form_widget(form_new.cellY) }}
+            &nbsp;:&nbsp;
             {{ form_widget(form_new.pos) }}
+            &nbsp;
             {{ form_widget(form_new.comment) }}
+            &nbsp;
             {{ form_widget(form_new.save) }}
+            {{ form_errors(form_new) }}
         </div>
     </div>
     {{ form_end(form_new) }}
 
-    {% if bookmarks %}
-        <twig:Table title="Gespeicherte Favoriten">
-            {% block table_content %}
-                <tr>
-                    <td colspan="6" style="text-align:center;">
-                        {{ form_start(form_sort) }}
-                        {{ form_widget(form_sort.itemOrderBookmark) }}
-                        {{ form_widget(form_sort.itemOrderWay) }}
-                        {{ form_widget(form_sort.save) }}
-                        {{ form_end(form_sort) }}
-                    </td>
-                </tr>
-                <tr>
-                    <th colspan="2">Typ</th>
-                    <th>Koordinaten</th>
-                    <th>Besitzer</th>
-                    <th>Kommentar</th>
-                    <th>Aktionen</th>
-                </tr>
-                {% for bookmark in bookmarks %}
-                    <tr>
-                        <td style="width:40px;background:#000">
-                            <img src="{{ bookmark.entity.getType.imagePath }}"/>
-                        </td>
-                        <td>{{ bookmark.entity.codeString }}</td>
-                        <td>
-                            <a href="?page=cell&amp;id=$ent.cellId()&amp;hl=$ent.id()">{{ bookmark.entity.toString }}</a>
-                        </td>
-                        <td>{{ bookmark.entity.displayOwner }}</td>
-                        <td>{{ BBCodeToHTML(bookmark.comment) }}</td>
-                        <td>
-                            {% if bookmark.entity.code == 'p' or
-                                bookmark.entity.code == 'a' or
-                                bookmark.entity.code == 'w' or
-                                bookmark.entity.code == 'n' or
-                                bookmark.entity.code == 'e' %}
-                                {# Flotte #}
-                                <a href="?page=haven&amp;target=$ent.id()" title="Flotte hinschicken">
-                                    <img src="{{ asset('build/images/icons/fleet') }}.png " alt="$name"/>
-                                </a>
-                            {% endif %}
-
-                            {% if bookmark.entity.code == 'p' and
-                                bookmark.entity.planet.user != app.user.data %}
-                                <a href="?page=messages&amp;mode=new&amp;message_user_to=$ent.ownerId()"
-                                   title="Nachricht senden">
-                                    <img src="{{ asset('build/images/icons/mail') }}.png"/>
-                                </a>
-
-                                {# Ausspionieren, Raketen, Krypto #}
-                                <a href="javascript:" onclick="xajax_launchSypProbe($ent.id());" title="Ausspionieren">
-                                    <img src="{{ asset('build/images/icons/spy') }}.png"/>
-                                </a>
-                                <a href="?page=missiles&amp;target=$ent.id()" title="Raketenangriff starten">
-                                    <img src="{{ asset('build/images/icons/missile') }}.png"/>
-                                </a>
-                                <a href="?page=crypto&amp;target=$ent.id()" title="Flottenbewegungen analysieren">
-                                    <img src="{{ asset('build/images/icons/crypto') }}.png"/>
-                                </a>
-                            {% endif %}
-
-                            {# Analysieren, letzten Analysebericht als Popup anzeigen #}
-                            {% if 'analyze' in bookmark.entity.getType.getAllowedFleetActions %}
-                                {% if app.user.data.userProperties.showCellreports %}
-                                    <span>
-                                    <a href="javascript:" onclick="xajax_launchAnalyzeProbe($ent.id());"
-                                       title="Analysieren">
-                                        <img src="{{ asset('build/images/icons/spy') }}.png"/>
-                                    </a>
-                                </span>
-                                    <a href="javascript:" onclick="xajax_launchAnalyzeProbe($ent.id());"
-                                       title="Analysieren">
-                                        <img src="{{ asset('build/images/icons/spy') }}.png"/>
-                                    </a>
-                                {% else %}
-                                    <a href="javascript:" onclick="xajax_launchAnalyzeProbe($ent.id());"
-                                       title="Analysieren">
-                                        <img src="{{ asset('build/images/icons/spy') }}.png"/>
-                                    </a>
-                                {% endif %}
-                            {% endif %}
-
-                            <a href="?page=entity&amp;id=$ent.id()&amp;hl=$ent.id()">
-                                <img src="{{ asset('build/images/icons/info') }}.png"/>
-                            </a>
-                            <a href="{{ path('game.bookmarks.edit',{id:bookmark.id}) }}">
-                                <img src="{{ asset('build/images/icons/edit') }}.png"/>
-                            </a>
-                            <a href="{{ path('game.bookmarks.delete',{id:bookmark.id}) }}"
-                               onclick="return confirm('Soll dieser Favorit wirklich gelöscht werden?');">
-                                <img src="{{ asset('build/images/icons/delete') }}.png"/>
-                            </a>
-                        </td>
-                    </tr>
-                {% endfor %}
-            {% endblock %}
-        </twig:Table>
-    {% else %}
-        <twig:Box title="Information">
-            Noch keine Bookmarks vorhanden!
-        </twig:Box>
+    {% if hasBookmarks %}
+        {{ form_start(form_sort) }}
+        <div class="boxLayout">
+            <div class="infoboxtitle">
+                <span>Sortierung</span>
+            </div>
+            <div class="infoboxcontent">
+                {{ form_widget(form_sort.itemOrderBookmark) }}
+                {{ form_widget(form_sort.itemOrderWay) }}
+                {{ form_widget(form_sort.save) }}
+            </div>
+        </div>
+        {{ form_end(form_sort) }}
     {% endif %}
+
+    <twig:BookmarkTargetList/>
 {% endblock %}

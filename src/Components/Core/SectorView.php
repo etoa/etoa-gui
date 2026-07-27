@@ -10,6 +10,7 @@ use EtoA\Universe\SectorMapRenderer;
 use EtoA\User\UserRepository;
 use EtoA\User\UserUniverseDiscoveryService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
 use Symfony\UX\LiveComponent\Attribute\LiveAction;
 use Symfony\UX\LiveComponent\Attribute\LiveArg;
@@ -28,7 +29,8 @@ class SectorView extends AbstractController
         private readonly UserUniverseDiscoveryService $userUniverseDiscoveryService,
         private readonly EntityRepository             $entityRepository,
         private readonly UserRepository               $userRepository,
-        private readonly FleetService                 $fleetService
+        private readonly FleetService                 $fleetService,
+        private readonly RequestStack                 $requestStack
     )
     {
     }
@@ -108,12 +110,16 @@ class SectorView extends AbstractController
     #[LiveAction]
     public function renderMap(): string
     {
+        $request = $this->requestStack->getCurrentRequest();
+        $entity = $this->entityRepository->find($request?->getSession()?->get('cpid'));
+
         $sectorMap = new SectorMapRenderer($this->config->param1Int('num_of_cells'), $this->config->param2Int('num_of_cells'));
         $sectorMap->enableRuler(true);
         $sectorMap->enableTooltips(true);
         $sectorMap->setUserCellIDs($this->cellRepository->getUserCellIds($this->userId));
         $sectorMap->setImpersonatedUser($this->userRepository->getUser($this->userId));
         $sectorMap->setCellUrl('cell/');
+        $sectorMap->setSelectedCell($entity->getCell());
         return $sectorMap->render($this->neighbours['sx'], $this->neighbours['sy'], $this->userUniverseDiscoveryService, $this->entityRepository);
     }
 

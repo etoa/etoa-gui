@@ -53,14 +53,11 @@ class ReportRepository extends AbstractRepository
 
     public function searchReport(ReportSearch $search): ?Report
     {
-        $data = $this->applySearchSortLimit($this->createQueryBuilder('q'), $search)
-            ->select('*')
-            ->from('reports')
-            ->orderBy('timestamp', 'DESC')
+        return $this->applySearchSortLimit($this->createQueryBuilder('q'), $search)
+            ->orderBy('q.timestamp', 'DESC')
             ->setMaxResults(1)
-            ->fetchAssociative();
-
-        return $data !== false ? Report::createFromArray($data) : null;
+            ->getQuery()
+            ->getOneOrNullResult();
     }
 
     protected function addReport(string $type, User $user, ?Alliance $alliance, ?string $content, Entity $entity1, ?Entity $entity2 = null, ?User $opponent = null): Report

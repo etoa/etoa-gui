@@ -39,7 +39,7 @@ class ReportSearch extends AbstractSearch
 
     public function read(bool $read): self
     {
-        $this->parts[] = '`read` = :read';
+        $this->parts[] = '`q.read` = :read';
         $this->parameters['read'] = (int) $read;
 
         return $this;
@@ -47,7 +47,7 @@ class ReportSearch extends AbstractSearch
 
     public function archived(bool $archived): self
     {
-        $this->parts[] = 'archived = :archived';
+        $this->parts[] = 'q.archived = :archived';
         $this->parameters['archived'] = (int) $archived;
 
         return $this;
@@ -55,7 +55,7 @@ class ReportSearch extends AbstractSearch
 
     public function deleted(bool $deleted): self
     {
-        $this->parts[] = 'deleted = :deleted';
+        $this->parts[] = 'q.deleted = :deleted';
         $this->parameters['deleted'] = (int) $deleted;
 
         return $this;
@@ -63,7 +63,7 @@ class ReportSearch extends AbstractSearch
 
     public function type(string $type): self
     {
-        $this->parts[] = 'type = :type';
+        $this->parts[] = 'q.type = :type';
         $this->parameters['type'] = $type;
 
         return $this;
@@ -71,7 +71,7 @@ class ReportSearch extends AbstractSearch
 
     public function dateFrom(int $dateTime): self
     {
-        $this->parts[] = 'timestamp > :dateFrom';
+        $this->parts[] = 'q.timestamp > :dateFrom';
         $this->parameters['dateFrom'] = $dateTime;
 
         return $this;
@@ -79,7 +79,7 @@ class ReportSearch extends AbstractSearch
 
     public function dateTo(int $dateTime): self
     {
-        $this->parts[] = 'timestamp < :dateTo';
+        $this->parts[] = 'q.timestamp < :dateTo';
         $this->parameters['dateTo'] = $dateTime;
 
         return $this;
@@ -87,7 +87,7 @@ class ReportSearch extends AbstractSearch
 
     public function entity1Id(int $entityId): self
     {
-        $this->parts[] = 'entity1_id = :entity1Id';
+        $this->parts[] = 'q.entity1 = :entity1Id';
         $this->parameters['entity1Id'] = $entityId;
 
         return $this;
@@ -96,7 +96,7 @@ class ReportSearch extends AbstractSearch
     public function entityId(int|Entity $entityId, int $identifier = null): self
     {
         $this->parts[] = sprintf('q.entity1 = :entityId%s OR q.entity2 = :entityId%s', $identifier, $identifier);
-        $this->parameters['entityId' . $identifier] = $entityId;
+        $this->parameters['q.entity' . $identifier] = $entityId;
 
         return $this;
     }

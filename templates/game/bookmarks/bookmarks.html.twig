@@ -8,7 +8,7 @@
         "game.bookmarks.new" : "Neuer Flottenfavorit",
     } %}
 
-    <twig:tabmenu data="{{ tabs }}" active="{{ app.request.attributes.get('_route') }}"/><br>
+    <twig:tabmenu data="{{ tabs }}" active="{{ activeTab|default(app.request.attributes.get('_route')) }}"/><br>
     <br/>
     {% block bookmarks %}
     {% endblock %}

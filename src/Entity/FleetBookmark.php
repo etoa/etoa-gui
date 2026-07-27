@@ -28,6 +28,7 @@ class FleetBookmark
     #[ORM\ManyToOne(targetEntity: Entity::class)]
     private ?Entity $target = null;
 
+    /** @var array<int, int> shipId => count */
     #[ORM\Column(type: Types::JSON)]
     private array $ships = [];
 
@@ -42,6 +43,14 @@ class FleetBookmark
 
     #[ORM\Column]
     private int $speed = 100;
+
+    public function __construct()
+    {
+        // Doctrine does not call the constructor when hydrating, so this only
+        // initializes the typed properties of a newly created bookmark.
+        $this->freight = new BaseResources();
+        $this->fetch = new BaseResources();
+    }
 
     public function getId(): ?int
     {
@@ -60,11 +69,17 @@ class FleetBookmark
         return $this;
     }
 
+    /**
+     * @return array<int, int> shipId => count
+     */
     public function getShips(): array
     {
         return $this->ships;
     }
 
+    /**
+     * @param array<int, int> $ships shipId => count
+     */
     public function setShips(array $ships): static
     {
         $this->ships = $ships;
@@ -72,9 +87,17 @@ class FleetBookmark
         return $this;
     }
 
-    public function getAction(): ?string
+    public function getAction(): string
     {
-        return FleetAction::createFactory($this->action);
+        return $this->action;
+    }
+
+    /**
+     * The action object of the stored action code (null if the code is unknown).
+     */
+    public function getFleetAction(): ?FleetAction
+    {
+        return FleetAction::createFactory($this->action) ?: null;
     }
 
     public function setAction(string $action): static

@@ -10,23 +10,27 @@
         {{ macros.errorMessage(msg.error) }}
     {% endif %}
     {{ form_start(form) }}
-        <twig:Table title="Favorit bearbeiten">
-            {% block table_content %}
-                <tr>
-                    <th>Koordinaten</th>
-                    <td>{{ form.vars.value.entity.toString }} {{ form.vars.value.entity.displayName }}</td>
-                </tr>
-                <tr>
-                    <th>Kommentar</th>
-                    <td>
-                        {{ form_widget(form.comment) }}
-                    </td>
-                </tr>
-            {% endblock %}
-        </twig:Table>
-        {{ form_widget(form.save) }}&nbsp;
-        <a href="{{ path('game.bookmarks.target') }}">
-            <input type="button" value="Zurück" />
-        </a>
+    <twig:Table title="Favorit bearbeiten">
+        {% block table_content %}
+            <tr>
+                <th width="25%">Koordinaten</th>
+                <td>
+                    {% if bookmark.entity %}
+                        {{ bookmark.entity.toString }}
+                        {% if bookmark.entity.displayName %}({{ bookmark.entity.displayName }}){% endif %}
+                    {% endif %}
+                </td>
+            </tr>
+            <tr>
+                <th>Kommentar</th>
+                <td>
+                    {{ form_widget(form.comment) }}
+                    {{ form_errors(form.comment) }}
+                </td>
+            </tr>
+        {% endblock %}
+    </twig:Table>
+    {{ form_widget(form.save) }}&nbsp;
+    <input type="button" value="Zurück" onclick="document.location='{{ path('game.bookmarks.target') }}'"/>
     {{ form_end(form) }}
 {% endblock %}

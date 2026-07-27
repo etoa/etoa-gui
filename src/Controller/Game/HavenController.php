@@ -44,6 +44,12 @@ class HavenController extends AbstractGameController
     {
         $error = $this->baseCheck();
 
+        // A target given by another page (e.g. a favourite) is preselected in the target step
+        $targetId = $request->query->getInt('target');
+        if ($targetId > 0) {
+            $request->getSession()->set('havenTarget', $targetId);
+        }
+
         if(!$error) {
             /** @var Planet $cp */
             $cp = $this->planetRepository->find($request->getSession()->get('cpid'));

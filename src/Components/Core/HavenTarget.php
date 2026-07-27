@@ -108,6 +108,11 @@ class HavenTarget extends AbstractGameController
         // Restore the last chosen speed factor so the slider isn't reset to 100%
         $this->speedPercent = $this->fleetLaunch->getSpeedPercent();
 
+        // A target which was requested by another page (e.g. a favourite) wins once
+        if ($this->preselectRequestedTarget()) {
+            return;
+        }
+
         // Derive the initial target from the fleet. The deserialized target entity has no
         // usable id, so rebuild it from its (reliably serialized) cell coordinates.
         $target = $this->fleetLaunch->getTargetEntity() ?? $this->fleetLaunch->getSourceEntity()->getEntity();
@@ -124,6 +129,32 @@ class HavenTarget extends AbstractGameController
                 $this->updateValues($entity);
             }
         }
+    }
+
+    /**
+     * Takes over a target which was requested by another page (link with ?target=...,
+     * e.g. the "send fleet" action of a favourite). The request is consumed so a later
+     * target selection is not overruled.
+     */
+    private function preselectRequestedTarget(): bool
+    {
+        $session = $this->requestStack->getCurrentRequest()->getSession();
+        $requestedTargetId = (int) $session->get('havenTarget', 0);
+        if ($requestedTargetId <= 0) {
+            return false;
+        }
+
+        $session->remove('havenTarget');
+
+        $entity = $this->entityRepository->find($requestedTargetId);
+        if ($entity === null || $entity->getCell() === null) {
+            return false;
+        }
+
+        $this->fillCoordinates($entity);
+        $this->updateValues($entity);
+
+        return true;
     }
 
     #[LiveAction]

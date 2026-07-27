@@ -1,0 +1,93 @@
+{% import 'macros.html.twig' as macros %}
+
+<div {{ attributes }}>
+    {% if this.probeMessage %}
+        {% if this.probeSuccess %}
+            {{ macros.successMessage(this.probeMessage, 'Flotte gestartet') }}
+        {% else %}
+            {{ macros.errorMessage(this.probeMessage, 'Flottenstart nicht möglich') }}
+        {% endif %}
+    {% endif %}
+
+    {% if this.bookmarks|length > 0 %}
+        <twig:Table title="Gespeicherte Favoriten">
+            {% block table_content %}
+                <tr>
+                    <th colspan="2">Typ</th>
+                    <th>Koordinaten</th>
+                    <th>Besitzer</th>
+                    <th>Kommentar</th>
+                    <th>Aktionen</th>
+                </tr>
+                {% for bookmark in outerScope.this.bookmarks %}
+                    {% set entity = bookmark.entity %}
+                    <tr>
+                        <td style="width:40px;background:#000">
+                            <img src="{{ entity.getType.getImagePath }}" alt="{{ entity.codeString }}"/>
+                        </td>
+                        <td>{{ entity.codeString }}</td>
+                        <td>
+                            <a href="{{ path('game.cell', {id: entity.cell.id}) }}">{{ entity.toString }}</a>
+                        </td>
+                        <td>{{ entity.displayOwner }}</td>
+                        <td>{{ BBCodeToHTML(bookmark.comment)|raw }}</td>
+                        <td>
+                            {% if outerScope.this.canSendFleet(entity) %}
+                                <a href="{{ path('game.haven.show', {target: entity.id}) }}" title="Flotte hinschicken">
+                                    {{ icon('fleet')|raw }}
+                                </a>
+                            {% endif %}
+
+                            {% if outerScope.this.isForeignPlanet(entity) %}
+                                <a href="{{ path('game.messages.newTo', {id: entity.owner.id}) }}" title="Nachricht senden">
+                                    {{ icon('mail')|raw }}
+                                </a>
+                                <a href="#" title="Ausspionieren"
+                                   data-action="click->live#action:prevent"
+                                   data-live-action-param="launchSpy"
+                                   data-live-id-param="{{ entity.id }}">
+                                    {{ icon('spy')|raw }}
+                                </a>
+                                <a href="{{ path('game.missiles') }}" title="Raketenangriff starten">
+                                    {{ icon('missile')|raw }}
+                                </a>
+                                <a href="{{ path('game.crypto') }}" title="Flottenbewegungen analysieren">
+                                    {{ icon('crypto')|raw }}
+                                </a>
+                            {% endif %}
+
+                            {% if outerScope.this.allowsAnalyze(entity) %}
+                                {% set report = outerScope.this.getLastSpyReport(entity) %}
+                                {% if report %}
+                                    <span {{ tm(report.subject, 'Letzter Spionagebericht vom ' ~ formatTimestamp(report.timestamp))|raw }}>
+                                {% endif %}
+                                <a href="#" title="Analysieren"
+                                   data-action="click->live#action:prevent"
+                                   data-live-action-param="launchAnalyze"
+                                   data-live-id-param="{{ entity.id }}">
+                                    {{ icon('spy')|raw }}
+                                </a>
+                                {% if report %}</span>{% endif %}
+                            {% endif %}
+
+                            <a href="{{ path('game.entity', {id: entity.id}) }}" title="Informationen">
+                                {{ icon('info')|raw }}
+                            </a>
+                            <a href="{{ path('game.bookmarks.edit', {id: bookmark.id}) }}" title="Bearbeiten">
+                                {{ icon('edit')|raw }}
+                            </a>
+                            <a href="{{ path('game.bookmarks.delete', {id: bookmark.id}) }}" title="Entfernen"
+                               onclick="return confirm('Soll dieser Favorit wirklich gelöscht werden?');">
+                                {{ icon('delete')|raw }}
+                            </a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            {% endblock %}
+        </twig:Table>
+    {% else %}
+        <twig:Box title="Information">
+            Noch keine Favoriten vorhanden!
+        </twig:Box>
+    {% endif %}
+</div>

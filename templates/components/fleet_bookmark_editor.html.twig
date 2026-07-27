@@ -1,0 +1,246 @@
+{% import 'macros.html.twig' as macros %}
+{% set METAL = constant('EtoA\\Universe\\Resources\\ResourceNames::METAL') %}
+{% set CRYSTAL = constant('EtoA\\Universe\\Resources\\ResourceNames::CRYSTAL') %}
+{% set PLASTIC = constant('EtoA\\Universe\\Resources\\ResourceNames::PLASTIC') %}
+{% set FUEL = constant('EtoA\\Universe\\Resources\\ResourceNames::FUEL') %}
+{% set FOOD = constant('EtoA\\Universe\\Resources\\ResourceNames::FOOD') %}
+{% set ICON_METAL = constant('EtoA\\Universe\\Resources\\ResIcons::METAL') %}
+{% set ICON_CRYSTAL = constant('EtoA\\Universe\\Resources\\ResIcons::CRYSTAL') %}
+{% set ICON_PLASTIC = constant('EtoA\\Universe\\Resources\\ResIcons::PLASTIC') %}
+{% set ICON_FUEL = constant('EtoA\\Universe\\Resources\\ResIcons::FUEL') %}
+{% set ICON_FOOD = constant('EtoA\\Universe\\Resources\\ResIcons::FOOD') %}
+{% set ICON_PEOPLE = constant('EtoA\\Universe\\Resources\\ResIcons::PEOPLE') %}
+
+<div {{ attributes }}>
+    {% if this.errorMessage %}
+        {{ macros.errorMessage(this.errorMessage) }}
+    {% endif %}
+    {% if this.successMessage %}
+        {{ macros.successMessage(this.successMessage) }}
+    {% endif %}
+
+    <twig:Table title="Allgemeines">
+        {% block table_content %}
+            <tr>
+                <th width="25%">Name</th>
+                <td>
+                    <input type="text" id="bookmark_name" size="30" maxlength="30" autocomplete="off"
+                           value="{{ outerScope.this.name }}" data-model="norender|name"/>
+                </td>
+            </tr>
+            <tr>
+                <th>Flottenaktion</th>
+                <td>
+                    <select id="bookmark_action" data-model="action">
+                        {% for code, fleetAction in outerScope.this.fleetActions %}
+                            <option value="{{ code }}" style="color:{{ fleetAction.color }}"
+                                    {% if outerScope.this.action == code %}selected="selected"{% endif %}>
+                                {{ fleetAction.name }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2">
+                    Wichtig: Die Flotte wird nur starten, falls die Schiffe und das Ziel die gewählte Aktion
+                    unterstützen. Es muss pro Schiffstyp mindestens ein Schiff vorhanden sein, damit die Flotte
+                    startet. Bei den Rohstoffen wird Rohstoff für Rohstoff jeweils das Maximum eingeladen.
+                </td>
+            </tr>
+        {% endblock %}
+    </twig:Table>
+
+    <twig:Table title="Schiffe">
+        {% block table_content %}
+            {% if outerScope.this.shipRows|length > 0 %}
+                {% for shipId, row in outerScope.this.shipRows %}
+                    {# The ids keep the dom morphing of the live component stable, otherwise
+                       entered counts can end up on another ship's row after a re-render #}
+                    <tr id="ship_row_{{ shipId }}">
+                        <td class="thumb" style="width:40px;background:#000">
+                            <img src="{{ row.ship.getImagePath }}" alt="{{ row.ship.name }}"/>
+                        </td>
+                        <td>{{ row.ship.name }}</td>
+                        <td class="count">
+                            {% if row.ship.isLaunchable %}
+                                <input type="text" id="ship_count_{{ shipId }}" size="10" autocomplete="off"
+                                       title="Anzahl Schiffe eingeben, die mitfliegen sollen"
+                                       value="{{ row.count }}"
+                                       data-model="norender|shipCounts.{{ shipId }}"
+                                       onclick="this.select()"/>
+                            {% else %}
+                                -
+                            {% endif %}
+                        </td>
+                        <td class="actions">
+                            <a href="#" title="Entfernen"
+                               data-action="click->live#action:prevent"
+                               data-live-action-param="removeShipFromFleet"
+                               data-live-id-param="{{ shipId }}">{{ icon('delete')|raw }}</a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            {% else %}
+                <tr>
+                    <td>Noch keine Schiffe gewählt. Suche unten nach einem Schiffstyp.</td>
+                </tr>
+            {% endif %}
+        {% endblock %}
+    </twig:Table>
+
+    <twig:Table title="Schiffe hinzufügen">
+        {% block table_content %}
+            <tr>
+                <th width="25%">Schiffname:</th>
+                <td>
+                    {% set suggestions = outerScope.this.shipSuggestions %}
+                    <input type="text" id="shipname" size="30" maxlength="30" autocomplete="off"
+                           placeholder="Name eingeben..."
+                           value="{{ outerScope.this.shipQuery }}" data-model="debounce(400)|shipQuery"/>
+                    <span id="shipsearch_hint">
+                        {%- if outerScope.this.shipQuery is not empty and suggestions is empty -%}
+                            &nbsp;<i>Keine passenden Schiffe gefunden.</i>
+                        {%- endif -%}
+                    </span>
+                    {# #shiplist is hidden by default in the design css and was toggled by the
+                       legacy xajax response, so the visibility is rendered explicitly here #}
+                    <div id="shiplist" style="display:{{ suggestions is empty ? 'none' : 'block' }};">
+                        {% for shipId, shipName in suggestions %}
+                            <a href="#" id="ship_suggestion_{{ shipId }}"
+                               data-action="click->live#action:prevent"
+                               data-live-action-param="addShipToFleet"
+                               data-live-id-param="{{ shipId }}">{{ shipName }}</a>
+                        {% endfor %}
+                    </div>
+                </td>
+            </tr>
+        {% endblock %}
+    </twig:Table>
+
+    <twig:Table title="Zielwahl">
+        {% block table_content %}
+            <tr id="manuelselect">
+                <th width="25%">Manuelle Eingabe:</th>
+                <td>
+                    <input type="text" id="sx" size="1" maxlength="1" title="Sektor X-Koordinate" autocomplete="off"
+                           value="{{ outerScope.this.csx }}" data-model="debounce(700)|csx"
+                           onfocus="this.select()" onclick="this.select()"
+                           onkeypress="return nurZahlen(event)"/>&nbsp;/&nbsp;
+                    <input type="text" id="sy" size="1" maxlength="1" title="Sektor Y-Koordinate" autocomplete="off"
+                           value="{{ outerScope.this.csy }}" data-model="debounce(700)|csy"
+                           onfocus="this.select()" onclick="this.select()"
+                           onkeypress="return nurZahlen(event)"/>&nbsp;&nbsp;:&nbsp;&nbsp;
+                    <input type="text" id="cx" size="2" maxlength="2" title="Zelle X-Koordinate" autocomplete="off"
+                           value="{{ outerScope.this.ccx }}" data-model="debounce(700)|ccx"
+                           onfocus="this.select()" onclick="this.select()"
+                           onkeypress="return nurZahlen(event)"/>&nbsp;/&nbsp;
+                    <input type="text" id="cy" size="2" maxlength="2" title="Zelle Y-Koordinate" autocomplete="off"
+                           value="{{ outerScope.this.ccy }}" data-model="debounce(700)|ccy"
+                           onfocus="this.select()" onclick="this.select()"
+                           onkeypress="return nurZahlen(event)"/>&nbsp;&nbsp;:&nbsp;&nbsp;
+                    <input type="text" id="pos" size="2" maxlength="2" title="Position des Planeten im Sonnensystem"
+                           autocomplete="off"
+                           value="{{ outerScope.this.psp }}" data-model="debounce(700)|psp"
+                           onfocus="this.select()" onclick="this.select()"
+                           onkeypress="return nurZahlen(event)"/>
+                </td>
+            </tr>
+            <tr id="bookmarkselect">
+                <th width="25%">Zielfavoriten:</th>
+                <td>
+                    <select id="bookmarks" data-model="bookmark">
+                        <option value="">Wählen...</option>
+                        {% for choice in outerScope.this.targetChoices %}
+                            <option value="{{ choice.id }}"
+                                    {% if outerScope.this.bookmark == choice.id %}selected="selected"{% endif %}>
+                                {{ choice.label }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <th width="25%"><b>Ziel-Informationen:</b></th>
+                <td id="targetinfo" style="padding:2px 2px 3px 6px;background:#000;color:#fff;height:47px;">
+                    {% set target = outerScope.this.targetEntity %}
+                    {% if target %}
+                        <img src="{{ target.getType.getImagePath }}" style="float:left;" alt="{{ target.codeString }}"/>
+                        <br/>&nbsp;&nbsp; {{ target.toString }} ({{ target.codeString }}, Besitzer:
+                        {{ target.displayOwner }})
+                    {% elseif not outerScope.this.isTargetDiscovered %}
+                        <div style="color:#f00">Das Gebiet ist noch nicht erkundet!</div>
+                    {% else %}
+                        <div style="color:#f00">Ziel nicht vorhanden!</div>
+                    {% endif %}
+                </td>
+            </tr>
+            <tr>
+                <th>Speedfaktor:</th>
+                <td>
+                    <select id="speed_percent" data-model="norender|speedPercent">
+                        {% for x in 100..1 %}
+                            <option value="{{ x }}"
+                                    {% if outerScope.this.speedPercent == x %}selected="selected"{% endif %}>{{ x }}</option>
+                        {% endfor %}
+                    </select> %
+                </td>
+            </tr>
+        {% endblock %}
+    </twig:Table>
+
+    <twig:Table title="Ladung">
+        {% block table_content %}
+            <tr>
+                <th width="25%">&nbsp;</th>
+                <th>Fracht</th>
+                <th>Abholauftrag</th>
+            </tr>
+            <tr>
+                <th>{{ ICON_METAL|raw }}{{ METAL }}</th>
+                <td><input type="text" id="res1" size="16" value="{{ outerScope.this.res1 }}" data-model="norender|res1"/></td>
+                <td><input type="text" id="fetch1" size="16" value="{{ outerScope.this.fetch1 }}" data-model="norender|fetch1"/></td>
+            </tr>
+            <tr>
+                <th>{{ ICON_CRYSTAL|raw }}{{ CRYSTAL }}</th>
+                <td><input type="text" id="res2" size="16" value="{{ outerScope.this.res2 }}" data-model="norender|res2"/></td>
+                <td><input type="text" id="fetch2" size="16" value="{{ outerScope.this.fetch2 }}" data-model="norender|fetch2"/></td>
+            </tr>
+            <tr>
+                <th>{{ ICON_PLASTIC|raw }}{{ PLASTIC }}</th>
+                <td><input type="text" id="res3" size="16" value="{{ outerScope.this.res3 }}" data-model="norender|res3"/></td>
+                <td><input type="text" id="fetch3" size="16" value="{{ outerScope.this.fetch3 }}" data-model="norender|fetch3"/></td>
+            </tr>
+            <tr>
+                <th>{{ ICON_FUEL|raw }}{{ FUEL }}</th>
+                <td><input type="text" id="res4" size="16" value="{{ outerScope.this.res4 }}" data-model="norender|res4"/></td>
+                <td><input type="text" id="fetch4" size="16" value="{{ outerScope.this.fetch4 }}" data-model="norender|fetch4"/></td>
+            </tr>
+            <tr>
+                <th>{{ ICON_FOOD|raw }}{{ FOOD }}</th>
+                <td><input type="text" id="res5" size="16" value="{{ outerScope.this.res5 }}" data-model="norender|res5"/></td>
+                <td><input type="text" id="fetch5" size="16" value="{{ outerScope.this.fetch5 }}" data-model="norender|fetch5"/></td>
+            </tr>
+            <tr>
+                <th>{{ ICON_PEOPLE|raw }}Passagiere</th>
+                <td><input type="text" id="res_people" size="16" value="{{ outerScope.this.resPeople }}" data-model="norender|resPeople"/></td>
+                <td><input type="text" id="fetch_people" size="16" value="{{ outerScope.this.fetchPeople }}" data-model="norender|fetchPeople"/></td>
+            </tr>
+            <tr>
+                <td colspan="3">
+                    Negative Frachtwerte bedeuten, dass diese Menge auf dem Planeten zurückbleibt.
+                </td>
+            </tr>
+        {% endblock %}
+    </twig:Table>
+
+    <input type="button" id="bookmark_back" onclick="document.location='{{ path('game.bookmarks.fleet') }}'"
+           value="Zurück zur Übersicht"/>
+    &nbsp;
+    {# One single button whose disabled state changes, so the dom structure stays stable #}
+    <button type="button" id="bookmark_save"
+            data-action="click->live#action:prevent" data-live-action-param="save"
+            {% if not this.isSaveable %}disabled="disabled"
+            title="Es muss mindestens ein Schiff und ein gültiges Ziel gewählt werden"{% endif %}>Speichern
+    </button>
+</div>
