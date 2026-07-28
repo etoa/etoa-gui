@@ -82,9 +82,9 @@ class UserBannerService
         return new UserBanner($userId, $localPath, str_replace($this->cacheDir, '/cache', $localPath));
     }
 
-    public function getUserBannerPath(int $userId): string
+    public function getUserBannerPath(int $userId, bool $public = false): string
     {
-        return $this->cacheDir . '/userbanner/' . md5('user' . $userId) . '.png';
+        return ($public?'/cache':$this->cacheDir). '/userbanner/' . md5('user' . $userId) . '.png';
     }
 
     /** @return resource|GdImage */

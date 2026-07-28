@@ -24,8 +24,6 @@ class GameStatsGenerator
     public const XML_INFO_FILE = "/xml/info.xml";
     public const XML_INFO_FILE_PUBLIC_PATH = "/cache/xml/info.xml";
 
-    private string $cacheDir;
-
     public function __construct(
         private readonly PlanetRepository             $planetRepository,
         private readonly BuildingListItemRepository   $buildingRepository,
@@ -35,9 +33,9 @@ class GameStatsGenerator
         private readonly StarRepository               $starRepository,
         private readonly UserRepository               $userRepository,
         private readonly ShipListRepository           $shipListRepository,
-        string                                        $cacheDir
-    ) {
-        $this->cacheDir = $cacheDir;
+        private readonly string                       $cacheDir
+    )
+    {
     }
 
     public function readCached(): ?string
@@ -204,7 +202,7 @@ class GameStatsGenerator
         if ($metal !== null) {
             $out .= "<tr>
                 <td >" . ResourceNames::METAL . "</td>
-                <td >" . StringUtils::formatNumber((int) $metal['res']) . "</td>
+                <td >" . StringUtils::formatNumber((int)$metal['res']) . "</td>
                 <td >" . $metal['type'] . "</td>
             </tr>";
         }
@@ -213,7 +211,7 @@ class GameStatsGenerator
         if ($crystal !== null) {
             $out .= "<tr>
                     <td >" . ResourceNames::CRYSTAL . "</td>
-                    <td >" . StringUtils::formatNumber((int) $crystal['res']) . "</td>
+                    <td >" . StringUtils::formatNumber((int)$crystal['res']) . "</td>
                     <td >" . $crystal['type'] . "</td>
                 </tr>";
         }
@@ -222,7 +220,7 @@ class GameStatsGenerator
         if ($plastic !== null) {
             $out .= "<tr>
                     <td >" . ResourceNames::PLASTIC . "</td>
-                    <td >" . StringUtils::formatNumber((int) $plastic['res']) . "</td>
+                    <td >" . StringUtils::formatNumber((int)$plastic['res']) . "</td>
                     <td >" . $plastic['type'] . "</td>
                 </tr>";
         }
@@ -231,7 +229,7 @@ class GameStatsGenerator
         if ($fuel !== null) {
             $out .= "<tr>
                     <td >" . ResourceNames::FUEL . "</td>
-                    <td >" . StringUtils::formatNumber((int) $fuel['res']) . "</td>
+                    <td >" . StringUtils::formatNumber((int)$fuel['res']) . "</td>
                     <td >" . $fuel['type'] . "</td>
                 </tr>";
         }
@@ -240,7 +238,7 @@ class GameStatsGenerator
         if ($food !== null) {
             $out .= "<tr>
                     <td >" . ResourceNames::FOOD . "</td>
-                    <td >" . StringUtils::formatNumber((int) $food['res']) . "</td>
+                    <td >" . StringUtils::formatNumber((int)$food['res']) . "</td>
                     <td >" . $food['type'] . "</td>
                 </tr>";
             $out .= "</table>";
@@ -258,41 +256,41 @@ class GameStatsGenerator
         $metal = $this->planetRepository->getMaxMetal();
         $out .= "<tr>
                 <td >" . ResourceNames::METAL . "</td>
-                <td >" . StringUtils::formatNumber((int) $metal['sum']) . "</td>
-                <td >" . StringUtils::formatNumber((int) $metal['avg']) . "</td>
-                <td >" . StringUtils::formatNumber((int) $metal['cnt']) . "</td>
+                <td >" . StringUtils::formatNumber((int)$metal['sum']) . "</td>
+                <td >" . StringUtils::formatNumber((int)$metal['avg']) . "</td>
+                <td >" . StringUtils::formatNumber((int)$metal['cnt']) . "</td>
             </tr>";
 
         $crystal = $this->planetRepository->getMaxCrystal();
         $out .= "<tr>
                 <td >" . ResourceNames::CRYSTAL . "</td>
-                <td >" . StringUtils::formatNumber((int) $crystal['sum']) . "</td>
-                <td >" . StringUtils::formatNumber((int) $crystal['avg']) . "</td>
-                <td >" . StringUtils::formatNumber((int) $crystal['cnt']) . "</td>
+                <td >" . StringUtils::formatNumber((int)$crystal['sum']) . "</td>
+                <td >" . StringUtils::formatNumber((int)$crystal['avg']) . "</td>
+                <td >" . StringUtils::formatNumber((int)$crystal['cnt']) . "</td>
             </tr>";
 
         $plastic = $this->planetRepository->getMaxPlastic();
         $out .= "<tr>
                 <td >" . ResourceNames::PLASTIC . "</td>
-                <td >" . StringUtils::formatNumber((int) $plastic['sum']) . "</td>
-                <td >" . StringUtils::formatNumber((int) $plastic['avg']) . "</td>
-                <td >" . StringUtils::formatNumber((int) $plastic['cnt']) . "</td>
+                <td >" . StringUtils::formatNumber((int)$plastic['sum']) . "</td>
+                <td >" . StringUtils::formatNumber((int)$plastic['avg']) . "</td>
+                <td >" . StringUtils::formatNumber((int)$plastic['cnt']) . "</td>
             </tr>";
 
         $fuel = $this->planetRepository->getMaxFuel();
         $out .= "<tr>
                 <td >" . ResourceNames::FUEL . "</td>
-                <td >" . StringUtils::formatNumber((int) $fuel['sum']) . "</td>
-                <td >" . StringUtils::formatNumber((int) $fuel['avg']) . "</td>
-                <td >" . StringUtils::formatNumber((int) $fuel['cnt']) . "</td>
+                <td >" . StringUtils::formatNumber((int)$fuel['sum']) . "</td>
+                <td >" . StringUtils::formatNumber((int)$fuel['avg']) . "</td>
+                <td >" . StringUtils::formatNumber((int)$fuel['cnt']) . "</td>
             </tr>";
 
         $food = $this->planetRepository->getMaxFood();
         $out .= "<tr>
                 <td >" . ResourceNames::FOOD . "</td>
-                <td >" . StringUtils::formatNumber((int) $food['sum']) . "</td>
-                <td >" . StringUtils::formatNumber((int) $food['avg']) . "</td>
-                <td >" . StringUtils::formatNumber((int) $food['cnt']) . "</td>
+                <td >" . StringUtils::formatNumber((int)$food['sum']) . "</td>
+                <td >" . StringUtils::formatNumber((int)$food['avg']) . "</td>
+                <td >" . StringUtils::formatNumber((int)$food['cnt']) . "</td>
             </tr>";
         $out .= "</table>";
 

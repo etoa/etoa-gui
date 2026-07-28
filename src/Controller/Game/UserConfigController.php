@@ -634,7 +634,7 @@ class UserConfigController extends AbstractGameController
         $name = $userBannerService->getUserBannerPath($this->getUser()->getId());
 
         return $this->render('game/userconfig/banner.html.twig', [
-            'banner' => file_exists($name) ? $name : false,
+            'banner' => file_exists($name) ? $userBannerService->getUserBannerPath($this->getUser()->getId(),true) : false,
         ]);
     }
 

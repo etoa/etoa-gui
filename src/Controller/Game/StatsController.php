@@ -34,9 +34,9 @@ class StatsController extends AbstractGameController
         private readonly ConfigurationService     $configurationService,
         private readonly UserRepository           $userRepository,
         private readonly GameStatsGenerator       $gameStatsGenerator,
-        private readonly Kernel                   $kernel,
         private readonly UserPointsRepository     $userPointsRepository,
-        private readonly AlliancePointsRepository $alliancePointsRepository
+        private readonly AlliancePointsRepository $alliancePointsRepository,
+        private readonly string                   $cacheDir
     )
     {
     }
@@ -50,25 +50,25 @@ class StatsController extends AbstractGameController
     #[Route("/game/stats/buildings", name: 'game.stats.buildings')]
     public function buildings(): Response
     {
-        return $this->renderDefault('buildingPoints','Gebäudepunkte');
+        return $this->renderDefault('buildingPoints', 'Gebäudepunkte');
     }
 
     #[Route("/game/stats/tech", name: 'game.stats.tech')]
     public function tech(): Response
     {
-        return $this->renderDefault('techPoints','Technologiepunkte');
+        return $this->renderDefault('techPoints', 'Technologiepunkte');
     }
 
     #[Route("/game/stats/ships", name: 'game.stats.ships')]
     public function ships(): Response
     {
-        return $this->renderDefault('shipPoints','Schiffspunkte');
+        return $this->renderDefault('shipPoints', 'Schiffspunkte');
     }
 
     #[Route("/game/stats/exp", name: 'game.stats.exp')]
     public function exp(): Response
     {
-        return $this->renderDefault('expPoints','Erfahrungspunkte');
+        return $this->renderDefault('expPoints', 'Erfahrungspunkte');
     }
 
 
@@ -82,8 +82,8 @@ class StatsController extends AbstractGameController
                            window.mytimeout = window.setTimeout(()=>{loadingMsg('statsTable','Suche Spieler...');event.target.parentElement.submit()}, 1500);",
                     'class' => "search"
                 ],
-                'mapped'=> false,
-                'required'=>false
+                'mapped' => false,
+                'required' => false
             ])
             ->add('nick', SubmitType::class, [
                 'label' => $this->getUser()->getData()->getNick()
@@ -93,13 +93,13 @@ class StatsController extends AbstractGameController
 
         $filter = [];
         if ($form->isSubmitted() && $form->isValid()) {
-            $nick = $form->get('nick')->isClicked()?$this->getUser()->getData()->getNick():$form->get('search')->getData();
-            $user = $this->userRepository->findOneBy(['nick'=>$nick]);
+            $nick = $form->get('nick')->isClicked() ? $this->getUser()->getData()->getNick() : $form->get('search')->getData();
+            $user = $this->userRepository->findOneBy(['nick' => $nick]);
             $filter['user'] = $user;
         }
 
         /** @var UserStat[] $stats */
-        $stats = $this->userRatingRepository->findBy($filter,['battleRating'=>'DESC']);
+        $stats = $this->userRatingRepository->findBy($filter, ['battleRating' => 'DESC']);
 
         $currentPage = $request->query->getInt('page', 1);
 
@@ -123,8 +123,8 @@ class StatsController extends AbstractGameController
                            window.mytimeout = window.setTimeout(()=>{loadingMsg('statsTable','Suche Spieler...');event.target.parentElement.submit()}, 1500);",
                     'class' => "search"
                 ],
-                'mapped'=> false,
-                'required'=>false
+                'mapped' => false,
+                'required' => false
             ])
             ->add('nick', SubmitType::class, [
                 'label' => $this->getUser()->getData()->getNick()
@@ -134,13 +134,13 @@ class StatsController extends AbstractGameController
 
         $filter = [];
         if ($form->isSubmitted() && $form->isValid()) {
-            $nick = $form->get('nick')->isClicked()?$this->getUser()->getData()->getNick():$form->get('search')->getData();
-            $user = $this->userRepository->findOneBy(['nick'=>$nick]);
+            $nick = $form->get('nick')->isClicked() ? $this->getUser()->getData()->getNick() : $form->get('search')->getData();
+            $user = $this->userRepository->findOneBy(['nick' => $nick]);
             $filter['user'] = $user;
         }
 
         /** @var UserStat[] $stats */
-        $stats = $this->userRatingRepository->findBy($filter,['tradeRating'=>'DESC']);
+        $stats = $this->userRatingRepository->findBy($filter, ['tradeRating' => 'DESC']);
 
         $currentPage = $request->query->getInt('page', 1);
 
@@ -164,8 +164,8 @@ class StatsController extends AbstractGameController
                            window.mytimeout = window.setTimeout(()=>{loadingMsg('statsTable','Suche Spieler...');event.target.parentElement.submit()}, 1500);",
                     'class' => "search"
                 ],
-                'mapped'=> false,
-                'required'=>false
+                'mapped' => false,
+                'required' => false
             ])
             ->add('nick', SubmitType::class, [
                 'label' => $this->getUser()->getData()->getNick()
@@ -175,13 +175,13 @@ class StatsController extends AbstractGameController
 
         $filter = [];
         if ($form->isSubmitted() && $form->isValid()) {
-            $nick = $form->get('nick')->isClicked()?$this->getUser()->getData()->getNick():$form->get('search')->getData();
-            $user = $this->userRepository->findOneBy(['nick'=>$nick]);
+            $nick = $form->get('nick')->isClicked() ? $this->getUser()->getData()->getNick() : $form->get('search')->getData();
+            $user = $this->userRepository->findOneBy(['nick' => $nick]);
             $filter['user'] = $user;
         }
 
         /** @var UserStat[] $stats */
-        $stats = $this->userRatingRepository->findBy($filter,['diplomacyRating'=>'DESC']);
+        $stats = $this->userRatingRepository->findBy($filter, ['diplomacyRating' => 'DESC']);
 
         $currentPage = $request->query->getInt('page', 1);
 
@@ -198,11 +198,11 @@ class StatsController extends AbstractGameController
     #[Route("/game/stats/alliances", name: 'game.stats.alliances')]
     public function alliances(Request $request): Response
     {
-        $sort = $request->query->getAlnum('sort')?$request->query->getAlnum('sort'):'points';
-        $order = $request->query->get('order') === 'ASC'?'ASC':'DESC';
+        $sort = $request->query->getAlnum('sort') ? $request->query->getAlnum('sort') : 'points';
+        $order = $request->query->get('order') === 'ASC' ? 'ASC' : 'DESC';
 
         /** @var AllianceStats[] $stats */
-        $stats = $this->allianceStatsRepository->findBy([],[$sort=>$order]);
+        $stats = $this->allianceStatsRepository->findBy([], [$sort => $order]);
 
         return $this->render('game/stats/stats_alliance.html.twig', [
             'stats' => $stats
@@ -212,11 +212,11 @@ class StatsController extends AbstractGameController
     #[Route("/game/stats/base", name: 'game.stats.base')]
     public function base(Request $request): Response
     {
-        $sort = $request->query->getAlnum('sort')?$request->query->getAlnum('sort'):'points';
-        $order = $request->query->get('order') === 'ASC'?'ASC':'DESC';
+        $sort = $request->query->getAlnum('sort') ? $request->query->getAlnum('sort') : 'points';
+        $order = $request->query->get('order') === 'ASC' ? 'ASC' : 'DESC';
 
         /** @var AllianceStats[] $stats */
-        $stats = $this->allianceStatsRepository->findBy([],[$sort=>$order]);
+        $stats = $this->allianceStatsRepository->findBy([], [$sort => $order]);
 
         return $this->render('game/stats/stats_base.html.twig', [
             'stats' => $stats
@@ -242,7 +242,7 @@ class StatsController extends AbstractGameController
     #[Route("/game/stats/gamestats", name: 'game.stats.gamestats')]
     public function gamestats(): Response
     {
-        $cacheDir = $this->kernel->getContainer()->getParameter('kernel.cache_dir');
+        $cacheDir = $this->cacheDir;
         $img = is_file($cacheDir . GameStatsGenerator::USER_STATS_FILE);
 
         return $this->render('game/stats/stats_game.html.twig', [
@@ -256,12 +256,12 @@ class StatsController extends AbstractGameController
     {
         if ($user) {
             return $this->render('game/stats/stats_userdetail.html.twig', [
-                'user'=>$user,
-                'pointEntries'=>$this->userPointsRepository->getPoints($user, 48)
+                'user' => $user,
+                'pointEntries' => $this->userPointsRepository->getPoints($user, 48)
             ]);
         }
 
-        return $this->render('game/error.html.twig',[
+        return $this->render('game/error.html.twig', [
             'msg' => 'Datensatz wurde nicht gefunden!',
             'path' => $this->generateUrl('game.stats.total'),
             'headline' => 'Statistiken'
@@ -273,12 +273,12 @@ class StatsController extends AbstractGameController
     {
         if ($alliance) {
             return $this->render('game/stats/stats_alliancedetail.html.twig', [
-                'alliance'=>$alliance,
-                'pointEntries'=>$this->alliancePointsRepository->getPoints($alliance, 48)
+                'alliance' => $alliance,
+                'pointEntries' => $this->alliancePointsRepository->getPoints($alliance, 48)
             ]);
         }
 
-        return $this->render('game/error.html.twig',[
+        return $this->render('game/error.html.twig', [
             'msg' => 'Datensatz wurde nicht gefunden!',
             'path' => $this->generateUrl('game.stats.total'),
             'headline' => 'Statistiken'
@@ -296,8 +296,8 @@ class StatsController extends AbstractGameController
                            window.mytimeout = window.setTimeout(()=>{loadingMsg('statsTable','Suche Spieler...');event.target.parentElement.submit()}, 1500);",
                     'class' => "search"
                 ],
-                'mapped'=> false,
-                'required'=>false
+                'mapped' => false,
+                'required' => false
             ])
             ->add('nick', SubmitType::class, [
                 'label' => $this->getUser()->getData()->getNick()
@@ -307,14 +307,14 @@ class StatsController extends AbstractGameController
 
         $filter = [];
         if ($form->isSubmitted() && $form->isValid()) {
-            $filter['nick'] = $form->get('nick')->isClicked()?$this->getUser()->getData()->getNick():$form->get('search')->getData();
+            $filter['nick'] = $form->get('nick')->isClicked() ? $this->getUser()->getData()->getNick() : $form->get('search')->getData();
         }
 
-        $sort = $request->query->getAlnum('sort')?$request->query->getAlnum('sort'):$value;
-        $order = $request->query->get('order') === 'ASC'?'ASC':'DESC';
+        $sort = $request->query->getAlnum('sort') ? $request->query->getAlnum('sort') : $value;
+        $order = $request->query->get('order') === 'ASC' ? 'ASC' : 'DESC';
 
         /** @var UserStat[] $stats */
-        $stats = $this->userStatsRepository->findBy($filter,[$sort=>$order]);
+        $stats = $this->userStatsRepository->findBy($filter, [$sort => $order]);
 
         $currentPage = $request->query->getInt('page', 1);
 
