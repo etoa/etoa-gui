@@ -31,6 +31,7 @@
 #include "etoa.h"
 #include <exception>
 #include "util/MemInfo.h"
+#include "util/Functions.h"
 #include "version.h"
 
 void etoamain()
@@ -39,11 +40,27 @@ void etoamain()
 
 	LOG(LOG_DEBUG,"Entering main event-handler loop");
 
-	// TODO: Error handling
 	std::time_t mtime=0;
 	srand(time(0));
 
-	//Load Data
+	// Load Data. This runs before the main loop, so it needs its own error
+	// handling - without it a database problem while loading the game data ends
+	// in a bare "terminate called after throwing ..." without any context.
+	try
+	{
+		DataHandler::instance();
+	}
+	catch (const mysqlpp::Exception& e)
+	{
+		etoa::logDbException("startup while loading the game data", e.what());
+		exit(EXIT_FAILURE);
+	}
+	catch (const std::exception& e)
+	{
+		LOG(LOG_CRIT,"Error while loading the game data: " << e.what());
+		exit(EXIT_FAILURE);
+	}
+
 	DataHandler &DataHandler = DataHandler::instance();
 
 	// Main loop
@@ -181,14 +198,33 @@ void etoamain()
 
     }
 
-		// Catch mysql exceptions
-		catch (mysqlpp::BadQuery e) {
-			LOG(LOG_ERR,"MySQL: Unexpected query error: " << e.what());
+		// Catch mysql exceptions. The more specific ones have to come first,
+		// BadQuery and BadConversion both derive from mysqlpp::Exception.
+		catch (const mysqlpp::BadQuery& e) {
+			etoa::logDbException("main loop, query failed", e.what());
 			sleep(10);
 		}
-		catch (mysqlpp::Exception e)
+		catch (const mysqlpp::BadConversion& e) {
+			// Typically a field which is NULL in the database but read as a
+			// number, see etoa::dbInt()
+			etoa::logDbException("main loop, field conversion failed", e.what());
+			sleep(10);
+		}
+		catch (const mysqlpp::Exception& e)
 		{
-			LOG(LOG_ERR,"MySQL: General error: " << e.what());
+			etoa::logDbException("main loop", e.what());
+			sleep(10);
+		}
+		catch (const std::exception& e)
+		{
+			LOG(LOG_ERR,"Unhandled error in main loop: " << e.what());
+			LOG(LOG_ERR,"Last query was: " << etoa::lastQuery());
+			sleep(10);
+		}
+		catch (...)
+		{
+			LOG(LOG_ERR,"Unhandled error of unknown type in main loop");
+			LOG(LOG_ERR,"Last query was: " << etoa::lastQuery());
 			sleep(10);
 		}
 

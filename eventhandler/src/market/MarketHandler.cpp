@@ -33,7 +33,7 @@ namespace market
 			<< "		trade_rating=trade_rating+VALUES(trade_rating), ";
 		if (sell) query << " trades_sell=trades_sell+VALUES(trades_sell);";
 		else query << " trades_buy=trades_buy+VALUES(trades_buy);";
-		query.store();
+		etoa::dbStore(query);
 		query.reset();
 
 		std::string text = "Der Spieler ";
@@ -72,7 +72,7 @@ namespace market
 				query << "config_param1=config_param1+" << sell_res[i] << " ";
 			query << "WHERE ";
 				query << "config_name='market_" << ressource[i] << "_logger'";
-			query.store();
+			etoa::dbStore(query);
 			query.reset();
 			i++;
 		}
@@ -93,7 +93,7 @@ namespace market
 			<< "WHERE "
 			<< "	date_end<'" << time << "' "
 			<< "	OR date_delete!='0';";
-		RESULT_TYPE res = query.store();
+		RESULT_TYPE res = etoa::dbStore(query);
 		query.reset();
 
 		if (res) {
@@ -120,7 +120,7 @@ namespace market
 						<< "	AND buildlist_current_level>'0' "
 						<< "	AND buildlist_user_id='" << arr["user_id"] << "' "
 						<< "LIMIT 1;";
-					RESULT_TYPE mres = query.store();
+					RESULT_TYPE mres = etoa::dbStore(query);
 					query.reset();
 
 					if (mres) {
@@ -133,11 +133,11 @@ namespace market
 							// Definiert den Rückgabefaktor
 							float returnFactor = 1 - (1/(marr["buildlist_current_level"]+1));
 							int deleteDate = time + ((int)config.nget("market_auction_delay_time", 0) * 3600);
-							std::string buyer_user_nick = etoa::get_user_nick((int)arr["current_buyer_id"]);
+							std::string buyer_user_nick = etoa::get_user_nick(etoa::dbInt(arr["current_buyer_id"]));
 							std::string partner_user_nick = etoa::get_user_nick((int)arr["user_id"]);
 
 							//überprüfen ob geboten wurde, wenn nicht, Waren dem Verkäufer zurückgeben
-							if((int)arr["current_buyer_id"]==0)
+							if(etoa::dbInt(arr["current_buyer_id"])==0)
 							{
 								// Ress dem besitzer zurückgeben (mit dem faktor)
 								query << "UPDATE "
@@ -152,7 +152,7 @@ namespace market
 									<< "	id='" << arr["entity_id"] << "' "
 									<< "	AND planet_user_id='" << arr["user_id"] << "' "
 									<< "LIMIT 1;";
-								query.store();
+								etoa::dbStore(query);
 								query.reset();
 
 								MarketReport *report = new MarketReport((int)arr["user_id"],
@@ -177,18 +177,18 @@ namespace market
 									<< "WHERE "
 									<< "	id='" << arr["id"] << "' "
 									<< "LIMIT 1;";
-								query.store();
+								etoa::dbStore(query);
 								query.reset();
 							}
 
 							//Jemand hat geboten: Waren zum Versenden freigeben und Nachricht schreiben
-							else if((int)arr["current_buyer_id"]!=0 and (int)arr["buyable"]==1) {
+							else if(etoa::dbInt(arr["current_buyer_id"])!=0 and (int)arr["buyable"]==1) {
 								// Report an Verkäufer
 								MarketReport *report = new MarketReport((int)arr["user_id"],
 																		 (int)arr["entity_id"],
 																		 (int)arr["id"],
 																		 (int)arr["date_end"],
-																		 (int)arr["current_buyer_id"]);
+																		 etoa::dbInt(arr["current_buyer_id"]));
 								report->setSell((int)arr["sell_0"],
 												(int)arr["sell_1"],
 												(int)arr["sell_2"],
@@ -206,7 +206,7 @@ namespace market
 								delete report;
 
 								//Report an Käufer
-								report = new MarketReport((int)arr["current_buyer_id"],
+								report = new MarketReport(etoa::dbInt(arr["current_buyer_id"]),
 														  (int)arr["entity_id"],
 														  (int)arr["id"],
 														  (int)arr["date_end"],
@@ -238,7 +238,7 @@ namespace market
 									<< "	user_id='" << arr["user_id"] << "' "
 									<< "	AND multi_id='" << arr["current_buyer_id"] << "' "
 									<< "LIMIT 1;";
-								RESULT_TYPE multi_res = query.store();
+								RESULT_TYPE multi_res = etoa::dbStore(query);
 								query.reset();
 
 								query <<"SELECT "
@@ -249,7 +249,7 @@ namespace market
 									<< "	user_id='" << arr["current_buyer_id"] << "' "
 									<< "	AND multi_id='" << arr["user_id"] << "' "
 									<< "LIMIT 1;";
-								RESULT_TYPE multi_res2 = query.store();
+								RESULT_TYPE multi_res2 = etoa::dbStore(query);
 								query.reset();
 
 								if (multi_res and multi_res2) {
@@ -333,7 +333,7 @@ namespace market
 									<< "WHERE "
 									<< "	id='" << arr["id"] << "' "
 									<< "LIMIT 1;";
-								query.store();
+								etoa::dbStore(query);
 								query.reset();
 
 								// Verkauftse Roshtoffe summieren für Config
@@ -377,7 +377,7 @@ namespace market
 			<< "WHERE "
 			<< "	date_delete<='" << time << "' "
 			<< "	AND sent='1';";
-		query.store();
+		etoa::dbStore(query);
 		query.reset();
 	}
 
@@ -409,7 +409,7 @@ namespace market
 			<< "	buyable='0' "
 			<< "	AND sent='0' "
 			<< "	AND date_delete>'" << time << "';";
-		RESULT_TYPE res = query.store();
+		RESULT_TYPE res = etoa::dbStore(query);
 		query.reset();
 
 		if (res) {
@@ -421,7 +421,7 @@ namespace market
 				for (mysqlpp::Row::size_type i = 0; i<resSize; i++) {
 					arr = res.at(i);
 
-					User buyer((int)arr["current_buyer_id"]);
+					User buyer(etoa::dbInt(arr["current_buyer_id"]));
 					User seller((int)arr["user_id"]);
 
 					// Add trade points
@@ -440,7 +440,7 @@ namespace market
 
 					//Flotte zum verkäufer der auktion schicken
 					int launchtime = time; // Startzeit
-					double distance = etoa::calcDistanceByPlanetId(arr["entity_id"],arr["current_buyer_entity_id"]);
+					double distance = etoa::calcDistanceByPlanetId(etoa::dbInt(arr["entity_id"]),etoa::dbInt(arr["current_buyer_entity_id"]));
 					int duration = (int)(distance / (double)marketShip->getSpeed() * 3600) + marketShip->getTime2Start() + marketShip->getTime2Land();
 					int sellerLandtime = launchtime + (int)(duration / seller.getSpecialist()->getSpecialistTradeBonus()); // Landezeit
 					int buyerLandtime = launchtime + (int)(duration / buyer.getSpecialist()->getSpecialistTradeBonus()); // Landezeit
@@ -471,7 +471,7 @@ namespace market
 						<<		arr["buy_2"] << ", "
 						<<		arr["buy_3"] << ", "
 						<<		arr["buy_4"] << ");";
-					query.store();
+					etoa::dbStore(query);
 
 					query << "INSERT INTO fleet_ships "
 						<< "(	fs_fleet_id, "
@@ -481,7 +481,7 @@ namespace market
 						<< "	'" << my.insert_id(query) << "', "
 						<< "	'" << config.idget("MARKET_SHIP_ID") << "', "
 						<< "	'1');";
-					query.store();
+					etoa::dbStore(query);
 
 
 					//Flotte zum hochstbietenden schicken (Käufer)
@@ -499,10 +499,10 @@ namespace market
 						<< "	res_fuel, "
 						<< "	res_food) "
 						<< "VALUES "
-						<< "(	'" << arr["current_buyer_id"] << "', "
+						<< "(	'" << etoa::dbInt(arr["current_buyer_id"]) << "', "
 						<< "	'" << config.get("market_entity", 0) << "', "
-						<<		arr["current_buyer_entity_id"] << ", "
-						<<		arr["current_buyer_id"] << ", "
+						<<		etoa::dbInt(arr["current_buyer_entity_id"]) << ", "
+						<<		etoa::dbInt(arr["current_buyer_id"]) << ", "
 						<<		launchtime << ", "
 						<<		buyerLandtime << ", "
 						<< "	'" << FLEET_ACTION_RESS << "', "
@@ -511,7 +511,7 @@ namespace market
 						<<		arr["sell_2"] << ", "
 						<<		arr["sell_3"] << ", "
 						<<		arr["sell_4"] << ");";
-					query.store();
+					etoa::dbStore(query);
 					query.reset();
 
 
@@ -525,7 +525,7 @@ namespace market
 						<< (int)my.insert_id(query) << ","
 						<< (int)config.idget("MARKET_SHIP_ID") << ", "
 						<< "'1');";
-					query.store();
+					etoa::dbStore(query);
 					query.reset();
 
 					//Waren als "gesendet" markieren
@@ -536,7 +536,7 @@ namespace market
 						<< "WHERE "
 						<< "	id='" << arr["id"] << "' "
 						<< "LIMIT 1;";
-					query.store();
+					etoa::dbStore(query);
 					query.reset();
 				}
 			}

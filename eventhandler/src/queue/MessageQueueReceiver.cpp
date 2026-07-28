@@ -1,4 +1,5 @@
 #include "MessageQueueReceiver.h"
+#include "../util/Functions.h"
 #include "../util/Log.h"
 
 std::vector<MessageQueueCommand> MessageQueueReceiver::receive()
@@ -10,7 +11,7 @@ std::vector<MessageQueueCommand> MessageQueueReceiver::receive()
 
 	mysqlpp::Query query = con_->query();
 	query << "SELECT id,cmd,arg FROM backend_message_queue;";
-	RESULT_TYPE res = query.store();
+	RESULT_TYPE res = etoa::dbStore(query);
 	query.reset();
 	if (res) {
 		unsigned int resSize = res.size();
@@ -32,7 +33,7 @@ std::vector<MessageQueueCommand> MessageQueueReceiver::receive()
 			for(std::vector<int>::iterator it = ids.begin(); it != ids.end(); ++it) {
 				query = con_->query();
 				query << "DELETE FROM backend_message_queue WHERE id=" << *it << ";";
-				query.store();
+				etoa::dbStore(query);
 				query.reset();
 			}
 		}

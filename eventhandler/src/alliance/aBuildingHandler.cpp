@@ -1,5 +1,6 @@
 
 #include "aBuildingHandler.h"
+#include "../util/Functions.h"
 
 namespace abuilding
 {
@@ -18,7 +19,7 @@ namespace abuilding
 			<< "WHERE "
 			<< "	alliance_buildlist_build_end_time>0 AND"
 			<< " alliance_buildlist_build_end_time<" << time << ";";
-		query.store();
+		etoa::dbStore(query);
 		//std::cout << "Upgraded "<<con_->affected_rows()<<" Alliance Buildings\n";
 		query.reset();
 	}

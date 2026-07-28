@@ -1,5 +1,6 @@
 
 #include "aPointsHandler.h"
+#include "../util/Functions.h"
 
 namespace aPoints
 {
@@ -25,7 +26,7 @@ namespace aPoints
 			<< "ON "
 			<< "	alliance_id=alliance_buildlist_alliance_id "
 			<< "	AND alliance_buildlist_building_id='3';";
-		RESULT_TYPE res = query.store();
+		RESULT_TYPE res = etoa::dbStore(query);
 		query.reset();
 
 		if (res) {
@@ -52,7 +53,7 @@ namespace aPoints
 							<< "user_alliace_shippoints=user_alliace_shippoints + '" << shipPointsAdd << "' "
 							<< "WHERE "
 							<< "	user_alliance_id='" << arr["alliance_buildlist_alliance_id"] << "';";
-						query.store();
+						etoa::dbStore(query);
 						query.reset();
 					}
 				}

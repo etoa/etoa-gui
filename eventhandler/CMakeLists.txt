@@ -14,12 +14,13 @@ SET(CMAKE_CXX_FLAGS "$ENV{CXXFLAGS} -O3 -Wall -g -ggdb")
 
 
 FIND_PACKAGE(Boost REQUIRED thread regex filesystem system)
-FIND_PACKAGE(Mysqlpp)
+FIND_PACKAGE(Mysqlpp REQUIRED)
 
+# MYSQLPP_LIBRARY/MYSQLCLIENT_LIBRARY are the library files themselves and must
+# not be added here: as link directories they produced bogus -L and -rpath
+# entries and made cmake fall back to "-lmysqlpp" instead of the resolved path.
 LINK_DIRECTORIES(
   ${Boost_LIBRARY_DIRS}
-  ${MYSQLPP_LIBRARY}
-  ${MYSQLCLIENT_LIBRARY}
 )
 
 INCLUDE_DIRECTORIES(

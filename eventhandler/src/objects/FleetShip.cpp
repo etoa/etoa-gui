@@ -1,5 +1,6 @@
 
 #include "FleetShip.h"
+#include "../util/Functions.h"
 
 	FleetShip::FleetShip(mysqlpp::Row &oRow) : Object(oRow) {
 		this->id = (int)oRow["fs_id"];
@@ -45,7 +46,7 @@
 					<< "WHERE "
 					<< "	fs_id='" << this->getId() << "' "
 					<< "LIMIT 1;";
-				query.store();
+				etoa::dbStore(query);
 				query.reset();
 			}
 			else {
@@ -54,7 +55,7 @@
 					<< "WHERE "
 					<< "	fs_id='" << this->getId() << "' "
 					<< "LIMIT 1;";
-				query.store();
+				etoa::dbStore(query);
 				query.reset();
 			}
 		}

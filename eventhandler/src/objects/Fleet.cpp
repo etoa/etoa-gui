@@ -4,7 +4,7 @@ Fleet::Fleet(mysqlpp::Row &fleet) {
     this->action = std::string(fleet["action"]);
     this->fId = (int)fleet["id"];
     this->userId = (int)fleet["user_id"];
-    this->leaderId = (int)fleet["leader_id"];
+    this->leaderId = etoa::dbInt(fleet["leader_id"]);
     this->entityFrom = (int)fleet["entity_from"];
     this->entityTo = (int)fleet["entity_to"];
     this->nextId = (int)fleet["next_id"];
@@ -1025,7 +1025,7 @@ void Fleet::setMain() {
     << "	planets.planet_user_id='" << this->getUserId() << "' "
     << "	AND planets.planet_user_main='1' "
     << "LIMIT 1;";
-    RESULT_TYPE mainRes = query.store();
+    RESULT_TYPE mainRes = etoa::dbStore(query);
     query.reset();
 
     if (mainRes) {
@@ -1244,7 +1244,7 @@ void Fleet::loadAdditionalFleets() {
     << "	leader_id='" << this->getLeaderId() << "' "
     << "	AND landtime<='" << time << "' "
     << "	AND status=3;";
-    RESULT_TYPE fRes = query.store();
+    RESULT_TYPE fRes = etoa::dbStore(query);
     query.reset();
 
     if (fRes) {
@@ -1362,7 +1362,7 @@ bool Fleet::checkSupportSlots(unsigned int maxSupportSlots, int targetEntityId, 
     << "GROUP BY"
     << "	`user_id` "
     << ";";
-    RESULT_TYPE fsRes = query.store();
+    RESULT_TYPE fsRes = etoa::dbStore(query);
     query.reset();
 
     if (fsRes)
@@ -1405,7 +1405,7 @@ void Fleet::loadShips() {
         << "	fleet_ships "
         << "WHERE "
         << "	fs_fleet_id='" << this->getId() << "';";
-        RESULT_TYPE fsRes = query.store();
+        RESULT_TYPE fsRes = etoa::dbStore(query);
         query.reset();
 
         if (fsRes) {
@@ -1597,7 +1597,7 @@ void Fleet::loadAllianceTechs() {
         << "	alliance_techlist "
         << "WHERE "
         << "	alliance_techlist_alliance_id='" << this->fleetUser->getAllianceId() << "';";
-        RESULT_TYPE aRes = query.store();
+        RESULT_TYPE aRes = etoa::dbStore(query);
         query.reset();
 
         if (aRes) {
@@ -1769,7 +1769,7 @@ void Fleet::save() {
         << "WHERE "
         << "	id='" << this->getId() << "' "
         << "LIMIT 1;";
-        RESULT_TYPE fsRes = query.store();
+        RESULT_TYPE fsRes = etoa::dbStore(query);
         query.reset();
     }
     else {
@@ -1778,7 +1778,7 @@ void Fleet::save() {
         << "WHERE "
         << "	id='" << this->getId() << "' "
         << "LIMIT 1;";
-        query.store();
+        etoa::dbStore(query);
         query.reset();
     }
 }

@@ -1,5 +1,6 @@
 
 #include "aTechHandler.h"
+#include "../util/Functions.h"
 
 namespace atech
 {
@@ -19,7 +20,7 @@ namespace atech
 			<< "WHERE "
 			<< "	alliance_techlist_build_start_time>0 AND"
 			<< " alliance_techlist_build_end_time<" << time << ";";
-		query.store();
+		etoa::dbStore(query);
 		//std::cout << "Upgraded "<<con_->affected_rows()<<" Alliance Technologies\n";
 		query.reset();
 

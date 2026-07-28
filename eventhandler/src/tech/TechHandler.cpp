@@ -1,5 +1,6 @@
 
 #include "TechHandler.h"
+#include "../util/Functions.h"
 #include "../util/Debug.h"
 namespace tech
 {
@@ -19,7 +20,7 @@ namespace tech
 			<< "	AND techlist_build_end_time<" << time << " "
 			<< "ORDER BY "
 			<< "	techlist_user_id;";
-		RESULT_TYPE res = query.store();
+		RESULT_TYPE res = etoa::dbStore(query);
 
 		// Add changed users to vector
 		if (res) {
@@ -52,7 +53,7 @@ namespace tech
 			<< "WHERE "
 			<< "	techlist_build_type=3 "
 			<< "	AND techlist_build_end_time<" << time << ";";
-		query.store();
+		etoa::dbStore(query);
 		DEBUG("Technologies: "<< my.affected_rows(query) <<" upgraded");
 
 		if( my.affected_rows(query) > 0 ) {

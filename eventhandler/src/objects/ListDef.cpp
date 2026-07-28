@@ -1,5 +1,6 @@
 
 #include "ListDef.h"
+#include "../util/Functions.h"
 
 	ListDef::ListDef(mysqlpp::Row &oRow,double rebuild) : Object(oRow) {
 		this->id = (int)oRow["deflist_id"];
@@ -29,7 +30,7 @@
 				<< "	deflist_id='" << this->getId() << "' "
 				<< "	AND deflist_user_id='" << this->getUserId() << "' "
 				<< "LIMIT 1;";
-			query.store();
+			etoa::dbStore(query);
 			query.reset();
 		}
 	}

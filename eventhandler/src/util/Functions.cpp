@@ -1,8 +1,43 @@
 
 #include "Functions.h"
+#include "Log.h"
 
 namespace etoa
 {
+	namespace
+	{
+		/** Sql of the query which was executed last, see lastQuery() */
+		std::string lastQuerySql;
+	}
+
+	const std::string& lastQuery()
+	{
+		return lastQuerySql;
+	}
+
+	RESULT_TYPE dbStore(mysqlpp::Query& query)
+	{
+		lastQuerySql = query.str();
+
+		try
+		{
+			return query.store();
+		}
+		catch (const mysqlpp::Exception& e)
+		{
+			logDbException("query", e.what());
+			throw;
+		}
+	}
+
+	void logDbException(const std::string& context, const std::string& what)
+	{
+		LOG(LOG_ERR, "MySQL error in " << context << ": " << what);
+		if (!lastQuerySql.empty())
+		{
+			LOG(LOG_ERR, "Last query was: " << lastQuerySql);
+		}
+	}
 
 
 	std::string get_user_nick(int userId)
@@ -16,7 +51,7 @@ namespace etoa
 			<< "	users "
 			<< "WHERE "
 			<< "	user_id='" << userId << "';";
-		RESULT_TYPE res = query.store();
+		RESULT_TYPE res = etoa::dbStore(query);
 
 		if (res) {
 			int resSize = res.size();
@@ -202,7 +237,7 @@ namespace etoa
 		query << mysqlpp::quote << time(0) << ", ";
 		query << mysqlpp::quote << msg_type;
 		query << ");";
-		query.store();
+		etoa::dbStore(query);
 
 		int iid = my.insert_id(query);
 
@@ -220,7 +255,7 @@ namespace etoa
 		query << mysqlpp::quote << subject << ", ";
 		query << mysqlpp::quote << text;
 		query << ");";
-		query.store();
+		etoa::dbStore(query);
 		query.reset();
 
 	}
@@ -242,7 +277,7 @@ namespace etoa
 				<< "('" << facility << "', "
 				<< "'" << log_timestamp << "', "
 				<< "'" << log_text << "');";
-		query.store();
+		etoa::dbStore(query);
 		query.reset();
 	}
 
@@ -304,7 +339,7 @@ namespace etoa
 			<< "	cells "
 			<< "	ON cells.id=entities.cell_id "
 			<< "	AND entities.id='" << pid1 <<"';";
-		RESULT_TYPE res1 = query.store();
+		RESULT_TYPE res1 = etoa::dbStore(query);
 		query.reset();
 
 		query << "SELECT "
@@ -319,7 +354,7 @@ namespace etoa
 			<< "	cells "
 			<< "	ON cells.id=entities.cell_id "
 			<< "	AND entities.id='" << pid2 <<"';";
-		RESULT_TYPE res2 = query.store();
+		RESULT_TYPE res2 = etoa::dbStore(query);
 		query.reset();
 
 		if (res1) {
@@ -356,7 +391,7 @@ namespace etoa
 		query << "	battle_rating=battle_rating+" << points << " "
 			<< "WHERE "
 			<< "	id=" << userId << ";";
-		query.store();
+		etoa::dbStore(query);
 		query.reset();
 		std::string text = "Der Spieler " + etoa::d2s(userId) +" erhält " + etoa::d2s(points) + " Kampfpunkt(e). Grund: " + reason;
 		add_log(17,text,0);
@@ -374,7 +409,7 @@ namespace etoa
 				<< "	battle_rating=battle_rating+1 "
 				<< "WHERE "
 				<< "	id=" << userId << ";";
-			query.store();
+			etoa::dbStore(query);
 			query.reset();
 			std::string text = "Der Spieler " + etoa::get_user_nick(userId) +" erhält 1 Kampfpunkte. Grund: " + reason;
 			add_log(17,text,0);

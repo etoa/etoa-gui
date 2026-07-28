@@ -1,30 +1,21 @@
-FIND_PATH(MYSQLPP_INCLUDE_DIR mysql++.h /usr/include/mysql++ /usr/local/include/mysql++)
+# Locates mysql++ and the mysql client library it needs.
+#
+# Sets MYSQLPP_INCLUDE_DIR, MYSQLPP_LIBRARY, MYSQLCLIENT_LIBRARY and MYSQLPP_FOUND.
 
-FIND_LIBRARY(MYSQLPP_LIBRARY NAMES mysqlpp PATH /lib /usr/lib /usr/local/lib)
+FIND_PATH(MYSQLPP_INCLUDE_DIR mysql++.h
+	PATHS /usr/include/mysql++ /usr/local/include/mysql++)
 
-FIND_LIBRARY(MYSQLCLIENT_LIBRARY mysqlclient PATH /lib /usr/lib /usr/local/lib /usr/local/mysql/lib/)
+FIND_LIBRARY(MYSQLPP_LIBRARY NAMES mysqlpp
+	PATHS /lib /usr/lib /usr/local/lib)
 
-IF (MYSQLPP_INCLUDE_DIR AND MYSQLPP_LIBRARY)
-   SET(MYSQLPP_FOUND TRUE)
-ENDIF (MYSQLPP_INCLUDE_DIR AND MYSQLPP_LIBRARY)
+FIND_LIBRARY(MYSQLCLIENT_LIBRARY NAMES mysqlclient
+	PATHS /lib /usr/lib /usr/local/lib /usr/local/mysql/lib)
 
-IF (MYSQLCLIENT_LIBRARY)
-	IF (NOT Foo_FIND_QUIETLY)
-		MESSAGE(STATUS "Found MySQL Client: ${MYSQLCLIENT_LIBRARY}")
-	ENDIF (NOT Foo_FIND_QUIETLY)
-ELSE (MYSQLCLIENT_LIBRARY)
-	IF (Foo_FIND_REQUIRED)
-		MESSAGE(FATAL_ERROR "Could not find MySQL Client")
-	ENDIF (Foo_FIND_REQUIRED)
-ENDIF (MYSQLCLIENT_LIBRARY)
+# Reports what is missing and aborts when the package was requested as REQUIRED.
+# The hand written checks this replaced tested "Foo_FIND_REQUIRED", which never
+# exists, so a missing library silently produced a broken link instead.
+INCLUDE(FindPackageHandleStandardArgs)
+FIND_PACKAGE_HANDLE_STANDARD_ARGS(Mysqlpp
+	REQUIRED_VARS MYSQLPP_LIBRARY MYSQLPP_INCLUDE_DIR MYSQLCLIENT_LIBRARY)
 
-
-IF (MYSQLPP_FOUND)
-   IF (NOT Foo_FIND_QUIETLY)
-      MESSAGE(STATUS "Found MySQL++: ${MYSQLPP_LIBRARY}")
-   ENDIF (NOT Foo_FIND_QUIETLY)
-ELSE (MYSQLPP_FOUND)
-   IF (Foo_FIND_REQUIRED)
-      MESSAGE(FATAL_ERROR "Could not find MySQL++")
-   ENDIF (Foo_FIND_REQUIRED)
-ENDIF (MYSQLPP_FOUND)
+MARK_AS_ADVANCED(MYSQLPP_INCLUDE_DIR MYSQLPP_LIBRARY MYSQLCLIENT_LIBRARY)

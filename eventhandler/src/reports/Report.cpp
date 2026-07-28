@@ -1,4 +1,5 @@
 #include "../util/Log.h"
+#include "../util/Functions.h"
 #include "Report.h"
 
 int Report::getId() {
@@ -91,7 +92,7 @@ int Report::save(int userId) {
 			<< "	'" << this->entity2Id << "', "
 			<< "	'" << this->opponent1Id << "' "
 			<< ");";
-		query.store();
+		etoa::dbStore(query);
 		query.reset();
 
 		return my.insert_id(query);

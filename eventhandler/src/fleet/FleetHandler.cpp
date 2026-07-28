@@ -1,5 +1,6 @@
 
 #include "FleetHandler.h"
+#include "../util/Functions.h"
 
 namespace fleet
 {
@@ -15,7 +16,7 @@ void FleetHandler::update()
     query << "	landtime<'" << time(0) << "' ";
     query << "	AND !(action='alliance' AND status='3') ";
     query << "ORDER BY landtime ASC;";
-    RESULT_TYPE res = query.store();
+    RESULT_TYPE res = etoa::dbStore(query);
     query.reset();
 
     //std::cout << "Updating ";

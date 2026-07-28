@@ -87,7 +87,7 @@
 							<< this->type << "' "
 							<< ");";
 						std::cout << query.str() << std::endl;
-						query.store();
+						etoa::dbStore(query);
 						query.reset();
 
 						query << "INSERT INTO "
@@ -114,7 +114,7 @@
 							<< mysqlpp::quote << this->fleetId
 							<< ");";
 						std::cout << query.str() << std::endl;
-						query.store();
+						etoa::dbStore(query);
 						query.reset();
 					}
 					catch (mysqlpp::Exception* e)

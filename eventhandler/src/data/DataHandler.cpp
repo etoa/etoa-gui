@@ -1,4 +1,5 @@
 #include <map>
+#include "../util/Functions.h"
 #include <vector>
 #include <string>
 #include "../MysqlHandler.h"
@@ -121,7 +122,7 @@
 			<< "	def_fields "
 			<< "FROM "
 			<< "	defense;";
-		RESULT_TYPE dRes = query.store();
+		RESULT_TYPE dRes = etoa::dbStore(query);
 		query.reset();
 		if (dRes) {
 			unsigned int dSize = dRes.size();
@@ -199,7 +200,7 @@
 			<< "	ship_alliance_costs "
 			<< "FROM "
 			<< "	ships;";
-		RESULT_TYPE sRes = query.store();
+		RESULT_TYPE sRes = etoa::dbStore(query);
 		query.reset();
 		if (sRes) {
 			unsigned int sSize = sRes.size();
@@ -239,7 +240,7 @@
 			<< "	tech_stealable "
 			<< "FROM "
 			<< "	technologies;";
-		RESULT_TYPE tRes = query.store();
+		RESULT_TYPE tRes = etoa::dbStore(query);
 		query.reset();
 		if (tRes) {
 			unsigned int tSize = tRes.size();
@@ -299,7 +300,7 @@
 			<< "	building_bunker_fleet_space "
 			<< "FROM "
 			<< "	buildings;";
-		RESULT_TYPE bRes = query.store();
+		RESULT_TYPE bRes = etoa::dbStore(query);
 		query.reset();
 		if (bRes) {
 			unsigned int bSize = bRes.size();
@@ -321,7 +322,7 @@
 			<< "	* "
 			<< "FROM "
 			<< "	races;";
-		RESULT_TYPE rRes = query.store();
+		RESULT_TYPE rRes = etoa::dbStore(query);
 		query.reset();
 		if (rRes) {
 			unsigned int rSize = rRes.size();
@@ -342,7 +343,7 @@
 			<< "	* "
 			<< "FROM "
 			<< "	sol_types;";
-		RESULT_TYPE slRes = query.store();
+		RESULT_TYPE slRes = etoa::dbStore(query);
 		query.reset();
 		if (slRes) {
 			unsigned int slSize = slRes.size();
@@ -363,7 +364,7 @@
 			<< "	* "
 			<< "FROM "
 			<< "	planet_types;";
-		RESULT_TYPE pRes = query.store();
+		RESULT_TYPE pRes = etoa::dbStore(query);
 		query.reset();
 		if (pRes) {
 			unsigned int pSize = pRes.size();
@@ -384,7 +385,7 @@
 			<< "	* "
 			<< "FROM "
 			<< "	specialists;";
-		RESULT_TYPE spRes = query.store();
+		RESULT_TYPE spRes = etoa::dbStore(query);
 		query.reset();
 		if (spRes) {
 			unsigned int spSize = spRes.size();

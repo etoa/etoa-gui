@@ -1,5 +1,6 @@
 
 #include "Log.h"
+#include "../util/Functions.h"
 
 	void Log::addFleetId(int fleetId) {
 		this->fleetId = fleetId;
@@ -132,7 +133,7 @@
 			<< mysqlpp::quote << this->entityShipsEnd << " "
 			<< ");";
 
-		query.store();
+		etoa::dbStore(query);
 		query.reset();
 	}
 

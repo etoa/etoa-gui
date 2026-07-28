@@ -54,7 +54,7 @@ namespace planet
 			<< "		users  "
 			<< "	ON planets.planet_user_id = users.user_id "
 			<< "LIMIT 1;";
-		RESULT_TYPE pRes = query.store();
+		RESULT_TYPE pRes = etoa::dbStore(query);
 		query.reset();
 
 		if (pRes) {
@@ -63,11 +63,11 @@ namespace planet
 			if (pSize) {
 				mysqlpp::Row pRow = pRes.at(0);
 
-				this->raceId = (int)pRow["user_race_id"];
+				this->raceId = etoa::dbInt(pRow["user_race_id"]);
 				this->userId = (int)pRow["user_id"];
 				this->solType = (int)pRow["type_id"];
 				this->planetType = (int)pRow["planet_type_id"];
-				this->speicalistId = (int)pRow["user_specialist_time"] < time(0) ? 0 : (int)pRow["user_specialist_id"];
+				this->speicalistId = (int)pRow["user_specialist_time"] < time(0) ? 0 : etoa::dbInt(pRow["user_specialist_id"]);
                 this->boostBonusProduction = (float)pRow["boost_bonus_production"];
 
 				this->solarPowerBonus = etoa::getSolarPowerBonus((int)pRow["planet_temp_from"], (int)pRow["planet_temp_to"]);
@@ -218,7 +218,7 @@ namespace planet
 			<< "	buildlist_entity_id='" << this->entityId << "' "
 			<< "	AND buildlist_user_id='" << this->userId << "' "
 			<< "	AND buildlist_current_level>0;";
-		RESULT_TYPE bRes = query.store();
+		RESULT_TYPE bRes = etoa::dbStore(query);
 		query.reset();
 
 		if (bRes) {
@@ -275,7 +275,7 @@ namespace planet
 			<< "	shiplist_entity_id='" << this->entityId << "' "
 			<< "	AND shiplist_user_id='" << this->userId << "' "
 			<< "	AND shiplist_count>0;";
-		RESULT_TYPE sRes = query.store();
+		RESULT_TYPE sRes = etoa::dbStore(query);
 		query.reset();
 
 		if (sRes) {
@@ -311,7 +311,7 @@ namespace planet
 			<< "	deflist_entity_id='" << this->entityId << "' "
 			<< "	AND deflist_user_id='" << this->userId << "' "
 			<< "	AND deflist_count>0;";
-		RESULT_TYPE dRes = query.store();
+		RESULT_TYPE dRes = etoa::dbStore(query);
 		query.reset();
 
 		if (dRes) {
@@ -403,7 +403,7 @@ namespace planet
 			<< "	techlist_tech_id='" << energyTechID << "' "
 			<< "	AND techlist_user_id='" << this->userId << "' "
 			<< "	AND techlist_current_level>" << requiredLevel << ";";
-		RESULT_TYPE res = query.store();
+		RESULT_TYPE res = etoa::dbStore(query);
 		query.reset();
 		if (res) {
 			unsigned int sSize = res.size();
@@ -455,7 +455,7 @@ namespace planet
 			<< "WHERE "
 			<< "	id='" << this->entityId << "' "
 			<< "LIMIT 1;";
-		query.store();
+		etoa::dbStore(query);
 		query.reset();
 	}
 
@@ -478,7 +478,7 @@ namespace planet
 			<< "WHERE "
 			<< "	id='" << this->entityId << "' "
 			<< "LIMIT 1;";
-		query.store();
+		etoa::dbStore(query);
 		query.reset();
 	}
 }

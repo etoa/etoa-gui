@@ -1,5 +1,6 @@
 
 #include "SpyReport.h"
+#include "../util/Functions.h"
 
 void SpyReport::setBuildings(std::string buildings) {
 	this->buildings = buildings;
@@ -89,7 +90,7 @@ void SpyReport::saveSpyReport() {
 			<< "	'" << this->coverage << "', "
 			<< "	'" << this->fleetId << "' "
 			<< ");";
-		query.store();
+		etoa::dbStore(query);
 		query.reset();
 	}
 	catch (int e)

@@ -1,5 +1,6 @@
 
 #include "Nebula.h"
+#include "../util/Functions.h"
 
 	void Nebula::loadData() {
 
@@ -13,7 +14,7 @@
 		query << "WHERE ";
 		query << "	id=" << this->getId() << " ";
 		query << "LIMIT 1;";
-		RESULT_TYPE nRes = query.store();
+		RESULT_TYPE nRes = etoa::dbStore(query);
 		query.reset();
 
 		if (nRes) {
@@ -66,7 +67,7 @@
 			query << "WHERE ";
 			query << "	id=" << this->getId() << " ";
 			query << "LIMIT 1;";
-			query.store();
+			etoa::dbStore(query);
 			query.reset();
 
 			query << "DELETE FROM";
@@ -74,7 +75,7 @@
 			query << "WHERE ";
 			query << " id=" << this->getId() << " ";
 			query << "LIMIT 1;";
-			query.store();
+			etoa::dbStore(query);
 			query.reset();
 
 			query << "INSERT INTO ";
@@ -85,7 +86,7 @@
 			query << "VALUES ";
 			query << "(";
 			query << "" << this->getId() << ");";
-			query.store();
+			etoa::dbStore(query);
 			query.reset();
 
 			// Create a new one
@@ -101,7 +102,7 @@
 			query << "ORDER BY ";
 			query << " RAND() ";
 			query << "LIMIT 1;";
-			RESULT_TYPE searchRes = query.store();
+			RESULT_TYPE searchRes = etoa::dbStore(query);
 			query.reset();
 
 			if (searchRes) {
@@ -118,7 +119,7 @@
 					query << "WHERE ";
 					query << "	id=" << searchRow["id"] << " ";
 					query << "LIMIT 1;";
-					query.store();
+					etoa::dbStore(query);
 					query.reset();
 
 					query << "INSERT INTO ";
@@ -131,7 +132,7 @@
 					query << "(";
 					query << "" << searchRow["id"] << ", ";
 					query << "" << newRess << ");";
-					query.store();
+					etoa::dbStore(query);
 					query.reset();
 
 					query << "DELETE FROM ";
@@ -139,7 +140,7 @@
 					query << "WHERE ";
 					query << " id=" << searchRow["id"] << " ";
 					query << "LIMIT 1;";
-					query.store();
+					etoa::dbStore(query);
 					query.reset();
 				}
 			}
@@ -158,7 +159,7 @@
 			query << "WHERE ";
 			query << "	id=" << this->getId() << " ";
 			query << "LIMIT 1;";
-			query.store();
+			etoa::dbStore(query);
 			query.reset();
 		}
 

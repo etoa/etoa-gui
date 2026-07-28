@@ -10,6 +10,14 @@
 #include <string>
 #include <fstream>
 
+// Has to be defined before the project headers are included: ConfigHandler.h
+// pulls in util/Functions.h, which declares functions returning RESULT_TYPE.
+#if MYSQLPP_HEADER_VERSION <= MYSQLPP_VERSION(2,3,2)
+#define RESULT_TYPE mysqlpp::Result
+#else
+#define RESULT_TYPE mysqlpp::StoreQueryResult
+#endif
+
 #include "config/ConfigHandler.h"
 #include "util/ConfigFile.h"
 
@@ -35,7 +43,6 @@
 		mysqlpp::Connection* get();
 
 #if MYSQLPP_HEADER_VERSION <= MYSQLPP_VERSION(2,3,2)
-#define RESULT_TYPE mysqlpp::Result
 		inline my_ulonglong insert_id(mysqlpp::Query &q) {
 			return con_.insert_id();
 		}
@@ -43,7 +50,6 @@
 			return con_.affected_rows();
 		}
 #else
-#define RESULT_TYPE mysqlpp::StoreQueryResult
 		inline my_ulonglong insert_id(mysqlpp::Query &q) {
 			return q.insert_id();
 		}

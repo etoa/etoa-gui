@@ -1,5 +1,6 @@
 
 #include "OtherReport.h"
+#include "../util/Functions.h"
 
 void OtherReport::setStatus(unsigned short status) {
 	this->status = status;
@@ -75,7 +76,7 @@ void OtherReport::saveOtherReport() {
 			<< "	'" << this->status << "', "
 			<< "	'" << this->fleetId << "' "
 			<< ");";
-		query.store();
+		etoa::dbStore(query);
 		query.reset();
 	}
 	catch (int e)

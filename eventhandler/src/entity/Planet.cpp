@@ -1,5 +1,6 @@
 
 #include "Planet.h"
+#include "../util/Functions.h"
 
 	void Planet::loadData() {
 		Config &config = Config::instance();
@@ -35,7 +36,7 @@
 			<< "WHERE "
 			<< "	id='" << this->getId() << "' "
 			<< "LIMIT 1;";
-		RESULT_TYPE pRes = query.store();
+		RESULT_TYPE pRes = etoa::dbStore(query);
 		query.reset();
 
 		if (pRes) {
@@ -43,7 +44,7 @@
 
 			if (pSize>0) {
 				mysqlpp::Row pRow = pRes.at(0);
-				this->userId = (int)pRow["planet_user_id"];
+				this->userId = etoa::dbInt(pRow["planet_user_id"]);
 				this->userMain = (bool)pRow["planet_user_main"];
 				this->codeName = std::string(pRow["planet_name"]);
 				this->typeId = (short)pRow["planet_type_id"];
@@ -66,7 +67,7 @@
 				this->fields = (int)pRow["planet_fields"];
 				this->lastUpdated = (int)pRow["planet_last_updated"];
 				this->userChanged = (int)pRow["planet_user_changed"];
-				this->lastUserId = (int)pRow["planet_last_user_id"];
+				this->lastUserId = etoa::dbInt(pRow["planet_last_user_id"]);
 			}
 		}
 
@@ -141,7 +142,12 @@
 			query << "UPDATE ";
 			query << "	planets ";
 			query << "SET ";
-			query << "	planet_user_id='" << this->getUserId() << "', ";
+			// "Nobody" is NULL in the orm schema, writing 0 would make doctrine
+			// resolve a user with the id 0 which does not exist
+			if (this->getUserId() > 0)
+				query << "	planet_user_id='" << this->getUserId() << "', ";
+			else
+				query << "	planet_user_id=NULL, ";
 			query << "	planet_res_metal=planet_res_metal+'" << (this->getResMetal() - this->initResMetal) << "', ";
 			query << "	planet_res_crystal=planet_res_crystal+'" << (this->getResCrystal() - this->initResCrystal) << "', ";
 			query << "	planet_res_fuel=planet_res_fuel+'" << (this->getResFuel() - this->initResFuel) << "', ";
@@ -153,14 +159,17 @@
 			query << "	planet_people=planet_people+'" << (this->getResPeople() - this->initResPeople) << "', ";
 			if (this->userChanged) {
 				query << " planet_user_changed='" << this->userChanged << "', ";
-				query << " planet_last_user_id='" << this->lastUserId << "', ";
+				if (this->lastUserId > 0)
+					query << " planet_last_user_id='" << this->lastUserId << "', ";
+				else
+					query << " planet_last_user_id=NULL, ";
 				query << "	planet_name=" << mysqlpp::quote << this->codeName << ", ";
 			}
 			query << "	planet_last_updated='" << this->lastUpdated << "' ";
 			query << "WHERE ";
 			query << "	id='" << this->getId() << "' ";
 			query << "LIMIT 1;";
-			query.store();
+			etoa::dbStore(query);
 			query.reset();
 		}
 

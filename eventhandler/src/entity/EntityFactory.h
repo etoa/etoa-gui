@@ -12,6 +12,7 @@
 #define MYSQLPP_MYSQL_HEADERS_BURIED
 #include <mysql++/mysql++.h>
 #include "../MysqlHandler.h"
+#include "../util/Functions.h"
 
 #include "Asteroid.h"
 #include "Base.h"
@@ -40,7 +41,7 @@ public:
 		query << "WHERE ";
 		query << "	id='" << id << "' ";
 		query << "LIMIT 1;";
-		RESULT_TYPE eRes = query.store();
+		RESULT_TYPE eRes = etoa::dbStore(query);
 		query.reset();
 
 		if (eRes)

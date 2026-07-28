@@ -98,7 +98,7 @@
 			<< "	config_param2 "
 			<< "FROM "
 			<< "	config;";
-		RESULT_TYPE res = query.store();
+		RESULT_TYPE res = etoa::dbStore(query);
 		query.reset();
 		if (res) {
 			unsigned int resSize = res.size();
@@ -127,7 +127,7 @@
 			<< "WHERE "
 			<< "	code='m' "
 			<< "LIMIT 1;";
-		RESULT_TYPE mRes = query.store();
+		RESULT_TYPE mRes = etoa::dbStore(query);
 		query.reset();
 
 		if (mRes) {
@@ -264,7 +264,7 @@
 			<< "	AND ship_actions LIKE '%collectfuel%' "
 			<< "GROUP BY "
 			<< "	shiplist_user_id";
-		RESULT_TYPE res = query.store();
+		RESULT_TYPE res = etoa::dbStore(query);
 		query.reset();
 
 		if (res) {
@@ -296,7 +296,7 @@
 			<< "	AND	ship_actions LIKE '%collectfuel%' "
 			<< "GROUP BY "
 			<< "	user_id ";
-		res = query.store();
+		res = etoa::dbStore(query);
 		query.reset();
 
 		if (res) {

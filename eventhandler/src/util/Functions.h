@@ -47,6 +47,26 @@ namespace etoa
 	}
 
 	/**
+	* Reads a numeric field which can be SQL NULL.
+	*
+	* The orm schema declares foreign keys such as planets.planet_user_id,
+	* planets.planet_last_user_id, users.user_alliance_id, users.user_race_id,
+	* users.user_specialist_id, fleet.leader_id, buildlist.buildlist_user_id and
+	* market_auction.current_buyer_id as nullable, while this daemon expects the
+	* legacy "nothing" value 0. Casting a NULL field to int directly makes
+	* mysqlpp throw BadConversion ("NULL" incompatible with "i" type), so every
+	* read of such a column has to go through this function.
+	*
+	* Templated on the field type because a row field is a mysqlpp::String in
+	* mysql++ 3.x but a mysqlpp::ColData in the 2.3 versions this daemon still
+	* compiles against (see MysqlHandler.h); both provide is_null().
+	*/
+	template <class T>inline int dbInt(const T& field, int nullValue = 0)
+	{
+		return field.is_null() ? nullValue : (int) field;
+	}
+
+	/**
 	* Tries to convert anything to an int using stringstream buffer
 	*/
 	template <class T>inline int toInt(const T& t)
@@ -218,6 +238,33 @@ namespace etoa
 	*/
 	void addBattlePoints(int userId, int points, short result, std::string reason="");
 	void addSpecialiBattle(int userId, std::string reason);
+
+	/**
+	* Returns the sql of the query which was executed last through dbStore().
+	*
+	* Mysqlpp exceptions carry no query context at all, and the ones which hurt
+	* most are thrown *after* the query succeeded (a BadConversion while reading a
+	* field of the result). Keeping the last sql around is what makes those
+	* traceable, see the exception handlers in etoa.cpp and main.cpp.
+	*/
+	const std::string& lastQuery();
+
+	/**
+	* Executes a query, remembers its sql (see lastQuery()) and writes it to the
+	* log if the query itself fails.
+	*
+	* Always use this instead of query.store(), otherwise a database error cannot
+	* be traced back to the statement which caused it.
+	*/
+	RESULT_TYPE dbStore(mysqlpp::Query& query);
+
+	/**
+	* Writes an exception together with the last executed query to the log.
+	*
+	* @param context Where it happened, e.g. the name of the handler
+	* @param what    Message of the exception
+	*/
+	void logDbException(const std::string& context, const std::string& what);
 
 }
 

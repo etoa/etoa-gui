@@ -1,5 +1,6 @@
 
 #include "BattleReport.h"
+#include "../util/Functions.h"
 
 void BattleReport::setUser(std::string user) {
 	this->user = user;
@@ -251,7 +252,7 @@ void BattleReport::saveBattleReport() {
 			<< "	'" << this->restoreCivilShips << "', "
 			<< "	'" << this->result << "' "
 			<< ");";
-		query.store();
+		etoa::dbStore(query);
 		query.reset();
 	}
 	catch (int e)

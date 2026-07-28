@@ -1,5 +1,6 @@
 
 #include "DefList.h"
+#include "../util/Functions.h"
 
 namespace def
 {
@@ -24,7 +25,7 @@ namespace def
 			<< "ON DUPLICATE KEY "
 			<< "	UPDATE "
 			<< "		deflist_count=deflist_count+VALUES(deflist_count);";
-		query.store();
+		etoa::dbStore(query);
 		query.reset();
 	}
 }

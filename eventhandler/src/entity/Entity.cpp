@@ -537,7 +537,7 @@
 		query << "	buildlist_user_id='" << this->userId << "' ";
 		query << "WHERE ";
 		query << "	buildlist_entity_id='" << this->id << "'; ";
-		query.store();
+		etoa::dbStore(query);
 		query.reset();
 
 		// Bestehende Schiffs-Einträge löschen
@@ -545,14 +545,14 @@
 		query << "	shiplist ";
 		query << "WHERE ";
 		query << "	shiplist_entity_id='" << this->id << "';";
-		query.store();
+		etoa::dbStore(query);
 		query.reset();
 
 		query << "DELETE FROM ";
 		query << "	ship_queue ";
 		query << "WHERE ";
 		query << "	queue_entity_id='" << this->id << "';";
-		query.store();
+		etoa::dbStore(query);
 		query.reset();
 
 		// Bestehende Verteidigungs-Einträge löschen
@@ -560,14 +560,14 @@
 		query << "	deflist ";
 		query << "WHERE ";
 		query << "	deflist_entity_id='" << this->id << "';";
-		query.store(),
+		etoa::dbStore(query),
 		query.reset();
 
 		query << "DELETE FROM ";
 		query << "	def_queue ";
 		query << "WHERE ";
 		query << "	queue_entity_id='" << this->id << "';";
-		query.store();
+		etoa::dbStore(query);
 		query.reset();
 	}
 
@@ -591,35 +591,35 @@
 		query << "	shiplist ";
 		query << "WHERE ";
 		query << "	shiplist_entity_id='" << this->id << "';";
-		query.store();
+		etoa::dbStore(query);
 		query.reset();
 
 		query << "DELETE FROM ";
 		query << "	ship_queue ";
 		query << "WHERE ";
 		query << "	queue_entity_id='" << this->id << "';";
-		query.store();
+		etoa::dbStore(query);
 		query.reset();
 
 		query << "DELETE FROM ";
 		query << "	buildlist ";
 		query << "WHERE ";
 		query << "	buildlist_entity_id='" << this->id << "';";
-		query.store();
+		etoa::dbStore(query);
 		query.reset();
 
 		query << "DELETE FROM ";
 		query << "	deflist ";
 		query << "WHERE ";
 		query << "	deflist_entity_id='" << this->id << "';";
-		query.store();
+		etoa::dbStore(query);
 		query.reset();
 
 		query << "DELETE FROM ";
 		query << "	def_queue ";
 		query << "WHERE ";
 		query << "	queue_entity_id='" << this->id << "';";
-		query.store();
+		etoa::dbStore(query);
 		query.reset();
 	}
 
@@ -1122,7 +1122,7 @@
 		query << "WHERE ";
 		query << "	id='" << this->cellId << "' ";
 		query << "LIMIT 1;";
-		RESULT_TYPE cRes = query.store();
+		RESULT_TYPE cRes = etoa::dbStore(query);
 		query.reset();
 
 		if (cRes) {
@@ -1165,7 +1165,7 @@
 		query << "	entity_to='" << this->getId() << "' ";
 		query << "	AND action='support' ";
 		query << "	AND status='3';";
-		RESULT_TYPE fRes = query.store();
+		RESULT_TYPE fRes = etoa::dbStore(query);
 		query.reset();
 
 		if (fRes) {
@@ -1199,7 +1199,7 @@
 			query << "	shiplist_entity_id='" << this->getId() << "' ";
 			query << "	AND shiplist_count>'0' ";
 			query << "	AND shiplist_user_id='" << this->getUserId() << "';";
-			RESULT_TYPE slRes = query.store();
+			RESULT_TYPE slRes = etoa::dbStore(query);
 			query.reset();
 
 			if (slRes) {
@@ -1298,7 +1298,7 @@
 			query << "	deflist_entity_id='" << this->getId() << "' ";
 			query << "	AND deflist_count>'0' ";
 			query << "	AND deflist_user_id='" << this->getUserId() << "';";
-			RESULT_TYPE dlRes = query.store();
+			RESULT_TYPE dlRes = etoa::dbStore(query);
 			query.reset();
 
 			if (dlRes) {
@@ -1397,7 +1397,7 @@
 				<< "	alliance_techlist "
 				<< "WHERE "
 				<< "	alliance_techlist_alliance_id='" << this->entityUser->getAllianceId() << "';";
-			RESULT_TYPE aRes = query.store();
+			RESULT_TYPE aRes = etoa::dbStore(query);
 			query.reset();
 
 			if (aRes) {
@@ -1514,7 +1514,7 @@
 				<< "	buildlist_entity_id='" << this->id << "' "
 				<< "	AND buildlist_current_level>'0' "
 				<< "	AND buildlist_user_id='" << this->userId << "';";
-			RESULT_TYPE bRes = query.store();
+			RESULT_TYPE bRes = etoa::dbStore(query);
 			query.reset();
 
 			if (bRes) {
@@ -1546,7 +1546,7 @@
         	<< "WHERE "
         	<< "	buildlist_entity_id='" << this->id << "'";
 
-		RESULT_TYPE pRes = query.store();
+		RESULT_TYPE pRes = etoa::dbStore(query);
 		query.reset();
 
 		if (pRes) {
@@ -1589,7 +1589,7 @@
 					query << "	AND buildlist_building_id='" << (*it).first << "' ";
 					query << "	AND buildlist_entity_id='" << this->id << "' ";
 					query << "LIMIT 1;";
-					query.store();
+					etoa::dbStore(query);
 					query.reset();
 
 					return (etoa::d2s((*it).first) + ":" + etoa::d2s(level) + ":"  + etoa::d2s((*it).second));
@@ -1627,7 +1627,7 @@
 		query << "ORDER BY ";
 		query << "	RAND() ";
 		query << "LIMIT 1;";
-		RESULT_TYPE bRes = query.store();
+		RESULT_TYPE bRes = etoa::dbStore(query);
 		query.reset();
 
 		if (bRes) {
@@ -1650,7 +1650,7 @@
 				query << "	buildlist_entity_id='" << this->id << "' ";
 				query << "	AND buildlist_building_id='" << bRow["buildlist_building_id"] << "' ";
 				query << "LIMIT 1";
-				query.store();
+				etoa::dbStore(query);
 				query.reset();
 
 				return (etoa::d2s((int)bRow["buildlist_building_id"]) + ":" + etoa::d2s(h));

@@ -29,7 +29,10 @@
 */
 
 #include "etoa.h"
+#include "util/Functions.h"
 #include "version.h"
+
+#include <exception>
 
 using namespace std;
 
@@ -44,6 +47,46 @@ int ownerUID;
 
 std::string appPath;
 std::string configFile;
+
+/**
+* Last resort for exceptions which nobody caught: without this the process dies
+* with a bare "terminate called after throwing an instance of ..." on stderr,
+* which is invisible once the daemon is detached from the console. Logs the
+* exception together with the query which was executed last (see etoa::dbStore).
+*/
+void terminateHandler()
+{
+	try
+	{
+		std::exception_ptr current = std::current_exception();
+		if (current)
+		{
+			std::rethrow_exception(current);
+		}
+
+		LOG(LOG_CRIT,"Terminating without an active exception");
+	}
+	catch (const mysqlpp::Exception& e)
+	{
+		etoa::logDbException("uncaught exception", e.what());
+	}
+	catch (const std::exception& e)
+	{
+		LOG(LOG_CRIT,"Uncaught exception: " << e.what());
+		LOG(LOG_CRIT,"Last query was: " << etoa::lastQuery());
+	}
+	catch (...)
+	{
+		LOG(LOG_CRIT,"Uncaught exception of unknown type");
+		LOG(LOG_CRIT,"Last query was: " << etoa::lastQuery());
+	}
+
+	// Clean up the pidfile, otherwise the next start refuses to run
+	delete pf;
+	pf = NULL;
+
+	abort();
+}
 
 // Signal handler
 void sighandler(int sig)
@@ -134,6 +177,9 @@ std::string getVersion()
 
 int main(int argc, char* argv[])
 {
+	// Log uncaught exceptions instead of dying silently
+	std::set_terminate(&terminateHandler);
+
 	// Register signal handlers
 	signal(SIGABRT, &sighandler);
 	signal(SIGTERM, &sighandler);
@@ -366,8 +412,24 @@ int main(int argc, char* argv[])
 		pf->write();
 	}
 
+	// Loading the configuration already talks to the database, so it needs the
+	// same error handling as the main loop
 	Config &config = Config::instance();
-	config.setConfigFile(configFile);
+	try
+	{
+		config.setConfigFile(configFile);
+	}
+	catch (const mysqlpp::Exception& e)
+	{
+		etoa::logDbException("startup while loading the configuration", e.what());
+		exit(EXIT_FAILURE);
+	}
+	catch (const std::exception& e)
+	{
+		LOG(LOG_CRIT,"Error while loading the configuration: " << e.what());
+		exit(EXIT_FAILURE);
+	}
+
 	if (opt->getValue('t') != NULL)
 	{
 		config.setSleep(atoi(opt->getValue('t')));

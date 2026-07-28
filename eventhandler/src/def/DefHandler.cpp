@@ -1,5 +1,6 @@
 
 #include "DefHandler.h"
+#include "../util/Functions.h"
 #include "../util/Debug.h"
 namespace def
 {
@@ -25,7 +26,7 @@ namespace def
 			<< "	queue_starttime<" << time <<" "
 			<< "	AND queue_build_type<1 "
 			<< "ORDER BY queue_entity_id;";
-		RESULT_TYPE res = query.store();
+		RESULT_TYPE res = etoa::dbStore(query);
 		query.reset();
 
     int built = 0;
@@ -74,7 +75,7 @@ namespace def
 								<< "WHERE "
 								<< "	queue_id='" << arr["queue_id"] <<"' "
 								<< "LIMIT 1;";
-							query.store();
+							etoa::dbStore(query);
 							query.reset();
 
 							changes_=true;
@@ -97,7 +98,7 @@ namespace def
 						<< "WHERE "
 						<< "	queue_endtime<=" << time <<" "
 						<< "ORDER BY queue_entity_id;";
-					query.store();
+					etoa::dbStore(query);
 					query.reset();
 				}
 			}

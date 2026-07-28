@@ -1,5 +1,6 @@
 
 #include "BuildingHandler.h"
+#include "../util/Functions.h"
 #include "../util/Debug.h"
 #include "../objects/User.h"
 #include "../entity/EntityFactory.h"
@@ -35,7 +36,7 @@ namespace building
 			<< "	buildlist_build_type>2 "
 			<< "	AND buildlist_building_id='" << config.idget("FLEET_CONTROL_ID") << "' "
 			<< "	AND buildlist_build_end_time<" << time << " ORDER BY buildlist_entity_id;";
-		RESULT_TYPE res = query.store();
+		RESULT_TYPE res = etoa::dbStore(query);
 
 		if (res) {
 			unsigned int resSize = res.size();
@@ -48,7 +49,7 @@ namespace building
 				for (mysqlpp::Row::size_type i = 0; i<resSize; i++) {
 	    			row = res.at(i);
 
-					int uid = (int)row["buildlist_user_id"];
+					int uid = etoa::dbInt(row["buildlist_user_id"]);
 					int eid = (int)row["buildlist_entity_id"];
 					int radius = (int)((int)row["buildlist_current_level"] * factor);
 
@@ -70,7 +71,7 @@ namespace building
 			<< "WHERE "
 			<< "	buildlist_build_type>2 "
 			<< "	AND buildlist_build_end_time<" << time << " ORDER BY buildlist_entity_id;";
-		res = query.store();
+		res = etoa::dbStore(query);
 
 
 		// Add changed planets to vector
@@ -104,7 +105,7 @@ namespace building
 			<< "WHERE "
 			<< "	buildlist_build_type=3 "
 			<< "	AND buildlist_build_end_time<" << time << ";";
-		query.store();
+		etoa::dbStore(query);
     int up = my.affected_rows(query);
 
 		query << "UPDATE "
@@ -117,7 +118,7 @@ namespace building
 			<< "WHERE "
 			<< "	buildlist_build_type=4 "
 			<< "	AND buildlist_build_end_time<" << time << ";";
-		query.store();
+		etoa::dbStore(query);
     int down = my.affected_rows(query);
 
 		DEBUG("Buildings: " << up << " upgraded, " << down << " downgraded");

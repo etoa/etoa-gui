@@ -37,7 +37,7 @@
 			<< "WHERE "
 			<< "	id='" << this->userId << "' "
 			<< "LIMIT 1;";
-		RESULT_TYPE eloRes = query.store();
+		RESULT_TYPE eloRes = etoa::dbStore(query);
 		query.reset();
 
 		if (eloRes) {
@@ -68,7 +68,7 @@
 			<< "WHERE "
 			<< "	id='" << this->userId << "' "
 			<< "LIMIT 1;";
-		query.store();
+		etoa::dbStore(query);
 		query.reset();
 	}
 
@@ -114,7 +114,7 @@
 			<< "WHERE "
 			<< "	user_id='" << this->userId << "' "
 			<< "LIMIT 1;";
-		RESULT_TYPE maskRes = query.store();
+		RESULT_TYPE maskRes = etoa::dbStore(query);
 		query.reset();
 
 		if (maskRes) {
@@ -143,7 +143,7 @@
 			<< "WHERE "
 			<< "	user_id='" << this->userId << "' "
 			<< "LIMIT 1;";
-		query.store();
+		etoa::dbStore(query);
 		query.reset();
 	}
 
@@ -158,7 +158,7 @@
 			<< "WHERE "
 			<< " user_id='" << this->userId << "' "
 			<< "LIMIT 1;";
-		query.store();
+		etoa::dbStore(query);
 		query.reset();
 	}
 
@@ -174,7 +174,7 @@
 			<< "WHERE "
 			<< "	id=" << this->userId << " "
 			<< "LIMIT 1;";
-		RESULT_TYPE mRes = query.store();
+		RESULT_TYPE mRes = etoa::dbStore(query);
 		query.reset();
 
 		if (mRes) {
@@ -203,7 +203,7 @@
 				<< "WHERE "
 				<< "	user_id='" << this->userId << "' "
 				<< "LIMIT 1;";
-			query.store();
+			etoa::dbStore(query);
 			query.reset();
 		}
 	}
@@ -221,7 +221,7 @@
 				<< "WHERE "
 				<< "	user_id='" << this->userId << "' "
 				<< "LIMIT 1;";
-			query.store();
+			etoa::dbStore(query);
 			query.reset();
 		}
 	}
@@ -239,7 +239,7 @@
 				<< "WHERE "
 				<< "	user_id='" << this->userId << "' "
 				<< "LIMIT 1;";
-			query.store();
+			etoa::dbStore(query);
 			query.reset();
 		}
 	}
@@ -257,7 +257,7 @@
 				<< "WHERE "
 				<< "	user_id='" << this->userId << "' "
 				<< "LIMIT 1;";
-			query.store();
+			etoa::dbStore(query);
 			query.reset();
 		}
 	}
@@ -288,7 +288,7 @@
 			<< "WHERE "
 			<< "	tech_name = " << mysqlpp::quote << tech << " "
 			<< "LIMIT 1;";
-		RESULT_TYPE res = query.store();
+		RESULT_TYPE res = etoa::dbStore(query);
 		query.reset();
 
 		if( res && res.size() > 0 ) {
@@ -325,7 +325,7 @@
 					<< "WHERE "
 					<< "	user_id='" << this->userId << "' "
 					<< "LIMIT 1;";
-				RESULT_TYPE uRes = query.store();
+				RESULT_TYPE uRes = etoa::dbStore(query);
 				query.reset();
 
 				if (uRes) {
@@ -333,15 +333,15 @@
 
 					if (uSize > 0) {
 						mysqlpp::Row uRow = uRes.at(0);
-						this->allianceId = (int)uRow["user_alliance_id"];
+						this->allianceId = etoa::dbInt(uRow["user_alliance_id"]);
 						this->userNick = std::string(uRow["user_nick"]);
 						this->points = (double)uRow["user_points"];
 						this->spyattackCount = (int)uRow["spyattack_counter"];
 						this->inactiv = (int)uRow["user_hmode_from"] == 0 && ((int)uRow["user_logouttime"] < (time(NULL) - Config::instance().idget("USER_INACTIVE_DAYS") * 86400)) ? true : false;
 
 						DataHandler &DataHandler = DataHandler::instance();
-						if ((int)uRow["user_specialist_id"]>0 && (int)uRow["user_specialist_time"]>time(0)) {
-							this->specialist = DataHandler.getSpecialistById((int)uRow["user_specialist_id"]);
+						if (etoa::dbInt(uRow["user_specialist_id"])>0 && (int)uRow["user_specialist_time"]>time(0)) {
+							this->specialist = DataHandler.getSpecialistById(etoa::dbInt(uRow["user_specialist_id"]));
 						}
 						else {
 							this->specialist = DataHandler.getSpecialistById(0);
@@ -376,7 +376,7 @@
 				<< "WHERE "
 				<< "	techlist_user_id='" << this->userId << "' "
 				<< "	AND techlist_current_level>'0' ";
-			RESULT_TYPE tRes = query.store();
+			RESULT_TYPE tRes = etoa::dbStore(query);
 			query.reset();
 
 			if (tRes) {
@@ -430,7 +430,7 @@
 						<< "	techlist_user_id='" << this->userId << "' "
 						<< "	AND techlist_tech_id='" << (*it).first << "' "
 						<< "LIMIT 1;";
-					query.store();
+					etoa::dbStore(query);
 					query.reset();
 
 					return (etoa::d2s((*it).first) + ":" + etoa::d2s((*it).second));
@@ -457,7 +457,7 @@
 			<< "WHERE "
 			<< "	user_id='" << this->userId << "' "
 			<< "LIMIT 1;";
-		query.store();
+		etoa::dbStore(query);
 		query.reset();
 	}
 
@@ -474,7 +474,7 @@
 			<< "	planet_user_id='" << this->userId << "' "
 			<< "	AND planet_user_main='1' "
 			<< "LIMIT 1";
-		RESULT_TYPE mainRes = query.store();
+		RESULT_TYPE mainRes = etoa::dbStore(query);
 		query.reset();
 
 		if (mainRes) {
@@ -500,7 +500,7 @@
 			<< "	planets "
 			<< "WHERE "
 			<< "	planet_user_id='" << this->userId << "';";
-		RESULT_TYPE planetRes = query.store();
+		RESULT_TYPE planetRes = etoa::dbStore(query);
 		query.reset();
 
 		if (planetRes) {
@@ -554,7 +554,7 @@
                 query << "  AND alliance_bnd_alliance_id2='" << this->getAllianceId() << "') ";
                 query << "  AND alliance_bnd_level='3';";
 
-                RESULT_TYPE warCheckRes = query.store();
+                RESULT_TYPE warCheckRes = etoa::dbStore(query);
                 query.reset();
 
                 if (warCheckRes && warCheckRes.size() > 0)

@@ -1,5 +1,6 @@
 
 #include "ListShip.h"
+#include "../util/Functions.h"
 
 	ListShip::ListShip(mysqlpp::Row &oRow) : Object(oRow) {
 		this->id = (int)oRow["shiplist_id"];
@@ -45,7 +46,7 @@
 				<< "	shiplist_id='" << this->getId() << "' "
 				<< "	AND shiplist_user_id='" << this->getUserId() << "' "
 				<< "LIMIT 1;";
-			query.store();
+			etoa::dbStore(query);
 			query.reset();
 		}
 	}

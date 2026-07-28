@@ -365,7 +365,7 @@ void BattleHandler::battle(Fleet* fleet, Entity* entity, Log* log, bool ratingEf
         << "	" << entity->getAddedWfPlastic() << ", "
         << "	" << std::time(0) << ", "
         << "	" << fleet->getLandtime() << ");";
-        query.store();
+        etoa::dbStore(query);
 
         std::cerr << query.str();
 

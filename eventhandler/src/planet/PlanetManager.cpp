@@ -1,5 +1,6 @@
 
 #include "PlanetManager.h"
+#include "../util/Functions.h"
 #include "../util/Debug.h"
 
 namespace planet
@@ -23,7 +24,7 @@ namespace planet
 			<< "WHERE planet_last_updated<'" << ptime << "' "
 			<< "  AND planet_user_id > 0 ";
     //std::cout << query.str() << std::endl;
-		RESULT_TYPE res = query.store();
+		RESULT_TYPE res = etoa::dbStore(query);
 		query.reset();
 
     std::vector<int>* vec = new std::vector<int>();
@@ -50,7 +51,7 @@ namespace planet
 			<< "FROM "
 			<< "  planets "
 			<< "WHERE planet_user_id = '" << userId << "';";
-		RESULT_TYPE res = query.store();
+		RESULT_TYPE res = etoa::dbStore(query);
 		query.reset();
 		std::vector<int>* vec = new std::vector<int>();
 		if (res) {

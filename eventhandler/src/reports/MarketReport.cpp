@@ -1,5 +1,6 @@
 
 #include "MarketReport.h"
+#include "../util/Functions.h"
 
 void MarketReport::setBuy(unsigned int res0,
 					   unsigned int res1,
@@ -93,7 +94,7 @@ void MarketReport::saveMarketReport() {
 			<< "	'" << this->fleet1Id << "', "
 			<< "	'" << this->fleet2Id << "' "
 			<< ");";
-		query.store();
+		etoa::dbStore(query);
 		query.reset();
 	}
 	catch (int e)

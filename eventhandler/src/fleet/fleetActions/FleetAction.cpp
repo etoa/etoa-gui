@@ -1,5 +1,6 @@
 
 #include "FleetAction.h"
+#include "../../util/Functions.h"
 
 void FleetAction::fleetLand(int fleetAction)
 {
@@ -95,7 +96,7 @@ void FleetAction::fleetLand(int fleetAction)
             << "		shiplist.`shiplist_special_ship_bonus_antrax_food` = VALUES(shiplist.`shiplist_special_ship_bonus_antrax_food`) , "
             << "		shiplist.`shiplist_special_ship_bonus_deactivade` = VALUES(shiplist.`shiplist_special_ship_bonus_deactivade`) ,"
             << "		shiplist.`shiplist_special_ship_bonus_readiness` = VALUES(shiplist.`shiplist_special_ship_bonus_readiness`);";
-            query.store();
+            etoa::dbStore(query);
             query.reset();
         }
         //Delete Fleet

@@ -1,5 +1,6 @@
 
 #include <ctime>
+#include "../util/Functions.h"
 #define MYSQLPP_MYSQL_HEADERS_BURIED
 #include <mysql++/mysql++.h>
 
@@ -19,7 +20,7 @@
 		query << "WHERE ";
 		query << "	id=" << this->id << " ";
 		query << "LIMIT 1;";
-		RESULT_TYPE nRes = query.store();
+		RESULT_TYPE nRes = etoa::dbStore(query);
 		query.reset();
 
 		if (nRes) {
@@ -72,7 +73,7 @@
 			query << "WHERE ";
 			query << "	id=" << this->getId() << " ";
 			query << "LIMIT 1;";
-			query.store();
+			etoa::dbStore(query);
 			query.reset();
 
 			query << "DELETE FROM";
@@ -80,7 +81,7 @@
 			query << "WHERE ";
 			query << " id=" << this->getId() << " ";
 			query << "LIMIT 1;";
-			query.store();
+			etoa::dbStore(query);
 			query.reset();
 
 			query << "INSERT INTO ";
@@ -91,7 +92,7 @@
 			query << "VALUES ";
 			query << "(";
 			query << "" << this->getId() << ");";
-			query.store();
+			etoa::dbStore(query);
 			query.reset();
 
             double shipCount =0;
@@ -105,7 +106,7 @@
             << "ON "
             << "    ship_id=shiplist_ship_id "
             << "    AND ship_actions LIKE '%collectmetal%' ";
-            RESULT_TYPE res = query.store();
+            RESULT_TYPE res = etoa::dbStore(query);
             query.reset();
 
             if (res) {
@@ -134,7 +135,7 @@
                 << "ON "
                 << "    fs_ship_id=ship_id "
                 << "    AND ship_actions LIKE '%collectmetal%' ";
-            res = query.store();
+            res = etoa::dbStore(query);
             query.reset();
 
             if (res) {
@@ -167,7 +168,7 @@
 			query << "ORDER BY ";
 			query << " RAND() ";
 			query << "LIMIT 1;";
-			RESULT_TYPE searchRes = query.store();
+			RESULT_TYPE searchRes = etoa::dbStore(query);
 			query.reset();
 
 			if (searchRes) {
@@ -184,7 +185,7 @@
 					query << "WHERE ";
 					query << "	id=" << searchRow["id"] << " ";
 					query << "LIMIT 1;";
-					query.store();
+					etoa::dbStore(query);
 					query.reset();
 
 					query << "INSERT INTO ";
@@ -201,7 +202,7 @@
 					query << "" << newMetal << ", ";
 					query << "" << newCrystal << ", ";
 					query << "" << newPlastic << ");";
-					query.store();
+					etoa::dbStore(query);
 					query.reset();
 
 					query << "DELETE FROM ";
@@ -209,7 +210,7 @@
 					query << "WHERE ";
 					query << " id=" << searchRow["id"] << " ";
 					query << "LIMIT 1;";
-					query.store();
+					etoa::dbStore(query);
 					query.reset();
 				}
 			}
@@ -228,7 +229,7 @@
 			query << "WHERE ";
 			query << "	id=" << this->getId() << " ";
 			query << "LIMIT 1;";
-			query.store();
+			etoa::dbStore(query);
 			query.reset();
 		}
 

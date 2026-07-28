@@ -1,5 +1,6 @@
 
 #include "ShipList.h"
+#include "../util/Functions.h"
 
 namespace ship
 {
@@ -65,7 +66,7 @@ namespace ship
 				<< "	UPDATE "
 				<< "		shiplist.`shiplist_count` = shiplist.`shiplist_count` + VALUES(shiplist.`shiplist_count`);";
 		}
-		query.store();
+		etoa::dbStore(query);
 		query.reset();
 	}
 }
