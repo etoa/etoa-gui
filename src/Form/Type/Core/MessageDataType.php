@@ -28,7 +28,7 @@ class MessageDataType extends AbstractType
                 'constraints' => [new NotBlank(message: 'Bitte gib einen Betreff ein!')],
                 'error_bubbling' => true
             ])
-            ->add('text', CKEditorType::class, [
+            ->add('text', TextareaType::class, [
                 'label'=>false,
                 'attr' => [
                     'rows' => "12",

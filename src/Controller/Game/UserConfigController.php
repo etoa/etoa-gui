@@ -65,6 +65,7 @@ class UserConfigController extends AbstractGameController
         private readonly FileUtils                $fileUtils,
         private readonly ShipDataRepository       $shipDataRepository,
         private readonly UserPropertiesRepository $userPropertiesRepository,
+        private readonly string                   $webRooDir
     )
     {
     }
@@ -92,8 +93,8 @@ class UserConfigController extends AbstractGameController
             ->add('avatar', AvatarUploadType::class)
             ->add('save', SubmitType::class, ['label' => 'Übernehmen'])
             ->getForm();
-
         $form->handleRequest($request);
+
         if ($form->isSubmitted() && $form->isValid()) {
             // Avatar
             if ($form->get('avatarDel')->getData()) {
@@ -101,7 +102,7 @@ class UserConfigController extends AbstractGameController
             } elseif ($form->get('avatar')->getData()) {
                 if ($file = $this->fileUtils->uploadImage(
                     $form->get('avatar')->getData(),
-                    $this->getParameter('kernel.project_dir') . AllianceBoardAvatar::IMAGE_PATH,
+                    $this->webRooDir . AllianceBoardAvatar::IMAGE_PATH,
                     [AllianceBoardAvatar::AVATAR_WIDTH, AllianceBoardAvatar::AVATAR_HEIGHT],
                     $msg['error']
                 )) {
@@ -115,7 +116,7 @@ class UserConfigController extends AbstractGameController
             } elseif ($form->get('profileImage')->getData()) {
                 if ($file = $this->fileUtils->uploadImage(
                     $form->get('profileImage')->getData(),
-                    $this->getParameter('kernel.project_dir') . ProfileImage::IMAGE_PATH,
+                    $this->webRooDir . ProfileImage::IMAGE_PATH,
                     [ProfileImage::IMAGE_WIDTH, ProfileImage::IMAGE_HEIGHT],
                     $msg['error']
                 )) {
@@ -125,7 +126,7 @@ class UserConfigController extends AbstractGameController
 
             //check if mail was changed
             $changeset = $this->userRepository->getChangeset($user);
-            if (array_key_exists('email',$changeset)) {
+            if (array_key_exists('email', $changeset)) {
                 $subject = "Änderung deiner E-Mail-Adresse";
                 $text = "Die E-Mail-Adresse deines Accounts " . $user->getNick() . " wurde von " . $changeset['email'][0] . " auf " . $changeset['email'][1] . " geändert!";
                 $this->mailSenderService->send($subject, $text, $user->getEmail());
@@ -634,7 +635,7 @@ class UserConfigController extends AbstractGameController
         $name = $userBannerService->getUserBannerPath($this->getUser()->getId());
 
         return $this->render('game/userconfig/banner.html.twig', [
-            'banner' => file_exists($name) ? $userBannerService->getUserBannerPath($this->getUser()->getId(),true) : false,
+            'banner' => file_exists($name) ? $userBannerService->getUserBannerPath($this->getUser()->getId(), true) : false,
         ]);
     }
 
@@ -645,7 +646,7 @@ class UserConfigController extends AbstractGameController
                          ConfigurationService $config): Response
     {
         $user = $this->getUser()->getData();
-        $form = $this->container->get('form.factory')->createNamed('hmode_form',FormType::class,$user)
+        $form = $this->container->get('form.factory')->createNamed('hmode_form', FormType::class, $user)
             ->add('deactivate', SubmitType::class, [
                 'label' => 'Urlaubsmodus deaktivieren',
                 'attr' => ['style' => 'color:#0f0']

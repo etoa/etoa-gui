@@ -143,7 +143,7 @@ class RankingService
             $planets = $this->planetRepository->getUserPlanets($user->getId());
             foreach ($planets as $planet) {
                 if ($planet->isMainPlanet()) {
-                    $entity = $this->entityRepository->findIncludeCell($planet->getEntity());
+                    $entity = $planet->getEntity();
                     $sx = $entity->getCell()->getSx();
                     $sy = $entity->getCell()->getSy();
 
@@ -175,11 +175,14 @@ class RankingService
             }
 
             foreach ($planets as $planet) {
-                $buildingLevels = $this->buildingRepository->getBuildingLevels($planet);
-                foreach ($buildingLevels as $buildingId => $level) {
-                    $p = round($buildingPoints[$buildingId][$level]);
-                    $points += $p;
-                    $points_building += $p;
+                foreach ($planet->getBuildlist() as $build) {
+                    $level = $build->getCurrentLevel();
+                    $buildingId = $build->getId();
+                    if(array_key_exists($buildingId, $buildingPoints) && array_key_exists($level, $buildingPoints[$buildingId])) {
+                        $p = $level>0?round($buildingPoints[$buildingId][$level]):0;
+                        $points += $p;
+                        $points_building += $p;
+                    }
                 }
             }
 

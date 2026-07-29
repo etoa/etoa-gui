@@ -636,7 +636,7 @@ class UserRepository extends AbstractRepository
     }
 
     /**
-     * @return Pillory[]
+     * @return User[]
      */
     public function getPillory(): array
     {
@@ -671,8 +671,8 @@ class UserRepository extends AbstractRepository
     {
         $this->createQueryBuilder('q')
             ->update()
-            ->set('q.bonusProduction', ':production')
-            ->set('q.bonusBuilding', ':building')
+            ->set('q.boostBonusProduction', ':production')
+            ->set('q.boostBonusBuilding', ':building')
             ->where('q.id = :userId')
             ->setParameters([
                 'userId' => $userId,

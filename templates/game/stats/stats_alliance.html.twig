@@ -43,7 +43,7 @@
                         {% set addClass = '' %}
                     {% endif %}
                     <tr>
-                        <td {{ tm('Punkteverlauf', '<div><img src="'~path('images.alliance.stats',{id:stat.allianceId})~'" alt="Diagramm" style="width:600px;height:400px;background:#335 url('~asset('/build/images/loading335.gif')~') no-repeat 300px 200px;" /></div>')|raw }} class="{{ addClass }}">
+                        <td {{ tm('Punkteverlauf', '<div><img src="'~path('images.alliance.stats',{id:stat.alliance.id})~'" alt="Diagramm" style="width:600px;height:400px;background:#335 url('~asset('/build/images/loading335.gif')~') no-repeat 300px 200px;" /></div>')|raw }} class="{{ addClass }}">
                             {{ loop.index }}
                             {% if stat.currentRank < stat.lastRank %}
                                 <img src="{{ asset('build/images/stats/stat_down.gif') }}" alt="down" width="9" height="12"/>

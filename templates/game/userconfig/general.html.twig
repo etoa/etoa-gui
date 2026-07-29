@@ -32,7 +32,7 @@
                 </tr>
                 <tr>
                     <th>Vollständiger Name:</th>
-                    <td>{{ app.user.data.name}} [ticketLink("Änderung beantragen", 10)]</td>
+                    <td>{{ app.user.data.name}} [<a href="{{ path('game.ticket.list.category',{id:10}) }}">Änderung beantragen</a>]</td>
                 </tr>
                 <tr>
                     <th>Fixe E-Mail:</th>
@@ -65,6 +65,7 @@
                         <b>Regeln:</b> Max {{ constant('EtoA\\User\\ProfileImage::IMAGE_MAX_WIDTH') }} * {{ constant('EtoA\\User\\ProfileImage::IMAGE_MAX_HEIGHT') }} Pixel, Bilder grösser als
                         {{ constant('EtoA\\User\\ProfileImage::IMAGE_WIDTH') }} * {{ constant('EtoA\\User\\ProfileImage::IMAGE_HEIGHT') }} werden automatisch verkleinert.<br/>
                         Format: GIF, JPG oder PNG. Grösse: Max {{ imgMax }}
+                        {{ form_errors(form.profileImage) }}
                     </td>
                 </tr>
                 <tr>
@@ -90,6 +91,7 @@
                         {{ constant('EtoA\\Admin\\AllianceBoardAvatar::AVATAR_WIDTH') }} *
                         {{ constant('EtoA\\Admin\\AllianceBoardAvatar::AVATAR_HEIGHT') }} werden automatisch verkleinert.<br/>
                         Format: GIF, JPG oder PNG. Grösse: Max {{ avatarMax }}
+                        {{ form_errors(form.avatar) }}
                     </td>
                 </tr>
                 <tr>

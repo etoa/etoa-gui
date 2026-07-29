@@ -17,7 +17,7 @@
                         <td>{{ stat.nick }}</td>
                         <td>{{ formatTimestamp(stat.blockedFrom) }}</td>
                         <td>{{ formatTimestamp(stat.blockedTo) }}</td>
-                        <td>{{ stat.banAdmin.nick }}</td>
+                        <td>{{ stat.banAdmin?stat.banAdmin.nick:'-' }}</td>
                         <td>{{ stat.banReason }}</td>
                     </tr>
                 {% endfor %}

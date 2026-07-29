@@ -100,7 +100,7 @@ class EntityRepository extends AbstractRepository
     public function findIncludeCell(Entity $entity): ?Entity
     {
         return $this->getEntityCoordinatesQueryBuilder()
-            ->where('e.id = :entity')
+            ->where('q.id = :entity')
             ->setParameters([
                 'entity' => $entity,
             ])

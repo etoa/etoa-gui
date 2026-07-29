@@ -9,7 +9,6 @@ use EtoA\Entity\Alliance;
 use EtoA\Entity\AllianceStats;
 use EtoA\Entity\User;
 use EtoA\Entity\UserStat;
-use EtoA\Kernel;
 use EtoA\Pagination\ArrayPaginator;
 use EtoA\Pagination\SimplePagination;
 use EtoA\Ranking\GameStatsGenerator;

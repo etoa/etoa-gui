@@ -26,7 +26,7 @@
                     <th>Vollständiger Name:</th>
                     <td>
                         {% if form.children.dualName.vars.data and form.vars.valid %}
-                            {{ form.children.dualName.vars.data }} [ticketLink("Änderung beantragen", 18)]
+                            {{ form.children.dualName.vars.data }} [<a href="{{ path('game.ticket.list.category',{id:18}) }}">Änderung beantragen</a>]
                         {% else %}
                             {{ form_widget(form.dualName,{'value': ''}) }}
                         {% endif %}
@@ -36,7 +36,7 @@
                     <th>E-Mail:</th>
                     <td>
                         {% if form.children.dualEmail.vars.data and form.vars.valid%}
-                            {{ form.children.dualEmail.vars.data }} [ticketLink("Änderung beantragen", 18)]
+                            {{ form.children.dualEmail.vars.data }} [<a href="{{ path('game.ticket.list.category',{id:18}) }}">Änderung beantragen</a>]
                         {% else %}
                             {{ form_widget(form.dualEmail,{'value': ''}) }}
                         {% endif %}

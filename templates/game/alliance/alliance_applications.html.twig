@@ -28,10 +28,10 @@
                         {% for application in form.applications %}
                             <tr>
                                 <td {{ tm("Info", "Rang: " ~ application.vars.data.user.rank  ~ "<br>Punkte: " ~ formatNumber(application.vars.data.user.points) ~ "<br>Registriert: " ~ formatTimestamp(application.vars.data.user.registered))|raw }}>
-                                    <a href="?page=userinfo&id="> {{ application.vars.data.user.nick }}</a>
+                                    <a href="{{ path('game.userinfo',{id:application.vars.data.user.id}) }}"> {{ application.vars.data.user.nick }}</a>
                                 </td>
                                 <td>{{ formatTimestamp(application.vars.data.timestamp) }}<br/><br/>{{ BBCodeToHTML(application.vars.data.text) }}</td>
-                                <td>{{ form_widget(application.answer) }} <br/><a href="?page=help&amp;site=">Hilfe zur Formatierung</a></td>
+                                <td>{{ form_widget(application.answer) }} <br/><a href="{{ path('game.help.textformat') }}">Hilfe zur Formatierung</a></td>
                                 <td>
                                     {% if allowAccept %}
                                         {{ form_widget(application.action.children.0) }}<span {{ tm("Anfrage annehmen",
