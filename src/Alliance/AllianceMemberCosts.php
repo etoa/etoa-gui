@@ -47,7 +47,7 @@ class AllianceMemberCosts
             foreach ($buildList as $item) {
                 $building = $item->getAllianceBuilding();
 
-                $level = $item->level;
+                $level = $item->getLevel();
                 if ($item->isUnderConstruction()) {
                     $level++;
                 }

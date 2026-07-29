@@ -1,0 +1,90 @@
+{% import 'macros.html.twig' as macros %}
+{% set RESOURCES = [
+    { icon: constant('EtoA\\Universe\\Resources\\ResIcons::METAL'), name: constant('EtoA\\Universe\\Resources\\ResourceNames::METAL'), field: 'metal' },
+    { icon: constant('EtoA\\Universe\\Resources\\ResIcons::CRYSTAL'), name: constant('EtoA\\Universe\\Resources\\ResourceNames::CRYSTAL'), field: 'crystal' },
+    { icon: constant('EtoA\\Universe\\Resources\\ResIcons::PLASTIC'), name: constant('EtoA\\Universe\\Resources\\ResourceNames::PLASTIC'), field: 'plastic' },
+    { icon: constant('EtoA\\Universe\\Resources\\ResIcons::FUEL'), name: constant('EtoA\\Universe\\Resources\\ResourceNames::FUEL'), field: 'fuel' },
+    { icon: constant('EtoA\\Universe\\Resources\\ResIcons::FOOD'), name: constant('EtoA\\Universe\\Resources\\ResourceNames::FOOD'), field: 'food' }
+] %}
+
+<div {{ attributes }}>
+    {% for message in this.errorMessages %}
+        {{ macros.errorMessage(message) }}
+    {% endfor %}
+    {% for message in this.successMessages %}
+        {{ macros.successMessage(message) }}
+    {% endfor %}
+
+    {% if this.applications is empty %}
+        {{ macros.errorMessage('Keine Bewerbungen vorhanden!') }}
+    {% else %}
+        {{ form_start(form) }}
+        <twig:Table title="Bewerbungen prüfen">
+            {% block table_content %}
+                {% set component = outerScope.this %}
+                {% set resources = outerScope.RESOURCES %}
+                <tr>
+                    <th width="10%">User</th>
+                    <th width="35%">Datum / Text</th>
+                    <th width="35%">Nachricht</th>
+                    <th width="20%">Aktion</th>
+                </tr>
+                {% for userId, applicationForm in outerScope.form.applications %}
+                    {% set application = applicationForm.vars.data %}
+                    {% set applicant = application.user %}
+                    {# Stabile ids, damit das DOM-Morphing der Live-Komponente die Eingaben
+                       nicht auf eine andere Zeile überträgt #}
+                    <tr id="application_row_{{ userId }}">
+                        <td {{ tm('Info', 'Rang: ' ~ applicant.rank ~ '<br>Punkte: ' ~ formatNumber(applicant.points ?? 0) ~ '<br>Registriert: ' ~ formatTimestamp(applicant.registered ?? 0))|raw }}>
+                            <a href="{{ path('game.userinfo', {id: applicant.id}) }}">{{ applicant.nick }}</a>
+                        </td>
+                        <td>
+                            {{ formatTimestamp(application.timestamp ?? 0) }}<br/><br/>
+                            {{ BBCodeToHTML(application.text)|raw }}
+                        </td>
+                        <td>
+                            {{ form_widget(applicationForm.answer) }}<br/>
+                            <a href="{{ path('game.help.textformat') }}">Hilfe zur Formatierung</a>
+                        </td>
+                        <td>
+                            {% if component.acceptAllowed %}
+                                {{ form_widget(applicationForm.action.children.0) }}
+                                <span {{ tm('Anfrage annehmen', applicant.nick ~ ' wird in die Allianz aufgenommen.<br>Eine Nachricht wird versendet.')|raw }}>Annehmen</span><br><br>
+                            {% endif %}
+                            {{ form_widget(applicationForm.action.children.1) }}
+                            <span {{ tm('Anfrage ablehnen', applicant.nick ~ ' wird der Zutritt zu der Allianz verweigert.<br>Eine Nachricht wird versendet.')|raw }}>Ablehnen</span><br><br>
+                            {{ form_widget(applicationForm.action.children.2) }}
+                            <span {{ tm('Anfrage nicht bearbeiten', 'Sofern vorhanden, wird eine Nachricht an ' ~ applicant.nick ~ ' geschickt.')|raw }}>Nicht bearbeiten</span>
+                        </td>
+                    </tr>
+                {% endfor %}
+                {# Rohstoffvorschau, ersetzt die xajax-Antwort von showAllianceMemberAddCosts #}
+                {% set costs = component.memberCosts %}
+                {% if costs %}
+                    <tr id="memberCosts">
+                        <td colspan="4" id="memberCostsTD">
+                            Bei der Aufnahme von {{ component.acceptCount }} Member werden dem Allianzkonto
+                            folgende Rohstoffe abgezogen:<br/>
+                            {% for resource in resources %}
+                                {{ resource.icon|raw }}<b>{{ resource.name }}</b>:
+                                {{ formatNumber(attribute(costs, resource.field)) }}<br/>
+                            {% endfor %}
+                        </td>
+                    </tr>
+                {% endif %}
+            {% endblock %}
+        </twig:Table>
+        <button type="button" id="applications_submit"
+                data-action="click->live#action:prevent"
+                data-live-action-param="save">Übernehmen
+        </button>
+        <input type="button" onclick="document.location='{{ path('game.alliance.overview') }}'" value="Zurück"/>
+        {{ form_widget(form._token) }}
+        {{ form_end(form, {render_rest: false}) }}
+    {% endif %}
+
+    {% if this.maxMemberCount != 0 %}
+        <p><b>Hinweis:</b> Eine Allianz darf maximal {{ this.maxMemberCount }} Mitglieder haben
+            (aktuell {{ this.currentMemberCount }})!</p>
+    {% endif %}
+</div>

@@ -2,12 +2,10 @@
 
 namespace EtoA\Controller\Game;
 
-use EtoA\Alliance\AllianceApplicationRepository;
 use EtoA\Alliance\AllianceDiplomacyPoints;
 use EtoA\Alliance\AllianceDiplomacyRepository;
 use EtoA\Alliance\AllianceHistoryRepository;
 use EtoA\Alliance\AllianceImage;
-use EtoA\Alliance\AllianceMemberCosts;
 use EtoA\Alliance\AllianceNewsRepository;
 use EtoA\Alliance\AllianceRankRepository;
 use EtoA\Alliance\AllianceRepository;
@@ -21,7 +19,6 @@ use EtoA\Entity\AllianceRank;
 use EtoA\Entity\MessageData;
 use EtoA\Entity\User;
 use EtoA\Fleet\ForeignFleetService;
-use EtoA\Form\Type\Core\AllianceApplicationType;
 use EtoA\Form\Type\Core\AllianceRankType;
 use EtoA\Form\Type\Core\AllianceUploadType;
 use EtoA\Form\Type\Core\EditAllianceMemberType;
@@ -36,7 +33,6 @@ use EtoA\Universe\Entity\EntityRepository;
 use EtoA\Universe\Planet\PlanetRepository;
 use EtoA\User\UserRatingService;
 use EtoA\User\UserRepository;
-use EtoA\User\UserService;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
@@ -54,14 +50,11 @@ class AllianceInternalController extends AbstractGameController
         private readonly AllianceRepository $allianceRepository,
         private readonly AllianceDiplomacyRepository $allianceDiplomacyRepository,
         private readonly UserRepository                $userRepository,
-        private readonly AllianceApplicationRepository $allianceApplicationRepository,
         private readonly MessageRepository             $messageRepository,
         private readonly AllianceHistoryRepository     $allianceHistoryRepository,
         private readonly AllianceService               $service,
         private readonly ConfigurationService          $config,
         private readonly LogRepository                 $logRepository,
-        private readonly UserService                   $userService,
-        private readonly AllianceMemberCosts           $allianceMemberCosts,
         private readonly PlanetRepository              $planetRepository,
         private readonly ForeignFleetService           $foreignFleetLoader,
         private readonly EntityRepository              $entityRepository,
@@ -125,98 +118,16 @@ class AllianceInternalController extends AbstractGameController
     }
 
     #[Route('/game/alliance/applications', name: 'game.alliance.applications')]
-    public function applications(Request $request): Response {
+    public function applications(): Response {
         $cu = $this->getUser()->getData();
+        if (!$cu->getAlliance()) {
+            return $this->redirectToRoute('game.alliance');
+        }
+
         $userAlliancePermission = $this->service->getUserAlliancePermissions($cu->getAlliance(), $cu);
 
         if ($userAlliancePermission->checkHasRights(AllianceRights::APPLICATIONS, 'alliance')) {
-            $maxMemberCount = $this->config->getInt("alliance_max_member_count");
-            $currentMemberCount = $this->userRepository->count(['alliance'=>$cu->getAlliance()]);
-            $applications = $this->allianceApplicationRepository->findBy(['alliance'=>$cu->getAlliance()->getId()]);
-
-            $form = $this->createFormBuilder(['applications' => $applications])
-                ->add('save', SubmitType::class, ['label' => 'Übernehmen'])
-                ->add('applications', CollectionType::class, array(
-                    'entry_type' => AllianceApplicationType::class,
-                    'entry_options' => ['label' => false],
-                ))
-                ->getForm();
-
-            $form->handleRequest($request);
-            if ($form->isSubmitted() && $form->isValid()) {
-                $alliance = $cu->getAlliance();
-                $newMemberCount = $currentMemberCount;
-
-                foreach ($form->get('applications') as $application) {
-                    $applicationUser = $application->getData()->getUser();
-                    $nick = $applicationUser->getNick();
-
-                    if ($application->get('action')->getData()) {
-                        // Anfrage annehmen
-                        if ($application->get('action')->getData() === 2) {
-                            if ($maxMemberCount != 0 && $newMemberCount >= $maxMemberCount) {
-                                $msg['error'][] = "Maximale Anzahl an Mitgliedern erreicht!";
-                                break;
-                            }
-
-                            $newMemberCount++;
-                            $msg['success'][] = $nick. " wurde angenommen.";
-
-                            // Nachricht an den Bewerber schicken
-                            $this->messageRepository->createSystemMessage($applicationUser, $this->messageCategoryRepository->find(MessageCategoryId::ALLIANCE), "Bewerbung angenommen", "Deine Allianzbewerbung wurde angenommen!\n\n[b]Antwort:[/b]\n" . addslashes($application->get('answer')->getData()));
-
-                            // Log schreiben
-                            $this->allianceHistoryRepository->addEntry($alliance, "Die Bewerbung von [b]" . $nick . "[/b] wurde akzeptiert!");
-                            $this->logRepository->add(LogFacility::ALLIANCE, LogSeverity::INFO, "Der Spieler [b]" . $nick . "[/b] tritt der Allianz [b]" . $alliance->toString() . "[/b] bei!");
-                            $this->userService->addToUserLog($applicationUser, "alliance", "{nick} ist nun ein Mitglied der Allianz " . $alliance->getName() . ".");
-
-                            // Speichern
-                            $applicationUser->setAlliance($cu->getAlliance());
-                            $this->allianceApplicationRepository->remove($application->getData());
-
-                            $this->allianceApplicationRepository->save();
-                        }
-                        // Anfrage ablehnen
-                        elseif ($application->get('action')->getData() === 1) {
-                            $msg['success'][] = $nick . " wurde abgelehnt.";
-
-                            // Nachricht an den Bewerber schicken
-                            $this->messageRepository->createSystemMessage($applicationUser, $this->messageCategoryRepository->find(MessageCategoryId::ALLIANCE), "Bewerbung abgelehnt", "Deine Allianzbewerbung wurde abgelehnt!\n\n[b]Antwort:[/b]\n" . addslashes($application->get('answer')->getData()));
-
-                            // Log schreiben
-                            $this->allianceHistoryRepository->addEntry($cu->getAlliance(), "Die Bewerbung von [b]" . $nick . "[/b] wurde abgelehnt!");
-
-                            // Anfrage löschen
-                            $this->allianceApplicationRepository->remove($application->getData());
-
-                            $this->allianceApplicationRepository->save();
-                        }
-                        // Anfrage unbearbeitet lassen, jedoch Nachricht verschicken, wenn etwas geschrieben ist
-                        else {
-                            $text = str_replace(' ', '', $application->get('answer')->getData());
-                            if ($text != '') {
-                                // Nachricht an den Bewerber schicken
-                                $this->messageRepository->createSystemMessage($applicationUser, $this->messageCategoryRepository->find(MessageCategoryId::ALLIANCE), "Bewerbung: Nachricht", "Antwort auf die Bewerbung an die Allianz [b]" . $alliance->toString() . "[/b]:\n" . $application->get('answer')->getData());
-
-                                $msg['success'][] = $nick . ": Nachricht gesendet";
-                            }
-                        }
-                    }
-                }
-
-                if ($newMemberCount > $currentMemberCount) {
-                    $this->allianceMemberCosts->increase($alliance, $currentMemberCount, $newMemberCount);
-                }
-
-                $msg['success'][] = "Änderungen übernommen";
-            }
-
-            return $this->render('game/alliance/alliance_applications.html.twig',[
-                'applications' => $applications,
-                'msg' => $msg??null,
-                'form' => $form,
-                'allowAccept' => $maxMemberCount == 0 || $currentMemberCount < $maxMemberCount
-            ]);
+            return $this->render('game/alliance/alliance_applications.html.twig');
         }
 
         return $this->render('game/error.html.twig',[

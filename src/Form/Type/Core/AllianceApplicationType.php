@@ -11,10 +11,14 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class AllianceApplicationType extends AbstractType
 {
+    public const ACTION_IGNORE = 0;
+    public const ACTION_REJECT = 1;
+    public const ACTION_ACCEPT = 2;
+
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('answer', TextAreaType::class, [
+            ->add('answer', TextareaType::class, [
                 'attr'=>[
                     'rows'=>"6",
                     'cols'=>"40",
@@ -24,12 +28,14 @@ class AllianceApplicationType extends AbstractType
             ])
             ->add('action',ChoiceType::class, [
                     'choices' => [
-                        'yes'=>2,'no'=>1,'maybe'=>0
+                        'Annehmen' => self::ACTION_ACCEPT,
+                        'Ablehnen' => self::ACTION_REJECT,
+                        'Nicht bearbeiten' => self::ACTION_IGNORE,
                     ],
                     'multiple'=>false,
                     'expanded'=>true,
                     'mapped' => false,
-                    'data' => '1'
+                    'data' => self::ACTION_IGNORE
                 ]
             );
     }

@@ -1,0 +1,55 @@
+{% extends 'game/haven/haven.html.twig' %}
+{% import 'macros.html.twig' as macros %}
+
+{% block haven %}
+    {% if msg is not null and msg.success is defined %}
+        {{ macros.successMessage(msg.success) }}
+    {% endif %}
+
+    {% if not hasMobileObjects %}
+        <twig:Box title="Hinweis">
+            {% block content %}
+                {{ msg.info }}
+            {% endblock %}
+        </twig:Box>
+    {% else %}
+        {{ form_start(form) }}
+            {% if form.defenses.children|length > 0 %}
+                <twig:Table title="Verteidigungsanlagen auf Träger verladen">
+                    {% block table_content %}
+                        <tr>
+                            <th>Typ</th>
+                            <th>Anzahl</th>
+                        </tr>
+                        {% for def in form.defenses %}
+                            <tr>
+                                <td>{{ def.vars.data.defense.name }}</td>
+                                <td>{{ form_widget(def.count) }} (max. {{ formatNumber(def.vars.data.count) }})</td>
+                            </tr>
+                        {% endfor %}
+                    {% endblock %}
+                </twig:Table>
+                {{ form_widget(form.dtransform) }}
+                <br/><br/>
+            {% endif %}
+
+            {% if form.ships.children|length > 0 %}
+                <twig:Table title="Mobile Verteidigung installieren">
+                    {% block table_content %}
+                        <tr>
+                            <th>Typ</th>
+                            <th>Anzahl</th>
+                        </tr>
+                        {% for ship in form.ships %}
+                            <tr>
+                                <td>{{ ship.vars.data.ship.name }}</td>
+                                <td>{{ form_widget(ship.count) }} (max. {{ formatNumber(ship.vars.data.count) }})</td>
+                            </tr>
+                        {% endfor %}
+                    {% endblock %}
+                </twig:Table>
+                {{ form_widget(form.stransform) }}
+            {% endif %}
+        {{ form_end(form) }}
+    {% endif %}
+{% endblock %}
