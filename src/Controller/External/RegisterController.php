@@ -2,9 +2,9 @@
 
 namespace EtoA\Controller\External;
 
-use EtoA\Controller\AbstractLegacyShowController;
 use EtoA\Core\AppName;
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Entity\User;
 use EtoA\Log\LogFacility;
 use EtoA\Log\LogRepository;
 use EtoA\Log\LogSeverity;
@@ -13,105 +13,146 @@ use EtoA\Support\Mail\MailSenderService;
 use EtoA\User\UserRepository;
 use EtoA\User\UserService;
 use Exception;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\EmailType;
+use Symfony\Component\Form\Extension\Core\Type\PasswordType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
-class RegisterController extends AbstractLegacyShowController
+class RegisterController extends AbstractController
 {
+
+
     protected ?string $pageTitle = 'Registrieren';
 
-    #[Route('/register', name: 'external.register')]
-    public function index(
-        UserRepository    $userRepository,
-        UserService       $userService,
-        MailSenderService $mailSenderService,
-        LogRepository     $logRepository,
-        Request           $request,
-    ): Response
+    public function __construct(
+        private readonly ConfigurationService $configurationService,
+        private readonly UserRepository       $userRepository,
+        private readonly LogRepository        $logRepository,
+        private readonly UserService          $userService,
+        private readonly MailSenderService    $mailSenderService,
+    )
     {
-        return $this->handle(function () use (
-            $userRepository,
-            $userService,
-            $mailSenderService,
-            $logRepository,
-            $request,
-        ) {
+    }
+
+    #[Route('/register', name: 'external.register')]
+    public function index(Request $request): Response
+    {
+        // Load user count
+        $userCount = $this->userRepository->count([]);
+        $user = new User();
+
+        $form = $this->createFormBuilder($user)
+            ->add('name', TextType::class, [
+                'label' => false,
+                'attr' => [
+                    'maxlength' => $this->configurationService->getInt('name_length'),
+                    'size' => $this->configurationService->getInt('name_length'),
+                    'autocomplete' => "off",
+                    'autofocus' => 1
+                ]
+            ])
+            ->add('email', EmailType::class, [
+                'label' => false,
+                'attr' => [
+                    'maxlength' => 50,
+                    'size' => 30,
+                    'autocomplete' => "off",
+                ]
+            ])
+            ->add('nick', TextType::class, [
+                'label' => false,
+                'attr' => [
+                    'maxlength' => $this->configurationService->param2('nick_length'),
+                    'size' => $this->configurationService->param2('nick_length'),
+                    'autocomplete' => "off"
+                ]
+            ])
+            ->add('password', PasswordType::class, [
+                'label' => false,
+                'attr' => [
+                    'size' => 20,
+                    'autocomplete' => "new-password",
+                ]
+            ])
+            ->add('agb', CheckboxType::class, [
+                'label' => false,
+                'mapped' => false
+            ])
+            ->add('submit', SubmitType::class, [
+                'label' => 'Anmelden!',
+                'attr' => [
+                    'disabled' => true,
+                ]
+            ])
+            ->getForm()
+            ->handleRequest($request);
+
+
+
+        if ($form->isSubmitted() && $form->isValid()) {
             //
             // Handle registration submit
             //
-            if ($request->request->has('register_submit') && $this->config->getBoolean('enable_register')) {
-                $_SESSION['REGISTER'] = $_POST;
-
+            if ($this->configurationService->getBoolean('enable_register')) {
                 try {
-                    $newUser = $userService->register(
-                        name: $request->request->get('register_user_name'),
-                        email: $request->request->get('register_user_email'),
-                        nick: $request->request->get('register_user_nick'),
-                        password: $request->request->get('register_user_password')
+                    $newUser = $this->userService->register(
+                        name: $user->getName(),
+                        email: $user->getEmail(),
+                        nick: $user->getNick(),
+                        password: $user->getPassword(),
                     );
-                    $logRepository->add(
+                    $this->logRepository->add(
                         LogFacility::USER,
                         LogSeverity::INFO,
-                        "Der Benutzer " . $newUser->nick . " (" . $newUser->name . ", " . $newUser->email . ") hat sich registriert!"
+                        "Der Benutzer " . $newUser->getNick() . " (" . $newUser->getName() . ", " . $newUser->getEmail() . ") hat sich registriert!"
                     );
 
-                    $verificationRequired = filled($newUser->verificationKey);
+                    $verificationRequired = filled($newUser->getVerificationKey());
                     $verificationUrl = $verificationRequired
-                        ? $this->config->get('roundurl') . $this->generateUrl('external.verify-email', [
-                            'key' => $newUser->verificationKey
+                        ? $this->configurationService->get('roundurl') . $this->generateUrl('external.verify-email', [
+                            'key' => $newUser->getVerificationKey()
                         ])
                         : null;
 
-                    $emailText = $this->twig->render('email/register.txt.twig', [
+                    $emailText = $this->render('email/register.txt.twig', [
                         'newUser' => $newUser,
-                        'roundName' => $this->config->get('roundname'),
+                        'roundName' => $this->configurationService->get('roundname'),
                         'verificationUrl' => $verificationUrl,
                         'rulesUrl' => ExternalUrl::RULES,
                     ]);
 
-                    $mailSenderService->send("Account-Registrierung", $emailText, $newUser->email);
-
-                    $_SESSION['REGISTER'] = Null;
+                    $this->mailSenderService->send("Account-Registrierung", $emailText, $newUser->getEmail());
 
                     return $this->render('external/register-success.html.twig', [
-                        'registerEmail' => $_POST['register_user_email'],
+                        'registerEmail' => $user->getEmail(),
                         'verificationRequired' => $verificationRequired,
                     ]);
                 } catch (Exception $e) {
                     $this->addFlash('error', 'Die Registration hat leider nicht geklappt: ' . $e->getMessage());
                 }
             }
+        }
 
-            return $this->render('external/register.html.twig',
-                $this->getRegisterParams($this->config, $userRepository)
-            );
-        });
-    }
-
-    private function getRegisterParams(ConfigurationService $config, UserRepository $userRepository): array
-    {
-        // Load user count
-        $userCount = $userRepository->count();
-
-        $registrationLater = ($config->getBoolean('enable_register') && $config->param1Int('enable_register') > time())
-            ? $config->param1Int('enable_register')
+        $registrationLater = ($this->configurationService->getBoolean('enable_register') && $this->configurationService->param1Int('enable_register') > time())
+            ? $this->configurationService->param1Int('enable_register')
             : null;
-        return [
-            'maxPlayerCount' => $userCount,
-            'registrationNotEnabled' => !$config->getBoolean('enable_register'),
-            'registrationLater' => $registrationLater,
-            'registrationFull' => $config->param2Int('enable_register') <= $userCount,
-            'userName' => $_SESSION['REGISTER']['register_user_name'] ?? '',
-            'userNick' => $_SESSION['REGISTER']['register_user_nick'] ?? '',
-            'userEmail' => $_SESSION['REGISTER']['register_user_email'] ?? '',
-            'userPassword' => $_SESSION['REGISTER']['register_user_password'] ?? '',
-            'roundName' => $config->get('roundname'),
-            'appName' => AppName::NAME,
-            'nameMaxLength' => $config->getInt('name_length'),
-            'nickMaxLength' => $config->param2Int('nick_length'),
-            'rulesUrl' => ExternalUrl::RULES,
-            'privacyUrl' => ExternalUrl::PRIVACY,
-        ];
+        return $this->render('external/register.html.twig',
+            [
+                'maxPlayerCount' => $userCount,
+                'registrationNotEnabled' => !$this->configurationService->getBoolean('enable_register'),
+                'registrationLater' => $registrationLater,
+                'registrationFull' => $this->configurationService->param2Int('enable_register') <= $userCount,
+                'roundName' => $this->configurationService->get('roundname'),
+                'appName' => AppName::NAME,
+                'rulesUrl' => ExternalUrl::RULES,
+                'privacyUrl' => ExternalUrl::PRIVACY,
+                'form' => $form
+            ]
+        );
     }
 }

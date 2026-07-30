@@ -201,14 +201,14 @@ class UserRepository extends AbstractRepository
     public function markVerifiedByVerificationKey(string $verificationKey): bool
     {
         return (bool)$this->createQueryBuilder('q')
-            ->update('users')
-            ->set('verification_key', ':updatedKey')
-            ->where('verification_key = :key')
-            ->setParameter('key', $verificationKey)
-            ->setParameter('updatedKey', '')
+            ->update()
+            ->set('q.verificationKey', ':updatedKey')
+            ->where('q.verificationKey = :key')
+            ->setParameter('key',$verificationKey)
+            ->setParameter('updatedKey','')
             ->setMaxResults(1)
-            ->executeQuery()
-            ->rowCount();
+            ->getQuery()
+            ->execute();
     }
 
     public function saveDiscoveryMask(int $userId, string $mask): void

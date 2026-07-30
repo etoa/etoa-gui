@@ -22,118 +22,95 @@
         <p>Melde dich hier für die {{ roundName }} von {{ appName }} an. Wenn du Hilfe benötigst, kannst du <a
                     href="{{ path('external.contact') }}">hier</a> einen Game-Admin kontaktieren.</p>
 
-        <form action="{{ path('external.register') }}" method="post">
-            <table class="tb">
-                <tr>
-                    <th style="width:150px;"><label for="register_user_name">Vollst&auml;ndiger Name:</label></th>
-                    <td style="width:170px;">
-                        <input type="text" id="register_user_name" name="register_user_name"
-                               maxlength="{{ nameMaxLength }}" size="{{ nameMaxLength }}" value="{{ userName }}"
-                               autocomplete="off" autofocus/>
-                    </td>
-                    <td>
-                        Hier musst du deinen realen Namen angeben; dies dient zur Kontrolle gegen Multis. Dieser Name
-                        ist nur f&uuml;r Administratoren sichtbar!
-                        <br/>
-                        <span id="nameStatus"></span>
-                    </td>
-                </tr>
+        {{ form_start(form) }}
+            <twig:Table>
+                {% block table_content %}
+                    <tr>
+                        <th style="width:150px;"><label for="register_user_name">Vollständiger Name:</label></th>
+                        <td style="width:170px;">
+                            {{ form_widget(form.name) }}
+                        </td>
+                        <td>
+                            Hier musst du deinen realen Namen angeben; dies dient zur Kontrolle gegen Multis. Dieser Name
+                            ist nur für Administratoren sichtbar!
+                            <br/>
+                            <span id="nameStatus"></span>
+                        </td>
+                    </tr>
 
-                <tr>
-                    <th><label for="register_user_email">E-Mail:</label></th>
-                    <td>
-                        <input type="text" id="register_user_email" name="register_user_email" maxlength="50" size="30"
-                               value="{{ userEmail }}" autocomplete="off"/>
-                    </td>
-                    <td>
-                        Du musst eine g&uuml;ltige E-Mail-Adresse eingeben. Falls du dein Passwort vergisst, kannst du
-                        ein neues an diese Adresse senden lassen.
-                        <br/>
-                        <span id="emailStatus"></span>
-                    </td>
-                </tr>
+                    <tr>
+                        <th><label for="register_user_email">E-Mail:</label></th>
+                        <td>
+                            {{ form_widget(form.email) }}
+                        </td>
+                        <td>
+                            Du musst eine g&uuml;ltige E-Mail-Adresse eingeben. Falls du dein Passwort vergisst, kannst du
+                            ein neues an diese Adresse senden lassen.
+                            <br/>
+                            <span id="emailStatus"></span>
+                        </td>
+                    </tr>
 
-                <tr>
-                    <th><label for="register_user_nick">Benutzername:</label></th>
-                    <td>
-                        <input type="text" id="register_user_nick" name="register_user_nick"
-                               maxlength="{{ nickMaxLength }}" size="{{ nickMaxLength }}" value="{{ userNick }}"
-                               autocomplete="off"/>
-                    </td>
-                    <td>
-                        Mit diesem Namen tritts du im Spiel als der Herrscher deines Volkes auf.
-                        <br/>
-                        <span id="nickStatus"></span>
-                    </td>
-                </tr>
-
-                <tr>
-                    <th><label for="register_user_password">Passwort:</label></th>
-                    <td>
-                        <input type="password" id="register_user_password" name="register_user_password" size="20"
-                               value="{{ userPassword }}" autocomplete="new-password"/>
-                    </td>
-                    <td>
-                        Wähle ein sicheres Passwort, damit sich niemand unbefugt in deinen Account einloggen kann.
-                        <br/>
-                        <span id="passwordStatus"></span>
-                    </td>
-                </tr>
-
-                <tr>
-                    <td colspan="3">
-                        <br/>
-                        <input type="checkbox" name="agbread" id="agbread" value="1"/>
-                        <label for="agbread">
-                            Ich akzeptiere die <a href="{{ rulesUrl }}" target="_blank">Regeln</a>
-                            sowie die <a href="{{ privacyUrl }}" target="_blank">Datenschutzerklärung</a>
-                        </label>
-                        <br/>
-                        <ul style="text-align:left;margin-left:30px">
-                            <li>Pro Person darf nur 1 Account verwendet werden. Multis werden rigoros gesperrt!</li>
-                            <li>Der Name und die E-Mail-Adresse können nur von den Game-Administratoren eingesehen
-                                werden und werden nicht weitergegeben.
-                            </li>
-                        </ul>
-                    </td>
-                </tr>
-            </table>
-            <input type="submit" id="register_submit" disabled="disabled" name="register_submit" value="Anmelden!"/>
+                    <tr>
+                        <th><label for="register_user_nick">Benutzername:</label></th>
+                        <td>
+                            {{ form_widget(form.nick) }}
+                        </td>
+                        <td>
+                            Mit diesem Namen tritts du im Spiel als der Herrscher deines Volkes auf.
+                            <br/>
+                            <span id="nickStatus"></span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th><label for="register_user_password">Passwort:</label></th>
+                        <td>
+                            {{ form_widget(form.password) }}
+                        </td>
+                        <td>
+                            Wähle ein sicheres Passwort, damit sich niemand unbefugt in deinen Account einloggen kann.
+                            <br/>
+                            <span id="passwordStatus"></span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="3">
+                            <br/>
+                            {{ form_widget(form.agb) }}
+                            <label for="agbread">
+                                Ich akzeptiere die <a href="{{ rulesUrl }}" target="_blank">Regeln</a>
+                                sowie die <a href="{{ privacyUrl }}" target="_blank">Datenschutzerklärung</a>
+                            </label>
+                            <br/>
+                            <ul style="text-align:left;margin-left:30px">
+                                <li>Pro Person darf nur 1 Account verwendet werden. Multis werden rigoros gesperrt!</li>
+                                <li>Der Name und die E-Mail-Adresse können nur von den Game-Administratoren eingesehen
+                                    werden und werden nicht weitergegeben.
+                                </li>
+                            </ul>
+                        </td>
+                    </tr>
+                {% endblock %}
+            </twig:Table>
+            {{ form_widget(form.submit) }}
             &nbsp;
             <a href="{{ path('external.login') }}">Zurück zum Login</a>
-        </form>
+        {{ form_end(form) }}
 
         <script type="text/javascript">
             $(function () {
-                $('#register_user_name').keyup(function () {
-                    if (this.value) {
-                        xajax_registerCheckName(this.value);
-                    }
-                });
+                let checkbox = $('#form_agb');
 
-                $('#register_user_email').keyup(function () {
-                    if (this.value) {
-                        xajax_registerCheckEmail(this.value);
-                    }
-                });
+                if (checkbox.checked)
+                    $('#form_submit').prop('disabled', false);
+                else
+                    $('#form_submit').prop('disabled', true);
 
-                $('#register_user_nick').keyup(function () {
-                    if (this.value) {
-                        xajax_registerCheckNick(this.value);
-                    }
-                });
-
-                $('#register_user_password').keyup(function () {
-                    if (this.value) {
-                        xajax_registerCheckPassword(this.value);
-                    }
-                });
-
-                $('#agbread').click(function () {
+                checkbox.click(function () {
                     if (this.checked)
-                        $('#register_submit').prop('disabled', false);
+                        $('#form_submit').prop('disabled', false);
                     else
-                        $('#register_submit').prop('disabled', true);
+                        $('#form_submit').prop('disabled', true);
                 });
             });
         </script>

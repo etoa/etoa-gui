@@ -2,12 +2,12 @@
 
 namespace EtoA\Controller\External;
 
-use EtoA\Controller\AbstractLegacyShowController;
 use EtoA\User\UserRepository;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
-class VerifyEmailController extends AbstractLegacyShowController
+class VerifyEmailController extends AbstractController
 {
     protected ?string $pageTitle = 'Bestätigung der E-Mail Adresse';
 
@@ -17,20 +17,15 @@ class VerifyEmailController extends AbstractLegacyShowController
         string         $key,
     ): Response
     {
-        return $this->handle(function () use (
-            $userRepository,
-            $key,
-        ) {
-            $success = $userRepository->markVerifiedByVerificationKey($key);
-            if ($success) {
-                $this->addFlash('success', 'Deine E-Mailadresse wurde erfolgreich bestätigt!');
-            } else {
-                $this->addFlash('error', 'Der Verifikationscode ist ungültig!');
-            }
+        $success = $userRepository->markVerifiedByVerificationKey($key);
+        if ($success) {
+            $this->addFlash('success', 'Deine E-Mailadresse wurde erfolgreich bestätigt!');
+        } else {
+            $this->addFlash('error', 'Der Verifikationscode ist ungültig!');
+        }
 
-            return $this->render('external/verify-email.html.twig', [
-                'success' => $success,
-            ]);
-        });
+        return $this->render('external/verify-email.html.twig', [
+            'success' => $success,
+        ]);
     }
 }
