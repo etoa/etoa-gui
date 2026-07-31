@@ -34,10 +34,11 @@ class FleetRepository extends AbstractRepository
      */
     public function getEntityToIds(FleetSearch $search = null): array
     {
-        return array_map(fn (array $row) => (int) $row['entity_to'], $this->applySearchSortLimit($this->createQueryBuilder('q'), $search)
-            ->select("DISTINCT entity_to")
-            ->from('fleet')
-            ->fetchAllAssociative());
+        return array_map(fn (array $row) => (int) $row['entityTo'], $this->applySearchSortLimit($this->createQueryBuilder('q'), $search)
+            ->join('q.user','u')
+            ->select("DISTINCT(IDENTITY(q.entityTo))")
+            ->getQuery()
+            ->getResult());
     }
 
     public function countFleet(FleetSearch $search = null): int

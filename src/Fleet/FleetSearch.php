@@ -82,7 +82,7 @@ class FleetSearch extends AbstractSearch
 
     public function alliance(Alliance $alliance): self
     {
-        $this->parts[] = 'q.user.alliance = :alliance';
+        $this->parts[] = 'u.alliance = :alliance';
         $this->parameters['alliance'] = $alliance;
 
         return $this;
@@ -101,8 +101,8 @@ class FleetSearch extends AbstractSearch
      */
     public function statusIn(array $status): self
     {
-        $this->parts[] = 'q.status IN (:status)';
-        $this->stringArrayParameters['statusIN'] = $status;
+        $this->parts[] = 'q.status IN (:statusIn)';
+        $this->stringArrayParameters['statusIn'] = $status;
 
         return $this;
     }
