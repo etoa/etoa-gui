@@ -5,10 +5,15 @@ declare(strict_types=1);
 namespace EtoA\User;
 
 use EtoA\Building\BuildingListItemRepository;
+use EtoA\DefaultItem\DefaultItemObjectResolver;
 use EtoA\DefaultItem\DefaultItemRepository;
 use EtoA\Defense\DefenseRepository;
+use EtoA\Entity\Building;
 use EtoA\Entity\DefaultItemSet;
+use EtoA\Entity\Defense;
 use EtoA\Entity\Planet;
+use EtoA\Entity\Ship;
+use EtoA\Entity\Technology;
 use EtoA\Entity\User;
 use EtoA\Ship\ShipListRepository;
 use EtoA\Technology\TechnologyListItemRepository;
@@ -20,6 +25,7 @@ use Symfony\Bundle\SecurityBundle\Security;
 class UserSetupService
 {
     private DefaultItemRepository $defaultItemRepository;
+    private DefaultItemObjectResolver $objectResolver;
     private BuildingListItemRepository $buildingRepository;
     private TechnologyListItemRepository $technologyRepository;
     private ShipListRepository $shipListRepository;
@@ -31,6 +37,7 @@ class UserSetupService
 
     public function __construct(
         DefaultItemRepository        $defaultItemRepository,
+        DefaultItemObjectResolver    $objectResolver,
         BuildingListItemRepository   $buildingRepository,
         TechnologyListItemRepository $technologyRepository,
         DefenseRepository            $defenseRepository,
@@ -42,6 +49,7 @@ class UserSetupService
         ShipListRepository           $shipListRepository
     ) {
         $this->defaultItemRepository = $defaultItemRepository;
+        $this->objectResolver = $objectResolver;
         $this->buildingRepository = $buildingRepository;
         $this->technologyRepository = $technologyRepository;
         $this->shipListRepository = $shipListRepository;
@@ -62,30 +70,34 @@ class UserSetupService
 
 
         // Add buildings
-        if (isset($defaultItems['b'])) {
-            foreach ($defaultItems['b'] as $defaultItem) {
-                $this->buildingRepository->addBuilding($defaultItem->getBuilding(), $defaultItem->getCount(), $user, $planet);
+        foreach ($defaultItems['b'] ?? [] as $defaultItem) {
+            $building = $this->objectResolver->resolve($defaultItem);
+            if ($building instanceof Building) {
+                $this->buildingRepository->addBuilding($building, $defaultItem->getCount(), $user, $planet);
             }
         }
 
         // Add technologies
-        if (isset($defaultItems['t'])) {
-            foreach ($defaultItems['t'] as $defaultItem) {
-                $this->technologyRepository->addTechnology($defaultItem->getTechnology(), $defaultItem->getCount(), $user, $planet->getEntity());
+        foreach ($defaultItems['t'] ?? [] as $defaultItem) {
+            $technology = $this->objectResolver->resolve($defaultItem);
+            if ($technology instanceof Technology) {
+                $this->technologyRepository->addTechnology($technology, $defaultItem->getCount(), $user, $planet->getEntity());
             }
         }
 
         // Add ships
-        if (isset($defaultItems['s'])) {
-            foreach ($defaultItems['s'] as $defaultItem) {
-                $this->shipListRepository->addShip($defaultItem->getShip(), $defaultItem->getCount(), $user, $planet);
+        foreach ($defaultItems['s'] ?? [] as $defaultItem) {
+            $ship = $this->objectResolver->resolve($defaultItem);
+            if ($ship instanceof Ship) {
+                $this->shipListRepository->addShip($ship, $defaultItem->getCount(), $user, $planet);
             }
         }
 
         // Add defense
-        if (isset($defaultItems['d'])) {
-            foreach ($defaultItems['d'] as $defaultItem) {
-                $this->defenseRepository->addDefense($defaultItem->getDefense(), $defaultItem->getCount(), $user, $planet);
+        foreach ($defaultItems['d'] ?? [] as $defaultItem) {
+            $defense = $this->objectResolver->resolve($defaultItem);
+            if ($defense instanceof Defense) {
+                $this->defenseRepository->addDefense($defense, $defaultItem->getCount(), $user, $planet);
             }
         }
     }

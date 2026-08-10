@@ -21,8 +21,12 @@ class NewDefaultItemType extends AbstractType
             ->add('submit', SubmitType::class, [
                 'label' => 'Hinzufügen',
                 'attr' => [
-                    'data-action'=>"live#action",
-                    'data-live-action-param'=>"prevent|submit"
+                    // ":prevent" is a Stimulus action option. The live component's own
+                    // "prevent|" modifier does not exist in this ux-live-component version
+                    // (only stop/self/debounce/files), so without it the browser also runs a
+                    // native form submit and reloads the page mid-request.
+                    'data-action' => 'live#action:prevent',
+                    'data-live-action-param' => 'submit',
                 ]
             ]);
     }

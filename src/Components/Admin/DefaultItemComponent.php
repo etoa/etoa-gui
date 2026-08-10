@@ -3,11 +3,11 @@
 namespace EtoA\Components\Admin;
 
 use EtoA\Components\Helper\AbstractEditComponent;
+use EtoA\DefaultItem\DefaultItemObjectResolver;
 use EtoA\DefaultItem\DefaultItemRepository;
 use EtoA\Entity\DefaultItem;
 use EtoA\Form\Type\Admin\EditDefaultItemType;
 use Symfony\Component\Form\FormInterface;
-use Symfony\Component\Form\FormView;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
 use Symfony\UX\LiveComponent\Attribute\LiveAction;
 use Symfony\UX\LiveComponent\Attribute\LiveProp;
@@ -20,7 +20,13 @@ class DefaultItemComponent extends AbstractEditComponent
 
     public function __construct(
         private readonly DefaultItemRepository $defaultItemRepository,
+        private readonly DefaultItemObjectResolver $objectResolver,
     ) {
+    }
+
+    public function getObjectName(): string
+    {
+        return $this->item !== null ? $this->objectResolver->resolveName($this->item) : '';
     }
 
     #[LiveAction]

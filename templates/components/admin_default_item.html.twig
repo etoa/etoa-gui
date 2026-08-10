@@ -6,7 +6,7 @@
         {{ form_start(form, {'attr': {'onkeydown' :"return event.key != 'Enter';"}}) }}
     {% endif %}
     <tr>
-        <td>{{ this.item.getObjectEntity.name }}</td>
+        <td>{{ this.objectName }}</td>
         <td>
             {% if this.isEdit %}
                 {{ form_row(form.count) }}

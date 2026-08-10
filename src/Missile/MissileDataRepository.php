@@ -14,7 +14,7 @@ class MissileDataRepository extends AbstractRepository
     }
 
     /**
-     * @return array<int, string>
+     * @return array<int, Missile>
      */
     public function getMissileNames(bool $showAll = false, bool $orderById = false): array
     {

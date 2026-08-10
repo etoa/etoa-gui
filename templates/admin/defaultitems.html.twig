@@ -23,9 +23,10 @@
                 [<a href="{{ path('admin.default-items.delete', {id: set.id}) }}" onclick="return confirm('Gesamtes Set wirklich löschen?');">Löschen</a>]
             </legend>
 
+            {# the id must not start with a digit: live components look children up via querySelector('#' ~ id) #}
             {{ component('admin_default_item_set', {
                 set: set,
-                id: set.id
+                id: 'default-item-set-' ~ set.id
             }) }}
         </fieldset>
     {% endfor %}

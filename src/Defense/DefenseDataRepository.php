@@ -16,7 +16,7 @@ class DefenseDataRepository extends AbstractRepository
     }
 
     /**
-     * @return array<int, string>
+     * @return array<int, Defense>
      */
     public function getDefenseNames(bool $showAll = false, ?DefenseSort $orderBy = null): array
     {

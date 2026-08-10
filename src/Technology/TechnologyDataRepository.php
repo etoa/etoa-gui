@@ -15,7 +15,7 @@ class TechnologyDataRepository extends AbstractRepository
     }
 
     /**
-     * @return array<int, string>
+     * @return array<int, Technology>
      */
     public function getTechnologyNames(bool $showAll = false, TechnologySort $orderBy = null): array
     {

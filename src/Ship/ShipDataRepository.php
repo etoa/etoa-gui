@@ -26,7 +26,7 @@ class ShipDataRepository extends AbstractRepository
     }
 
     /**
-     * @return array<int, string>
+     * @return array<int, Ship>
      */
     public function getShipNames(bool $showAll = false, ?ShipSort $orderBy = null): array
     {

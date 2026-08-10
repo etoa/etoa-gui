@@ -2,15 +2,10 @@
 
 namespace EtoA\Components\Admin;
 
-use EtoA\Building\BuildingDataRepository;
 use EtoA\DefaultItem\DefaultItemRepository;
-use EtoA\Defense\DefenseDataRepository;
 use EtoA\Entity\DefaultItem;
 use EtoA\Entity\DefaultItemSet;
 use EtoA\Form\Type\Admin\NewDefaultItemType;
-use EtoA\Missile\MissileDataRepository;
-use EtoA\Ship\ShipDataRepository;
-use EtoA\Technology\TechnologyDataRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormInterface;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
@@ -28,63 +23,42 @@ class DefaultItemSetComponent extends AbstractController
     #[LiveProp]
     public DefaultItemSet $set;
     public string $error = '';
-    /** @var array<int, string> */
-    public array $buildings = [];
-    /** @var array<int, string> */
-    public array $technologies = [];
-    /** @var array<int, string> */
-    public array $ships = [];
-    /** @var array<int, string> */
-    public array $defense = [];
-    /** @var array<int, string> */
-    public array $missiles = [];
 
     public function __construct(
-        private readonly DefaultItemRepository    $defaultItemRepository,
-        private readonly BuildingDataRepository   $buildingDataRepository,
-        private readonly TechnologyDataRepository $technologyDataRepository,
-        private readonly ShipDataRepository       $shipDataRepository,
-        private readonly DefenseDataRepository    $defenseDataRepository,
-        private readonly MissileDataRepository    $missileDataRepository,
+        private readonly DefaultItemRepository $defaultItemRepository,
     ) {
     }
 
     /**
-     * @return DefaultItem[][]
+     * @return array<string, array<DefaultItem>>
      */
     public function getItems(): array
     {
-        $defaultItems = $this->defaultItemRepository->getItemsGroupedByCategory($this->set);
-        if (isset($defaultItems['b'])) {
-            $this->buildings = $this->buildingDataRepository->getBuildingNames(true);
-        }
-        if (isset($defaultItems['t'])) {
-            $this->technologies = $this->technologyDataRepository->getTechnologyNames(true);
-        }
-        if (isset($defaultItems['s'])) {
-            $this->ships = $this->shipDataRepository->getShipNames(true);
-        }
-        if (isset($defaultItems['d'])) {
-            $this->defense = $this->defenseDataRepository->getDefenseNames(true);
-        }
-        if (isset($defaultItems['m'])) {
-            $this->missiles = $this->missileDataRepository->getMissileNames(true);
-        }
-
-        return $defaultItems;
+        return $this->defaultItemRepository->getItemsGroupedByCategory($this->set);
     }
 
     #[LiveAction]
     public function submit(): void
     {
+        $this->error = '';
         $this->submitForm();
 
         /** @var DefaultItem $item */
-        $item = $this->getFormInstance()->getData();
-        $success = $this->defaultItemRepository->addItemToSet($this->setId, $item->getCat(), $item->getObjectId(), $item->getCount());
+        $item = $this->getForm()->getData();
+        if ($item->getCat() === '') {
+            $this->error = 'Kein Objekt gewählt';
+
+            return;
+        }
+
+        $success = $this->defaultItemRepository->addItemToSet($this->set, $item->getCat(), $item->getObjectId(), $item->getCount());
         if (!$success) {
             $this->error = 'Existiert bereits';
         }
+
+        // No resetForm() here: the choice widget is excluded from the live re-render
+        // (see SearchableChoiceType), so clearing the form server-side would leave the
+        // dropdown visibly showing an object the component no longer knows about.
     }
 
     protected function instantiateForm(): FormInterface
