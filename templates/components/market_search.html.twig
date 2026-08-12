@@ -519,13 +519,15 @@
                     <p>
                         <input type="submit" name="submit_auction_bid" id="auction_submit"
                                style="color: rgb(255, 0, 0);" disabled="disabled" value="Gebot abgeben"/>
-                        <button data-action="live#action" data-live-action-param="back">
+                        {# inside form_start(): without :prevent the browser also submits the form natively #}
+                        <button data-action="click->live#action:prevent" data-live-action-param="back">
                             Zurück
                         </button>
                     </p>
                 {% else %}
                     <p>
-                        <button data-action="live#action" data-live-action-param="back">
+                        {# inside form_start(): without :prevent the browser also submits the form natively #}
+                        <button data-action="click->live#action:prevent" data-live-action-param="back">
                             Zurück
                         </button>
                     </p>

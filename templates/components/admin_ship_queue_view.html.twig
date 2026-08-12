@@ -38,12 +38,12 @@
         </td>
         <td>
             {% if this.isEdit %}
-                <a href="#ship-{{ this.item.id }}" data-action="live#action" data-live-action-param="prevent|submit">Speichern</a>
-                <a href="#ship-{{ this.item.id }}" data-action="live#action" data-live-action-param="prevent|abortEdit">Abbrechen</a>
+                <a href="#ship-{{ this.item.id }}" data-action="click->live#action:prevent" data-live-action-param="submit">Speichern</a>
+                <a href="#ship-{{ this.item.id }}" data-action="click->live#action:prevent" data-live-action-param="abortEdit">Abbrechen</a>
             {% else %}
-                <a href="#ship-{{ this.item.id }}" data-action="live#action" data-live-action-param="prevent|showEdit">Bearbeiten</a>
-                <a href="#ship-{{ this.item.id }}" data-action="live#action" data-live-action-param="prevent|finish">Fertig stellen</a>
-                <a onclick="confirm('Sollen {{ this.item.count}} {{ this.item.ship.name }} von diesem Planeten gelöscht werden?')" href="#ship-{{ this.item.id }}" data-action="live#action" data-live-action-param="prevent|delete">Löschen</a>
+                <a href="#ship-{{ this.item.id }}" data-action="click->live#action:prevent" data-live-action-param="showEdit">Bearbeiten</a>
+                <a href="#ship-{{ this.item.id }}" data-action="click->live#action:prevent" data-live-action-param="finish">Fertig stellen</a>
+                <a onclick="confirm('Sollen {{ this.item.count}} {{ this.item.ship.name }} von diesem Planeten gelöscht werden?')" href="#ship-{{ this.item.id }}" data-action="click->live#action:prevent" data-live-action-param="delete">Löschen</a>
             {% endif %}
         </td>
     </tr>

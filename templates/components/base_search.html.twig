@@ -11,7 +11,7 @@
                 </div>
             {% endfor %}
 
-            <button type="button" data-action="live#action" data-live-action-param="prevent|reset">Reset</button>
+            <button type="button" data-action="click->live#action:prevent" data-live-action-param="reset">Reset</button>
         </fieldset>
         {{ form_end(form) }}
     </div>
@@ -32,10 +32,10 @@
                             <input type="hidden" value="{{ search.limit }}" name="limit">
 
                             {% if search.limit > 0 %}
-                                <button type="button" data-action="live#action" data-live-action-param="prevent|firstPage">
+                                <button type="button" data-action="click->live#action:prevent" data-live-action-param="firstPage">
                                     &lt;&lt;
                                 </button>
-                                <button type="button" data-action="live#action" data-live-action-param="prevent|previousPage">
+                                <button type="button" data-action="click->live#action:prevent" data-live-action-param="previousPage">
                                     &lt;
                                 </button>
                             {% else %}
@@ -43,10 +43,10 @@
                                 <button type="button" disabled="disabled">&lt;</button>
                             {% endif %}
                             {% if search.limit < search.total - search.perPage %}
-                                <button type="button" data-action="live#action" data-live-action-param="prevent|nextPage">
+                                <button type="button" data-action="click->live#action:prevent" data-live-action-param="nextPage">
                                     &gt;
                                 </button>
-                                <button type="button" data-action="live#action" data-live-action-param="prevent|lastPage">&gt;&gt;</button>
+                                <button type="button" data-action="click->live#action:prevent" data-live-action-param="lastPage">&gt;&gt;</button>
                             {% else %}
                                 <button type="button" disabled="disabled">&gt;</button>
                                 <button type="button" disabled="disabled">&gt;&gt;</button>
