@@ -30,14 +30,12 @@ class DefaultItemSetRepository extends AbstractRepository
 
     public function createSet(string $name): void
     {
-        $this->createQueryBuilder('q')
-            ->insert('default_item_sets')
-            ->values([
-                'set_name' => ':name',
-                'set_active' => 0,
-            ])
-            ->setParameter('name', $name)
-            ->executeQuery();
+        $set = new DefaultItemSet();
+        $set->setName($name);
+        $set->setActive(false);
+
+        $this->persist($set);
+        $this->save();
     }
 
     public function toggleSetActive(int $setId): void

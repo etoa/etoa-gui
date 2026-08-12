@@ -286,7 +286,7 @@ class SetupController extends AbstractGameController
             $addForm->handleRequest($request);
 
             if($addForm->isSubmitted() && $addForm->isValid()) {
-                $this->userSetupService->addItemSetListToPlanet($planet, $this->getUser()->getData(), $addForm->getData()['itemset_id']->getId());
+                $this->userSetupService->addItemSetListToPlanet($planet, $this->getUser()->getData(), $addForm->getData()['itemset_id']);
                 $this->userRepository->setSetupFinished($this->getUser()->getData());
                 return $this->redirectToRoute('game.setup.finished');
             }

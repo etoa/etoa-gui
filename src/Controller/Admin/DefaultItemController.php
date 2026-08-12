@@ -4,6 +4,7 @@ namespace EtoA\Controller\Admin;
 
 use EtoA\DefaultItem\DefaultItemRepository;
 use EtoA\DefaultItem\DefaultItemSetRepository;
+use EtoA\Entity\DefaultItemSet;
 use EtoA\Form\Type\Admin\NewDefaultItemSetType;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -40,9 +41,10 @@ class DefaultItemController extends AbstractAdminController
 
     #[Route('/admin/default-items/{id}/toggle', name: 'admin.default-items.toggle')]
     #[IsGranted('ROLE_ADMIN_MASTER')]
-    public function toggle(int $id): RedirectResponse
+    public function toggle(DefaultItemSet $set): RedirectResponse
     {
-        $this->defaultItemSetRepository->toggleSetActive($id);
+        $set->setActive(!$set->isActive());
+        $this->defaultItemRepository->save();
 
         return $this->redirectToRoute('admin.default-items');
     }

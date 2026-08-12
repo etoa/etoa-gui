@@ -268,9 +268,9 @@ class UserTwigSubscriber implements EventSubscriberInterface
         }
         elseif ($cu->getData()->getDeleted()>0) {
             if(!in_array($controller[0],[ContactController::class,UserConfigController::class])) {
-                //$content = $this->twig->render('game/deletion.html.twig');
-                //$response = new Response($content);
-                //$event->setResponse($response);
+                $content = $this->twig->render('game/deletion.html.twig');
+                $response = new Response($content);
+                $event->setResponse($response);
             }
         }
         elseif ($cu->getData()->getHmodFrom()>0) {
