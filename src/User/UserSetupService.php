@@ -11,10 +11,12 @@ use EtoA\Defense\DefenseRepository;
 use EtoA\Entity\Building;
 use EtoA\Entity\DefaultItemSet;
 use EtoA\Entity\Defense;
+use EtoA\Entity\Missile;
 use EtoA\Entity\Planet;
 use EtoA\Entity\Ship;
 use EtoA\Entity\Technology;
 use EtoA\Entity\User;
+use EtoA\Missile\MissileRepository;
 use EtoA\Ship\ShipListRepository;
 use EtoA\Technology\TechnologyListItemRepository;
 use EtoA\Universe\Entity\EntityRepository;
@@ -30,6 +32,7 @@ class UserSetupService
     private TechnologyListItemRepository $technologyRepository;
     private ShipListRepository $shipListRepository;
     private DefenseRepository $defenseRepository;
+    private MissileRepository $missileRepository;
     private PlanetService $planetService;
     private PlanetRepository $planetRepository;
     private UserService $userService;
@@ -41,10 +44,10 @@ class UserSetupService
         BuildingListItemRepository   $buildingRepository,
         TechnologyListItemRepository $technologyRepository,
         DefenseRepository            $defenseRepository,
+        MissileRepository            $missileRepository,
         PlanetService                $planetService,
         PlanetRepository             $planetRepository,
         UserService                  $userService,
-        EntityRepository             $entityRepository,
         Security                     $security,
         ShipListRepository           $shipListRepository
     ) {
@@ -54,6 +57,7 @@ class UserSetupService
         $this->technologyRepository = $technologyRepository;
         $this->shipListRepository = $shipListRepository;
         $this->defenseRepository = $defenseRepository;
+        $this->missileRepository = $missileRepository;
         $this->planetRepository = $planetRepository;
         $this->planetService = $planetService;
         $this->userService = $userService;
@@ -98,6 +102,14 @@ class UserSetupService
             $defense = $this->objectResolver->resolve($defaultItem);
             if ($defense instanceof Defense) {
                 $this->defenseRepository->addDefense($defense, $defaultItem->getCount(), $user, $planet);
+            }
+        }
+
+        // Add missiles
+        foreach ($defaultItems['m'] ?? [] as $defaultItem) {
+            $missile = $this->objectResolver->resolve($defaultItem);
+            if ($missile instanceof Missile) {
+                $this->missileRepository->addMissile($missile, $defaultItem->getCount(), $user, $planet);
             }
         }
     }
