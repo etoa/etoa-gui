@@ -2,6 +2,7 @@
 
 namespace EtoA\Tutorial;
 
+use Doctrine\ORM\AbstractQuery;
 use Doctrine\Persistence\ManagerRegistry;
 use EtoA\Core\AbstractRepository;
 use EtoA\Entity\Tutorial;
@@ -23,44 +24,56 @@ class TutorialUserProgressRepository extends AbstractRepository
     public function hasReadTutorial(int $userId, int $tutorialId): bool
     {
         return (bool) $this->createQueryBuilder('q')
-            ->select('tup_closed')
-            ->where('tup_user_id = :userId')
-            ->andWhere('tup_tutorial_id = :tutorialId')
+            ->select('q.closed')
+            ->where('q.userId = :userId')
+            ->andWhere('q.tutorialId = :tutorialId')
             ->setParameters([
                 'userId' => $userId,
                 'tutorialId' => $tutorialId,
             ])
-            ->getFirstResult();
+            ->setMaxResults(1)
+            ->getQuery()
+            ->getOneOrNullResult(AbstractQuery::HYDRATE_SINGLE_SCALAR);
     }
 
     public function closeTutorial(User $user, Tutorial $tutorial): void
     {
-        $progress = $this->findOneBy(['user'=>$user,'tutorial'=>$tutorial]);
-        $progress?->setClosed(true);
+        $this->getOrCreateProgress($user, $tutorial)->setClosed(true);
 
         $this->save();
     }
 
-    public function setUserProgress(int $userId, int $tutorialId, int $textStep): void
+    public function setUserProgress(User $user, Tutorial $tutorial, int $textStep): void
     {
-        $this->getConnection()->executeStatement(
-            'REPLACE INTO
-                tutorial_user_progress
-            (
-                tup_user_id,
-                tup_tutorial_id,
-                tup_text_step)
-            VALUES (
-                :userId,
-                :tutorialId,
-                :textStep
-            );',
-            [
-                'userId' => $userId,
-                'tutorialId' => $tutorialId,
-                'textStep' => $textStep,
-            ]
-        );
+        $this->getOrCreateProgress($user, $tutorial)->setTextStep($textStep);
+
+        $this->save();
+    }
+
+    /**
+     * UserTwigSubscriber shows a tutorial exactly while the user has no progress row, so
+     * every write has to be able to create one - otherwise nothing is persisted at all.
+     */
+    private function getOrCreateProgress(User $user, Tutorial $tutorial): TutorialUserProgress
+    {
+        $progress = $this->findOneBy(['user' => $user, 'tutorial' => $tutorial]);
+        if ($progress !== null) {
+            return $progress;
+        }
+
+        $progress = new TutorialUserProgress();
+        // tup_user_id and tup_tutorial_id are each mapped twice, as an id field and as the
+        // join column of an association. Both sides must be set, otherwise one overwrites
+        // the other with null while building the insert.
+        $progress->setUser($user);
+        $progress->setUserId((int) $user->getId());
+        $progress->setTutorial($tutorial);
+        $progress->setTutorialId((int) $tutorial->getId());
+        $progress->setTextStep(0);
+
+        $this->persist($progress);
+
+        return $progress;
     }
 
     public function getUserProgress(User $user, Tutorial $tutorial): int
@@ -73,26 +86,30 @@ class TutorialUserProgressRepository extends AbstractRepository
     public function reopenTutorial(int $userId, int $tutorialId): void
     {
         $this->createQueryBuilder('q')
-            ->update('tutorial_user_progress')
-            ->set('tup_closed', (string) 0)
-            ->where('tup_user_id = :userId')
-            ->andWhere('tup_tutorial_id = :tutorialId')
+            ->update()
+            ->set('q.closed', ':closed')
+            ->where('q.userId = :userId')
+            ->andWhere('q.tutorialId = :tutorialId')
             ->setParameters([
+                'closed' => false,
                 'userId' => $userId,
                 'tutorialId' => $tutorialId,
             ])
-            ->executeQuery();
+            ->getQuery()
+            ->execute();
     }
 
     public function reopenAllTutorials(int $userId): void
     {
         $this->createQueryBuilder('q')
-            ->update('tutorial_user_progress')
-            ->set('tup_closed', (string) 0)
-            ->where('tup_user_id = :userId')
+            ->update()
+            ->set('q.closed', ':closed')
+            ->where('q.userId = :userId')
             ->setParameters([
+                'closed' => false,
                 'userId' => $userId,
             ])
-            ->executeQuery();
+            ->getQuery()
+            ->execute();
     }
 }

@@ -1,4 +1,3 @@
-import $ from 'jquery'
 
 // Minimize tutorial
 const minimizeTutorial = function () {
@@ -74,4 +73,17 @@ $(function () {
   $('.tutorialFinish').click(closeTutorial);
 });
 
+// Used by the "Anzeigen" button in the game settings. The tutorial was closed, so the
+// closed flag has to be reset server-side before it shows up on the other pages again.
+function reopenTutorial (id, step) {
+  $.ajax({
+    type: 'PUT',
+    url: '/api/tutorials/' + id + '/reopen',
+    contentType: 'application/json'
+  }).done(function () {
+    showTutorialText(id, step)
+  }).fail(alert)
+}
+
 window.showTutorialText = showTutorialText
+window.reopenTutorial = reopenTutorial

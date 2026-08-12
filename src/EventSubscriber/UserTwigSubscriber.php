@@ -217,11 +217,14 @@ class UserTwigSubscriber implements EventSubscriberInterface
             $this->twig->addGlobal($key, $value);
         }
 
-        if (!$this->tutorialUserProgressRepository->find(['userId'=>$cu->getId(), 'tutorialId'=>1])) {
+        // The closed flag decides, not the mere existence of a progress row: reopening a
+        // tutorial only resets that flag, so checking for the row would ignore it.
+        $userId = (int) $cu->getId();
+        if (!$this->tutorialUserProgressRepository->hasReadTutorial($userId, 1)) {
             $this->twig->addGlobal('tutorial_id', 1);
-        } else if ($cu->getdata()->isSetup() && !$this->tutorialUserProgressRepository->find(['userId'=>$cu->getId(), 'tutorialId'=>2])) {
+        } else if ($cu->getdata()->isSetup() && !$this->tutorialUserProgressRepository->hasReadTutorial($userId, 2)) {
             $this->twig->addGlobal('tutorial_id', 2);
-        } elseif ($cu->getdata()->isSetup() && $this->tutorialUserProgressRepository->find(['userId'=>$cu->getId(), 'tutorialId'=>2]) && $this->config->getInt('quest_system_enable')) {
+        } elseif ($cu->getdata()->isSetup() && $this->config->getInt('quest_system_enable')) {
             //$app['cubicle.quests.initializer']->initialize($this->getUser()->getId()); //TODO migrate quests
         }
 

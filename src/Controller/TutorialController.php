@@ -23,7 +23,9 @@ class TutorialController extends AbstractController
     }
 
 
-    #[Route("/api/tutorials/{tutorialId}", name:"api.tutorial.show", methods:['GET'])]
+    // The placeholder must be named "id": the EntityValueResolver looks for a request
+    // attribute matching either the argument name or "id", so {tutorialId} left $tutorial null.
+    #[Route("/api/tutorials/{id}", name:"api.tutorial.show", methods:['GET'])]
     public function showAction(Request $request, TokenContext $context, ?Tutorial $tutorial = null): JsonResponse
     {
         $data = [];
@@ -32,7 +34,7 @@ class TutorialController extends AbstractController
             if ($request->query->has('step')) {
                 $currentStep = $request->query->getInt('step');
             } else {
-                $currentStep = $this->tutorialUserProgressRepository->getUserProgress($context->getCurrentUser()->getData(), $tutorial);
+                $currentStep = $this->tutorialUserProgressRepository->getUserProgress($context->getCurrentUser(), $tutorial);
             }
 
             $tutorialText = $this->tutorialManager->getText($tutorial, $currentStep);
@@ -49,10 +51,32 @@ class TutorialController extends AbstractController
     }
 
 
-    #[Route("/api/tutorials/{tutorialId}/close", name:"api.tutorial.close",methods:["PUT"])]
+    #[Route("/api/tutorials/{id}/close", name:"api.tutorial.close",methods:["PUT"])]
     public function closeAction(TokenContext $context, ?Tutorial $tutorial = null) : JsonResponse
     {
-        $this->tutorialUserProgressRepository->closeTutorial($context->getCurrentUser()->getData(), $tutorial);
+        if ($tutorial === null) {
+            return new JsonResponse(['error' => 'Tutorial nicht gefunden!'], 404);
+        }
+
+        $this->tutorialUserProgressRepository->closeTutorial($context->getCurrentUser(), $tutorial);
+
+        return new JsonResponse();
+    }
+
+    /**
+     * Lets a closed tutorial show up again, used by the "Anzeigen" button in the settings.
+     */
+    #[Route("/api/tutorials/{id}/reopen", name:"api.tutorial.reopen", methods:["PUT"])]
+    public function reopenAction(TokenContext $context, ?Tutorial $tutorial = null): JsonResponse
+    {
+        if ($tutorial === null) {
+            return new JsonResponse(['error' => 'Tutorial nicht gefunden!'], 404);
+        }
+
+        $this->tutorialUserProgressRepository->reopenTutorial(
+            (int) $context->getCurrentUser()->getId(),
+            (int) $tutorial->getId()
+        );
 
         return new JsonResponse();
     }

@@ -200,7 +200,7 @@ class UserConfigController extends AbstractGameController
                 ],
                 'expanded' => true,
             ])
-            ->add('showTut', ButtonType::class, ['label' => 'Anzeigen', 'attr' => ['onClick' => 'showTutorialText(1,0']])
+            ->add('showTut', ButtonType::class, ['label' => 'Anzeigen', 'attr' => ['onClick' => 'reopenTutorial(1,0)']])
             ->add('chatColor', ColorType::class, ['attr' =>
                 [
                     'size' => 6,

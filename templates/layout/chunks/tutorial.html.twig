@@ -1,4 +1,5 @@
-{% if tutorial_id|default(0) > 0 %}
+{# The box is hidden until a tutorial is opened and is always rendered, because the
+   "Anzeigen" button in the settings needs it even when no tutorial is currently due. #}
     <div id="tutorialContainer" style="display:none;" data-tutorial="0">
         <div class="tutorialBox">
             <div class="tutorialTitle">Tutorial: <span class="tutorialTitleContent"></span>
@@ -20,6 +21,10 @@
             <input type="button" value="Tutorial" class="tutorialRestore" />
         </div>
     </div>
+    {# tutorial.js needs $.cookie and is only used here, so both are loaded with the box #}
+    <script type="text/javascript" src="{{ asset('build/js/jquery.cookie.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('build/js/tutorial.js') }}"></script>
+{% if tutorial_id|default(0) > 0 %}
     <script>
         $(function(){
             showTutorialText({{ tutorial_id }});
