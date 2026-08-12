@@ -39,7 +39,7 @@
                     {% endif %}
                     <th style="width:150px">Datum:</th>
                     <th style="text-align:center;">
-                        <input type="button" id="selectBtn" value="X" onclick="xajax_reportSelectAll(this.value)"/>
+                        <input type="button" value="X" onclick="toggleCheckboxGroup(this, '{{ form.children.reports.vars.full_name }}[')"/>
                     </th>
                 </tr>
 

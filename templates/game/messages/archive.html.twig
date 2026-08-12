@@ -32,7 +32,7 @@
                     <tr>
                         <th colspan="4"> {{ BBCodeToHTML(messageCat.find(category).name)|raw }} ({{ messages.children|length }} Nachrichten)</th>
                         <th style="text-align:center;">
-                            <input type="button" id="selectBtn[ category.id ]" value="X" onclick="xajax_messagesSelectAllInCategory( category.id , count(messages) ,this.value)"/>
+                            <input type="button" value="X" onclick="toggleCheckboxGroup(this, '{{ messages.vars.full_name }}[')"/>
                         </th>
                     </tr>
                     {% for message in messages.children %}
@@ -57,7 +57,7 @@
                                     <span style="color:red;">{{ message.vars.data.messageData.subject }}</span>
                                 {% else %}
                                     {% if app.user.data.userProperties.msgPreview %}
-                                        <a href="javascript:;" onclick="toggleBox('msgtext{{ message.vars.data.id }}');xajax_messagesSetRead( message.id )">
+                                        <a href="javascript:;" data-message="{{ message.vars.data.id }}" data-read="{{ message.vars.data.isRead }}" class="openMessage" onclick="toggleBox('msgtext{{ message.vars.data.id }}')">
                                             {{ message.vars.data.messageData.subject }}
                                         </a>
                                     {% else %}
