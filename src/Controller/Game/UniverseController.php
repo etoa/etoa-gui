@@ -6,15 +6,14 @@ use EtoA\Controller\Game;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Entity\Cell;
 use EtoA\Entity\Entity;
+use EtoA\Fleet\QuickLaunchResult;
+use EtoA\Fleet\QuickLaunchService;
 use EtoA\UI\Tooltip;
 use EtoA\Universe\Cell\CellRepository;
 use EtoA\Universe\CellRenderer;
 use EtoA\Universe\Entity\EntityRepository;
-use EtoA\Universe\Entity\EntityService;
 use EtoA\Universe\Entity\EntityType;
 use EtoA\Universe\GalaxyMap;
-use EtoA\Universe\Planet\PlanetRepository;
-use EtoA\User\UserRepository;
 use EtoA\User\UserUniverseDiscoveryService;
 use Symfony\Component\Form\Extension\Core\Type\ButtonType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
@@ -141,6 +140,47 @@ class UniverseController extends Game\AbstractGameController
             'renderedCells' => $renderedCells??null,
             'form' => !$starNamed?$form:null
         ]);
+    }
+
+    /**
+     * Sends the configured analyzers to an object of the system map. Replaces the
+     * xajax_launchAnalyzeProbe() call the cell page used before xajax was removed.
+     */
+    #[Route('/game/cell/analyze/{id}', name: 'game.cell.analyze')]
+    public function cellAnalyze(QuickLaunchService $quickLaunchService, ?Entity $entity = null): Response
+    {
+        return $this->launchCellProbe($entity, fn (Entity $target) => $quickLaunchService->launchAnalyzeProbe($target));
+    }
+
+    /**
+     * Sends the configured spy probes to an object of the system map. Replaces the
+     * xajax_launchSypProbe() call the cell page used before xajax was removed.
+     */
+    #[Route('/game/cell/spy/{id}', name: 'game.cell.spy')]
+    public function cellSpy(QuickLaunchService $quickLaunchService, ?Entity $entity = null): Response
+    {
+        return $this->launchCellProbe($entity, fn (Entity $target) => $quickLaunchService->launchSpyProbe($target));
+    }
+
+    /**
+     * @param callable(Entity): QuickLaunchResult $launch
+     */
+    private function launchCellProbe(?Entity $entity, callable $launch): Response
+    {
+        $cell = $entity?->getCell();
+        if ($entity === null || $cell === null) {
+            return $this->render('game/error.html.twig', [
+                'msg' => "Es existiert kein Objekt an den angegebenen Koordinaten!",
+                'path' => $this->generateUrl('game.galaxy'),
+                'headline' => 'Systemkarte',
+            ]);
+        }
+
+        $result = $launch($entity);
+        $this->addFlash($result->success ? 'success' : 'error', $result->message);
+
+        // back to the system map with the target row highlighted
+        return $this->redirectToRoute('game.cell', ['id' => $cell->getId(), 'hl' => $entity->getId()]);
     }
 
     #[Route('/game/entity/{id}', name: 'game.entity')]

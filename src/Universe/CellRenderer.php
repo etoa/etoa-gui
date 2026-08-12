@@ -6,7 +6,6 @@ use EtoA\Admin\AdminUserRepository;
 use EtoA\Alliance\AllianceDiplomacyLevel;
 use EtoA\Alliance\AllianceDiplomacyRepository;
 use EtoA\Core\Configuration\ConfigurationService;
-use EtoA\Entity\Report;
 use EtoA\Image\ImageUtil;
 use EtoA\Message\ReportRepository;
 use EtoA\Message\ReportSearch;
@@ -242,7 +241,7 @@ class CellRenderer
                 if ($cu != $owner) {
                     // Besiedelte Planete
                     if ($owner) {
-                        echo "<a href=\"javascript:;\" onclick=\"xajax_launchSypProbe(" . $ent->getId() . ");\" title=\"Ausspionieren\">" . ImageUtil::icon("spy") . "</a>";
+                        echo "<a href=\"" . $this->router->generate('game.cell.spy', ['id' => $ent->getId()]) . "\" title=\"Ausspionieren\">" . ImageUtil::icon("spy") . "</a>";
                         echo "<a href=\"?page=missiles&amp;target=" . $ent->getId() . "\" title=\"Raketenangriff starten\">" . ImageUtil::icon("missile") . "</a> ";
                         echo "<a href=\"?page=crypto&amp;target=" . $ent->getId() . "\" title=\"Flottenbewegungen analysieren\">" . ImageUtil::icon("crypto") . "</a> ";
                     }
@@ -250,15 +249,20 @@ class CellRenderer
             }
 
             if (in_array("analyze", $ent->getType()->getAllowedFleetActions(), true)) {
-                if ($properties->isShowCellreports()) {
-                    $report = $this->reportRepository->searchReport(ReportSearch::create()->userId($cu)->type('spy')->entity1Id($ent->getId()));
-                    if ($report !== null) {
-                        $r = Report::createFactory($report);
-                        echo "<span " . tm($r->getSubject(), $r . "<br style=\"clear:both\" />") . "><a href=\"javascript:;\" onclick=\"xajax_launchAnalyzeProbe(" . $ent->id() . ");\" title=\"Analysieren\">" . ImageUtil::icon("spy") . "</a></span>";
-                    } else
-                        echo "<a href=\"javascript:;\" onclick=\"xajax_launchAnalyzeProbe(" . $ent->getId() .");\" title=\"Analysieren\">" . ImageUtil::icon("spy") . "</a> ";
-                } else
-                    echo "<a href=\"javascript:;\" onclick=\"xajax_launchAnalyzeProbe(" . $ent->getId() . ");\" title=\"Analysieren\">" . ImageUtil::icon("spy") . "</a> ";
+                $analyzeLink = "<a href=\"" . $this->router->generate('game.cell.analyze', ['id' => $ent->getId()]) . "\" title=\"Analysieren\">" . ImageUtil::icon("spy") . "</a>";
+
+                $report = $properties->isShowCellreports()
+                    ? $this->reportRepository->searchReport(ReportSearch::create()->userId($cu)->type('spy')->entity1Id($ent->getId()))
+                    : null;
+
+                if ($report !== null) {
+                    echo "<span " . tm(
+                            $report->getSubject() ?? 'Spionagebericht',
+                            'Letzter Spionagebericht vom ' . StringUtils::formatDate((int) $report->getTimestamp())
+                        ) . ">" . $analyzeLink . "</span> ";
+                } else {
+                    echo $analyzeLink . " ";
+                }
             }
 
 
