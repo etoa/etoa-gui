@@ -79,6 +79,11 @@ function setMessageRead(ele) {
       method: 'POST',
       success: function (response) {
         ele.dataset.read = '1'
+        // the envelope would keep showing "new" until the next page load
+        var icon = document.getElementById('msgimg' + ele.dataset.message);
+        if (icon) {
+          icon.src = icon.src.replace('pm_new', 'pm_normal');
+        }
       },
     });
   }
@@ -1349,6 +1354,20 @@ function show_info(
 
 function htmlEntities(str) {
   return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+
+// Checks or unchecks every checkbox whose name starts with the given prefix and flips
+// the button between "X" and "-". Replaces the xajax functions
+// messagesSelectAllInCategory() and reportSelectAll(), which did this server-side.
+function toggleCheckboxGroup(button, namePrefix) {
+  var boxes = document.querySelectorAll('input[type="checkbox"][name^="' + namePrefix + '"]');
+  var check = button.value !== '-';
+
+  for (var i = 0; i < boxes.length; i++) {
+    boxes[i].checked = check;
+  }
+
+  button.value = check ? '-' : 'X';
 }
 
 function ajaxRequest(path, queryData, callbackFunction, errorFunction) {
