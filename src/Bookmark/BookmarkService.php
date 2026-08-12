@@ -4,12 +4,8 @@ declare(strict_types=1);
 
 namespace EtoA\Bookmark;
 
-use EtoA\Entity\Bookmark;
-use EtoA\Entity\Report;
-use EtoA\Message\ReportRepository;
 use EtoA\Universe\Entity\EntityRepository;
 use EtoA\Universe\Planet\PlanetService;
-use Symfony\Bundle\SecurityBundle\Security;
 
 class BookmarkService
 {
@@ -17,8 +13,6 @@ class BookmarkService
         private readonly BookmarkRepository $repository,
         private readonly PlanetService $planetService,
         private readonly EntityRepository $entityRepository,
-        private readonly ReportRepository $reportRepository,
-        private readonly Security $security
     ) {
     }
 
@@ -65,13 +59,5 @@ class BookmarkService
         echo "</select>";
 
         return ob_get_clean();
-    }
-
-    public function getAnalyzeReports(Bookmark $bookmark)
-    {   $report = $this->reportRepository->findOneBy(['user'=>$this->security->getUser()->getData(),'type'=>'spy', 'entity1'=>$bookmark->getEntity()],['timestamp'=>'DESC'])->get;
-        if ($report) {
-            #$r = Report::createFactory($report);
-            #echo "<span " . tm($r->subject, $r . "<br style=\"clear:both\" />") . "><a href=\"javascript:;\" onclick=\"xajax_launchAnalyzeProbe(" . $ent->id() . ");\" title=\"Analysieren\">" . icon("spy") . "</a></span>";
-        }
     }
 }
