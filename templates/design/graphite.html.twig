@@ -76,11 +76,11 @@
                 document.getElementById('hbarlogoutslide').style.display='none';
                 return false;"></a>
         {% if buddyreq > 0 %}
-            <a href="?page=buddylist" id="navbuddylistred" onmouseover="hideAllHbarMenus();"></a>
+            <a href="{{ path('game.buddylist.overview') }}" id="navbuddylistred" onmouseover="hideAllHbarMenus();"></a>
         {% elseif buddys > 0 %}
-            <a href="?page=buddylist" id="navbuddylistgreen" onmouseover="hideAllHbarMenus();"></a>
+            <a href="{{ path('game.buddylist.overview') }}" id="navbuddylistgreen" onmouseover="hideAllHbarMenus();"></a>
         {% else %}
-            <a href="?page=buddylist" id="navbuddylist" onmouseover="hideAllHbarMenus();"></a>
+            <a href="{{ path('game.buddylist.overview') }}" id="navbuddylist" onmouseover="hideAllHbarMenus();"></a>
         {% endif %}
         <a href="?page=userconfig" id="navuserconfig" onmouseover="
                 if (document.getElementById('hbarsettingsslide').style.display=='none') { document.getElementById('hbarsettingsslide').style.display=''; }

@@ -114,21 +114,25 @@ class TechnologyListItemRepository extends AbstractRepository
         $this->save();
     }
 
-    public function countResearchInProgress(int $userId, int $entityId): bool
+    /**
+     * Researches running on the entity, without the gen lab which is counted separately.
+     */
+    public function countResearchInProgress(int $userId, int $entityId): int
     {
-        return (bool) $this->createQueryBuilder('q')
-            ->select('COUNT(techlist_id)')
-            ->from('techlist')
-            ->where('techlist_user_id = :userId')
-            ->where('techlist_entity_id = :entityId')
-            ->andWhere('techlist_build_type > 2')
-            ->andWhere('techlist_tech_id <> :techId')
+        return (int) $this->createQueryBuilder('q')
+            ->select('COUNT(q.id)')
+            ->where('q.user = :userId')
+            // the entity condition used a second where() before and was therefore dropped
+            ->andWhere('q.entity = :entityId')
+            ->andWhere('q.buildType > 2')
+            ->andWhere('q.technology <> :techId')
             ->setParameters([
                 'userId' => $userId,
                 'entityId' => $entityId,
                 'techId' => TechnologyId::GEN,
             ])
-            ->getFirstResult();
+            ->getQuery()
+            ->getSingleScalarResult();
     }
 
     public function isTechInProgress(int|User $userId, int|Technology $technologyId): bool
