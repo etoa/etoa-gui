@@ -53,8 +53,9 @@ class TechnologyListItemRepository extends AbstractRepository
     public function countSearch(TechnologyListItemSearch $search = null): int
     {
         return (int) $this->applySearchSortLimit($this->createQueryBuilder('q'), $search)
-            ->select('COUNT(techlist_id)')
-            ->getFirstResult();
+            ->select('COUNT(q.id)')
+            ->getQuery()
+            ->getSingleScalarResult();
     }
 
     public function searchEntry(TechnologyListItemSearch $search): ?TechnologyListItem
@@ -133,17 +134,17 @@ class TechnologyListItemRepository extends AbstractRepository
     public function isTechInProgress(int|User $userId, int|Technology $technologyId): bool
     {
         return (bool) $this->createQueryBuilder('q')
-            ->select('1')
+            ->select('COUNT(q.id)')
             ->where('q.user = :userId')
             ->andWhere('q.buildType > 2')
-            ->andWhere('q.tech = :techId')
+            // the field is "technology", "q.tech" would not resolve
+            ->andWhere('q.technology = :techId')
             ->setParameters([
                 'userId' => $userId,
                 'techId' => $technologyId,
             ])
             ->getQuery()
-            ->setMaxResults(1)
-            ->getFirstResult();
+            ->getSingleScalarResult();
     }
 
     public function countEmpty(): int

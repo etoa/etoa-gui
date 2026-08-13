@@ -2,10 +2,12 @@
 
 namespace EtoA\BuddyList;
 
+use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\Persistence\ManagerRegistry;
 use EtoA\Core\AbstractRepository;
 use EtoA\Entity\Buddy;
 use EtoA\Entity\User;
+use EtoA\Entity\UserSession;
 
 class BuddyListRepository extends AbstractRepository
 {
@@ -15,26 +17,40 @@ class BuddyListRepository extends AbstractRepository
     }
 
 
+    /**
+     * Confirmed buddies of the user that currently have a session.
+     */
     public function countFriendsOnline(int $userId): int
     {
         return (int) $this->createQueryBuilder('q')
-            ->select('COUNT(user_id)')
-            ->from('buddylist', 'b')
-            ->innerJoin('b', 'user_sessions', 's', 'b.bl_buddy_id = s.user_id')
-            ->where('b.bl_allow = 1')
-            ->andWhere('bl_user_id = :userId')
-            ->setParameter('userId', $userId)
-            ->getFirstResult();
+            // a user can have several sessions, so count each buddy once
+            ->select('COUNT(DISTINCT q.id)')
+            ->innerJoin(UserSession::class, 's', Join::WITH, 's.user = q.buddy')
+            ->where('q.user = :userId')
+            ->andWhere('q.allowed = :allowed')
+            ->setParameters([
+                'userId' => $userId,
+                'allowed' => true,
+            ])
+            ->getQuery()
+            ->getSingleScalarResult();
     }
 
+    /**
+     * True while someone added the user as a buddy and the user has not confirmed yet.
+     */
     public function hasPendingFriendRequest(int $userId): bool
     {
         return (bool) $this->createQueryBuilder('q')
-            ->select('COUNT(bl_id)')
-            ->where('bl_allow = 0')
-            ->andWhere('bl_buddy_id = :userId')
-            ->setParameter('userId', $userId)
-            ->getFirstResult();
+            ->select('COUNT(q.id)')
+            ->where('q.buddy = :userId')
+            ->andWhere('q.allowed = :allowed')
+            ->setParameters([
+                'userId' => $userId,
+                'allowed' => false,
+            ])
+            ->getQuery()
+            ->getSingleScalarResult();
     }
 
     /**

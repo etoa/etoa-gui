@@ -25,10 +25,11 @@
                 <tr>
                     <td> {{ buddy.buddy.nick }} </td>
                     {% if buddy.allowed %}
-                        <td>{{ formatNumber(buddy.user.points) }}</td>
+                        <td>{{ formatNumber(buddy.buddy.points) }}</td>
+                        {% set mainPlanet = planetRepository.getUserMain(buddy.buddy) %}
                         <td>
-                            {% if planetRepository.getUserMain(buddy.buddy) %}
-                                <a href="{{ path('game.cell',{id:planetRepository.getUserMain(buddy.buddy).entity.cell.id}) }}&hl={{ planet.id }}">{{ planetRepository.getUserMain(buddy.buddy).name }}</a>
+                            {% if mainPlanet %}
+                                <a href="{{ path('game.cell', {id: mainPlanet.entity.cell.id, hl: mainPlanet.entity.id}) }}">{{ mainPlanet.name }}</a>
                             {% else %}
                                 Noch kein Hauptplanet vorhanden!
                             {% endif %}
@@ -49,10 +50,11 @@
                         {% endif %}
                     </td>
                     <td>
-                        <a href="{{ path('game.messages.newTo',{id:buddy.id}) }}" title="Nachricht">Nachricht</a>
-                        <a href="{{ path('game.userinfo',{id:buddy.id}) }}" title="Info">Profil</a><br/>
+                        {# messages and userinfo take a user id, comment and remove take the buddy row id #}
+                        <a href="{{ path('game.messages.newTo',{id:buddy.buddy.id}) }}" title="Nachricht">Nachricht</a>
+                        <a href="{{ path('game.userinfo',{id:buddy.buddy.id}) }}" title="Info">Profil</a><br/>
                         <a href="{{ path('game.buddylist.comment',{id:buddy.id}) }}" title="Kommentar bearbeiten">Kommentar</a>
-                        <a href="{{ path('game.buddylist.remove',{id:buddy.id}) }}" onclick="return confirm('Willst du  {{ buddy.user.nick }}  wirklich von deiner Liste entfernen?');">Entfernen</a>
+                        <a href="{{ path('game.buddylist.remove',{id:buddy.id}) }}" onclick="return confirm('Willst du  {{ buddy.buddy.nick }}  wirklich von deiner Liste entfernen?');">Entfernen</a>
                     </td>
                 </tr>
             {% endfor %}
@@ -77,8 +79,9 @@
                         <td class="tbldata"> {{ pending.user.nick }} </td>
                         <td> {{ formatNumber(pending.user.points) }} </td>
                         <td style="width:280px;">
-                            <a href="{{ path('game.messages.newTo',{id:pending.id}) }}" title="Nachricht">Nachricht</a>
-                            <a href="{{ path('game.userinfo',{id:pending.id}) }}" title="Info">Profil</a>
+                            {# in a pending row "user" is the requester, "buddy" is the current user #}
+                            <a href="{{ path('game.messages.newTo',{id:pending.user.id}) }}" title="Nachricht">Nachricht</a>
+                            <a href="{{ path('game.userinfo',{id:pending.user.id}) }}" title="Info">Profil</a>
                             <a href="{{path('game.buddylist.accept',{id:pending.id})}}" style="color:#0f0">Annehmen</a>
                             <a href="{{path('game.buddylist.deny',{id:pending.id})}}" style="color:#f90">Zurückweisen</a>
                         </td>
