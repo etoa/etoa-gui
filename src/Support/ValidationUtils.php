@@ -58,4 +58,16 @@ class ValidationUtils
 
         return empty($value);
     }
+
+    /**
+     * Determine if a value is "filled".
+     *
+     * @param mixed $value
+     * @return bool
+     * @see https://github.com/illuminate/support/blob/master/helpers.php
+     */
+    public static function filled(mixed $value): bool
+    {
+        return !self::blank($value);
+    }
 }

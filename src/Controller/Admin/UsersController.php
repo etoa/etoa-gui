@@ -20,6 +20,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
+use EtoA\Support\ValidationUtils;
 
 class UsersController extends AbstractAdminController
 {
@@ -183,7 +184,7 @@ class UsersController extends AbstractAdminController
     public function ipSearch(Request $request): Response
     {
         $ip = $request->query->get('ip');
-        if (blank($ip)) {
+        if (ValidationUtils::blank($ip)) {
             return $this->render('admin/user/ip-search-form.html.twig');
         }
 

@@ -9,6 +9,7 @@ use EtoA\User\UserRepository;
 use EtoA\User\UserSessionManager;
 use EtoA\User\UserSessionRepository;
 use EtoA\User\UserSittingRepository;
+use EtoA\Support\ValidationUtils;
 
 /**
  * Provides session and authentication management
@@ -139,7 +140,7 @@ class UserSession
     {
         $this->sessionManager->cleanup();
 
-        if (!filled($loginNick) || !filled($loginPassword)) {
+        if (!ValidationUtils::filled($loginNick) || !ValidationUtils::filled($loginPassword)) {
             $this->lastError = "Kein Benutzername oder Passwort eingegeben!";
             return false;
         }

@@ -12,6 +12,7 @@ use EtoA\User\UserRepository;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RequestStack;
+use EtoA\Support\ValidationUtils;
 
 class ChatManager
 {
@@ -43,7 +44,7 @@ class ChatManager
      */
     public function kickUser(int|User $uid, string $msg = ''): bool
     {
-        $msg = filled($msg) ? $msg : 'Kicked by Admin';
+        $msg = ValidationUtils::filled($msg) ? $msg : 'Kicked by Admin';
 
         return $this->chatUserRepository->kickUser($uid, $msg);
     }

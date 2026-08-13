@@ -18,6 +18,7 @@ use EtoA\Universe\Planet\PlanetService;
 use EtoA\Universe\Star\StarRepository;
 use EtoA\Universe\Wormhole\WormholeRepository;
 use EtoA\User\UserRepository;
+use EtoA\Support\ValidationUtils;
 
 class EntityService
 {
@@ -30,7 +31,6 @@ class EntityService
         private readonly NebulaRepository $nebulaRepository,
         private readonly WormholeRepository $wormholeRepository,
         private readonly EmptySpaceRepository $emptySpaceRepository,
-        private readonly AllianceRepository $allianceRepository,
         private readonly PlanetService $planetService
     ){}
 
@@ -42,12 +42,12 @@ class EntityService
 
         if ($entity->getCode() == EntityType::PLANET) {
             $planet = $this->planetRepository->find($entity->getId());
-            if (filled($planet->name)) {
+            if (ValidationUtils::filled($planet->name)) {
                 $extra[] = $planet->name;
             }
             if ($planet->userId > 0) {
                 $nick = $this->userRepository->getNick($planet->userId);
-                if (filled($nick)) {
+                if (ValidationUtils::filled($nick)) {
                     $extra[] = $nick;
                 }
             }
@@ -55,7 +55,7 @@ class EntityService
 
         if ($entity->getCode() == EntityType::STAR) {
             $star = $this->starRepository->find($entity->getId());
-            if (filled($star->name)) {
+            if (ValidationUtils::filled($star->name)) {
                 $extra[] = $star->name;
             }
         }

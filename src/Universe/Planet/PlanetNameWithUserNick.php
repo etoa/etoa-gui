@@ -2,6 +2,8 @@
 
 namespace EtoA\Universe\Planet;
 
+use EtoA\Support\ValidationUtils;
+
 class PlanetNameWithUserNick
 {
     public int $id;
@@ -19,6 +21,6 @@ class PlanetNameWithUserNick
 
     public function displayName(): string
     {
-        return filled($this->planetName) ? $this->planetName : 'Unbenannt';
+        return ValidationUtils::filled($this->planetName) ? $this->planetName : 'Unbenannt';
     }
 }

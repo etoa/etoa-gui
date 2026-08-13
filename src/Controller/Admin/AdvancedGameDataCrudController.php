@@ -4,6 +4,7 @@ namespace EtoA\Controller\Admin;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use EtoA\Support\ValidationUtils;
 
 abstract class AdvancedGameDataCrudController extends GameDataCrudController
 {
@@ -223,7 +224,7 @@ abstract class AdvancedGameDataCrudController extends GameDataCrudController
     {
         $this->insertRecord($request);
         $hookResult = $this->runPostInsertUpdateHook();
-        $this->addFlash('success', "Neuer Datensatz gespeichert!" . (filled($hookResult) ? ' ' . $hookResult : ''));
+        $this->addFlash('success', "Neuer Datensatz gespeichert!" . (ValidationUtils::filled($hookResult) ? ' ' . $hookResult : ''));
     }
 
     private function insertRecord(Request $request): void
@@ -355,7 +356,7 @@ abstract class AdvancedGameDataCrudController extends GameDataCrudController
     {
         if ($this->updateRecord($request)) {
             $hookResult = $this->runPostInsertUpdateHook();
-            $this->addFlash('success', "Datensatz geändert!" . (filled($hookResult) ? ' ' . $hookResult : ''));
+            $this->addFlash('success', "Datensatz geändert!" . (ValidationUtils::filled($hookResult) ? ' ' . $hookResult : ''));
         }
     }
 

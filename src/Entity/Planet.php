@@ -13,6 +13,7 @@ use EtoA\Universe\Planet\PlanetRepository;
 use EtoA\Universe\Planet\PlanetService;
 use Symfony\Component\Serializer\Annotation\Ignore;
 use Symfony\Contracts\Service\Attribute\Required;
+use EtoA\Support\ValidationUtils;
 
 #[ORM\Entity(repositoryClass: PlanetRepository::class)]
 #[ORM\Table(name: 'planets')]
@@ -222,7 +223,7 @@ class Planet extends AbstractEntity implements ObjectWithImage
 
     public function displayName(): string
     {
-        return filled($this->name) ? $this->name : 'Unbenannt';
+        return ValidationUtils::filled($this->name) ? $this->name : 'Unbenannt';
     }
 
     public function hasDebrisField(): bool

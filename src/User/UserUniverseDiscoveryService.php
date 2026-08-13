@@ -8,6 +8,7 @@ use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Entity\Cell;
 use EtoA\Entity\Entity;
 use EtoA\Entity\User;
+use EtoA\Support\ValidationUtils;
 
 class UserUniverseDiscoveryService
 {
@@ -24,7 +25,7 @@ class UserUniverseDiscoveryService
 
     private function ensureDiscoveryMaskExists(User $user): void
     {
-        if (!filled($user->getDiscoveryMask()) || strlen($user->getDiscoveryMask()) < 3) {
+        if (!ValidationUtils::filled($user->getDiscoveryMask()) || strlen($user->getDiscoveryMask()) < 3) {
             $sx_num = $this->config->param1Int('num_of_sectors');
             $cx_num = $this->config->param1Int('num_of_cells');
             $sy_num = $this->config->param2Int('num_of_sectors');

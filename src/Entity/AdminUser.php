@@ -7,6 +7,7 @@ namespace EtoA\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use EtoA\Admin\AdminUserRepository;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
+use EtoA\Support\ValidationUtils;
 
 #[ORM\Entity(repositoryClass: AdminUserRepository::class)]
 #[ORM\Table(name: 'admin_users')]
@@ -210,7 +211,7 @@ class AdminUser implements PasswordAuthenticatedUserInterface
 
     public function getRoles(): array
     {
-        return blank($this->roles) ? [] : explode(",", $this->roles);
+        return ValidationUtils::blank($this->roles) ? [] : explode(",", $this->roles);
     }
 
     public function setRoles(array $roles): static

@@ -10,6 +10,7 @@ use EtoA\Support\DB\DatabaseBackupService;
 use EtoA\Support\DB\DatabaseManagerRepository;
 use EtoA\Support\DB\DatabaseMigrationService;
 use EtoA\Support\DB\SchemaMigrationRepository;
+use EtoA\Support\FileUtils;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Lock\LockFactory;
@@ -24,7 +25,8 @@ class DatabaseResetController extends AbstractAdminController
         private readonly DatabaseManagerRepository $databaseManager,
         private readonly LogRepository             $logRepository,
         private readonly DatabaseMigrationService  $databaseMigrationService,
-        private readonly DatabaseBackupService     $databaseBackupService
+        private readonly DatabaseBackupService     $databaseBackupService,
+        private readonly FileUtils                 $fileUtils
     )
     {
     }
@@ -53,7 +55,7 @@ class DatabaseResetController extends AbstractAdminController
     {
         $lock = $this->lockFactory->createLock('db');
 
-        $persistentTables = fetchJsonConfig("persistent-tables.conf");
+        $persistentTables = $this->fileUtils->fetchJsonConfig("persistent-tables.json");
 
         try {
             // Acquire mutex

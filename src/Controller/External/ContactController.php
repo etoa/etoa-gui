@@ -15,6 +15,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use EtoA\Support\ValidationUtils;
 
 class ContactController extends AbstractController
 {
@@ -99,7 +100,7 @@ class ContactController extends AbstractController
             $mail_text = $request->get('mail_text');
             $sender = $request->request->get('mail_sender');
 
-            if (filled($mail_subject) && filled($mail_text) && filled($sender)) {
+            if (ValidationUtils::filled($mail_subject) && ValidationUtils::filled($mail_text) && ValidationUtils::filled($sender)) {
                 $subject = "Kontakt-Anfrage: " . $mail_subject;
                 $recipient = $admin->getEmail();
 

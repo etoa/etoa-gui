@@ -2,6 +2,7 @@
 
 namespace EtoA\Support;
 
+use Symfony\Component\HttpFoundation\InputBag;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 class Checker
@@ -40,7 +41,7 @@ class Checker
     {
         $session = $this->requestStack->getSession();
         $request = $this->requestStack->getCurrentRequest()->request;
-        $checker = $request->all(array_key_first($request->all()))['checker'];
+        $checker = $this->extractChecker($request);
         $flashes = $session->getFlashBag();
 
         if ($debug == 1)
@@ -58,5 +59,23 @@ class Checker
             );
             return false;
         }
+    }
+
+    /**
+     * The token sits either directly in the payload (plain form with a hidden
+     * "checker" field) or inside the namespace of a symfony form.
+     */
+    private function extractChecker(InputBag $payload): ?string
+    {
+        if ($payload->has('checker')) {
+            return $payload->get('checker');
+        }
+
+        $all = $payload->all();
+        $formName = array_key_first($all);
+
+        return $formName !== null && is_array($all[$formName])
+            ? ($all[$formName]['checker'] ?? null)
+            : null;
     }
 }

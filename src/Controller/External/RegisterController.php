@@ -22,6 +22,7 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use EtoA\Support\ValidationUtils;
 
 class RegisterController extends AbstractController
 {
@@ -112,7 +113,7 @@ class RegisterController extends AbstractController
                         "Der Benutzer " . $newUser->getNick() . " (" . $newUser->getName() . ", " . $newUser->getEmail() . ") hat sich registriert!"
                     );
 
-                    $verificationRequired = filled($newUser->getVerificationKey());
+                    $verificationRequired = ValidationUtils::filled($newUser->getVerificationKey());
                     $verificationUrl = $verificationRequired
                         ? $this->configurationService->get('roundurl') . $this->generateUrl('external.verify-email', [
                             'key' => $newUser->getVerificationKey()

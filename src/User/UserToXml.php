@@ -14,6 +14,7 @@ use EtoA\Ship\ShipListRepository;
 use EtoA\Universe\Planet\PlanetRepository;
 use EtoA\Universe\Planet\PlanetTypeRepository;
 use Exception;
+use EtoA\Support\ValidationUtils;
 
 class UserToXml
 {
@@ -44,7 +45,7 @@ class UserToXml
         $filename = $user->getId() . "_" . date("Y-m-d_H-i") . ".xml";
         $file = $this->getDataDirectory() . "/" . $filename;
         $xml = $this->generate($user->getId());
-        if (!filled($xml)) {
+        if (!ValidationUtils::filled($xml)) {
             throw new Exception("XML Export fehlgeschlagen. User " . $user->getId() . " nicht gefunden!");
         }
         if (file_put_contents($file, $xml)) {

@@ -4,6 +4,7 @@ namespace EtoA\Universe\Entity;
 
 use EtoA\Core\ObjectWithImage;
 use EtoA\Entity\Entity;
+use EtoA\Support\ValidationUtils;
 
 class EntityLabel extends Entity
 {
@@ -41,9 +42,9 @@ class EntityLabel extends Entity
     {
         switch ($this->getCode()) {
             case EntityType::PLANET:
-                return (filled($this->planetName) ? $this->planetName : 'Unbenannt');
+                return (ValidationUtils::filled($this->planetName) ? $this->planetName : 'Unbenannt');
             case EntityType::STAR:
-                return (filled($this->starName) ? $this->starName : 'Unbenannt');
+                return (ValidationUtils::filled($this->starName) ? $this->starName : 'Unbenannt');
             default:
                 return null;
         }

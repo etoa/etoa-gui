@@ -8,6 +8,7 @@ use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Support\StringUtils;
 use EtoA\User\UserRepository;
 use GdImage;
+use EtoA\Support\ValidationUtils;
 
 class UserBannerService
 {
@@ -120,13 +121,13 @@ class UserBannerService
         imagettftext($im, 11, 0, $nsize[2] - $nsize[0] + 15, 20, $colWhite, $font, $race);
 
         // Alliance
-        if (filled($alliance)) {
+        if (ValidationUtils::filled($alliance)) {
             imagettftext($im, 9, 0, 9, 39, $colBlack, $font, $alliance);
             imagettftext($im, 9, 0, 8, 38, $colWhite, $font, $alliance);
         }
 
         // Text
-        if (filled($text)) {
+        if (ValidationUtils::filled($text)) {
             imagettftext($im, 9, 0, 9, 54, $colBlack, $font, $text);
             imagettftext($im, 9, 0, 8, 53, $colWhite, $font, $text);
         }

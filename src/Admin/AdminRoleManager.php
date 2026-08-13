@@ -5,23 +5,22 @@ declare(strict_types=1);
 namespace EtoA\Admin;
 
 use EtoA\Entity\AdminUser;
+use EtoA\Support\FileUtils;
 
 class AdminRoleManager
 {
-    /** @var array<string, string> */
-    private static $roles;
+    /** @var array<string, string>|null */
+    private static ?array $roles = null;
 
-    public function __construct()
+    public function __construct(
+        private readonly FileUtils $fileUtils,
+    )
     {
-        if (self::$roles === null) {
-            $securityConfig = fetchJsonConfig("admin-security.conf");
-            self::$roles = $securityConfig['roles'];
-        }
     }
 
     public function getRoleName(string $name): string
     {
-        return self::$roles[$name];
+        return $this->getRoles()[$name];
     }
 
     public function getRolesStr(AdminUser $user): string
@@ -39,6 +38,11 @@ class AdminRoleManager
      */
     public function getRoles(): array
     {
+        // read once per process, the config does not change at runtime
+        if (self::$roles === null) {
+            self::$roles = $this->fileUtils->fetchJsonConfig("admin-security.json")['roles'];
+        }
+
         return self::$roles;
     }
 

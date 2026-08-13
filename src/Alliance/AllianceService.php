@@ -28,6 +28,7 @@ use EtoA\User\UserRepository;
 use EtoA\User\UserService;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use EtoA\Support\ValidationUtils;
 
 class AllianceService
 {
@@ -54,7 +55,7 @@ class AllianceService
 
     public function create(string $tag, string $name, ?User $founder): Alliance
     {
-        if (!filled($name) || !filled($tag)) {
+        if (!ValidationUtils::filled($name) || !ValidationUtils::filled($tag)) {
             throw new InvalidAllianceParametersException("Name/Tag fehlt!");
         }
         $name = trim($name);

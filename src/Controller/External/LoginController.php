@@ -7,6 +7,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use EtoA\Support\ValidationUtils;
 
 class LoginController extends AbstractController
 {
@@ -21,7 +22,7 @@ class LoginController extends AbstractController
     {
         return $this->redirectToRoute('game.login');
         $loginUrl = $this->config->get('loginurl');
-        if (filled($loginUrl)) {
+        if (ValidationUtils::filled($loginUrl)) {
             return $this->redirect($loginUrl);
         }
 

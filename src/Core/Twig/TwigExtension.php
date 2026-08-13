@@ -30,6 +30,7 @@ class TwigExtension extends AbstractExtension
         private readonly GameVersionService    $gameVersion,
         private readonly UrlGeneratorInterface $router,
         private readonly Tooltip $tooltip,
+        private readonly AdminRoleManager      $adminRoleManager,
     )
     {
         $this->startTime = microtime(true);
@@ -171,14 +172,14 @@ class TwigExtension extends AbstractExtension
      * @param string[] $userRoles
      * @param string|string[] $required
      */
-    public function isAdminAllowed(array $userRoles, $required): bool
+    public function isAdminAllowed(array $userRoles, array|string $required): bool
     {
-        return (new AdminRoleManager())->checkAllowedRoles($userRoles, $required);
+        return $this->adminRoleManager->checkAllowedRoles($userRoles, $required);
     }
 
     public function getAdminRoles(AdminUser $admin): string
     {
-        return (new AdminRoleManager())->getRolesStr($admin);
+        return $this->adminRoleManager->getRolesStr($admin);
     }
 
     public function renderTime(): float

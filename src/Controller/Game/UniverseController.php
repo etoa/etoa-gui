@@ -21,6 +21,7 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use EtoA\Support\ValidationUtils;
 
 
 class UniverseController extends Game\AbstractGameController
@@ -218,10 +219,10 @@ class UniverseController extends Game\AbstractGameController
             if ($this->userUniverseDiscoveryService->discovered($this->getUser()->getData(), $abs[0], $abs[1])) {
                 if ($ent->getCode() === EntityType::PLANET) {
                     $rowSpan = 7;
-                    if (filled($ent->getType()->getName())) {
+                    if (ValidationUtils::filled($ent->getType()->getName())) {
                         $rowSpan++;
                     }
-                    if (filled($ent->getType()->getDescription())) {
+                    if (ValidationUtils::filled($ent->getType()->getDescription())) {
                         $rowSpan++;
                     }
                     if ($ent->getType()->hasDebrisField()) {

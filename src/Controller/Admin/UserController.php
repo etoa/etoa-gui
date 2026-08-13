@@ -71,6 +71,7 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use WhichBrowser\Parser as BrowserParser;
+use EtoA\Support\ValidationUtils;
 
 class UserController extends AbstractAdminController
 {
@@ -819,7 +820,7 @@ class UserController extends AbstractAdminController
             return $this->redirectToRoute('admin.users');
         }
 
-        if (blank($request->get('subject')) || blank($request->get('message'))) {
+        if (ValidationUtils::blank($request->get('subject')) || ValidationUtils::blank($request->get('message'))) {
             $this->addFlash('error', 'Titel oder Text fehlt!');
             return $this->redirectToRoute('admin.users.messages', ['id' => $id]);
         }

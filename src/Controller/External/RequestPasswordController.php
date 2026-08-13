@@ -3,11 +3,13 @@
 namespace EtoA\Controller\External;
 
 use EtoA\Controller\AbstractLegacyShowController;
+use EtoA\Support\Checker;
 use EtoA\User\UserService;
 use Exception;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use EtoA\Support\ValidationUtils;
 
 class RequestPasswordController extends AbstractLegacyShowController
 {
@@ -17,14 +19,16 @@ class RequestPasswordController extends AbstractLegacyShowController
     public function index(
         UserService $userService,
         Request     $request,
+        Checker     $checker,
     ): Response
     {
         return $this->handle(function () use (
             $userService,
             $request,
+            $checker,
         ) {
-            if ($request->request->has('submit_pwforgot') && checker_verify(0, 1, true)) {
-                if (filled($request->request->get('user_nick')) && filled($request->request->get('user_email_fix'))) {
+            if ($request->request->has('submit_pwforgot') && $checker->checker_verify()) {
+                if (ValidationUtils::filled($request->request->get('user_nick')) && ValidationUtils::filled($request->request->get('user_email_fix'))) {
                     try {
                         $userService->resetPassword($request->request->get('user_nick'), $request->request->get('user_email_fix'));
                         $this->addFlash('success', 'Deine Passwort-Anfrage war erfolgreich. Du solltest in einigen Minuten eine E-Mail mit dem neuen Passwort erhalten!');
@@ -39,7 +43,7 @@ class RequestPasswordController extends AbstractLegacyShowController
 
             return $this->render('external/pwforgot.html.twig', [
                 'roundName' => $this->config->get('roundname'),
-                'checker' => checker_init(),
+                'checker' => $checker->checker_init(),
             ]);
         });
     }

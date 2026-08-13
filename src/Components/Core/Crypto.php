@@ -31,6 +31,7 @@ use Symfony\UX\LiveComponent\ComponentWithFormTrait;
 use Symfony\UX\LiveComponent\DefaultActionTrait;
 use Symfony\Component\Form\FormInterface;
 use Symfony\UX\TwigComponent\Attribute\PreMount;
+use EtoA\Support\ValidationUtils;
 
 #[AsLiveComponent(template: 'components/crypto.html.twig')]
 class Crypto extends AbstractGameController
@@ -136,7 +137,7 @@ class Crypto extends AbstractGameController
         }
         else {
             $planet = $targetEntity->getPlanet();
-            if (filled($planet->getName())) {
+            if (ValidationUtils::filled($planet->getName())) {
                 $out = "<b>Planet:</b> " . $planet->getName();
             } else {
                 $out = "<i>Unbenannter Planet</i>";
