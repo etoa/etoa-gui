@@ -76,7 +76,7 @@ class ChatController extends AbstractController
         }
 
         // User exists, not kicked, not banned.
-        $this->chatManager->updateUserEntry($user->getId(), $user->getNick());
+        $this->chatManager->updateUserEntry($user);
 
         $messages = $this->chatRepository->getMessagesAfter($request->query->getInt('minId'), $request->query->getInt('chanId'));
 

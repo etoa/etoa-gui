@@ -4,6 +4,7 @@ namespace EtoA\Components\Admin\Widgets;
 
 use EtoA\Support\DB\DatabaseManagerRepository;
 use Symfony\UX\TwigComponent\Attribute\AsTwigComponent;
+use EtoA\Support\SystemUtils;
 
 #[AsTwigComponent('admin:widgets:systemInfo')]
 class SystemInfoWidget
@@ -44,7 +45,7 @@ class SystemInfoWidget
 
     public function getOsString(): ?string
     {
-        if (isUnixOS()) {
+        if (SystemUtils::isUnix()) {
             $unix = posix_uname();
             return $unix != null ? $unix['sysname'] . ' ' . $unix['release'] . ' ' . $unix['version'] : null;
         }
@@ -53,7 +54,7 @@ class SystemInfoWidget
 
     public function getSysLoad(): ?string
     {
-        if (isUnixOS()) {
+        if (SystemUtils::isUnix()) {
             exec("cat /proc/cpuinfo | grep processor | wc -l", $out);
             $load = sys_getloadavg();
             $systemLoad = round($load[2] / intval($out[0]) * 100, 2);

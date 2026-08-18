@@ -8,6 +8,7 @@ use EtoA\Core\Configuration\ConfigurationService;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
+use EtoA\Support\SystemUtils;
 
 class EventHandlerController extends AbstractAdminController
 {
@@ -56,7 +57,7 @@ class EventHandlerController extends AbstractAdminController
         $messageQueueSize = null;
         $sysId = null;
         $log = null;
-        if (isUnixOS()) {
+        if (SystemUtils::isUnix()) {
             $messageQueueSize = $this->backendMessageRepository->getMessageQueueSize();
             $eventHandlerPid = $this->eventHandlerManager->checkDaemonRunning();
 

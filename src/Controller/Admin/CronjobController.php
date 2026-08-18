@@ -14,6 +14,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
+use EtoA\Support\SystemUtils;
 
 class CronjobController extends AbstractAdminController
 {
@@ -31,7 +32,7 @@ class CronjobController extends AbstractAdminController
         // Cron configuration
         $cronjob = null;
         $crontabUser = null;
-        if (isUnixOS()) {
+        if (SystemUtils::isUnix()) {
             $scriptname = dirname(__DIR__, 3) . "/bin/console cron:run";
             $cronjob = '* * * * * ' . $scriptname;
             $crontabUser = trim(shell_exec('id'));
@@ -129,7 +130,7 @@ class CronjobController extends AbstractAdminController
     public function setup(): RedirectResponse
     {
         // Enable cronjob
-        if (isUnixOS()) {
+        if (SystemUtils::isUnix()) {
             $scriptname = dirname(__DIR__, 3) . "/bin/console cron:run";
             $cronjob = '* * * * * ' . $scriptname;
 

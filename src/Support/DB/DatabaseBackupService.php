@@ -7,6 +7,7 @@ namespace EtoA\Support\DB;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Support\StringUtils;
 use Exception;
+use EtoA\Support\SystemUtils;
 
 class DatabaseBackupService
 {
@@ -64,12 +65,12 @@ class DatabaseBackupService
 
     public function loadFile(string $file): void
     {
-        $mysql = isWindowsOS() ? "c:\\xampp\\mysql\\bin\\mysql.exe" : "mysql";
-        $mysqldump = isWindowsOS() ? "c:\\xampp\\mysql\\bin\\mysqldump.exe" : "mysqldump";
+        $mysql = SystemUtils::isWindows() ? "c:\\xampp\\mysql\\bin\\mysql.exe" : "mysql";
+        $mysqldump = SystemUtils::isWindows() ? "c:\\xampp\\mysql\\bin\\mysqldump.exe" : "mysqldump";
         if (file_exists($file)) {
             $ext = pathinfo($file, PATHINFO_EXTENSION);
             if ($ext == "gz") {
-                if (!isUnixOS()) {
+                if (!SystemUtils::isUnix()) {
                     throw new Exception("Das Laden von GZIP SQL Dateien wird nur auf UNIX Systemen unterstützt!");
                 }
                 $cmd = "gunzip < " . $file . " | " . $mysql .
@@ -89,7 +90,7 @@ class DatabaseBackupService
                     " < " . $file;
             }
 
-            if (isWindowsOS() && !file_exists($mysql) || isUnixOS() && !unix_command_exists($mysqldump)) {
+            if (SystemUtils::isWindows() && !file_exists($mysql) || SystemUtils::isUnix() && !SystemUtils::unixCommandExists($mysqldump)) {
                 $this->importFromFile($file);
             } else {
                 $result = shell_exec($cmd);
@@ -160,12 +161,12 @@ class DatabaseBackupService
 
     public function backupDB(string $backupDir, bool $gzip): string
     {
-        $mysqldump = isWindowsOS() ? "c:\\xampp\\mysql\\bin\\mysqldump.exe" : "mysqldump";
+        $mysqldump = SystemUtils::isWindows() ? "c:\\xampp\\mysql\\bin\\mysqldump.exe" : "mysqldump";
 
         if (is_dir($backupDir)) {
             $file = $backupDir . "/" . $this->databaseManagerRepository->getDatabaseName() . "-" . date("Y-m-d-H-i") . ".sql";
             if ($gzip) {
-                if (!isUnixOS()) {
+                if (!SystemUtils::isUnix()) {
                     throw new Exception("Das Erstellen von GZIP Backups wird nur auf UNIX Systemen unterstützt!");
                 }
                 $file .= ".gz";
@@ -188,7 +189,7 @@ class DatabaseBackupService
                     " -r " . $file;
             }
 
-            if (isWindowsOS() && !file_exists($mysqldump) || isUnixOS() && !unix_command_exists($mysqldump)) {
+            if (SystemUtils::isWindows() && !file_exists($mysqldump) || SystemUtils::isUnix() && !SystemUtils::unixCommandExists($mysqldump)) {
                 $this->dumpIntoFile($file);
             } else {
                 $result = shell_exec($cmd);

@@ -73,7 +73,12 @@ class EventHandlerManager
 
     private function getPidFilePath(): string
     {
-        return getAbsPath($this->config->get('daemon_pidfile'));
+        $pidFile = $this->config->get('daemon_pidfile');
+
+        // an absolute path is taken as is, a relative one resolves like the config file
+        return str_starts_with($pidFile, '/')
+            ? $pidFile
+            : __DIR__ . '/../../htdocs/' . $pidFile;
     }
 
     private function getExecutable(): string

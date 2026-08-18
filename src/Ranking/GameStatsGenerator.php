@@ -59,9 +59,7 @@ class GameStatsGenerator
 
     public function generate(): string
     {
-        // Renderzeit-Start festlegen
-        $render_time = explode(" ", microtime());
-        $renderStartTime = (float)$render_time[1] + (float)$render_time[0];
+        $renderStartTime = microtime(true);
 
         $out = $this->createUniverseStats();
         $out .= $this->createResourceStats();
@@ -69,7 +67,7 @@ class GameStatsGenerator
         $out .= $this->createBestPlayerConstructionStats();
         $out .= $this->createMiscStats();
 
-        $renderTime = timerStop($renderStartTime);
+        $renderTime = round(microtime(true) - $renderStartTime, 3);
         $out .= "<br/>Erstellt am " . date("d.m.Y") . " um " . date("H:i") . " Uhr ";
         $out .= " in " . $renderTime . " Sekunden";
 

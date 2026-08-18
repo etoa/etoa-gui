@@ -16,6 +16,7 @@ use EtoA\Universe\Entity\EntitySearch;
 use EtoA\Universe\Resources\BaseResources;
 use EtoA\Universe\Resources\PreciseResources;
 use EtoA\Universe\Star\StarRepository;
+use EtoA\Support\BBCodeUtils;
 
 class PlanetRepository extends AbstractRepository
 {
@@ -356,7 +357,7 @@ class PlanetRepository extends AbstractRepository
             ->where('id = :id')
             ->setParameters([
                 'id' => $id,
-                'name' => stripBBCode($name),
+                'name' => BBCodeUtils::removeBBCode($name),
                 'comment' => $comment,
             ])
             ->executeQuery();

@@ -28,6 +28,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
+use EtoA\Support\SystemUtils;
 
 class OverviewController extends AbstractAdminController
 {
@@ -97,7 +98,7 @@ class OverviewController extends AbstractAdminController
 
         $admin = $this->getUser();
 
-        if (isUnixOS()) {
+        if (SystemUtils::isUnix()) {
             $eventHandlerPid = $this->eventHandlerManager->checkDaemonRunning();
         }
 

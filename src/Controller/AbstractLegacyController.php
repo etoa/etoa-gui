@@ -48,7 +48,7 @@ abstract class AbstractLegacyController extends AbstractController
         date_default_timezone_set(TIMEZONE);
 
         // Enable debug error reporting
-        if (isDebugEnabled()) {
+        if ($this->getParameter('kernel.debug')) {
             error_reporting(E_ALL);
         } else {
             error_reporting(E_ERROR | E_WARNING | E_PARSE);

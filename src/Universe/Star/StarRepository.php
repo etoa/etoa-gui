@@ -10,6 +10,7 @@ use EtoA\Entity\Cell;
 use EtoA\Entity\Entity;
 use EtoA\Entity\SolarType;
 use EtoA\Entity\Star;
+use EtoA\Support\BBCodeUtils;
 
 class StarRepository extends AbstractRepository
 {
@@ -62,7 +63,7 @@ class StarRepository extends AbstractRepository
             ->where('id = :id')
             ->setParameters([
                 'id' => $id,
-                'name' => stripBBCode((string) $name),
+                'name' => BBCodeUtils::removeBBCode((string) $name),
             ]);
 
         if ($typeId !== null) {

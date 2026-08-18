@@ -6,7 +6,8 @@ class ShipXpCalculator
 {
     public static function xpByLevel(int $base_xp, float $factor, int $level): int
     {
-        return (int) ($base_xp * intpow($factor, $level - 1));
+        // level 1 and below means no factor at all, as the former helper did
+        return (int) ($base_xp * ($level > 1 ? $factor ** ($level - 1) : 1));
     }
 
     public static function levelByXp(int $base_xp, float $factor, int $xp): int

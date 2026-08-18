@@ -5,6 +5,7 @@ namespace EtoA\Exceptions;
 use EtoA\Support\ExternalUrl;
 use Exception;
 use Symfony\Bundle\SecurityBundle\Security;
+use EtoA\Support\SystemUtils;
 
 class EException extends Exception
 {
@@ -25,7 +26,7 @@ class EException extends Exception
         $f = fopen(self::LOG_FILE, "a+");
         fwrite($f, date("d.m.Y H:i:s") . ", " . $_SERVER['REMOTE_ADDR'] . ", " . $cu->getNick() . "\n" . $str . "\n\n");
         fclose($f);
-        if (!isCLI()) {
+        if (!SystemUtils::isCli()) {
             $str = "<div class=\"criticalErrorBox\"><h2>Allgemeiner Fehler</h2><div>" . parent::getMessage() . "<br/>
                 <b>Datei:</b> " . parent::getFile() . ", <b>Zeile:</b> " . parent::getLine() . "";
             $str .= "<div style=\"text-align:left;border-top:1px solid #000;\">

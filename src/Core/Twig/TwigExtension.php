@@ -18,6 +18,7 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;
 use WhichBrowser\Parser;
+use EtoA\Support\SystemUtils;
 
 class TwigExtension extends AbstractExtension
 {
@@ -93,7 +94,7 @@ class TwigExtension extends AbstractExtension
 
     public function getVersion(): string
     {
-        return getAppVersion();
+        return $this->gameVersion->getAppVersion();
     }
 
     public function getBannerValues(string $info):int
@@ -215,7 +216,7 @@ class TwigExtension extends AbstractExtension
 
     public function isUnix(): bool
     {
-        return isUnixOS();
+        return SystemUtils::isUnix();
     }
 
     public function userMTT(string $userNick, int $points): string
