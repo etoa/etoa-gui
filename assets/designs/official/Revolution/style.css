@@ -43,7 +43,8 @@ h1 {
 }
 
 input[type="button"],
-input[type="submit"] {
+input[type="submit"],
+button[type="submit"] {
   background: url("images/button.gif") repeat-x;
   font-family: zekton, Arial;
   color: #dae9ff;
