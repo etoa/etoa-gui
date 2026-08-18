@@ -4,12 +4,9 @@ namespace EtoA\Legacy;
 
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Support\StringUtils;
-use EtoA\User\UserLoginFailureRepository;
-use EtoA\User\UserRepository;
 use EtoA\User\UserSessionManager;
 use EtoA\User\UserSessionRepository;
 use EtoA\User\UserSittingRepository;
-use EtoA\Support\ValidationUtils;
 
 /**
  * Provides session and authentication management
@@ -52,8 +49,6 @@ class UserSession
         private readonly UserSessionManager         $sessionManager,
         private readonly UserSessionRepository      $userSessionRepository,
         private readonly UserSittingRepository      $userSittingRepository,
-        private readonly UserLoginFailureRepository $userLoginFailureRepository,
-        private readonly UserRepository             $userRepository,
     )
     {
         // Use SHA1 hash
@@ -134,58 +129,6 @@ class UserSession
     function __unset(string $field): void
     {
         unset($_SESSION[$field]);
-    }
-
-    public function login(string $loginNick, string $loginPassword): bool
-    {
-        $this->sessionManager->cleanup();
-
-        if (!ValidationUtils::filled($loginNick) || !ValidationUtils::filled($loginPassword)) {
-            $this->lastError = "Kein Benutzername oder Passwort eingegeben!";
-            return false;
-        }
-
-        $user = $this->userRepository->getUserByNick($loginNick);
-        if ($user === null) {
-            $this->lastError = "Der Benutzername ist in dieser Runde nicht registriert!";
-            return false;
-        }
-
-        $t = time();
-
-        // check sitter
-        $this->sittingActive = false;
-        $sittingEntry = $this->userSittingRepository->getActiveUserEntry($user->id);
-        if ($sittingEntry !== null) {
-            if (validatePasswort($loginPassword, $sittingEntry->password)) {
-                $this->sittingActive = true;
-                $this->sittingUntil = $sittingEntry->dateTo;
-            } elseif (validatePasswort($loginPassword, $user->password)) {
-                // false sitter
-                $this->sittingActive = true;
-                $this->sittingUntil = $sittingEntry->dateTo;
-            }
-        }
-
-        // Validate password
-        $validPassword = validatePasswort($loginPassword, $user->password) || $this->sittingActive || ($user->passwordTemp != "" && $user->passwordTemp == $loginPassword);
-        if (!$validPassword) {
-            $this->lastError = "Benutzer nicht vorhanden oder Passwort falsch!";
-            $this->userLoginFailureRepository->add($user->id, $t, $_SERVER['REMOTE_ADDR'], $_SERVER['HTTP_USER_AGENT']);
-            return false;
-        }
-
-        session_regenerate_id(true);
-
-        $this->userId = $user->id;
-        $this->userNick = $user->nick;
-        $this->time_login = $t;
-        $this->time_action = $t;
-        $this->registerSession();
-        $this->bot_count = 0;
-        $this->firstView = true;
-
-        return true;
     }
 
     /**

@@ -83,6 +83,6 @@ class PlayerUserProvider implements UserProviderInterface, PasswordUpgraderInter
             return;
         }
 
-        $this->userRepository->updatePassword($user->getData()->getId(), $newHashedPassword, true);
+        $this->userRepository->updatePassword($user->getData(), $newHashedPassword);
     }
 }

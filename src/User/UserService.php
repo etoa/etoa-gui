@@ -5,39 +5,23 @@ declare(strict_types=1);
 namespace EtoA\User;
 
 use EtoA\Admin\AllianceBoardAvatar;
-use EtoA\Alliance\AllianceApplicationRepository;
 use EtoA\Alliance\AllianceDiplomacyRepository;
 use EtoA\Alliance\AllianceRepository;
-use EtoA\Bookmark\BookmarkRepository;
-use EtoA\Bookmark\FleetBookmarkRepository;
-use EtoA\BuddyList\BuddyListRepository;
-use EtoA\Building\BuildingListItemRepository;
 use EtoA\Core\Configuration\ConfigurationService;
-use EtoA\Defense\DefenseRepository;
 use EtoA\Entity\Race;
 use EtoA\Entity\User;
 use EtoA\Exceptions\RecordNotFoundException;
 use EtoA\Fleet\FleetRepository;
 use EtoA\Fleet\FleetSearchParameters;
-use EtoA\Fleet\FleetShipRepository;
-use EtoA\Help\TicketSystem\TicketRepository;
 use EtoA\Log\LogFacility;
 use EtoA\Log\LogRepository;
 use EtoA\Log\LogSeverity;
-use EtoA\Market\MarketAuctionRepository;
-use EtoA\Market\MarketResourceRepository;
-use EtoA\Market\MarketShipRepository;
-use EtoA\Message\ReportRepository;
-use EtoA\Missile\MissileRepository;
-use EtoA\Notepad\NotepadDataRepository;
-use EtoA\Ship\ShipListRepository;
-use EtoA\Ship\ShipQueueRepository;
 use EtoA\Support\Mail\MailSenderService;
 use EtoA\Support\ValidationUtils;
-use EtoA\Technology\TechnologyListItemRepository;
 use EtoA\Universe\Planet\PlanetService;
 use Exception;
 use Symfony\Bundle\SecurityBundle\Security;
+use EtoA\Support\GameUtils;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Twig\Environment;
 use Twig\Error\LoaderError;
@@ -62,22 +46,27 @@ class UserService
         private readonly Environment                   $twig,
         private readonly AllianceDiplomacyRepository   $allianceDiplomacyRepository,
         private readonly Security                      $security,
+        private readonly UserPasswordHasherInterface   $passwordHasher,
     )
     {
     }
 
+    /**
+     * The password arrives already hashed, both forms use the "hash_property_path"
+     * option of PasswordType. Length and blank rules therefore belong to the form.
+     */
     public function register(
         string $name,
         string $email,
         string $nick,
-        string $password,
+        string $hashedPassword,
         ?Race   $race = null,
         bool   $ghost = false,
         bool   $forceVerified = false
     ): User
     {
         // Validate required data is not empty
-        if (ValidationUtils::blank($name) || ValidationUtils::blank($email) || ValidationUtils::blank($nick) || ValidationUtils::blank($password)) {
+        if (ValidationUtils::blank($name) || ValidationUtils::blank($email) || ValidationUtils::blank($nick) || ValidationUtils::blank($hashedPassword)) {
             throw new Exception("Nicht alle Felder sind ausgefüllt!");
         }
 
@@ -104,18 +93,13 @@ class UserService
             throw new Exception("Dein Nickname muss mindestens " . $this->config->param1Int('nick_length') . " Zeichen und maximum " . $this->config->param2Int('nick_length') . " Zeichen haben!");
         }
 
-        // Validate password
-        if (strlen($password) < $this->config->getInt('password_minlength')) {
-            throw new Exception("Das Passwort ist noch zu kurz (mind. " . $this->config->getInt('password_minlength') . " Zeichen sind nötig)!");
-        }
-
         // Check existing user
         if ($this->userRepository->exists(UserSearch::create()->nick($nick)->emailFix($email))) {
             throw new Exception("Der Benutzer mit diesem Nicknamen oder dieser E-Mail-Adresse existiert bereits!");
         }
 
         // Add new record
-        $user = $this->userRepository->create($nick, $name, $email, $password, $race, $ghost);
+        $user = $this->userRepository->create($nick, $name, $email, $hashedPassword, $race, $ghost);
 
         $this->userRepository->setSittingDays($user, $this->config->getInt('user_sitting_days'));
         $this->userRatingRepository->addBlank($user);
@@ -197,7 +181,7 @@ die Spielleitung";
     public function deleteRequest(int $userId, string $password): bool
     {
         $user = $this->userRepository->getUser($userId);
-        if ($user !== null && validatePasswort($password, $user->getPassword())) {
+        if ($user !== null && $this->passwordHasher->isPasswordValid($user, $password)) {
             $timestamp = time() + ($this->config->getInt('user_delete_days') * 3600 * 24);
             $this->userRepository->markDeleted($userId, $timestamp);
 
@@ -209,8 +193,7 @@ die Spielleitung";
 
     public function updateDelete(User $user, int $timestamp): void
     {
-        $user->setDeleted($timestamp);
-        $this->userRepository->save();
+        $this->userRepository->markDeleted($user,$timestamp);
     }
 
     public function removeInactive(bool $manual = false): int
@@ -302,7 +285,7 @@ die Spielleitung";
     {
         $user = $this->userRepository->getUser($userId);
 
-        if (!validatePasswort($oldPassword, $user->getPassword())) {
+        if (!$this->passwordHasher->isPasswordValid($user, $oldPassword)) {
             throw new Exception("Dein altes Passwort stimmt nicht mit dem gespeicherten Passwort &uuml;berein!");
         }
 
@@ -318,7 +301,7 @@ die Spielleitung";
             throw new Exception("Das Passwort muss mindestens " . $this->config->getInt('password_minlength') . " Zeichen lang sein!");
         }
 
-        $this->userRepository->updatePassword($userId, $newPassword1);
+        $this->userRepository->updatePassword($user, $this->passwordHasher->hashPassword($user, $newPassword1));
 
         $this->logRepository->add(LogFacility::USER, LogSeverity::INFO, "Der Spieler [b]" . $user->getNick() . "[/b] &auml;ndert sein Passwort!");
 
@@ -344,7 +327,7 @@ die Spielleitung";
             throw new RecordNotFoundException('Es wurde kein entsprechender Datensatz gefunden!');
         }
 
-        $pw = generatePasswort();
+        $pw = GameUtils::generatePasswort();
 
         $emailText = $this->twig->render('email/new-password.txt.twig', [
             'user' => $user,
@@ -353,7 +336,7 @@ die Spielleitung";
         ]);
         $this->mailSenderService->send("Passwort-Anforderung", $emailText, $emailFixed);
 
-        $this->userRepository->updatePassword($user->getId(), $pw);
+        $this->userRepository->updatePassword($user, $this->passwordHasher->hashPassword($user, $pw));
 
         $this->logRepository->add(
             LogFacility::USER,

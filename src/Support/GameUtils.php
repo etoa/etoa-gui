@@ -5,6 +5,7 @@ namespace EtoA\Support;
 use EtoA\Core\Configuration\ConfigurationService;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\String\ByteString;
 
 class GameUtils
 {
@@ -46,8 +47,12 @@ class GameUtils
         return false;
     }
 
+    /**
+     * Generates a random password, ByteString uses random_int and is therefore
+     * safe to use for credentials.
+     */
     public static function generatePasswort():string
     {
-        return substr(sha1((string)mt_rand()), 0, 8);
+        return ByteString::fromRandom(12)->toString();
     }
 }

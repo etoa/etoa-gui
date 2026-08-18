@@ -22,6 +22,8 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Validator\Constraints\Length;
+use Symfony\Component\Validator\Constraints\NotBlank;
 use EtoA\Support\ValidationUtils;
 
 class RegisterController extends AbstractController
@@ -78,7 +80,14 @@ class RegisterController extends AbstractController
                 'attr' => [
                     'size' => 20,
                     'autocomplete' => "new-password",
-                ]
+                ],
+                // the form hashes the input and writes it to User::setPassword()
+                'hash_property_path' => 'password',
+                'mapped' => false,
+                'constraints' => [
+                    new NotBlank(),
+                    new Length(['min' => $this->configurationService->getInt('password_minlength')]),
+                ],
             ])
             ->add('agb', CheckboxType::class, [
                 'label' => false,
@@ -105,7 +114,7 @@ class RegisterController extends AbstractController
                         name: $user->getName(),
                         email: $user->getEmail(),
                         nick: $user->getNick(),
-                        password: $user->getPassword(),
+                        hashedPassword: $user->getPassword(),
                     );
                     $this->logRepository->add(
                         LogFacility::USER,

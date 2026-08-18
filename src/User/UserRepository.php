@@ -11,6 +11,7 @@ use EtoA\Entity\Alliance;
 use EtoA\Entity\AllianceRank;
 use EtoA\Entity\Race;
 use EtoA\Entity\User;
+use Symfony\Component\String\ByteString;
 
 class UserRepository extends AbstractRepository
 {
@@ -475,7 +476,7 @@ class UserRepository extends AbstractRepository
 
     public function setVerified(User $user, bool $verified): void
     {
-        $user->setVerificationKey($verified ? '' : generateRandomString(64));
+        $user->setVerificationKey($verified ? '' : ByteString::fromRandom(64)->toString());
     }
 
     /**
@@ -529,7 +530,7 @@ class UserRepository extends AbstractRepository
             ->execute();
     }
 
-    public function create(string $nick, string $name, string $email, string $password, ?Race $race = null, bool $ghost = false): User
+    public function create(string $nick, string $name, string $email, string $hashedPassword, ?Race $race = null, bool $ghost = false): User
     {
         $user = new User();
 
@@ -537,7 +538,7 @@ class UserRepository extends AbstractRepository
         $user->setName($name);
         $user->setEmail($email);
         $user->setEmailFix($email);
-        $user->setPassword($password);
+        $user->setPassword($hashedPassword);
         $user->setRace($race);
         $user->setGhost($ghost);
         $user->setLogoutTime(time());
@@ -549,20 +550,14 @@ class UserRepository extends AbstractRepository
         return $user;
     }
 
-    public function updatePassword(int $userId, string $password, bool $isHashedPassword = false): string
+    /**
+     * The value has to be hashed by the caller, the security component decides the algorithm.
+     */
+    public function updatePassword(User $user, string $hashedPassword): void
     {
-        $saltedPassword = $isHashedPassword ? $password : saltPasswort($password);
-        $this->createQueryBuilder('q')
-            ->update('users')
-            ->set('user_password', ':password')
-            ->where('user_id = :userId')
-            ->setParameters([
-                'userId' => $userId,
-                'password' => $saltedPassword,
-            ])
-            ->executeQuery();
+        $user->setPassword($hashedPassword);
 
-        return $saltedPassword;
+        $this->save();
     }
 
     public function increaseMultiDeletes(int $userId): void
