@@ -3,7 +3,45 @@
 {% extends 'layout/external.html.twig' %}
 
 {% block content %}
-    {{ contactContent|raw }}
+    {% if contactText %}
+        <twig:box title="">
+            {{ BBCodeToHTML(contactText)|raw }}
+        </twig:box>
+    {% endif %}
+
+    {% if contacts is not empty %}
+        <twig:Table :title="'Kontaktpersonen für die ' ~ roundName">
+            {% block table_content %}
+                <tr>
+                    <th>Name</th>
+                    <th>Mail</th>
+                    <th>Kontaktformular</th>
+                    <th>Foren-Profil</th>
+                </tr>
+                {% for contact in outerScope.contacts %}
+                    <tr>
+                        <td>{{ contact.nick }}</td>
+                        {% if contact.email %}
+                            <td><a href="mailto:{{ contact.email }}">{{ contact.email }}</a></td>
+                        {% else %}
+                            <td>(nicht öffentlich)</td>
+                        {% endif %}
+                        <td><a href="{{ path('external.contact.message', {adminId: contact.id}) }}">Mail senden</a></td>
+                        {% if contact.boardUrl %}
+                            <td><a href="{{ contact.boardUrl }}" target="_blank">Profil</a></td>
+                        {% else %}
+                            <td>-</td>
+                        {% endif %}
+                    </tr>
+                {% endfor %}
+            {% endblock %}
+        </twig:Table>
+    {% else %}
+        <twig:box title="Information" class="information">
+            Keine Kontaktpersonen vorhanden!
+        </twig:box>
+    {% endif %}
+
     <p class="center">
         <a href="{{ path('external.login') }}">Zurück zum Login</a>
     </p>

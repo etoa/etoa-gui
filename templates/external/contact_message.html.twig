@@ -1,0 +1,17 @@
+{% set title='Kontakt' %}
+
+{% extends 'layout/external.html.twig' %}
+
+{% block content %}
+    {{ form_start(form) }}
+        <twig:Table :title="'Nachricht an ' ~ admin.nick ~ ' senden'">
+            {% block table_content %}
+                {{ form_row(outerScope.form.mail_sender) }}
+                {{ form_row(outerScope.form.mail_subject) }}
+                {{ form_row(outerScope.form.mail_text) }}
+            {% endblock %}
+        </twig:Table>
+        {{ form_widget(form.submit) }} &nbsp;
+        <input type="button" onclick="document.location='{{ path('external.contact') }}'" value="Zurück"/>
+    {{ form_end(form) }}
+{% endblock %}

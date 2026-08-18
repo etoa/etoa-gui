@@ -7,15 +7,18 @@ use EtoA\Core\AppName;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Entity\AdminUser;
 use EtoA\HostCache\NetworkNameService;
-use EtoA\Support\BBCodeUtils;
 use EtoA\Support\Mail\MailSenderService;
 use EtoA\Text\TextRepository;
 use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\Extension\Core\Type\EmailType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use EtoA\Support\ValidationUtils;
+use Symfony\Component\Validator\Constraints\NotBlank;
 
 class ContactController extends AbstractController
 {
@@ -27,48 +30,20 @@ class ContactController extends AbstractController
     ): Response
     {
         $admins = array_filter($adminUserRepo->findAll(), fn(AdminUser $admin) => $admin->isIsContact());
-
-        ob_start();
-
         $contactText = $textRepo->find('contact_message');
-        if ($contactText->isEnabled()) {
-            iBoxStart();
-            echo BBCodeUtils::toHTML($contactText->getContent());
-            iBoxEnd();
-        }
-
-        if (count($admins) > 0) {
-            tableStart('Kontaktpersonen für die ' . $config->get('roundname'));
-            echo '<tr>
-                <th>Name</th>
-                <th>Mail</th>
-                <th>Kontaktformular</th>
-                <th>Foren-Profil</th>
-            </tr>';
-            foreach ($admins as $admin) {
-                $showMailAddress = preg_match('/' . AdminUser::CONTACT_REQUIRED_EMAIL_SUFFIX . '/i', $admin->getEmail());
-
-                echo '<tr><td>' . $admin->getNick() . '</td>';
-                if ($showMailAddress) {
-                    echo '<td><a href="mailto:' . $admin->getEmail() . '">' . $admin->getEmail() . '</a></td>';
-                } else {
-                    echo '<td>(nicht öffentlich)</td>';
-                }
-                echo '<td><a href="' . $this->generateUrl('external.contact.message', ['adminId' => $admin->getId()]) . '">Mail senden</a></td>';
-                if ($admin->getBoardUrl() != '') {
-                    echo '<td><a href="' . $admin->getBoardUrl() . '" target="_blank">Profil</a></td>';
-                } else {
-                    echo '<td>-</td>';
-                }
-                echo '</tr>';
-            }
-            tableEnd();
-        } else {
-            info_msg('Keine Kontaktpersonen vorhanden!');
-        }
 
         return $this->render('external/contact.html.twig', [
-            'contactContent' => ob_get_clean(),
+            'contactText' => $contactText !== null && $contactText->isEnabled() ? $contactText->getContent() : null,
+            'roundName' => $config->get('roundname'),
+            'contacts' => array_map(fn (AdminUser $admin) => [
+                'id' => $admin->getId(),
+                'nick' => $admin->getNick(),
+                // only addresses on the official domain are shown publicly
+                'email' => preg_match('/' . AdminUser::CONTACT_REQUIRED_EMAIL_SUFFIX . '/i', $admin->getEmail())
+                    ? $admin->getEmail()
+                    : null,
+                'boardUrl' => $admin->getBoardUrl(),
+            ], array_values($admins)),
         ]);
     }
 
@@ -82,37 +57,64 @@ class ContactController extends AbstractController
         int                  $adminId,
     ): Response
     {
-
-        ob_start();
-
         $admin = $this->getAdmin($adminUserRepo, $adminId);
         if ($admin === null) {
             $this->addFlash('error', "Kontakt nicht vorhanden!");
             return $this->redirectToRoute('external.contact');
         }
 
-        $sender = '';
-        $mail_subject = '';
-        $mail_text = '';
+        $form = $this->createFormBuilder()
+            ->add('mail_sender', EmailType::class, [
+                'label' => 'Absender E-Mail:',
+                'attr' => [
+                    'size' => 50,
+                    'autofocus' => 1,
+                ],
+                'constraints' => [
+                    new NotBlank(),
+                ],
+            ])
+            ->add('mail_subject', TextType::class, [
+                'label' => 'Titel:',
+                'attr' => [
+                    'size' => 50,
+                ],
+                'constraints' => [
+                    new NotBlank(),
+                ],
+            ])
+            ->add('mail_text', TextareaType::class, [
+                'label' => 'Text:',
+                'attr' => [
+                    'rows' => 6,
+                    'cols' => 80,
+                ],
+                'constraints' => [
+                    new NotBlank(),
+                ],
+            ])
+            ->add('submit', SubmitType::class, [
+                'label' => 'Senden',
+            ])
+            ->getForm()
+            ->handleRequest($request);
 
-        if ($request->request->has('submit')) {
-            $mail_subject = $request->get('mail_subject');
-            $mail_text = $request->get('mail_text');
-            $sender = $request->request->get('mail_sender');
+        if ($form->isSubmitted()) {
+            if ($form->isValid()) {
+                $sender = $form->get('mail_sender')->getData();
 
-            if (ValidationUtils::filled($mail_subject) && ValidationUtils::filled($mail_text) && ValidationUtils::filled($sender)) {
-                $subject = "Kontakt-Anfrage: " . $mail_subject;
-                $recipient = $admin->getEmail();
-
-                // Text
                 $text = "Kontakt-Anfrage " . AppName::NAME . " " . $config->get('roundname') . "\n----------------------\n\n";
                 $text .= "E-Mail: " . $sender . "\n";
                 $text .= "IP/Host: " . $request->getClientIp() . " (" . $networkNameService->getHost($request->getClientIp()) . ")\n\n";
-                $text .= $mail_text;
+                $text .= $form->get('mail_text')->getData();
 
-                // Send mail
                 try {
-                    $mailSenderService->send($subject, $text, $recipient, $sender);
+                    $mailSenderService->send(
+                        "Kontakt-Anfrage: " . $form->get('mail_subject')->getData(),
+                        $text,
+                        $admin->getEmail(),
+                        $sender
+                    );
                     $this->addFlash('success', 'Vielen Dank! Deine Nachricht wurde gesendet!');
 
                     return $this->redirectToRoute('external.contact');
@@ -124,18 +126,9 @@ class ContactController extends AbstractController
             }
         }
 
-        echo '<form action="' . $this->generateUrl('external.contact.message', ['adminId' => $admin->getId()]) . '" method="post"><div>';
-        tableStart('Nachricht an ' . $admin->getNick() . ' senden');
-        echo '<tr><th>Absender E-Mail:</th><td><input type="email" name="mail_sender" value="' . $sender . '" size="50" autofocus required />';
-        echo '</td></tr>';
-        echo '<tr><th>Titel:</th><td><input type="text" name="mail_subject" value="' . $mail_subject . '" size="50" required /></td></tr>';
-        echo '<tr><th>Text:</th><td><textarea name="mail_text" rows="6" cols="80" required>' . $mail_text . '</textarea></td></tr>';
-        tableEnd();
-        echo '<input type="submit" name="submit" value="Senden" /> &nbsp;';
-        echo '<input type="button" onclick="document.location=\'' . $this->generateUrl('external.contact') . '\'" value="Zurück" /></div></form>';
-
-        return $this->render('external/contact.html.twig', [
-            'contactContent' => ob_get_clean(),
+        return $this->render('external/contact_message.html.twig', [
+            'admin' => $admin,
+            'form' => $form,
         ]);
     }
 
