@@ -2,12 +2,12 @@
 
 namespace EtoA\Controller\External;
 
-use EtoA\Controller\AbstractLegacyShowController;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
-class ShowController extends AbstractLegacyShowController
+class ShowController extends AbstractController
 {
     #[Route('/show', name: 'legacy.show')]
     public function index(Request $request): Response
@@ -28,8 +28,7 @@ class ShowController extends AbstractLegacyShowController
         if ($index == 'verifymail') {
             return $this->redirectToRoute('external.verify-email');
         }
-        return $this->handle(function () use ($index) {
-            return $this->render('external/404.html.twig');
-        });
+
+        return $this->render('external/404.html.twig');
     }
 }

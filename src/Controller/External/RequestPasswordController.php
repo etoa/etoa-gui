@@ -3,7 +3,6 @@
 namespace EtoA\Controller\External;
 
 use EtoA\Core\Configuration\ConfigurationService;
-use EtoA\Support\Checker;
 use EtoA\User\UserService;
 use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -13,7 +12,6 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use EtoA\Support\ValidationUtils;
 use Symfony\Component\Validator\Constraints\NotBlank;
 
 class RequestPasswordController extends AbstractController
