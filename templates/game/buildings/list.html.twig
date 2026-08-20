@@ -46,10 +46,14 @@
                                             <input type="hidden" name="id[{{ building.id }}]" value="{{ building.id }}">
                                             <input type="submit" class="button" name="command_cbuild[{{ building.id }}]" value="Bau abbrechen" onclick="if (this.value=='Bau abbrechen'){return confirm('Wirklich abbrechen?');}">
                                         </td>
-                                        <script type="text/javascript">
-                                            countDown("buildtime_{{ building.id }}", {{ building.endTime }}, "buildcancel_{{ building.id }}");
-                                            jsProgressBar("progressbar_{{ building.id }}", {{ building.startTime }}, {{ building.endTime }});
-                                        </script>
+                                        <twig:countdown
+                                            :element="'buildtime_' ~ building.id"
+                                            :targettime="building.endTime"
+                                            :elementToSetEmpty="'buildcancel_' ~ building.id"/>
+                                        <twig:progress_bar
+                                            :element="'progressbar_' ~ building.id"
+                                            :startTime="building.startTime"
+                                            :endTime="building.endTime"/>
                                     {% else %}
                                         <td class="buildingCellTime">{{ formatTimespan(building.buildTime) }}</td>
                                         {% if building.waitArr %}

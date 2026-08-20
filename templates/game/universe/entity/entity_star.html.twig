@@ -11,7 +11,7 @@
                     <img src="{{ star.getImagePath('b') }}" alt="star" width="220" height="220">
                 </td>
                 <th style="height:20px;">Typ:</th>
-                <td>{{ star.solarType.name }} helpLink("stars")</td>
+                <td>{{ star.solarType.name }} <a href="{{ path('game.help.stars') }}">Hilfe</a></td>
             </tr>
             <tr>
                 <th>Beschreibung:</th><td> {{ star.solarType.comment|raw }} </td>

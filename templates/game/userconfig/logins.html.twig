@@ -5,7 +5,8 @@
 {% block config %}
     {{ macros.message('Logins', 'Hier findest du deine aktiven Sessions, eine Liste der letzten 10 Logins in deinen Account, ebenfalls kannst du weiter unten
             sehen wann dass fehlerhafte Loginversuche stattgefunden haben. Solltest du feststellen, dass jemand unbefugten
-            Zugriff auf deinen Account hatte, solltest du umgehend dein Passwort ändern und ein ticketLink("Ticket", 16) schreiben.') }}
+            Zugriff auf deinen Account hatte, solltest du umgehend dein Passwort ändern und ein
+            <a href="' ~ path('game.ticket.list.category', {id: 16}) ~ '">Ticket</a> schreiben.') }}
 
     <twig:Table title="Aktive Sessions">
         {% block table_content %}

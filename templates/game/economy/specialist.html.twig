@@ -48,7 +48,9 @@
     {% if not app.user.data.specialist %}
         {{ form_start(form_specialists) }}
     {% endif %}
-        <twig:Table title="Galaktisches Arbeitsamt helpLink('specialists')">
+        {# der Hilfe-Link stand vorher im Tabellentitel, dort wuerde die Komponente das HTML escapen #}
+        <p><a href="{{ path('game.help.specialists') }}">Hilfe zu Spezialisten</a></p>
+        <twig:Table title="Galaktisches Arbeitsamt">
         {% block table_content %}
             <tr>
                 <th>Name</th>

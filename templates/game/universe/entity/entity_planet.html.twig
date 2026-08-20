@@ -45,7 +45,7 @@
             <th>Temperatur:</th>
             <td>{{ planet.tempFrom }} &deg;C bis {{ planet.tempTo }} &deg;C <br/><br/>
                 <img src="{{ asset('build/images/heat_small.png') }}" alt="Heat" style="width:16px;float:left;"/>
-                Wärmebonus: helpLink("tempbonus")<br/>
+                Wärmebonus: <a href="{{ path('game.help.tempbonus') }}">Hilfe</a><br/>
                 {% if planet.solarPowerBonus > 0 %}
                     <span style="color:#0f0"> + {{ planet.solarPowerBonus }}</span>
                 {% else %}
@@ -53,7 +53,7 @@
                 {% endif %}
                 Energie pro Solarsatellit <br style="clear:both;"/><br/>
                 <img src="{{ asset('build/images/ice_small.png') }}" alt="Cold" style="width:16px;float:left;" />
-                Kältebonus: helpLink("tempbonus")<br/>
+                Kältebonus: <a href="{{ path('game.help.tempbonus') }}">Hilfe</a><br/>
                 {% if planet.fuelProductionBonus > 0 %}
                     <span style="color:#0f0"> + {{planet.fuelProductionBonus}}%</span>
                 {% else %}
