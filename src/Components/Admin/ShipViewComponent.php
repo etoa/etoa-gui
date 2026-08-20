@@ -58,6 +58,6 @@ class ShipViewComponent extends AbstractEditComponent
 
     protected function storeItem(): void
     {
-        $this->shipRepository->saveItem($this->item);
+        $this->shipRepository->save();
     }
 }

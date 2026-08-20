@@ -91,33 +91,6 @@ class ShipQueueRepository extends AbstractRepository
             ->execute();
     }
 
-    public function saveQueueItem(ShipQueueItem $item): void
-    {
-        $this->createQueryBuilder('q')
-            ->update('ship_queue')
-            ->set('queue_user_id', ':userId')
-            ->set('queue_ship_id', ':shipId')
-            ->set('queue_entity_id', ':entityId')
-            ->set('queue_cnt', ':count')
-            ->set('queue_starttime', ':startTime')
-            ->set('queue_endtime', ':endTime')
-            ->set('queue_objtime', ':objectTime')
-            ->set('queue_build_type', ':buildType')
-            ->where('queue_id = :id')
-            ->setParameters([
-                'id' => $item->id,
-                'userId' => $item->userId,
-                'shipId' => $item->shipId,
-                'entityId' => $item->entityId,
-                'count' => $item->count,
-                'startTime' => $item->startTime,
-                'endTime' => $item->endTime,
-                'objectTime' => $item->objectTime,
-                'buildType' => $item->buildType,
-            ])
-            ->executeQuery();
-    }
-
     public function deleteQueueItem(ShipQueueItem $item): void
     {
         $this->remove($item);

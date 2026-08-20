@@ -180,63 +180,6 @@ class ShipListRepository extends AbstractRepository
     }
 
 
-    public function saveItem(ShipListItem $item): void
-    {
-        $this->createQueryBuilder('q')
-            ->update('shiplist')
-            ->set('shiplist_user_id', ':userId')
-            ->set('shiplist_ship_id', ':shipId')
-            ->set('shiplist_entity_id', ':entityId')
-            ->set('shiplist_bot_id', ':botId')
-            ->set('shiplist_count', ':count')
-            ->set('shiplist_bunkered', ':bunkered')
-            ->set('shiplist_special_ship', ':special')
-            ->set('shiplist_special_ship_level', ':specialLevel')
-            ->set('shiplist_special_ship_exp', ':specialExp')
-            ->set('shiplist_special_ship_bonus_weapon', ':specialWeapon')
-            ->set('shiplist_special_ship_bonus_structure', ':specialStructure')
-            ->set('shiplist_special_ship_bonus_shield', ':specialShield')
-            ->set('shiplist_special_ship_bonus_heal', ':specialHeal')
-            ->set('shiplist_special_ship_bonus_capacity', ':specialCapacity')
-            ->set('shiplist_special_ship_bonus_speed', ':specialSpeed')
-            ->set('shiplist_special_ship_bonus_pilots', ':specialPilots')
-            ->set('shiplist_special_ship_bonus_tarn', ':specialTarn')
-            ->set('shiplist_special_ship_bonus_antrax', ':specialAntrax')
-            ->set('shiplist_special_ship_bonus_forsteal', ':specialForsteal')
-            ->set('shiplist_special_ship_bonus_build_destroy', ':specialDestroy')
-            ->set('shiplist_special_ship_bonus_antrax_food', ':specialAntraxFood')
-            ->set('shiplist_special_ship_bonus_deactivade', ':specialDeactivate')
-            ->set('shiplist_special_ship_bonus_readiness', ':specialReadiness')
-            ->where('shiplist_id = :id')
-            ->setParameters([
-                'id' => $item->id,
-                'userId' => $item->userId,
-                'shipId' => $item->shipId,
-                'entityId' => $item->entityId,
-                'botId' => $item->botId,
-                'count' => $item->count,
-                'bunkered' => $item->bunkered,
-                'special' => (int) $item->specialShip,
-                'specialLevel' => $item->specialShipLevel,
-                'specialExp' => $item->specialShipExp,
-                'specialWeapon' => $item->specialShipBonusWeapon,
-                'specialStructure' => $item->specialShipBonusStructure,
-                'specialShield' => $item->specialShipBonusShield,
-                'specialHeal' => $item->specialShipBonusHeal,
-                'specialCapacity' => $item->specialShipBonusCapacity,
-                'specialSpeed' => $item->specialShipBonusSpeed,
-                'specialPilots' => $item->specialShipBonusPilots,
-                'specialTarn' => $item->specialShipBonusTarn,
-                'specialAntrax' => $item->specialShipBonusAnthrax,
-                'specialForsteal' => $item->specialShipBonusForSteal,
-                'specialDestroy' => $item->specialShipBonusBuildDestroy,
-                'specialAntraxFood' => $item->specialShipBonusAnthraxFood,
-                'specialDeactivate' => $item->specialShipBonusDeactivate,
-                'specialReadiness' => $item->specialShipBonusReadiness,
-            ])
-            ->executeQuery();
-    }
-
     public function bunker(ShipListItem $shipListItem, int $count): int
     {
 

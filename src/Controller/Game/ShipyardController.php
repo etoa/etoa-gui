@@ -329,7 +329,6 @@ class ShipyardController extends AbstractGameController
                     $item->setStartTime($new_starttime);
                     $item->setEndTime($new_starttime + $item->getEndTime() - $item->getStartTime());
                     $new_starttime = $item->getEndTime();
-                    $this->shipQueueRepository->saveQueueItem($item);
                 }
                 $this->shipQueueRepository->save();
             }

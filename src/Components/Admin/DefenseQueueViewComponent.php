@@ -54,6 +54,6 @@ class DefenseQueueViewComponent extends AbstractEditComponent
 
     protected function storeItem(): void
     {
-        $this->defenseQueueRepository->saveQueueItem($this->item);
+        $this->defenseQueueRepository->save();
     }
 }

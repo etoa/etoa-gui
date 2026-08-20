@@ -341,7 +341,6 @@ class DefenseController extends AbstractGameController
                     $item->setStartTime($new_starttime);
                     $item->setEndTime($new_starttime + $item->getEndTime() - $item->getStartTime());
                     $new_starttime = $item->getEndTime();
-                    $this->defenseQueueRepository->saveQueueItem($item);
                 }
                 $this->defenseQueueRepository->save();
             }

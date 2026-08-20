@@ -54,6 +54,6 @@ class ShipQueueViewComponent extends AbstractEditComponent
 
     protected function storeItem(): void
     {
-        $this->shipQueueRepository->saveQueueItem($this->item);
+        $this->shipQueueRepository->save();
     }
 }
