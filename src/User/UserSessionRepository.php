@@ -24,9 +24,9 @@ class UserSessionRepository extends AbstractRepository
     public function getUserSessionIds(): array
     {
         return $this->createQueryBuilder('q')
-            ->select('id')
-            ->from('user_sessions')
-            ->fetchFirstColumn();
+            ->select('q.id')
+            ->getQuery()
+            ->getSingleColumnResult();
     }
 
     public function countActiveSessions(int $timeout): int

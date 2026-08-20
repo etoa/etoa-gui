@@ -95,18 +95,19 @@ class UsersController extends AbstractAdminController
         //TODO: use symfony form
         if ($request->request->has('validate_submit')) {
             foreach ($request->request->all('validate') as $userId => $validate) {
+                $user = $this->userRepository->getUser((int) $userId);
+                if ($user === null) {
+                    continue;
+                }
+
                 if ($validate == 0) {
-                    $user = $this->userRepository->getUser($userId);
-                    if ($user !== null) {
-                        if (file_exists($storedImagePath . $user->getProfileImage())) {
-                            unlink($storedImagePath . $user->getProfileImage());
-                        }
-                        if ($this->userRepository->updateImgCheck($userId, false, '')) {
-                            $this->addFlash('success', 'Bild entfernt!');
-                        }
+                    if (file_exists($storedImagePath . $user->getProfileImage())) {
+                        unlink($storedImagePath . $user->getProfileImage());
                     }
+                    $this->userRepository->updateImgCheck($user, false, '');
+                    $this->addFlash('success', 'Bild entfernt!');
                 } else {
-                    $this->userRepository->updateImgCheck($userId, false);
+                    $this->userRepository->updateImgCheck($user, false);
                 }
             }
         }

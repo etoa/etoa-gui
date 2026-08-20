@@ -1037,7 +1037,7 @@ class UserController extends AbstractAdminController
         }
 
         $this->userMultiRepository->deactivate($id, $multi);
-        $this->userRepository->increaseMultiDeletes($id);
+        $this->userRepository->increaseMultiDeletes($user);
         $this->addFlash('success', "Eintrag gelöscht!");
 
         return $this->redirectToRoute('admin.users.user_multi', ['id' => $id]);

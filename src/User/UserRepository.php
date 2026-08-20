@@ -363,11 +363,13 @@ class UserRepository extends AbstractRepository
      */
     public function getEmailAddressesWithNickname(): array
     {
-        return $this->createQueryBuilder('q')
-            ->select('user_email', 'user_nick')
-            ->from('users')
-            ->orderBy('user_nick')
-            ->fetchAllKeyValue();
+        $rows = $this->createQueryBuilder('q')
+            ->select('q.email', 'q.nick')
+            ->orderBy('q.nick')
+            ->getQuery()
+            ->getArrayResult();
+
+        return array_column($rows, 'nick', 'email');
     }
 
     public function blockUser(User $user, int $from, int $to, string $reason, AdminUser $admin): void
@@ -397,24 +399,15 @@ class UserRepository extends AbstractRepository
             ->execute();
     }
 
-    public function updateImgCheck(int $userId, bool $check, string $image = null): bool
+    public function updateImgCheck(User $user, bool $check, string $image = null): void
     {
-        $qb = $this->createQueryBuilder('q')
-            ->update('users')
-            ->set('user_profile_img_check', ':check')
-            ->where('user_id = :userId')
-            ->setParameters([
-                'check' => (int)$check,
-                'userId' => $userId,
-            ]);
+        $user->setProfileImageCheck($check);
 
         if ($image !== null) {
-            $qb
-                ->set('user_profile_img', ':image')
-                ->setParameter('image', $image);
+            $user->setProfileImage($image);
         }
 
-        return (bool)$qb->executeQuery()->rowCount();
+        $this->save();
     }
 
     public function addSittingDays(int $days): void
@@ -519,16 +512,11 @@ class UserRepository extends AbstractRepository
         $this->save();
     }
 
-    public function increaseMultiDeletes(int $userId): void
+    public function increaseMultiDeletes(User $user): void
     {
-        $this->createQueryBuilder('q')
-            ->update('users')
-            ->set('user_multi_delets', 'user_multi_delets + 1')
-            ->where('user_id = :userId')
-            ->setParameters([
-                'userId' => $userId,
-            ])
-            ->executeQuery();
+        $user->setMultiDelets($user->getMultiDelets() + 1);
+
+        $this->save();
     }
 
     public function markMainPlanetChanged(int $userId): void

@@ -86,19 +86,15 @@ class UserMultiRepository extends AbstractRepository
 
     public function deactivate(int $userId, int $multiId): void
     {
-        $this->createQueryBuilder('q')
-            ->update('user_multi')
-            ->set('activ', ':active')
-            ->set('timestamp', ':now')
-            ->where('user_id = :userId')
-            ->andWhere('multi_id = :multiId')
-            ->setParameters([
-                'userId' => $userId,
-                'multiId' => $multiId,
-                'active' => 0,
-                'now' => time(),
-            ])
-            ->executeQuery();
+        $entry = $this->findOneBy(['user' => $userId, 'multiUser' => $multiId]);
+        if ($entry === null) {
+            return;
+        }
+
+        $entry->setActive(false);
+        $entry->setTimestamp(time());
+
+        $this->save();
     }
 
     /**
