@@ -49,18 +49,6 @@ class DefenseRepository extends AbstractRepository
         $this->addDefenseCount($defense, $amount, $user, $entity);
     }
 
-    public function setDefenseCount(int $id, int $count): void
-    {
-        $this->createQueryBuilder('q')
-            ->update('deflist')
-            ->set('deflist_count', ':count')
-            ->where('deflist_id = :id')
-            ->setParameters([
-                'count' => $count,
-                'id' => $id,
-            ])->executeQuery();
-    }
-
     public function removeEntry(int $id): void
     {
         $this->createQueryBuilder('q')

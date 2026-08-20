@@ -66,10 +66,13 @@ class MissileBattleHandler
                 $missileList = $this->missileRepository->findForUser($flight->getTarget()->getUser(), $flight->getTarget());
                 $defendingMissiles = [];
                 $defendingMissilesCounts = [];
+                // keep the items by id, the remaining counts are written back onto them below
+                $defendingMissileItemsById = [];
                 $defendingMissileCount = 0;
                 foreach ($missileList as $item) {
                     if ($item->getMissile()->getDef() > 0) {
                         $defendingMissilesCounts[$item->getId()] = $item->getCount();
+                        $defendingMissileItemsById[$item->getId()] = $item;
                         for ($x = 0; $x < $item->getCount(); $x++) {
                             $defendingMissiles[$defendingMissileCount]['id'] = $item->getId();
                             $defendingMissiles[$defendingMissileCount]['d'] = $item->getMissile()->getDef();
@@ -140,7 +143,15 @@ class MissileBattleHandler
                             $defenseItemCounts[$item->getId()] = $item->getCount();
                             $msg_d .= "" . $item->getCount() . " " . $defense->getName() . "\n";
                         }
-                        shuffle($defenseItemCounts);
+                        // only the order in which the items take damage is random, the
+                        // item ids have to survive as keys - shuffle() would reindex them
+                        $shuffledItemIds = array_keys($defenseItemCounts);
+                        shuffle($shuffledItemIds);
+                        $shuffledItemCounts = [];
+                        foreach ($shuffledItemIds as $shuffledItemId) {
+                            $shuffledItemCounts[$shuffledItemId] = $defenseItemCounts[$shuffledItemId];
+                        }
+                        $defenseItemCounts = $shuffledItemCounts;
 
                         // Missile damage
                         $attackingDamage = 0;
@@ -173,14 +184,15 @@ class MissileBattleHandler
                                 $msg_d .= "\nAnlagen nach dem Angriff:\n\n";
                                 foreach ($defenseItemCounts as $itemId => $count) {
                                     $msg_d .= $count . " " . $defenses[$defenseItemsById[$itemId]->getDefenseId()]->getName() . "\n";
-                                    $this->defenseRepository->setDefenseCount($itemId, $count);
+                                    $defenseItemsById[$itemId]->setCount($count);
                                 }
                             } else {
                                 $msg_d .= 'Sämtliche Verteidigungsanlagen wurden zerstört!' . "\n";
                                 foreach (array_keys($defenseItemCounts) as $itemId) {
-                                    $this->defenseRepository->setDefenseCount($itemId, 0);
+                                    $defenseItemsById[$itemId]->setCount(0);
                                 }
                             }
+                            $this->defenseRepository->save();
                         } else {
                             $msg_d .= 'Es wurden aber keine Schäden festgestellt da eure Schilde allen Schaden abgefangen haben.' . "\n";
                         }
@@ -208,8 +220,9 @@ class MissileBattleHandler
 
                 // Set remaining defense missiles
                 foreach ($defendingMissilesCounts as $itemId => $count) {
-                    $this->missileRepository->setMissileCount($itemId, $count);
+                    $defendingMissileItemsById[$itemId]->setCount($count);
                 }
+                $this->missileRepository->save();
 
                 $this->messageRepository->createSystemMessage($flight->getEntityFrom()->getUser(), $this->messageCategoryRepository->find(MessageCategoryId::SHIP_WAR), 'Ergebnis des Raketenangriffs', $msg_a);
                 $this->messageRepository->createSystemMessage($flight->getTarget()->getUser(), $this->messageCategoryRepository->find(MessageCategoryId::SHIP_WAR), 'Raketenangriff', $msg_d);

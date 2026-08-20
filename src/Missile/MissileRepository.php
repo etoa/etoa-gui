@@ -102,18 +102,6 @@ class MissileRepository extends AbstractRepository
         return $qb->getQuery()->execute();
     }
 
-    public function setMissileCount(int $id, int $count): void
-    {
-        $this->createQueryBuilder('q')
-            ->update('missilelist')
-            ->set('missilelist_count', ':count')
-            ->where('missilelist_id = :id')
-            ->setParameters([
-                'count' => $count,
-                'id' => $id,
-            ])->executeQuery();
-    }
-
     public function removeForUser(User $user): void
     {
         $this->createQueryBuilder('q')
