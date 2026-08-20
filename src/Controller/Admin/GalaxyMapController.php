@@ -2,8 +2,8 @@
 
 namespace EtoA\Controller\Admin;
 
-use Cell;
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Universe\Cell\CellRepository;
 use EtoA\Universe\Entity\EntityRepository;
 use EtoA\Universe\SectorMapRenderer;
 use EtoA\User\UserRepository;
@@ -19,7 +19,8 @@ class GalaxyMapController extends AbstractAdminController
         private readonly UserRepository               $userRepository,
         private readonly ConfigurationService         $config,
         private readonly UserUniverseDiscoveryService $userUniverseDiscoveryService,
-        private readonly EntityRepository             $entityRepository
+        private readonly EntityRepository             $entityRepository,
+        private readonly CellRepository               $cellRepository
     )
     {
     }
@@ -38,8 +39,8 @@ class GalaxyMapController extends AbstractAdminController
 
         // Selected cell
         if ($request->query->has('cell')) {
-            $cell = new Cell($request->query->getInt('cell'));
-            if ($cell->isValid()) {
+            $cell = $this->cellRepository->find($request->query->getInt('cell'));
+            if ($cell !== null) {
                 $sectorMap->setSelectedCell($cell);
             }
         }
