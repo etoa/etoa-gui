@@ -266,16 +266,6 @@ class AllianceRepository extends AbstractRepository
         return $affected > 0;
     }
 
-    public function getPicture(int $allianceId): ?string
-    {
-        return $this->createQueryBuilder('q')
-            ->select('alliance_img')
-            ->from('alliances')
-            ->where('alliance_id = :allianceId')
-            ->setParameter('allianceId', $allianceId)
-            ->fetchOne();
-    }
-
     public function clearPicture(Alliance $alliance): void
     {
         $alliance->setImage(null);
@@ -284,20 +274,11 @@ class AllianceRepository extends AbstractRepository
         $this->save();
     }
 
-    public function markPictureChecked(int $allianceId): bool
+    public function markPictureChecked(Alliance $alliance): void
     {
-        $affected = $this->createQueryBuilder('q')
-            ->update('alliances')
-            ->set('alliance_img_check', ':check')
-            ->where('alliance_id = :allianceId')
-            ->setParameters([
-                'allianceId' => $allianceId,
-                'check' => 0,
-            ])
-            ->executeQuery()
-            ->rowCount();
+        $alliance->setImageCheck(false);
 
-        return $affected > 0;
+        $this->save();
     }
 
     /**
@@ -383,30 +364,6 @@ class AllianceRepository extends AbstractRepository
             ->setParameter('id', $allianceId)
             ->getQuery()
             ->execute();
-    }
-
-    public function assignRankToUser(int $rankId, int $userId): void
-    {
-        $this->createQueryBuilder('q')
-            ->update('users')
-            ->set('user_alliance_rank_id', ':rank')
-            ->where('user_id = :user')
-            ->setParameters([
-                'rank' => $rankId,
-                'user' => $userId,
-            ])
-            ->executeQuery();
-    }
-
-    public function removeUser(int $userId): void
-    {
-        $this->createQueryBuilder('q')
-            ->update('users')
-            ->set('user_alliance_id', (string) 0)
-            ->set('user_alliance_rank_id', (string) 0)
-            ->where('user_id = :userId')
-            ->setParameter('userId', $userId)
-            ->executeQuery();
     }
 
     /**

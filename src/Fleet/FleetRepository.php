@@ -23,10 +23,10 @@ class FleetRepository extends AbstractRepository
      */
     public function getUserIds(FleetSearch $search = null): array
     {
-        return array_map(fn (array $row) => (int) $row['user_id'], $this->applySearchSortLimit($this->createQueryBuilder('q'), $search)
-            ->select("DISTINCT user_id")
-            ->from('fleet')
-            ->fetchAllAssociative());
+        return array_map('intval', $this->applySearchSortLimit($this->createQueryBuilder('q'), $search)
+            ->select('DISTINCT IDENTITY(q.user)')
+            ->getQuery()
+            ->getSingleColumnResult());
     }
 
     /**
@@ -52,11 +52,11 @@ class FleetRepository extends AbstractRepository
     public function countLeaderFleets(int $leaderId): int
     {
         return (int) $this->createQueryBuilder('q')
-            ->select("COUNT(id)")
-            ->from('fleet')
-            ->where('leader_id = :leaderId')
+            ->select('COUNT(q.id)')
+            ->where('q.leader = :leaderId')
             ->setParameter('leaderId', $leaderId)
-            ->fetchOne();
+            ->getQuery()
+            ->getSingleScalarResult();
     }
 
 

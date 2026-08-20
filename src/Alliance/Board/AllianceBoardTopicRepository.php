@@ -44,16 +44,18 @@ class AllianceBoardTopicRepository extends AbstractRepository
      */
     public function getBndTopicCounts(array $bndIds): array
     {
-        $data = $this->createQueryBuilder('q')
-            ->select('topic_bnd_id, COUNT(topic_id)')
-            ->from('allianceboard_topics')
-            ->where('topic_bnd_id IN (:bndIds)')
-            ->setParameter('bndIds', $bndIds, ArrayParameterType::INTEGER)
-            ->fetchAllAssociative();
+        $rows = $this->createQueryBuilder('q')
+            ->select('IDENTITY(q.bnd) AS bndId', 'COUNT(q.id) AS cnt')
+            ->where('q.bnd IN (:bndIds)')
+            ->groupBy('q.bnd')
+            ->setParameter('bndIds', $bndIds)
+            ->getQuery()
+            ->getArrayResult();
 
-        $counts = [];
-        foreach ($bndIds as $bndId) {
-            $counts[$bndId] = (int) ($data[$bndId] ?? 0);
+        // every requested id has to appear, missing ones count as zero
+        $counts = array_fill_keys($bndIds, 0);
+        foreach ($rows as $row) {
+            $counts[(int) $row['bndId']] = (int) $row['cnt'];
         }
 
         return $counts;
@@ -65,17 +67,19 @@ class AllianceBoardTopicRepository extends AbstractRepository
      */
     public function getBndPostCounts(array $bndIds): array
     {
-        $data = $this->createQueryBuilder('q')
-            ->select('t.topic_bnd_id, COUNT(p.post_id)')
-            ->from('allianceboard_topics', 't')
-            ->innerJoin('t', 'allianceboard_posts', 'p', 'p.post_topic_id = t.topic_id')
-            ->where('t.topic_bnd_id IN (:bndIds)')
-            ->setParameter('bndIds', $bndIds, ArrayParameterType::INTEGER)
-            ->fetchAllAssociative();
+        $rows = $this->createQueryBuilder('q')
+            ->select('IDENTITY(q.bnd) AS bndId', 'COUNT(p.id) AS cnt')
+            ->innerJoin('q.posts', 'p')
+            ->where('q.bnd IN (:bndIds)')
+            ->groupBy('q.bnd')
+            ->setParameter('bndIds', $bndIds)
+            ->getQuery()
+            ->getArrayResult();
 
-        $counts = [];
-        foreach ($bndIds as $bndId) {
-            $counts[$bndId] = (int) ($data[$bndId] ?? 0);
+        // every requested id has to appear, missing ones count as zero
+        $counts = array_fill_keys($bndIds, 0);
+        foreach ($rows as $row) {
+            $counts[(int) $row['bndId']] = (int) $row['cnt'];
         }
 
         return $counts;

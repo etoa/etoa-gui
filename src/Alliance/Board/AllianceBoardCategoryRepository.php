@@ -87,7 +87,10 @@ class AllianceBoardCategoryRepository extends AbstractRepository
 
     public function addCategory(string $name, string $description, int $order, string $bullet, int $allianceId): int
     {
-        $this->createQueryBuilder('q')
+        // dbal builder on purpose: the entity maps cat_alliance_id twice (as the
+        // alliance relation and as the allianceId field), an orm insert would
+        // write that column twice
+        $this->getConnection()->createQueryBuilder()
             ->insert('allianceboard_cat')
             ->values([
                 'cat_name' => ':name',
@@ -103,7 +106,7 @@ class AllianceBoardCategoryRepository extends AbstractRepository
                 'bullet' => $bullet,
                 'allianceId' => $allianceId,
             ])
-            ->executeQuery();
+            ->executeStatement();
 
         return (int) $this->getConnection()->lastInsertId();
     }

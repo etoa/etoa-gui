@@ -53,14 +53,12 @@ class AllianceBoardCategoryRankRepository extends AbstractRepository
      */
     public function getRanksForBnd(int $bndId): array
     {
-        $data = $this->createQueryBuilder('q')
-            ->select('cr_rank_id')
-            ->from('allianceboard_catranks')
-            ->where('cr_bnd_id = :bndId')
+        return array_map('intval', $this->createQueryBuilder('q')
+            ->select('q.rankId')
+            ->where('q.bndId = :bndId')
             ->setParameter('bndId', $bndId)
-            ->fetchAllAssociative();
-
-        return array_map(fn (array $row) => (int) $row['cr_rank_id'], $data);
+            ->getQuery()
+            ->getSingleColumnResult());
     }
 
     /**

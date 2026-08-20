@@ -5,11 +5,9 @@ namespace EtoA\Controller\Admin;
 use EtoA\Alliance\AllianceBuildListRepository;
 use EtoA\Alliance\AllianceDiplomacyRepository;
 use EtoA\Alliance\AllianceImageStorage;
-use EtoA\Alliance\AllianceRankRepository;
 use EtoA\Alliance\AllianceRepository;
 use EtoA\Alliance\AllianceService;
 use EtoA\Alliance\AllianceTechnologyListRepository;
-use EtoA\Alliance\AllianceTechnologyRepository;
 use EtoA\Alliance\InvalidAllianceParametersException;
 use EtoA\Entity\Alliance;
 use EtoA\Entity\AllianceBuildListItem;
@@ -39,7 +37,6 @@ class AllianceController extends AbstractAdminController
         private readonly AllianceService              $allianceService,
         private readonly AllianceImageStorage         $allianceImageStorage,
         private readonly AllianceDiplomacyRepository  $allianceDiplomacyRepository,
-        private readonly AllianceRankRepository       $allianceRankRepository,
         private readonly AllianceBuildListRepository  $allianceBuildListRepository,
         private readonly AllianceTechnologyListRepository $allianceTechnologyListRepository
     )
@@ -138,36 +135,6 @@ class AllianceController extends AbstractAdminController
     #[IsGranted('ROLE_ADMIN_TRIAL-ADMIN')]
     public function members(Alliance $alliance, Request $request): Response
     {
-        if ($request->isMethod('POST')) {
-            // Change alliance memberships
-            if ($request->request->has('member_kick') && count($request->request->all('member_kick')) > 0) {
-                foreach (array_keys($request->request->all('member_kick')) as $userId) {
-                    $this->allianceRepository->removeUser($userId);
-                }
-            }
-
-            if (count($request->request->all('member_rank')) > 0) {
-                foreach ($request->request->all('member_rank') as $userId => $rankId) {
-                    $this->allianceRepository->assignRankToUser((int)$rankId, (int)$userId);
-                }
-            }
-
-            // Update rank changes
-            if ($request->request->has('rank_del') && count($request->request->all('rank_del')) > 0) {
-                foreach (array_keys($request->request->all('rank_del')) as $rankId) {
-                    $this->allianceRankRepository->removeRank($rankId);
-                }
-            }
-
-            if ($request->request->has('rank_name') && count($request->request->all('rank_name')) > 0) {
-                foreach ($request->request->all('rank_name') as $rankId => $name) {
-                    $this->allianceRankRepository->updateRank($rankId, $name, $request->request->all('rank_level')[$rankId]);
-                }
-            }
-
-            $this->addFlash('success', 'Mitglieder aktualisiert!');
-        }
-
         $formMembers = $this->createFormBuilder($alliance)
             ->add('members', CollectionType::class, [
                 'entry_type' => AllianceMembersType::class,

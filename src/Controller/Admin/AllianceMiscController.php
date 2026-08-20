@@ -55,19 +55,22 @@ class AllianceMiscController extends AbstractAdminController
     #[IsGranted('ROLE_ADMIN_GAME-ADMIN')]
     public function imageCheck(Request $request): Response
     {
-        //TODO
         if ($request->request->has('validate_submit')) {
             foreach ($request->request->all('validate') as $allianceId => $value) {
+                $alliance = $this->allianceRepository->find((int) $allianceId);
+                if ($alliance === null) {
+                    continue;
+                }
+
                 if ($value == 0) {
-                    $picture = $this->allianceRepository->getPicture($allianceId);
-                    if ($picture != '') {
+                    $picture = $alliance->getImage();
+                    if ($picture !== null && $picture !== '') {
                         $this->allianceImageStorage->delete($picture);
-                        if ($this->allianceRepository->clearPicture($allianceId)) {
-                            $this->addFlash('success', 'Bild entfernt!');
-                        }
+                        $this->allianceRepository->clearPicture($alliance);
+                        $this->addFlash('success', 'Bild entfernt!');
                     }
                 } else {
-                    $this->allianceRepository->markPictureChecked($allianceId);
+                    $this->allianceRepository->markPictureChecked($alliance);
                 }
             }
         }

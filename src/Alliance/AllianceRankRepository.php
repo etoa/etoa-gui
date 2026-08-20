@@ -48,19 +48,7 @@ class AllianceRankRepository extends AbstractRepository
      */
     public function getRanks(int $allianceId): array
     {
-        $data = $this->createQueryBuilder('q')
-            ->select(
-                'rank_id',
-                'rank_level',
-                'rank_name'
-            )
-            ->from('alliance_ranks')
-            ->where('rank_alliance_id = :allianceId')
-            ->orderBy('rank_level', 'DESC')
-            ->setParameter('allianceId', $allianceId)
-            ->fetchAllAssociative();
-
-        return array_map(fn (array $row) => new AllianceRank($row), $data);
+        return $this->findBy(['alliance' => $allianceId], ['level' => 'DESC']);
     }
 
     public function getRank(int $rankId, int $allianceId): ?AllianceRank
@@ -132,41 +120,6 @@ class AllianceRankRepository extends AbstractRepository
             ->execute();
 
         return array_map(fn (array $row) => (int) $row['rightId'], $data);
-    }
-
-    public function updateRank(int $id, string $name, int $level): void
-    {
-        $this->createQueryBuilder('q')
-            ->update('alliance_ranks')
-            ->set('rank_name', ':name')
-            ->set('rank_level', ':level')
-            ->where('rank_id = :id')
-            ->setParameters([
-                'id' => $id,
-                'name' => $name,
-                'level' => $level,
-            ])
-            ->executeQuery();
-    }
-
-    public function removeRank(int $rankId): void
-    {
-        $this->createQueryBuilder('q')
-            ->delete('alliance_ranks')
-            ->where('rank_id = :rankId')
-            ->setParameter('rankId', $rankId)
-            ->executeQuery();
-
-        $this->deleteRights($rankId);
-    }
-
-    public function deleteRights(int $rankId): void
-    {
-        $this->createQueryBuilder('q')
-            ->delete('alliance_rankrights')
-            ->where('rr_rank_id = :rankId')
-            ->setParameter('rankId', $rankId)
-            ->executeQuery();
     }
 
     public function deleteAllianceRanks(Alliance $alliance): void

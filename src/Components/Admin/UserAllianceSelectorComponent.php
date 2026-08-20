@@ -45,7 +45,7 @@ class UserAllianceSelectorComponent
 
         $ranks = [];
         foreach ($this->allianceRankRepository->getRanks($this->userAllianceId) as $rank) {
-            $ranks[$rank->id] = $rank->name;
+            $ranks[$rank->getId()] = $rank->getName();
         }
         return $ranks;
     }
