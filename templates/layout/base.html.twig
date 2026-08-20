@@ -21,8 +21,6 @@
     {{ encore_entry_link_tags(encoreEntry|default('app')) }}
     {{ encore_entry_script_tags(encoreEntry|default('app')) }}
 
-    <!-- XAJAX -->
-    {{ xajaxJS|default('')|raw }}
     <script type="text/javascript" src="{{ asset('build/js/main.js') }}"></script>
     {% if page|default(false) %}
         <script type="text/javascript">

@@ -20,6 +20,8 @@ use EtoA\Universe\Resources\BaseResources;
 use EtoA\Universe\Resources\ResourceNames;
 use EtoA\User\UserRepository;
 use Symfony\Bundle\SecurityBundle\Security;
+use EtoA\UI\Tooltip;
+use EtoA\UI\Countdown;
 
 class AllianceBase
 {
@@ -41,6 +43,7 @@ class AllianceBase
         private readonly UserRepository $userRepository,
         private readonly AllianceBuildListRepository $allianceBuildListRepository,
         private readonly Security                 $security,
+        private readonly Tooltip                  $tooltip,
     )
     {}
 
@@ -196,7 +199,7 @@ class AllianceBase
                     switch ($itemStatus->status) {
                         case AllianceItemBuildStatus::STATUS_ITEM_UNDER_CONSTRUCTION:
                             $style_message = "color: rgb(0, 255, 0);";
-                            $message = startTime($currentBuildingListItem->buildEndTime - time(), 'build_message_building_' . $building->getId() . '', 0, 'Wird ausgebaut auf Stufe ' . ($level + 1) . ' (TIME)');
+                            $message = Countdown::script($currentBuildingListItem->buildEndTime - time(), 'build_message_building_' . $building->getId() . '', 0, 'Wird ausgebaut auf Stufe ' . ($level + 1) . ' (TIME)');
                             break;
                         case AllianceItemBuildStatus::STATUS_UNDER_CONSTRUCTION:
                             $message = "Es wird bereits gebaut!";
@@ -204,10 +207,10 @@ class AllianceBase
                             break;
                         case AllianceItemBuildStatus::STATUS_MISSING_RESOURCE:
                             $need = $itemStatus->missingResources;
-                            $message = "<input type=\"button\" class=\"button\" name=\"storage_submit\" id=\"storage_submit\" value=\"Fehlende Rohstoffe einzahlen\" " . tm("Nicht genügend Rohstoffe", "Es sind nicht genügend Rohstoffe vorhanden!<br>Klick auf den Button um die fehlenden Rohstoffe einzuzahlen.") . " onclick=\"setSpends(" . $need->metal . ", " . $need->crystal . ", " . $need->plastic . ", " . $need->fuel . ", " . $need->food . ");\"/>";
+                            $message = "<input type=\"button\" class=\"button\" name=\"storage_submit\" id=\"storage_submit\" value=\"Fehlende Rohstoffe einzahlen\" " . $this->tooltip->mTT("Nicht genügend Rohstoffe", "Es sind nicht genügend Rohstoffe vorhanden!<br>Klick auf den Button um die fehlenden Rohstoffe einzuzahlen.") . " onclick=\"setSpends(" . $need->metal . ", " . $need->crystal . ", " . $need->plastic . ", " . $need->fuel . ", " . $need->food . ");\"/>";
                             foreach ($this->resName as $id => $resourceName) {
                                 if ($need->get($id) > 0) {
-                                    $style[$id] = "style=\"color:red;\" " . tm("Fehlender Rohstoff", "" . StringUtils::formatNumber($need->get($id)) . " " . $resourceName . "") . "";
+                                    $style[$id] = "style=\"color:red;\" " . $this->tooltip->mTT("Fehlender Rohstoff", "" . StringUtils::formatNumber($need->get($id)) . " " . $resourceName . "") . "";
                                 }
                             }
                             break;

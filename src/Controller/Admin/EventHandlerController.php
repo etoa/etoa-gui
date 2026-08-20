@@ -68,8 +68,9 @@ class EventHandlerController extends AbstractAdminController
 
             // Warning: Open-Basedir restrictions may appply
             $logfile = $this->config->get('daemon_logfile');
-            if (!preg_match('#^/#', $logfile)) {
-                $logfile = '../' . $logfile;
+            if (!str_starts_with($logfile, '/')) {
+                // a relative path is project relative, not relative to the current working directory
+                $logfile = $this->getParameter('kernel.project_dir') . '/' . $logfile;
             }
             if (is_file($logfile)) {
                 $lf = fopen($logfile, "r");

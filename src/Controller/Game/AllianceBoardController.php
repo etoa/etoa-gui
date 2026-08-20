@@ -35,6 +35,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Constraints\Type;
+use EtoA\UI\Tooltip;
 
 class AllianceBoardController extends AbstractGameController
 {
@@ -46,7 +47,8 @@ class AllianceBoardController extends AbstractGameController
         private readonly AllianceBoardTopicRepository $allianceBoardTopicRepository,
         private readonly AllianceBoardCategoryRankRepository $allianceBoardCategoryRankRepository,
         private readonly AllianceRankRepository $allianceRankRepository,
-        private readonly AllianceBoardPostRepository $allianceBoardPostRepository
+        private readonly AllianceBoardPostRepository $allianceBoardPostRepository,
+        private readonly Tooltip $tooltip
     )
     {
     }
@@ -95,7 +97,7 @@ class AllianceBoardController extends AbstractGameController
                     $topic = $post?->getTopic();
 
                     if ($topic !== null) {
-                        $ps = "<a href=\"?page=$page&amp;topic=" . $topic->getId() . "#" . $post->getId() . "\" " . tm($topic->getSubject() . ", " . StringUtils::formatDate($topic->getTimestamp()), "Geschrieben von: <b>" . $post->getUserNick() . "</b>") . ">" . $topic->getSubject() . "<br/>" . StringUtils::formatDate($topic->getTimestamp()) . "</a>";
+                        $ps = "<a href=\"?page=$page&amp;topic=" . $topic->getId() . "#" . $post->getId() . "\" " . $this->tooltip->mTT($topic->getSubject() . ", " . StringUtils::formatDate($topic->getTimestamp()), "Geschrieben von: <b>" . $post->getUserNick() . "</b>") . ">" . $topic->getSubject() . "<br/>" . StringUtils::formatDate($topic->getTimestamp()) . "</a>";
                     } else
                         $ps = "-";
                     echo "<tr>";
@@ -116,7 +118,7 @@ class AllianceBoardController extends AbstractGameController
                         }
 
                         if ($rstr != "") $rstr = substr($rstr, 0, strlen($rstr) - 2);
-                        echo " " . tm("Admin-Info: " . $category->getName(), "<b>Position:</b> " . $category->getOrder() . "<br/><b>Zugriff:</b> " . $rstr) . "";
+                        echo " " . $this->tooltip->mTT("Admin-Info: " . $category->getName(), "<b>Position:</b> " . $category->getOrder() . "<br/><b>Zugriff:</b> " . $rstr) . "";
                     }
                     echo ">
                                 <b><a href=\"" . $this->generateUrl('game.alliance.allianceboard.showtopics',['id'=>$category->getId()]) . "\">" . ($category->getName() != "" ? $category->getName() : "Unbenannt") . "</a></b>
@@ -165,7 +167,7 @@ class AllianceBoardController extends AbstractGameController
                     $accessCnt++;
                     $post = $this->allianceBoardTopicRepository->getTopicWithLatestPost(0, $diplomacy->getId());
                     if ($post !== null) {
-                        $ps = "<a href=\"?page=$page&amp;topic=" . $topic->getId() . "#" . $post->getId() . "\" " . tm($post->getTopic()->getSubject() . ", " . StringUtils::formatDate($topic->getTimestamp()), "Geschrieben von: <b>" . $post->getUserNick() . "</b>") . ">" . $topic->getSubject() . "<br/>" . StringUtils::formatDate($topic->getTimestamp()) . "</a>"; //ToDo User auch von anderen Allianzen
+                        $ps = "<a href=\"?page=$page&amp;topic=" . $topic->getId() . "#" . $post->getId() . "\" " . $this->tooltip->mTT($post->getTopic()->getSubject() . ", " . StringUtils::formatDate($topic->getTimestamp()), "Geschrieben von: <b>" . $post->getUserNick() . "</b>") . ">" . $topic->getSubject() . "<br/>" . StringUtils::formatDate($topic->getTimestamp()) . "</a>"; //ToDo User auch von anderen Allianzen
                     } else
                         $ps = "-";
                     echo "<tr>";
@@ -181,7 +183,7 @@ class AllianceBoardController extends AbstractGameController
                         }
 
                         if ($rstr != "") $rstr = substr($rstr, 0, strlen($rstr) - 2);
-                        echo " " . tm("Admin-Info: " . stripslashes($diplomacy->getAlliance2()->toString()),/*"<b>Position:</b> ".$arr['cat_order']."<br/>*/ "<b>Zugriff:</b> " . $rstr) . "";
+                        echo " " . $this->tooltip->mTT("Admin-Info: " . stripslashes($diplomacy->getAlliance2()->toString()),/*"<b>Position:</b> ".$arr['cat_order']."<br/>*/ "<b>Zugriff:</b> " . $rstr) . "";
                     }
                     echo "><b><a href=\"?page=$page&amp;cat=0&bnd=" . $diplomacy->getId() . "\"";
                     echo ">" . stripslashes($diplomacy->getAlliance2()->toString()) . "</a></b><br/>" . BBCodeUtils::toHTML($diplomacy->getText()) . "</td>";

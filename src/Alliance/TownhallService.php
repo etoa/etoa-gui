@@ -9,18 +9,14 @@ use EtoA\Support\BBCodeUtils;
 
 class TownhallService
 {
-    private ConfigurationService $config;
-    private AllianceNewsRepository $allianceNewsRepository;
-
-    /** Townhall-RSS-File */
-    private const RSS_TOWNHALL_FILE = __DIR__ . "/../../htdocs/cache/rss/townhall.rss";
+    /** Townhall-RSS-File, relative to the project directory */
+    private const RSS_TOWNHALL_FILE = 'var/rss/townhall.rss';
 
     public function __construct(
-        ConfigurationService $config,
-        AllianceNewsRepository $allianceNewsRepository
+        private readonly ConfigurationService   $config,
+        private readonly AllianceNewsRepository $allianceNewsRepository,
+        private readonly string                 $projectDir,
     ) {
-        $this->config = $config;
-        $this->allianceNewsRepository = $allianceNewsRepository;
     }
 
     /**
@@ -60,11 +56,12 @@ class TownhallService
         $rssValue .= "	</channel>\r\n";
         $rssValue .= "</rss>";
 
-        $dir = dirname(self::RSS_TOWNHALL_FILE);
+        $file = $this->projectDir . '/' . self::RSS_TOWNHALL_FILE;
+        $dir = dirname($file);
         if (!file_exists($dir)) {
             mkdir($dir, 0755, true);
         }
 
-        file_put_contents(self::RSS_TOWNHALL_FILE, $rssValue);
+        file_put_contents($file, $rssValue);
     }
 }

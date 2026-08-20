@@ -19,6 +19,7 @@ use EtoA\Universe\Star\StarRepository;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use EtoA\UI\Tooltip;
 
 class TechnologyService
 {
@@ -36,6 +37,7 @@ class TechnologyService
         private readonly StarRepository               $starRepository,
         private readonly TechnologyCostCalculator     $technologyCostCalculator,
         private readonly string                       $projectDir,
+        private readonly Tooltip                      $tooltip,
     )
     {
     }
@@ -230,7 +232,7 @@ class TechnologyService
                             echo "<td style=\"width:120px;height:120px ;padding:0px;\">
                                         <div style=\"position:relative;height:120px;overflow:hidden\">
                                         <div class=\"buildOverviewObjectTitle\">" . $tech->getName() . "</div>";
-                            echo "<a href=\"" . $this->router->generate('game.research.detail', ['id' => $tech->getId()]) . "\" " . tm($tech->getName(), "<b>" . $subtitle . "</b><br/>" . $tmtext . $tech->getShortComment()) . " style=\"display:block;\"><img class=\"" . $filterStyleClass . "\" src=\"" . $img . "\"/></a>";
+                            echo "<a href=\"" . $this->router->generate('game.research.detail', ['id' => $tech->getId()]) . "\" " . $this->tooltip->mTT($tech->getName(), "<b>" . $subtitle . "</b><br/>" . $tmtext . $tech->getShortComment()) . " style=\"display:block;\"><img class=\"" . $filterStyleClass . "\" src=\"" . $img . "\"/></a>";
                             if ($b_level > 0 || ($b_level == 0 && isset($techlist[$tech->getId()]) && $techlist[$tech->getId()]->getBuildType() === 3)) {
                                 echo "<div class=\"buildOverviewObjectLevel\" style=\"color:" . $color . "\">" . $b_level . "</div>";
                             }

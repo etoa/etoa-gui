@@ -33,6 +33,7 @@ use EtoA\Defense\DefenseQueueSearch;
 use EtoA\User\UserLoginFailureRepository;
 use EtoA\Universe\Resources\ResourceNames;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use EtoA\UI\Countdown;
 
 class OverviewController extends AbstractGameController
 {
@@ -300,7 +301,7 @@ class OverviewController extends AbstractGameController
 
             // Stellt Zeit Counter dar, wenn ein Gebäude in bau ist
             if ($building_rest_time > 0) {
-                $planets .= startTime($building_rest_time, "planet_timer_" . $userPlanet->getEntity()->getId() . "", 0, "<br>(TIME)") . "";
+                $planets .= Countdown::script($building_rest_time, "planet_timer_" . $userPlanet->getEntity()->getId() . "", 0, "<br>(TIME)") . "";
             }
 
             $planets .= "</span></div>";

@@ -656,10 +656,10 @@ https://etoa.ch</v>
       <v comment="Evendhandler Instanzname" type="text">roundx</v>
     </item>
     <item name="daemon_logfile" cat="20" base="yes">
-      <v comment="Evendhandler Logfile" type="text">log/eventhandler.log</v>
+      <v comment="Evendhandler Logfile (relativ zum Projektverzeichnis)" type="text">var/log/eventhandler.log</v>
     </item>
     <item name="daemon_pidfile" cat="20" base="yes">
-      <v comment="Evendhandler PID-File" type="text">tmp/eventhandler.pid</v>
+      <v comment="Evendhandler PID-File (relativ zum Projektverzeichnis)" type="text">var/eventhandler.pid</v>
     </item>
     <item name="backend_offline_mail" cat="20">
       <v comment="Eventhandler Offline Mail" type="text">mail@etoa.ch</v>

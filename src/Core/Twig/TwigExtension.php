@@ -236,7 +236,7 @@ class TwigExtension extends AbstractExtension
 
     public function button(string $label, string $target): string
     {
-        return button($label, $target);
+        return "<input type=\"button\" value=\"" . $label . "\" onclick=\"document.location='" . $target . "'\" />";
     }
 
     public function ipGetHost(?string $ip): string

@@ -43,6 +43,7 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use EtoA\Controller\Game\SetupController;
 use EtoA\Controller\Image\GalaxyMapImageController;
 use EtoA\Fleet\ForeignFleetService;
+use EtoA\UI\Tooltip;
 
 class UserTwigSubscriber implements EventSubscriberInterface
 {
@@ -63,7 +64,8 @@ class UserTwigSubscriber implements EventSubscriberInterface
         private readonly UrlGeneratorInterface          $router,
         private readonly ForeignFleetService            $foreignFleetLoader,
         private readonly PlanetRepository               $planetRepository,
-        private readonly TutorialUserProgressRepository $tutorialUserProgressRepository
+        private readonly TutorialUserProgressRepository $tutorialUserProgressRepository,
+        private readonly Tooltip                        $tooltip
     )
     {
     }
@@ -191,9 +193,8 @@ class UserTwigSubscriber implements EventSubscriberInterface
         $globals = array_merge($currentPlanetData, [
             'design' => $properties->getCssStyle(),
             'gameTitle' => $this->versionService->getGameIdentifier(),
-            'xajaxJS' => isset($xajax)?$xajax->getJavascript():null,
             'templateDir' => '/' .$this->designService->getCurrentDesign(),
-            'bodyTopStuff' => getInitTT(),
+            'bodyTopStuff' => $this->tooltip->initHtml(),
             'ownFleetCount' => $ownFleetCount,
             'messages' => $newMessages,
             'newreports' => $newReports,

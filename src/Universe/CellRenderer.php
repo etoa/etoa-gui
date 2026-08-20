@@ -19,6 +19,7 @@ use EtoA\User\UserPropertiesRepository;
 use EtoA\User\UserService;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use EtoA\UI\Tooltip;
 
 class CellRenderer
 {
@@ -32,7 +33,8 @@ class CellRenderer
         private readonly UserPropertiesRepository $userPropertiesRepository,
         private readonly ReportRepository $reportRepository,
         private readonly UserService $userService,
-        private readonly UrlGeneratorInterface $router
+        private readonly UrlGeneratorInterface $router,
+        private readonly Tooltip $tooltip
     )
     {
     }
@@ -176,7 +178,7 @@ class CellRenderer
                     <td $class style=\"text-align:center;vertical-align:middle;background:#000\"><b>" . $ent->getPos() . "</b></td>
                     <td $class $addstyle >";
             if ($ent->getCode() === EntityType::PLANET)
-                echo "<span " . tm($planetType->getName(), $tm) . ">" . $planetType->getName() . "</span>";
+                echo "<span " . $this->tooltip->mTT($planetType->getName(), $tm) . ">" . $planetType->getName() . "</span>";
             else
                 echo $ent->getType()->getEntityCodeString();
 
@@ -191,7 +193,7 @@ class CellRenderer
             } elseif ($ent->getCode() == EntityType::PLANET) {
                 $planet = $this->planetRepo->find($ent->getId());
                 if ($planet->hasDebrisField()) {
-                    echo "<br/><span style=\"color:#817339;font-weight:bold\" " . tm(
+                    echo "<br/><span style=\"color:#817339;font-weight:bold\" " . $this->tooltip->mTT(
                             "Trümmerfeld",
                             ResIcons::METAL . StringUtils::formatNumber($planet->wfMetal) . " " .
                             ResourceNames::METAL . "<br style=\"clear:both\" />" .
@@ -214,7 +216,7 @@ class CellRenderer
 
                 if ($tm_info != "")
                     $header .= " (<span $class>" . $tm_info . "</span>)";
-                echo "<span style=\"color:#817339;font-weight:bold\" " . tm($header, $tm) . "><a $class href=\"?page=userinfo&amp;id=" . $owner->getId() . "\">" . $owner->getNick() . "</a></span> ";
+                echo "<span style=\"color:#817339;font-weight:bold\" " . $this->tooltip->mTT($header, $tm) . "><a $class href=\"?page=userinfo&amp;id=" . $owner->getId() . "\">" . $owner->getNick() . "</a></span> ";
             } else
                 echo 'Niemand';
             echo "</td>
@@ -256,7 +258,7 @@ class CellRenderer
                     : null;
 
                 if ($report !== null) {
-                    echo "<span " . tm(
+                    echo "<span " . $this->tooltip->mTT(
                             $report->getSubject() ?? 'Spionagebericht',
                             'Letzter Spionagebericht vom ' . StringUtils::formatDate((int) $report->getTimestamp())
                         ) . ">" . $analyzeLink . "</span> ";

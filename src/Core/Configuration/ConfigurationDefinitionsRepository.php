@@ -11,7 +11,7 @@ class ConfigurationDefinitionsRepository
 {
     private ?SimpleXMLElement $xmlData = null;
 
-    const DEFAULTS_FILE_PATH = __DIR__ . '/../../../htdocs/config/defaults.xml';
+    const DEFAULTS_FILE_PATH = __DIR__ . '/../../../config/defaults.xml';
 
     public function getXmlDefinitions(): SimpleXMLElement
     {

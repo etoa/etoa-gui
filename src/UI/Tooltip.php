@@ -68,6 +68,17 @@ class Tooltip
         $this->add("<img src=\"" . $path . "\" alt=\"TTImage\" style=\"background:#000;\" /><br/>");
     }
 
+    /**
+     * The container that showTT()/hideTT() fill, belongs once at the top of the body.
+     */
+    public function initHtml(): string
+    {
+        return '<div class="tooltip" id="tooltip" style="display:none;" onmouseup="hideTT();">
+<div class="tttitle" id="tttitle"></div>
+<div class="ttcontent" id="ttcontent"></div>
+    </div> ';
+    }
+
     public function cTT($title, $content): string
     {
         return " onclick=\"showTT('" . StringUtils::encodeDBStringToJS($title) . "','" . StringUtils::encodeDBStringToJS($content) . "',0,event,this);return false;\"  ";

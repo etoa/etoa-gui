@@ -38,7 +38,7 @@ sudo rm /etc/nginx/sites-available/default
 sudo cp /var/www/etoa/vagrant/nginx-default /etc/nginx/sites-available/default
 sudo cp /var/www/etoa/vagrant/xdebug.ini /etc/php/8.5/mods-available/xdebug.ini
 cp /var/www/etoa/vagrant/db.conf /var/www/etoa/htdocs/config
-cp /var/www/etoa/vagrant/roundx.conf /var/www/etoa/htdocs/config/eventhandler.conf
+cp /var/www/etoa/vagrant/roundx.conf /var/www/etoa/config/eventhandler.conf
 
 sudo service nginx restart
 sudo service php8.5-fpm restart

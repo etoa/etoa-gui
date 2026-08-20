@@ -1,0 +1,73 @@
+{# Fragment, wird von api.race.info als JSON-Feld "content" ausgeliefert #}
+{% set stats = [
+    { icon: constant('EtoA\\Universe\\Resources\\ResIcons::METAL'), label: 'Produktion von ' ~ constant('EtoA\\Universe\\Resources\\ResourceNames::METAL'), value: race.metal, inverse: false },
+    { icon: constant('EtoA\\Universe\\Resources\\ResIcons::CRYSTAL'), label: 'Produktion von ' ~ constant('EtoA\\Universe\\Resources\\ResourceNames::CRYSTAL'), value: race.crystal, inverse: false },
+    { icon: constant('EtoA\\Universe\\Resources\\ResIcons::PLASTIC'), label: 'Produktion von ' ~ constant('EtoA\\Universe\\Resources\\ResourceNames::PLASTIC'), value: race.plastic, inverse: false },
+    { icon: constant('EtoA\\Universe\\Resources\\ResIcons::FUEL'), label: 'Produktion von ' ~ constant('EtoA\\Universe\\Resources\\ResourceNames::FUEL'), value: race.fuel, inverse: false },
+    { icon: constant('EtoA\\Universe\\Resources\\ResIcons::FOOD'), label: 'Produktion von ' ~ constant('EtoA\\Universe\\Resources\\ResourceNames::FOOD'), value: race.food, inverse: false },
+    { icon: constant('EtoA\\Universe\\Resources\\ResIcons::POWER'), label: 'Produktion von Energie', value: race.power, inverse: false },
+    { icon: constant('EtoA\\Universe\\Resources\\ResIcons::PEOPLE'), label: 'Bevölkerungswachstum', value: race.population, inverse: false },
+    { icon: constant('EtoA\\Universe\\Resources\\ResIcons::TIME'), label: 'Forschungszeit', value: race.researchTime, inverse: true },
+    { icon: constant('EtoA\\Universe\\Resources\\ResIcons::TIME'), label: 'Bauzeit', value: race.buildTime, inverse: true },
+    { icon: constant('EtoA\\Universe\\Resources\\ResIcons::TIME'), label: 'Fluggeschwindigkeit', value: race.fleetTime, inverse: false }
+] %}
+
+{{ BBCodeToHTML(race.comment)|raw }}<br/><br/>
+
+<twig:Table :width="300">
+    {% block table_content %}
+        <tr>
+            <th colspan="2">St&auml;rken / Schw&auml;chen:</th>
+        </tr>
+        {% for stat in outerScope.stats %}
+            {% if stat.value != 1.0 %}
+                <tr>
+                    <th>{{ stat.icon|raw }}{{ stat.label }}:</th>
+                    <td>{{ formatPercentString(stat.value, true, stat.inverse)|raw }}</td>
+                </tr>
+            {% endif %}
+        {% endfor %}
+    {% endblock %}
+</twig:Table>
+
+<twig:Table :width="500">
+    {% block table_content %}
+        <tr>
+            <th colspan="3">Spezielle Schiffe:</th>
+        </tr>
+        {% for ship in outerScope.ships %}
+            <tr>
+                <td style="background:black;">
+                    <img src="{{ ship.imagePath }}" style="width:40px;height:40px;border:none;" alt="ship{{ ship.id }}"/>
+                </td>
+                <th style="width:180px;">{{ BBCodeToHTML(ship.name)|raw }}</th>
+                <td>{{ BBCodeToHTML(ship.shortComment)|raw }}</td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="3">Keine Rassenschiffe vorhanden</td>
+            </tr>
+        {% endfor %}
+    {% endblock %}
+</twig:Table>
+
+<twig:Table :width="500">
+    {% block table_content %}
+        <tr>
+            <th colspan="3">Spezielle Verteidigung:</th>
+        </tr>
+        {% for def in outerScope.defense %}
+            <tr>
+                <td style="background:black;">
+                    <img src="{{ def.imagePath }}" style="width:40px;height:40px;border:none;" alt="def{{ def.id }}"/>
+                </td>
+                <th style="width:180px;">{{ BBCodeToHTML(def.name)|raw }}</th>
+                <td>{{ BBCodeToHTML(def.shortComment)|raw }}</td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="3">Keine Rassenverteidigung vorhanden</td>
+            </tr>
+        {% endfor %}
+    {% endblock %}
+</twig:Table>

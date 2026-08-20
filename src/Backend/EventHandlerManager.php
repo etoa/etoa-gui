@@ -11,12 +11,10 @@ class EventHandlerManager
 {
     public const CONFIG_FILE_NAME = 'eventhandler.conf';
 
-    private ConfigurationService $config;
-
     public function __construct(
-        ConfigurationService $config
+        private readonly ConfigurationService $config,
+        private readonly string               $projectDir,
     ) {
-        $this->config = $config;
     }
 
     public function checkDaemonRunning(): ?int
@@ -65,7 +63,7 @@ class EventHandlerManager
             throw new Exception("Eventhandler Executable $executable nicht vorhanden!");
         }
 
-        $configFile = $this->getExecutable();
+        $configFile = $this->getConfigFile();
         if (!file_exists($configFile)) {
             throw new Exception("Eventhandler Konfigurationsdatei $configFile nicht vorhanden!");
         }
@@ -75,17 +73,17 @@ class EventHandlerManager
     {
         $pidFile = $this->config->get('daemon_pidfile');
 
-        // an absolute path is taken as is, a relative one resolves like the config file
+        // an absolute path is taken as is, a relative one is project relative (var/…)
         return str_starts_with($pidFile, '/')
             ? $pidFile
-            : __DIR__ . '/../../htdocs/' . $pidFile;
+            : $this->projectDir . '/' . $pidFile;
     }
 
     private function getExecutable(): string
     {
         $executable = $this->config->get('daemon_exe');
         if (!$executable) {
-            $executable = realpath(__DIR__ . '/../../eventhandler/target/etoad');
+            $executable = realpath($this->projectDir . '/eventhandler/target/etoad');
         }
 
         return $executable;
@@ -98,6 +96,6 @@ class EventHandlerManager
 
     private function getConfigFile(): string
     {
-        return realpath(__DIR__ . '/../../htdocs/config/' . EventHandlerManager::CONFIG_FILE_NAME);
+        return realpath($this->projectDir . '/config/' . EventHandlerManager::CONFIG_FILE_NAME);
     }
 }
