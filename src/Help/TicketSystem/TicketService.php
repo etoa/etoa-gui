@@ -171,17 +171,4 @@ Dein Admin-Team";
         return "System";
     }
 
-    /**
-     * @param int[] $ticketIds
-     */
-    public function removeByIds(array $ticketIds): int
-    {
-        if (count($ticketIds) === 0) {
-            return 0;
-        }
-
-        $this->messageRepo->removeByTicketIds($ticketIds);
-
-        return $this->ticketRepo->removeByIds($ticketIds);
-    }
 }

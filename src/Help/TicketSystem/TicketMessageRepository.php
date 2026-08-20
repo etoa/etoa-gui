@@ -54,21 +54,4 @@ class TicketMessageRepository extends AbstractRepository
         $message->id = (int) $this->getConnection()->lastInsertId();
     }
 
-    /**
-     * @param int[] $ticketIds
-     */
-    public function removeByTicketIds(array $ticketIds): void
-    {
-        if (count($ticketIds) == 0) {
-            return;
-        }
-
-        $qry = $this->createQueryBuilder('q')
-            ->delete('ticket_msg')
-            ->where('ticket_id IN('.implode(',', array_fill(0, count($ticketIds), '?')).')');
-        foreach ($ticketIds as $k => $id) {
-            $qry->setParameter($k, $id);
-        }
-        $qry->executeQuery();
-    }
 }

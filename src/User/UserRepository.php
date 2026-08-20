@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace EtoA\User;
 
+use Doctrine\ORM\AbstractQuery;
 use Doctrine\Persistence\ManagerRegistry;
 use EtoA\Core\AbstractRepository;
 use EtoA\Entity\AdminUser;
@@ -161,14 +162,14 @@ class UserRepository extends AbstractRepository
 
     public function getUserIdByNick(string $nick): ?int
     {
-        $result = $this->createQueryBuilder('q')
-            ->select('user_id')
-            ->from('users')
-            ->where('user_nick = :nick')
+        $id = $this->createQueryBuilder('q')
+            ->select('q.id')
+            ->where('q.nick = :nick')
             ->setParameter('nick', $nick)
-            ->fetchOne();
+            ->getQuery()
+            ->getOneOrNullResult(AbstractQuery::HYDRATE_SINGLE_SCALAR);
 
-        return $result !== false ? (int)$result : null;
+        return $id !== null ? (int) $id : null;
     }
 
     public function markVerifiedByVerificationKey(string $verificationKey): bool

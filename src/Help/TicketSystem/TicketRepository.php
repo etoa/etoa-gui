@@ -48,25 +48,6 @@ class TicketRepository extends AbstractRepository
             ->execute();
     }
 
-    /**
-     * @param int[] $ticketIds
-     */
-    public function removeByIds(array $ticketIds): int
-    {
-        if (count($ticketIds) == 0) {
-            return 0;
-        }
-
-        $qry = $this->createQueryBuilder('q')
-            ->delete('tickets')
-            ->where('id IN(' . implode(',', array_fill(0, count($ticketIds), '?')) . ')');
-        foreach ($ticketIds as $k => $id) {
-            $qry->setParameter($k, $id);
-        }
-
-        return $qry->executeQuery()->rowCount();
-    }
-
     public function removeForUser(User $user) : void
     {
         $this->createQueryBuilder('q')
