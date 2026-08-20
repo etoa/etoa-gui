@@ -39,18 +39,6 @@ class DefenseRepository extends AbstractRepository
             ->execute();
     }
 
-    public function getItem(int $id): ?DefenseListItem
-    {
-        $data = $this->createQueryBuilder('q')
-            ->select('*')
-            ->from('deflist')
-            ->where('deflist_id = :id')
-            ->setParameter('id', $id)
-            ->fetchAssociative();
-
-        return $data !== false ? DefenseListItem::createFromData($data) : null;
-    }
-
     public function addDefense(Defense $defense, int $amount, User $user, Planet $entity): void
     {
         if ($amount < 0) {

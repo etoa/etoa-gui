@@ -125,22 +125,6 @@ class UserSurveillanceRepository extends AbstractRepository
         ]);
     }
 
-    /**
-     * @return int[]
-     */
-    public function getOrphanedUserIds(): array
-    {
-        $data = $this->createQueryBuilder('q')
-            ->select('s.user_id')
-            ->from('user_surveillance', 's')
-            ->innerJoin('s', 'users', 'u', 's.user_id=u.user_id')
-            ->where('u.user_observe IS NULL')
-            ->groupBy('s.user_id')
-            ->fetchAllAssociative();
-
-        return array_map(fn(array $row) => (int)$row['user_id'], $data);
-    }
-
     public function removeForUser(User $user): void
     {
         $this->createQueryBuilder('q')

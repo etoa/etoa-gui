@@ -49,20 +49,6 @@ class UserWarningRepository extends AbstractRepository
         return array_map(fn (array $row) => new UserWarning($row), $data);
     }
 
-    public function getWarning(int $id): ?UserWarning
-    {
-        $data = $this->createQueryBuilder('q')
-            ->select('w.*, a.user_nick as admin_user_nick, u.user_nick')
-            ->from('user_warnings', 'w')
-            ->leftJoin('w', 'admin_users', 'a', 'a.user_id = w.warning_admin_id')
-            ->innerJoin('w', 'users', 'u', 'u.user_id = w.warning_user_id')
-            ->where('w.warning_id = :id')
-            ->setParameter('id', $id)
-            ->fetchAssociative();
-
-        return $data !== false ? new UserWarning($data) : null;
-    }
-
     /**
      * @return array{count: int, max: int}
      */

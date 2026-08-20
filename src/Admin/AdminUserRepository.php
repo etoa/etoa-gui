@@ -30,18 +30,6 @@ class AdminUserRepository extends AbstractRepository
         return array_map(fn($value) => (int)$value, $data);
     }
 
-    public function findOneByNick(string $nick): ?AdminUser
-    {
-        $data = $this->createQueryBuilder('q')
-            ->select("*")
-            ->from('admin_users')
-            ->where('LCASE(user_nick) = LCASE(:nick)')
-            ->setParameter('nick', $nick)
-            ->fetchAssociative();
-
-        return $data !== false ? AdminUser::createFromArray($data) : null;
-    }
-
     public function findOneByNickAndEmail(string $nick, string $email): ?AdminUser
     {
         return $this->findOneBy(['nick'=>$nick,'email'=>$email]);
@@ -66,18 +54,6 @@ class AdminUserRepository extends AbstractRepository
         return $this->applySearchSortLimit($qb)
             ->getQuery()
             ->execute();
-    }
-
-    /**
-     * @return array<int,string>
-     */
-    public function findAllAsList(): array
-    {
-        return $this->createQueryBuilder('q')
-            ->select("user_id", 'user_nick')
-            ->from('admin_users')
-            ->orderBy('user_nick')
-            ->fetchAllKeyValue();
     }
 
     public function setPassword(AdminUser $adminUser, string $newHashedPassword, bool $forceChange = false): void

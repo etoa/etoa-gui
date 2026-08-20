@@ -54,15 +54,6 @@ class UserCommentRepository extends AbstractRepository
             ->executeQuery();
     }
 
-    public function deleteComment(int $commentId): void
-    {
-        $this->createQueryBuilder('q')
-            ->delete('user_comments')
-            ->where('comment_id = :id')
-            ->setParameter('id', $commentId)
-            ->executeQuery();
-    }
-
     public function removeForUser(User $user) : void
     {
         $this->createQueryBuilder('q')

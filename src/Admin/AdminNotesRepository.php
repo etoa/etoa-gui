@@ -28,22 +28,6 @@ class AdminNotesRepository extends AbstractRepository
         return $this->findBy(['admin'=>$admin],['date'=>'DESC']);
     }
 
-    public function findForAdmin(int $id, int $adminId): ?AdminNote
-    {
-        $data = $this->createQueryBuilder('q')
-            ->select("*")
-            ->from('admin_notes')
-            ->where('notes_id = :id')
-            ->andWhere('admin_id = :admin_id')
-            ->setParameters([
-                'id' => $id,
-                'admin_id' => $adminId,
-            ])
-            ->fetchAssociative();
-
-        return $data !== false ? new AdminNote($data) : null;
-    }
-
     public function create(AdminNote $note): int
     {
         $this->createQueryBuilder('q')

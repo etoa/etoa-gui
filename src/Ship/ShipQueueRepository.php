@@ -33,22 +33,6 @@ class ShipQueueRepository extends AbstractRepository
             ->fetchOne();
     }
 
-    /**
-     * @return ShipQueueItem[]
-     */
-    public function findQueueItemsForUser(int $userId): array
-    {
-        $data = $this->createQueryBuilder('q')
-            ->select('*')
-            ->from('ship_queue')
-            ->where('queue_user_id = :userId')
-            ->setParameter('userId', $userId)
-            ->orderBy('queue_starttime', 'ASC')
-            ->fetchAllAssociative();
-
-        return array_map(fn ($row) => ShipQueueItem::createFromData($row), $data);
-    }
-
     public function add(User $user, Ship $ship, Planet $entity, int $count, int $startTime, int $endTime, int $objectTime): void
     {
         $item = new ShipQueueItem();

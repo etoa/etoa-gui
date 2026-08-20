@@ -99,21 +99,6 @@ class FleetShipRepository extends AbstractRepository
 
 
 
-    public function updateShipsInFleet(int $fleetId, int $shipId, int $count): void
-    {
-        $this->createQueryBuilder('q')
-            ->update('fleet_ships')
-            ->set('fs_ship_cnt', ':count')
-            ->where('fs_fleet_id = :fleetId')
-            ->andWhere('fs_ship_id = :shipId')
-            ->setParameters([
-                'fleetId' => $fleetId,
-                'shipId' => $shipId,
-                'count' => $count,
-            ])
-            ->executeQuery();
-    }
-
     public function removeShipsFromFleet(Fleet $fleet, Ship $ship): void
     {
         $this->createQueryBuilder('q')

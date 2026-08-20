@@ -19,51 +19,6 @@ class UserSessionRepository extends AbstractRepository
     }
 
     /**
-     * @return array<string, int>
-     */
-    public function logCountPerIp(UserSessionSearch $search): array
-    {
-        $data = $this->applySearchSortLimit($this->createQueryBuilder('q'), $search)
-            ->select('s.ip_addr, COUNT(s.ip_addr) cnt')
-            ->from('user_sessionlog', 's')
-            ->groupBy('s.ip_addr')
-            ->orderBy('s.cnt', 'DESC')
-            ->fetchAllKeyValue();
-
-        return array_map(fn ($value) => (int) $value, $data);
-    }
-
-    /**
-     * @return array<int, int>
-     */
-    public function countPerUserId(UserSessionSearch $search): array
-    {
-        $data = $this->applySearchSortLimit($this->createQueryBuilder('q'), $search)
-            ->select('s.user_id, COUNT(s.user_id) cnt')
-            ->from('user_session', 's')
-            ->groupBy('s.user_id')
-            ->orderBy('s.cnt', 'DESC')
-            ->fetchAllKeyValue();
-
-        return array_map(fn ($value) => (int) $value, $data);
-    }
-
-    /**
-     * @return array<int, int>
-     */
-    public function logCountPerUserId(UserSessionSearch $search): array
-    {
-        $data = $this->applySearchSortLimit($this->createQueryBuilder('q'), $search)
-            ->select('s.user_id, COUNT(s.user_id) cnt')
-            ->from('user_sessionlog', 's')
-            ->groupBy('s.user_id')
-            ->orderBy('s.cnt', 'DESC')
-            ->fetchAllKeyValue();
-
-        return array_map(fn ($value) => (int) $value, $data);
-    }
-
-    /**
      * @return string[]
      */
     public function getUserSessionIds(): array
@@ -82,17 +37,6 @@ class UserSessionRepository extends AbstractRepository
             ->setParameter('timeout', time() - $timeout)
             ->getQuery()
             ->getSingleScalarResult();
-    }
-
-    public function findLog(string $sessionId): ?UserSessionLog
-    {
-        $data = $this->createQueryBuilder('q')
-            ->select("*")
-            ->where('session_id = :id')
-            ->setParameter('id', $sessionId)
-            ->fetchAssociative();
-
-        return $data !== false ? new UserSessionLog($data) : null;
     }
 
 

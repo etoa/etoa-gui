@@ -111,21 +111,6 @@ class PlanetRepository extends AbstractRepository
             ->fetchOne();
     }
 
-    /**
-     * @return PlanetNameWithUserNick[]
-     */
-    public function searchPlanetNamesWithUserNick(PlanetSearch $search): array
-    {
-        $data = $this->applySearchSortLimit($this->createQueryBuilder('q'), $search)
-            ->select('p.id, p.planet_name')
-            ->addSelect('u.user_id, u.user_nick')
-            ->from('planets', 'p')
-            ->leftJoin('p', 'users', 'u', 'u.user_id = p.planet_user_id')
-            ->fetchAllAssociative();
-
-        return array_map(fn (array $row) => new PlanetNameWithUserNick($row), $data);
-    }
-
     public function getUserMain(User $user): ?Planet
     {
        return $this->findOneBy(['mainPlanet'=>1,'user'=>$user]);
@@ -413,18 +398,6 @@ class PlanetRepository extends AbstractRepository
         $planet->setPeoplePlace(0);
         $planet->setDescription('');
         $this->save();
-    }
-
-    public function resetUserChanged(int $id): void
-    {
-        $this->createQueryBuilder('q')
-            ->update('planets')
-            ->set('planet_user_changed', (string) 0)
-            ->where('id = :id')
-            ->setParameters([
-                'id' => $id,
-            ])
-            ->executeQuery();
     }
 
     public function setLastUpdated(Planet $planet, int $timestamp): void

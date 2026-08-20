@@ -52,19 +52,6 @@ class DefenseDataRepository extends AbstractRepository
         return array_column($data, 'points', 'id');
     }
 
-    public function updateDefensePoints(int $defenseId, float $points): void
-    {
-        $this->createQueryBuilder('q')
-            ->update('defense')
-            ->set('def_points', ':points')
-            ->where('def_id = :defenseId')
-            ->setParameters([
-                'defenseId' => $defenseId,
-                'points' => $points,
-            ])
-            ->executeQuery();
-    }
-
     public function getDefense(int $defenseId): ?Defense
     {
         $data = $this->createQueryBuilder('q')

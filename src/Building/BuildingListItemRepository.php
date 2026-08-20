@@ -104,14 +104,6 @@ class BuildingListItemRepository extends AbstractRepository
             ->getOneOrNullResult();
     }
 
-    public function countSearch(?BuildingListItemSearch $search = null): int
-    {
-        return (int)$this->applySearchSortLimit($this->createQueryBuilder(), $search)
-            ->select('COUNT(buildlist_id)')
-            ->from('buildlist')
-            ->fetchOne();
-    }
-
     public function numBuildingListEntries(): int
     {
         return $this->count([]);
@@ -149,43 +141,6 @@ class BuildingListItemRepository extends AbstractRepository
             ->execute();
     }
 
-    /**
-     * @return array<int, string>
-     */
-    public function buildingNames(): array
-    {
-        return $this->createQueryBuilder('q')
-            ->select('building_id', 'building_name')
-            ->from('buildings')
-            ->orderBy('building_type_id')
-            ->addOrderBy('building_order')
-            ->addOrderBy('building_name')
-            ->fetchAllKeyValue();
-    }
-
-    public function fetchBuildingListEntry(int $id): ?array
-    {
-        $data = $this->createQueryBuilder('q')
-            ->select(
-                'bl.buildlist_id',
-                'bl.buildlist_current_level',
-                'bl.buildlist_build_start_time',
-                'bl.buildlist_build_end_time',
-                'bl.buildlist_build_type',
-                'p.planet_name',
-                'u.user_nick',
-                'b.building_name'
-            )
-            ->from('buildlist', 'bl')
-            ->innerJoin('bl', 'planets', 'p', 'bl.buildlist_entity_id = p.id')
-            ->innerJoin('bl', 'users', 'u', 'bl.buildlist_user_id = u.user_id')
-            ->innerJoin('bl', 'buildings', 'b', 'bl.buildlist_building_id = b.building_id AND bl.buildlist_id = :id')
-            ->setParameter('id', $id)
-            ->fetchAssociative();
-
-        return $data !== false ? $data : null;
-    }
-
     public function updateBuildingListEntry(BuildingListItem $item, int $level, int $type, int $start, int $end): void
     {
         $item->setCurrentLevel($level);
@@ -220,59 +175,6 @@ class BuildingListItemRepository extends AbstractRepository
             ])
             ->getQuery()
             ->execute();
-    }
-
-    public function deleteBuildingListEntry(int $id): bool
-    {
-        $affected = $this->createQueryBuilder('q')
-            ->delete('buildlist')
-            ->where('buildlist_id = :id')
-            ->setParameter('id', $id)
-            ->executeQuery()
-            ->rowCount();
-
-        return $affected > 0;
-    }
-
-    /**
-     * @param array<string, mixed> $formData
-     */
-    public function findByFormData(array $formData): array
-    {
-        $qry = $this->createQueryBuilder('q')
-            ->select('*')
-            ->from('buildlist', 'l')
-            ->innerJoin('l', 'planets', 'p', 'p.id = l.buildlist_entity_id')
-            ->innerJoin('l', 'users', 'u', 'u.user_id = l.buildlist_user_id')
-            ->innerJoin('l', 'buildings', 'b', 'b.building_id = l.buildlist_building_id')
-            ->groupBy('buildlist_id')
-            ->orderBy('buildlist_user_id')
-            ->addOrderBy('buildlist_entity_id')
-            ->addOrderBy('building_type_id')
-            ->addOrderBy('building_order')
-            ->addOrderBy('building_name');
-
-        if ($formData['entity_id'] != "") {
-            $qry->andWhere('id = :id')
-                ->setParameter('id', $formData['entity_id']);
-        }
-        if ($formData['planet_name'] != "") {
-            $qry = $this->fieldComparisonQuery($qry, $formData, 'planet_name', 'planet_name');
-        }
-        if ($formData['user_id'] != "") {
-            $qry->andWhere('user_id = :userid')
-                ->setParameter('userid', $formData['user_id']);
-        }
-        if ($formData['user_nick'] != "") {
-            $qry = $this->fieldComparisonQuery($qry, $formData, 'user_nick', 'user_nick');
-        }
-        if ($formData['building_id'] != "") {
-            $qry->andWhere('building_id = :building')
-                ->setParameter('building', $formData['building_id']);
-        }
-
-        return $qry
-            ->fetchAllAssociative();
     }
 
     private function fieldComparisonQuery(QueryBuilder $qry, array $formData, string $column, string $formKey): QueryBuilder
@@ -574,26 +476,6 @@ class BuildingListItemRepository extends AbstractRepository
             ])
             ->getQuery()
             ->execute();
-    }
-
-    public function findUnderConstruction(int $userId, int $entityId) : ?array {
-        $data = $this->createQueryBuilder('q')
-            ->select('*')
-            ->from('buildlist')
-            ->where('buildlist_entity_id = :entityId')
-            ->andWhere('buildlist_build_type = 3')
-            ->orWhere('buildlist_build_type = 4')
-            ->andWhere('buildlist_build_end_time > :time')
-            ->setParameters([
-                'entityId' => $entityId,
-                'userId' => $userId,
-                'time' => time()
-            ])
-            ->fetchAllAssociative();
-
-        return array_map(fn($arr) => [
-            BuildingListItem::createFromData($arr)
-        ], $data);
     }
 
     public function findWithProductionOrPowerUse(Entity $entity): array

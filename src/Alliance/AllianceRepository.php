@@ -385,33 +385,6 @@ class AllianceRepository extends AbstractRepository
             ->execute();
     }
 
-    /**
-     * @return array<array{user_id: string, user_nick: string, user_points: string, user_alliance_rank_id: string}>
-     */
-    public function findUsers(int $allianceId): array
-    {
-        $data = $this->createQueryBuilder('q')
-            ->select(
-                'user_id',
-                'user_nick',
-                'user_points',
-                'user_alliance_rank_id'
-            )
-            ->from('users')
-            ->where('user_alliance_id = :allianceId')
-            ->orderBy('user_points', 'DESC')
-            ->addOrderBy('user_nick')
-            ->setParameter('allianceId', $allianceId)
-            ->fetchAllAssociative();
-
-        $users = [];
-        foreach ($data as $row) {
-            $users[$row['user_id']] = $row;
-        }
-
-        return $users;
-    }
-
     public function assignRankToUser(int $rankId, int $userId): void
     {
         $this->createQueryBuilder('q')
@@ -437,19 +410,6 @@ class AllianceRepository extends AbstractRepository
     }
 
     /**
-     * @return array<int, string>
-     */
-    public function listSoloUsers(): array
-    {
-        return $this->createQueryBuilder('q')
-            ->select("user_id", "user_nick")
-            ->from('users')
-            ->where('user_alliance_id = 0')
-            ->orderBy('user_nick')
-            ->fetchAllKeyValue();
-    }
-
-    /**
      * @return array<array{user_id: string, user_nick: string, user_email: string}>
      */
     public function findAllSoloUsers(): array
@@ -469,33 +429,6 @@ class AllianceRepository extends AbstractRepository
                         WHERE a.alliance_id = u.user_alliance_id
                     );"
             );
-    }
-
-    public function updateResources(
-        int $allianceId,
-        int $metal,
-        int $crystal,
-        int $plastic,
-        int $fuel,
-        int $food
-    ): void {
-        $this->createQueryBuilder('q')
-            ->update('alliances')
-            ->set('alliance_res_metal', ':metal')
-            ->set('alliance_res_crystal', ':crystal')
-            ->set('alliance_res_plastic', ':plastic')
-            ->set('alliance_res_fuel', ':fuel')
-            ->set('alliance_res_food', ':food')
-            ->where('alliance_id = :id')
-            ->setParameters([
-                'id' => $allianceId,
-                'metal' => $metal,
-                'crystal' => $crystal,
-                'plastic' => $plastic,
-                'fuel' => $fuel,
-                'food' => $food,
-            ])
-            ->executeQuery();
     }
 
     public function addResources(

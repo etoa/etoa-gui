@@ -87,35 +87,4 @@ class AdminSessionRepository extends AbstractRepository
             ->execute();
     }
 
-    /**
-     * @return AdminSessionLog[]
-     */
-    public function findSessionLogsByUser(int $userId): array
-    {
-        $data = $this->createQueryBuilder('q')
-            ->select("l.*", 'u.user_nick')
-            ->from("admin_user_sessionlog", 'l')
-            ->innerJoin('l', 'admin_users', 'u', 'l.user_id=u.user_id AND l.user_id = :user_id')
-            ->orderBy('time_action', 'DESC')
-            ->setParameter('user_id', $userId)
-            ->fetchAllAssociative();
-
-        return array_map(fn (array $row) => new AdminSessionLog($row), $data);
-    }
-
-    /**
-     * @return AdminSessionCount[]
-     */
-    public function findUsersWithSessionLogs(): array
-    {
-        $data = $this->createQueryBuilder('q')
-            ->select("user_nick", 'u.user_id', 'COUNT(*) as cnt')
-            ->from("admin_users", 'u')
-            ->innerJoin('u', 'admin_user_sessionlog', 'l', 'l.user_id=u.user_id')
-            ->groupBy('u.user_id')
-            ->orderBy('u.user_nick')
-            ->fetchAllAssociative();
-
-        return array_map(fn (array $row) => new AdminSessionCount($row), $data);
-    }
 }

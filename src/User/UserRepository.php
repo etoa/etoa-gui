@@ -111,20 +111,6 @@ class UserRepository extends AbstractRepository
         $this->save();
     }
 
-    public function addSpecialistTime(int $userId, int $time): void
-    {
-        $this->createQueryBuilder('q')
-            ->update('users')
-            ->set('user_specialist_time', 'user_specialist_time + :time')
-            ->where('user_id = :id')
-            ->andWhere('user_specialist_id > 0')
-            ->setParameters([
-                'id' => $userId,
-                'time' => $time,
-            ])
-            ->executeQuery();
-    }
-
     public function setSpecialist(int $userId, int $specialistId, int $time): void
     {
         $this->createQueryBuilder('q')
@@ -173,20 +159,6 @@ class UserRepository extends AbstractRepository
             ->executeQuery();
     }
 
-    public function disableHolidayMode(int $userId): void
-    {
-        $this->createQueryBuilder('q')
-            ->update('users')
-            ->set('user_hmode_from', (string)0)
-            ->set('user_hmode_to', (string)0)
-            ->set('user_logouttime', (string)time())
-            ->where('user_id = :id')
-            ->setParameters([
-                'id' => $userId,
-            ])
-            ->executeQuery();
-    }
-
     public function getUserIdByNick(string $nick): ?int
     {
         $result = $this->createQueryBuilder('q')
@@ -210,19 +182,6 @@ class UserRepository extends AbstractRepository
             ->setMaxResults(1)
             ->getQuery()
             ->execute();
-    }
-
-    public function saveDiscoveryMask(int $userId, string $mask): void
-    {
-        $this->createQueryBuilder('q')
-            ->update('users')
-            ->set('discoverymask', ":mask")
-            ->where('user_id = :userId')
-            ->setParameters([
-                'userId' => $userId,
-                'mask' => $mask,
-            ])
-            ->executeQuery();
     }
 
     public function resetDiscoveryMask(): void
@@ -568,19 +527,6 @@ class UserRepository extends AbstractRepository
             ->where('user_id = :userId')
             ->setParameters([
                 'userId' => $userId,
-            ])
-            ->executeQuery();
-    }
-
-    public function updateObserve(int $userId, ?string $observe): void
-    {
-        $this->createQueryBuilder('q')
-            ->update('users')
-            ->set('user_observe', ':observe')
-            ->where('user_id = :userId')
-            ->setParameters([
-                'userId' => $userId,
-                'observe' => $observe,
             ])
             ->executeQuery();
     }

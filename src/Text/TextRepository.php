@@ -45,30 +45,6 @@ class TextRepository extends AbstractRepository
         return array_keys($this->textDef);
     }
 
-    public function enableText(string $id): void
-    {
-        $this->createQueryBuilder('q')
-            ->update('texts')
-            ->set('text_enabled', '1')
-            ->where('text_id = :id')
-            ->setParameters([
-                'id' => $id,
-            ])
-            ->executeQuery();
-    }
-
-    public function disableText(string $id): void
-    {
-        $this->createQueryBuilder('q')
-            ->update('texts')
-            ->set('text_enabled', '0')
-            ->where('text_id = :id')
-            ->setParameters([
-                'id' => $id,
-            ])
-            ->executeQuery();
-    }
-
     public function reset(string $id): void
     {
         $this->createQueryBuilder('q')

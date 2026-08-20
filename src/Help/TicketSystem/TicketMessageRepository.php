@@ -27,36 +27,6 @@ class TicketMessageRepository extends AbstractRepository
             ->execute();
     }
 
-    /**
-     * @return array<TicketMessage>
-     */
-    public function findByTicket(int $ticketId): array
-    {
-        $data = $this->createQueryBuilder('q')
-            ->select("*")
-            ->from('ticket_msg')
-            ->where('ticket_id = :ticket_id')
-            ->orderBy('timestamp', 'ASC')
-            ->setParameter('ticket_id', $ticketId)
-            ->fetchAllAssociative();
-
-        return array_map(fn (array $arr) => TicketMessage::createFromArray($arr), $data);
-    }
-
-    public function findLastMessageForTicket(int $ticketId): ?TicketMessage
-    {
-        $data = $this->createQueryBuilder('q')
-            ->select("*")
-            ->from('ticket_msg')
-            ->where('ticket_id = :ticket_id')
-            ->orderBy('timestamp', 'DESC')
-            ->addOrderBy('id', 'DESC')
-            ->setParameter('ticket_id', $ticketId)
-            ->fetchAssociative();
-
-        return $data ? TicketMessage::createFromArray($data) : null;
-    }
-
     public function create(TicketMessage $message): void
     {
         if (!isset($message->timestamp)) {
