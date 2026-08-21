@@ -72,16 +72,6 @@ class BuildingDataRepository extends AbstractRepository
             ->execute();
     }
 
-    public function getBuildingName(int $buildingId): string
-    {
-        return (string) $this->applySearchSortLimit($this->createQueryBuilder('q'))
-            ->select('building_name')
-            ->from('buildings')
-            ->where('building_id = :buildingId')
-            ->setParameter('buildingId', $buildingId)
-            ->fetchOne();
-    }
-
     /**
      * @return array<int, string>
      */

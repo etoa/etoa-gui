@@ -88,20 +88,6 @@ class UserSittingRepository extends AbstractRepository
         return $this->findBy(['sitter'=>$sitter]);
     }
 
-    public function existsEntry(int $userId, string $password): bool
-    {
-        return (bool)$this->createQueryBuilder('q')
-            ->select('1')
-            ->from('user_sitting')
-            ->where('user_id = :userId')
-            ->andWhere('password = :password')
-            ->setParameters([
-                'userId' => $userId,
-                'password' => $password,
-            ])
-            ->fetchOne();
-    }
-
     public function hasSittingEntryForTimeSpan(int $userId, int $from, int $to): bool
     {
         return (bool)$this->createQueryBuilder('q')

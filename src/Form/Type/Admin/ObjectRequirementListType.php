@@ -2,6 +2,7 @@
 
 namespace EtoA\Form\Type\Admin;
 
+use EtoA\Form\Validation\UniqueObjectRequirementConstraint;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -30,6 +31,9 @@ class ObjectRequirementListType extends AbstractType
                     'data' => $object->getObjectRequirements(),
                     'entry_options' => [
                         'data_class' => $options['type'],
+                    ],
+                    'constraints' => [
+                        new UniqueObjectRequirementConstraint(['objectName' => $object->getName()]),
                     ],
                 ]);
         }

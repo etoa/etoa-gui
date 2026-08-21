@@ -30,11 +30,10 @@ class MarketRateRepository extends AbstractRepository
     public function removeWhereIdLowerThan(int $id): void
     {
         $this->createQueryBuilder('q')
-        ->delete('market_rates')
-        ->where('id < :id')
-        ->setParameters([
-            'id' => $id,
-        ])
-        ->executeQuery();
+            ->delete()
+            ->where('q.id < :id')
+            ->setParameter('id', $id)
+            ->getQuery()
+            ->execute();
     }
 }

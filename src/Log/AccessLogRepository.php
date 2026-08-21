@@ -57,19 +57,19 @@ class AccessLogRepository extends AbstractRepository
     public function getCountsForTarget(string $domain, string $target): array
     {
         $data = $this->createQueryBuilder('q')
-            ->select('sub, COUNT(target) cnt')
-            ->from('accesslog')
-            ->where('domain = :domain')
-            ->andWhere('target = :target')
-            ->groupBy('sub')
+            ->select('q.sub, COUNT(q.target) cnt')
+            ->where('q.domain = :domain')
+            ->andWhere('q.target = :target')
+            ->groupBy('q.sub')
             ->orderBy('cnt', 'DESC')
             ->setParameters([
                 'domain' => $domain,
                 'target' => $target,
             ])
-            ->fetchAllKeyValue();
+            ->getQuery()
+            ->execute();
 
-        return array_map(fn ($value) => (int) $value, $data);
+        return array_map('intval', array_column($data, 'cnt', 'sub'));
     }
 
     public function deleteAll(): void

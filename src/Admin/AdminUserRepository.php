@@ -66,15 +66,9 @@ class AdminUserRepository extends AbstractRepository
 
     public function setTfaSecret(AdminUser $adminUser, string $secret): void
     {
-        $this->createQueryBuilder('q')
-            ->update('admin_users')
-            ->set('tfa_secret', ':secret')
-            ->where('user_id = :id')
-            ->setParameters([
-                'id' => $adminUser->id,
-                'secret' => $secret,
-            ])
-            ->executeQuery();
+        $adminUser->setTfaSecret($secret);
+
+        $this->save();
     }
 
     public function getNick(int $userId): ?string

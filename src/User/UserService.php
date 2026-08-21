@@ -37,7 +37,6 @@ class UserService
         private readonly UserPropertiesRepository      $userPropertiesRepository,
         private readonly MailSenderService             $mailSenderService,
         private readonly PlanetService                 $planetService,
-        private readonly UserSittingRepository         $userSittingRepository,
         private readonly AllianceRepository            $allianceRepository,
         private readonly FleetRepository               $fleetRepository,
         private readonly UserLogRepository             $userLogRepository,
@@ -274,44 +273,6 @@ die Spielleitung";
         $message = str_replace($search, $replace, $message);
 
         $this->userLogRepository->add($user, $zone, $message, gethostbyname($_SERVER['REMOTE_ADDR']), $public);
-    }
-
-    /**
-
-     * @deprecated let symfony/form handler deal with it
-
-     */
-    public function setPassword(int $userId, string $oldPassword, string $newPassword1, string $newPassword2): void
-    {
-        $user = $this->userRepository->getUser($userId);
-
-        if (!$this->passwordHasher->isPasswordValid($user, $oldPassword)) {
-            throw new Exception("Dein altes Passwort stimmt nicht mit dem gespeicherten Passwort &uuml;berein!");
-        }
-
-        if ($this->userSittingRepository->existsEntry($userId, md5($newPassword1))) {
-            throw new Exception("Das Passwort darf nicht identisch mit dem Sitterpasswort sein!");
-        }
-
-        if ($newPassword1 != $newPassword2) {
-            throw new Exception("Die Eingaben m&uuml;ssen identisch sein!");
-        }
-
-        if (strlen($newPassword1) < $this->config->getInt('password_minlength')) {
-            throw new Exception("Das Passwort muss mindestens " . $this->config->getInt('password_minlength') . " Zeichen lang sein!");
-        }
-
-        $this->userRepository->updatePassword($user, $this->passwordHasher->hashPassword($user, $newPassword1));
-
-        $this->logRepository->add(LogFacility::USER, LogSeverity::INFO, "Der Spieler [b]" . $user->getNick() . "[/b] &auml;ndert sein Passwort!");
-
-        $this->mailSenderService->send(
-            "Passwortänderung",
-            "Hallo " . $user->getNick() . "\n\nDies ist eine Bestätigung, dass du dein Passwort für deinen Account erfolgreich geändert hast!\n\nSolltest du dein Passwort nicht selbst geändert haben, so nimm bitte sobald wie möglich Kontakt mit einem Game-Administrator auf: http://www.etoa.ch/kontakt",
-            $user->getEmail()
-        );
-
-        $this->addToUserLog($userId, "settings", "{nick} ändert sein Passwort.", false);
     }
 
     /**

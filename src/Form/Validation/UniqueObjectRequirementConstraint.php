@@ -6,6 +6,6 @@ use Symfony\Component\Validator\Constraint;
 
 class UniqueObjectRequirementConstraint extends Constraint
 {
-    /** @var array<int, string> */
-    public array $objectNames = [];
+    /** Name of the object whose requirement list is validated, used in the message. */
+    public string $objectName = '';
 }

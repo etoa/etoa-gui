@@ -27,15 +27,7 @@ class SpecialistDataRepository extends AbstractRepository
 
     public function getSpecialist(int $specialistId): ?Specialist
     {
-        $data = $this->createQueryBuilder('q')
-            ->select('s.*')
-            ->from('specialists', 's')
-            ->where('s.specialist_enabled = 1')
-            ->andWhere('s.specialist_id = :id')
-            ->setParameter('id', $specialistId)
-            ->fetchAssociative();
-
-        return $data !== false ? new Specialist($data) : null;
+        return $this->findOneBy(['id' => $specialistId, 'enabled' => true]);
     }
 
     /**
