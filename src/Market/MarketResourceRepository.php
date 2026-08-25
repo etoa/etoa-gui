@@ -18,48 +18,30 @@ class MarketResourceRepository extends AbstractRepository
         parent::__construct($registry, MarketResource::class);
     }
 
-    public function add(User $user, Planet $entity, int $forUserId, int $forAllianceId, string $text, BaseResources $sell, BaseResources $buy): int
+    public function add(User $user, Planet $entity, ?User $forUser, ?Alliance $forAlliance, string $text, BaseResources $sell, BaseResources $buy): MarketResource
     {
-        $this->createQueryBuilder('q')
-            ->insert('market_ressource')
-            ->values([
-                'user_id' => ':userId',
-                'entity_id' => ':entityId',
-                'for_user' => ':forUserId',
-                'for_alliance' => ':forAllianceId',
-                'text' => ':text',
-                'datum' => ':now',
-                'sell_0' => ':sell0',
-                'sell_1' => ':sell1',
-                'sell_2' => ':sell2',
-                'sell_3' => ':sell3',
-                'sell_4' => ':sell4',
-                'buy_0' => ':buy0',
-                'buy_1' => ':buy1',
-                'buy_2' => ':buy2',
-                'buy_3' => ':buy3',
-                'buy_4' => ':buy4',
-            ])
-            ->setParameters([
-                'userId' => $userId,
-                'entityId' => $entityId,
-                'now' => time(),
-                'forUserId' => $forUserId,
-                'forAllianceId' => $forAllianceId,
-                'text' => $text,
-                'sell0' => $sell->metal,
-                'sell1' => $sell->crystal,
-                'sell2' => $sell->plastic,
-                'sell3' => $sell->fuel,
-                'sell4' => $sell->food,
-                'buy0' => $buy->metal,
-                'buy1' => $buy->crystal,
-                'buy2' => $buy->plastic,
-                'buy3' => $buy->fuel,
-                'buy4' => $buy->food,
-            ])->executeQuery();
+        $offer = (new MarketResource())
+            ->setUser($user)
+            ->setEntity($entity)
+            ->setForUser($forUser)
+            ->setForAlliance($forAlliance)
+            ->setText($text)
+            ->setDate(time())
+            ->setSell0($sell->metal)
+            ->setSell1($sell->crystal)
+            ->setSell2($sell->plastic)
+            ->setSell3($sell->fuel)
+            ->setSell4($sell->food)
+            ->setBuy0($buy->metal)
+            ->setBuy1($buy->crystal)
+            ->setBuy2($buy->plastic)
+            ->setBuy3($buy->fuel)
+            ->setBuy4($buy->food);
 
-        return (int) $this->getConnection()->lastInsertId();
+        $this->persist($offer);
+        $this->save();
+
+        return $offer;
     }
 
     /**

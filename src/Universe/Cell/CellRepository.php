@@ -126,11 +126,11 @@ class CellRepository extends AbstractRepository
                 'q.cx',
                 'q.sy',
                 'q.cy',
-                'COUNT(DISTINCT(p.id)) AS cnt'
+                'COUNT(p.entity) AS cnt'
             )
-            ->innerJoin('App:Entity', 'e', 'WITH', 'e.cellId = q.id')
-            ->innerJoin('App:Planet', 'p', 'WITH', 'p.id = e.id AND p.user > 0')
-            ->groupBy('e.cellId')
+            ->innerJoin('App:Entity', 'e', 'WITH', 'e.cell = q')
+            ->innerJoin('App:Planet', 'p', 'WITH', 'p.entity = e AND p.user IS NOT NULL')
+            ->groupBy('e.cell')
             ->getQuery()
             ->getArrayResult();
 
@@ -158,18 +158,18 @@ class CellRepository extends AbstractRepository
     {
         $data = $this->createQueryBuilder('q')
             ->select(
-                'c.sx',
-                'c.cx',
-                'c.sy',
-                'c.cy',
-                'COUNT(p.id) AS cnt'
+                'q.sx',
+                'q.cx',
+                'q.sy',
+                'q.cy',
+                'COUNT(p.entity) AS cnt'
             )
-            ->from('cells', 'c')
-            ->innerJoin('c', 'entities', 'e', 'e.cell_id = c.id')
-            ->innerJoin('e', 'planets', 'p', 'p.id = e.id AND p.planet_user_id = :user')
-            ->groupBy('e.cell_id')
+            ->innerJoin('App:Entity', 'e', 'WITH', 'e.cell = q')
+            ->innerJoin('App:Planet', 'p', 'WITH', 'p.entity = e AND p.user = :user')
+            ->groupBy('e.cell')
             ->setParameter('user', $userId)
-            ->fetchAllAssociative();
+            ->getQuery()
+            ->getArrayResult();
 
         return array_map(fn (array $arr) => new CellPopulation($arr), $data);
     }
@@ -181,20 +181,21 @@ class CellRepository extends AbstractRepository
     {
         $data = $this->createQueryBuilder('q')
             ->select(
-                'c.sx',
-                'c.cx',
-                'c.sy',
-                'c.cy',
-                'COUNT(p.id) AS cnt'
+                'q.sx',
+                'q.cx',
+                'q.sy',
+                'q.cy',
+                'COUNT(p.entity) AS cnt'
             )
-            ->from('cells', 'c')
-            ->innerJoin('c', 'entities', 'e', 'e.cell_id = c.id')
-            ->innerJoin('e', 'planets', 'p', 'p.id = e.id')
-            ->innerJoin('p', 'users', 'a', 'p.planet_user_id = a.user_id')
-            ->innerJoin('a', 'users', 'u', 'a.user_alliance_id=u.user_alliance_id AND u.user_alliance_id > 0 AND u.user_id = :user')
-            ->groupBy('e.cell_id')
+            ->innerJoin('App:Entity', 'e', 'WITH', 'e.cell = q')
+            ->innerJoin('App:Planet', 'p', 'WITH', 'p.entity = e')
+            ->innerJoin('App:User', 'owner', 'WITH', 'p.user = owner')
+            // the alliance of the given user, joined back onto every member's planets
+            ->innerJoin('App:User', 'u', 'WITH', 'owner.alliance = u.alliance AND u.alliance IS NOT NULL AND u.id = :user')
+            ->groupBy('e.cell')
             ->setParameter('user', $userId)
-            ->fetchAllAssociative();
+            ->getQuery()
+            ->getArrayResult();
 
         return array_map(fn (array $arr) => new CellPopulation($arr), $data);
     }

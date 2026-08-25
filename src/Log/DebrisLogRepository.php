@@ -4,8 +4,10 @@ namespace EtoA\Log;
 
 use Doctrine\Persistence\ManagerRegistry;
 use EtoA\Core\AbstractRepository;
+use EtoA\Entity\AdminUser;
 use EtoA\Entity\DebrisLog;
 use EtoA\Entity\User;
+use EtoA\Universe\Resources\BaseResources;
 
 class DebrisLogRepository extends AbstractRepository
 {
@@ -25,27 +27,20 @@ class DebrisLogRepository extends AbstractRepository
             ->execute();
     }
 
-    public function add(int $adminId, int $userId, int $metal, int $crystal, int $plastic): void
+    public function add(AdminUser $admin, User $user, BaseResources $resources): DebrisLog
     {
-        $this->createQueryBuilder('q')
-            ->insert('logs_debris')
-            ->values([
-                'time' => ':now',
-                'admin_id' => ':adminId',
-                'user_id' => ':userId',
-                'metal' => ':metal',
-                'crystal' => ':crystal',
-                'plastic' => ':plastic',
-            ])
-            ->setParameters([
-                'now' => time(),
-                'adminId' => $adminId,
-                'userId' => $userId,
-                'metal' => $metal,
-                'crystal' => $crystal,
-                'plastic' => $plastic,
-            ])
-            ->executeQuery();
+        $entry = (new DebrisLog())
+            ->setAdmin($admin)
+            ->setUser($user)
+            ->setTime(time())
+            ->setMetal($resources->metal)
+            ->setCrystal($resources->crystal)
+            ->setPlastic($resources->plastic);
+
+        $this->persist($entry);
+        $this->save();
+
+        return $entry;
     }
 
     public function countBySearch(DebrisLogSearch $search = null): int

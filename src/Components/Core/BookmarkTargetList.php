@@ -137,8 +137,8 @@ class BookmarkTargetList extends AbstractGameController
             return null;
         }
 
-        // ReportRepository::searchReport() is still legacy dbal code on an orm query
-        // builder, so the report is loaded directly.
+        // loaded directly instead of via ReportRepository::searchReport(), which does
+        // not filter out deleted reports
         return $this->reportRepository->findOneBy(
             [
                 'user' => $this->getUser()->getData(),

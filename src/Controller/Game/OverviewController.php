@@ -20,11 +20,8 @@ use EtoA\Technology\TechnologyDataRepository;
 use EtoA\Technology\TechnologyListItemRepository;
 use EtoA\Technology\TechnologyListItemSearch;
 use EtoA\Technology\TechnologyId;
-use EtoA\Building\BuildingDataRepository;
-use EtoA\Ship\ShipDataRepository;
 use EtoA\Fleet\FleetStatus;
 use EtoA\Fleet\FleetAction;
-use EtoA\Defense\DefenseDataRepository;
 use EtoA\Building\BuildingListItemRepository;
 use EtoA\Ship\ShipQueueRepository;
 use EtoA\Ship\ShipQueueSearch;
@@ -47,7 +44,6 @@ class OverviewController extends AbstractGameController
         private readonly ForeignFleetService              $foreignFleetLoader,
         private readonly TechnologyDataRepository         $technologyDataRepository,
         private readonly TechnologyListItemRepository     $technologyRepository,
-        private readonly DefenseDataRepository            $defenseDataRepository,
         private readonly BuildingListItemRepository       $buildingRepository,
         private readonly ShipQueueRepository              $shipQueueRepository,
         private readonly DefenseQueueRepository           $defenseQueueRepository,
@@ -125,7 +121,6 @@ class OverviewController extends AbstractGameController
 
         //Liest alle Planeten des Besitzers aus und gibt benötigte infos
         $userPlanets = $this->planetRepository->getUserPlanets($this->getUser()->getId());
-        $defenseNames = $this->defenseDataRepository->getDefenseNames(true);
 
         $shipyard_rest_time = [];
         $shipyard_name = [];

@@ -198,7 +198,7 @@ class EntityRepository extends AbstractRepository
     }
 
     /**
-     * @return EntityLabel[]
+     * @return array<int, Entity> keyed by entity id
      */
     public function searchEntityLabels(EntitySearch $search, ?EntityLabelSort $sort = null, ?int $limit = null, ?int $offset = null): array
     {
@@ -212,14 +212,6 @@ class EntityRepository extends AbstractRepository
         }
 
         return $entities;
-    }
-
-    public function searchEntityLabel(EntitySearch $search, ?EntityLabelSort $sort = null): ?EntityLabel
-    {
-        $data = $this->entityLabelQuerBuilder($search, $sort, 1)
-            ->fetchAssociative();
-
-        return $data !== false ? new EntityLabel($data) : null;
     }
 
     private function entityLabelQuerBuilder(EntitySearch $search, ?EntityLabelSort $sort = null, ?int $limit = null, ?int $offset = null): QueryBuilder

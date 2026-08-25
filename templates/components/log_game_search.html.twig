@@ -20,7 +20,7 @@
                 <td>{{ log.user.nick|default('-') }}</td>
                 <td>{{ log.alliance.toString|default('') }}</td>
                 <td>{{ log.entity.toString|default('-') }}</td>
-                <td>{{ this.objects[log.facility][log.object.id].name }} {% if log.level > 0 %}log.level{% endif %}</td>
+                <td>{{ log.object.name|default('-') }}{% if log.level > 0 %} {{ log.level }}{% endif %}</td>
                 <td>{{ this.status[log.facility][log.status]|default('-') }}</td>
                 <td><a href="#log-{{ log.id }}" data-action="click->toggle#onClick">Details</a></td>
             </tr>

@@ -3,9 +3,7 @@
 namespace EtoA\Components\Admin;
 
 use EtoA\Entity\Report;
-use EtoA\Message\ReportAggregator;
 use EtoA\Message\ReportRepository;
-use EtoA\Message\ReportSearch;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
 use Symfony\UX\LiveComponent\Attribute\LiveAction;
 use Symfony\UX\LiveComponent\Attribute\LiveProp;
@@ -21,7 +19,6 @@ class ReportViewComponent
 
     public function __construct(
         private readonly ReportRepository $reportRepository,
-        private readonly ReportAggregator $reportAggregator,
     ) {
     }
 
@@ -37,15 +34,5 @@ class ReportViewComponent
     {
         $this->report->setDeleted(false);
         $this->reportRepository->save();
-    }
-
-    public function getReport(): Report
-    {
-        if ($this->report === null) {
-            $report = $this->reportRepository->searchReport(ReportSearch::create()->id($this->reportId));
-            $this->report = $this->reportAggregator->aggregate([$report])[0];
-        }
-
-        return $this->report;
     }
 }
