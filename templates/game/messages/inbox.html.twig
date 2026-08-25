@@ -61,7 +61,7 @@
                                             {{ message.vars.data.messageData.subject }}
                                         </a>
                                     {% else %}
-                                        <a href="{{path('game.messages.detail',{id:message.vars.data.id})}}">{{ message.vars.data.messageData.subject }}</a>
+                                        <a href="{{path('game.messages.show',{id:message.vars.data.id})}}">{{ message.vars.data.messageData.subject }}</a>
                                     {% endif %}
                                 {% endif %}
                             </td>
