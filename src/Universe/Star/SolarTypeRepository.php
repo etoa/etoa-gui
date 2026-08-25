@@ -16,9 +16,10 @@ class SolarTypeRepository extends AbstractRepository
     }
 
     /**
-     * Returns an array of solar types names indexed by their id.
+     * Despite the name this returns solar type entities, not a name map.
+     * UniverseGenerator and SolarTypeType rely on that.
      *
-     * @return array<int, string>
+     * @return SolarType[]
      */
     public function getSolarTypeNames(bool $showAll = false, bool $orderById = false): array
     {

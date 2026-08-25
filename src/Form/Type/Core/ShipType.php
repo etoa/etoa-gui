@@ -4,6 +4,7 @@ namespace EtoA\Form\Type\Core;
 
 use EtoA\Ship\ShipDataRepository;
 use EtoA\Ship\ShipSearch;
+use EtoA\Ship\ShipSort;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\ChoiceList\ChoiceList;
 use Symfony\Component\Form\ChoiceList\Factory\Cache\ChoiceLoader;
@@ -32,7 +33,7 @@ class ShipType extends AbstractType
                         $search = ShipSearch::create();
                     }
 
-                    return $this->shipDataRepository->searchShipNames($search);
+                    return $this->shipDataRepository->searchShips($search, ShipSort::name());
                 });
             },
             'choice_value' => 'id',

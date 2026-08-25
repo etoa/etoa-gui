@@ -30,7 +30,10 @@ class DefenseDataRepository extends AbstractRepository
 
 
     /**
-     * @return array<int, string>
+     * Despite the name this returns defense entities, not a name map — same as
+     * searchDefense(), only with a name sort applied by default.
+     *
+     * @return Defense[]
      */
     public function searchDefenseNames(?DefenseSearch $search = null, ?DefenseSort $orderBy = null, ?int $limit = null): array
     {

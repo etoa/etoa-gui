@@ -17,7 +17,9 @@ class MessageCategoryRepository extends AbstractRepository
     }
 
     /**
-     * @return array<int,string>
+     * Despite the name this returns category entities, not a name map.
+     *
+     * @return MessageCategory[]
      */
     public function getNames(): array
     {

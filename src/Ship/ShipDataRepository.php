@@ -36,7 +36,10 @@ class ShipDataRepository extends AbstractRepository
     }
 
     /**
-     * @return array<int, string>
+     * Despite the name this returns ship entities, not a name map — same as
+     * searchShips(), only with a name sort applied by default.
+     *
+     * @return Ship[]
      */
     public function searchShipNames(?ShipSearch $search = null, ?ShipSort $orderBy = null, ?int $limit = null): array
     {

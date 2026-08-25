@@ -30,6 +30,19 @@ yarn-error.log
 
 .idea/
 CMakeFiles/
+CMakeCache.txt
 .vagrant/
 cmake_install.cmake
 Makefile
+
+# vom Vagrant-Box-Boot
+*-cloudimg-console.log
+
+# Laufzeitdaten: Avatare und Profilbilder, ausgeliefert unter /cache/
+/cache/
+
+# Zugangsdaten (Vorlage: htdocs/config/db.conf.dist)
+/htdocs/config/db.conf
+
+# das Projekt benutzt yarn, yarn.lock ist die getrackte Lockfile
+/package-lock.json

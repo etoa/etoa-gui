@@ -220,8 +220,7 @@ class FleetBookmarkEditor extends AbstractGameController
             return [];
         }
 
-        // ShipDataRepository::searchShipNames() returns ship entities instead of the
-        // documented id => name map, so the map is built here.
+        // the repository returns ship entities, the suggestion list needs id => name
         $suggestions = [];
         foreach ($this->shipDataRepository->searchShips(
             ShipSearch::create()->showOrBuildable()->nameLike($query),

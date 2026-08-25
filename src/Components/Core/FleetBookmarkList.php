@@ -46,8 +46,7 @@ class FleetBookmarkList extends AbstractGameController
     }
 
     /**
-     * ShipDataRepository::getShipNames() returns ship entities instead of the documented
-     * id => name map, so the map is built here.
+     * The id => name map the template needs; the repository returns ship entities.
      *
      * @return array<int, string>
      */

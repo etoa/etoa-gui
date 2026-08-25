@@ -14,7 +14,10 @@ class SpecialistDataRepository extends AbstractRepository
     }
 
     /**
-     * @return array<int, string>
+     * Despite the name this returns specialist entities, not a name map. The admin
+     * user form relies on that (choice_value: 'id', choice_label: 'name').
+     *
+     * @return Specialist[]
      */
     public function getSpecialistNames(): array
     {

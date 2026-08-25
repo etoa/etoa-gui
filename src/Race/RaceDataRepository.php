@@ -14,9 +14,10 @@ class RaceDataRepository extends AbstractRepository
     }
 
     /**
-     * Returns an array of race names indexed by the race id.
+     * Despite the name this returns race entities, not a name map. The form types
+     * consuming it rely on that (choice_value: 'id', choice_label: 'name').
      *
-     * @return array<int, string>
+     * @return Race[]
      */
     public function getRaceNames(bool $showAll = false, bool $orderById = false): array
     {
