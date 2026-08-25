@@ -1,6 +1,0 @@
-controllers:
-    resource: ../src/Controller/
-    type: annotation
-
-live_component:
-    resource: '@LiveComponentBundle/Resources/config/routing/live_component.xml'

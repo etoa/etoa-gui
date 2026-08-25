@@ -14,7 +14,7 @@ jobs:
     strategy:
       matrix:
         php-version:
-          - "8.0"
+          - "8.5"
 
     services:
       mysql:
@@ -59,14 +59,11 @@ jobs:
       - name: Set up DB
         run: bin/console database:migrate --env=test
 
-      - name: Set up DB config
-        run: echo '{"host":"127.0.0.1:${{ job.services.mysql.ports[3306] }}","dbname":"etoa","user":"root","password":"root"}' > htdocs/config/db.conf
-
       - name: "Client dummy files"
         run: |
-          mkdir -p ./htdocs/web/build
-          echo "{}" > ./htdocs/web/build/manifest.json
-          echo '{"entrypoints": {"admin": {}}}' > ./htdocs/web/build/entrypoints.json
+          mkdir -p ./public/build
+          echo "{}" > ./public/build/manifest.json
+          echo '{"entrypoints": {"admin": {}}}' > ./public/build/entrypoints.json
 
       - name: PHPUnit
         run: ./vendor/bin/phpunit tests
@@ -75,7 +72,7 @@ jobs:
     strategy:
       matrix:
         php-version:
-          - "8.0"
+          - "8.5"
 
     name: PHP-CS-Fixer
     runs-on: ubuntu-latest
@@ -110,7 +107,7 @@ jobs:
     strategy:
       matrix:
         php-version:
-          - "8.0"
+          - "8.5"
 
     services:
       mysql:
@@ -149,9 +146,6 @@ jobs:
 
       - name: Install dependencies
         run: ./composer.phar install --prefer-dist --no-progress --no-suggest
-
-      - name: Set up DB config
-        run: echo '{"host":"127.0.0.1:${{ job.services.mysql.ports[3306] }}","dbname":"etoa_test","user":"root","password":"root"}' > htdocs/config/db.conf
 
       - name: Setup container
         run: ./bin/console debug:container --quiet
