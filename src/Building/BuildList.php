@@ -10,7 +10,6 @@ use EtoA\Technology\TechnologyId;
 use EtoA\Technology\TechnologyListItemRepository;
 use EtoA\Universe\Planet\PlanetRepository;
 use IteratorAggregate;
-use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 
@@ -36,7 +35,6 @@ class BuildList implements IteratorAggregate
      */
     public function __construct(
         private readonly TechnologyListItemRepository $technologyListItemRepository,
-        private readonly Security                 $security,
         private readonly RequestStack $requestStack,
         private readonly PlanetRepository $planetRepository,
         private readonly BuildingListItemRepository $buildingListItemRepository,

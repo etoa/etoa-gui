@@ -8,29 +8,20 @@ use EtoA\Form\Type\Admin\AddTechnologyItemType;
 use EtoA\Form\Type\Admin\ObjectRequirementListType;
 use EtoA\Form\Type\Admin\TechnologySearchType;
 use EtoA\Ranking\RankingService;
-use EtoA\Requirement\ObjectRequirement;
-use EtoA\Requirement\RequirementsUpdater;
 use EtoA\Technology\TechnologyDataRepository;
-use EtoA\Technology\TechnologyPointRepository;
 use EtoA\Technology\TechnologyListItemRepository;
-use EtoA\Technology\TechnologyRequirementRepository;
-use EtoA\Universe\Planet\PlanetRepository;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
-use function DeepCopy\deep_copy;
 
 class TechnologyController extends AbstractAdminController
 {
     public function __construct(
         private readonly TechnologyListItemRepository    $technologyRepository,
         private readonly TechnologyDataRepository        $technologyDataRepository,
-        private readonly TechnologyPointRepository       $technologyPointRepository,
         private readonly RankingService                  $rankingService,
-        private readonly TechnologyRequirementRepository $technologyRequirementRepository,
-        private readonly PlanetRepository                $planetRepository,
     )
     {
     }

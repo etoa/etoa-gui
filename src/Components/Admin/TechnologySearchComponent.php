@@ -4,17 +4,11 @@ namespace EtoA\Components\Admin;
 
 use EtoA\Components\Helper\SearchComponentTrait;
 use EtoA\Components\Helper\SearchResult;
-use EtoA\Entity\TechnologyListItem;
 use EtoA\Form\Request\Admin\TechnologySearchRequest;
 use EtoA\Form\Type\Admin\TechnologySearchType;
 use EtoA\Technology\TechnologyBuildType;
-use EtoA\Technology\TechnologyDataRepository;
 use EtoA\Technology\TechnologyListItemSearch;
 use EtoA\Technology\TechnologyListItemRepository;
-use EtoA\Universe\Entity\EntityLabel;
-use EtoA\Universe\Entity\EntityRepository;
-use EtoA\Universe\Entity\EntitySearch;
-use EtoA\User\UserRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormInterface;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
@@ -37,9 +31,6 @@ class TechnologySearchComponent extends AbstractController
 
     public function __construct(
         private readonly TechnologyListItemRepository $technologyRepository,
-        private readonly TechnologyDataRepository     $technologyDataRepository,
-        private readonly UserRepository               $userRepository,
-        private readonly EntityRepository             $entityRepository,
     ) {
         $this->buildTypes = TechnologyBuildType::all();
         $this->request = new TechnologySearchRequest();

@@ -2,15 +2,12 @@
 
 namespace EtoA\Components\Admin;
 
-use EtoA\Building\BuildingDataRepository;
 use EtoA\Building\BuildingListItemRepository;
 use EtoA\Building\BuildingListItemSearch;
 use EtoA\Components\Helper\SearchComponentTrait;
 use EtoA\Components\Helper\SearchResult;
 use EtoA\Form\Request\Admin\BuildingSearchRequest;
 use EtoA\Form\Type\Admin\BuildingSearchType;
-use EtoA\Universe\Entity\EntityRepository;
-use EtoA\User\UserRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormInterface;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
@@ -30,9 +27,6 @@ class BuildingSearchComponent extends AbstractController
 
     public function __construct(
         private readonly BuildingListItemRepository $buildingRepository,
-        private readonly BuildingDataRepository     $buildingDataRepository,
-        private readonly UserRepository             $userRepository,
-        private readonly EntityRepository           $entityRepository,
     ) {
         $this->request = new BuildingSearchRequest();
     }

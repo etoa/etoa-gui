@@ -26,14 +26,12 @@ use EtoA\Entity\TechnologyPoint;
 use EtoA\Fleet\FleetRepository;
 use EtoA\Fleet\FleetSearchParameters;
 use EtoA\Fleet\FleetShipRepository;
-use EtoA\Race\RaceDataRepository;
 use EtoA\Ship\ShipDataRepository;
 use EtoA\Ship\ShipListRepository;
 use EtoA\Support\RuntimeDataStore;
 use EtoA\Technology\TechnologyDataRepository;
 use EtoA\Technology\TechnologyPointRepository;
 use EtoA\Technology\TechnologyListItemRepository;
-use EtoA\Universe\Entity\EntityRepository;
 use EtoA\Universe\Planet\PlanetRepository;
 use EtoA\User\UserPointsRepository;
 use EtoA\User\UserRepository;
@@ -64,10 +62,8 @@ class RankingService
         private readonly FleetRepository $fleetRepository,
         private readonly DefenseRepository $defenseRepository,
         private readonly DefenseDataRepository $defenseDataRepository,
-        private readonly RaceDataRepository $raceRepository,
         private readonly UserStatRepository $userStatRepository,
         private readonly UserRepository $userRepository,
-        private readonly EntityRepository $entityRepository,
         private readonly AllianceBuildingRepository $allianceBuildingRepository,
         private readonly AllianceBuildListRepository $allianceBuildListRepository,
         private readonly AllianceTechnologyRepository $allianceTechnologyRepository,
@@ -97,10 +93,6 @@ class RankingService
             $this->calcTechPoints();
         }
         $techPoints = $this->technologyPointRepository->getAllMap();
-
-        $race = $this->raceRepository->getRaceNames();
-
-        $allianceTags = $this->allianceRepository->getAllianceTags();
 
         // Load 'old' ranks
         $ranks = $this->userStatRepository->getUserRanks();

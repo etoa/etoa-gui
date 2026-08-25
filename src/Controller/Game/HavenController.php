@@ -2,7 +2,6 @@
 
 namespace EtoA\Controller\Game;
 
-use EtoA\Bookmark\BookmarkRepository;
 use EtoA\Defense\DefenseRepository;
 use EtoA\Entity\Planet;
 use EtoA\Fleet\FleetAction;
@@ -13,7 +12,6 @@ use EtoA\Ship\ShipListRepository;
 use EtoA\Ship\ShipTransformRepository;
 use EtoA\Support\StringUtils;
 use EtoA\Universe\Entity\AbstractEntity;
-use EtoA\Universe\Entity\EntityRepository;
 use EtoA\Universe\Planet\PlanetRepository;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
@@ -33,8 +31,6 @@ class HavenController extends AbstractGameController
         private readonly PlanetRepository $planetRepository,
         private readonly ShipListRepository $shipListRepository,
         private readonly FleetLaunchService $fleetLaunchService,
-        private readonly EntityRepository $entityRepository,
-        private readonly BookmarkRepository $bookmarkRepository,
         private readonly DefenseRepository $defenseRepository
     )
     {}

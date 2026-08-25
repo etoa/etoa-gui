@@ -9,8 +9,6 @@ use EtoA\Entity\Entity;
 use EtoA\Fleet\FleetLaunch;
 use EtoA\Fleet\FleetLaunchService;
 use EtoA\Fleet\FleetRepository;
-use EtoA\Ship\ShipListRepository;
-use EtoA\Ship\ShipTransformRepository;
 use EtoA\Support\StringUtils;
 use EtoA\Universe\Entity\AbstractEntity;
 use EtoA\Universe\Entity\EntityCoordinates;
@@ -84,9 +82,7 @@ class HavenTarget extends AbstractGameController
     private bool $hydrated = false;
 
     public function __construct(
-        private readonly ShipTransformRepository $shipTransformRepository,
         private readonly PlanetRepository $planetRepository,
-        private readonly ShipListRepository $shipListRepository,
         private readonly FleetLaunchService $fleetLaunchService,
         private readonly EntityRepository $entityRepository,
         private readonly BookmarkRepository $bookmarkRepository,

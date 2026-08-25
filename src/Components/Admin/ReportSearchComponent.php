@@ -8,7 +8,6 @@ use EtoA\Form\Request\Admin\ReportSearchRequest;
 use EtoA\Form\Type\Admin\ReportSearchType;
 use EtoA\Message\ReportRepository;
 use EtoA\Message\ReportSearch;
-use EtoA\User\UserRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormInterface;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
@@ -18,15 +17,10 @@ class ReportSearchComponent extends AbstractController
 {
     use SearchComponentTrait;
 
-    /** @var array<string, string> */
-    public array $types;
-    /** @var array<int, string> */
-    public array $users;
     private ReportSearchRequest $request;
 
     public function __construct(
         private readonly ReportRepository $reportRepository,
-        private readonly UserRepository   $userRepository,
     ) {
         $this->request = new ReportSearchRequest();
     }

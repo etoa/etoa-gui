@@ -23,12 +23,6 @@ class MissilesSearchComponent extends AbstractController
 {
     use SearchComponentTrait;
 
-    /** @var array<int, string> */
-    public array $users;
-    /** @var array<int, string> */
-    public array $missileNames;
-    /** @var array<int, string> */
-    public array $entities;
     private MissilesSearchRequest $request;
 
     public function __construct(

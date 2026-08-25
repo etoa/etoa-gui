@@ -11,10 +11,7 @@ use EtoA\Log\FleetLogFacility;
 use EtoA\Log\FleetLogRepository;
 use EtoA\Log\FleetLogSearch;
 use EtoA\Log\LogSeverity;
-use EtoA\Ship\ShipDataRepository;
 use EtoA\Universe\Entity\EntityLabel;
-use EtoA\Universe\Entity\EntityRepository;
-use EtoA\User\UserRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormInterface;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
@@ -42,9 +39,6 @@ class LogFleetsSearchComponent extends AbstractController
 
     public function __construct(
         private readonly FleetLogRepository $logRepository,
-        private readonly UserRepository     $userRepository,
-        private readonly EntityRepository   $entityRepository,
-        private readonly ShipDataRepository $shipDataRepository
     ) {
         $this->request = new LogFleetsSearchRequest();
     }

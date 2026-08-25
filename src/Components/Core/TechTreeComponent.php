@@ -16,7 +16,6 @@ use EtoA\Entity\Technology;
 use EtoA\Form\Type\Core\TechTreeSelectionType;
 use EtoA\Missile\MissileDataRepository;
 use EtoA\Missile\MissileRequirementRepository;
-use EtoA\Requirement\RequirementRepositoryProvider;
 use EtoA\Ship\ShipDataRepository;
 use EtoA\Ship\ShipRequirementRepository;
 use EtoA\Technology\TechnologyDataRepository;
@@ -45,7 +44,6 @@ class TechTreeComponent extends AbstractController
         private readonly ShipDataRepository              $shipDataRepository,
         private readonly DefenseDataRepository           $defenseDataRepository,
         private readonly MissileDataRepository           $missileDataRepository,
-        private readonly RequirementRepositoryProvider   $requirementRepositoryProvider,
         private readonly BuildingRequirementRepository   $buildingRequirementRepository,
         private readonly TechnologyRequirementRepository $technologyRequirementRepository,
         private readonly ShipRequirementRepository       $shipRequirementRepository,

@@ -4,8 +4,6 @@ namespace EtoA\Components\Core;
 
 use EtoA\Building\BuildingId;
 use EtoA\Building\BuildingListItemRepository;
-use EtoA\Building\BuildingService;
-use EtoA\Building\BuildList;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Entity\Planet;
 use EtoA\Entity\User;
@@ -45,8 +43,6 @@ class ShipYardInfo extends AbstractController
         private readonly ConfigurationService         $configurationService,
         private readonly RequestStack                 $requestStack,
         private readonly PlanetRepository             $planetRepository,
-        private readonly BuildingService              $buildingService,
-        private readonly BuildList                    $buildList,
         private readonly ShipQueueRepository          $shipQueueRepository
     )
     {

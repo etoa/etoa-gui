@@ -4,8 +4,6 @@ namespace EtoA\Components\Core;
 
 use EtoA\Building\BuildingId;
 use EtoA\Building\BuildingListItemRepository;
-use EtoA\Building\BuildingService;
-use EtoA\Building\BuildList;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Defense\DefenseQueueRepository;
 use EtoA\Defense\DefenseQueueSearch;
@@ -45,8 +43,6 @@ class DefenseInfo extends AbstractController
         private readonly ConfigurationService         $configurationService,
         private readonly RequestStack                 $requestStack,
         private readonly PlanetRepository             $planetRepository,
-        private readonly BuildingService              $buildingService,
-        private readonly BuildList                    $buildList,
         private readonly DefenseQueueRepository       $defenseQueueRepository
     )
     {

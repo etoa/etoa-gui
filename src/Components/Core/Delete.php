@@ -8,10 +8,8 @@ use EtoA\Support\StringUtils;
 use EtoA\User\UserHolidayService;
 use EtoA\User\UserService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Form\Extension\Core\Type\ButtonType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
-use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\Validator\Constraints\NotBlank;
@@ -32,7 +30,6 @@ class Delete extends AbstractController
         private readonly UserService          $userService,
         private readonly UserHolidayService   $userHolidayService,
         private readonly ConfigurationService $config,
-        private readonly Security             $security
     )
     {
     }

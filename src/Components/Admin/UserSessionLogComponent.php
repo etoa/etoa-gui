@@ -8,7 +8,6 @@ use EtoA\Form\Request\Admin\UserSessionLogRequest;
 use EtoA\Form\Type\Admin\UserSessionLogType;
 use EtoA\User\UserRepository;
 use EtoA\User\UserSessionLogRepository;
-use EtoA\User\UserSessionRepository;
 use EtoA\User\UserSessionSearch;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormInterface;
@@ -24,8 +23,7 @@ class UserSessionLogComponent extends AbstractController
     public array $users;
 
     public function __construct(
-        private UserSessionRepository $userSessionRepository,
-        private UserRepository $userRepository,
+        private readonly UserRepository           $userRepository,
         private readonly UserSessionLogRepository $userSessionLogRepository
     ) {
         $this->request = new UserSessionLogRequest();

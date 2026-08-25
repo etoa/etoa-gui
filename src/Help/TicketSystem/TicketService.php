@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace EtoA\Help\TicketSystem;
 
-use EtoA\Admin\AdminUserRepository;
 use EtoA\Entity\AdminUser;
 use EtoA\Entity\MessageCategory;
 use EtoA\Entity\Ticket;
@@ -24,7 +23,6 @@ class TicketService
     public function __construct(
         private readonly TicketRepository $ticketRepo,
         private readonly TicketMessageRepository $messageRepo,
-        private readonly AdminUserRepository $adminUserRepo,
         private readonly MessageRepository $userMessageRepo,
         private readonly UrlGeneratorInterface $router,
         private readonly MessageCategoryRepository $messageCategoryRepository

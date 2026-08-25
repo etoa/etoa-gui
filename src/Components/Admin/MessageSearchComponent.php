@@ -6,10 +6,8 @@ use EtoA\Components\Helper\SearchComponentTrait;
 use EtoA\Components\Helper\SearchResult;
 use EtoA\Form\Request\Admin\MessageSearchRequest;
 use EtoA\Form\Type\Admin\MessageSearchType;
-use EtoA\Message\MessageCategoryRepository;
 use EtoA\Message\MessageRepository;
 use EtoA\Message\MessageSearch;
-use EtoA\User\UserRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormInterface;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
@@ -19,16 +17,10 @@ class MessageSearchComponent extends AbstractController
 {
     use SearchComponentTrait;
 
-    /** @var array<int, string> */
-    public array $users;
-    /** @var array<int, string> */
-    public array $categories;
     private MessageSearchRequest $request;
 
     public function __construct(
-        private readonly MessageRepository         $messageRepository,
-        private readonly MessageCategoryRepository $messageCategoryRepository,
-        private readonly UserRepository $userRepository
+        private readonly MessageRepository $messageRepository,
     ) {
         $this->request = new MessageSearchRequest();
     }
@@ -76,11 +68,6 @@ class MessageSearchComponent extends AbstractController
         $limit = $this->getLimit($total);
 
         $logs = $this->messageRepository->search($search, $this->perPage, $limit);
-
-        if ($total > 0) {
-            $this->users = $this->userRepository->searchUserNicknames();
-            $this->categories = $this->messageCategoryRepository->getNames();
-        }
 
         return new SearchResult($logs, $limit, $total, $this->perPage);
     }

@@ -4,13 +4,10 @@ namespace EtoA\Components\Admin;
 
 use EtoA\Components\Helper\SearchComponentTrait;
 use EtoA\Components\Helper\SearchResult;
-use EtoA\Defense\DefenseDataRepository;
 use EtoA\Defense\DefenseQueueRepository;
 use EtoA\Defense\DefenseQueueSearch;
 use EtoA\Form\Request\Admin\DefenseQueueSearchRequest;
 use EtoA\Form\Type\Admin\DefenseSearchType;
-use EtoA\Universe\Entity\EntityRepository;
-use EtoA\User\UserRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormInterface;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
@@ -20,19 +17,10 @@ class DefenseQueueSearchComponent extends AbstractController
 {
     use SearchComponentTrait;
 
-    /** @var array<int, string> */
-    public array $users;
-    /** @var array<int, string> */
-    public array $defenseNames;
-    /** @var array<int, string> */
-    public array $entities;
     private DefenseQueueSearchRequest $request;
 
     public function __construct(
         private DefenseQueueRepository $defenseQueueRepository,
-        private DefenseDataRepository $defenseDataRepository,
-        private UserRepository $userRepository,
-        private EntityRepository $entityRepository,
     ) {
         $this->request = new DefenseQueueSearchRequest();
     }

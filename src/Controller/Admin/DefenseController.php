@@ -5,7 +5,6 @@ namespace EtoA\Controller\Admin;
 use EtoA\Defense\DefenseDataRepository;
 use EtoA\Defense\DefenseQueueRepository;
 use EtoA\Defense\DefenseRepository;
-use EtoA\Defense\DefenseRequirementRepository;
 use EtoA\Entity\DefenseListItem;
 use EtoA\Entity\DefenseRequirements;
 use EtoA\Form\Type\Admin\AddDefenseListType;
@@ -26,7 +25,6 @@ class DefenseController extends AbstractAdminController
         private readonly DefenseDataRepository        $defenseDataRepository,
         private readonly DefenseQueueRepository       $defenseQueueRepository,
         private readonly DefenseRepository            $defenseRepository,
-        private readonly DefenseRequirementRepository $defenseRequirementRepository,
     )
     {
     }

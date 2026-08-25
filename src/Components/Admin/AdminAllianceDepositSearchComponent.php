@@ -8,8 +8,6 @@ use EtoA\Components\Helper\SearchResult;
 use EtoA\Entity\Alliance;
 use EtoA\Form\Request\Admin\AdminAllianceDepositSearchRequest;
 use EtoA\Form\Type\Admin\AllianceDepositSearchType;
-use EtoA\User\UserRepository;
-use EtoA\User\UserSearch;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormInterface;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
@@ -27,7 +25,6 @@ class AdminAllianceDepositSearchComponent extends AbstractController
 
     public function __construct(
         private readonly AllianceSpendRepository $allianceSpendRepository,
-        private readonly UserRepository $userRepository
     ) {
         $this->request = new AdminAllianceDepositSearchRequest();
     }
@@ -43,12 +40,7 @@ class AdminAllianceDepositSearchComponent extends AbstractController
             $entries = $this->alliance->getSpends()->toArray();
         }
 
-        $total = count($entries);
-        if ($total > 0) {
-            $this->users = $this->userRepository->searchUserNicknames(UserSearch::create()->allianceId($this->alliance));
-        }
-
-        return new SearchResult($entries, 0, count($entries), $total);
+        return new SearchResult($entries, 0, count($entries), count($entries));
     }
 
     protected function instantiateForm(): FormInterface

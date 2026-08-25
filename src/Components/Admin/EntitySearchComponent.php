@@ -8,8 +8,6 @@ use EtoA\Form\Request\Admin\EntitySearchRequest;
 use EtoA\Form\Type\Admin\EntitySearchType;
 use EtoA\Universe\Entity\EntityLabelSearch;
 use EtoA\Universe\Entity\EntityRepository;
-use EtoA\Universe\Planet\PlanetTypeRepository;
-use EtoA\Universe\Star\SolarTypeRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormInterface;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
@@ -19,16 +17,10 @@ class EntitySearchComponent extends AbstractController
 {
     use SearchComponentTrait;
 
-    /** @var array<int, string> */
-    public array $solarTypes;
-    /** @var array<int, string> */
-    public array $planetTypes;
     private EntitySearchRequest $request;
 
     public function __construct(
         private EntityRepository $entityRepository,
-        private PlanetTypeRepository $planetTypeRepository,
-        private SolarTypeRepository $solarTypeRepository
     ) {
         $this->request = new EntitySearchRequest();
     }
@@ -69,11 +61,6 @@ class EntitySearchComponent extends AbstractController
         $limit = $this->getLimit($total);
 
         $entities = $this->entityRepository->searchEntityLabels($search, null, $this->perPage, $limit);
-
-        if ($total > 0) {
-            $this->planetTypes = $this->planetTypeRepository->getPlanetTypeNames(true);
-            $this->solarTypes = $this->solarTypeRepository->getSolarTypeNames(true);
-        }
 
         return new SearchResult($entities, $limit, $total, $this->perPage);
     }

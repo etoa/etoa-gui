@@ -6,11 +6,8 @@ use EtoA\Components\Helper\SearchComponentTrait;
 use EtoA\Components\Helper\SearchResult;
 use EtoA\Form\Request\Admin\ShipSearchRequest;
 use EtoA\Form\Type\Admin\ShipSearchType;
-use EtoA\Ship\ShipDataRepository;
 use EtoA\Ship\ShipListRepository;
 use EtoA\Ship\ShipListSearch;
-use EtoA\Universe\Entity\EntityRepository;
-use EtoA\User\UserRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormInterface;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
@@ -23,9 +20,6 @@ class ShipSearchComponent extends AbstractController
     private ShipSearchRequest $request;
 
     public function __construct(
-        private readonly ShipDataRepository $shipDataRepository,
-        private readonly UserRepository     $userRepository,
-        private readonly EntityRepository   $entityRepository,
         private readonly ShipListRepository $shipListRepository
     ) {
         $this->request = new ShipSearchRequest();

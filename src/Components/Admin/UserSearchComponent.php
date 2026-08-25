@@ -2,12 +2,10 @@
 
 namespace EtoA\Components\Admin;
 
-use EtoA\Alliance\AllianceRepository;
 use EtoA\Components\Helper\SearchComponentTrait;
 use EtoA\Components\Helper\SearchResult;
 use EtoA\Form\Request\Admin\UserSearchRequest;
 use EtoA\Form\Type\Admin\UserSearchType;
-use EtoA\Race\RaceDataRepository;
 use EtoA\User\UserRepository;
 use EtoA\User\UserSearch;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -19,17 +17,11 @@ class UserSearchComponent extends AbstractController
 {
     use SearchComponentTrait;
 
-    /** @var string[] */
-    public array $alliances = [];
-    /** @var string[] */
-    public array $races = [];
     public int $time;
     private UserSearchRequest $request;
 
     public function __construct(
         private UserRepository $userRepository,
-        private AllianceRepository $allianceRepository,
-        private RaceDataRepository $raceDataRepository,
     ) {
         $this->perPage = 99999;
         $this->request = new UserSearchRequest();
@@ -84,10 +76,6 @@ class UserSearchComponent extends AbstractController
         }
 
         $users = $this->userRepository->searchUsers($search);
-        if (count($users) > 0) {
-            $this->alliances = $this->allianceRepository->getAllianceNamesWithTags();
-            $this->races = $this->raceDataRepository->getRaceNames(true);
-        }
 
         return new SearchResult($users, 0, count($users), $this->perPage);
     }

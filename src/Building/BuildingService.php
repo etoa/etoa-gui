@@ -11,7 +11,6 @@ use EtoA\Log\GameLogFacility;
 use EtoA\Log\GameLogRepository;
 use EtoA\Log\LogSeverity;
 use EtoA\Support\StringUtils;
-use EtoA\Technology\TechnologyDataRepository;
 use EtoA\Technology\TechnologyId;
 use EtoA\Technology\TechnologyListItemRepository;
 use EtoA\Universe\Planet\PlanetRepository;
@@ -21,7 +20,6 @@ use EtoA\Universe\Star\StarRepository;
 use EtoA\User\UserPropertiesRepository;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\RequestStack;
-use EtoA\Specialist\SpecialistService;
 
 class BuildingService
 {
@@ -30,13 +28,10 @@ class BuildingService
         private readonly UserPropertiesRepository     $userPropertiesRepository,
         private readonly BuildingListItemRepository   $buildingListItemRepository,
         private readonly RequestStack                 $requestStack,
-        private readonly BuildingDataRepository       $buildingDataRepository,
-        private readonly TechnologyDataRepository     $technologyDataRepository,
         private readonly PlanetRepository             $planetRepository,
         private readonly BuildList                    $buildList,
         private readonly BuildingTypeDataRepository   $buildingTypeDataRepository,
         private readonly BuildingCostCalculator       $buildingCostCalculator,
-        private readonly SpecialistService            $specialistService,
         private readonly StarRepository               $starRepository,
         private readonly TechnologyListItemRepository $technologyListItemRepository,
         private readonly GameLogRepository            $gameLogRepository,

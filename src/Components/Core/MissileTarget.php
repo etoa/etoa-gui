@@ -2,23 +2,16 @@
 
 namespace EtoA\Components\Core;
 
-use EtoA\Bookmark\BookmarkRepository;
 use EtoA\Controller\Game\AbstractGameController;
-use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\DTO\MissileLaunchDto;
 use EtoA\Entity\Entity;
-use EtoA\Fleet\FleetLaunchService;
 use EtoA\Missile\MissileFlightRepository;
 use EtoA\Missile\MissileRepository;
-use EtoA\Ship\ShipListRepository;
-use EtoA\Ship\ShipTransformRepository;
 use EtoA\Support\StringUtils;
 use EtoA\Universe\Entity\EntityCoordinates;
 use EtoA\Universe\Entity\EntityRepository;
 use EtoA\Universe\Entity\EntityService;
 use EtoA\Universe\Entity\EntityType;
-use EtoA\Universe\Planet\PlanetRepository;
-use EtoA\User\UserUniverseDiscoveryService;
 use Symfony\Component\Form\ChoiceList\Loader\CallbackChoiceLoader;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
@@ -26,7 +19,6 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
 use Symfony\UX\LiveComponent\Attribute\LiveAction;
 use Symfony\UX\LiveComponent\Attribute\LiveProp;
@@ -82,17 +74,9 @@ class MissileTarget extends AbstractGameController
     public array $count = [];
 
     public function __construct(
-        private readonly ShipTransformRepository      $shipTransformRepository,
-        private readonly PlanetRepository             $planetRepository,
-        private readonly ShipListRepository           $shipListRepository,
-        private readonly FleetLaunchService           $fleetLaunchService,
         private readonly EntityRepository             $entityRepository,
-        private readonly BookmarkRepository           $bookmarkRepository,
         private readonly RequestStack                 $requestStack,
-        private readonly ConfigurationService         $configurationService,
-        private readonly UserUniverseDiscoveryService $userUniverseDiscoveryService,
         private readonly EntityService                $entityService,
-        private readonly SerializerInterface          $serializer,
         private readonly MissileRepository            $missileRepository,
         private readonly MissileFlightRepository      $missileFlightRepository
     )

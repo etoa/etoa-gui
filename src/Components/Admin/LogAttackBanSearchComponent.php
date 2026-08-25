@@ -12,8 +12,6 @@ use EtoA\Form\Type\Admin\LogAttackBanType;
 use EtoA\Log\BattleLogRepository;
 use EtoA\Log\BattleLogSearch;
 use EtoA\Universe\Entity\EntityLabel;
-use EtoA\Universe\Entity\EntityRepository;
-use EtoA\User\UserRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormInterface;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
@@ -34,8 +32,6 @@ class LogAttackBanSearchComponent extends AbstractController
     public function __construct(
         private readonly BattleLogRepository $battleLogRepository,
         private readonly BanFinder           $attackBanFinder,
-        private readonly UserRepository      $userRepository,
-        private readonly EntityRepository $entityRepository
     ) {
         $this->perPage = 99999;
         $this->request = new LogAttackBanSearchRequest();
