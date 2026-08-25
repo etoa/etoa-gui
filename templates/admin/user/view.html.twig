@@ -301,29 +301,25 @@
                             {{ formatNumber(user.rankHighest) }}
                         </td>
                     </tr>
-                    {% if battleRating is not null %}
+                    {% if rating is not null %}
                         <tr>
                             <th>Kampfpunkte</th>
                             <td>
-                                {{ battleRating.rating }}
-                                ({{ battleRating.battlesWon }} gewonnen / {{ battleRating.battlesLost }} verloren
-                                / {{ battleRating.battlesFought }} total)
+                                {{ formatNumber(rating.battleRating) }}
+                                ({{ formatNumber(rating.battlesWon) }} gewonnen / {{ formatNumber(rating.battlesLost) }} verloren
+                                / {{ formatNumber(rating.battlesFought) }} total)
                             </td>
                         </tr>
-                    {% endif %}
-                    {% if tradeRating is not null %}
                         <tr>
                             <th>Handelspunkte</th>
                             <td>
-                                {{ tradeRating.rating }}
-                                ({{ tradeRating.tradesBuy }} Einkäufe / {{ tradeRating.tradesSell }} Verkäufe)
+                                {{ formatNumber(rating.tradeRating) }}
+                                ({{ formatNumber(rating.tradesBuy) }} Einkäufe / {{ formatNumber(rating.tradesSell) }} Verkäufe)
                             </td>
                         </tr>
-                    {% endif %}
-                    {% if diplomacyRating is not null %}
                         <tr>
                             <th>Diplomatiepunkte</th>
-                            <td>{{ diplomacyRating.rating }}</td>
+                            <td>{{ formatNumber(rating.diplomacyRating) }}</td>
                         </tr>
                     {% endif %}
                     <tr>

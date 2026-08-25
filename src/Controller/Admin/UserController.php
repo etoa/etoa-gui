@@ -45,8 +45,6 @@ use EtoA\User\UserLogRepository;
 use EtoA\User\UserMultiRepository;
 use EtoA\User\UserPointsRepository;
 use EtoA\User\UserPropertiesRepository;
-use EtoA\User\UserRatingRepository;
-use EtoA\User\UserRatingSearch;
 use EtoA\User\UserRepository;
 use EtoA\User\UserService;
 use EtoA\User\UserSessionLogRepository;
@@ -92,7 +90,6 @@ class UserController extends AbstractAdminController
         private readonly AllianceRepository         $allianceRepository,
         private readonly UserBannerService          $userBannerService,
         private readonly UserLoginFailureRepository $userLoginFailureRepository,
-        private readonly UserRatingRepository       $userRatingRepository,
         private readonly GameLogRepository          $gameLogRepository,
         private readonly MessageRepository          $messageRepository,
         private readonly UserLogRepository          $userLogRepository,
@@ -149,7 +146,6 @@ class UserController extends AbstractAdminController
 
         $bannerPath = $this->userBannerService->getUserBannerPath($user->getId());
 
-        $ratingSearch = UserRatingSearch::create()->user($user);
         $userSession = $this->userSessionRepository->findOneBy(['user' => $user]);
         if (!$userSession) {
             $userSession = $this->userSessionLogRepository->findOneBy(['user' => $user], ['id' => 'DESC']);
@@ -197,9 +193,7 @@ class UserController extends AbstractAdminController
             'bannerTime' => file_exists($bannerPath) ? filemtime($bannerPath) : 0,
             'userBannerWebsiteLink' => ExternalUrl::USERBANNER_LINK,
             'userBannerLink' => $this->config->get('roundurl') . '/' . $bannerPath,
-            'battleRating' => $this->userRatingRepository->getBattleRating($ratingSearch)[0] ?? null,
-            'tradeRating' => $this->userRatingRepository->getTradeRating($ratingSearch)[0] ?? null,
-            'diplomacyRating' => $this->userRatingRepository->getDiplomacyRating($ratingSearch)[0] ?? null,
+            'rating' => $user->getUserRating(),
             'session' => $userSession,
             'form' => $form
         ]);

@@ -18,7 +18,9 @@ class UserRatingRepository extends AbstractRepository
     }
 
     /**
-     * @return UserDiplomacyRating[]
+     * Mixed result: one row per rating, each `[0 => UserRating, 'points' => int]`.
+     *
+     * @return array<int, array{0: UserRating, points: int}>
      */
     public function getDiplomacyRating(?UserRatingSearch $search = null, ?UserRatingSort $sort = null, ?int $limit = null, ?int $offset = null): array
     {
@@ -30,7 +32,9 @@ class UserRatingRepository extends AbstractRepository
     }
 
     /**
-     * @return UserBattleRating[]
+     * Mixed result: one row per rating, each `[0 => UserRating, 'points' => int]`.
+     *
+     * @return array<int, array{0: UserRating, points: int}>
      */
     public function getBattleRating(?UserRatingSearch $search = null, ?UserRatingSort $sort = null, ?int $limit = null, ?int $offset = null): array
     {
@@ -42,7 +46,9 @@ class UserRatingRepository extends AbstractRepository
     }
 
     /**
-     * @return UserTradeRating[]
+     * Mixed result: one row per rating, each `[0 => UserRating, 'points' => int]`.
+     *
+     * @return array<int, array{0: UserRating, points: int}>
      */
     public function getTradeRating(?UserRatingSearch $search = null, ?UserRatingSort $sort = null, ?int $limit = null, ?int $offset = null): array
     {

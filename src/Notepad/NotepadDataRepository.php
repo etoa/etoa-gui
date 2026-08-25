@@ -26,7 +26,11 @@ class NotepadDataRepository extends AbstractRepository
         $this->notepadRepository->persist($notepad);
         $this->notepadRepository->save();
 
-        $notepadData->setId($notepad->getId());
+        // NotepadData is identified by its Notepad (foreign identity), so the
+        // association has to be set - there is no plain id to assign
+        $notepadData->setNotepad($notepad);
+        $notepad->setData($notepadData);
+
         $this->persist($notepadData);
         $this->save();
     }
