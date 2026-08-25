@@ -179,6 +179,7 @@
                     </script>
                 {% endif %}
                 {{ form_widget(form._token) }}
+                {{ form_widget(form.checker) }}
             {{ form_end(form,{render_rest:false}) }}
         {% endif %}
     {% endif %}

@@ -47,6 +47,7 @@
             {% endblock %}
         </twig:Table>
         {{ form_widget(formRess.submit) }}
+        {{ form_widget(formRess.checker) }}
         {{ form_end(formRess) }}<br/><br/>
     {% else %}
         {{ macros.message('Rohstoffe','Keine Angebote vorhanden!') }}
@@ -97,6 +98,7 @@
             {% endblock %}
         </twig:Table>
         {{ form_widget(formShip.submit) }}
+        {{ form_widget(formShip.checker) }}
         {{ form_end(formShip) }}<br/><br/>
     {% else %}
         {{ macros.message('Schiffe','Keine Angebote vorhanden!') }}
@@ -156,6 +158,7 @@
         </twig:Table>
         {{ form_widget(formAuction.submit) }}
         {{ form_widget(formAuction._token) }}
+        {{ form_widget(formAuction.checker) }}
         {{ form_end(formAuction,{render_rest:false}) }}<br/><br/>
     {% else %}
         {{ macros.message('Auktionen','Keine Auktionen vorhanden!') }}

@@ -2,6 +2,7 @@
 
 namespace EtoA\Controller\Game;
 
+use EtoA\Form\Type\Core\SingleSubmitType;
 use EtoA\Entity\ShipListItem;
 use EtoA\Ship\ShipListRepository;
 use EtoA\Ship\ShipXpCalculator;
@@ -130,6 +131,7 @@ class ShipUpgradeController extends AbstractGameController
                 ->add('save', SubmitType::class, [
                     'label' => 'Gewähltes Upgrade durchführen',
                 ])
+                ->add('checker', SingleSubmitType::class)
                 ->getForm()
                 ->handleRequest($request);
 

@@ -70,6 +70,7 @@
         {% endblock %}
         </twig:Table>
         {{ form_widget(form._token) }}
+    {{ form_widget(form.checker) }}
     {{ form_end(form,{render_rest:false}) }}
     <twig:Table title="Daten" width="500">
     {% block table_content %}

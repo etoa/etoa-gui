@@ -2,6 +2,7 @@
 
 namespace EtoA\Controller\Game;
 
+use EtoA\Form\Type\Core\SingleSubmitType;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Defense\DefenseRepository;
 use EtoA\Entity\Planet;
@@ -71,7 +72,7 @@ class RecycleController extends AbstractGameController
                 ->add('submit', SubmitType::class, [
                     'label' => 'Ausgewählte Schiffe recyceln'
                 ])
-
+                ->add('checker', SingleSubmitType::class)
                 ->getForm()
                 ->handleRequest($request);
 
@@ -125,7 +126,7 @@ class RecycleController extends AbstractGameController
                 ->add('submit', SubmitType::class, [
                     'label' => 'Ausgewählte Anlagen recyceln'
                 ])
-
+                ->add('checker', SingleSubmitType::class)
                 ->getForm()
                 ->handleRequest($request);
 

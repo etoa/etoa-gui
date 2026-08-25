@@ -2,6 +2,7 @@
 
 namespace EtoA\Controller\Game;
 
+use EtoA\Form\Type\Core\SingleSubmitType;
 use EtoA\Building\BuildingId;
 use EtoA\Building\BuildingListItemRepository;
 use EtoA\Entity\Technology;
@@ -92,6 +93,7 @@ class ResearchController extends AbstractGameController
             ->add('refresh', SubmitType::class, [
                 'label' => 'Aktualisieren'
             ])
+            ->add('checker', SingleSubmitType::class)
             ->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {

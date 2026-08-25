@@ -12,7 +12,6 @@ use EtoA\Form\Type\Core\PlanetSetupType;
 use EtoA\Form\Type\Core\RaceSetupType;
 use EtoA\Message\MessageCategoryRepository;
 use EtoA\Message\MessageRepository;
-use EtoA\Support\Checker;
 use EtoA\Text\TextRepository;
 use EtoA\UI\Tooltip;
 use EtoA\Universe\Entity\EntityRepository;
@@ -37,7 +36,6 @@ class SetupController extends AbstractGameController
         private readonly PlanetRepository         $planetRepository,
         private readonly MessageRepository        $messageRepository,
         private readonly EntityRepository         $entityRepository,
-        private readonly Checker                  $checker,
         private readonly StarRepository           $starRepository,
         private readonly TextRepository           $textRepository,
         private readonly UserRepository           $userRepository,
@@ -61,8 +59,6 @@ class SetupController extends AbstractGameController
                 $this->userRepository->save();
                 return $this->redirectToRoute('game.setup.sector');
             }
-
-            #$addForm->get('checker')->setData($this->checker->checker_init());
 
             return $this->render("game/setup/setup_race.html.twig", [
                 'addForm' => $addForm->createView(),
@@ -113,7 +109,7 @@ class SetupController extends AbstractGameController
                 $xcnt++;
             }
 
-            $addForm = $this->createForm(ChooseSectorSetupType::class,[$this->checker->checker_init()]);
+            $addForm = $this->createForm(ChooseSectorSetupType::class);
             return $this->render('game/setup/setup_choosesector.html.twig', [
                 'map' => $map,
                 'addForm' => $addForm->createView(),
@@ -138,7 +134,7 @@ class SetupController extends AbstractGameController
             return $this->redirectToRoute('game.setup.finished');
         }
 
-        $addForm = $this->createForm(PlanetSetupType::class,['checker'=>$this->checker->checker_init()]);
+        $addForm = $this->createForm(PlanetSetupType::class);
 
         if(!$planet) {
             $flashes = $request->getSession()->getFlashBag();
@@ -239,11 +235,12 @@ class SetupController extends AbstractGameController
             return $this->redirectToRoute('game.setup.planet',['id'=> $planet?->getEntity()->getId()]);
         }
 
+        // isValid() covers the one-time token of PlanetSetupType, so colonising can
+        // not be triggered twice from several windows holding the same page
         if($addForm->get('submit_chooseplanet')->isClicked() && $addForm->isValid()) {
             if ($planet->getPlanetType()->isHabitable() &&
                 $planet->getUser() === null &&
                 $planet->getFields() > $this->configurationService->getInt('user_min_fields')
-                #&& $this->checker->checker_verify()
             ) {
                 $this->userSetupService->coloniseMainPlanet($planet);
 
@@ -262,7 +259,6 @@ class SetupController extends AbstractGameController
         }
 
         return $this->render('game/setup/setup_planet.html.twig', [
-            'checker' => $this->checker->checker_init(),
             'addForm' => $addForm->createView(),
             'entity' => $entity,
             'starType' =>$starType,

@@ -2,6 +2,7 @@
 
 namespace EtoA\Controller\Game;
 
+use EtoA\Form\Type\Core\SingleSubmitType;
 use EtoA\Alliance\AllianceBuildingId;
 use EtoA\Alliance\AllianceBuildingRepository;
 use EtoA\Alliance\AllianceBuildListRepository;
@@ -149,6 +150,7 @@ class AllianceBaseController extends AbstractGameController
                 'data' => 0
             ])
             ->add('save', SubmitType::class, ['label' => 'Einzahlen'])
+            ->add('checker', SingleSubmitType::class)
             ->getForm()
             ->handleRequest($request);
 
@@ -293,6 +295,7 @@ class AllianceBaseController extends AbstractGameController
                         'onmouseout' => 'hideTT()'
                     ]
                 ])
+                ->add('checker', SingleSubmitType::class)
                 ->getForm()
                 ->handleRequest($request);
 

@@ -2,6 +2,7 @@
 
 namespace EtoA\Controller\Game;
 
+use EtoA\Form\Type\Core\SingleSubmitType;
 use EtoA\Building\BuildingId;
 use EtoA\Building\BuildingListItemRepository;
 use EtoA\Core\Configuration\ConfigurationService;
@@ -96,6 +97,7 @@ class ShipyardController extends AbstractGameController
                     ->add('submit', SubmitType::class, [
                         'label' => 'Bauaufträge übernehmen',
                     ])
+                    ->add('checker', SingleSubmitType::class)
                     ->handleRequest($request);
 
 

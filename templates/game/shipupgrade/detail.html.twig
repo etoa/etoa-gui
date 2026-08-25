@@ -34,6 +34,7 @@
             <br>
         {% endif %}
     {{ form_widget(form._token) }}
+    {{ form_widget(form.checker) }}
     {{ form_end(form,{render_rest:false}) }}
     <a href="{{ path('game.ships.upgrade') }}">
         <input type="button" value="Zurück zur Übersicht"/>

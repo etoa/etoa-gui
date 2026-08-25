@@ -2,6 +2,7 @@
 
 namespace EtoA\Controller\Game;
 
+use EtoA\Form\Type\Core\SingleSubmitType;
 use EtoA\Building\BuildingId;
 use EtoA\Building\BuildingListItemRepository;
 use EtoA\Core\Configuration\ConfigurationService;
@@ -96,7 +97,7 @@ class MarketController extends AbstractGameController
             ->add('submit', SubmitType::class, [
                 'label' => 'Angebot zurückziehen'
             ])
-
+            ->add('checker', SingleSubmitType::class)
             ->getForm()
             ->handleRequest($request);
 
@@ -137,7 +138,7 @@ class MarketController extends AbstractGameController
             ->add('submit', SubmitType::class, [
                 'label' => 'Angebot zurückziehen'
             ])
-
+            ->add('checker', SingleSubmitType::class)
             ->getForm()
             ->handleRequest($request);
 
@@ -172,7 +173,7 @@ class MarketController extends AbstractGameController
             ->add('submit', SubmitType::class, [
                 'label' => 'Angebot zurückziehen'
             ])
-
+            ->add('checker', SingleSubmitType::class)
             ->getForm()
             ->handleRequest($request);
 

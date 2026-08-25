@@ -2,6 +2,7 @@
 
 namespace EtoA\Controller\Game;
 
+use EtoA\Form\Type\Core\SingleSubmitType;
 use EtoA\Building\BuildingId;
 use EtoA\Building\BuildingListItemRepository;
 use EtoA\Form\Type\Core\BunkerShipCountType;
@@ -72,6 +73,7 @@ class BunkerController extends AbstractGameController
                 ->add('send', SubmitType::class, [
                     'label' => 'Speichern'
                 ])
+                ->add('checker', SingleSubmitType::class)
                 ->getForm()
                 ->handleRequest($request);
 
@@ -125,7 +127,7 @@ class BunkerController extends AbstractGameController
                 ->add('submit', SubmitType::class, [
                     'label' => 'Ausbunkern'
                 ])
-
+                ->add('checker', SingleSubmitType::class)
                 ->getForm()
                 ->handleRequest($request);
 
@@ -187,7 +189,7 @@ class BunkerController extends AbstractGameController
                 ->add('submit', SubmitType::class, [
                     'label' => 'Einbunkern'
                 ])
-
+                ->add('checker', SingleSubmitType::class)
                 ->getForm()
                 ->handleRequest($request);
 

@@ -2,6 +2,7 @@
 
 namespace EtoA\Controller\Game;
 
+use EtoA\Form\Type\Core\SingleSubmitType;
 use EtoA\Building\BuildingId;
 use EtoA\Building\BuildingListItemRepository;
 use EtoA\Core\Configuration\ConfigurationService;
@@ -235,6 +236,7 @@ class MissileController extends AbstractGameController
                                     'onClick' => "return confirm('Sollen die gewählten Raketen wirklich verschrottet werden? Es werden keine Ressourcen zurückerstattet!')"
                                 ]
                             ])
+                            ->add('checker', SingleSubmitType::class)
                             ->getForm()
                             ->handleRequest($request);
 

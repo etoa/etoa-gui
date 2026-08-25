@@ -5,7 +5,6 @@ namespace EtoA\Form\Type\Core;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 class PlanetSetupType extends AbstractType
@@ -41,8 +40,6 @@ class PlanetSetupType extends AbstractType
             ->add('redo', SubmitType::class, [
                 'label' => 'Einen neuen Sektor auswählen',
             ])
-            ->add('checker', HiddenType::class, [
-                'data' => $options['data']['checker']
-            ]);
+            ->add('checker', SingleSubmitType::class);
     }
 }

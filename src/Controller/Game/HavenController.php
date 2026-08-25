@@ -2,6 +2,7 @@
 
 namespace EtoA\Controller\Game;
 
+use EtoA\Form\Type\Core\SingleSubmitType;
 use EtoA\Defense\DefenseRepository;
 use EtoA\Entity\Planet;
 use EtoA\Fleet\FleetAction;
@@ -70,7 +71,7 @@ class HavenController extends AbstractGameController
                         'title' => "Wenn du die Schiffe ausgewählt hast, klicke hier um das Ziel auszuwählen"
                     ]
                 ])
-
+                ->add('checker', SingleSubmitType::class)
                 ->getForm()
                 ->handleRequest($request);
 
@@ -201,6 +202,7 @@ class HavenController extends AbstractGameController
                 ->add('dtransform', SubmitType::class, ['label' => 'Verladen'])
                 ->add('ships', CollectionType::class, ['entry_type' => CountType::class, 'label' => false])
                 ->add('stransform', SubmitType::class, ['label' => 'Ausladen und installieren'])
+                ->add('checker', SingleSubmitType::class)
                 ->getForm();
         };
 

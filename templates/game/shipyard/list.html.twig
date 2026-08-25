@@ -260,6 +260,7 @@
                 {{ form_widget(shipForm.submit) }}<br/><br/>
             {% endif %}
             {{ form_widget(shipForm._token) }}
+            {{ form_widget(shipForm.checker) }}
         {{ form_end(shipForm,{render_rest:false}) }}
     {% else %}
         <p>Es können noch keine Schiffe gebaut werden! Baue zuerst die benötigten Gebäude und erforsche die

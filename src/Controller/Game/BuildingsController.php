@@ -4,6 +4,7 @@ namespace EtoA\Controller\Game;
 
 use EtoA\Building\BuildingService;
 use EtoA\Entity\Building;
+use EtoA\Form\Type\Core\SingleSubmitType;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\HttpFoundation\Request;
@@ -68,6 +69,7 @@ class BuildingsController extends AbstractGameController
                     'onclick' => "if (this.value=='Abriss abbrechen'){return confirm('Wirklich abbrechen?');}"
                 ]
             ])
+            ->add('checker', SingleSubmitType::class)
             ->handleRequest($request);
 
 

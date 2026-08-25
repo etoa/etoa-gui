@@ -2,6 +2,7 @@
 
 namespace EtoA\Controller\Game;
 
+use EtoA\Form\Type\Core\SingleSubmitType;
 use EtoA\Alliance\AllianceBuildingId;
 use EtoA\Alliance\AllianceBuildListRepository;
 use EtoA\Alliance\AllianceFleetControlLevel;
@@ -127,6 +128,7 @@ class FleetController extends AbstractGameController
                         'onclick' => "return confirm('Willst du diesen Allianzangriff wirklich abbrechen? Merke du brichst damit den ganzen Allianzangriff ab!')"
                     ]
                 ])
+                ->add('checker', SingleSubmitType::class)
                 ->getForm()
                 ->handleRequest($request);
 

@@ -252,6 +252,7 @@
                 {{ form_widget(defenseForm.submit) }}<br/><br/>
             {% endif %}
             {{ form_widget(defenseForm._token) }}
+            {{ form_widget(defenseForm.checker) }}
         {{ form_end(defenseForm,{render_rest:false}) }}
     {% else %}
         <p>Es können noch keine Anlagen gebaut werden! Baue zuerst die benötigten Gebäude und erforsche die

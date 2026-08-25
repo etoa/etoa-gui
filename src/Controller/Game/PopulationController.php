@@ -2,6 +2,7 @@
 
 namespace EtoA\Controller\Game;
 
+use EtoA\Form\Type\Core\SingleSubmitType;
 use EtoA\Building\BuildingId;
 use EtoA\Building\BuildingListItemRepository;
 use EtoA\Building\BuildingRepository;
@@ -82,6 +83,7 @@ class PopulationController extends AbstractGameController
                     ])
                     ->add('save', SubmitType::class, ['label' => 'Speichern'])
                     ->add('free', SubmitType::class, ['label' => 'Alle Arbeiter freigeben'])
+                    ->add('checker', SingleSubmitType::class)
                     ->getForm()
                     ->handleRequest($request);
 

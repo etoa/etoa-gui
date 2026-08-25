@@ -6,7 +6,6 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\Extension\Core\Type\ButtonType;
-use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 
 class RaceSetupType extends AbstractType
 {
@@ -25,6 +24,6 @@ class RaceSetupType extends AbstractType
                 'label' => 'Zufällige Rasse auswählen',
                 'attr' => ['onclick' => 'rdm()'],
             ])
-            ->add('checker', HiddenType::class);
+            ->add('checker', SingleSubmitType::class);
     }
 }

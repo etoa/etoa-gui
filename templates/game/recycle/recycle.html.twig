@@ -46,6 +46,7 @@
                 {% endblock %}
             </twig:Table>
             {{ form_widget(formShips.submit) }}
+        {{ form_widget(formShips.checker) }}
         {{ form_end(formShips) }}
     {% else %}
         <twig:Box title="Information" class="information">
@@ -80,6 +81,7 @@
             </twig:Table>
             {{ form_widget(formDefenses.submit) }}
             {{ form_widget(formDefenses._token) }}
+        {{ form_widget(formDefenses.checker) }}
         {{ form_end(formDefenses,{render_rest:false})}}
     {% else %}
         <twig:Box title="Information" class="information">
