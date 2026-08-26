@@ -209,7 +209,8 @@ class SellShipType extends AbstractType
                     'onclick'=>"calcMarketShipPrice(0, 1);checkUpdate('ship_selector', 'ship_last_update')"
                 ],
                 'label' => 'Angebot aufgeben'
-            ]);
+            ])
+            ->add('checker', SingleSubmitType::class);
         $builder->get('forUser')
             ->addModelTransformer(new CallbackTransformer(
                 function () {},

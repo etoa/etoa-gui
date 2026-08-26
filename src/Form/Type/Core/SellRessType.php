@@ -187,7 +187,8 @@ class SellRessType extends AbstractType
                     'onclick'=>"calcMarketRessPrice(1);checkUpdate('ress_selector', 'ress_last_update')"
                 ],
                 'label' => 'Angebot aufgeben'
-            ]);
+            ])
+            ->add('checker', SingleSubmitType::class);
         $builder->get('forUser')
             ->addModelTransformer(new CallbackTransformer(
                 function () {},

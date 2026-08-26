@@ -165,7 +165,8 @@ class AuctionType extends AbstractType
                     'onclick'=>"checkMarketAuctionFormular(1);checkUpdate('auction_selector', 'auction_last_update')"
                 ],
                 'label' => 'Angebot aufgeben'
-            ]);
+            ])
+            ->add('checker', SingleSubmitType::class);
 
         $builder->addEventListener(FormEvents::PRE_SUBMIT, function (FormEvent $event) {
             $data = $event->getData();
