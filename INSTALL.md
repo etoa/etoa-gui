@@ -3,8 +3,86 @@ Escape to Andromeda Installation Guide
 
 Frontend - Version 1.0
 
-Vagrant Developer setup
------------------------
+Docker Developer setup
+----------------------
+
+The recommended way to develop. Needs only Docker with the Compose plugin
+(Docker Desktop on Windows and macOS brings both).
+
+    $ docker compose up -d          # php-fpm, nginx, mysql, cron, mailpit
+    $ docker compose run --rm node  # yarn install + yarn run build
+
+The asset build is intentionally not part of `up`: webpack rewrites
+`public/build/entrypoints.json` while it runs, and a request arriving in that
+window gets a 500.
+
+The first `up` builds the php image, which includes compiling the C++ event
+handler, and takes a few minutes. Afterwards the game is on
+**http://localhost:8080**, the caught mail on **http://localhost:8025**.
+
+The php entrypoint waits for the database, runs `composer install` if `vendor/`
+is empty, applies all migrations for `etoa` and `etoa_test` and sets the three
+config rows the environment needs (`loginurl`, `daemon_exe`, `daemon_pidfile`).
+It is idempotent, so it just runs again on every `up`.
+
+### Everyday commands
+
+    $ docker compose exec php bin/console <command>
+    $ docker compose exec php composer <command>
+    $ docker compose exec php vendor/bin/phpunit
+    $ docker compose exec database mysql -uetoa -petoa etoa
+    $ docker compose run --rm node yarn watch     # rebuild assets on change
+    $ docker compose logs -f php
+
+**`vendor/` and `var/` live in docker volumes, not on the host.** They cause by
+far the most file access, and a bind mount onto the Windows filesystem is what
+made the old setup slow. The price is that your editor does not see `vendor/`:
+run `composer install` on the host as well if you want the IDE to resolve
+Symfony and Doctrine classes.
+
+### Ports
+
+Overridable via the environment, e.g. `HTTP_PORT=9000 docker compose up -d`:
+
+| Variable       | Default | What                        |
+|----------------|---------|-----------------------------|
+| `HTTP_PORT`    | 8080    | the game                    |
+| `MYSQL_PORT`   | 3307    | mysql, for an external client |
+| `MAILPIT_PORT` | 8025    | the mail catcher web UI     |
+
+### Xdebug
+
+Off by default, because an always-on xdebug costs time on every request. Turn it
+on for a session without rebuilding:
+
+    $ XDEBUG_MODE=debug docker compose up -d php
+
+It connects back to `host.docker.internal:9003` with the IDE key `etoa`.
+
+### Event handler
+
+The binary is built into the php image and installed as `/usr/local/bin/etoad` —
+not into `eventhandler/target`, because that path is covered by the bind mount of
+the project. Start and stop work as usual from `/admin/eventhandler`. Its MySQL
+connection comes from `docker/eventhandler.conf`, which is mounted over the
+tracked `config/eventhandler.conf` (that one points at `localhost` for the
+vagrant box).
+
+### Rebuilding
+
+    $ docker compose build php            # after changing the Dockerfile or eventhandler/
+    $ docker compose down -v              # throw away database, vendor and var
+
+If `php:8.5-fpm-bookworm` is not available for your platform:
+
+    $ docker compose build --build-arg PHP_VERSION=8.4 php
+
+Vagrant Developer setup (legacy)
+--------------------------------
+
+Superseded by the Docker setup above; kept until that has proven itself. Note
+that on Windows the synced folder is disabled in the `Vagrantfile`, so the VM
+does not see your working tree at all.
 
 Install [VirtualBox](https://www.virtualbox.org/).
 Install [Vagrant](https://www.vagrantup.com/).

@@ -1,0 +1,20 @@
+# Keeps the build context small - without this the whole node_modules, vendor,
+# backup and legacy tree is sent to the daemon on every build.
+.git
+.idea
+node_modules
+vendor
+var
+backup
+cache
+php
+legacy
+public/build
+public/bundles
+db/etoa.sql
+*.log
+
+# CMake output of a host build of the event handler; the image builds it itself
+eventhandler/target
+eventhandler/CMakeCache.txt
+eventhandler/CMakeFiles

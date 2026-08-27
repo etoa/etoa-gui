@@ -76,4 +76,7 @@ echo "* * * * * php /var/www/etoa/bin/console cron:run" | crontab
 sudo apt-get install -q -y -f cmake libboost-all-dev libmysql++-dev g++
 
 # Build eventhandler
-cd /var/www/etoa && make eventhandler
+# (there is no root Makefile and never was an "eventhandler" target in it, so this
+# used to fail silently at the end of the provisioning)
+cd /var/www/etoa && cmake -S eventhandler -B eventhandler/build \
+    && cmake --build eventhandler/build -j "$(nproc)"

@@ -1,0 +1,132 @@
+name: etoa-gui
+
+services:
+  php:
+    build:
+      context: .
+      dockerfile: docker/php/Dockerfile
+    image: etoa-gui-php
+    depends_on:
+      database:
+        condition: service_healthy
+    environment:
+      APP_ENV: ${APP_ENV:-dev}
+      # Debug mode revalidates ~1000 tracked container resources plus the twig,
+      # routing and doctrine caches on every request. Each filemtime() on the
+      # bind-mounted project costs about 4 ms here, which adds ~11 s per request.
+      #   APP_DEBUG=0 docker compose up -d php
+      # brings the kernel boot from 10.4 s down to 0.03 s, at the price of the
+      # profiler and of having to run cache:clear after changing config, routes
+      # or templates. The lasting fix is a working tree in the WSL2 filesystem.
+      APP_DEBUG: ${APP_DEBUG:-1}
+      # real env vars win over .env, so the committed 127.0.0.1 default stays untouched
+      DATABASE_URL: mysql://etoa:etoa@database:3306/etoa?serverVersion=8.0&charset=utf8mb4
+      DATABASE_URL_TEST: mysql://etoa:etoa@database:3306/etoa_test?serverVersion=8.0&charset=utf8mb4
+      MAILER_DSN: smtp://mailer:1025
+      # set to "debug" (or develop,debug) to switch xdebug on without a rebuild
+      XDEBUG_MODE: ${XDEBUG_MODE:-off}
+      PHP_IDE_CONFIG: serverName=etoa
+    volumes:
+      - .:/app
+      # vendor/ and var/ live in volumes: they cause by far the most file access
+      # and a bind mount onto the Windows filesystem is slow. Consequence: they are
+      # not visible on the host, use "docker compose exec php ..." for composer and
+      # bin/console.
+      - vendor:/app/vendor
+      - var:/app/var
+      # The tracked config/eventhandler.conf points at localhost, which is right
+      # for the vagrant box and wrong here. Mounted over instead of rewritten, so
+      # the working tree stays clean.
+      - ./docker/eventhandler.conf:/app/config/eventhandler.conf:ro
+    extra_hosts:
+      - host.docker.internal:host-gateway
+
+  nginx:
+    image: nginx:1.27-alpine
+    depends_on:
+      - php
+    ports:
+      - "${HTTP_PORT:-8080}:80"
+    volumes:
+      - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+      # only the document root is needed, and public/build is written by the node service
+      - ./public:/app/public:ro
+
+  database:
+    image: mysql:8.0
+    command:
+      # the game's queries rely on grouping without a full group by
+      - --sql-mode=STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: etoa
+      MYSQL_USER: etoa
+      MYSQL_PASSWORD: etoa
+    volumes:
+      - database:/var/lib/mysql
+      - ./docker/mysql/init:/docker-entrypoint-initdb.d:ro
+    ports:
+      - "${MYSQL_PORT:-3307}:3306"
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-uroot", "-proot"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+      start_period: 30s
+
+  # Replaces the crontab of the vagrant box ("* * * * * bin/console cron:run").
+  cron:
+    # same image as php, built once
+    image: etoa-gui-php
+    depends_on:
+      php:
+        condition: service_started
+    environment:
+      APP_ENV: ${APP_ENV:-dev}
+      DATABASE_URL: mysql://etoa:etoa@database:3306/etoa?serverVersion=8.0&charset=utf8mb4
+      XDEBUG_MODE: off
+    volumes:
+      - .:/app
+      - vendor:/app/vendor
+      - var:/app/var
+    entrypoint: ["/bin/sh", "-c"]
+    command:
+      - |
+        echo "waiting for the php service to finish installing dependencies"
+        until [ -f /app/vendor/autoload_runtime.php ]; do sleep 2; done
+        while true; do
+          php /app/bin/console cron:run || true
+          sleep 60
+        done
+
+  # Deliberately behind a profile: "docker compose up" must not rebuild the assets
+  # every time. Webpack rewrites public/build/entrypoints.json while it runs, and a
+  # request arriving in that window gets a 500.
+  #
+  #   docker compose run --rm node             one-shot build
+  #   docker compose run --rm node yarn watch  rebuild on change
+  #
+  node:
+    profiles: ["assets"]
+    image: node:20-bookworm-slim
+    working_dir: /app
+    volumes:
+      - .:/app
+      - node_modules:/app/node_modules
+    command: sh -c "yarn install --frozen-lockfile && yarn run build"
+
+  mailer:
+    image: axllent/mailpit:latest
+    ports:
+      - "${MAILPIT_PORT:-8025}:8025"
+    environment:
+      MP_SMTP_AUTH_ACCEPT_ANY: 1
+      MP_SMTP_AUTH_ALLOW_INSECURE: 1
+
+volumes:
+  database:
+  vendor:
+  var:
+  node_modules:

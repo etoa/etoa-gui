@@ -18,15 +18,15 @@ jobs:
 
     services:
       mysql:
-        image: mysql:5.7
+        image: mysql:8.0
         env:
           MYSQL_ROOT_PASSWORD: root
         ports:
           - 3306
-        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+        options: --health-cmd="mysqladmin ping -uroot -proot" --health-interval=10s --health-timeout=5s --health-retries=3
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: "Install PHP"
         uses: "shivammathur/setup-php@v2"
@@ -37,7 +37,7 @@ jobs:
 
       - name: Composer Cache Directory
         id: composer-cache
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: ~/.composer
           key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
@@ -45,13 +45,17 @@ jobs:
             ${{ runner.os }}-composer-
 
       - name: Set up Symfony DB config
-        run: echo 'DATABASE_URL="mysql://root:root@127.0.0.1:${{ job.services.mysql.ports[3306] }}/etoa?serverVersion=5.7"' > .env.test
+        run: echo 'DATABASE_URL="mysql://root:root@127.0.0.1:${{ job.services.mysql.ports[3306] }}/etoa?serverVersion=8.0&charset=utf8mb4"' > .env.test
 
       - name: Validate composer.json and composer.lock
         run: ./composer.phar validate
 
       - name: Install dependencies
-        run: ./composer.phar install --prefer-dist --no-progress --no-suggest
+        run: ./composer.phar install --prefer-dist --no-progress
+
+      - name: Relax sql_mode
+        # the game groups without a full group by, provision.sh does the same
+        run: mysql -h 127.0.0.1 -P ${{ job.services.mysql.ports[3306] }} -uroot -proot -e "SET GLOBAL sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''));"
 
       - name: Create DB
         run: ./bin/console doctrine:database:create --env=test
@@ -77,7 +81,7 @@ jobs:
     name: PHP-CS-Fixer
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: "Install PHP"
         uses: "shivammathur/setup-php@v2"
@@ -88,17 +92,17 @@ jobs:
 
       - name: "Determine composer cache directory"
         id: "determine-composer-cache-directory"
-        run: "echo \"::set-output name=directory::$(composer config cache-dir)\""
+        run: echo "directory=$(composer config cache-dir)" >> "$GITHUB_OUTPUT"
 
       - name: "Cache dependencies installed with composer"
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: "${{ steps.determine-composer-cache-directory.outputs.directory }}"
           key: "php-${{ matrix.php-version }}-phpcsfixer-${{ hashFiles('**/composer.lock') }}"
           restore-keys: "php-${{ matrix.php-version }}-phpcsfixer"
 
       - name: Install dependencies
-        run: ./composer.phar install --prefer-dist --no-progress --no-suggest
+        run: ./composer.phar install --prefer-dist --no-progress
 
       - name: PHP-CS-Fixer
         run: ./vendor/bin/php-cs-fixer fix --dry-run --diff
@@ -111,17 +115,17 @@ jobs:
 
     services:
       mysql:
-        image: mysql:5.7
+        image: mysql:8.0
         env:
           MYSQL_ROOT_PASSWORD: root
         ports:
           - 3306
-        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+        options: --health-cmd="mysqladmin ping -uroot -proot" --health-interval=10s --health-timeout=5s --health-retries=3
 
     name: PHPStan
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: "Install PHP"
         uses: "shivammathur/setup-php@v2"
@@ -132,23 +136,27 @@ jobs:
 
       - name: "Determine composer cache directory"
         id: "determine-composer-cache-directory"
-        run: "echo \"::set-output name=directory::$(composer config cache-dir)\""
+        run: echo "directory=$(composer config cache-dir)" >> "$GITHUB_OUTPUT"
 
       - name: "Cache dependencies installed with composer"
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: "${{ steps.determine-composer-cache-directory.outputs.directory }}"
           key: "php-${{ matrix.php-version }}-phpstan-${{ hashFiles('**/composer.lock') }}"
           restore-keys: "php-${{ matrix.php-version }}-phpstan"
 
       - name: Set up Symfony DB config
-        run: echo 'DATABASE_URL="mysql://root:root@127.0.0.1:${{ job.services.mysql.ports[3306] }}/etoa?serverVersion=5.7"' > .env.test
+        run: echo 'DATABASE_URL="mysql://root:root@127.0.0.1:${{ job.services.mysql.ports[3306] }}/etoa?serverVersion=8.0&charset=utf8mb4"' > .env.test
 
       - name: Install dependencies
-        run: ./composer.phar install --prefer-dist --no-progress --no-suggest
+        run: ./composer.phar install --prefer-dist --no-progress
 
       - name: Setup container
         run: ./bin/console debug:container --quiet
+
+      - name: Relax sql_mode
+        # the game groups without a full group by, provision.sh does the same
+        run: mysql -h 127.0.0.1 -P ${{ job.services.mysql.ports[3306] }} -uroot -proot -e "SET GLOBAL sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''));"
 
       - name: Create DB
         run: ./bin/console doctrine:database:create --env=test
@@ -157,7 +165,7 @@ jobs:
         run: bin/console database:migrate --env=test
 
       - name: Set up Symfony DB config
-        run: echo 'DATABASE_URL="mysql://root:root@127.0.0.1:${{ job.services.mysql.ports[3306] }}/etoa_test?serverVersion=5.7"' > .env.test
+        run: echo 'DATABASE_URL="mysql://root:root@127.0.0.1:${{ job.services.mysql.ports[3306] }}/etoa_test?serverVersion=8.0&charset=utf8mb4"' > .env.test
 
       - name: Run PHPStan
         run: vendor/bin/phpstan analyse --no-progress
@@ -170,18 +178,18 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [16.x]
+        # provision.sh installs node 20 and the docker stack uses node:20
+        node-version: [20.x]
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
 
       - name: Install dependencies
-        run: ./composer.phar install --prefer-dist --no-progress --no-suggest --no-plugins --no-dev --ignore-platform-reqs
+        run: ./composer.phar install --prefer-dist --no-progress --no-plugins --no-dev --ignore-platform-reqs
 
       - run: yarn install --frozen-lockfile
-      - run: yarn run prod-mix
       - run: yarn run build
