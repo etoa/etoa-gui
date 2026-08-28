@@ -26,7 +26,7 @@ class MessageRepository extends AbstractRepository
     /**
      * @return Message[]
      */
-    public function search(MessageSearch $search, int $limit = null, int $offset = null): array
+    public function search(MessageSearch $search, ?int $limit = null, ?int $offset = null): array
     {
         return $this->applySearchSortLimit($this->createQueryBuilder('q'), $search, null, $limit, $offset)
             ->innerJoin('App:MessageData', 'd', 'WITH', 'd.message = q.id')
@@ -46,7 +46,7 @@ class MessageRepository extends AbstractRepository
         return $this->count(['deleted'=>true]);
     }
 
-    public function countBySearch(MessageSearch $search = null): int
+    public function countBySearch(?MessageSearch $search = null): int
     {
         return (int) $this->applySearchSortLimit($this->createQueryBuilder('q'), $search)
             ->select('COUNT(q)')
@@ -164,8 +164,8 @@ class MessageRepository extends AbstractRepository
         User $sender,
         User $receiver,
         MessageData $messageData,
-        MessageCategory $cat = null,
-        Fleet $fleet = null
+        ?MessageCategory $cat = null,
+        ?Fleet $fleet = null
     ): void {
         $message = new Message();
         $message->setUserFrom($sender);
@@ -244,7 +244,7 @@ class MessageRepository extends AbstractRepository
         return $affected > 0;
     }
 
-    public function setDeletedForUser(int $userId, bool $deleted = true, int $userFromId = null, ?bool $isArchived = null): bool
+    public function setDeletedForUser(int $userId, bool $deleted = true, ?int $userFromId = null, ?bool $isArchived = null): bool
     {
         $qry = $this->createQueryBuilder('q')
             ->update('messages')

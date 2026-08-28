@@ -28,12 +28,6 @@ services:
       PHP_IDE_CONFIG: serverName=etoa
     volumes:
       - .:/app
-      # vendor/ and var/ live in volumes: they cause by far the most file access
-      # and a bind mount onto the Windows filesystem is slow. Consequence: they are
-      # not visible on the host, use "docker compose exec php ..." for composer and
-      # bin/console.
-      - vendor:/app/vendor
-      - var:/app/var
       # The tracked config/eventhandler.conf points at localhost, which is right
       # for the vagrant box and wrong here. Mounted over instead of rewritten, so
       # the working tree stays clean.
@@ -114,6 +108,7 @@ services:
     working_dir: /app
     volumes:
       - .:/app
+      - vendor:/app/vendor
       - node_modules:/app/node_modules
     command: sh -c "yarn install --frozen-lockfile && yarn run build"
 

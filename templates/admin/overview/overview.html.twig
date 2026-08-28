@@ -104,7 +104,7 @@
 
     {% if fleetBanTitle %}
         <twig:alert type="info" :title="fleetBanTitle">
-            {{ fleetBanText }}
+            {{ fleetBanText|raw }}
         </twig:alert>
     {% endif %}
 

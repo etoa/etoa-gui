@@ -34,12 +34,6 @@ It is idempotent, so it just runs again on every `up`.
     $ docker compose run --rm node yarn watch     # rebuild assets on change
     $ docker compose logs -f php
 
-**`vendor/` and `var/` live in docker volumes, not on the host.** They cause by
-far the most file access, and a bind mount onto the Windows filesystem is what
-made the old setup slow. The price is that your editor does not see `vendor/`:
-run `composer install` on the host as well if you want the IDE to resolve
-Symfony and Doctrine classes.
-
 ### Ports
 
 Overridable via the environment, e.g. `HTTP_PORT=9000 docker compose up -d`:

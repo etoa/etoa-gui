@@ -21,7 +21,7 @@ class FleetRepository extends AbstractRepository
     /**
      * @return int[]
      */
-    public function getUserIds(FleetSearch $search = null): array
+    public function getUserIds(?FleetSearch $search = null): array
     {
         return array_map('intval', $this->applySearchSortLimit($this->createQueryBuilder('q'), $search)
             ->select('DISTINCT IDENTITY(q.user)')
@@ -32,7 +32,7 @@ class FleetRepository extends AbstractRepository
     /**
      * @return int[]
      */
-    public function getEntityToIds(FleetSearch $search = null): array
+    public function getEntityToIds(?FleetSearch $search = null): array
     {
         return array_map(fn (array $row) => (int) $row['entityTo'], $this->applySearchSortLimit($this->createQueryBuilder('q'), $search)
             ->join('q.user','u')
@@ -41,7 +41,7 @@ class FleetRepository extends AbstractRepository
             ->getResult());
     }
 
-    public function countFleet(FleetSearch $search = null): int
+    public function countFleet(?FleetSearch $search = null): int
     {
         return $this->applySearchSortLimit($this->createQueryBuilder('q'), $search)
             ->select("COUNT(q.id)")
@@ -134,7 +134,7 @@ class FleetRepository extends AbstractRepository
             ->execute();
     }
 
-    public function add(User $user, int $launchTime, int $landTime, Entity $entityFrom, Entity $entityTo, string $action, int $status, BaseResources $resources, BaseResources $fetch = null, int $pilots = 0, int $fuelUsage = 0, int $foodUsage = 0, int $powerUsage = 0, ?Fleet $leader = null, int $nextId = 0, int $nextActionTime = 0, int $supportFuelUsage = 0, int $supportFoodUsage = 0): Fleet
+    public function add(User $user, int $launchTime, int $landTime, Entity $entityFrom, Entity $entityTo, string $action, int $status, BaseResources $resources, ?BaseResources $fetch = null, int $pilots = 0, int $fuelUsage = 0, int $foodUsage = 0, int $powerUsage = 0, ?Fleet $leader = null, int $nextId = 0, int $nextActionTime = 0, int $supportFuelUsage = 0, int $supportFoodUsage = 0): Fleet
     {
         $fetch = $fetch !== null ? $fetch : new BaseResources();
 
@@ -184,7 +184,7 @@ class FleetRepository extends AbstractRepository
 
     }
 
-    public function update(Fleet $fleet, int $launchTime, int $landTime, Entity $entityFrom, Entity $entityTo, int $status, BaseResources $resources = null, int $usageFuel = null, int $usageFood = null): void
+    public function update(Fleet $fleet, int $launchTime, int $landTime, Entity $entityFrom, Entity $entityTo, int $status, ?BaseResources $resources = null, ?int $usageFuel = null, ?int $usageFood = null): void
     {
         $fleet->setLaunchTime($launchTime);
         $fleet->setLandTime($landTime);
@@ -271,7 +271,7 @@ class FleetRepository extends AbstractRepository
     /**
      * @return Fleet[]
      */
-    public function search(FleetSearch $search, FleetSort $sort = null): array
+    public function search(FleetSearch $search, ?FleetSort $sort = null): array
     {
         $sort = $sort !== null ? $sort : FleetSort::landtime('DESC');
 

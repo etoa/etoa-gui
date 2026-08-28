@@ -55,7 +55,7 @@ class StarRepository extends AbstractRepository
         }
     }
 
-    public function update(int $id, ?string $name, int $typeId = null): bool
+    public function update(int $id, ?string $name, ?int $typeId = null): bool
     {
         $qb = $this->createQueryBuilder('q')
             ->update('stars')

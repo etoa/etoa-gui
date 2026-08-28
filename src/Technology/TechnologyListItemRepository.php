@@ -50,7 +50,7 @@ class TechnologyListItemRepository extends AbstractRepository
         return $data !== false ? TechnologyListItem::createFromData($data) : null;
     }
 
-    public function countSearch(TechnologyListItemSearch $search = null): int
+    public function countSearch(?TechnologyListItemSearch $search = null): int
     {
         return (int) $this->applySearchSortLimit($this->createQueryBuilder('q'), $search)
             ->select('COUNT(q.id)')

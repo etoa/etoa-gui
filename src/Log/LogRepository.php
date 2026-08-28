@@ -17,7 +17,7 @@ class LogRepository extends AbstractRepository
     /**
      * @return Log[]
      */
-    public function searchLogs(LogSearch $search, int $limit = null, int $offset = null): array
+    public function searchLogs(LogSearch $search, ?int $limit = null, ?int $offset = null): array
     {
         return $this->applySearchSortLimit($this->createQueryBuilder('q'), $search, null, $limit, $offset)
             ->orderBy('q.timestamp', 'DESC')
@@ -50,7 +50,7 @@ class LogRepository extends AbstractRepository
             ->execute();
     }
 
-    public function countBySearch(LogSearch $search = null): int
+    public function countBySearch(?LogSearch $search = null): int
     {
         return (int) $this->applySearchSortLimit($this->createQueryBuilder('q'), $search)
             ->select('COUNT(q)')

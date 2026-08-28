@@ -63,7 +63,7 @@ class UserSessionRepository extends AbstractRepository
     /**
      * @return UserSession[]
      */
-    public function getSessions(UserSessionSearch $search = null): array
+    public function getSessions(?UserSessionSearch $search = null): array
     {
         return $this->applySearchSortLimit($this->createQueryBuilder('q'), $search)
             ->orderBy('q.timeAction', 'DESC')

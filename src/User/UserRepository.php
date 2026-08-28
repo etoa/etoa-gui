@@ -58,7 +58,7 @@ class UserRepository extends AbstractRepository
         return $data !== false ? $data : null;
     }
 
-    public function setAlliance(User $user, Alliance $alliance, AllianceRank $rank = null, int $leaveTimestamp = null): void
+    public function setAlliance(User $user, Alliance $alliance, ?AllianceRank $rank = null, ?int $leaveTimestamp = null): void
     {
         $user->setAlliance($alliance);
 
@@ -400,7 +400,7 @@ class UserRepository extends AbstractRepository
             ->execute();
     }
 
-    public function updateImgCheck(User $user, bool $check, string $image = null): void
+    public function updateImgCheck(User $user, bool $check, ?string $image = null): void
     {
         $user->setProfileImageCheck($check);
 
@@ -535,7 +535,7 @@ class UserRepository extends AbstractRepository
     /**
      * @return array<int, User>
      */
-    public function searchUserNicknames(UserSearch $search = null, int $limit = null): array
+    public function searchUserNicknames(?UserSearch $search = null, ?int $limit = null): array
     {
         $qb = $this->createQueryBuilder('q')
             ->orderBy('q.nick');
@@ -548,7 +548,7 @@ class UserRepository extends AbstractRepository
     /**
      * @return User[]
      */
-    public function searchUsers(UserSearch $search = null, UserSort $sort = null, int $limit = null): array
+    public function searchUsers(?UserSearch $search = null, ?UserSort $sort = null, ?int $limit = null): array
     {
         $qb = $this->createQueryBuilder('q');
 
