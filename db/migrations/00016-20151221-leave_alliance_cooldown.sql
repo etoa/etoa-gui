@@ -1,1 +1,0 @@
-ALTER TABLE `users` ADD `user_alliance_leave` INT unsigned NOT NULL DEFAULT '0' AFTER `user_alliace_shippoints_used`;
