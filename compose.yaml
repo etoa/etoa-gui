@@ -83,8 +83,6 @@ services:
       XDEBUG_MODE: off
     volumes:
       - .:/app
-      - vendor:/app/vendor
-      - var:/app/var
     entrypoint: ["/bin/sh", "-c"]
     command:
       - |
@@ -108,7 +106,6 @@ services:
     working_dir: /app
     volumes:
       - .:/app
-      - vendor:/app/vendor
       - node_modules:/app/node_modules
     command: sh -c "yarn install --frozen-lockfile && yarn run build"
 
@@ -122,6 +119,4 @@ services:
 
 volumes:
   database:
-  vendor:
-  var:
   node_modules:

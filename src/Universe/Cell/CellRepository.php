@@ -111,7 +111,7 @@ class CellRepository extends AbstractRepository
                 )
                 VALUES " .
                     implode(',', array_fill(0, count($values), '(?, ?, ? ,?)')),
-                array_merge(...$values)
+                array_merge(...array_map('array_values', $values))
             );
     }
 

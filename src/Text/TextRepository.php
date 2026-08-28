@@ -64,13 +64,15 @@ class TextRepository extends AbstractRepository
             return null;
         }
 
-        if(!$text || !$text->getContent()) {
+        if (!$text) {
             $text = new Text();
             $text->setId($id);
             $text->setContent($this->textDef[$id]['default']);
             $text->setDescription($this->textDef[$id]['description']);
             $text->setLabel($this->textDef[$id]['label']);
             $this->persist($text);
+        } elseif (!$text->getContent()) {
+            $text->setContent($this->textDef[$id]['default']);
         }
 
         return $text;

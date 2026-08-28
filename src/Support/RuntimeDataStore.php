@@ -17,7 +17,7 @@ class RuntimeDataStore extends AbstractRepository
 
     public function get(string $key, ?string $default = null): ?string
     {
-        return $this->findOneBy(['dataKey'=>$key])->getDataValue()??$default;
+        return $this->findOneBy(['dataKey'=>$key])?->getDataValue() ?? $default;
     }
 
     public function set(string $key, string $value): void
