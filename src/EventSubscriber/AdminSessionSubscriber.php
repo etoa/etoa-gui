@@ -65,8 +65,11 @@ class AdminSessionSubscriber implements EventSubscriberInterface
             $time = time();
             $lastAction = $session->get('lastAction');
             $timeout = $time - $this->config->getInt('admin_timeout');
+            $userAgent = (string) $event->getRequest()->headers->get('User-Agent');
             if ($lastAction === null || $lastAction > $timeout) {
-                if ($this->adminSessionRepository->exists($session->getId(), $user->getId(), $event->getRequest()->headers->get('User-Agent'))) {
+                $this->migrateSession($event, $user, $userAgent);
+
+                if ($this->adminSessionRepository->exists($session->getId(), $user->getId(), $userAgent)) {
                     $this->adminSessionRepository->update($session->getId(), $user->getId(), $time, $event->getRequest()->getClientIp());
                     $session->set('lastAction', $time);
 
@@ -76,6 +79,35 @@ class AdminSessionSubscriber implements EventSubscriberInterface
 
             $event->setResponse(new RedirectResponse($this->urlGenerator->generate('admin.logout'), Response::HTTP_TEMPORARY_REDIRECT));
         }
+    }
+
+    /**
+     * Symfony migrates the session id whenever another firewall authenticates in the
+     * same browser - logging into the game next to the admin area does exactly that.
+     * The session row still belongs to this admin, it only carries the previous id, so
+     * move it over. A row that is really gone (kicked, timed out) is left alone and the
+     * caller logs the admin out.
+     */
+    private function migrateSession(RequestEvent $event, CurrentAdmin $user, string $userAgent): void
+    {
+        $session = $event->getRequest()->getSession();
+        if ($this->adminSessionRepository->exists($session->getId(), $user->getId(), $userAgent)) {
+            return;
+        }
+
+        $previous = $this->adminSessionRepository->findForUser($user->getId());
+        if ($previous === null || $previous->getUserAgent() !== $userAgent) {
+            return;
+        }
+
+        $this->adminSessionRepository->removeByUserOrId($session->getId(), $user->getData());
+        $this->adminSessionRepository->create(
+            $session->getId(),
+            $user->getData(),
+            (string) $event->getRequest()->getClientIp(),
+            $userAgent,
+            (int) $previous->getTimeLogin(),
+        );
     }
 
     public function onLogout(LogoutEvent $event): void

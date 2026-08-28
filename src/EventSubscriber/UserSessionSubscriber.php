@@ -73,12 +73,14 @@ class UserSessionSubscriber implements EventSubscriberInterface
 
             $session = $event->getRequest()->getSession();
 
+            $this->userSessionManager->migrateSession($user->getData(), $session->getId());
+
             $time = time();
             $lastAction = $session->get('lastAction');
             $sittingActive = $session->has('sittingActive')?$session->get('sittingActive'):null;
             $sittingUntil = $session->has('sittingUntil')?$session->get('sittingUntil'):null;
-            $botCount = $session->get('botCount');
-            $lastSpan = $session->get('botCount');
+            $botCount = (int) $session->get('botCount');
+            $lastSpan = (int) $session->get('lastSpan');
             $timeout = $time - $this->config->getInt('user_timeout');
 
             if ($lastAction === null || $lastAction > $timeout) {
@@ -109,6 +111,8 @@ class UserSessionSubscriber implements EventSubscriberInterface
                     if (!$bot) {
                         $this->userSessionRepository->update($session->getId(), $time, $botCount, $lastSpan, $event->getRequest()->getClientIp());
                         $session->set('lastAction', $time);
+                        $session->set('botCount', $botCount);
+                        $session->set('lastSpan', $lastSpan);
                         return;
                     }
                 }

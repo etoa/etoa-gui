@@ -78,40 +78,40 @@ class GalaxyMapImageGenerator
 
         $imgDir = $this->projectDir . '/' . self::IMG_BASE_DIR;
 
-        $starImageSrc = imagecreatefrompng($imgDir . "/stars/star4_small.png");
+        $starImageSrc = self::loadPng($imgDir . "/stars/star4_small.png");
         $starImage = imagecreatetruecolor($mim->galaxyImageScale, $mim->galaxyImageScale);
         imagecopyresampled($starImage, $starImageSrc, 0, 0, 0, 0, $mim->galaxyImageScale, $mim->galaxyImageScale, imagesx($starImageSrc), imagesy($starImageSrc));
 
-        $nebulaImageSrc = imagecreatefrompng($imgDir . "/nebulas/nebula2_small.png");
+        $nebulaImageSrc = self::loadPng($imgDir . "/nebulas/nebula2_small.png");
         $nebulaImage = imagecreatetruecolor($mim->galaxyImageScale, $mim->galaxyImageScale);
         imagecopyresampled($nebulaImage, $nebulaImageSrc, 0, 0, 0, 0, $mim->galaxyImageScale, $mim->galaxyImageScale, imagesx($nebulaImageSrc), imagesy($nebulaImageSrc));
 
-        $asteroidImageSrc = imagecreatefrompng($imgDir . "/asteroids/asteroids1_small.png");
+        $asteroidImageSrc = self::loadPng($imgDir . "/asteroids/asteroids1_small.png");
         $asteroidImage = imagecreatetruecolor($mim->galaxyImageScale, $mim->galaxyImageScale);
         imagecopyresampled($asteroidImage, $asteroidImageSrc, 0, 0, 0, 0, $mim->galaxyImageScale, $mim->galaxyImageScale, imagesx($asteroidImageSrc), imagesy($asteroidImageSrc));
 
-        $spaceImageSrc = imagecreatefrompng($imgDir . "/space/space1_small.png");
+        $spaceImageSrc = self::loadPng($imgDir . "/space/space1_small.png");
         $spaceImage = imagecreatetruecolor($mim->galaxyImageScale, $mim->galaxyImageScale);
         imagecopyresampled($spaceImage, $spaceImageSrc, 0, 0, 0, 0, $mim->galaxyImageScale, $mim->galaxyImageScale, imagesx($spaceImageSrc), imagesy($spaceImageSrc));
 
-        $wormholeImageSrc = imagecreatefrompng($imgDir . "/wormholes/wormhole1_small.png");
+        $wormholeImageSrc = self::loadPng($imgDir . "/wormholes/wormhole1_small.png");
         $wormholeImage = imagecreatetruecolor($mim->galaxyImageScale, $mim->galaxyImageScale);
         imagecopyresampled($wormholeImage, $wormholeImageSrc, 0, 0, 0, 0, $mim->galaxyImageScale, $mim->galaxyImageScale, imagesx($wormholeImageSrc), imagesy($wormholeImageSrc));
 
-        $persistentWormholeImageSrc = imagecreatefrompng($imgDir . "/wormholes/wormhole_persistent1_small.png");
+        $persistentWormholeImageSrc = self::loadPng($imgDir . "/wormholes/wormhole_persistent1_small.png");
         $persistentWormholeImage = imagecreatetruecolor($mim->galaxyImageScale, $mim->galaxyImageScale);
         imagecopyresampled($persistentWormholeImage, $persistentWormholeImageSrc, 0, 0, 0, 0, $mim->galaxyImageScale, $mim->galaxyImageScale, imagesx($persistentWormholeImageSrc), imagesy($persistentWormholeImageSrc));
 
         $unexploredImages = [];
         for ($i = 1; $i < 7; $i++) {
-            $unexploredImageSrc = imagecreatefrompng($imgDir . "/unexplored/fog$i.png");
+            $unexploredImageSrc = self::loadPng($imgDir . "/unexplored/fog$i.png");
             $unexploredImages[$i] = imagecreatetruecolor($mim->galaxyImageScale, $mim->galaxyImageScale);
             imagecopyresampled($unexploredImages[$i], $unexploredImageSrc, 0, 0, 0, 0, $mim->galaxyImageScale, $mim->galaxyImageScale, imagesx($unexploredImageSrc), imagesy($unexploredImageSrc));
         }
 
         $fogBorderImages = [];
         for ($i = 1; $i < 16; $i++) {
-            $fogBorderImageSrc = imagecreatefrompng($imgDir . "/unexplored/fogborder$i.png");
+            $fogBorderImageSrc = self::loadPng($imgDir . "/unexplored/fogborder$i.png");
             $fogBorderImages[$i] = imagecreatetruecolor($mim->galaxyImageScale, $mim->galaxyImageScale);
             imagecopyresampled($fogBorderImages[$i], $fogBorderImageSrc, 0, 0, 0, 0, $mim->galaxyImageScale, $mim->galaxyImageScale, imagesx($fogBorderImageSrc), imagesy($fogBorderImageSrc));
         }
@@ -127,7 +127,7 @@ class GalaxyMapImageGenerator
             if (($showAll && $user === null) || $user !== null && $this->userUniverseDiscoveryService->discovered($user, (($entity->getCell()->getSx() - 1) * $mim->numCellsX) + $entity->getCell()->getCx(), (($entity->getCell()->getSy() - 1) * $mim->numCellsY) + $entity->getCell()->getCy())) {
                 if ($entity->getCode() == EntityType::STAR) {
                     $star = $entity->getStar();
-                    $starImageSrc = imagecreatefrompng($imgDir . "/stars/star" . $star->getSolarType()->getId() . "_small.png");
+                    $starImageSrc = self::loadPng($imgDir . "/stars/star" . $star->getSolarType()->getId() . "_small.png");
                     imagecopyresampled($mim->image, $starImageSrc, $xe, $ye, 0, 0, $mim->galaxyImageScale, $mim->galaxyImageScale, imagesx($starImageSrc), imagesy($starImageSrc));
                 } elseif ($entity->getCode() == EntityType::WORMHOLE) {
                     $wh = $this->whRepo->find($entity->getId());
@@ -235,5 +235,15 @@ class GalaxyMapImageGenerator
             imagefilledellipse($mim->image, 135, $mim->height - $mim->legendHeight + 10 + GalaxyMap::DOT_RADIUS * 2, GalaxyMap::DOT_RADIUS * 2, GalaxyMap::DOT_RADIUS * 2, $col[floor($mim->maxNumPlanets / 2)]);
             imagefilledellipse($mim->image, 205, $mim->height - $mim->legendHeight + 10 + GalaxyMap::DOT_RADIUS * 2, GalaxyMap::DOT_RADIUS * 2, GalaxyMap::DOT_RADIUS * 2, $col[3]);
         }
+    }
+
+    private static function loadPng(string $path): \GdImage
+    {
+        $image = @imagecreatefrompng($path);
+        if ($image === false) {
+            throw new \RuntimeException("Bild '$path' konnte nicht geladen werden!");
+        }
+
+        return $image;
     }
 }

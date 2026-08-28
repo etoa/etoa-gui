@@ -304,7 +304,7 @@ class UserTwigSubscriber implements EventSubscriberInterface
         $cu = $this->security->getUser();
 
         $controller = $event->getRequest()->attributes->get('_controller');
-        if(is_string($controller)) {
+        if(is_string($controller) && str_contains($controller, '::')) {
             $controller = explode('::', $controller);
 
             //redirect to setup if new account

@@ -133,6 +133,8 @@ class SectorMapRenderer
             $cells[$entity['cx']][$entity['cy']] = $entity;
         }
 
+        $entityRepository->findBy(['id' => array_column($entities, 'id')]);
+
         for ($y = 0; $y < $this->numberOfCellsX; $y++) {
             $ycoords = $this->numberOfCellsY - $y;
 

@@ -10,11 +10,30 @@ use RuntimeException;
 
 class ConfigurationService
 {
+    private ?array $items = null;
+
     public function __construct(
         private readonly ConfigurationRepository            $repository,
         private readonly ConfigurationDefinitionsRepository $definitions,
     )
     {
+    }
+
+    private function item(string $name): ?Config
+    {
+        if ($this->items === null) {
+            $this->items = [];
+            foreach ($this->repository->findAll() as $item) {
+                $this->items[(string) $item->getName()] = $item;
+            }
+        }
+
+        return $this->items[$name] ?? null;
+    }
+
+    public function reload(): void
+    {
+        $this->items = null;
     }
 
     /**
@@ -25,7 +44,7 @@ class ConfigurationService
      */
     public function set(string $name, float|bool|int|string $value, float|bool|int|string $param1 = "", float|bool|int|string $param2 = ""): void
     {
-        $elem = $this->repository->findOneBy(['name'=>$name]);
+        $elem = $this->item($name);
         if($elem) {
             $elem->setValue((string)$value);
             $elem->setParam1((string)$param1);
@@ -42,14 +61,16 @@ class ConfigurationService
         }
 
         $this->repository->save();
+        $this->reload();
     }
 
     public function forget(string $name): void
     {
-        $elem = $this->repository->findOneBy(['name'=>$name]);
+        $elem = $this->item($name);
         if($elem) {
             $this->repository->remove($elem);
             $this->repository->save();
+            $this->reload();
         }
     }
 
@@ -63,7 +84,7 @@ class ConfigurationService
 
     public function get(string $key): int|bool|string|float
     {
-        $elem = $this->repository->findOneBy(['name'=>$key]);
+        $elem = $this->item($key);
         if ($elem) {
             return $elem->getValue();
         }
@@ -92,7 +113,7 @@ class ConfigurationService
 
     public function param1(string $key): int|bool|string|float
     {
-        $elem = $this->repository->findOneBy(['name'=>$key]);
+        $elem = $this->item($key);
         if ($elem) {
             return $elem->getParam1();
         }
@@ -125,7 +146,7 @@ class ConfigurationService
      */
     public function param2(string $key)
     {
-        $elem = $this->repository->findOneBy(['name'=>$key]);
+        $elem = $this->item($key);
         if ($elem) {
             return $elem->getParam2();
         }
@@ -154,7 +175,7 @@ class ConfigurationService
 
     public function has(string $name): bool
     {
-        return (bool) $this->repository->findOneBy(['name'=>$name]);
+        return (bool) $this->item($name);
     }
 
     public function filled(string $name): bool
@@ -180,6 +201,7 @@ class ConfigurationService
         }
 
         $this->repository->save();
+        $this->reload();
 
         return $cnt;
     }

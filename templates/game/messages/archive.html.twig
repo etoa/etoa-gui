@@ -77,7 +77,7 @@
                                 {% elseif message.vars.data.userFrom and message.vars.data.userFrom.id == 0 %}
                                     <i>System</i>
                                 {% else %}
-                                    <i>Unbekannt</i>
+                                    <i>{{ message.vars.data.cat and message.vars.data.cat.sender ? message.vars.data.cat.sender : 'System' }}</i>
                                 {% endif %}
                             </td>
                             <td class='messageCellDate' style="width:15%;">

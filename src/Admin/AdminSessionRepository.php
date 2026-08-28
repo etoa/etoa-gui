@@ -28,15 +28,24 @@ class AdminSessionRepository extends AbstractRepository
     }
 
     /**
-     * @return string[]
+     * @return AdminSession[]
      */
     public function findByTimeout(int $timeout): array
     {
         return $this->createQueryBuilder('q')
-            ->where('q.timeAction + :timeout = ' . time())
+            ->where('q.timeAction + :timeout < :now')
             ->setParameter('timeout', $timeout)
+            ->setParameter('now', time())
             ->getQuery()
             ->execute();
+    }
+
+    /**
+     * The session row of an admin, whatever session id it currently carries.
+     */
+    public function findForUser(int|AdminUser $user): ?AdminSession
+    {
+        return $this->findOneBy(['user' => $user]);
     }
 
     public function exists(string $id, int|AdminUser $user, string $userAgent): bool

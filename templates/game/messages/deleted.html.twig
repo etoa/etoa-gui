@@ -39,7 +39,7 @@
                         {% elseif message.userFrom and message.userFrom.id == 0 %}
                             <i>System</i>
                         {% else %}
-                            <i>Unbekannt</i>
+                            <i>{{ message.cat and message.cat.sender ? message.cat.sender : 'System' }}</i>
                         {% endif %}
                     </td>
                     <td style="width:120px;">

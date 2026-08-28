@@ -6,6 +6,7 @@ namespace EtoA\User;
 
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Entity\User;
+use EtoA\Entity\UserSession;
 use EtoA\Log\LogFacility;
 use EtoA\Log\LogRepository;
 use EtoA\Log\LogSeverity;
@@ -29,11 +30,38 @@ class UserSessionManager
         }
     }
 
+    /**
+     * Moves the session row of a user to a new session id. Symfony migrates the session
+     * id whenever another firewall authenticates in the same browser, and the row is
+     * keyed by that id.
+     */
+    public function migrateSession(User $user, string $newSessionId): void
+    {
+        $current = $user->getSession();
+        if ($current === null || $current->getId() === $newSessionId) {
+            return;
+        }
+
+        $session = new UserSession();
+        $session
+            ->setId($newSessionId)
+            ->setUser($user)
+            ->setIpAddr($current->getIpAddr())
+            ->setUserAgent($current->getUserAgent())
+            ->setTimeLogin($current->getTimeLogin())
+            ->setTimeAction(time());
+
+        $user->setSession($session);
+        $this->userRepository->save();
+    }
+
     public function cleanup(): void
     {
         $sessions = $this->repository->findByTimeout($this->config->getInt('user_timeout'));
         foreach ($sessions as $session) {
-            $this->unregisterSession($session->getUser(), false);
+            if ($session->getUser() !== null) {
+                $this->unregisterSession($session->getUser(), false);
+            }
         }
     }
 
@@ -52,6 +80,9 @@ class UserSessionManager
 
     public function kick(string $sessionId): void
     {
-        $this->unregisterSession($sessionId, false);
+        $session = $this->repository->find($sessionId);
+        if ($session !== null && $session->getUser() !== null) {
+            $this->unregisterSession($session->getUser(), false);
+        }
     }
 }

@@ -85,8 +85,9 @@ class UserSessionRepository extends AbstractRepository
     public function findByTimeout(int $timeout): array
     {
         return $this->createQueryBuilder('q')
-            ->where('q.timeAction + :timeout = ' . time())
+            ->where('q.timeAction + :timeout < :now')
             ->setParameter('timeout', $timeout)
+            ->setParameter('now', time())
             ->getQuery()
             ->execute();
     }
@@ -100,13 +101,18 @@ class UserSessionRepository extends AbstractRepository
     public function update(string $id, int $timeAction, int $botCount, int $lastSpan, string $ipAddress): void
     {
         $this->createQueryBuilder('q')
-            ->set('q.time_action', $timeAction)
-            ->set('q.bot_count',  $botCount)
-            ->set('q.last_span',  $lastSpan)
-            ->set('q.ip_addr',  $ipAddress)
+            ->update()
+            ->set('q.timeAction', ':timeAction')
+            ->set('q.botCount', ':botCount')
+            ->set('q.lastSpan', ':lastSpan')
+            ->set('q.ipAddr', ':ipAddress')
             ->where('q.id = :id')
             ->setParameters([
                 'id' => $id,
+                'timeAction' => $timeAction,
+                'botCount' => $botCount,
+                'lastSpan' => $lastSpan,
+                'ipAddress' => $ipAddress,
             ])
             ->getQuery()
             ->execute();
@@ -117,7 +123,8 @@ class UserSessionRepository extends AbstractRepository
     public function removeForUser(int $userId): void
     {
         $this->createQueryBuilder('q')
-            ->where('q.userId = :userId')
+            ->delete()
+            ->where('q.user = :userId')
             ->setParameter('userId', $userId)
             ->getQuery()
             ->execute();

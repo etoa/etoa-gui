@@ -81,6 +81,7 @@ services:
       APP_ENV: ${APP_ENV:-dev}
       DATABASE_URL: mysql://etoa:etoa@database:3306/etoa?serverVersion=8.0&charset=utf8mb4
       XDEBUG_MODE: off
+    pid: "service:php"
     volumes:
       - .:/app
     entrypoint: ["/bin/sh", "-c"]

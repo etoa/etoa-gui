@@ -131,16 +131,23 @@ class MessageRepository extends AbstractRepository
     }
 
     /**
-     * Sends a message from the system to ghe given user
+     * Sends a message from the system to the given user
      *
-     * @param User $user the recipient user ID
-     * @param MessageCategory $cat the message category ID
+     * @param User|int $user the recipient, as entity or user id
+     * @param MessageCategory|int|null $cat the category, as entity or MessageCategoryId
      * @param string $subject the subject
      * @param string $text the text
      * @return Message the newly created message
      */
-    public function createSystemMessage(User $user, MessageCategory $cat, string $subject, string $text): Message
+    public function createSystemMessage(User|int $user, MessageCategory|int|null $cat, string $subject, string $text): Message
     {
+        if (is_int($user)) {
+            $user = $this->getEntityManager()->getReference(User::class, $user);
+        }
+        if (is_int($cat)) {
+            $cat = $this->messageCategoryRepository->find($cat);
+        }
+
         $msg = new Message();
         $msg->setUserFrom(null);
         $msg->setUserTo($user);
