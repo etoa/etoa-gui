@@ -24,10 +24,7 @@ CREATE TABLE IF NOT EXISTS `accesslog` (
   KEY `target` (`target`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb3;
 
--- Exportiere Daten aus Tabelle etoa_test.accesslog: 0 rows
-DELETE FROM `accesslog`;
-/*!40000 ALTER TABLE `accesslog` DISABLE KEYS */;
-/*!40000 ALTER TABLE `accesslog` ENABLE KEYS */;
+-- Daten-Export vom Benutzer nicht ausgewählt
 
 -- Exportiere Struktur von Tabelle etoa_test.admin_notes
 CREATE TABLE IF NOT EXISTS `admin_notes` (
@@ -39,10 +36,7 @@ CREATE TABLE IF NOT EXISTS `admin_notes` (
   PRIMARY KEY (`notes_id`)
 ) ENGINE=MyISAM AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
 
--- Exportiere Daten aus Tabelle etoa_test.admin_notes: 0 rows
-DELETE FROM `admin_notes`;
-/*!40000 ALTER TABLE `admin_notes` DISABLE KEYS */;
-/*!40000 ALTER TABLE `admin_notes` ENABLE KEYS */;
+-- Daten-Export vom Benutzer nicht ausgewählt
 
 -- Exportiere Struktur von Tabelle etoa_test.admin_users
 CREATE TABLE IF NOT EXISTS `admin_users` (
@@ -67,12 +61,9 @@ CREATE TABLE IF NOT EXISTS `admin_users` (
   `is_contact` tinyint unsigned NOT NULL,
   PRIMARY KEY (`user_id`),
   FULLTEXT KEY `user_password` (`user_password`)
-) ENGINE=MyISAM AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb3;
+) ENGINE=MyISAM AUTO_INCREMENT=12 DEFAULT CHARSET=utf8mb3;
 
--- Exportiere Daten aus Tabelle etoa_test.admin_users: 0 rows
-DELETE FROM `admin_users`;
-/*!40000 ALTER TABLE `admin_users` DISABLE KEYS */;
-/*!40000 ALTER TABLE `admin_users` ENABLE KEYS */;
+-- Daten-Export vom Benutzer nicht ausgewählt
 
 -- Exportiere Struktur von Tabelle etoa_test.admin_user_log
 CREATE TABLE IF NOT EXISTS `admin_user_log` (
@@ -88,8 +79,7 @@ CREATE TABLE IF NOT EXISTS `admin_user_log` (
   KEY `log_user_id` (`log_user_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 
--- Exportiere Daten aus Tabelle etoa_test.admin_user_log: ~0 rows (ungefähr)
-DELETE FROM `admin_user_log`;
+-- Daten-Export vom Benutzer nicht ausgewählt
 
 -- Exportiere Struktur von Tabelle etoa_test.admin_user_sessionlog
 CREATE TABLE IF NOT EXISTS `admin_user_sessionlog` (
@@ -102,10 +92,9 @@ CREATE TABLE IF NOT EXISTS `admin_user_sessionlog` (
   `time_action` int unsigned NOT NULL DEFAULT '0',
   `time_logout` int unsigned NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=utf8mb3;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb3;
 
--- Exportiere Daten aus Tabelle etoa_test.admin_user_sessionlog: ~0 rows (ungefähr)
-DELETE FROM `admin_user_sessionlog`;
+-- Daten-Export vom Benutzer nicht ausgewählt
 
 -- Exportiere Struktur von Tabelle etoa_test.admin_user_sessions
 CREATE TABLE IF NOT EXISTS `admin_user_sessions` (
@@ -119,10 +108,7 @@ CREATE TABLE IF NOT EXISTS `admin_user_sessions` (
   UNIQUE KEY `user_id` (`user_id`)
 ) ENGINE=MEMORY DEFAULT CHARSET=utf8mb3;
 
--- Exportiere Daten aus Tabelle etoa_test.admin_user_sessions: 0 rows
-DELETE FROM `admin_user_sessions`;
-/*!40000 ALTER TABLE `admin_user_sessions` DISABLE KEYS */;
-/*!40000 ALTER TABLE `admin_user_sessions` ENABLE KEYS */;
+-- Daten-Export vom Benutzer nicht ausgewählt
 
 -- Exportiere Struktur von Tabelle etoa_test.allianceboard_cat
 CREATE TABLE IF NOT EXISTS `allianceboard_cat` (
@@ -138,10 +124,7 @@ CREATE TABLE IF NOT EXISTS `allianceboard_cat` (
   KEY `cat_alliance_id` (`cat_alliance_id`)
 ) ENGINE=MyISAM AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb3;
 
--- Exportiere Daten aus Tabelle etoa_test.allianceboard_cat: 0 rows
-DELETE FROM `allianceboard_cat`;
-/*!40000 ALTER TABLE `allianceboard_cat` DISABLE KEYS */;
-/*!40000 ALTER TABLE `allianceboard_cat` ENABLE KEYS */;
+-- Daten-Export vom Benutzer nicht ausgewählt
 
 -- Exportiere Struktur von Tabelle etoa_test.allianceboard_catranks
 CREATE TABLE IF NOT EXISTS `allianceboard_catranks` (
@@ -152,12 +135,9 @@ CREATE TABLE IF NOT EXISTS `allianceboard_catranks` (
   PRIMARY KEY (`cr_id`),
   KEY `cr_rank_id` (`cr_rank_id`),
   KEY `cr_cat_id` (`cr_cat_id`)
-) ENGINE=MyISAM AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb3;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb3;
 
--- Exportiere Daten aus Tabelle etoa_test.allianceboard_catranks: 0 rows
-DELETE FROM `allianceboard_catranks`;
-/*!40000 ALTER TABLE `allianceboard_catranks` DISABLE KEYS */;
-/*!40000 ALTER TABLE `allianceboard_catranks` ENABLE KEYS */;
+-- Daten-Export vom Benutzer nicht ausgewählt
 
 -- Exportiere Struktur von Tabelle etoa_test.allianceboard_posts
 CREATE TABLE IF NOT EXISTS `allianceboard_posts` (
@@ -174,10 +154,7 @@ CREATE TABLE IF NOT EXISTS `allianceboard_posts` (
   KEY `post_timestamp` (`post_timestamp`)
 ) ENGINE=MyISAM AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb3;
 
--- Exportiere Daten aus Tabelle etoa_test.allianceboard_posts: 0 rows
-DELETE FROM `allianceboard_posts`;
-/*!40000 ALTER TABLE `allianceboard_posts` DISABLE KEYS */;
-/*!40000 ALTER TABLE `allianceboard_posts` ENABLE KEYS */;
+-- Daten-Export vom Benutzer nicht ausgewählt
 
 -- Exportiere Struktur von Tabelle etoa_test.allianceboard_topics
 CREATE TABLE IF NOT EXISTS `allianceboard_topics` (
@@ -196,10 +173,7 @@ CREATE TABLE IF NOT EXISTS `allianceboard_topics` (
   KEY `topic_timestamp` (`topic_timestamp`)
 ) ENGINE=MyISAM AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb3;
 
--- Exportiere Daten aus Tabelle etoa_test.allianceboard_topics: 0 rows
-DELETE FROM `allianceboard_topics`;
-/*!40000 ALTER TABLE `allianceboard_topics` DISABLE KEYS */;
-/*!40000 ALTER TABLE `allianceboard_topics` ENABLE KEYS */;
+-- Daten-Export vom Benutzer nicht ausgewählt
 
 -- Exportiere Struktur von Tabelle etoa_test.alliances
 CREATE TABLE IF NOT EXISTS `alliances` (
@@ -239,10 +213,7 @@ CREATE TABLE IF NOT EXISTS `alliances` (
   KEY `alliance_founder_id` (`alliance_founder_id`)
 ) ENGINE=MyISAM AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci COMMENT='Allianz-Daten';
 
--- Exportiere Daten aus Tabelle etoa_test.alliances: 0 rows
-DELETE FROM `alliances`;
-/*!40000 ALTER TABLE `alliances` DISABLE KEYS */;
-/*!40000 ALTER TABLE `alliances` ENABLE KEYS */;
+-- Daten-Export vom Benutzer nicht ausgewählt
 
 -- Exportiere Struktur von Tabelle etoa_test.alliance_applications
 CREATE TABLE IF NOT EXISTS `alliance_applications` (
@@ -254,10 +225,7 @@ CREATE TABLE IF NOT EXISTS `alliance_applications` (
   KEY `alliance_id` (`alliance_id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb3;
 
--- Exportiere Daten aus Tabelle etoa_test.alliance_applications: 0 rows
-DELETE FROM `alliance_applications`;
-/*!40000 ALTER TABLE `alliance_applications` DISABLE KEYS */;
-/*!40000 ALTER TABLE `alliance_applications` ENABLE KEYS */;
+-- Daten-Export vom Benutzer nicht ausgewählt
 
 -- Exportiere Struktur von Tabelle etoa_test.alliance_bnd
 CREATE TABLE IF NOT EXISTS `alliance_bnd` (
@@ -278,10 +246,7 @@ CREATE TABLE IF NOT EXISTS `alliance_bnd` (
   KEY `bnd2` (`alliance_bnd_level`,`alliance_bnd_alliance_id2`)
 ) ENGINE=MyISAM AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb3;
 
--- Exportiere Daten aus Tabelle etoa_test.alliance_bnd: 0 rows
-DELETE FROM `alliance_bnd`;
-/*!40000 ALTER TABLE `alliance_bnd` DISABLE KEYS */;
-/*!40000 ALTER TABLE `alliance_bnd` ENABLE KEYS */;
+-- Daten-Export vom Benutzer nicht ausgewählt
 
 -- Exportiere Struktur von Tabelle etoa_test.alliance_buildings
 CREATE TABLE IF NOT EXISTS `alliance_buildings` (
@@ -303,17 +268,7 @@ CREATE TABLE IF NOT EXISTS `alliance_buildings` (
   PRIMARY KEY (`alliance_building_id`)
 ) ENGINE=MyISAM AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb3;
 
--- Exportiere Daten aus Tabelle etoa_test.alliance_buildings: 6 rows
-DELETE FROM `alliance_buildings`;
-/*!40000 ALTER TABLE `alliance_buildings` DISABLE KEYS */;
-INSERT INTO `alliance_buildings` (`alliance_building_id`, `alliance_building_name`, `alliance_building_shortcomment`, `alliance_building_longcomment`, `alliance_building_costs_metal`, `alliance_building_costs_crystal`, `alliance_building_costs_plastic`, `alliance_building_costs_fuel`, `alliance_building_costs_food`, `alliance_building_build_time`, `alliance_building_costs_factor`, `alliance_building_last_level`, `alliance_building_show`, `alliance_building_needed_id`, `alliance_building_needed_level`) VALUES
-	(6, 'Kryptocenter', '', 'Das Kryptocenter ermöglicht das Entschlüsseln und Mithören gegnerischer Flottensignale.', 250000, 2250000, 250000, 3250000, 0, 20000, 3.00, 10, 1, 1, 2),
-	(4, 'Flottenkontrolle', '', 'Koordiniert die Flotten einer Allianz. Je weiter die Allianzflottenkontrolle ausgebaut ist, desto mehr Teilflotten können an einem Allianzangriff teilnehmen.', 100000, 75000, 50000, 25000, 0, 15000, 2.01, 99, 1, 1, 1),
-	(5, 'Forschungslabor', '', 'Ermöglicht das Erforschen von Allianztechnologien.', 60000, 90000, 45000, 35000, 0, 15000, 2.00, 99, 1, 1, 1),
-	(3, 'Schiffswerft', '', 'Die Allianzschiffswerft produziert einzelne Schiffsteile, mit welchen ein ganzes Schiff hergestellt werden kann. Je weiter die Werft ausgebaut ist, desto schneller können die Teile hergestellt werden und desto mehr Baupläne für Schiffstypen werden konstruiert.', 145000, 102000, 117000, 80000, 0, 15000, 2.50, 99, 1, 4, 1),
-	(1, 'Zentrale', '', 'Die Zentrale ist das Hauptgebäude der Allianzbasis. Baut dieses aus um weitere Objekte zu erhalten.', 100000, 100000, 70000, 35000, 50000, 3600, 2.00, 4, 1, 0, 0),
-	(2, 'Handelszentrum', '', 'Das Handelszentrum ermöglicht den risikofreien Handel unter den Allianzmitgliedern. Dieser erlaubt es die Angebote auf einem abgeschotteten Markt anzubieten, auf welchen nur Allianzmitglieder zutritt haben.', 300000, 250000, 350000, 35000, 0, 18000, 2.00, 10, 1, 1, 1);
-/*!40000 ALTER TABLE `alliance_buildings` ENABLE KEYS */;
+-- Daten-Export vom Benutzer nicht ausgewählt
 
 -- Exportiere Struktur von Tabelle etoa_test.alliance_building_cooldown
 CREATE TABLE IF NOT EXISTS `alliance_building_cooldown` (
@@ -323,10 +278,7 @@ CREATE TABLE IF NOT EXISTS `alliance_building_cooldown` (
   UNIQUE KEY `cooldown_user_id` (`cooldown_user_id`,`cooldown_alliance_building_id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
 
--- Exportiere Daten aus Tabelle etoa_test.alliance_building_cooldown: 0 rows
-DELETE FROM `alliance_building_cooldown`;
-/*!40000 ALTER TABLE `alliance_building_cooldown` DISABLE KEYS */;
-/*!40000 ALTER TABLE `alliance_building_cooldown` ENABLE KEYS */;
+-- Daten-Export vom Benutzer nicht ausgewählt
 
 -- Exportiere Struktur von Tabelle etoa_test.alliance_buildlist
 CREATE TABLE IF NOT EXISTS `alliance_buildlist` (
@@ -342,10 +294,7 @@ CREATE TABLE IF NOT EXISTS `alliance_buildlist` (
   KEY `alliance_buildlist_alliance_id` (`alliance_buildlist_alliance_id`)
 ) ENGINE=MyISAM AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb3;
 
--- Exportiere Daten aus Tabelle etoa_test.alliance_buildlist: 0 rows
-DELETE FROM `alliance_buildlist`;
-/*!40000 ALTER TABLE `alliance_buildlist` DISABLE KEYS */;
-/*!40000 ALTER TABLE `alliance_buildlist` ENABLE KEYS */;
+-- Daten-Export vom Benutzer nicht ausgewählt
 
 -- Exportiere Struktur von Tabelle etoa_test.alliance_history
 CREATE TABLE IF NOT EXISTS `alliance_history` (
@@ -357,10 +306,7 @@ CREATE TABLE IF NOT EXISTS `alliance_history` (
   KEY `latest` (`history_alliance_id`,`history_timestamp`)
 ) ENGINE=MyISAM AUTO_INCREMENT=825 DEFAULT CHARSET=utf8mb3;
 
--- Exportiere Daten aus Tabelle etoa_test.alliance_history: 0 rows
-DELETE FROM `alliance_history`;
-/*!40000 ALTER TABLE `alliance_history` DISABLE KEYS */;
-/*!40000 ALTER TABLE `alliance_history` ENABLE KEYS */;
+-- Daten-Export vom Benutzer nicht ausgewählt
 
 -- Exportiere Struktur von Tabelle etoa_test.alliance_news
 CREATE TABLE IF NOT EXISTS `alliance_news` (
@@ -381,10 +327,7 @@ CREATE TABLE IF NOT EXISTS `alliance_news` (
   KEY `alliance_news_date` (`alliance_news_date`)
 ) ENGINE=MyISAM AUTO_INCREMENT=13 DEFAULT CHARSET=utf8mb3;
 
--- Exportiere Daten aus Tabelle etoa_test.alliance_news: 0 rows
-DELETE FROM `alliance_news`;
-/*!40000 ALTER TABLE `alliance_news` DISABLE KEYS */;
-/*!40000 ALTER TABLE `alliance_news` ENABLE KEYS */;
+-- Daten-Export vom Benutzer nicht ausgewählt
 
 -- Exportiere Struktur von Tabelle etoa_test.alliance_points
 CREATE TABLE IF NOT EXISTS `alliance_points` (
@@ -398,10 +341,7 @@ CREATE TABLE IF NOT EXISTS `alliance_points` (
   KEY `point_user_id` (`point_alliance_id`)
 ) ENGINE=MyISAM AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb3 COMMENT='Speichert den Punkteverlauf der Allianz';
 
--- Exportiere Daten aus Tabelle etoa_test.alliance_points: 0 rows
-DELETE FROM `alliance_points`;
-/*!40000 ALTER TABLE `alliance_points` DISABLE KEYS */;
-/*!40000 ALTER TABLE `alliance_points` ENABLE KEYS */;
+-- Daten-Export vom Benutzer nicht ausgewählt
 
 -- Exportiere Struktur von Tabelle etoa_test.alliance_polls
 CREATE TABLE IF NOT EXISTS `alliance_polls` (
@@ -431,10 +371,7 @@ CREATE TABLE IF NOT EXISTS `alliance_polls` (
   KEY `poll_alliance_id` (`poll_alliance_id`)
 ) ENGINE=MyISAM AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb3;
 
--- Exportiere Daten aus Tabelle etoa_test.alliance_polls: 0 rows
-DELETE FROM `alliance_polls`;
-/*!40000 ALTER TABLE `alliance_polls` DISABLE KEYS */;
-/*!40000 ALTER TABLE `alliance_polls` ENABLE KEYS */;
+-- Daten-Export vom Benutzer nicht ausgewählt
 
 -- Exportiere Struktur von Tabelle etoa_test.alliance_poll_votes
 CREATE TABLE IF NOT EXISTS `alliance_poll_votes` (
@@ -449,10 +386,7 @@ CREATE TABLE IF NOT EXISTS `alliance_poll_votes` (
   KEY `vote_alliance_id` (`vote_alliance_id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb3;
 
--- Exportiere Daten aus Tabelle etoa_test.alliance_poll_votes: 0 rows
-DELETE FROM `alliance_poll_votes`;
-/*!40000 ALTER TABLE `alliance_poll_votes` DISABLE KEYS */;
-/*!40000 ALTER TABLE `alliance_poll_votes` ENABLE KEYS */;
+-- Daten-Export vom Benutzer nicht ausgewählt
 
 -- Exportiere Struktur von Tabelle etoa_test.alliance_rankrights
 CREATE TABLE IF NOT EXISTS `alliance_rankrights` (
@@ -464,10 +398,7 @@ CREATE TABLE IF NOT EXISTS `alliance_rankrights` (
   KEY `rr_right_id` (`rr_right_id`)
 ) ENGINE=MyISAM AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb3;
 
--- Exportiere Daten aus Tabelle etoa_test.alliance_rankrights: 0 rows
-DELETE FROM `alliance_rankrights`;
-/*!40000 ALTER TABLE `alliance_rankrights` DISABLE KEYS */;
-/*!40000 ALTER TABLE `alliance_rankrights` ENABLE KEYS */;
+-- Daten-Export vom Benutzer nicht ausgewählt
 
 -- Exportiere Struktur von Tabelle etoa_test.alliance_ranks
 CREATE TABLE IF NOT EXISTS `alliance_ranks` (
@@ -480,10 +411,7 @@ CREATE TABLE IF NOT EXISTS `alliance_ranks` (
   KEY `rank_alliance_id` (`rank_alliance_id`,`rank_level`)
 ) ENGINE=MyISAM AUTO_INCREMENT=14 DEFAULT CHARSET=utf8mb3;
 
--- Exportiere Daten aus Tabelle etoa_test.alliance_ranks: 0 rows
-DELETE FROM `alliance_ranks`;
-/*!40000 ALTER TABLE `alliance_ranks` DISABLE KEYS */;
-/*!40000 ALTER TABLE `alliance_ranks` ENABLE KEYS */;
+-- Daten-Export vom Benutzer nicht ausgewählt
 
 -- Exportiere Struktur von Tabelle etoa_test.alliance_rights
 CREATE TABLE IF NOT EXISTS `alliance_rights` (
@@ -494,10 +422,7 @@ CREATE TABLE IF NOT EXISTS `alliance_rights` (
   KEY `right_key` (`right_key`)
 ) ENGINE=MyISAM AUTO_INCREMENT=18 DEFAULT CHARSET=utf8mb3;
 
--- Exportiere Daten aus Tabelle etoa_test.alliance_rights: 0 rows
-DELETE FROM `alliance_rights`;
-/*!40000 ALTER TABLE `alliance_rights` DISABLE KEYS */;
-/*!40000 ALTER TABLE `alliance_rights` ENABLE KEYS */;
+-- Daten-Export vom Benutzer nicht ausgewählt
 
 -- Exportiere Struktur von Tabelle etoa_test.alliance_spends
 CREATE TABLE IF NOT EXISTS `alliance_spends` (
@@ -514,10 +439,7 @@ CREATE TABLE IF NOT EXISTS `alliance_spends` (
   KEY `alliance_spend_alliance_id` (`alliance_spend_alliance_id`)
 ) ENGINE=MyISAM AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb3;
 
--- Exportiere Daten aus Tabelle etoa_test.alliance_spends: 0 rows
-DELETE FROM `alliance_spends`;
-/*!40000 ALTER TABLE `alliance_spends` DISABLE KEYS */;
-/*!40000 ALTER TABLE `alliance_spends` ENABLE KEYS */;
+-- Daten-Export vom Benutzer nicht ausgewählt
 
 -- Exportiere Struktur von Tabelle etoa_test.alliance_stats
 CREATE TABLE IF NOT EXISTS `alliance_stats` (
@@ -537,10 +459,7 @@ CREATE TABLE IF NOT EXISTS `alliance_stats` (
   PRIMARY KEY (`alliance_id`)
 ) ENGINE=MEMORY DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
 
--- Exportiere Daten aus Tabelle etoa_test.alliance_stats: 0 rows
-DELETE FROM `alliance_stats`;
-/*!40000 ALTER TABLE `alliance_stats` DISABLE KEYS */;
-/*!40000 ALTER TABLE `alliance_stats` ENABLE KEYS */;
+-- Daten-Export vom Benutzer nicht ausgewählt
 
 -- Exportiere Struktur von Tabelle etoa_test.alliance_techlist
 CREATE TABLE IF NOT EXISTS `alliance_techlist` (
@@ -555,10 +474,7 @@ CREATE TABLE IF NOT EXISTS `alliance_techlist` (
   KEY `alliance_techlist_alliance_id` (`alliance_techlist_alliance_id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb3;
 
--- Exportiere Daten aus Tabelle etoa_test.alliance_techlist: 0 rows
-DELETE FROM `alliance_techlist`;
-/*!40000 ALTER TABLE `alliance_techlist` DISABLE KEYS */;
-/*!40000 ALTER TABLE `alliance_techlist` ENABLE KEYS */;
+-- Daten-Export vom Benutzer nicht ausgewählt
 
 -- Exportiere Struktur von Tabelle etoa_test.alliance_technologies
 CREATE TABLE IF NOT EXISTS `alliance_technologies` (
@@ -580,17 +496,7 @@ CREATE TABLE IF NOT EXISTS `alliance_technologies` (
   PRIMARY KEY (`alliance_tech_id`)
 ) ENGINE=MyISAM AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb3;
 
--- Exportiere Daten aus Tabelle etoa_test.alliance_technologies: 6 rows
-DELETE FROM `alliance_technologies`;
-/*!40000 ALTER TABLE `alliance_technologies` DISABLE KEYS */;
-INSERT INTO `alliance_technologies` (`alliance_tech_id`, `alliance_tech_name`, `alliance_tech_shortcomment`, `alliance_tech_longcomment`, `alliance_tech_costs_metal`, `alliance_tech_costs_crystal`, `alliance_tech_costs_plastic`, `alliance_tech_costs_fuel`, `alliance_tech_costs_food`, `alliance_tech_build_time`, `alliance_tech_costs_factor`, `alliance_tech_last_level`, `alliance_tech_show`, `alliance_tech_needed_id`, `alliance_tech_needed_level`) VALUES
-	(6, 'Schutzschilder', '', '', 0, 0, 0, 0, 0, 0, 1.00, 50, 1, 5, 2),
-	(7, 'Panzerung', '', '', 0, 0, 0, 0, 0, 0, 1.00, 50, 1, 5, 2),
-	(8, 'Spionagetechnik', '', 'Durch den Zusammenschluss verschiedenster Forscher aus jeglichen Galaxien ergaben sich neue Möglichkeiten der Spionage.', 50000, 25000, 75000, 25000, 25000, 12600, 1.70, 50, 1, 4, 3),
-	(4, 'Tarntechnologie', 'In Zeiten einer neuen Ära mit grösseren Flottenverbänden bestehend aus mehreren Teilflotten, reichte die gewöhnliche Tarntechnik nicht mehr aus. So setzten sich Spieler zusammen und teilten ihr Wissen und ihre Ressourcen, um auch diese Hürde zu überwinden.\r\nJe höher diese Technologie erforscht ist, desto länger bleiben Allianzverbände für den Gegner unentdeckt.', 'Durch die immer weiter fortschreitende Entwicklung bei Quantencomputern und und Intergalaktischen Computersystemen, wurden Sicherheitslücken zu einem einem grossen Risikofaktor. Durch Lücken in den Sicherheitssystemen konnten feindliche Mächte die Systeme manipulieren und Daten entwenden.\r\n\r\nDie Allianzverbände Andromedas entwickelten darauf spezielle Verschlüsselungstechnologien.\r\nMit dieser Technologie konnte man die feindlichen System-Zugriffe erheblich stören, jedoch nie komplett ausmerzen.\r\n\r\nJe höher die Technologie erforscht wird, desto geringer ist die Chance genaue Flotteninformationen zu entwenden.', 75000, 25000, 50000, 50000, 50000, 900, 1.60, 50, 1, 0, 0),
-	(5, 'Waffentechnik', '', '', 0, 0, 0, 0, 0, 0, 1.00, 50, 1, 5, 2),
-	(9, 'Antriebstechnologie', '', '', 0, 0, 0, 0, 0, 0, 1.00, 0, 1, 5, 11);
-/*!40000 ALTER TABLE `alliance_technologies` ENABLE KEYS */;
+-- Daten-Export vom Benutzer nicht ausgewählt
 
 -- Exportiere Struktur von Tabelle etoa_test.asteroids
 CREATE TABLE IF NOT EXISTS `asteroids` (
@@ -604,10 +510,7 @@ CREATE TABLE IF NOT EXISTS `asteroids` (
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb3;
 
--- Exportiere Daten aus Tabelle etoa_test.asteroids: 0 rows
-DELETE FROM `asteroids`;
-/*!40000 ALTER TABLE `asteroids` DISABLE KEYS */;
-/*!40000 ALTER TABLE `asteroids` ENABLE KEYS */;
+-- Daten-Export vom Benutzer nicht ausgewählt
 
 -- Exportiere Struktur von Tabelle etoa_test.backend_message_queue
 CREATE TABLE IF NOT EXISTS `backend_message_queue` (
@@ -618,10 +521,7 @@ CREATE TABLE IF NOT EXISTS `backend_message_queue` (
   UNIQUE KEY `cmd` (`cmd`,`arg`)
 ) ENGINE=MEMORY DEFAULT CHARSET=utf8mb3;
 
--- Exportiere Daten aus Tabelle etoa_test.backend_message_queue: 0 rows
-DELETE FROM `backend_message_queue`;
-/*!40000 ALTER TABLE `backend_message_queue` DISABLE KEYS */;
-/*!40000 ALTER TABLE `backend_message_queue` ENABLE KEYS */;
+-- Daten-Export vom Benutzer nicht ausgewählt
 
 -- Exportiere Struktur von Tabelle etoa_test.bookmarks
 CREATE TABLE IF NOT EXISTS `bookmarks` (
@@ -634,10 +534,7 @@ CREATE TABLE IF NOT EXISTS `bookmarks` (
   KEY `absindex` (`user_id`,`entity_id`)
 ) ENGINE=MyISAM AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb3;
 
--- Exportiere Daten aus Tabelle etoa_test.bookmarks: 0 rows
-DELETE FROM `bookmarks`;
-/*!40000 ALTER TABLE `bookmarks` DISABLE KEYS */;
-/*!40000 ALTER TABLE `bookmarks` ENABLE KEYS */;
+-- Daten-Export vom Benutzer nicht ausgewählt
 
 -- Exportiere Struktur von Tabelle etoa_test.buddylist
 CREATE TABLE IF NOT EXISTS `buddylist` (
@@ -652,10 +549,7 @@ CREATE TABLE IF NOT EXISTS `buddylist` (
   KEY `bl_user_id` (`bl_user_id`)
 ) ENGINE=MyISAM AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb3;
 
--- Exportiere Daten aus Tabelle etoa_test.buddylist: 0 rows
-DELETE FROM `buddylist`;
-/*!40000 ALTER TABLE `buddylist` DISABLE KEYS */;
-/*!40000 ALTER TABLE `buddylist` ENABLE KEYS */;
+-- Daten-Export vom Benutzer nicht ausgewählt
 
 -- Exportiere Struktur von Tabelle etoa_test.buildings
 CREATE TABLE IF NOT EXISTS `buildings` (
@@ -702,36 +596,7 @@ CREATE TABLE IF NOT EXISTS `buildings` (
   KEY `building_name` (`building_name`,`building_order`)
 ) ENGINE=InnoDB AUTO_INCREMENT=28 DEFAULT CHARSET=utf8mb3;
 
--- Exportiere Daten aus Tabelle etoa_test.buildings: ~27 rows (ungefähr)
-DELETE FROM `buildings`;
-INSERT INTO `buildings` (`building_id`, `building_name`, `building_type_id`, `building_shortcomment`, `building_longcomment`, `building_costs_metal`, `building_costs_crystal`, `building_costs_fuel`, `building_costs_plastic`, `building_costs_food`, `building_costs_power`, `building_build_costs_factor`, `building_demolish_costs_factor`, `building_power_use`, `building_power_req`, `building_fuel_use`, `building_prod_metal`, `building_prod_crystal`, `building_prod_plastic`, `building_prod_fuel`, `building_prod_food`, `building_prod_power`, `building_production_factor`, `building_store_metal`, `building_store_crystal`, `building_store_plastic`, `building_store_fuel`, `building_store_food`, `building_store_factor`, `building_people_place`, `building_last_level`, `building_fields`, `building_show`, `building_order`, `building_fieldsprovide`, `building_workplace`, `building_bunker_res`, `building_bunker_fleet_count`, `building_bunker_fleet_space`) VALUES
-	(1, 'Titanmine', 2, 'Produziert Titan.', 'Produziert Titan.', 100, 45, 0, 0, 0, 10, 1.90, 0.20, 10, 0, 0, 104, 0, 0, 0, 0, 0, 1.50, 0, 0, 0, 0, 0, 0.00, 0, 50, 2, 1, 0, 0, 0, 0, 0, 0),
-	(2, 'Siliziummine', 2, 'Produziert Silizium.', 'Produziert Silizium.', 150, 50, 0, 0, 0, 20, 1.90, 0.20, 20, 0, 0, 0, 79, 0, 0, 0, 0, 1.50, 0, 0, 0, 0, 0, 0.00, 0, 50, 2, 1, 1, 0, 0, 0, 0, 0),
-	(3, 'Chemiefabrik', 2, 'Produziert PVC.', 'Produziert PVC.', 100, 80, 0, 0, 0, 20, 1.90, 0.20, 20, 0, 0, 0, 0, 64, 0, 0, 0, 1.50, 0, 0, 0, 0, 0, 0.00, 0, 50, 3, 1, 3, 0, 0, 0, 0, 0),
-	(4, 'Tritiumsynthesizer', 2, 'Produziert Tritium.', 'Produziert Tritium.', 100, 70, 0, 10, 0, 50, 1.90, 0.20, 50, 0, 0, 0, 0, 0, 86, 0, 0, 1.50, 0, 0, 0, 0, 0, 0.00, 0, 50, 3, 1, 4, 0, 0, 0, 0, 0),
-	(5, 'Gewächshaus', 2, 'Produziert Nahrung.', 'Produziert Nahrung.', 80, 100, 0, 0, 0, 5, 1.90, 0.20, 5, 0, 0, 0, 0, 0, 0, 60, 0, 1.50, 0, 0, 0, 0, 0, 0.00, 0, 50, 2, 1, 5, 0, 0, 0, 0, 0),
-	(6, 'Planetenbasis', 1, 'Das Grundgebäude jedes Planeten bietet Platz für Bewohner, Lagerräume und produziert Rohstoffe.', 'Die Planetenbasis ist die Schaltzentrale aller Aktivitäten auf deinem Planeten. Du musst zuerst eine Planetenbasis bauen, danach kannst du alle weiteren Gebäude errichten. Die Planetenbasis liefert ein Grundeinkommen an Rohstoffen und eine minimale Energieversorgung durch ein integriertes Erdwärmekraftwerk. Es ist jedoch sinnvoll, Minen und Fabriken zu bauen, um die Rohstoffproduktion zu steigern.', 500, 250, 0, 300, 0, 50, 2.00, 0.00, 50, 0, 0, 50, 20, 10, 5, 15, 200, 1.00, 100000, 100000, 100000, 100000, 100000, 1.00, 300, 1, 5, 1, 0, 0, 1, 0, 0, 0),
-	(7, 'Wohnmodul', 1, 'Mit einem Wohnmodul wird die Kapazität für Bewohner erhöht.', 'Mit steigendem Wachstum eines Planeten werden immer mehr Gebäude errichtet und ausgebaut, wofür mehr Arbeiter benötigt werden.\r\nEin Ausbau des Wohnmoduls ist deshalb wichtig, welches die Kapazität der Bewohner erhöht und so potenzielle Arbeiter freigibt.', 100, 60, 0, 150, 0, 0, 1.65, 0.40, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0.00, 0, 0, 0, 0, 0, 1.80, 300, 50, 1, 1, 1, 0, 1, 0, 0, 0),
-	(8, 'Forschungslabor', 1, 'Im Labor werden neue Techniken entwickelt. Höhere Stufen senken die Forschungszeit.', 'Damit Schiffe und Spezialgebäude errichten werden können, braucht es ein Forschungslabor, in dem die Wissenschaftler neue Technologien entwickeln. Je höher das Forschungslabor ausgebaut ist, desto mehr Technologien können entwickelt werden. Erforschte Technologien gelten automatisch auf allen Planeten deines Reiches.\r\nAusserdem senkt das Forschungslabor die Forschungszeit, jedoch erst ab einer bestimmten Stufe!\r\nUm zur Elite auf dem Gebiet der Technologien zu gehören, ist ein guter Ausbau des Forschungslabors unverzichtbar. ', 598, 836, 247, 418, 0, 0, 1.80, 0.40, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0.00, 0, 0, 0, 0, 0, 0.00, 0, 50, 4, 1, 2, 0, 1, 0, 0, 0),
-	(9, 'Schiffswerft', 1, 'In der Werft werden alle Raumschiffe gebaut.Höhere Stufen senken die Bauzeit.', 'In der Schiffswerft werden Schiffe gebaut, die im Krieg oder für den Handel mit anderen Völkern eingesetzt werden können. Je höher die Werft, desto mehr Schiffe können gebaut werden.\r\nAusserdem senkt die Schiffswerft die Bauzeit der Schiffe, jedoch erst ab einer bestimmten Stufe!', 900, 680, 510, 780, 0, 0, 1.80, 0.40, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0.00, 0, 0, 0, 0, 0, 0.00, 0, 50, 6, 1, 3, 0, 1, 0, 0, 0),
-	(10, 'Waffenfabrik', 1, 'In der Waffenfabrik werden Verteidigungsanlagen gebaut. Höhere Stufen senken die Bauzeit.', 'Die Waffenfabrik bietet jedem Volk die Möglichkeit, Verteidigungsanlagen gegen feindliche Angriffe zu errichten.\r\nVerteidigungsanlagen funktionieren, wenn sie mal gebaut sind, selbstständig und eröffnen das Feuer gegen angreifende Flotten. \r\nAusserdem senkt der Ausbau der Waffenfabrik die Bauzeit der Verteidigungsanlagen, jedoch erst ab einer bestimmten Stufe!', 750, 480, 320, 500, 0, 0, 1.70, 0.40, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0.00, 0, 0, 0, 0, 0, 0.00, 0, 50, 5, 1, 4, 0, 1, 0, 0, 0),
-	(11, 'Flottenkontrolle', 1, 'Koordiniert deine Flotten. Je weiter die Flottenkontrolle ausgebaut ist, desto mehr Flotten können starten.', 'Die Flottenkontrolle ist ein Gebäude voller Überwachungscomputer, Leitsystemen, Empfänger- sowie Sendeanlagen. Mit Hilfe der Flottenkontrolle werden Flotten gesteuert. Sie ist ebenfalls Voraussetzung für den Bau von Schiffen. Je weiter die Flottenkontrolle ausgebaut ist, desto mehr Flotten können vom Planeten gestartet werden.', 1100, 750, 0, 500, 0, 0, 1.80, 0.40, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0.00, 0, 0, 0, 0, 0, 0.00, 0, 50, 5, 1, 5, 0, 0, 0, 0, 0),
-	(12, 'Windkraftwerk', 3, 'Nicht sehr effizientes und relativ teures Kraftwerk, welches Energie mit Hilfe des Windes gewinnt.', 'Windenergieanlagen wandeln mit Hilfe des Rotors die Windenergie in eine Drehbewegung um. Mit Hilfe von Generatoren wird diese Drehbewegung in eine elektrische Energie umgewandelt, welche dann in das Stromnetz des Planeten eingespeist wird.\r\nWindenergie ist eine alternative Energie, jedoch noch nicht sehr effizient. Der Bau ist relativ teuer und die Produktion nur mittelmässig.', 250, 50, 5, 80, 0, 0, 1.90, 0.20, 0, 0, 0, 0, 0, 0, 0, 0, 80, 1.65, 0, 0, 0, 0, 0, 0.00, 0, 50, 1, 1, 0, 0, 0, 0, 0, 0),
-	(13, 'Solarkraftwerk', 3, 'Solarkraftwerke gewinnen Energie durch Sonnenlicht. ', 'In einer Solarstromanlage findet die Umwandlung von Sonnenenergie in elektrische Energie statt. Eine Solarstromanlage besteht aus mehreren Komponenten. Der Generator empfängt und wandelt die Lichtenergie in elektrische Energie um. Als Empfänger dient die Solarzelle. Hierbei kommen Spiegel oder Linsensysteme zum Einsatz, die die Strahlung auf die Zellen umleiten und konzentrieren.\r\nEiner der wichtigsten Bestandteile einer Solarzelle ist das Metal Silizium. Dieses hat die Eigenschaft, unter Bestrahlung von Licht eine elektrische Spannung erzeugen zu können.\r\nDiese Methode für die Energieerzeugung ist noch sehr jung und unerforscht. Wegen den grossen Mengen an Silizium die es benötigt, wird das Solarkraftwerk oft als unrentabel bezeichnet, jedoch kann sich die Energiegewinnung daraus sehen lassen.', 150, 250, 0, 160, 0, 0, 1.90, 0.20, 0, 0, 0, 0, 0, 0, 0, 0, 100, 1.70, 0, 0, 0, 0, 0, 0.00, 0, 50, 1, 1, 2, 0, 0, 0, 0, 0),
-	(14, 'Fusionskraftwerk', 3, 'Durch die Fusion von Tritium und Deuterium werden im Fusionskraftwerk riesige Energiemengen gewonnen. ', 'Als Kernfusion wird der Prozess des Verschmelzens zweier Atomkerne zu einem schwereren Kern bezeichnet. Besonders viel Energie wird frei, wenn Deuterium und Tritium miteinander verschmelzen. Hier beträgt der Massendefekt fast 4 Promille. Die fehlende Masse wird aufgrund der Äquivalenz von Masse und Energie aus Einsteins Gleichung E=mc^2 als kinetische Energie auf die Reaktionsprodukte übertragen. Da c^2 eine sehr grosse Zahl ist, setzt schon die Fusion kleiner Mengen von Deuterium und Tritium gewaltige Energiemengen frei.\r\nDie Effizienz dieses Kraftwerkes wird pro Stufe immer wie grösser! Die Energie, welche das Kraftwerk in den ersten Stufen freisetzt, wird oft als normal angesehen, jedoch stellt sich schon sehr früh heraus, dass beim weiteren Ausbau des Fusionskraftwerkes die Effizient beachtlich gesteigert wird!', 3000, 4900, 8300, 1500, 0, 0, 1.90, 0.20, 0, 0, 0, 0, 0, 0, 0, 0, 1500, 1.95, 0, 0, 0, 0, 0, 0.00, 0, 50, 2, 1, 5, 0, 0, 0, 0, 0),
-	(15, 'Gezeitenkraftwerk', 3, 'Dieses Kraftwerk gewinnt Energie durch den Hubunterschied der Gezeiten.', 'Ein Gezeitenkraftwerk ist ein Kraftwerk zur Produktion von elektrischem Strom, das durch die Tide angetrieben wird. Sie sind eine Sonderform der Wasserkraftwerke.\r\nGezeitenkraftwerke werden an Meeresbuchten und in Ästuaren errichtet, die einen besonders hohen Tidenhub haben. Dazu wird die entsprechende Bucht durch einen Deich abgedämmt. Dadurch kann das Wasser der Tidenströme durch die Turbinen strömen, die aufgrund der Gezeitenströme, welche viermal am Tag die Richtung wechseln, auf Zweirichtungsbetrieb eingestellt sind.', 2100, 1000, 500, 2000, 0, 0, 1.85, 0.20, 0, 0, 0, 0, 0, 0, 0, 0, 750, 1.75, 0, 0, 0, 0, 0, 0.00, 0, 50, 3, 1, 3, 0, 0, 0, 0, 0),
-	(16, 'Titanspeicher', 4, 'Lagert Titan.', 'Lagert Titan. Wenn die Lagerkapazität des Speichers überschritten ist, können keine weiteren Rohstoffe produziert bzw. gefördert werden. Baue in diesem Fall den Speicher aus.', 4000, 100, 0, 100, 0, 0, 1.80, 0.20, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0.00, 100000, 0, 0, 0, 0, 1.80, 0, 50, 1, 1, 0, 0, 0, 0, 0, 0),
-	(17, 'Siliziumspeicher', 4, 'Lagert Silizium.', 'Lagert Silizium. Wenn die Lagerkapazität des Speichers überschritten ist, können keine weiteren Rohstoffe produziert bzw. gefördert werden. Baue in diesem Fall den Speicher aus.', 100, 3500, 0, 100, 0, 0, 1.80, 0.20, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0.00, 0, 100000, 0, 0, 0, 1.80, 0, 50, 1, 1, 1, 0, 0, 0, 0, 0),
-	(18, 'Lagerhalle', 4, 'Lagert Plastik.', 'Lagert Plastik. Wenn die Lagerkapazität des Speichers überschritten ist, können keine weiteren Rohstoffe produziert bzw. gefördert werden. Baue in diesem Fall den Speicher aus.', 50, 50, 0, 3750, 0, 0, 1.80, 0.20, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0.00, 0, 0, 100000, 0, 0, 1.80, 0, 50, 1, 1, 2, 0, 0, 0, 0, 0),
-	(19, 'Nahrungssilo', 4, 'Lagert Nahrung.', 'Lagert Nahrung.Wenn die Lagerkapazität des Speichers überschritten ist, können keine weiteren Rohstoffe produziert bzw. gefördert werden. Baue in diesem Fall den Speicher aus.', 1000, 1000, 0, 1000, 0, 0, 1.80, 0.20, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0.00, 0, 0, 0, 0, 100000, 1.80, 0, 50, 1, 1, 4, 0, 0, 0, 0, 0),
-	(20, 'Tritiumsilo', 4, 'Lagert Tritium.', 'Lagert Tritium. Wenn die Lagerkapazität des Speichers überschritten ist, können keine weiteren Rohstoffe produziert bzw. gefördert werden. Baue in diesem Fall den Speicher aus.', 500, 500, 3000, 0, 0, 0, 1.80, 0.20, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0.00, 0, 0, 0, 100000, 0, 1.80, 0, 50, 1, 1, 3, 0, 0, 0, 0, 0),
-	(21, 'Marktplatz', 1, 'Auf dem Marktplatz können Schiffe und Rohstoffe gehandelt und ersteigert werden.', 'Der Marktplatz bildet das Zentrum aller Händler in Andromeda.\r\nEs können Rohstoffe und Schiffe gehandelt und versteigert werden.\r\nJe höher der Marktplatz ausgebaut ist, desto mehr Waren können gleichzeitig angeboten werden.\r\nAusserdem werden mehr Waren zurück erstattet, wenn ein Angebot zurückgezogen wird.\r\nDer Markt kann aber nicht beliebig weit ausgebaut werden, sondern ist durch ein Maximallevel beschränkt.', 15000, 12500, 1750, 17500, 0, 0, 1.50, 1.50, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0.00, 0, 0, 0, 0, 0, 0.00, 0, 10, 4, 1, 6, 0, 0, 0, 0, 0),
-	(22, 'Orbitalplattform', 1, 'Die Orbitalplattform erhöht den Platz auf einem Planeten und bietet Lagerräume für Ressourcen.', 'Die Orbitalplattform erhöht die Anzahl verfügbarer Felder auf einem Planeten. Dies wird besonders wichtig, wenn ein Planet nicht allzu viele Felder besitzt, oder viele Verteidigungsanlagen errichtet wurden. Ebenfalls befinden sich auf der Plattform zusätzliche Lagerräume für diverse Ressourcen.\r\nPro Ausbaustufe erhöht sich die Anzahl der Felder, ebenso die Grösse der Lagerräume.', 30000, 60000, 50000, 55000, 0, 100, 1.90, 0.00, 100, 0, 0, 0, 0, 0, 0, 0, 0, 1.80, 10000, 15000, 20000, 0, 0, 2.00, 0, 50, 0, 1, 7, 60, 0, 0, 0, 0),
-	(23, 'Multimine', 2, 'Dieses riesige Mine fördert Titan und Silizium zu Tage und kann auch eine gewisse Menge an Rohstoffen speichern. Allerdings verbraucht sie enorm viel Energie!', 'Dieses riesige Mine fördert Titan und Silizium zu Tage und kann auch eine gewisse Menge an Rohstoffen speichern. Allerdings verbraucht sie enorm viel Energie! Da sie so enorm gross ist, braucht sie viele Felder und kann nur bis zu Stufe 15 gebaut werden.', 5100, 7200, 160, 1100, 0, 0, 2.00, 0.00, 100, 0, 0, 100, 70, 0, 0, 0, 0, 1.80, 50000, 50000, 0, 0, 0, 1.50, 0, 15, 8, 0, 20, 0, 0, 0, 0, 0),
-	(24, 'Kryptocenter', 1, 'Das Kryptocenter analysiert Kommunikationskanäle um Infos über fremde Flottenbewegungen zu erhalten. ', 'Das Kryptocenter analysiert Kommunikationskanäle zwischen Flotten und Bodenstationen, um Aufschluss über fremde Flottenbewegungen zu erhalten. Mit Hilfe eines riesigen unterirdischen Rechenzentrums werden die gewonnenen Daten analysiert, entschlüsselt und ausgewertet, deshalb braucht diese Anlage enorm viel Energie zum Bau und zum  Betrieb. Je höher der Level dieser Anlage, desto grösser ist auch die Reichweite des Scanners.', 50000, 450000, 650000, 50000, 0, 1000000, 1.50, 0.10, 0, 1000000, 0, 0, 0, 0, 0, 0, 0, 1.50, 0, 0, 0, 0, 0, 0.00, 0, 10, 5, 0, 11, 0, 0, 0, 0, 0),
-	(25, 'Raketensilo', 1, 'Im Raketensilo werden Raketen gebaut und gestartet, um gegnerische Verteidigungsanlagen zu beschädigen.', 'Im Raketensilo werden Raketen gelagert und gestartet, mit denen man gegnerische Verteidigungsanlagen beschädigen oder ausser Gefecht setzen kann, sowie Raketen um gegnerische Raketen abzufangen. Je grösser das Silo ist, desto mehr Raketen können darin gelagert werden.', 100000, 50000, 70000, 20000, 0, 50000, 1.40, 0.00, 50000, 0, 300, 0, 0, 0, 0, 0, 0, 1.40, 0, 0, 0, 0, 0, 0.00, 0, 20, 2, 1, 10, 0, 0, 0, 0, 0),
-	(26, 'Rohstoffbunker', 1, 'In diesem Bunker kann im Falle eines Angriffs ein Teil der Rohstoffe versteckt werden.', 'In diesem Bunker kann im Falle eines Angriffs ein Teil der Rohstoffe versteckt werden, so dass sie nicht geklaut werden können. Das Verstecken geschieht automatisch. Auf Stufe 1 können 9000 Resourcen versteckt werden, pro Stufe verdoppelt sich diese Anzahl.', 5750, 1150, 0, 2300, 0, 0, 2.00, 0.20, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0.00, 0, 0, 0, 0, 0, 2.00, 0, 13, 0, 1, 8, 0, 0, 9000, 0, 0),
-	(27, 'Flottenbunker', 1, 'Der Flottenbunker kann Schiffe vor Angriffen schützen und die Kosten für Allianzschiffe wieder gesenkt werden, wenn diese eingebunkert sind.', 'Der Flottenbunker ist ein imposantes Bauwerk von beeindruckender Größe und Robustheit. Seine massiven Wände und strukturellen Verstärkungen machen ihn zu einer unüberwindbaren Festung im Weltraum. Dieses Bollwerk wurde speziell entwickelt, um Schiffe vor feindlichen Angriffen zu schützen. Darüber hinaus verfügt der Flottenbunker über eine einzigartige Funktion: Wenn Allianzschiffe in ihn eingebunkert werden, können die Produktionskosten wieder gesenkt werden. Dies macht den Flottenbunker nicht nur zu einem Verteidigungsbollwerk, sondern auch zu einer strategisch wertvollen Ressource für die Raumfahrtindustrie.', 20000, 10000, 0, 5000, 0, 0, 2.00, 0.50, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0.00, 0, 0, 0, 0, 0, 2.00, 0, 12, 0, 1, 9, 0, 0, 0, 5, 2500);
+-- Daten-Export vom Benutzer nicht ausgewählt
 
 -- Exportiere Struktur von Tabelle etoa_test.building_points
 CREATE TABLE IF NOT EXISTS `building_points` (
@@ -743,12 +608,9 @@ CREATE TABLE IF NOT EXISTS `building_points` (
   KEY `bp_building_id` (`bp_building_id`),
   KEY `bp_level` (`bp_level`),
   KEY `bp_points` (`bp_points`)
-) ENGINE=MyISAM AUTO_INCREMENT=3250 DEFAULT CHARSET=utf8mb3;
+) ENGINE=MyISAM AUTO_INCREMENT=1082 DEFAULT CHARSET=utf8mb3;
 
--- Exportiere Daten aus Tabelle etoa_test.building_points: 0 rows
-DELETE FROM `building_points`;
-/*!40000 ALTER TABLE `building_points` DISABLE KEYS */;
-/*!40000 ALTER TABLE `building_points` ENABLE KEYS */;
+-- Daten-Export vom Benutzer nicht ausgewählt
 
 -- Exportiere Struktur von Tabelle etoa_test.building_queue
 CREATE TABLE IF NOT EXISTS `building_queue` (
@@ -768,10 +630,7 @@ CREATE TABLE IF NOT EXISTS `building_queue` (
   KEY `entity_id` (`entity_id`,`user_id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb3;
 
--- Exportiere Daten aus Tabelle etoa_test.building_queue: 0 rows
-DELETE FROM `building_queue`;
-/*!40000 ALTER TABLE `building_queue` DISABLE KEYS */;
-/*!40000 ALTER TABLE `building_queue` ENABLE KEYS */;
+-- Daten-Export vom Benutzer nicht ausgewählt
 
 -- Exportiere Struktur von Tabelle etoa_test.building_requirements
 CREATE TABLE IF NOT EXISTS `building_requirements` (
@@ -791,60 +650,7 @@ CREATE TABLE IF NOT EXISTS `building_requirements` (
   CONSTRAINT `FK_EB479F257E57261C` FOREIGN KEY (`req_building_id`) REFERENCES `buildings` (`building_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=73 DEFAULT CHARSET=utf8mb3;
 
--- Exportiere Daten aus Tabelle etoa_test.building_requirements: ~51 rows (ungefähr)
-DELETE FROM `building_requirements`;
-INSERT INTO `building_requirements` (`id`, `obj_id`, `req_building_id`, `req_tech_id`, `req_level`) VALUES
-	(1, 1, 6, NULL, 1),
-	(2, 2, 6, NULL, 1),
-	(5, 5, 6, NULL, 1),
-	(6, 7, 6, NULL, 1),
-	(11, 12, 6, NULL, 1),
-	(12, 3, 1, NULL, 2),
-	(13, 3, 12, NULL, 3),
-	(14, 4, 12, NULL, 4),
-	(15, 4, 2, NULL, 3),
-	(16, 8, 12, NULL, 5),
-	(17, 10, 8, NULL, 2),
-	(18, 9, 10, NULL, 2),
-	(19, 9, 8, NULL, 4),
-	(20, 11, 9, NULL, 1),
-	(21, 13, NULL, 3, 3),
-	(22, 14, NULL, 3, 8),
-	(23, 15, NULL, 3, 5),
-	(29, 13, 6, NULL, 1),
-	(30, 14, 6, NULL, 1),
-	(31, 15, 6, NULL, 1),
-	(32, 4, 1, NULL, 1),
-	(35, 22, NULL, 3, 10),
-	(36, 22, 10, 10, 8),
-	(37, 23, 1, NULL, 10),
-	(38, 23, 2, NULL, 9),
-	(39, 23, 14, NULL, 6),
-	(40, 23, NULL, 3, 8),
-	(41, 23, NULL, 16, 3),
-	(50, 25, NULL, 24, 1),
-	(51, 25, 11, NULL, 12),
-	(52, 25, 10, NULL, 10),
-	(53, 24, 11, NULL, 11),
-	(54, 24, 14, NULL, 5),
-	(55, 24, NULL, 7, 13),
-	(56, 24, NULL, 25, 7),
-	(57, 26, 16, NULL, 1),
-	(58, 26, 17, NULL, 1),
-	(59, 26, 18, NULL, 1),
-	(60, 26, 19, NULL, 1),
-	(61, 26, 20, NULL, 1),
-	(62, 27, 11, NULL, 5),
-	(63, 27, NULL, 3, 5),
-	(64, 27, NULL, 25, 3),
-	(65, 27, NULL, 11, 5),
-	(66, 21, 11, NULL, 5),
-	(67, 7, 3, NULL, 5),
-	(68, 16, 1, NULL, 10),
-	(69, 17, 2, NULL, 10),
-	(70, 18, 3, NULL, 10),
-	(71, 20, 4, NULL, 10),
-	(72, 19, 5, NULL, 10);
+-- Daten-Export vom Benutzer nicht ausgewählt
 
 -- Exportiere Struktur von Tabelle etoa_test.building_types
 CREATE TABLE IF NOT EXISTS `building_types` (
@@ -855,8 +661,7 @@ CREATE TABLE IF NOT EXISTS `building_types` (
   PRIMARY KEY (`type_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb3;
 
--- Exportiere Daten aus Tabelle etoa_test.building_types: ~0 rows (ungefähr)
-DELETE FROM `building_types`;
+-- Daten-Export vom Benutzer nicht ausgewählt
 
 -- Exportiere Struktur von Tabelle etoa_test.buildlist
 CREATE TABLE IF NOT EXISTS `buildlist` (
@@ -881,10 +686,9 @@ CREATE TABLE IF NOT EXISTS `buildlist` (
   KEY `buildlist_build_end_time` (`buildlist_build_end_time`),
   KEY `buildlist_build_type` (`buildlist_build_type`),
   CONSTRAINT `fk_building_id` FOREIGN KEY (`buildlist_building_id`) REFERENCES `buildings` (`building_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=143 DEFAULT CHARSET=utf8mb3;
+) ENGINE=InnoDB AUTO_INCREMENT=26 DEFAULT CHARSET=utf8mb3;
 
--- Exportiere Daten aus Tabelle etoa_test.buildlist: ~0 rows (ungefähr)
-DELETE FROM `buildlist`;
+-- Daten-Export vom Benutzer nicht ausgewählt
 
 -- Exportiere Struktur von Tabelle etoa_test.cells
 CREATE TABLE IF NOT EXISTS `cells` (
@@ -903,10 +707,7 @@ CREATE TABLE IF NOT EXISTS `cells` (
   KEY `sx` (`sx`)
 ) ENGINE=MyISAM AUTO_INCREMENT=401 DEFAULT CHARSET=utf8mb3 DELAY_KEY_WRITE=1;
 
--- Exportiere Daten aus Tabelle etoa_test.cells: 0 rows
-DELETE FROM `cells`;
-/*!40000 ALTER TABLE `cells` DISABLE KEYS */;
-/*!40000 ALTER TABLE `cells` ENABLE KEYS */;
+-- Daten-Export vom Benutzer nicht ausgewählt
 
 -- Exportiere Struktur von Tabelle etoa_test.chat
 CREATE TABLE IF NOT EXISTS `chat` (
@@ -922,10 +723,7 @@ CREATE TABLE IF NOT EXISTS `chat` (
   KEY `timestamp` (`timestamp`)
 ) ENGINE=MEMORY DEFAULT CHARSET=utf8mb3;
 
--- Exportiere Daten aus Tabelle etoa_test.chat: 0 rows
-DELETE FROM `chat`;
-/*!40000 ALTER TABLE `chat` DISABLE KEYS */;
-/*!40000 ALTER TABLE `chat` ENABLE KEYS */;
+-- Daten-Export vom Benutzer nicht ausgewählt
 
 -- Exportiere Struktur von Tabelle etoa_test.chat_banns
 CREATE TABLE IF NOT EXISTS `chat_banns` (
@@ -935,10 +733,7 @@ CREATE TABLE IF NOT EXISTS `chat_banns` (
   PRIMARY KEY (`user_id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb3;
 
--- Exportiere Daten aus Tabelle etoa_test.chat_banns: 0 rows
-DELETE FROM `chat_banns`;
-/*!40000 ALTER TABLE `chat_banns` DISABLE KEYS */;
-/*!40000 ALTER TABLE `chat_banns` ENABLE KEYS */;
+-- Daten-Export vom Benutzer nicht ausgewählt
 
 -- Exportiere Struktur von Tabelle etoa_test.chat_channels
 CREATE TABLE IF NOT EXISTS `chat_channels` (
@@ -952,8 +747,7 @@ CREATE TABLE IF NOT EXISTS `chat_channels` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
--- Exportiere Daten aus Tabelle etoa_test.chat_channels: ~0 rows (ungefähr)
-DELETE FROM `chat_channels`;
+-- Daten-Export vom Benutzer nicht ausgewählt
 
 -- Exportiere Struktur von Tabelle etoa_test.chat_log
 CREATE TABLE IF NOT EXISTS `chat_log` (
@@ -970,10 +764,7 @@ CREATE TABLE IF NOT EXISTS `chat_log` (
   KEY `timestamp` (`timestamp`)
 ) ENGINE=MyISAM AUTO_INCREMENT=30 DEFAULT CHARSET=utf8mb3;
 
--- Exportiere Daten aus Tabelle etoa_test.chat_log: 0 rows
-DELETE FROM `chat_log`;
-/*!40000 ALTER TABLE `chat_log` DISABLE KEYS */;
-/*!40000 ALTER TABLE `chat_log` ENABLE KEYS */;
+-- Daten-Export vom Benutzer nicht ausgewählt
 
 -- Exportiere Struktur von Tabelle etoa_test.chat_users
 CREATE TABLE IF NOT EXISTS `chat_users` (
@@ -985,10 +776,7 @@ CREATE TABLE IF NOT EXISTS `chat_users` (
   KEY `timestamp` (`timestamp`)
 ) ENGINE=MEMORY DEFAULT CHARSET=utf8mb3;
 
--- Exportiere Daten aus Tabelle etoa_test.chat_users: 0 rows
-DELETE FROM `chat_users`;
-/*!40000 ALTER TABLE `chat_users` DISABLE KEYS */;
-/*!40000 ALTER TABLE `chat_users` ENABLE KEYS */;
+-- Daten-Export vom Benutzer nicht ausgewählt
 
 -- Exportiere Struktur von Tabelle etoa_test.config
 CREATE TABLE IF NOT EXISTS `config` (
@@ -1001,242 +789,7 @@ CREATE TABLE IF NOT EXISTS `config` (
   UNIQUE KEY `config_name_2` (`config_name`)
 ) ENGINE=MyISAM AUTO_INCREMENT=421 DEFAULT CHARSET=utf8mb3;
 
--- Exportiere Daten aus Tabelle etoa_test.config: 231 rows
-DELETE FROM `config`;
-/*!40000 ALTER TABLE `config` DISABLE KEYS */;
-INSERT INTO `config` (`config_id`, `config_name`, `config_value`, `config_param1`, `config_param2`) VALUES
-	(50, 'user_planet_name', 'Startplanet', '', ''),
-	(51, 'user_min_fields', '1200', '', ''),
-	(52, 'user_max_planets', '15', '', ''),
-	(53, 'asteroid_ress', '', '10000', '1000000'),
-	(54, 'nebula_ress', '', '100000', '3000000'),
-	(55, 'wh_update', '172800', '1', ''),
-	(56, 'gasplanet', '7', '3600', '500'),
-	(57, 'solsys_percent_planet', '85', '', ''),
-	(58, 'solsys_percent_asteroids', '2', '', ''),
-	(59, 'user_attack_min_points', '100', '', ''),
-	(60, 'user_attack_percentage', '0.4', '', ''),
-	(61, 'invade_possibility', '0.5', '1', '0.1'),
-	(62, 'invade_ship_destroy', '0.3', '', ''),
-	(63, 'def_restore_percent', '0.4', '', ''),
-	(64, 'def_wf_percent', '0.5', '', ''),
-	(65, 'civil_ship_restore_percent', '0.8', '', ''),
-	(66, 'civil_ship_categories', '2,7', '', ''),
-	(67, 'ship_wf_percent', '0.65', '', ''),
-	(69, 'ship_bomb_factor', '5', '10', ''),
-	(68, 'deactivate_fleet', '0', '', ''),
-	(71, 'max_heal', '1', '', ''),
-	(70, 'battle_rounds', '5', '', ''),
-	(72, 'gasattack_action', '25', '95', ''),
-	(73, 'elorating', '1600', '15', ''),
-	(74, 'battle_rebuildable', '0', '0.75', '1'),
-	(75, 'rebuildable_costs', '0.25', '', ''),
-	(76, 'invade_active_users', '0', '', ''),
-	(77, 'abs_enabled', '1', '0', ''),
-	(78, 'alliance_fleets_max_players', '1', '3', ''),
-	(79, 'res_update', '300', '', ''),
-	(80, 'def_store_capacity', '200000', '', ''),
-	(81, 'user_start_metal', '16000', '', ''),
-	(82, 'user_start_crystal', '8000', '', ''),
-	(83, 'user_start_plastic', '2500', '', ''),
-	(85, 'user_start_food', '500', '', ''),
-	(84, 'user_start_fuel', '200', '', ''),
-	(86, 'user_start_people', '200', '250', ''),
-	(87, 'people_food_require', '12', '', ''),
-	(88, 'people_multiply', '1.1', '', ''),
-	(89, 'people_work_done', '3', '', ''),
-	(90, 'specialistconfig', '0.3', '10', '100000'),
-	(91, 'energy_tech_power_bonus_required_level', '10', '', ''),
-	(92, 'energy_tech_power_bonus_percent_per_level', '5', '', ''),
-	(93, 'market_enabled', '1', '', ''),
-	(94, 'market_response_time', '14', '', ''),
-	(95, 'market_ship_action_ress', 'market', '', ''),
-	(101, 'ship_price_factor_max', '2', '', ''),
-	(100, 'ship_price_factor_min', '1.35', '', ''),
-	(99, 'market_user_reservation_active', '1', '', ''),
-	(98, 'market_auction_delay_time', '24', '', ''),
-	(97, 'market_ship_flight_time', '', '15', '180'),
-	(96, 'market_ship_action_ship', 'market', '', ''),
-	(102, 'res_price_factor_min', '0.5', '', ''),
-	(103, 'res_price_factor_max', '2', '', ''),
-	(104, 'auction_price_factor_min', '0.333', '', ''),
-	(105, 'auction_price_factor_max', '3', '', ''),
-	(106, 'auction_overbid', '0.01', '', ''),
-	(107, 'market_sell_tax', '1.005', '', ''),
-	(108, 'auction_min_duration', '2', '', ''),
-	(109, 'min_market_level_res', '1', '', ''),
-	(110, 'min_market_level_ship', '3', '', ''),
-	(111, 'min_market_level_auction', '5', '', ''),
-	(112, 'market_rates_count', '200', '', ''),
-	(113, 'market_rate_min', '0.1', '', ''),
-	(114, 'market_rate_max', '10', '', ''),
-	(115, 'default_image_path', 'images/imagepacks/ReDiscovery', '', ''),
-	(116, 'default_css_style', 'Rediscovery', '', ''),
-	(117, 'imagepack_zip_format', 'zip', '', ''),
-	(118, 'imagepack_predirectory', '', '', ''),
-	(119, 'imagesize', '220', '120', '40'),
-	(120, 'num_nebula_images', '9', '', ''),
-	(121, 'num_asteroid_images', '5', '', ''),
-	(122, 'num_space_images', '10', '', ''),
-	(123, 'num_wormhole_images', '1', '', ''),
-	(124, 'wordbanlist', '', '', ''),
-	(125, 'msg_flood_control', '10', '', ''),
-	(126, 'msg_ban_hours', '0', '', ''),
-	(127, 'mailqueue', '50', '', ''),
-	(128, 'msg_max_store', '200', '20', ''),
-	(129, 'password_minlength', '6', '30', ''),
-	(130, 'hmode_days', '2', '42', '1'),
-	(131, 'user_inactive_days', '7', '21', '8'),
-	(132, 'user_ban_min_length', '1', '', ''),
-	(133, 'user_umod_min_length', '2', '', ''),
-	(134, 'user_sitting_days', '12', '2', ''),
-	(135, 'online_threshold', '5', '', ''),
-	(136, 'nick_length', '', '3', '15'),
-	(137, 'main_planet_changetime', '7', '', ''),
-	(138, 'name_length', '30', '', ''),
-	(139, 'user_delete_days', '5', '', ''),
-	(140, 'profileimagecheck_done', '1209569797', '', ''),
-	(141, 'email_verification_required', '1', '', ''),
-	(143, 'admin_dateformat', 'Y-m-d H:i:s', '', ''),
-	(142, 'admin_timeout', '1200', '', ''),
-	(145, 'battleban', '1', 'EtoA-Updatedienst Problem ', ''),
-	(144, 'flightban', '0', '', ''),
-	(146, 'battleban_time', '', '1780738200', '1780761600'),
-	(147, 'flightban_time', '', '1704913200', '1704956400'),
-	(148, 'battleban_arrival_text', '', 'Die ankommenden Schiffe sind auf dem Planeten gelandet. Nach einer kurzen Kaffeepause der Piloten kehrten sie wieder um und machten sich auf den Rückflug.', 'Auf dem Weg zu ihrem Ziel flogen deine Raketen in ein intergalaktisches Warpfeld. Sie wurden deaktiviert und in ihr Lager gebeamt.'),
-	(149, 'asteroid_action', '30', '40', '0'),
-	(150, 'gascollect_action', '30', '20', '1000'),
-	(151, 'nebula_action', '30', '50', '1000'),
-	(152, 'antrax_action', '30', '90', ''),
-	(153, 'spyattack_action', '10', '10', '10'),
-	(154, 'emp_action', '1', '', ''),
-	(155, 'userrank_total', 'Imperator von Andromeda', '', ''),
-	(156, 'userrank_buildings', 'Grossbaumeister von Andromeda', '', ''),
-	(157, 'userrank_tech', 'Hochtechnokrat von Andromeda', '', ''),
-	(158, 'userrank_fleet', 'Flottenadmiral von Andromeda', '', ''),
-	(159, 'userrank_battle', 'Generalfeldmarschall von Andromeda', '', ''),
-	(160, 'userrank_trade', 'Handelsfürst von Andromeda', '', ''),
-	(161, 'userrank_diplomacy', 'Botschafter von Andromeda', '', ''),
-	(162, 'userrank_exp', 'Kriegsheld von Andromeda', '', ''),
-	(163, 'alliance_allow', '1', '', ''),
-	(164, 'alliance_max_member_count', '5', '', ''),
-	(165, 'alliance_membercosts_factor', '0.9', '', ''),
-	(166, 'alliance_leave_cooldown', '86400', '', ''),
-	(167, 'alliance_shippoints_per_hour', '10', '', ''),
-	(168, 'alliance_shipcosts_factor', '1.02', '', ''),
-	(169, 'alliance_tech_bonus', '10', '', ''),
-	(170, 'alliance_war_time', '48', '48', ''),
-	(171, 'alliance_shippoints_base', '1.4', '', ''),
-	(172, 'allow_wings', '0', '', ''),
-	(173, 'townhall_ban', '86400', 'Nichtbeachtung der Rathaus-Regeln', ''),
-	(174, 'discoverymask', '0.5', '', ''),
-	(175, 'explor_radius', '2', '', ''),
-	(176, 'shipyard_min_build_time', '1', '', ''),
-	(177, 'shipqueue_cancel_min_level', '5', '', ''),
-	(178, 'shipqueue_cancel_start', '0.3', '', ''),
-	(179, 'shipqueue_cancel_factor', '0.03', '', ''),
-	(180, 'shipqueue_cancel_end', '0.8', '', ''),
-	(181, 'defense_min_build_time', '1', '', ''),
-	(182, 'defqueue_cancel_min_level', '5', '', ''),
-	(192, 'daemon_pidfile', 'tmp/eventhandler.pid', '', ''),
-	(191, 'daemon_logfile', 'log/eventhandler.log', '', ''),
-	(190, 'daemon_instance', 'round23', '', ''),
-	(189, 'daemon_exe', '', '', ''),
-	(188, 'sessionlog_store_days', '', '30', '60'),
-	(187, 'log_threshold_days', '28', '', ''),
-	(186, 'recyc_max_payback', '0.9', '', ''),
-	(185, 'defqueue_cancel_end', '0.8', '', ''),
-	(184, 'defqueue_cancel_factor', '0.03', '', ''),
-	(183, 'defqueue_cancel_start', '0.3', '', ''),
-	(193, 'backend_offline_mail', 'mail@etoa.ch', '', ''),
-	(194, 'update_enabled', '1', '', ''),
-	(195, 'backup_dir', '', '', ''),
-	(196, 'backup_retention_time', '7', '', ''),
-	(197, 'backup_use_gzip', '1', '', ''),
-	(198, 'accesslog', '0', '', ''),
-	(200, 'crypto_default_cooldown', '86400', '', ''),
-	(199, 'crypto_enable', '1', '', ''),
-	(201, 'crypto_cooldown_reduction_per_level', '7200', '', ''),
-	(203, 'crypto_range_per_level', '700', '', ''),
-	(202, 'crypto_min_cooldown', '21600', '', ''),
-	(204, 'crypto_fuel_costs_per_scan', '1500000', '', ''),
-	(206, 'chat_user_timeout', '180', '', ''),
-	(205, 'chat_recent_messages', '200', '', ''),
-	(207, 'boost_system_enable', '1', '', ''),
-	(208, 'boost_system_max_res_prod_bonus', '0.66', '', ''),
-	(209, 'boost_system_max_building_speed_bonus', '0.33', '', ''),
-	(49, 'map_init_sector', '', '1', '1'),
-	(48, 'cell_length', '300', '', ''),
-	(47, 'field_squarekm', '11694', '', ''),
-	(46, 'planet_temp', '20', '-155', '166'),
-	(45, 'planet_fields', '', '850', '2500'),
-	(44, 'num_planet_images', '5', '', ''),
-	(43, 'persistent_wormholes_ratio', '15', '', ''),
-	(42, 'space_percent_wormholes', '8', '', ''),
-	(41, 'space_percent_nebulas', '11', '', ''),
-	(40, 'space_percent_asteroids', '11', '', ''),
-	(39, 'space_percent_solsys', '64', '', ''),
-	(38, 'num_planets', '', '20', '35'),
-	(37, 'num_of_cells', '', '10', '10'),
-	(36, 'num_of_sectors', '', '2', '2'),
-	(35, 'res_build_time', '0.75', '', ''),
-	(34, 'flight_land_time', '1', '', ''),
-	(33, 'flight_start_time', '1', '', ''),
-	(32, 'flight_flight_time', '1', '', ''),
-	(31, 'build_build_time', '0.95', '', ''),
-	(30, 'def_build_time', '0.75', '', ''),
-	(29, 'ship_build_time', '0.75', '', ''),
-	(28, 'build_time_boni_waffenfabrik', '5', '10', ''),
-	(27, 'build_time_boni_schiffswerft', '5', '10', ''),
-	(26, 'build_time_boni_forschungslabor', '5', '10', '0.2'),
-	(25, 'shipdefbuild_cancel_time', '15', '', ''),
-	(24, 'global_time', '12', '', ''),
-	(23, 'bot_max_count', '5', '', ''),
-	(22, 'register_key', '', '', ''),
-	(21, 'offline_ips_allow', '', '', ''),
-	(20, 'offline_message', '', '', ''),
-	(19, 'offline', '0', '', ''),
-	(18, 'under_construction', '', '', ''),
-	(17, 'referers', 'https://round24.etoa.net\r\nhttps://etoa.ch', '', ''),
-	(16, 'reports_threshold_days', '42', '42', ''),
-	(15, 'messages_threshold_days', '28', '14', ''),
-	(14, 'url_teamspeak', 'https://discord.gg/RjDQae4wMT', '', ''),
-	(13, 'url_rules', 'https://etoa.ch/rules', '', ''),
-	(12, 'stats_num_rows', '50', '', ''),
-	(11, 'show_hmod_users_stats', '1', '', ''),
-	(10, 'points_update', '3600', '1000', '100'),
-	(9, 'round_end', '1', '1790891999', ''),
-	(8, 'enable_login', '1', '1760119200', ''),
-	(7, 'enable_register', '1', '1759773600', '1000'),
-	(6, 'mail_reply', 'mail@etoa.ch', '', ''),
-	(5, 'mail_sender', 'no-reply@etoa.ch', '', ''),
-	(4, 'user_timeout', '2400', '', ''),
-	(3, 'loginurl', 'https://etoa.ch', '', ''),
-	(1, 'roundname', 'Runde 24', '', ''),
-	(2, 'roundurl', 'https://round24.etoa.net', '', ''),
-	(210, 'missile_silo_missiles_per_level', '5', '', ''),
-	(211, 'missile_silo_missiles_algo_base', '1.4', '', ''),
-	(212, 'missile_silo_flights_per_level', '0.5', '', ''),
-	(213, 'missile_battle_shield_factor', '0.3', '', ''),
-	(214, 'quest_system_enable', '0', '', ''),
-	(215, 'crypto_number_of_fleets_level', '0', '', ''),
-	(216, 'crypto_fleets_incoming_level', '2.5', '', ''),
-	(217, 'crypto_fleets_send_level', '7.5', '', ''),
-	(218, 'crypto_time_60_level', '5', '', ''),
-	(219, 'crypto_time_30_level', '10', '', ''),
-	(220, 'crypto_time_15_level', '10', '', ''),
-	(221, 'crypto_time_min_level', '15', '', ''),
-	(222, 'crypto_time_sec_level', '17.5', '', ''),
-	(223, 'crypto_ships_type_level', '12.5', '', ''),
-	(224, 'crypto_ships_count_all_level', '12.5', '', ''),
-	(225, 'crypto_ships_count_single_level', '12.5', '', ''),
-	(226, 'crypto_action_level', '20', '', ''),
-	(227, 'crypto_resources_level', '22.5', '', ''),
-	(228, 'crypto_level_rand_mod_min', '-5', '', ''),
-	(229, 'crypto_level_rand_mod_max', '0', '', ''),
-	(230, 'crypto_chance_rand_mod_min', '-1', '', ''),
-	(231, 'crypto_chance_rand_mod_max', '1', '', '');
-/*!40000 ALTER TABLE `config` ENABLE KEYS */;
+-- Daten-Export vom Benutzer nicht ausgewählt
 
 -- Exportiere Struktur von Tabelle etoa_test.default_items
 CREATE TABLE IF NOT EXISTS `default_items` (
@@ -1249,10 +802,7 @@ CREATE TABLE IF NOT EXISTS `default_items` (
   KEY `FK_default_items_default_item_sets` (`item_set_id`)
 ) ENGINE=MyISAM AUTO_INCREMENT=139 DEFAULT CHARSET=utf8mb3;
 
--- Exportiere Daten aus Tabelle etoa_test.default_items: 0 rows
-DELETE FROM `default_items`;
-/*!40000 ALTER TABLE `default_items` DISABLE KEYS */;
-/*!40000 ALTER TABLE `default_items` ENABLE KEYS */;
+-- Daten-Export vom Benutzer nicht ausgewählt
 
 -- Exportiere Struktur von Tabelle etoa_test.default_item_sets
 CREATE TABLE IF NOT EXISTS `default_item_sets` (
@@ -1262,10 +812,7 @@ CREATE TABLE IF NOT EXISTS `default_item_sets` (
   PRIMARY KEY (`set_id`)
 ) ENGINE=MyISAM AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb3;
 
--- Exportiere Daten aus Tabelle etoa_test.default_item_sets: 0 rows
-DELETE FROM `default_item_sets`;
-/*!40000 ALTER TABLE `default_item_sets` DISABLE KEYS */;
-/*!40000 ALTER TABLE `default_item_sets` ENABLE KEYS */;
+-- Daten-Export vom Benutzer nicht ausgewählt
 
 -- Exportiere Struktur von Tabelle etoa_test.defense
 CREATE TABLE IF NOT EXISTS `defense` (
@@ -1302,26 +849,7 @@ CREATE TABLE IF NOT EXISTS `defense` (
   KEY `def_battlepoints` (`def_points`)
 ) ENGINE=InnoDB AUTO_INCREMENT=19 DEFAULT CHARSET=utf8mb3;
 
--- Exportiere Daten aus Tabelle etoa_test.defense: ~17 rows (ungefähr)
-DELETE FROM `defense`;
-INSERT INTO `defense` (`def_id`, `def_name`, `def_shortcomment`, `def_longcomment`, `def_costs_metal`, `def_costs_crystal`, `def_costs_fuel`, `def_costs_plastic`, `def_costs_food`, `def_costs_power`, `def_power_use`, `def_fuel_use`, `def_prod_power`, `def_fields`, `def_show`, `def_buildable`, `def_order`, `def_structure`, `def_shield`, `def_weapon`, `def_heal`, `def_jam`, `def_race_id`, `def_cat_id`, `def_max_count`, `def_points`) VALUES
-	(1, 'SPICA Flakkanone', 'Einfache und billige Abwehrwaffe.', 'Einfache und billige Abwehrwaffe.\r\nSie wird auf Gebäuden befestigt und braucht daher keine Felder. Sie ist aber nicht sehr effektiv. Darum ist es besser, sie nur am Anfang und auch dann nur in grossen Mengen zu bauen.', 800, 475, 0, 425, 0, 0, 1, 0, 0, 0, 1, 1, 0, 300, 150, 250, 0, 0, 0, 2, 1000000, 1.700),
-	(2, 'POLARIS Raketengeschütz', 'Die Raketen dieses Geschützes verfolgen ihr Ziel mittels Lasersteuerung.', 'Um den gegnerischen Schiffen mit Raketen beizukommen, wurde dieses Raketengeschütz entwickelt. Es schiesst kleinere Raketen ab, welche dann das Ziel bis zur Zerstörung verfolgen. Es ist jedoch nicht sehr stark und dient vor allem zu Beginn als gute und billige Verteidigungswaffe.', 1000, 700, 300, 500, 0, 0, 3, 0, 0, 0, 1, 1, 2, 450, 325, 350, 0, 0, 0, 2, 1000000, 2.500),
-	(3, 'ZIBAL Laserturm', 'Dieses Geschütz richtet einen gebündelten und starken Energiestrahl auf ihr Ziel.', 'Dieses Geschütz richtet einen gebündelten und starken Energiestrahl auf ihr Ziel. Es ist eine weiterentwickelte Verteidigungsanlage, welche es auch mit grösseren Schiffen aufnehmen kann.', 3900, 3100, 2100, 1500, 0, 0, 8, 0, 0, 0, 1, 1, 3, 1500, 2000, 1800, 0, 0, 0, 2, 100000, 10.600),
-	(4, 'OMEGA Geschütz', 'Diese mächtige Abwehrwaffe beschützt deinen Planeten auch vor grösseren Angriffen.', 'Diese mächtige Abwehrwaffe beschützt deinen Planeten auch vor grösseren Angriffen. Da es aber eine starke Waffe ist, können maximal 1\'000 Stück gebaut werden.', 650000, 425000, 265000, 425000, 0, 0, 15, 0, 0, 1, 1, 1, 4, 300000, 350000, 275000, 0, 0, 0, 2, 1000, 1765.000),
-	(5, 'VEGA Hochenergieschild', 'Dieser kleine Hochenergieschild schützt deine Verteidigungsanlagen und Schiffe vor feindlichem Beschuss.', 'Dieser kleine Hochenergieschild schützt deine Verteidigungsanlagen und Schiffe vor feindlichem Beschuss. Es ist jedoch nicht sehr gut und kann nur wenig Beschuss abhalten.', 3000, 1200, 1800, 600, 0, 0, 0, 0, 0, 1, 1, 1, 0, 1200, 3500, 0, 0, 0, 0, 1, 1, 6.600),
-	(6, 'CASTOR Hochenergieschild', 'Dieser grosse Hochenergieschild schützt deine Verteidigungsanlagen und Schiffe vor feindlichem Beschuss.', 'Dieser grosse Hochenergieschild schützt deine Verteidigungsanlagen und Schiffe vor feindlichem Beschuss.', 95000, 40000, 45000, 25000, 0, 0, 0, 0, 0, 2, 1, 1, 1, 52500, 105000, 0, 0, 0, 0, 1, 1, 205.000),
-	(7, 'NEKKAR Plasmawerfer', 'Die stärkste Verteidigung in ganz Andromeda.', 'Die stärkste Verteidigung in ganz Andromeda. Dieser Plasmawerfer kann es sogar mit einem Andromeda Kampfstern aufnehmen! Dabei schiesst er hochenergetische Teilchen auf das Ziel.\r\nBedingt durch seine Grösse und Stärke ist die maximale Anzahl pro Planet auf 15 limitiert.', 25000000, 20000000, 11500000, 12000000, 0, 0, 0, 0, 0, 2, 1, 1, 5, 14000000, 9500000, 14500000, 0, 0, 0, 2, 15, 68500.000),
-	(8, 'SIGMA Hochenergieschild', 'Dies ist der grösste Schild in ganz Andromeda.', 'Dies ist der grösste Schild in ganz Andromeda. Dieser Schild nutzt hochenergetische Teilchen, um die Angriffe der Gegner abzufangen. Beim Bau dieses Schildes wird gleich noch ein Kraftwerk nur für diesen Schild gebaut, damit die Energieversorgung gesichert ist. Deshalb ist er so unglaublich teuer.', 250000000, 20000000, 25000000, 5000000, 0, 0, 0, 0, 0, 100, 1, 1, 3, 25000000, 225000000, 0, 0, 0, 0, 1, 1, 300000.000),
-	(9, 'KAPPA Minen', 'Diese Minen schweben im Orbit und können gegnerische Schiffe zerstören.', 'Diese Minen schweben im Orbit und können gegnerische Schiffe zerstören. Sie sind mit Tritium gefüllt und explodieren bei einer Kollision mit feindlichen Schiffen. Da ein kleiner Korridor für eigene Schiffe und Handelsschiffe frei bleiben muss, kann maximal eine Million dieser Minen gebaut werden.', 500, 300, 400, 100, 0, 0, 0, 0, 0, 0, 1, 1, 1, 5, 5, 500, 0, 0, 0, 3, 1000000, 1.300),
-	(10, 'MAGNETRON Störsender', 'Diese defensive Anlage kann zufällige Signale in den Raum abgeben und so das Auffinden und Entschlüsseln der eigenen Flottenkommunikation durch gegnerische Spione erschweren.', 'Durch die Verfügbarkeit von grossen Rechenzentren ist in letzter Zeit die Bedrohung durch kryptographische Angriffe auf die eigenen Flottenfunkverbindungen stark angestiegen. Viele Generäle fühlten sich nicht mehr sicher, da ihre Feinde anscheinend plötzlich sehr genau wussten, wann und wo ihre Flotten landen würden. Dies führte zur Erfindung des MAGNETRON Störsenders. Die riesigen Sendeanlagen erzeugen zufällige Funksignale, die sie in den Raum abgeben. Eine gegnerische Analyse der Funksignale eines Planeten findet so viel zu viele Signale und hat Mühe, die richtigen herauszufiltern. ', 20000, 50000, 10000, 15000, 0, 0, 0, 0, 0, 5, 1, 1, 10, 15000, 1200, 0, 0, 1, 0, 3, 10, 95.000),
-	(11, 'PHOENIX Reparaturplattform', 'Diese Anlage repariert bei einem Kampf jede Runde eine gewisse Anzahl an Strukturpunkten, kann jedoch selbst auch zerstört werden.', 'Diese Anlage repariert bei einem Kampf jede Runde eine gewisse Anzahl an Strukturpunkten, kann jedoch selbst auch zerstört werden.\r\nDie grundlegende Idee, welche zur Entwicklung dieser Reparaturplattform führte, fanden die Serrakin in den Mutterschiffen der Cardassianer.', 6000, 3000, 3000, 2900, 0, 0, 0, 0, 0, 0, 1, 1, 10, 3150, 1900, 1700, 825, 0, 10, 3, 1000000, 14.900),
-	(12, 'SAGITTARIUS Plasmaschild', 'Dieser spezielle Schild wurde schon oft zu kopieren versucht, doch bisher gelang es keiner anderen Rasse als den Serrakin, ihn so effizient herzustellen.', 'Dieser spezielle Schild wurde schon oft zu kopieren versucht, doch bisher gelang es keiner anderen Rasse als den Serrakin, ihn so effizient herzustellen.', 1350000, 1000000, 1050000, 625000, 0, 0, 0, 0, 0, 20, 1, 1, 2, 1400000, 2100000, 0, 0, 0, 10, 1, 1, 4025.000),
-	(14, 'ZIBAL Laserturm M', 'Dieses Geschütz richtet einen gebündelten und starken Energiestrahl auf ihr Ziel. Mobile Version.', 'Dieses Geschütz richtet einen gebündelten und starken Energiestrahl auf ihr Ziel. Es ist eine weiterentwickelte Verteidigungsanlage, welche es auch mit grösseren Schiffen aufnehmen kann. Kann auf andere Planeten transportiert werden.', 3900, 3100, 2100, 1500, 0, 0, 8, 0, 0, 0, 1, 1, 3, 1500, 2000, 1800, 0, 0, 10, 2, 100000, 10.600),
-	(15, 'POLARIS Raketengeschütz M', 'Die Raketen dieses Geschützes verfolgen ihr Ziel mittels Lasersteuerung. Mobile Version.', 'Um den gegnerischen Schiffen mit Raketen beizukommen, wurde dieses Raketengeschütz entwickelt. Es schiesst kleinere Raketen ab, welche dann das Ziel bis zur Zerstörung verfolgen. Es ist jedoch nicht sehr stark und dient vor allem zu Beginn als gute und billige Verteidigungswaffe. Kann auf andere Planeten transportiert werden.', 1000, 700, 300, 500, 0, 0, 3, 0, 0, 0, 1, 1, 2, 450, 325, 350, 0, 0, 10, 2, 1000000, 2.500),
-	(16, 'SPICA Flakkanone M', 'Einfache und billige Abwehrwaffe. Mobile Version.', 'Einfache und billige Abwehrwaffe.\r\nSie wird auf Gebäuden befestigt und braucht daher keine Felder. Sie ist aber nicht sehr effektiv. Darum ist es besser, sie nur am Anfang und auch dann nur in grossen Mengen zu bauen. Kann auf andere Planeten transportiert werden.', 800, 475, 0, 425, 0, 0, 1, 0, 0, 0, 1, 1, 0, 300, 150, 250, 0, 0, 10, 2, 1000000, 1.700),
-	(17, 'PHOENIX Reparaturplattform M', 'Diese Anlage repariert bei einem Kampf jede Runde eine gewisse Anzahl an Strukturpunkten, kann jedoch selbst auch zerstört werden. Mobile Version.', 'Diese Anlage repariert bei einem Kampf jede Runde eine gewisse Anzahl an Strukturpunkten, kann jedoch selbst auch zerstört werden.\r\nDie grundlegende Idee, welche zur Entwicklung dieser Reparaturplattform führte, fanden die Serrakin in den Mutterschiffen der Cardassianer. Kann auf andere Planeten transportiert werden.', 6000, 3000, 3000, 2900, 0, 0, 0, 0, 0, 0, 1, 1, 10, 3150, 1900, 1700, 825, 0, 10, 3, 1000000, 14.900),
-	(18, 'OMEGA Geschütz M', 'Diese mächtige Abwehrwaffe beschützt deinen Planeten auch vor grösseren Angriffen.', 'Diese mächtige Abwehrwaffe beschützt deinen Planeten auch vor grösseren Angriffen. Da es aber eine starke Waffe ist, können maximal 1\'000 Stück gebaut werden.', 650000, 425000, 265000, 425000, 0, 0, 0, 0, 0, 1, 1, 1, 0, 300000, 350000, 275000, 0, 0, 10, 2, 0, 1765.000);
+-- Daten-Export vom Benutzer nicht ausgewählt
 
 -- Exportiere Struktur von Tabelle etoa_test.deflist
 CREATE TABLE IF NOT EXISTS `deflist` (
@@ -1332,12 +860,9 @@ CREATE TABLE IF NOT EXISTS `deflist` (
   `deflist_count` int unsigned NOT NULL DEFAULT '0',
   PRIMARY KEY (`deflist_id`),
   UNIQUE KEY `deflist_all` (`deflist_user_id`,`deflist_entity_id`,`deflist_def_id`)
-) ENGINE=MyISAM AUTO_INCREMENT=17 DEFAULT CHARSET=utf8mb3;
+) ENGINE=MyISAM AUTO_INCREMENT=20 DEFAULT CHARSET=utf8mb3;
 
--- Exportiere Daten aus Tabelle etoa_test.deflist: 0 rows
-DELETE FROM `deflist`;
-/*!40000 ALTER TABLE `deflist` DISABLE KEYS */;
-/*!40000 ALTER TABLE `deflist` ENABLE KEYS */;
+-- Daten-Export vom Benutzer nicht ausgewählt
 
 -- Exportiere Struktur von Tabelle etoa_test.def_cat
 CREATE TABLE IF NOT EXISTS `def_cat` (
@@ -1348,8 +873,7 @@ CREATE TABLE IF NOT EXISTS `def_cat` (
   PRIMARY KEY (`cat_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
 
--- Exportiere Daten aus Tabelle etoa_test.def_cat: ~0 rows (ungefähr)
-DELETE FROM `def_cat`;
+-- Daten-Export vom Benutzer nicht ausgewählt
 
 -- Exportiere Struktur von Tabelle etoa_test.def_queue
 CREATE TABLE IF NOT EXISTS `def_queue` (
@@ -1368,10 +892,7 @@ CREATE TABLE IF NOT EXISTS `def_queue` (
   KEY `queue_planet_id` (`queue_entity_id`)
 ) ENGINE=MyISAM AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
 
--- Exportiere Daten aus Tabelle etoa_test.def_queue: 0 rows
-DELETE FROM `def_queue`;
-/*!40000 ALTER TABLE `def_queue` DISABLE KEYS */;
-/*!40000 ALTER TABLE `def_queue` ENABLE KEYS */;
+-- Daten-Export vom Benutzer nicht ausgewählt
 
 -- Exportiere Struktur von Tabelle etoa_test.def_requirements
 CREATE TABLE IF NOT EXISTS `def_requirements` (
@@ -1391,63 +912,7 @@ CREATE TABLE IF NOT EXISTS `def_requirements` (
   CONSTRAINT `FK_21FC30237E57261C` FOREIGN KEY (`req_building_id`) REFERENCES `buildings` (`building_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=92 DEFAULT CHARSET=utf8mb3;
 
--- Exportiere Daten aus Tabelle etoa_test.def_requirements: ~54 rows (ungefähr)
-DELETE FROM `def_requirements`;
-INSERT INTO `def_requirements` (`id`, `obj_id`, `req_building_id`, `req_tech_id`, `req_level`) VALUES
-	(2, 2, 10, NULL, 3),
-	(3, 3, 10, NULL, 6),
-	(4, 3, NULL, 3, 5),
-	(5, 4, NULL, 3, 7),
-	(6, 4, 10, NULL, 8),
-	(8, 5, 10, NULL, 3),
-	(10, 5, 8, NULL, 2),
-	(11, 5, NULL, 3, 4),
-	(12, 6, 10, NULL, 6),
-	(13, 6, NULL, 3, 6),
-	(14, 6, 8, NULL, 5),
-	(15, 7, 10, NULL, 10),
-	(16, 7, NULL, 8, 11),
-	(17, 7, NULL, 3, 10),
-	(19, 8, NULL, 3, 8),
-	(20, 8, 10, 10, 12),
-	(21, 8, NULL, 9, 6),
-	(22, 8, 22, NULL, 3),
-	(23, 3, NULL, 8, 5),
-	(24, 4, 8, 8, 7),
-	(25, 9, 10, NULL, 4),
-	(26, 9, NULL, 8, 3),
-	(27, 9, NULL, 4, 2),
-	(28, 11, 10, NULL, 8),
-	(29, 11, NULL, 25, 3),
-	(30, 11, NULL, 16, 4),
-	(32, 12, 10, NULL, 9),
-	(33, 12, 8, NULL, 7),
-	(34, 12, NULL, 3, 10),
-	(35, 12, NULL, 16, 8),
-	(36, 10, NULL, 25, 5),
-	(37, 10, NULL, 11, 8),
-	(38, 10, NULL, 3, 10),
-	(39, 10, 13, NULL, 5),
-	(41, 14, 10, NULL, 6),
-	(42, 14, NULL, 3, 5),
-	(43, 14, NULL, 8, 5),
-	(68, 1, 10, NULL, 1),
-	(69, 16, 10, NULL, 1),
-	(71, 15, 10, NULL, 3),
-	(73, 17, 10, NULL, 8),
-	(74, 17, NULL, 25, 3),
-	(75, 17, NULL, 16, 4),
-	(79, 16, NULL, 12, 3),
-	(80, 15, NULL, 12, 4),
-	(82, 14, NULL, 12, 6),
-	(83, 17, NULL, 12, 8),
-	(85, 11, NULL, 19, 9),
-	(86, 17, NULL, 19, 9),
-	(87, 18, 8, NULL, 7),
-	(88, 18, 10, NULL, 8),
-	(89, 18, NULL, 3, 7),
-	(90, 18, NULL, 12, 10),
-	(91, 18, NULL, 8, 7);
+-- Daten-Export vom Benutzer nicht ausgewählt
 
 -- Exportiere Struktur von Tabelle etoa_test.entities
 CREATE TABLE IF NOT EXISTS `entities` (
@@ -1458,12 +923,9 @@ CREATE TABLE IF NOT EXISTS `entities` (
   `lastvisited` int unsigned NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
   KEY `cell_id` (`cell_id`)
-) ENGINE=MyISAM AUTO_INCREMENT=3010 DEFAULT CHARSET=utf8mb3 DELAY_KEY_WRITE=1 COMMENT='Entities in Space, acts as fleet targets';
+) ENGINE=MyISAM AUTO_INCREMENT=7337 DEFAULT CHARSET=utf8mb3 DELAY_KEY_WRITE=1 COMMENT='Entities in Space, acts as fleet targets';
 
--- Exportiere Daten aus Tabelle etoa_test.entities: 0 rows
-DELETE FROM `entities`;
-/*!40000 ALTER TABLE `entities` DISABLE KEYS */;
-/*!40000 ALTER TABLE `entities` ENABLE KEYS */;
+-- Daten-Export vom Benutzer nicht ausgewählt
 
 -- Exportiere Struktur von Tabelle etoa_test.fleet
 CREATE TABLE IF NOT EXISTS `fleet` (
@@ -1506,10 +968,7 @@ CREATE TABLE IF NOT EXISTS `fleet` (
   KEY `entity_to` (`entity_to`)
 ) ENGINE=MyISAM AUTO_INCREMENT=13 DEFAULT CHARSET=utf8mb3;
 
--- Exportiere Daten aus Tabelle etoa_test.fleet: 0 rows
-DELETE FROM `fleet`;
-/*!40000 ALTER TABLE `fleet` DISABLE KEYS */;
-/*!40000 ALTER TABLE `fleet` ENABLE KEYS */;
+-- Daten-Export vom Benutzer nicht ausgewählt
 
 -- Exportiere Struktur von Tabelle etoa_test.fleet_bookmarks
 CREATE TABLE IF NOT EXISTS `fleet_bookmarks` (
@@ -1525,10 +984,7 @@ CREATE TABLE IF NOT EXISTS `fleet_bookmarks` (
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb3;
 
--- Exportiere Daten aus Tabelle etoa_test.fleet_bookmarks: 0 rows
-DELETE FROM `fleet_bookmarks`;
-/*!40000 ALTER TABLE `fleet_bookmarks` DISABLE KEYS */;
-/*!40000 ALTER TABLE `fleet_bookmarks` ENABLE KEYS */;
+-- Daten-Export vom Benutzer nicht ausgewählt
 
 -- Exportiere Struktur von Tabelle etoa_test.fleet_ships
 CREATE TABLE IF NOT EXISTS `fleet_ships` (
@@ -1560,10 +1016,7 @@ CREATE TABLE IF NOT EXISTS `fleet_ships` (
   KEY `fs_fleet_id_2` (`fs_fleet_id`,`fs_ship_faked`)
 ) ENGINE=MyISAM AUTO_INCREMENT=15 DEFAULT CHARSET=utf8mb3;
 
--- Exportiere Daten aus Tabelle etoa_test.fleet_ships: 0 rows
-DELETE FROM `fleet_ships`;
-/*!40000 ALTER TABLE `fleet_ships` DISABLE KEYS */;
-/*!40000 ALTER TABLE `fleet_ships` ENABLE KEYS */;
+-- Daten-Export vom Benutzer nicht ausgewählt
 
 -- Exportiere Struktur von Tabelle etoa_test.hostname_cache
 CREATE TABLE IF NOT EXISTS `hostname_cache` (
@@ -1573,10 +1026,7 @@ CREATE TABLE IF NOT EXISTS `hostname_cache` (
   PRIMARY KEY (`addr`)
 ) ENGINE=MEMORY DEFAULT CHARSET=utf8mb3;
 
--- Exportiere Daten aus Tabelle etoa_test.hostname_cache: 0 rows
-DELETE FROM `hostname_cache`;
-/*!40000 ALTER TABLE `hostname_cache` DISABLE KEYS */;
-/*!40000 ALTER TABLE `hostname_cache` ENABLE KEYS */;
+-- Daten-Export vom Benutzer nicht ausgewählt
 
 -- Exportiere Struktur von Tabelle etoa_test.login_failures
 CREATE TABLE IF NOT EXISTS `login_failures` (
@@ -1590,10 +1040,7 @@ CREATE TABLE IF NOT EXISTS `login_failures` (
   KEY `failure_user_id` (`failure_user_id`)
 ) ENGINE=MyISAM AUTO_INCREMENT=13 DEFAULT CHARSET=utf8mb3 DELAY_KEY_WRITE=1;
 
--- Exportiere Daten aus Tabelle etoa_test.login_failures: 0 rows
-DELETE FROM `login_failures`;
-/*!40000 ALTER TABLE `login_failures` DISABLE KEYS */;
-/*!40000 ALTER TABLE `login_failures` ENABLE KEYS */;
+-- Daten-Export vom Benutzer nicht ausgewählt
 
 -- Exportiere Struktur von Tabelle etoa_test.logs
 CREATE TABLE IF NOT EXISTS `logs` (
@@ -1608,12 +1055,9 @@ CREATE TABLE IF NOT EXISTS `logs` (
   KEY `logview` (`facility`,`severity`,`timestamp`),
   KEY `severity` (`severity`),
   KEY `timestamp` (`timestamp`)
-) ENGINE=MyISAM AUTO_INCREMENT=208402 DEFAULT CHARSET=utf8mb3 DELAY_KEY_WRITE=1;
+) ENGINE=MyISAM AUTO_INCREMENT=2171 DEFAULT CHARSET=utf8mb3 DELAY_KEY_WRITE=1;
 
--- Exportiere Daten aus Tabelle etoa_test.logs: 0 rows
-DELETE FROM `logs`;
-/*!40000 ALTER TABLE `logs` DISABLE KEYS */;
-/*!40000 ALTER TABLE `logs` ENABLE KEYS */;
+-- Daten-Export vom Benutzer nicht ausgewählt
 
 -- Exportiere Struktur von Tabelle etoa_test.logs_alliance
 CREATE TABLE IF NOT EXISTS `logs_alliance` (
@@ -1627,10 +1071,7 @@ CREATE TABLE IF NOT EXISTS `logs_alliance` (
   PRIMARY KEY (`logs_alliance_id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb3 DELAY_KEY_WRITE=1;
 
--- Exportiere Daten aus Tabelle etoa_test.logs_alliance: 0 rows
-DELETE FROM `logs_alliance`;
-/*!40000 ALTER TABLE `logs_alliance` DISABLE KEYS */;
-/*!40000 ALTER TABLE `logs_alliance` ENABLE KEYS */;
+-- Daten-Export vom Benutzer nicht ausgewählt
 
 -- Exportiere Struktur von Tabelle etoa_test.logs_battle
 CREATE TABLE IF NOT EXISTS `logs_battle` (
@@ -1677,10 +1118,7 @@ CREATE TABLE IF NOT EXISTS `logs_battle` (
   KEY `logs_battle_fleet_landtime` (`landtime`)
 ) ENGINE=MyISAM AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb3 DELAY_KEY_WRITE=1;
 
--- Exportiere Daten aus Tabelle etoa_test.logs_battle: 0 rows
-DELETE FROM `logs_battle`;
-/*!40000 ALTER TABLE `logs_battle` DISABLE KEYS */;
-/*!40000 ALTER TABLE `logs_battle` ENABLE KEYS */;
+-- Daten-Export vom Benutzer nicht ausgewählt
 
 -- Exportiere Struktur von Tabelle etoa_test.logs_battle_queue
 CREATE TABLE IF NOT EXISTS `logs_battle_queue` (
@@ -1726,10 +1164,7 @@ CREATE TABLE IF NOT EXISTS `logs_battle_queue` (
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb3 DELAY_KEY_WRITE=1;
 
--- Exportiere Daten aus Tabelle etoa_test.logs_battle_queue: 0 rows
-DELETE FROM `logs_battle_queue`;
-/*!40000 ALTER TABLE `logs_battle_queue` DISABLE KEYS */;
-/*!40000 ALTER TABLE `logs_battle_queue` ENABLE KEYS */;
+-- Daten-Export vom Benutzer nicht ausgewählt
 
 -- Exportiere Struktur von Tabelle etoa_test.logs_debris
 CREATE TABLE IF NOT EXISTS `logs_debris` (
@@ -1743,8 +1178,7 @@ CREATE TABLE IF NOT EXISTS `logs_debris` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
 
--- Exportiere Daten aus Tabelle etoa_test.logs_debris: ~0 rows (ungefähr)
-DELETE FROM `logs_debris`;
+-- Daten-Export vom Benutzer nicht ausgewählt
 
 -- Exportiere Struktur von Tabelle etoa_test.logs_fleet
 CREATE TABLE IF NOT EXISTS `logs_fleet` (
@@ -1773,10 +1207,7 @@ CREATE TABLE IF NOT EXISTS `logs_fleet` (
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM AUTO_INCREMENT=28 DEFAULT CHARSET=utf8mb3 DELAY_KEY_WRITE=1;
 
--- Exportiere Daten aus Tabelle etoa_test.logs_fleet: 0 rows
-DELETE FROM `logs_fleet`;
-/*!40000 ALTER TABLE `logs_fleet` DISABLE KEYS */;
-/*!40000 ALTER TABLE `logs_fleet` ENABLE KEYS */;
+-- Daten-Export vom Benutzer nicht ausgewählt
 
 -- Exportiere Struktur von Tabelle etoa_test.logs_fleet_queue
 CREATE TABLE IF NOT EXISTS `logs_fleet_queue` (
@@ -1805,10 +1236,7 @@ CREATE TABLE IF NOT EXISTS `logs_fleet_queue` (
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb3 DELAY_KEY_WRITE=1;
 
--- Exportiere Daten aus Tabelle etoa_test.logs_fleet_queue: 0 rows
-DELETE FROM `logs_fleet_queue`;
-/*!40000 ALTER TABLE `logs_fleet_queue` DISABLE KEYS */;
-/*!40000 ALTER TABLE `logs_fleet_queue` ENABLE KEYS */;
+-- Daten-Export vom Benutzer nicht ausgewählt
 
 -- Exportiere Struktur von Tabelle etoa_test.logs_game
 CREATE TABLE IF NOT EXISTS `logs_game` (
@@ -1829,12 +1257,9 @@ CREATE TABLE IF NOT EXISTS `logs_game` (
   KEY `severity` (`severity`,`facility`,`timestamp`),
   KEY `logs_game_user_facility_timestamp_idx` (`user_id`,`facility`),
   KEY `logs_game_facility_object_idx` (`facility`,`object_id`)
-) ENGINE=MyISAM AUTO_INCREMENT=56 DEFAULT CHARSET=utf8mb3 DELAY_KEY_WRITE=1;
+) ENGINE=MyISAM AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb3 DELAY_KEY_WRITE=1;
 
--- Exportiere Daten aus Tabelle etoa_test.logs_game: 0 rows
-DELETE FROM `logs_game`;
-/*!40000 ALTER TABLE `logs_game` DISABLE KEYS */;
-/*!40000 ALTER TABLE `logs_game` ENABLE KEYS */;
+-- Daten-Export vom Benutzer nicht ausgewählt
 
 -- Exportiere Struktur von Tabelle etoa_test.logs_game_queue
 CREATE TABLE IF NOT EXISTS `logs_game_queue` (
@@ -1853,10 +1278,7 @@ CREATE TABLE IF NOT EXISTS `logs_game_queue` (
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb3 DELAY_KEY_WRITE=1;
 
--- Exportiere Daten aus Tabelle etoa_test.logs_game_queue: 0 rows
-DELETE FROM `logs_game_queue`;
-/*!40000 ALTER TABLE `logs_game_queue` DISABLE KEYS */;
-/*!40000 ALTER TABLE `logs_game_queue` ENABLE KEYS */;
+-- Daten-Export vom Benutzer nicht ausgewählt
 
 -- Exportiere Struktur von Tabelle etoa_test.logs_queue
 CREATE TABLE IF NOT EXISTS `logs_queue` (
@@ -1869,10 +1291,7 @@ CREATE TABLE IF NOT EXISTS `logs_queue` (
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb3 DELAY_KEY_WRITE=1;
 
--- Exportiere Daten aus Tabelle etoa_test.logs_queue: 0 rows
-DELETE FROM `logs_queue`;
-/*!40000 ALTER TABLE `logs_queue` DISABLE KEYS */;
-/*!40000 ALTER TABLE `logs_queue` ENABLE KEYS */;
+-- Daten-Export vom Benutzer nicht ausgewählt
 
 -- Exportiere Struktur von Tabelle etoa_test.market_auction
 CREATE TABLE IF NOT EXISTS `market_auction` (
@@ -1912,10 +1331,7 @@ CREATE TABLE IF NOT EXISTS `market_auction` (
   KEY `auction_user_id` (`user_id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb3;
 
--- Exportiere Daten aus Tabelle etoa_test.market_auction: 0 rows
-DELETE FROM `market_auction`;
-/*!40000 ALTER TABLE `market_auction` DISABLE KEYS */;
-/*!40000 ALTER TABLE `market_auction` ENABLE KEYS */;
+-- Daten-Export vom Benutzer nicht ausgewählt
 
 -- Exportiere Struktur von Tabelle etoa_test.market_rates
 CREATE TABLE IF NOT EXISTS `market_rates` (
@@ -1941,12 +1357,9 @@ CREATE TABLE IF NOT EXISTS `market_rates` (
   `rate_5` float unsigned NOT NULL DEFAULT '1',
   PRIMARY KEY (`id`),
   KEY `timestamp` (`timestamp`)
-) ENGINE=MyISAM AUTO_INCREMENT=2691 DEFAULT CHARSET=utf8mb3;
+) ENGINE=MyISAM AUTO_INCREMENT=89 DEFAULT CHARSET=utf8mb3;
 
--- Exportiere Daten aus Tabelle etoa_test.market_rates: 0 rows
-DELETE FROM `market_rates`;
-/*!40000 ALTER TABLE `market_rates` DISABLE KEYS */;
-/*!40000 ALTER TABLE `market_rates` ENABLE KEYS */;
+-- Daten-Export vom Benutzer nicht ausgewählt
 
 -- Exportiere Struktur von Tabelle etoa_test.market_ressource
 CREATE TABLE IF NOT EXISTS `market_ressource` (
@@ -1976,10 +1389,7 @@ CREATE TABLE IF NOT EXISTS `market_ressource` (
   KEY `planet_id` (`entity_id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb3;
 
--- Exportiere Daten aus Tabelle etoa_test.market_ressource: 0 rows
-DELETE FROM `market_ressource`;
-/*!40000 ALTER TABLE `market_ressource` DISABLE KEYS */;
-/*!40000 ALTER TABLE `market_ressource` ENABLE KEYS */;
+-- Daten-Export vom Benutzer nicht ausgewählt
 
 -- Exportiere Struktur von Tabelle etoa_test.market_ship
 CREATE TABLE IF NOT EXISTS `market_ship` (
@@ -2007,10 +1417,7 @@ CREATE TABLE IF NOT EXISTS `market_ship` (
   KEY `planet_id` (`entity_id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb3;
 
--- Exportiere Daten aus Tabelle etoa_test.market_ship: 0 rows
-DELETE FROM `market_ship`;
-/*!40000 ALTER TABLE `market_ship` DISABLE KEYS */;
-/*!40000 ALTER TABLE `market_ship` ENABLE KEYS */;
+-- Daten-Export vom Benutzer nicht ausgewählt
 
 -- Exportiere Struktur von Tabelle etoa_test.messages
 CREATE TABLE IF NOT EXISTS `messages` (
@@ -2032,12 +1439,9 @@ CREATE TABLE IF NOT EXISTS `messages` (
   KEY `message_read` (`message_read`),
   KEY `message_timestamp` (`message_timestamp`),
   KEY `list` (`message_user_to`,`message_read`,`message_timestamp`)
-) ENGINE=MyISAM AUTO_INCREMENT=849 DEFAULT CHARSET=utf8mb3 DELAY_KEY_WRITE=1;
+) ENGINE=MyISAM AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb3 DELAY_KEY_WRITE=1;
 
--- Exportiere Daten aus Tabelle etoa_test.messages: 0 rows
-DELETE FROM `messages`;
-/*!40000 ALTER TABLE `messages` DISABLE KEYS */;
-/*!40000 ALTER TABLE `messages` ENABLE KEYS */;
+-- Daten-Export vom Benutzer nicht ausgewählt
 
 -- Exportiere Struktur von Tabelle etoa_test.message_cat
 CREATE TABLE IF NOT EXISTS `message_cat` (
@@ -2050,10 +1454,7 @@ CREATE TABLE IF NOT EXISTS `message_cat` (
   KEY `cat_order` (`cat_order`)
 ) ENGINE=MyISAM AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb3;
 
--- Exportiere Daten aus Tabelle etoa_test.message_cat: 0 rows
-DELETE FROM `message_cat`;
-/*!40000 ALTER TABLE `message_cat` DISABLE KEYS */;
-/*!40000 ALTER TABLE `message_cat` ENABLE KEYS */;
+-- Daten-Export vom Benutzer nicht ausgewählt
 
 -- Exportiere Struktur von Tabelle etoa_test.message_data
 CREATE TABLE IF NOT EXISTS `message_data` (
@@ -2065,10 +1466,7 @@ CREATE TABLE IF NOT EXISTS `message_data` (
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb3;
 
--- Exportiere Daten aus Tabelle etoa_test.message_data: 0 rows
-DELETE FROM `message_data`;
-/*!40000 ALTER TABLE `message_data` DISABLE KEYS */;
-/*!40000 ALTER TABLE `message_data` ENABLE KEYS */;
+-- Daten-Export vom Benutzer nicht ausgewählt
 
 -- Exportiere Struktur von Tabelle etoa_test.message_ignore
 CREATE TABLE IF NOT EXISTS `message_ignore` (
@@ -2080,10 +1478,7 @@ CREATE TABLE IF NOT EXISTS `message_ignore` (
   KEY `ignore_target_id` (`ignore_target_id`)
 ) ENGINE=MyISAM AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
 
--- Exportiere Daten aus Tabelle etoa_test.message_ignore: 0 rows
-DELETE FROM `message_ignore`;
-/*!40000 ALTER TABLE `message_ignore` DISABLE KEYS */;
-/*!40000 ALTER TABLE `message_ignore` ENABLE KEYS */;
+-- Daten-Export vom Benutzer nicht ausgewählt
 
 -- Exportiere Struktur von Tabelle etoa_test.messenger_messages
 CREATE TABLE IF NOT EXISTS `messenger_messages` (
@@ -2098,10 +1493,9 @@ CREATE TABLE IF NOT EXISTS `messenger_messages` (
   KEY `IDX_75EA56E0FB7336F0` (`queue_name`),
   KEY `IDX_75EA56E0E3BD61CE` (`available_at`),
   KEY `IDX_75EA56E016BA31DB` (`delivered_at`)
-) ENGINE=InnoDB AUTO_INCREMENT=43 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=44 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
--- Exportiere Daten aus Tabelle etoa_test.messenger_messages: ~0 rows (ungefähr)
-DELETE FROM `messenger_messages`;
+-- Daten-Export vom Benutzer nicht ausgewählt
 
 -- Exportiere Struktur von Tabelle etoa_test.missilelist
 CREATE TABLE IF NOT EXISTS `missilelist` (
@@ -2115,10 +1509,7 @@ CREATE TABLE IF NOT EXISTS `missilelist` (
   KEY `missilelist_user_id` (`missilelist_user_id`,`missilelist_entity_id`)
 ) ENGINE=MyISAM AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
 
--- Exportiere Daten aus Tabelle etoa_test.missilelist: 0 rows
-DELETE FROM `missilelist`;
-/*!40000 ALTER TABLE `missilelist` DISABLE KEYS */;
-/*!40000 ALTER TABLE `missilelist` ENABLE KEYS */;
+-- Daten-Export vom Benutzer nicht ausgewählt
 
 -- Exportiere Struktur von Tabelle etoa_test.missiles
 CREATE TABLE IF NOT EXISTS `missiles` (
@@ -2145,8 +1536,7 @@ CREATE TABLE IF NOT EXISTS `missiles` (
   KEY `missile_launchable` (`missile_launchable`)
 ) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb3;
 
--- Exportiere Daten aus Tabelle etoa_test.missiles: ~0 rows (ungefähr)
-DELETE FROM `missiles`;
+-- Daten-Export vom Benutzer nicht ausgewählt
 
 -- Exportiere Struktur von Tabelle etoa_test.missile_flights
 CREATE TABLE IF NOT EXISTS `missile_flights` (
@@ -2161,10 +1551,7 @@ CREATE TABLE IF NOT EXISTS `missile_flights` (
   KEY `flight_user_id` (`flight_starttime`)
 ) ENGINE=MyISAM AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
 
--- Exportiere Daten aus Tabelle etoa_test.missile_flights: 0 rows
-DELETE FROM `missile_flights`;
-/*!40000 ALTER TABLE `missile_flights` DISABLE KEYS */;
-/*!40000 ALTER TABLE `missile_flights` ENABLE KEYS */;
+-- Daten-Export vom Benutzer nicht ausgewählt
 
 -- Exportiere Struktur von Tabelle etoa_test.missile_flights_obj
 CREATE TABLE IF NOT EXISTS `missile_flights_obj` (
@@ -2178,10 +1565,7 @@ CREATE TABLE IF NOT EXISTS `missile_flights_obj` (
   KEY `obj_cnt` (`obj_cnt`)
 ) ENGINE=MyISAM AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
 
--- Exportiere Daten aus Tabelle etoa_test.missile_flights_obj: 0 rows
-DELETE FROM `missile_flights_obj`;
-/*!40000 ALTER TABLE `missile_flights_obj` DISABLE KEYS */;
-/*!40000 ALTER TABLE `missile_flights_obj` ENABLE KEYS */;
+-- Daten-Export vom Benutzer nicht ausgewählt
 
 -- Exportiere Struktur von Tabelle etoa_test.missile_requirements
 CREATE TABLE IF NOT EXISTS `missile_requirements` (
@@ -2201,8 +1585,7 @@ CREATE TABLE IF NOT EXISTS `missile_requirements` (
   CONSTRAINT `FK_F991BD9A7E57261C` FOREIGN KEY (`req_building_id`) REFERENCES `buildings` (`building_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8mb3;
 
--- Exportiere Daten aus Tabelle etoa_test.missile_requirements: ~0 rows (ungefähr)
-DELETE FROM `missile_requirements`;
+-- Daten-Export vom Benutzer nicht ausgewählt
 
 -- Exportiere Struktur von Tabelle etoa_test.nebulas
 CREATE TABLE IF NOT EXISTS `nebulas` (
@@ -2216,10 +1599,7 @@ CREATE TABLE IF NOT EXISTS `nebulas` (
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb3;
 
--- Exportiere Daten aus Tabelle etoa_test.nebulas: 0 rows
-DELETE FROM `nebulas`;
-/*!40000 ALTER TABLE `nebulas` DISABLE KEYS */;
-/*!40000 ALTER TABLE `nebulas` ENABLE KEYS */;
+-- Daten-Export vom Benutzer nicht ausgewählt
 
 -- Exportiere Struktur von Tabelle etoa_test.notepad
 CREATE TABLE IF NOT EXISTS `notepad` (
@@ -2231,10 +1611,7 @@ CREATE TABLE IF NOT EXISTS `notepad` (
   KEY `list` (`user_id`,`timestamp`)
 ) ENGINE=MyISAM AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb3;
 
--- Exportiere Daten aus Tabelle etoa_test.notepad: 0 rows
-DELETE FROM `notepad`;
-/*!40000 ALTER TABLE `notepad` DISABLE KEYS */;
-/*!40000 ALTER TABLE `notepad` ENABLE KEYS */;
+-- Daten-Export vom Benutzer nicht ausgewählt
 
 -- Exportiere Struktur von Tabelle etoa_test.notepad_data
 CREATE TABLE IF NOT EXISTS `notepad_data` (
@@ -2245,10 +1622,7 @@ CREATE TABLE IF NOT EXISTS `notepad_data` (
   KEY `subject` (`subject`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb3;
 
--- Exportiere Daten aus Tabelle etoa_test.notepad_data: 0 rows
-DELETE FROM `notepad_data`;
-/*!40000 ALTER TABLE `notepad_data` DISABLE KEYS */;
-/*!40000 ALTER TABLE `notepad_data` ENABLE KEYS */;
+-- Daten-Export vom Benutzer nicht ausgewählt
 
 -- Exportiere Struktur von Tabelle etoa_test.obj_transforms
 CREATE TABLE IF NOT EXISTS `obj_transforms` (
@@ -2267,12 +1641,9 @@ CREATE TABLE IF NOT EXISTS `obj_transforms` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `def_id` (`def_id`),
   UNIQUE KEY `ship_id` (`ship_id`)
-) ENGINE=MyISAM AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb3;
+) ENGINE=MyISAM AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb3;
 
--- Exportiere Daten aus Tabelle etoa_test.obj_transforms: 0 rows
-DELETE FROM `obj_transforms`;
-/*!40000 ALTER TABLE `obj_transforms` DISABLE KEYS */;
-/*!40000 ALTER TABLE `obj_transforms` ENABLE KEYS */;
+-- Daten-Export vom Benutzer nicht ausgewählt
 
 -- Exportiere Struktur von Tabelle etoa_test.planets
 CREATE TABLE IF NOT EXISTS `planets` (
@@ -2329,10 +1700,7 @@ CREATE TABLE IF NOT EXISTS `planets` (
   KEY `mainplanet` (`planet_user_id`,`planet_user_main`,`planet_name`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb3 DELAY_KEY_WRITE=1;
 
--- Exportiere Daten aus Tabelle etoa_test.planets: 0 rows
-DELETE FROM `planets`;
-/*!40000 ALTER TABLE `planets` DISABLE KEYS */;
-/*!40000 ALTER TABLE `planets` ENABLE KEYS */;
+-- Daten-Export vom Benutzer nicht ausgewählt
 
 -- Exportiere Struktur von Tabelle etoa_test.planet_types
 CREATE TABLE IF NOT EXISTS `planet_types` (
@@ -2355,18 +1723,7 @@ CREATE TABLE IF NOT EXISTS `planet_types` (
   KEY `type_name` (`type_name`)
 ) ENGINE=MyISAM AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
 
--- Exportiere Daten aus Tabelle etoa_test.planet_types: 0 rows
-DELETE FROM `planet_types`;
-/*!40000 ALTER TABLE `planet_types` DISABLE KEYS */;
-INSERT INTO `planet_types` (`type_id`, `type_name`, `type_habitable`, `type_comment`, `type_f_metal`, `type_f_crystal`, `type_f_plastic`, `type_f_fuel`, `type_f_food`, `type_f_power`, `type_f_population`, `type_f_researchtime`, `type_f_buildtime`, `type_collect_gas`, `type_consider`) VALUES
-	(2, 'Wasserplanet', 1, 'Die Oberfläche dieses Planeten besteht zum grössten Teil aus Ozeanen. Die wenigen Landteile sind nicht wirklich geeignet für grossflächigen Abbau von Mineralen, dafür kann aus dem Wasser Tritium gewonnen werden. Ebenfalls ist durch das viele vorhandene Wasser die Hauptgrundlage für Nahrungsabbau gelegt, ausserdem ist der Planet bestens geeignet, mit Hilfe von Wasserkraftwerken grosse Mengen an Energie zu erzeugen.', 1.00, 1.00, 1.05, 0.85, 1.10, 1.20, 1.00, 1.00, 0.85, 0, 1),
-	(1, 'Erdähnlicher Planet', 1, 'Dieser Planet hat eine sehr ausgeglichene Umwelt und ähnelt unseren ehemaligen Erde am meisten. Da der Mensch ein Gewohnheitstier ist, sind erdähnliche Planeten ideal für das Heranwachsen einer Zivilisation geeignet, da die notwendigen Voraussetzungen für alle Bereiche gegeben sind.', 1.20, 0.90, 1.30, 1.05, 1.40, 1.10, 1.20, 1.00, 1.00, 0, 1),
-	(3, 'Wüstenplanet', 1, 'Wüste, Sand, Trockenheit und ein unwirtliches Klima zeichnet diesen Planetentyp aus. Der allgegenwärtige Sand hat aber auch etwas positives, denn aus ihm können grosse Mengen von wertvollem Silizium gewonnen werden.', 0.95, 1.45, 1.00, 0.90, 1.00, 0.90, 0.85, 0.85, 0.95, 0, 1),
-	(4, 'Eisplanet', 1, 'Auf diesem unwirtlichen Planeten lockt einzig der Abbau von Tritium, welches sich aus den Eisschichen herausextrahieren lässt.\r\nVor kurzem haben Forscher eine neue chemische Methode entwickelt, aus Eismassen Silizium zu gewinnen. Diese neuartige Abbaumöglichkeit macht die Eisplaneten für Silizium-Anwender interessanter.', 1.10, 1.30, 1.25, 1.30, 0.95, 0.90, 1.00, 1.00, 1.05, 0, 1),
-	(7, 'Gasplanet', 0, 'Dieser Planet ist unbewohnbar, da er keine feste Oberfläche hat, sondern aus lauter gasartigen Nebeln besteht. Seine Gase lassen sich jedoch mit Hilfe von Gassaugern zu Tritium umwandeln.', 0.50, 0.60, 0.40, 3.00, 0.30, 1.20, 0.30, 1.20, 1.20, 1, 1),
-	(5, 'Dschungelplanet', 1, 'Riesige Wälder wachsen auf diesem Planeten, dessen Klima sehr gut für das Wachstum der Umwelt ist. Daher kann viel Nahrung für die Bevölkerung geerntet werden, welche sich auf einem Dschungelplaneten auch sonst sehr wohl fühlt.', 0.90, 1.20, 1.15, 1.20, 1.40, 1.00, 1.10, 1.00, 1.00, 0, 1),
-	(6, 'Gebirgsplanet', 1, 'Den Namen hat dieser Planetentyp durch seine felsige Oberfläche erhalten. Ein Abbau von Erzen bietet sich optimalerweise an, hingegen ist der Abbau von Nahrung und die Herstellung von PVC mit Aufwand verbunden, da die Umgebung deren Anforderungen nicht gerecht wird.', 1.55, 1.00, 0.90, 0.90, 0.90, 1.10, 0.90, 1.00, 0.95, 0, 1);
-/*!40000 ALTER TABLE `planet_types` ENABLE KEYS */;
+-- Daten-Export vom Benutzer nicht ausgewählt
 
 -- Exportiere Struktur von Tabelle etoa_test.quests
 CREATE TABLE IF NOT EXISTS `quests` (
@@ -2379,8 +1736,7 @@ CREATE TABLE IF NOT EXISTS `quests` (
   KEY `user_state_idx` (`user_id`,`state`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
 
--- Exportiere Daten aus Tabelle etoa_test.quests: ~0 rows (ungefähr)
-DELETE FROM `quests`;
+-- Daten-Export vom Benutzer nicht ausgewählt
 
 -- Exportiere Struktur von Tabelle etoa_test.quest_log
 CREATE TABLE IF NOT EXISTS `quest_log` (
@@ -2395,8 +1751,7 @@ CREATE TABLE IF NOT EXISTS `quest_log` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
 
--- Exportiere Daten aus Tabelle etoa_test.quest_log: ~0 rows (ungefähr)
-DELETE FROM `quest_log`;
+-- Daten-Export vom Benutzer nicht ausgewählt
 
 -- Exportiere Struktur von Tabelle etoa_test.quest_tasks
 CREATE TABLE IF NOT EXISTS `quest_tasks` (
@@ -2409,8 +1764,7 @@ CREATE TABLE IF NOT EXISTS `quest_tasks` (
   CONSTRAINT `quest_fk` FOREIGN KEY (`quest_id`) REFERENCES `quests` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
 
--- Exportiere Daten aus Tabelle etoa_test.quest_tasks: ~0 rows (ungefähr)
-DELETE FROM `quest_tasks`;
+-- Daten-Export vom Benutzer nicht ausgewählt
 
 -- Exportiere Struktur von Tabelle etoa_test.races
 CREATE TABLE IF NOT EXISTS `races` (
@@ -2437,21 +1791,7 @@ CREATE TABLE IF NOT EXISTS `races` (
   KEY `race_name` (`race_name`)
 ) ENGINE=MyISAM AUTO_INCREMENT=12 DEFAULT CHARSET=utf8mb3;
 
--- Exportiere Daten aus Tabelle etoa_test.races: 0 rows
-DELETE FROM `races`;
-/*!40000 ALTER TABLE `races` DISABLE KEYS */;
-INSERT INTO `races` (`race_id`, `race_name`, `race_comment`, `race_short_comment`, `race_adj1`, `race_adj2`, `race_adj3`, `race_leadertitle`, `race_f_researchtime`, `race_f_buildtime`, `race_f_fleettime`, `race_f_metal`, `race_f_crystal`, `race_f_plastic`, `race_f_fuel`, `race_f_food`, `race_f_power`, `race_f_population`, `race_active`) VALUES
-	(1, 'Terraner', 'Die Terraner sind eine eher jüngere Rasse, deren Vorfahren ursprünglich vom Planeten Erde kamen. Die Menschen sind besonders gut in der Herstellung von Plastik und dem Anbau von Nahrung. Ihre Schwächen liegen im Abbau von Kristallen. ', 'Terraner bauen Ressourcen gleichmässig gut ab und haben relativ starke Schiffe.', 'terranischer', 'terranisches', 'terranische', 'Präsident der Terraner', 0.95, 1.00, 1.00, 1.15, 0.90, 1.25, 0.95, 1.40, 1.00, 1.00, 1),
-	(2, 'Andorianer', 'Die Andorianer sind zugleich humanoid und insektoid. Sie haben graublaue Haut und weisses Haar. Auf ihrem Kopf haben sie zwei Fühler, die ihnen zur feinfühligen sinnlichen Wahrnehmung dienen. Ihre Stärke ist die Produktion künstlicher Stoffe wie Plastik. Ihre Schwäche ist der schlechte Umgang mit Energie.', 'Der Andorianer verfügt über grosses Wissen in der PVC-Herstellung', '', '', '', 'Schwarmführer der Andorianer', 1.00, 1.00, 1.00, 0.95, 1.10, 1.60, 1.00, 1.00, 1.00, 1.40, 1),
-	(3, 'Rigelianer', 'Die Rigelianer stammen aus dem Rigel-System. Ihre Stärke liegt im Abbau von Kristallen, die für Steuereinheiten in Gebäuden und Schiffen verwendet werden. Da sie lange nur auf den Handel mit Silizium gesetzt haben, sind ihre Kenntnisse beim Abbau anderer Stoffe eher schlecht.', 'Spezialist in der Siliziumherstellung', '', '', '', 'Kaiser der Rigelianer', 1.00, 1.00, 1.00, 0.85, 1.80, 0.95, 1.00, 0.90, 1.00, 1.10, 1),
-	(4, 'Orioner', 'Die Orioner sind eine humanoide Rasse aus der Nähe des Orions. Die Gesellschaft der Orioner besteht hauptsächlich aus Schmugglern und Piraten. Ihre Schiffe sind bekannt für ihre Schnelligkeit.', 'Orioner haben sich auf die Schnelligkeit der Schiffe spezialisiert', '', '', '', 'Kapitän der Orioner', 1.00, 1.00, 1.80, 1.15, 1.00, 0.90, 1.10, 1.00, 1.20, 1.10, 1),
-	(5, 'Minbari', 'Die Minbari sind eine humanoide Rasse. Dadurch, dass sie den Rohstoff Erdöl nie gekannt haben, sind sie seit Ewigkeiten auf den Abbau von Tritium spezialisiert. Durch ihre enormen Treibstoffreserven und ihre grossen Anwendungskenntnisse von Tritium haben sie relativ schnelle Raumschiffe.', 'Eine Rasse mit schnellen Schiffen und grossem Wissen über Tritium.', 'minbarischer', '', 'minbarische', 'Vorsteher des Minbarikonzils', 1.00, 1.00, 1.20, 1.00, 1.00, 1.00, 1.60, 1.00, 1.00, 1.00, 1),
-	(8, 'Centauri', 'Der Centauri ist spezialisiert auf zivile Schiffe. Schnelle kleine Transportsonden sowie Hochentwickelte Gassauger, haben sie zu einem Vorreiter ziviler Wirtschaftimperien gemacht.', 'Haben die grössten Gassauger im Spiel.', '', '', '', 'Professor der Centauri', 1.05, 1.00, 1.00, 1.20, 1.15, 0.90, 1.20, 0.90, 1.10, 1.10, 1),
-	(6, 'Ferengi', 'Die Ferengi sind eine humanoide Rasse. Sie sind etwas kleinwüchsiger als Menschen und  haben grosse Ohren. Die Stärke der Ferengi liegt beim Abbau von Metall.', 'Profi in der Titanherstellung', '', '', '', 'Grosser Nagus der Ferengi', 1.00, 1.00, 1.00, 1.75, 0.90, 0.90, 1.00, 1.05, 1.00, 1.00, 1),
-	(7, 'Vorgonen', 'Die Vorgonen sind eine Rasse die auf den Schiffbau ausgelegt ist. Entsprechend sind sie vor allem im Beschaffen von Treibstoff und Kunststoff für den Bau der Schiffe gut.', 'Vorgonen können Schiffe ohne Start und Landezeit bauen.', '', '', '', 'Architekt der Vorgonen', 1.00, 0.90, 1.10, 0.85, 0.85, 1.30, 1.20, 1.10, 1.10, 1.00, 1),
-	(9, 'Cardassianer', 'Seit einer grossen Hungersnot haben sich die Cardassianer auf die Nahrungsherstellung spezialisiert, haben aber den Abbau von Erzen vernachlässigt.\r\nIhre andere Stärke liegt in der Fähigkeit der Mutterschiffe zur Regeneration von ganzen Flottenverbänden.', 'Spezialist in der Nahrungsherstellung', '', '', '', 'Zentralrat der Cardassianer', 1.00, 1.00, 1.00, 0.90, 0.90, 1.20, 1.00, 1.60, 1.10, 1.30, 1),
-	(10, 'Serrakin', 'Die Serrakin sind eine sehr friedliche Rasse, welche sich nicht gerne in grosse Auseinandersetzungen einmischt. Sie weiss sich aber bei Angriffen sehr gut zu wehren, da die Verteidigungstechnologie ihr Spezialgebiet ist.', 'Der Serrakin setzt auf die Verteidigung seiner Kolonien', 'serrakinischer', '', 'serrakinische', 'Beschützer der Serrakin', 1.00, 0.95, 0.90, 1.10, 1.15, 1.05, 0.95, 1.05, 1.40, 1.00, 1);
-/*!40000 ALTER TABLE `races` ENABLE KEYS */;
+-- Daten-Export vom Benutzer nicht ausgewählt
 
 -- Exportiere Struktur von Tabelle etoa_test.reports
 CREATE TABLE IF NOT EXISTS `reports` (
@@ -2477,8 +1817,7 @@ CREATE TABLE IF NOT EXISTS `reports` (
   CONSTRAINT `reports_user_id` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`) ON DELETE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=9207492 DEFAULT CHARSET=utf8mb3;
 
--- Exportiere Daten aus Tabelle etoa_test.reports: ~0 rows (ungefähr)
-DELETE FROM `reports`;
+-- Daten-Export vom Benutzer nicht ausgewählt
 
 -- Exportiere Struktur von Tabelle etoa_test.reports_battle
 CREATE TABLE IF NOT EXISTS `reports_battle` (
@@ -2551,8 +1890,7 @@ CREATE TABLE IF NOT EXISTS `reports_battle` (
   CONSTRAINT `FK_REPORTS_BATTLE` FOREIGN KEY (`id`) REFERENCES `reports` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 
--- Exportiere Daten aus Tabelle etoa_test.reports_battle: ~0 rows (ungefähr)
-DELETE FROM `reports_battle`;
+-- Daten-Export vom Benutzer nicht ausgewählt
 
 -- Exportiere Struktur von Tabelle etoa_test.reports_market
 CREATE TABLE IF NOT EXISTS `reports_market` (
@@ -2581,8 +1919,7 @@ CREATE TABLE IF NOT EXISTS `reports_market` (
   CONSTRAINT `FK_REPORTS_MARKET` FOREIGN KEY (`id`) REFERENCES `reports` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 
--- Exportiere Daten aus Tabelle etoa_test.reports_market: ~0 rows (ungefähr)
-DELETE FROM `reports_market`;
+-- Daten-Export vom Benutzer nicht ausgewählt
 
 -- Exportiere Struktur von Tabelle etoa_test.reports_other
 CREATE TABLE IF NOT EXISTS `reports_other` (
@@ -2602,8 +1939,7 @@ CREATE TABLE IF NOT EXISTS `reports_other` (
   CONSTRAINT `FK_REPORTS_OTHER` FOREIGN KEY (`id`) REFERENCES `reports` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 
--- Exportiere Daten aus Tabelle etoa_test.reports_other: ~0 rows (ungefähr)
-DELETE FROM `reports_other`;
+-- Daten-Export vom Benutzer nicht ausgewählt
 
 -- Exportiere Struktur von Tabelle etoa_test.reports_spy
 CREATE TABLE IF NOT EXISTS `reports_spy` (
@@ -2626,8 +1962,7 @@ CREATE TABLE IF NOT EXISTS `reports_spy` (
   CONSTRAINT `FK_REPORTS_SPY` FOREIGN KEY (`id`) REFERENCES `reports` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 
--- Exportiere Daten aus Tabelle etoa_test.reports_spy: ~0 rows (ungefähr)
-DELETE FROM `reports_spy`;
+-- Daten-Export vom Benutzer nicht ausgewählt
 
 -- Exportiere Struktur von Tabelle etoa_test.runtime_data
 CREATE TABLE IF NOT EXISTS `runtime_data` (
@@ -2636,10 +1971,7 @@ CREATE TABLE IF NOT EXISTS `runtime_data` (
   PRIMARY KEY (`data_key`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
 
--- Exportiere Daten aus Tabelle etoa_test.runtime_data: 0 rows
-DELETE FROM `runtime_data`;
-/*!40000 ALTER TABLE `runtime_data` DISABLE KEYS */;
-/*!40000 ALTER TABLE `runtime_data` ENABLE KEYS */;
+-- Daten-Export vom Benutzer nicht ausgewählt
 
 -- Exportiere Struktur von Tabelle etoa_test.schema_migrations
 CREATE TABLE IF NOT EXISTS `schema_migrations` (
@@ -2648,10 +1980,7 @@ CREATE TABLE IF NOT EXISTS `schema_migrations` (
   PRIMARY KEY (`version`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
--- Exportiere Daten aus Tabelle etoa_test.schema_migrations: 0 rows
-DELETE FROM `schema_migrations`;
-/*!40000 ALTER TABLE `schema_migrations` DISABLE KEYS */;
-/*!40000 ALTER TABLE `schema_migrations` ENABLE KEYS */;
+-- Daten-Export vom Benutzer nicht ausgewählt
 
 -- Exportiere Struktur von Tabelle etoa_test.shiplist
 CREATE TABLE IF NOT EXISTS `shiplist` (
@@ -2681,12 +2010,9 @@ CREATE TABLE IF NOT EXISTS `shiplist` (
   `shiplist_special_ship_bonus_readiness` tinyint unsigned NOT NULL DEFAULT '0',
   PRIMARY KEY (`shiplist_id`),
   UNIQUE KEY `user_entity_ship_id` (`shiplist_user_id`,`shiplist_entity_id`,`shiplist_ship_id`)
-) ENGINE=MyISAM AUTO_INCREMENT=82 DEFAULT CHARSET=utf8mb3;
+) ENGINE=MyISAM AUTO_INCREMENT=97 DEFAULT CHARSET=utf8mb3;
 
--- Exportiere Daten aus Tabelle etoa_test.shiplist: 0 rows
-DELETE FROM `shiplist`;
-/*!40000 ALTER TABLE `shiplist` DISABLE KEYS */;
-/*!40000 ALTER TABLE `shiplist` ENABLE KEYS */;
+-- Daten-Export vom Benutzer nicht ausgewählt
 
 -- Exportiere Struktur von Tabelle etoa_test.ships
 CREATE TABLE IF NOT EXISTS `ships` (
@@ -2755,122 +2081,7 @@ CREATE TABLE IF NOT EXISTS `ships` (
   KEY `ship_name` (`ship_name`)
 ) ENGINE=InnoDB AUTO_INCREMENT=138 DEFAULT CHARSET=utf8mb3;
 
--- Exportiere Daten aus Tabelle etoa_test.ships: ~0 rows (ungefähr)
-DELETE FROM `ships`;
-INSERT INTO `ships` (`ship_id`, `ship_name`, `ship_type_id`, `ship_shortcomment`, `ship_longcomment`, `ship_costs_metal`, `ship_costs_crystal`, `ship_costs_fuel`, `ship_costs_plastic`, `ship_costs_food`, `ship_costs_power`, `ship_power_use`, `ship_fuel_use`, `ship_fuel_use_launch`, `ship_fuel_use_landing`, `ship_prod_power`, `ship_capacity`, `ship_people_capacity`, `ship_pilots`, `ship_speed`, `ship_time2start`, `ship_time2land`, `ship_show`, `ship_buildable`, `ship_order`, `ship_actions`, `ship_bounty_bonus`, `ship_heal`, `ship_structure`, `ship_shield`, `ship_weapon`, `ship_race_id`, `ship_launchable`, `ship_fieldsprovide`, `ship_cat_id`, `ship_fakeable`, `special_ship`, `ship_max_count`, `special_ship_max_level`, `special_ship_need_exp`, `special_ship_exp_factor`, `special_ship_bonus_weapon`, `special_ship_bonus_structure`, `special_ship_bonus_shield`, `special_ship_bonus_heal`, `special_ship_bonus_capacity`, `special_ship_bonus_speed`, `special_ship_bonus_pilots`, `special_ship_bonus_tarn`, `special_ship_bonus_antrax`, `special_ship_bonus_forsteal`, `special_ship_bonus_build_destroy`, `special_ship_bonus_antrax_food`, `special_ship_bonus_deactivade`, `special_ship_bonus_readiness`, `ship_points`, `ship_alliance_shipyard_level`, `ship_alliance_costs`, `ship_tradable`) VALUES
-	(1, 'UNUKALHAI Transportschiff', 1, 'Dies ist ein grosses Transportschiff, dessen Lagerräume alle Arten von Waren aufnehmen können. ', 'Nachdem die Algol Transportschiffe sich mit einem ungeahnten Erfolg im ganzen Universum verbreitet hatten, wurde das Unukalhai Transportschiff konzipiert, welches eine grössere Lagerkapazität aufweist. Da man die Konvois mit Antares schützte, war auch für die Unukalhais keine grössere Bewaffnung nötig; man konzentrierte sich ausserdem vor allem auf die grössere Sicherheit für die Navigationssysteme, weil diese bei den Algols oft wegen kosmischer Strahlung ausgefallen sind.', 6000, 1400, 0, 2100, 0, 0, 0, 23, 35, 5, 0, 65000, 0, 1, 3449, 450, 225, 1, 1, 0, 'transport,fetch,position,attack,flight,support,alliance', 0.33, 0, 400, 100, 27, 0, 1, 0, 2, 0, 0, 0, 0, 0, 1.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 9.500, 0, 0, 1),
-	(2, 'ANTARES Jäger', 1, 'Kleines Kampfschiff, ideal für die Begleitung kleinerer Konvois. Auch geeignet für Raubzüge und Übergriffe auf schwach befestigte Planeten.', 'Der Antares Jäger wurde als erster kampftauglicher Jäger hergestellt, um die Rohstoffkonvois vor Piraten zu schützen. Sie eignen sich zu Beginn als Begleitschutz, aber ihre Technologie ist nicht sehr weit entwickelt, deshalb sind die Herstellungskosten im Vergleich mit ihrer Leistung relativ hoch. Die Antares wurden nicht für grössere Angriffe auf befestigte Planeten konzipiert, auch deshalb werden sie von den wenigsten Armeen in grösseren Mengen genutzt.', 750, 575, 50, 420, 0, 0, 0, 3, 2, 1, 0, 500, 0, 1, 770, 150, 150, 1, 1, 0, 'transport,position,attack,flight,support,alliance', 0.33, 0, 330, 60, 153, 0, 1, 0, 1, 0, 0, 0, 0, 0, 1.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 1.795, 0, 0, 0),
-	(3, 'ZAVIJAH Spionagesonde', 1, 'Diese Sonde erkundet fremde Planeten und sendet die Daten an dein Kontrollzentrum zurück.', 'Nachdem die Raumpiraten wegen den schnell konstruierten planetaren Verteidigungsanlagen nicht mehr jedes System gefahrlos ausrauben konnten, erfanden sie dieses kleine, nützliche Schiff. Es kann in Frage kommende Planeten ausspionieren und detaillierte Informationen über die stationierte Flotte liefern. Dank seiner Geschwindigkeit wird es dabei äusserst selten abgeschossen. Um diese Geschwindigkeit erreichen zu können, müssen sie sehr leicht gebaut sein und können keine Bewaffnung tragen. Ausserdem haben sie einen sehr kleinen Laderaum und können deshalb nur über kürzere Distanzen verwendet werden.', 100, 300, 0, 80, 0, 0, 0, 1, 1, 0, 0, 150, 0, 0, 25000, 2, 1, 1, 1, 9, 'position,spy,flight,support', 0.33, 0, 10, 1, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 1.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.480, 0, 0, 0),
-	(4, 'TAURUS Besiedlungsschiff', 1, 'Das TAURUS Besiedlungsschiff ist ein Schiff, mit dem andere Planeten besiedelt werden können. Es kann Rohstoffe für die Startgebäude aufnehmen, ist aber auch langsam.', 'Sobald auf dem Heimatplaneten die grundlegende Infrastruktur aufgebaut war, waren die Herrscher mit nur einem Planeten nicht mehr zufrieden. Also baute man die Taurus Besiedlungsschiffe, die andere Planeten für das eigene Imperium besiedeln können. Da sie die ganze Lebenserhaltung für die Kolonialisten in einer lebensfeindlichen Umwelt gewährleisten müssen, gestaltet sich ihre Herstellung als langwierig und teuer, und das Schiff kann wegen seiner Masse nur langsam bewegt werden.', 8000, 10500, 1200, 5000, 0, 0, 0, 7, 8, 3, 0, 10000, 0, 5, 968, 375, 188, 1, 1, 8, 'transport,position,attack,colonize,flight,support,alliance', 0.33, 0, 1000, 500, 100, 0, 1, 0, 2, 0, 0, 0, 0, 0, 1.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 24.700, 0, 0, 1),
-	(6, 'HADAR Schlachtschiff', 1, 'Das HADAR Schlachtschiff ist ein gut gepanzertes und stark bewaffnetes Kriegsschiff. Mit ihm können auch grössere Verteidigungsstellungen ausgeschaltet, oder die eigenen Planeten vor Angriffen geschützt werden.', 'Nachdem jede noch so kleine Nation eine Verteidigung errichtet hatte, welche mit Antares ohne tragbare Verluste nicht geknackt werden konnte, entschlossen sich die grösseren Nationen, ein neues Kampfschiff zu konstruieren. Man nahm den Rumpf eines Besiedlungsschiffes, baute Waffen und eine Panzerung ein, und das Hadar Schlachtschiff war geboren.', 50000, 31500, 19500, 12500, 0, 0, 0, 4, 5, 40, 0, 8500, 0, 4, 4400, 338, 200, 1, 1, 3, 'transport,position,attack,flight,support,alliance', 0.33, 0, 28200, 7100, 11700, 0, 1, 0, 1, 1, 0, 0, 0, 0, 1.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 113.500, 0, 0, 0),
-	(7, 'POLLUX Bomber', 1, 'Dieses Raumschiff ist sehr effektiv gegen gegnerische Verteidigungsanlagen.', 'Trotz allen Erfolgen, die die Hadar Schlachtschiffe bei der Zerstörung gegnerischer Flotten und Verteidigung erzielten, war man damit noch nicht zufrieden. Deshalb konstruierte man ein neues, bis an die Zähne bewaffnetes Schiff, den Pollux Bomber. Nachdem man das Schiff mit Waffen beladen hatte, erwies es sich, dass dadurch die Angriffsgeschwindigkeit eingeschränkt wurde. Wegen diesem Nachteil konnte der Bomber sich in grossen Flotten nicht etablieren, er ist aber trotzdem in allem eine nicht zu unterschätzende Waffe, welche grosse Zerstörung anrichten kann.', 9700, 21000, 11500, 8500, 0, 0, 0, 2, 25, 5, 0, 2000, 0, 2, 3080, 338, 169, 1, 1, 4, 'transport,position,attack,flight,support,alliance', 0.33, 0, 2600, 500, 16200, 0, 1, 0, 1, 1, 0, 0, 0, 0, 1.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 50.700, 0, 0, 0),
-	(8, 'SIRIUS Invasionsschiff', 1, 'Mit Hilfe dieses Raumschiffes können Planeten von inaktiven Imperatoren übernommen werden.', 'Es gab einmal ein florierendes Wirtschaftsimperium und die Infrastruktur ihrer Kolonien wurde von den anderen Völkern beneidet. Einer dieser bösen Nachbaren hatte die Idee, dass er so einen Planeten wirklich gut gebrauchen könnte. So wurde unter strengster Geheimhaltung dieses Invasionsschiff gebaut, welches die Planeten von inaktiven Herrschern übernehmen kann. Das Schiff hat aber nicht die grössten Erfolgschancen und es kann keine Hauptplaneten übernehmen. ', 80000, 35000, 55000, 40500, 0, 0, 0, 8, 400, 250, 0, 20000, 0, 20, 1800, 1200, 900, 1, 1, 9, 'transport,position,attack,invade,flight,support,alliance', 0.33, 0, 2000, 3000, 162, 0, 1, 0, 1, 1, 0, 0, 0, 0, 1.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 210.500, 0, 0, 0),
-	(9, 'ALGOL Transportschiff', 1, 'Dies ist ein kleines Transportschiff, dessen Lagerräume alle Arten von Waren aufnehmen können. ', 'Das Algol Transportschiff war das erste wirkliche Raumschiff, welches in Serienproduktion ging. Man wollte damit vor allem Rohstoffe zu anderen Planeten transportieren, damit man die natürlichen Ressourcen der verschiedenen Planeten besser ausnutzen kann. Deshalb hat man bei der Ausrüstung auf eine Bewaffnung weitestgehend verzichtet. Obwohl Algols mittlerweile veraltet sind, hat man dieses beliebte Schiff immer wieder mit neuen Motoren modifiziert, deshalb sieht man auch heute noch viele Transporter ähnlichen Typs.', 700, 180, 0, 500, 0, 0, 0, 13, 5, 2, 0, 15000, 0, 1, 968, 375, 188, 1, 1, 7, 'transport,fetch,position,attack,flight,support,alliance', 0.33, 0, 50, 50, 9, 0, 1, 0, 2, 0, 0, 0, 0, 0, 1.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 1.380, 0, 0, 1),
-	(10, 'REGULUS Trümmersammler', 1, 'Mit diesem Schiff können die Trümmer der nach einer Schlacht zerstörten Schiffe eingesammelt, in grosse Tranporter geladen und damit wiederverwendet werden.', 'Nachdem die Piraten durch die Entwicklung der mächtigen Kampfschiffe nicht mehr die unbewaffneten Transportkonvois überfallen konnten, entwickelten sie dieses Schiff, um mit ihm nach den grösseren Schlachten zwischen den kriegslustigen Imperien aufzutauchen, und ihren Lebensunterhalt aus den Überresten der zerstörten Schiffe zu gewinnen. Der Wert dieser Trümmersammler wurde schon bald erkannt, und ab dann führte niemand mehr Krieg, ohne sich nicht die Überreste der Schiffe zurück zu holen. Die Trümmersammler sammeln die Trümmer ein und laden sie auf die mitgeschickten Transportschiffe.', 300, 200, 100, 800, 0, 0, 5, 1, 1, 0, 0, 1500, 0, 2, 2750, 216, 72, 1, 1, 10, 'transport,collectdebris,position,attack,flight,support,alliance', 0.33, 0, 80, 120, 2, 0, 1, 0, 8, 0, 0, 0, 0, 0, 1.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 1.400, 0, 0, 1),
-	(11, 'RIGEL Dreadnought', 1, 'Dieses Schiff ist eine riesige fliegende Festung. ', 'Aus der Erfahrungen, die man mit den Hadar und den Pollux gewonnen hatte, wurde ein neues Superschiff kreiert, der Rigel Dreadnought. Optimierungen in der Herstellung und bei den Antrieben verliehen dem Schiff eine aussergewöhnliche Kampfkraft, Effizienz und Geschwindigkeit zu erstaunlich niedrigen Preisen. Zusätzlich erhöhte man die Transportkapazität, so dass die Rigel eigenständig praktisch aus dem Nichts heraus Raubzüge unternehmen können, ohne sich mit langsamen Transportern zu belasten. ', 3350000, 2975000, 1750000, 750000, 0, 0, 0, 100, 1100, 1500, 0, 600000, 0, 400, 6050, 480, 300, 1, 1, 5, 'transport,position,attack,flight,support,alliance', 0.33, 0, 1000000, 1350000, 1575000, 0, 1, 0, 1, 0, 0, 0, 0, 0, 1.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 8825.000, 0, 0, 0),
-	(12, 'ELNATH Gassauger', 1, 'Dieses Schiff kann Wasserstoff aus der Atmosphäre von Gasplaneten einsaugen und daraus Tritium gewinnen.', 'Nachdem die Flotten immer grösser wurden, hatte man nicht mehr genug Tritium auf den Planeten zur Verfügung, um sie zu bewegen. Deshalb kam man auf die Idee, Wasserstoff von den unbewohnbaren Gasplaneten abzusaugen und es in Tritium umzuwandeln. Genau dafür wurde dieses Schiff konstruiert. Es wurde schnell klar, dass dieses Saugen äusserst rentabel ist und deshalb wurde der Gassauger soweit verbessert, dass heute eine grössere Flotte ohne ihn praktisch undenkbar ist.', 20000, 7500, 22200, 15000, 0, 0, 0, 28, 80, 65, 0, 15000, 0, 3, 880, 3225, 645, 1, 1, 12, 'transport,position,collectcrystal,collectfuel,flight,support', 0.33, 0, 650, 800, 0, 0, 1, 0, 8, 0, 0, 0, 0, 0, 1.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 64.700, 0, 0, 1),
-	(13, 'ANDROMEDA Kampfstern', 1, 'Dieses Schiff ist das mächtigste Schiff der Galaxien.', 'Ein verrückter Wissenschaftler war von der Idee besessen, ein Kampfschiff zu bauen, welches so gross wie ein ganzer Trabant wäre. Er wurde so lange ausgelacht, bis er einen anderen Verrückten traf, der zufällig nebenberuflich Imperator war und der ihn unterstützte. Danach wurde Wissenschaftler allgemein als Genius bekannt, welcher die ultimative Waffe erschaffen hatte: den Andromeda Kampfstern. Seine Waffen und Schilder sind bis heute noch unübertroffen!\r\nDer einzige Nachteil dieses monströsen Kampfschiffes ist, dass es wegen seiner Masse lange Start- und Landezeiten hat, und eine zahlreiche Besatzung benötigt wird.', 20000000, 10000000, 12000000, 12000000, 0, 0, 0, 400, 4000, 2000, 0, 6000000, 0, 990, 9900, 600, 600, 1, 1, 7, 'transport,position,attack,flight,support,alliance', 0.33, 0, 8500000, 9000000, 8550000, 0, 1, 0, 1, 0, 0, 0, 0, 0, 1.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 54000.000, 0, 0, 0),
-	(14, 'STARLIGHT Jäger', 1, 'Weiterentwicklung des ANTARES Jäger.', 'Parallel zu den Antares Jägern wurde der STARLIGHT Jäger entwickelt, welcher besser gepanzert war und auch die bessere Bewaffnung aufwies. Er nutzte auch einen neuartigen Antrieb, welcher aber noch nicht ganz serienreif war, da er andauernd ausfiel, und selten wie geplant lief. Nach einigen Untersuchungen fand man heraus, dass dies daran lag, dass beim Bau des Motors billiges Material verwendet wurde. Das stellte den viel gelobten Jäger in ein anderes Licht, aber andererseits erwies er sich in Raumschlachten als zuverlässiger Mitstreiter.', 4900, 3400, 2400, 2100, 0, 0, 0, 1, 3, 3, 0, 800, 0, 1, 1430, 160, 200, 1, 1, 1, 'transport,position,attack,flight,support,alliance', 0.33, 0, 2100, 1100, 1710, 0, 1, 0, 1, 1, 0, 0, 0, 0, 1.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 12.800, 0, 0, 0),
-	(15, 'ONEFIGHT Kampfdrohne', 1, 'Die Einweg-Kampfdrohne ist sehr nützlich, um vor einem Angriff die gegnerische Kampfflotte zu zerstören.', 'Es gab zwei Nachbarn, die lange Zeit friedlich miteinander lebten, aus dem einfachen Grund, dass die Flotten beider Kontrahenten etwa gleich gross war und niemand den anderen ohne Verluste hätte angreifen können. Das änderte sich, als der erste die Kampfdrohne entwickelte, ein billiges Schiff, welches aber eine äusserst grosse Kampfkraft aufweist, aber sobald es von einer Waffe getroffen wird, explodiert. Als die Flotte des einen zerstört war, hatte man der Invasion nichts mehr entgegenzusetzen, und jetzt leben sie als eine Rasse wieder friedlich miteinander.', 200, 700, 300, 300, 0, 0, 0, 1, 8, 1, 0, 300, 0, 0, 13200, 100, 120, 1, 1, 2, 'position,attack,flight,support,alliance', 0.33, 0, 0, 0, 585, 0, 1, 0, 1, 0, 0, 0, 0, 0, 1.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 1.500, 0, 0, 0),
-	(16, 'Handelsschiff', 1, 'Ein Schiff der neutralen Handelsgilde.', 'Ein Schiff der neutralen Handelsgilde. Es wird benutzt um Einkäufe im Markt zu den Käufern zu transportieren.', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 100000, 0, 0, 15000, 60, 60, 0, 0, 0, 'market', 0.37, 0, 0, 0, 0, 0, 0, 0, 5, 0, 0, 0, 0, 0, 1.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.000, 0, 0, 1),
-	(17, 'TERRANIA Zerstörer', 1, 'Das Kriegsschiff der Terraner.', 'Eine Weiterentwicklung des Polluxbombers.\r\nSchneller, stärker und besser.', 85000, 40000, 50000, 40000, 0, 0, 0, 6, 55, 45, 0, 50000, 0, 7, 7150, 450, 360, 1, 1, 0, 'transport,position,attack,flight,support,alliance', 0.33, 0, 20000, 20000, 55000, 1, 1, 0, 4, 1, 0, 0, 0, 0, 1.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 215.000, 0, 0, 0),
-	(18, 'PROMETHEUS TerraFormer', 1, 'Ein Besiedlungsschiff und Trümmersammler, weil Terraner gerne Land erobern und die nötigen Rohstoffe dafür so gewinnen können, sofern sie genügend Transportschiffe mitschicken.', 'Dieser Recycler wurde nach Prometheus dem Titanen, welcher gegen Zeus rebellierte, und den Menschen das Feuer brachte, benannt, da mit den Rohstoffen, welche die Terraner mit seiner Hilfe gewinnen, deren Flotten gebaut werden. Früher brachte Prometheus ihnen mit dem Feuer die Möglichkeit, eine Kultur zu entwickeln. Heute bringen viele Tausend Prometheus den Menschen mit ihren Rohstoffen die Grundlage, ihre Kultur weiterzuentwickeln und ihre Kultur im weiten All zu verbreiten.\r\nDer Prometheus Recycler ist in der Lage, verschiedene Transporter mit den abgebauten Trümmern zu befüllen.', 9000, 8000, 1500, 4200, 0, 0, 0, 10, 12, 20, 0, 50000, 0, 5, 1870, 135, 90, 1, 1, 0, 'transport,collectdebris,position,attack,colonize,flight,support,alliance', 0.33, 0, 800, 1000, 5, 1, 1, 0, 4, 0, 0, 0, 0, 0, 1.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 22.700, 0, 0, 1),
-	(19, 'GAIA Transporter', 1, 'Beliebtester Bewohnertransporter der Andromedabevölkerung, solange auf dem Bestimmungsort genug Platz vorhanden ist.', 'Als die Planeten wegen Überbevölkerung einen vollständigen Kollaps erlitt, musste sie schleunigst evakuiert werden, und dafür wurde dieser Transporter entwickelt. Die Bewohner wurden zu Zehntausenden bei normalerweise untragbaren Bedingungen in diese Kolosse gesteckt und verfrachtet. Nach dieser Katastrophe etablierte dieser Transporter sich zu einem beliebten Fährschiff, mit welchem die Leute zu den Vergnügungsplaneten flogen, um sich vom täglichen Arbeitsstress zu erholen.', 3500, 1000, 750, 1250, 0, 0, 0, 23, 50, 40, 0, 3000, 10000, 1, 2420, 405, 203, 1, 1, 0, 'transport,fetch,position,attack,flight,support,alliance', 0.33, 0, 750, 300, 50, 0, 1, 0, 2, 0, 0, 0, 0, 0, 1.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 6.500, 0, 0, 1),
-	(20, 'ANDREIA Bomber', 1, 'Dieser Bomber ermöglicht Angriffe auf Gebäude sowie einen Antraxangriff.', 'Den Andorianer war die Infrastruktur der Gegner ein Dorn im Auge, so erschufen sie einen Bomber, der sogar aus dem Orbit zielgenau Bomben abwerfen kann und somit Gebäude zerstören kann.', 85000, 40000, 50000, 40000, 0, 0, 0, 47, 263, 325, 0, 15000, 0, 25, 1000, 1200, 1320, 0, 0, 0, 'transport,position,attack,bombard,antrax,flight,support,alliance', 0.33, 0, 25000, 9000, 9000, 2, 0, 0, 4, 1, 0, 0, 0, 0, 1.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 215.000, 0, 0, 0),
-	(21, 'ATLAS Transporter', 1, 'Grosser Transporter', 'Auch die Andorianer entwickelten einen grösseren Transporter, da sie nicht wollten, dass andere Rassen mit ihren Transportern ihre Ressourcen herumschippern konnten und sie von diesen abhängig wären. Die Atlas entwickelten sich zu viel genutzten Transportern im Andorianischen Imperium. Sie erwiesen sich als viel nützlicher, als es sich die Regierungsmitglieder jemals erhofft hätten.', 2000, 2000, 2000, 23000, 0, 0, 0, 18, 50, 5, 0, 325000, 0, 1, 8168, 288, 216, 1, 1, 0, 'transport,fetch,position,attack,flight,support,alliance', 0.33, 0, 300, 500, 27, 2, 1, 0, 7, 0, 0, 0, 0, 0, 1.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 29.000, 0, 0, 1),
-	(22, 'ZELOS Kreuzer', 1, 'Weiterentwicklung des HADAR Schlachtschiffes.', 'Nachdem sich der Bau von Hadar Schlachtschiffen durchgesetzt hatte, wollten die Andorianer diese noch übertreffen. So wurde der Zelos Kreuzer entwickelt.\r\nDieses Schiff hat ungeheuer starke Schilde und ist sehr gut für die Verteidigung von Planeten geeignet, macht aber auch ordentlich Schaden bei einem Angriff.', 121000, 44000, 50000, 45400, 0, 0, 0, 8, 75, 40, 0, 16000, 0, 10, 5280, 450, 315, 1, 1, 2, 'transport,position,attack,flight,support,alliance', 0.33, 0, 15000, 56500, 45000, 2, 1, 0, 4, 1, 0, 0, 0, 0, 1.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 260.400, 0, 0, 0),
-	(23, 'CENTAURUS Spioschiff', 1, 'Kann von einem anderen Spieler eine Technologie klauen.', 'Die Centauri waren äusserst stolz darauf, dass sie die höchsten Technologien aller Völker besassen. Entsprechend gross war der Neid, als sie von einem andern Volk in einer von ihnen vernachlässigten Technologie übertrumpft wurden. Also erfanden sie dieses Spionageschiff, mit dessen Hilfe sie den anderen Völkern etwaige höher entwickelte Technologien klauen können.', 85000, 40000, 50000, 40000, 0, 0, 0, 4, 63, 125, 0, 7500, 0, 20, 600, 2905, 2359, 0, 0, 0, 'transport,position,attack,spyattack,flight,support,alliance', 0.33, 0, 3250, 2250, 500, 8, 0, 0, 4, 0, 0, 0, 0, 0, 1.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 215.000, 0, 0, 1),
-	(24, 'PEGASUS Gassauger', 1, 'Grosser Gassauger der Centauri.', 'Um ihre teuren Forschungen zu betreiben, mussten die Centauri einen neuen Gassauger entwerfen, welcher eine grössere Kapazität hat, da die normalen Sauger die Bedürfnisse ihrer Forschungslabore nicht stillen konnten. Der Pegasus hat  eine wesentlich grössere Saugkapazität als herkömmliche Sauger, und durch seine hoch entwickelten Saugarme hat er die grössere Effizienz. Dies ist die Antwort der Centauri auf Tritiumknappheit.', 130000, 60000, 60000, 100000, 0, 0, 0, 30, 10, 16, 0, 120000, 0, 15, 1100, 2700, 2700, 1, 1, 0, 'transport,position,attack,collectfuel,flight,support,alliance', 0.33, 0, 4000, 4000, 50, 8, 1, 0, 4, 0, 0, 0, 0, 0, 1.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 350.000, 0, 0, 1),
-	(25, 'EUROPA Fighter', 1, 'Mittelgrosses, für seine Verhältnisse jedoch sehr starkes Kriegsschiff der Centauri.', 'Die Centauri suchten ihren Vorteil in der Überlegenheit der Technologien, aber als die Rigel die Herrschaft über die Schlachtfelder übernahmen, entwickelten sie ihren eigenen Prototypen, den Europa Fighter. Heutzutage eines der stärksten Raumschiffe der mittleren Kampfklasse. Die Europas sind bei weitem nicht so stark wie Rigel, jedoch haben sie eine sehr kurze Startzeit, was sie sehr gefährlich macht.', 20000, 11000, 18000, 8000, 0, 0, 0, 2, 15, 10, 0, 22000, 0, 3, 6050, 263, 478, 1, 1, 0, 'transport,position,attack,flight,support,alliance', 0.33, 0, 6250, 12500, 6750, 8, 1, 0, 4, 1, 0, 0, 0, 0, 1.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 57.000, 0, 0, 0),
-	(26, 'VORGONIA Vernichter', 1, 'Sehr grosses Kampfschiff der Vorgonen.', 'Den Vorgonen ging es gehörig gegen den Strich, dass sie nicht mehr als Gefahr angesehen wurden, sobald ihr Feinde auf allen Planeten eine halbwegs vernünftige Verteidigung gebaut hatten. Um sich den verdienten Respekt zurückzuholen, erschufen sie den mächtigen Vorgonia Vernichter, welcher es sogar mit einem Imperialen Kreuzer aufnehmen kann.', 943000, 543000, 570000, 760000, 0, 0, 0, 63, 365, 270, 0, 350000, 0, 115, 4950, 563, 315, 1, 1, 0, 'transport,position,attack,flight,support,alliance', 0.33, 0, 295000, 520000, 409000, 7, 1, 0, 4, 0, 0, 0, 0, 0, 1.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 2816.000, 0, 0, 0),
-	(27, 'ALAMAK Trümmersammler', 1, 'Trümmersammler der Orioner - sammelt Trümmerfelder und belädt Transporter mit den gewonnenen Rohstoffen.', 'Die Orioner konnten selbst durch ihr Wissen, mehr Geschwindigkeit aus ihren Schiffen zu ziehen, nicht vermeiden, dass ihre Trümmersammler stets zu spät nach einem Kampf eintrafen. Um diese Lücke in ihrem System zu korrigieren, erschufen sie den Alamak Trümmersammler, der sich insbesondere für Orioner als eine echte Alternative zu den bestehenden Trümmersammlern bewähren sollte und der mitgeschickte Transporter schnell und effizient mit den Rohstoffen beladen konnte.', 20000, 13000, 10000, 7000, 0, 0, 0, 25, 25, 50, 0, 150000, 0, 10, 4950, 432, 288, 1, 1, 0, 'transport,collectdebris,position,attack,flight,support,alliance', 0.33, 0, 3000, 2000, 20, 4, 1, 0, 4, 0, 0, 0, 0, 0, 1.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 50.000, 0, 0, 1),
-	(28, 'IKAROS Jäger', 1, 'Schwebt in der Atmosphäre und hat somit keine Start- und Landezeit.', 'Die Vorgonen raubten alle ihre direkten Nachbarn mit Jägern aus, und bald einmal gab es erste Piloten, die gar nie mehr richtig auf dem Heimatplaneten landeten, sondern im Dauereinsatz waren. Dank ihren unerwarteten Raubzügen konnten sie viele Rohstoffe erbeuten. Diese Elitepiloten waren aber bald nicht mehr zufrieden mit den normalen Schiffen, also entwickelten sie ihre Jäger weiter, bis die Ikaros entstanden, die im Orbit des Planeten stationiert sind, so dass sie sofort und ohne Treibstoffverbrauch starten und landen können.', 4000, 2000, 1000, 2000, 0, 0, 0, 1, 0, 0, 0, 6000, 0, 1, 2200, 0, 0, 1, 1, 0, 'transport,position,attack,flight,support,alliance', 0.33, 0, 350, 2750, 1125, 7, 1, 0, 4, 0, 0, 0, 0, 0, 1.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 9.000, 0, 0, 0),
-	(29, 'MARAUDER Transporter', 1, 'Grosser Transporter', 'Auch die Ferengi sahen sich genötigt, grosse Transporter zu entwickeln, wenn auch nicht aus denselben Gründen wie die anderen Rassen. Die Ferengi hatten wegen ihrer Titanproduktion alle ihre Lager längstens überfüllt und keinen Platz mehr, um grössere zu bauen. Also erschufen sie mit den Marauder Transportern eine Art fliegendes Lager, damit sie ihr Titan im Weltraum zwischenlagern konnten, wo es genug Platz dafür hat.', 23000, 2000, 2000, 2000, 0, 0, 0, 18, 50, 5, 0, 325000, 0, 1, 8168, 288, 216, 1, 1, 0, 'transport,fetch,position,attack,flight,support,alliance', 0.33, 0, 300, 500, 27, 6, 1, 0, 7, 0, 0, 0, 0, 0, 1.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 29.000, 0, 0, 1),
-	(30, 'BELL Zerstörer', 1, 'Dieses Schiff wird mit Unmengen an Titan gepanzert, was es zu einer fast unzerstörbaren Waffe macht.', 'Die Ferengi waren an einem Punkt angelagt, wo sie ihr Titan nicht mehr verbrauchen konnten. Es musste etwas erfunden werden, das mit möglichst viel Titan und wenig Zusatzstoffen gebaut werden konnte. Aus diesem Bedürfnis entstand der Bell Zerstörer.\r\nDieses Schiff wird mit einer Titanlegierung gepanzert, die kaum überwunden werden kann. Aufgrund der Masse des Schiffes, dessen Antrieben und der dicken Panzerschicht gehört der Bell Zerstörer nicht zu den schnellsten Schiffen der Galaxien, jedoch zu den stärksten im Kampf.\r\nEin Nachteil des Bell Zerstörers ist sein immenser Tritiumverbrauch, der aus dem grossen Gewicht und der tiefen Fluggeschwindigkeit resultiert.', 800000, 300000, 450000, 250000, 0, 0, 0, 40, 175, 225, 0, 225000, 0, 45, 4950, 466, 428, 1, 1, 0, 'transport,position,attack,flight,support,alliance', 0.33, 0, 380000, 180000, 235000, 6, 1, 0, 4, 1, 0, 0, 0, 0, 1.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 1800.000, 0, 0, 0),
-	(31, 'RUTICULUS Sammler', 1, 'Ein multifunktionales Schiff der Andorianer, das Asteroiden und Sternennebel sammeln kann.', 'Ein erstklassiger Wissenschaftler der Andorianer namens Herkules war viel herumgereist und hatte viele Schiffe analysiert. Dabei kroch er so viel auf den Knien herum, um das Schiff von allen Seiten zu untersuchen, dass er im Alter immer schlimme Schmerzen hatte und seine Zeit fast nur noch liegend verbringen konnte. Doch das hielt ihn nicht davon ab, weitere Schiffe zu entwickeln. Durch seine Erfahrung gelang es ihm, Berechnungen für einen Sammler zu finden, der sowohl Asteroiden wie auch Sternennebel besuchen konnte, um Rohstoffe von ihnen zu gewinnen. Er benannte es dann nach seinem Lieblingsstern.', 12800, 4800, 10000, 8000, 0, 0, 0, 4, 1, 1, 0, 18000, 0, 1, 4950, 1800, 3600, 1, 1, 0, 'transport,position,attack,collectmetal,collectcrystal,flight,support,alliance', 0.33, 0, 50, 2, 0, 2, 1, 0, 4, 0, 0, 0, 0, 0, 1.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 35.600, 0, 0, 1),
-	(32, 'RIGELIA Bomber', 1, 'Kann ein Gebäude für eine bestimmte Zeit mittels EMP-Technologie ausser Kraft setzen und hat noch weitere Fähigkeiten.', 'Der Rigelia Bomber kann mit seinen EMP-Angriffen die feindlichen Gebäude für eine kurze Zeit ausser Kraft setzen, was in einem Krieg schwerwiegende Folgen haben kann. Obwohl der Bomber sehr teuer ist, und von seiner Kampfkraft her gesehen kaum genutzt werden sollte, sind viele Generäle der Meinung, dass seine Bomben genug effektiv sind, so dass man diese Möglichkeit in einem Krieg immer einsetzen sollte. Rigelianer können mit diesem Schiff auch zu noch drastischeren Mitteln greifen, und Nahrung und Bewohner mittels Antrax- und Gasangriffen dezimieren. ', 85000, 40000, 50000, 40000, 0, 0, 0, 28, 163, 125, 0, 15000, 0, 41, 1100, 1140, 1500, 1, 1, 0, 'transport,position,attack,emp,antrax,gasattack,flight,support,alliance', 0.33, 0, 25000, 6500, 12500, 3, 1, 0, 4, 1, 0, 0, 0, 0, 1.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 215.000, 0, 0, 0),
-	(33, 'EOS Transporter', 1, 'Grosser Transporter', 'Als die Cardassianer und die Minbari die grossen Transporter entwickelt hatten, konnten die Rigelianer dem nicht nachstehen und fertigten sofort ihre eigene Version eines grossen Transporters an. Vom Prinzip her ist es genau dasselbe Schiff wie der Saiph Transporter der Minbari. Die Rigelianer passten einfach das Design und die Steuergeräte ihren Bedürfnisse an.', 2000, 23000, 2000, 2000, 0, 0, 0, 18, 50, 5, 0, 325000, 0, 1, 8168, 288, 216, 1, 1, 0, 'transport,fetch,position,attack,flight,support,alliance', 0.33, 0, 300, 500, 27, 3, 1, 0, 7, 0, 0, 0, 0, 0, 1.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 29.000, 0, 0, 1),
-	(34, 'HELIOS Drohne', 1, 'Weiterentwicklung der Onefight Kampfdrohne. Rassenschiff der Rigelianer.', 'Die Rigelianer waren von den Onefight Kampfdrohnen begeistert. Sie steckten deshalb ihre ganzen Forschungsmittel in deren Weiterentwicklung. So entstand die Helios Drohne: Diese Drohne ist noch effizienter als die Onefight und kann in genügend grosser Anzahl den Gegner empfindlich treffen. Ausserdem können die Helios im Gegensatz zu den Onefights einen Kampf auch überleben.\r\nDie Helios sind überall wegen ihrer Kampfkraft gefürchtet, und da sie auf dem Standardantrieb der Drohnen aufbauen, haben sie auch eine hohe Geschwindigkeit, weshalb man sich nie vor einem Angriff sicher fühlen kann.', 2500, 6200, 2000, 2300, 0, 0, 0, 1, 3, 3, 0, 500, 0, 0, 13200, 120, 180, 1, 1, 0, 'position,attack,flight,support,alliance', 0.33, 0, 1, 0, 5400, 3, 1, 0, 4, 1, 0, 0, 0, 0, 1.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 13.000, 0, 0, 0),
-	(36, 'CARDASSIA Mutterschiff', 1, 'Heilt während dem Kampf eine gewisse Anzahl Schild- und Strukturpunkte.', 'Nachdem die Cardassianer mit ihren Nilams die ganze Galaxie in Angst und Schrecken versetzt hatten, schlossen sich alle anderen Rassen zu einem Bund zusammen, um die Cardassianer zu vernichten. Trotzdem hatten sie nicht mit dem neuen Geniestreich der Cardassianer gerechnet: Den Mutterschiffen. Mit diesem hoch entwickelten Raumschiff können die Cardassianer ihre Flotte während dem Kampf reparieren, um so Verluste auszugleichen. Nur dank der Hilfe dieses Schiffes konnten die Cardassianer den immerwährenden Angriffen standhalten.', 42000, 27500, 16500, 16000, 0, 0, 0, 3, 35, 5, 0, 1500, 0, 5, 5500, 450, 405, 1, 1, 0, 'transport,position,attack,flight,support,alliance', 0.33, 16000, 10000, 6000, 113, 9, 1, 0, 4, 1, 0, 0, 0, 0, 1.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 102.000, 0, 0, 0),
-	(37, 'DEMETER Transporter', 1, 'Grosser Transporter', 'Die Cardassianer waren allgemein wegen ihren vielen Rohstoffen beneidet, vor allem wegen ihrer Nahrung, die sie wie keine anderen herstellen können. Um sich vor Übergriffen zu schützen und um ihre Gegner im Unklaren über ihre wahren Rohstoffmengen zu lassen, entwickelten sie diese Transporter, welche mit den Rohstoffen irgendwo in der Ewigkeit des Alls herumfliegen, damit sie nicht gefunden werden. Die Cardassianer sind die einzigen, deren Organisation solch perfekte Nachschublinien zustande bringt.', 23000, 8300, 1200, 1500, 0, 0, 0, 5, 50, 5, 0, 375000, 0, 1, 6353, 351, 237, 1, 1, 0, 'transport,fetch,position,attack,flight,support,alliance', 0.33, 0, 300, 500, 27, 9, 1, 0, 7, 0, 0, 0, 0, 0, 1.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 34.000, 0, 0, 1),
-	(38, 'NILAM Fighter', 1, 'Ein starkes Kampfschiff aus der Mittelschweren Klasse, entwickelt von den Cardassianern.', 'Den Cardassianern waren Starlights von Anfang an zu langsam und Drohnen zu schwach. So erfanden sie die Nilam, welche sie zu gefürchteten Jägern entwickelten, da sie spezielle Antriebe haben, die ausserordentlich schnell sind. Die Cardassianer benutzen die Jäger vor allem, um ihre Militärdiktatur aufrechtzuerhalten. Sie wollen schnell reagieren und überall bereitstehen können. Dafür eignen sich die Nilams am besten. Sie kommen aus dem Nichts und verschwinden sofort wieder, nachdem sie die Schlacht gewonnen haben.', 7150, 4000, 2000, 3000, 0, 0, 0, 1, 3, 3, 0, 5000, 0, 1, 6050, 400, 270, 1, 1, 0, 'transport,position,attack,flight,support,alliance', 0.33, 0, 2900, 2000, 2250, 9, 1, 0, 4, 1, 0, 0, 0, 0, 1.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 16.150, 0, 0, 0),
-	(40, 'SERA Kreuzer', 1, 'Dieses Schiff ist ein passabler Kriegsschiff, das in grossen Mengen eine ordentliche Zerstörungskraft hat.', 'Den Ferengi gefiel es nicht, dass andere Rassen besondere Kriegsschiffe hatten, also gestalteten sie ihre eigene Version. Der führende Forscher entwickelte ein Kriegsschiff, dass neben den Bell Zerstörern einen guten Eindruck machen konnte. Für eine abschreckende Wirkung wurde es in Wildrosenrot angemalt. ', 3750, 6000, 3250, 2000, 0, 0, 0, 1, 2, 2, 0, 8000, 0, 1, 3080, 413, 83, 1, 1, 0, 'transport,position,attack,flight,support,alliance', 0.33, 0, 1500, 1000, 3500, 6, 1, 0, 4, 0, 0, 0, 0, 0, 1.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 15.000, 0, 0, 0),
-	(41, 'HYPOS Drohne', 1, 'Kann ein Trümmerfeld beim Gegner erstellen, ohne dass dieser etwas merkt, ausser er überprüft genau zu diesem Zeitpunkt die Raumkarte.', 'Die Hypos Drohne wurde entwickelt, damit kein Angriff mehr für ein Trümmerfeld notwendig ist. Deshalb werden diese Drohnen vor grossen Schlachten losgeschickt, um beim Gegner ein klitzekleines Trümmerfeld zu erstellen. Zu diesem Zweck muss sich die Drohne beim Gegner in die Luft sprengen, was selten für mehr als eine Sternschnuppe wahrgenommen wird. Durch diese Aktion kann den Navigationscomputern der Trümmerfeldsammler ein gültiges Ziel zugewiesen werden und der Angriff und das Sammeln getimed werden. ', 500, 300, 50, 200, 0, 0, 0, 1, 5, 5, 0, 300, 0, 0, 30000, 1, 1, 1, 1, 0, 'position,createdebris,flight,support,alliance', 0.33, 0, 10, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 1.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 1.050, 0, 0, 0),
-	(42, 'MINBARI Jäger', 1, 'Wenn er alleine in oder in einem Flottenverband aus lauter Minbari Jägern fliegt, ist er für die gegnerische Flottenkontrolle nicht sichtbar.', 'Die Minbari sahen es gar nicht gerne, als man ihre Flotten schon im Anflug entdeckte und eine entsprechende Verteidigung bereitstellte. Deshalb liessen sie die besten Köpfe der Galaxie zusammenkommen, um dieses Schiff zu entwickeln, welches durch seine perfekte Tarnung erst im allerletzten Moment entdeckt werden kann. Und dann ist es bereits zu spät, da der Kampf bereits stattfand...', 20500, 13500, 13500, 10000, 0, 0, 0, 2, 25, 5, 0, 15000, 0, 3, 6600, 900, 375, 1, 1, 0, 'transport,position,attack,stealthattack,flight,support,alliance', 0.33, 0, 12000, 4500, 5500, 5, 1, 0, 4, 1, 0, 0, 0, 0, 1.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 57.500, 0, 0, 0),
-	(43, 'SAIPH Transporter', 1, 'Grosser Transporter der Minbari.', 'Die Minbari entwickelten diese grossen Transporter, um ihren steigenden Rohstofftransport-Bedürfnissen nachzukommen. Die Rohstoffmengen stiegen immer weiter an, und irgendwann war auch die Kapazität der Unukalhai ausgeschöpft. Nun musste eine neue Lösung gefunden werden, und die Ingenieure der Minbari entwickelten diesen grossen Transporter.', 2000, 2000, 23000, 2000, 0, 0, 0, 18, 50, 5, 0, 325000, 0, 1, 8168, 288, 216, 1, 1, 0, 'transport,fetch,position,attack,flight,support,alliance', 0.33, 0, 300, 500, 27, 5, 1, 0, 7, 0, 0, 0, 0, 0, 1.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 29.000, 0, 0, 1),
-	(44, 'WEZEA Fighter', 1, 'Kampfschiff der Minbari.', 'Die Minbari liebten es seit eh und je, über die Gasplaneten zu fliegen, da sie von den unbeschreiblich schönen Polarlichtern fasziniert sind, welche man dort beobachten kann. \r\nEs ist ihnen sogar gelungen, den neuartigen Solarantrieb zu integrieren. Damit verbraucht der WEZEA Fighter nur Tritium für den Start und die Landung.', 2800, 1400, 1800, 1600, 0, 0, 0, 0, 1, 1, 0, 2500, 0, 1, 2500, 450, 270, 1, 1, 0, 'transport,position,attack,flight,support,alliance', 0.33, 0, 1450, 700, 1144, 5, 1, 0, 4, 0, 0, 0, 0, 0, 1.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 7.600, 0, 0, 0),
-	(45, 'ORION Fighter', 1, 'Kampfschiff der Mittelschweren Klasse, entworfen von den Orionern. Kann 50% mehr Rohstoffe von einem fremden Planeten mitnehmen als alle anderen Schiffe.', 'Den Orionern war die Menge, welche sie normalerweise mit ihren Schiffen von gegnerischen Planeten erbeuten konnten, viel zu wenig. Der Orion Fighter ist ihre Antwort auf dieses Problem. Ein starkes Raumschiff, welches so konzipiert ist, dass es 50% mehr Rohstoffe als Beute mitnehmen kann als alle anderen Schiffe. Zusätzlich hat der Orion schlagkräftige Waffen, was den Fighter zum optimalen Schiff für Piraterie macht.', 35000, 10500, 12500, 5500, 0, 0, 0, 2, 25, 8, 0, 17500, 0, 3, 6600, 480, 330, 1, 1, 0, 'transport,position,attack,flight,support,alliance', 0.50, 0, 7500, 7000, 12600, 4, 1, 0, 4, 1, 0, 0, 0, 0, 1.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 63.500, 0, 0, 0),
-	(46, 'FORNAX Asteroidensammler', 1, 'Kann Asteroidenfelder anfliegen und dort Rohstoffe sammeln.', 'Da die Gassauger grossen Erfolg hatten, dachte man, dass man das auch mit Asteroidenfeldern versuchen könne, so dass man auch die anderen Rohstoffe aus dem Weltraum gewinnen konnte. Leider war die praktische Umsetzung schwieriger, da eine sichere  Navigation innerhalb der Asteroidenfelder sich als praktisch unmöglich erwies. Deshalb ist dieses Konzept fehlgeschlagen, da die Sammler schneller von Asteroiden getroffen werden, als dass sie genug Rohstoffe holen können, um ihre Herstellungskosten zurückzugewinnen.', 15000, 5000, 25000, 9000, 0, 0, 0, 33, 50, 60, 0, 17500, 0, 8, 1815, 3263, 788, 1, 1, 11, 'transport,position,attack,collectmetal,flight,support,alliance', 0.33, 0, 250, 1000, 50, 0, 1, 0, 8, 0, 0, 0, 0, 0, 1.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 54.000, 0, 0, 1),
-	(47, 'TITAN Transporter', 1, 'Dies ist ein relativ billiger und sehr schneller, grosser Transporter.', 'Dies ist ein relativ billiger und sehr schneller, grosser Transporter, allerdings zeigt sich der Preis in seiner Qualität. Er ist sehr schwach. Dieser Transporter setzt auf den Solarantrieb, wodurch er durch ein Sonnensegel unglaublich schnell ohne Treibstoffverbrauch fliegen kann. \r\n', 14000, 4000, 1500, 3000, 0, 0, 0, 14, 15, 28, 0, 225000, 0, 1, 6292, 413, 345, 1, 1, 5, 'transport,fetch,position,attack,flight,support,alliance', 0.33, 0, 50, 20, 1, 0, 1, 0, 2, 0, 0, 0, 0, 0, 1.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 22.500, 0, 0, 1),
-	(50, 'ASTERIO Recycler', 1, 'Ein effizienter Trümmersammler für ganz Andromeda.', 'Der Sternenkönig Asterios hat die Galaxie mit diesem Raumschiff gesegnet, um im Kampf verlorene Rohstoffe im All wiederzugewinnen. Er hat die Völker der Galaxie dazu aufgefordert, die entstandenen Trümmerfelder um alle Planeten herum wieder wegzuräumen, damit die Galaxie frei von Weltraumschrott ist. Der Sammler ist in der Lage, mit einer Start- und Landezeit von 25 Minuten und einer passablen Geschwindigkeit auch weit entfernte Trümmerfelder in einer annehmbaren Zeit zu sammeln und dabei die Rohstoffe auf die mitgeschickten Transporter zu laden.', 3200, 1200, 2500, 2000, 0, 0, 0, 4, 1, 1, 0, 11000, 0, 1, 3300, 450, 300, 1, 1, 3, 'transport,collectdebris,position,attack,flight,support,alliance', 0.33, 0, 50, 2, 1, 0, 1, 0, 8, 0, 0, 0, 0, 0, 1.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 8.900, 0, 0, 1),
-	(51, 'HAARP Spionagesonde', 1, 'Diese Sonde ist die Weiterentwicklung der ZAVIJAH Spionagesonde.', 'Diese Sonde ist die Weiterentwicklung der ZAVIJAH Spionagesonde. Sie ist enorm schnell und gut geeignet für das Ausspionieren weit entfernter Galaxien. Zudem kann sie genutzt werden, um sie in eine gegnerische Flotte reinzujagen, sodass der Kampfbericht einem die Werte der gegnerischen Flotte verrät. ', 1000, 1000, 1000, 500, 0, 0, 0, 0, 1, 0, 0, 5, 0, 0, 60000, 5, 4, 1, 1, 4, 'position,attack,spy,flight,support,alliance', 0.33, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 1.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 3.500, 0, 0, 0),
-	(52, 'AURORA Sonde', 1, 'Diese Sonde wurde entwickelt, um Rohstoffe innert kurzer Zeit von einem Ort zum anderen zu transportieren. ', 'Diese Sonde wurde entwickelt, um Rohstoffe innert kurzer Zeit von einem Ort zum anderen zu transportieren.  Deshalb hat diese sehr schwache und teure Sonde einen grossen Laderaum, in dem sie den Treibstoff und andere Rohstoffe für die mitfliegenden Schiffe bereit halten kann. Sie besteht praktisch nur aus dünnbeschichteten Tanks und dem notwendigen Antrieb. \r\nVor kurzem bekam die Sonde eine Generalüberholung, was ihr nun höhere Geschwindigkeiten und einen etwas grösseren Laderaum ermöglichte.', 20000, 18000, 10000, 9000, 0, 0, 0, 8, 5, 3, 0, 90000, 0, 0, 36300, 25, 15, 1, 1, 2, 'transport,fetch,position,attack,flight,support,alliance', 0.00, 0, 1, 1, 1, 0, 1, 0, 2, 0, 0, 0, 0, 0, 1.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 57.000, 0, 0, 1),
-	(53, 'IMPERIALER Kreuzer', 1, 'Der Imperiale Kreuzer gehört zu den grösseren Schiffe in Andromeda und ist ein Kampfschiff mit akzeptablem Kosten-Nutzen-Verhältnis.', 'Dies ist eines der besseren Kampfschiffe in Andromeda. Es ist enorm stark gepanzert, hat allerdings einen relativ schwachen Schild. Seine Waffen sind nicht zu verachten. Es ist das grösste Schiff, das Sonnensegel zur Antriebsunterstützung nutzt. \r\nVor allem die Minbari und die Vorgonen stellen dieses Schiff zu Tausenden her, da die Start- und Landezeit für sie kein Problem darstellt.', 750000, 600000, 415000, 365000, 0, 0, 0, 23, 395, 280, 0, 230000, 0, 35, 5500, 587, 351, 1, 1, 6, 'transport,position,attack,flight,support,alliance', 0.33, 0, 355000, 135000, 401500, 0, 1, 0, 1, 0, 0, 0, 0, 0, 1.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 2130.000, 0, 0, 0),
-	(54, 'Alien-Jäger', 1, 'Niemand weiss genaueres über diese Alien-Raumschiffe, nur dass sie extrem gefährlich sind.', 'Niemand weiss genaueres über diese Alien-Raumschiffe, nur dass sie extrem gefährlich sind.', 0, 0, 99999999, 0, 0, 0, 0, 1, 0, 0, 0, 1000, 0, 1, 5000, 0, 0, 0, 0, 0, 'flight', 0.33, 0, 500, 700, 50, 0, 1, 0, 5, 0, 0, 0, 0, 0, 1.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 99999.999, 0, 0, 0),
-	(55, 'Alien-Kampschiff', 1, 'Kriegsbeute aus dem Kampf gegen die Aliens.', 'Niemand weiss genaueres über diese Alien-Raumschiffe, nur dass sie extrem gefährlich sind.', 0, 0, 99999999, 0, 0, 0, 0, 1, 0, 0, 0, 1000000, 0, 1, 150000, 0, 0, 0, 0, 0, 'transport,fetch,collectdebris,position,attack,collectmetal,collectcrystal,collectfuel,analyze,explore,flight,support,alliance', 0.33, 0, 50000000, 70000000, 50000000, 0, 1, 0, 5, 0, 1, 0, 0, 350, 2.00, 0.03, 0.03, 0.03, 0.00, 0.03, 0.00, 0.10, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 99999.999, 99, 16777215, 1),
-	(56, 'Alien-Mutterschiff', 1, 'Niemand weis genaueres über diese Alien-Raumschiffe, nur dass sie extrem gefährlich sind.', 'Niemand weis genaueres über diese Alien-Raumschiffe, nur dass sie extrem gefährlich sind.', 0, 0, 99999999, 0, 0, 0, 0, 1, 0, 0, 0, 10000, 0, 1, 5000, 0, 0, 0, 0, 0, 'flight', 0.33, 0, 50000, 70000, 5000, 0, 1, 0, 5, 0, 0, 0, 0, 0, 1.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 99999.999, 0, 0, 1),
-	(57, 'ANDROMEDA Mysticum', 1, 'Ein einmaliges Schiff mit speziellen Fähigkeiten.', 'Ein einmaliges Schiff mit speziellen Fähigkeiten.', 58000, 67000, 43600, 37500, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 30000, 0, 0, 0, 1, 0, 'position,flight', 0.33, 0, 5000, 5000, 0, 0, 1, 0, 3, 0, 1, 1, 0, 350, 2.00, 0.03, 0.03, 0.03, 0.00, 0.03, 0.00, 0.10, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 206.100, 0, 0, 0),
-	(59, 'MINBARI Mysticum', 1, 'Das Spezialschiff für die Minbari.', 'Das Spezialschiff für die Minbari.', 670000, 500000, 350000, 480000, 100000, 0, 0, 0, 0, 0, 0, 0, 0, 0, 30000, 0, 0, 0, 1, 0, 'position,flight', 0.33, 0, 110000, 86000, 0, 5, 1, 0, 3, 0, 1, 1, 0, 180, 1.70, 0.01, 0.02, 0.01, 0.00, 0.00, 0.00, 0.05, 0.04, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 2100.000, 0, 0, 0),
-	(60, 'ANDORIA Mysticum', 1, 'Das Spezialschiff für die Andorianer.', 'Das Spezialschiff für die Andorianer.', 670000, 500000, 350000, 480000, 100000, 0, 0, 0, 0, 0, 0, 0, 0, 0, 30000, 0, 0, 0, 1, 0, 'position,flight', 0.33, 0, 110000, 86000, 0, 2, 1, 0, 3, 0, 1, 1, 0, 180, 1.70, 0.02, 0.02, 0.02, 0.00, 0.00, 0.08, 0.05, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 2100.000, 0, 0, 0),
-	(61, 'CARDASSIA Mysticum', 1, 'Das Spezialschiff für die Cardassianer.', 'Das Spezialschiff für die Cardassianer.', 670000, 500000, 350000, 480000, 100000, 0, 0, 0, 0, 0, 0, 0, 0, 0, 30000, 0, 0, 0, 1, 0, 'position,flight', 0.33, 0, 110000, 86000, 0, 9, 1, 0, 3, 0, 1, 1, 0, 180, 1.70, 0.02, 0.02, 0.02, 0.05, 0.00, 0.00, 0.06, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 2100.000, 0, 0, 0),
-	(62, 'CENTAURI Mysticum', 1, 'Das Spezialschiff für die Centauri.', 'Das Spezialschiff für die Centauri.', 670000, 500000, 350000, 480000, 100000, 0, 0, 0, 0, 0, 0, 0, 0, 0, 30000, 0, 0, 0, 1, 0, 'position,flight', 0.33, 0, 110000, 86000, 0, 8, 1, 0, 3, 0, 1, 1, 0, 180, 1.70, 0.03, 0.03, 0.03, 0.00, 0.10, 0.00, 0.05, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 2100.000, 0, 0, 0),
-	(63, 'FERENGI Mysticum', 1, 'Das Spezialschiff für die Ferengi.', 'Das Spezialschiff für die Ferengi.', 670000, 500000, 350000, 480000, 100000, 0, 0, 0, 0, 0, 0, 0, 0, 0, 30000, 0, 0, 0, 1, 0, 'position,flight', 0.33, 0, 110000, 86000, 0, 6, 1, 0, 3, 0, 1, 1, 0, 180, 1.70, 0.01, 0.05, 0.02, 0.00, 0.07, 0.00, 0.05, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 2100.000, 0, 0, 0),
-	(64, 'ORION Mysticum', 1, 'Das Spezialschiff für den Orioner.', 'Das Spezialschiff für den Orioner.', 670000, 500000, 350000, 480000, 100000, 0, 0, 0, 0, 0, 0, 0, 0, 0, 30000, 0, 0, 0, 1, 0, 'position,flight', 0.33, 0, 110000, 86000, 0, 4, 1, 0, 3, 0, 1, 1, 0, 180, 1.70, 0.02, 0.01, 0.01, 0.00, 0.00, 0.16, 0.05, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 2100.000, 0, 0, 0),
-	(65, 'RIGELIA Mysticum', 1, 'Das Spezialschiff für die Rigelianer.', 'Das Spezialschiff für die Rigelianer.', 670000, 500000, 350000, 480000, 100000, 0, 0, 0, 0, 0, 0, 0, 0, 0, 30000, 0, 0, 0, 1, 0, 'position,flight', 0.33, 0, 110000, 86000, 0, 3, 1, 0, 3, 0, 1, 1, 0, 180, 1.70, 0.04, 0.01, 0.01, 0.00, 0.05, 0.00, 0.05, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 2100.000, 0, 0, 0),
-	(66, 'TERRANIA Mysticum', 1, 'Das Spezialschiff für die Terraner.', 'Das Spezialschiff für die Terraner.', 670000, 500000, 350000, 480000, 100000, 0, 0, 0, 0, 0, 0, 0, 0, 0, 30000, 0, 0, 0, 1, 0, 'position,flight', 0.33, 0, 110000, 86000, 0, 1, 1, 0, 3, 0, 1, 1, 0, 180, 1.70, 0.02, 0.02, 0.02, 0.00, 0.05, 0.00, 0.15, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 2100.000, 0, 0, 0),
-	(67, 'VORGONIA Mysticum', 1, 'Das Spezialschiff für die Vorgonen.', 'Das Spezialschiff für die Vorgonen.', 670000, 500000, 350000, 480000, 100000, 0, 0, 0, 0, 0, 0, 0, 0, 0, 30000, 0, 0, 0, 1, 0, 'position,flight', 0.33, 0, 110000, 86000, 0, 7, 1, 0, 3, 0, 1, 1, 0, 180, 1.70, 0.01, 0.02, 0.02, 0.00, 0.00, 0.00, 0.05, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.03, 2100.000, 0, 0, 0),
-	(68, 'ENERGIJA Solarsatellit', 1, 'Ein Satellit, der im Orbit schwebt und durch Solarpanels Energie gewinnt, welche dann auf dem Planeten verwendet werden kann.', 'Da einige (neu entwickelte) Gebäude enorme Energiemengen verschlingen, wurde der Solarsatellit entwickelt. Diese Sonde wird im Orbit stationiert und erzeugt Energie mit Hilfe der Sonne. Die Energieausbeute pro Solarsatellit ist jedoch abhängig von der jeweiligen Planetentemperatur und der jeweiligen Entfernung zur Sonne. Je näher der Planet der Sonne war, umso mehr Energie konnte der Satellit produzieren.', 300, 1500, 100, 100, 0, 0, 0, 0, 0, 0, 300, 0, 0, 0, 0, 0, 0, 1, 1, 13, 'flight', 0.33, 0, 100, 50, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 2.000, 0, 0, 1),
-	(69, 'TEREBELLUM Analysator', 1, 'Diese kleine Sonde wurde dafür geschaffen, um Staub- und Gasvorkommen im All zu analysieren und festzustellen, ob sich deren Abbau lohnt.', 'Nachdem verschiedene Schiffe entwickelt wurden, um von Asteroidenfeldern, Sternennebel und Gasplaneten Rohstoffe zu gewinnen, wollte man den Prozess optimieren. Dazu wurde eine kleine Sonde entwickelt, die in kurzer Zeit zu verschiedenen Vorkommen geschickt werden konnte, um diese zu analysieren und festzustellen, ob sich deren Abbau lohnt. Besonders bei Gasplaneten war diese Analyse wichtig, da das Eintreffen einer solchen Sonde verschiedene chemische Prozesse auslöste, welche die Tritiumherstellung beschleunigte.', 2000, 4500, 3000, 3000, 0, 0, 0, 1, 25, 1, 0, 500, 0, 0, 70000, 10, 1, 1, 1, 1, 'position,analyze,flight,support', 0.33, 0, 100, 200, 1, 0, 1, 0, 2, 0, 0, 0, 0, 0, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 12.500, 0, 0, 1),
-	(70, 'LORIAL Transportschiff', 1, 'Dieser Transporter der Serrakin kann extrem viel transportieren und verbraucht wenig Sprit, ist dafür aber auch ziemlich langsam.', 'Dieser Transporter der Serrakin kann extrem viel transportieren und verbraucht wenig Sprit, ist dafür aber auch ziemlich langsam.', 15000, 10000, 5000, 5000, 0, 0, 0, 5, 25, 5, 0, 600000, 0, 1, 3630, 360, 300, 1, 1, 0, 'transport,fetch,position,attack,flight,support,alliance', 0.33, 0, 200, 500, 45, 10, 1, 0, 7, 0, 0, 0, 0, 0, 1.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 35.000, 0, 0, 1),
-	(71, 'AURIGA Explorer', 1, 'Dient zur Erkundung der unbekannten Weiten der Galaxie.', 'Als das Zeitalter der Dunkelheit über die Andromeda Galaxie kam, fielen sämtliche Sensoren der Planeten aus. Niemand wusste mehr, wo die nächsten Planeten zum Besiedeln waren. \r\nSchnell musste eine Lösung her. Somit entwickelten Forscher den Auriga Explorer, der in der Lage war, die  Galaxiekarte von der Dunkelheit zu befreien. Die Sensoren konnten im Koordinatensystem ein Feld von 5x5 Feldern aufdecken, um das vom Auriga Explorer erkundete Feld herum.', 1000, 800, 0, 0, 0, 0, 0, 1, 3, 0, 0, 200, 0, 0, 3630, 10, 0, 1, 1, 6, 'position,explore,flight,support', 0.33, 0, 50, 20, 0, 0, 1, 0, 2, 0, 0, 0, 0, 0, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 1.800, 0, 0, 1),
-	(72, 'SERRAKIN Mysticum', 1, 'Das Spezialschiff für die Serrakin', 'Das Spezialschiff für die Serrakin', 670000, 500000, 350000, 480000, 100000, 0, 0, 0, 0, 0, 0, 0, 0, 0, 30000, 0, 0, 0, 1, 0, 'position,flight', 0.33, 0, 110000, 86000, 0, 10, 1, 0, 3, 0, 1, 1, 0, 180, 1.70, 0.02, 0.02, 0.05, 0.02, 0.00, 0.00, 0.05, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 2100.000, 0, 0, 0),
-	(73, 'SUPRANALIS Jäger', 1, 'Weiterentwicklung des ANTARES Jäger.', 'Parallel zu den Antares Jägern wurde der STARLIGHT Jäger für Allianzmitglieder entwickelt, welcher besser gepanzert war und auch die bessere Bewaffnung aufwies. Er nutzte auch einen neuartigen Antrieb, welcher aber noch nicht ganz serienreif war, da er andauernd ausfiel, und selten wie geplant lief. Nach einigen Untersuchungen fand man heraus, dass dies daran lag, dass beim Bau des Motors billiges Material verwendet wurde. Das stellte den viel gelobten Jäger in ein anderes Licht, aber andererseits erwies er sich in Raumschlachten als zuverlässiger Mitstreiter.', 2450000, 1700000, 1050000, 1200000, 0, 0, 0, 1, 3, 3, 0, 800, 0, 1, 9750, 22, 20, 1, 0, 2, 'transport,position,attack,flight,support,alliance', 0.33, 0, 1050000, 500000, 855000, 0, 1, 0, 6, 0, 0, 0, 0, 0, 1.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 6400.000, 1, 2500, 1),
-	(74, 'SUPRANALIS Bomber', 1, 'Dieses Raumschiff ist sehr effektiv gegen gegnerische Verteidigungsanlagen.', 'Trotz allen Erfolgen, die die Hadar Schlachtschiffe bei der Zerstörung gegnerischer Flotten und Verteidigung erzielten, war man damit noch nicht zufrieden. Deshalb konstruierte man ein neues, bis an die Zähne bewaffnetes Schiff, den Pollux Bomber für Allianzmitglieder. Nachdem man das Schiff mit Waffen beladen hatte, erwies es sich, dass deshalb die Angriffsgeschwindigkeit eingeschränkt wurde. Wegen diesem Nachteil konnte der Bomber sich in grossen Flotten nicht etablieren, er ist aber trotzdem in allem eine nicht zu unterschätzende Waffe, welche grosse Zerstörung anrichten kann.', 48500000, 10500000, 4250000, 5750000, 0, 0, 0, 275, 400, 350, 0, 2000, 0, 2, 2400, 300, 60, 1, 0, 5, 'transport,position,attack,flight,support,alliance', 0.33, 0, 1300000, 250000, 8100000, 0, 1, 0, 6, 0, 0, 0, 0, 0, 1.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 69000.000, 4, 8000, 1),
-	(76, 'SUPRANALIS Dreadnought', 1, 'Dieses Schiff ist eine riesige fliegende Festung. ', 'Aus der Erfahrungen, die man mit den Hadar und den Pollux gewonnen hatte, wurde ein neues Superschiff kreiert, der Rigel Dreadnought für Allianzmitglieder. Optimierungen in der Herstellung und bei den Antrieben verliehen dem Schiff eine aussergewöhnliche Kampfkraft, Effizienz und Geschwindigkeit zu erstaunlich niedrigen Preisen. Zusätzlich erhöhte man die Transportkapazität, so dass die Rigel eigenständig praktisch aus dem Nichts heraus Raubzüge unternehmen können, ohne sich mit langsamen Transportern zu belasten. ', 33500000, 29750000, 7500000, 17500000, 0, 0, 0, 1400, 11750, 17000, 0, 600000, 0, 560, 9600, 310, 200, 1, 0, 9, 'transport,position,attack,flight,support,alliance', 0.33, 0, 10000000, 13500000, 15750000, 0, 1, 0, 6, 0, 0, 0, 0, 0, 1.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 88250.000, 5, 25000, 1),
-	(77, 'SUPRANALIS Kampfstern', 1, 'Dieses Schiff ist das mächtigste Schiff der Galaxien.', 'Ein verrückter Wissenschaftler war von der Idee besessen, ein Kampfschiff für Allianzmitglieder zu bauen, welches so gross wie ein ganzer Trabant wäre. Er wurde so lange ausgelacht, bis er einen anderen Verrückten traf, der zufällig nebenberuflich Imperator war und der ihn unterstützte. Danach wurde dieser Wissenschaftler allgemein als Genius bekannt, welcher die ultimative Waffe erschaffen hatte: den Andromeda Kampfstern. Seine Waffen und Schilder sind bis heute noch unübertroffen!\r\nDer einzige Nachteil dieses monströsen Kampfschiffes ist nur, dass es wegen seiner Masse lange Start- und Landezeiten hat, und eine zahlreiche Besatzung benötigt wird.', 110000000, 55000000, 66000000, 66000000, 0, 0, 0, 4000, 40000, 20000, 0, 6000000, 0, 990, 20000, 1750, 1250, 1, 0, 13, 'transport,position,attack,flight,support,alliance', 0.33, 0, 46750000, 49500000, 47025000, 0, 1, 0, 6, 0, 0, 0, 0, 0, 1.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 297000.000, 7, 75000, 1),
-	(78, 'SUPRANALIS Ultra', 1, 'Dieses Schiff ist das mächtigste Schiff der Galaxien \r\n(nun aber wirklich ^^)', 'Der Andromeda Kampfstern galt lange als DAS Kampfschiff schlechthin und nicht wenige behaupten, dass es nicht möglich sei, seine Grösse und Stärke zu übertreffen, doch genau dieses Ziel hatten diverse Imperatoren einer mächtigen Allianz Namens "Supranalis Ultra".\r\nNach vielen Jahren, unzähligen Arbeitsstunden und diversen Todesopfern war der Prototyp dieses Superschiffs fertig.\r\nEtwas noch nie Dagewesenes wurde erschaffen um die Kontrolle eines ganzen Universums an sich zu reissen...', 1000000000, 500000000, 600000000, 600000000, 0, 0, 0, 5000, 50000, 50000, 0, 50000000, 0, 100000, 20000, 5000, 3000, 1, 0, 14, 'transport,position,attack,flight,support,alliance', 0.33, 0, 500000000, 500000000, 450000000, 0, 1, 0, 6, 0, 0, 0, 0, 0, 1.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 2700000.000, 10, 356342, 1),
-	(79, 'SCORPIUS ZIBAL Trägerschiff', 1, 'Transportiert mobile Verteidigungsanlagen.', 'Transportiert mobile Verteidigungsanlagen.', 3900, 3100, 2100, 1500, 0, 0, 0, 5, 5, 5, 0, 1000, 0, 0, 11000, 60, 60, 1, 1, 14, 'position', 0.33, 0, 1, 1, 1, 10, 1, 0, 4, 0, 0, 0, 0, 0, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 10.600, 0, 0, 0),
-	(80, 'SCORPIUS SPICA Trägerschiff', 1, 'Transportiert mobile Verteidigungsanlagen.', 'Transportiert mobile Verteidigungsanlagen.', 800, 475, 0, 425, 0, 0, 0, 5, 5, 5, 0, 1000, 0, 0, 11000, 60, 60, 1, 1, 14, 'position', 0.33, 0, 1, 1, 1, 10, 1, 0, 4, 0, 0, 0, 0, 0, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 1.700, 0, 0, 0),
-	(81, 'SCORPIUS POLARIS Trägerschiff', 1, 'Transportiert mobile Verteidigungsanlagen.', 'Transportiert mobile Verteidigungsanlagen.', 1000, 700, 300, 500, 0, 0, 0, 5, 5, 5, 0, 1000, 0, 0, 11000, 60, 60, 1, 1, 14, 'position', 0.33, 0, 1, 1, 1, 10, 1, 0, 4, 0, 0, 0, 0, 0, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 2.500, 0, 0, 0),
-	(82, 'SCORPIUS PHOENIX Trägerschiff', 1, 'Transportiert mobile Verteidigungsanlagen.', 'Transportiert mobile Verteidigungsanlagen.', 6000, 3000, 3000, 2900, 0, 0, 0, 5, 5, 5, 0, 1000, 0, 0, 11000, 60, 60, 1, 1, 14, 'position', 0.33, 0, 1, 1, 1, 10, 1, 0, 4, 0, 0, 0, 0, 0, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 14.900, 0, 0, 0),
-	(85, 'KRISTNAS Explorer', 1, 'Aus dem Weihnachtsschlitten mit Rentieren als Antrieb entwickelten die Nachfahren der Elfen den KRISTNAS Explorer. Umhertreibende Ressourcen verstaut dieser wie der Weihnachtsmann in seinem Sack. Fröhliche Weihnachten!', 'Aus dem Weihnachtsschlitten mit Rentieren als Antrieb entwickelten die Nachfahren der Elfen den KRISTNAS Explorer. Umhertreibende Ressourcen verstaut dieser wie der Weihnachtsmann in seinem Sack. Fröhliche Weihnachten!', 0, 0, 0, 0, 0, 0, 0, 35, 70, 10, 0, 500000, 0, 1, 30000, 300, 150, 0, 0, 0, 'transport,fetch,collectdebris,position,attack,collectmetal,collectcrystal,collectfuel,analyze,explore,flight,support,alliance', 0.33, 0, 10000, 6000, 100, 0, 1, 0, 3, 0, 1, 1, 1, 1, 10.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.000, 0, 0, 0),
-	(91, 'DAEDALUS Jäger', 1, 'Kampfschiff der Terraner.', 'Die Terraner haderten schon lange mit ihrer Effektivität im Kampf. Ihre Zerstörer waren im Schwarm zwar in der Lage, sämtlichen Schiffen gefährlich zu werden, allerdings brachten sie durch ihre geringe Struktur stets erhebliche Verluste mit sich. Um dem entgegen zu wirken, entwickelten sie ein stark gepanzertes Schiff, den Daedalus Jäger.', 13900, 7000, 7000, 7000, 0, 0, 0, 1, 10, 5, 0, 12000, 0, 3, 5720, 495, 270, 1, 1, 0, 'transport,position,attack,flight,support,alliance', 0.33, 0, 8000, 5000, 2000, 1, 1, 0, 4, 1, 0, 0, 0, 0, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 34.900, 0, 0, 0),
-	(94, 'SIRRAH Schlachter', 1, 'Grosses Kampfschiff der Orioner.', 'Die Orioner waren schon immer eine gefürchtete Rasse durch ihre schnellen Angriffe. Dies hat den Orionern aber noch nicht gereicht. Zusätzlich zum Orion Fighter entwickelten sie ein weiteres Kriegsschiff, den Sirrah Schlachter. Trotz seiner enormen Grösse hat der Sirrah Schlachter eine hohe Geschwindigkeit und eine kurze Startzeit, was ihn zu einer grossen Bedrohung macht.', 275000, 190000, 160000, 90000, 0, 0, 0, 20, 98, 128, 0, 150000, 0, 25, 7700, 525, 371, 1, 1, 0, 'transport,position,attack,flight,support,alliance', 0.33, 0, 125000, 80500, 108000, 4, 1, 0, 4, 0, 0, 0, 0, 0, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 715.000, 0, 0, 0),
-	(95, 'GOMEISA Nebelsammler', 1, 'Nebelsammler der Vorgonen.', 'Die Vorgonen bemerkten bald, dass in Andromeda der Siliziumverbrauch durch die Gewächshäuser sowie der Flottenproduktion extrem gestiegen ist. Um sich entscheidende Vorteile in der Siliziumproduktion zu verschaffen, erfanden sie den GOMEISA Nebelsammler.', 60000, 28000, 25000, 60000, 0, 0, 0, 19, 3, 4, 0, 40000, 0, 3, 1650, 713, 1088, 1, 1, 0, 'transport,position,attack,collectcrystal,flight,support,alliance', 0.33, 0, 800, 1000, 5, 7, 1, 0, 4, 0, 0, 0, 0, 0, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 173.000, 0, 0, 1),
-	(96, 'Weihnachtskreuzer', 1, 'Beschreibung folgt...', 'Beschreibung folgt...', 0, 0, 0, 0, 0, 0, 0, 8000, 80000, 40000, 0, 60000000, 0, 990, 20000, 480, 480, 0, 0, 13, 'position,attack,flight', 0.33, 0, 850000000, 900000000, 850000000, 0, 1, 0, 5, 0, 0, 0, 0, 0, 1.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.000, 0, 16777215, 1),
-	(97, 'AIN Sonde', 1, 'Diese kleine Sonde wurde für den schnellen Transport von kleineren Mengen Ressourcen entwickelt.', 'Beim Aufbau neuer Imperien war der Ressourcenfluss meist das größte Problem aller Völker. Die AURORA Sonde wäre für dieses Zeitalter das beste Schiff, doch zu hoch entwickelt. So erfanden die hoch intelligenten Centauri ein besseres Schiff - die Artifical Intelligence Neurologic - kurz AIN - Sonde. Durch eine extrem leichte Bauweise, der Verzicht von Piloten und einem intelligenten automatischen internen Logistiksystem fanden große Lagerräume und schnelle Antriebe Platz.', 15000, 7500, 5000, 10000, 0, 0, 0, 1, 1, 1, 0, 75000, 0, 0, 48400, 20, 10, 1, 1, 0, 'transport,fetch,position,flight', 0.00, 0, 1, 1, 1, 8, 1, 0, 7, 0, 0, 0, 0, 0, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 37.500, 0, 0, 1),
-	(98, 'AUREA wawa', 1, 'Ein goldenes Schiff, das deine Flotte verschönert und eine echte Errungenschaft ist.', 'Das Aurea wawa kann man nicht bauen, man kann es sich nur verdienen. Es ist ein wunderschönes goldenes Schiff, ähnlich einem Mysticum, nur viel schöner. Wenn du ein solches Schiff besitzt, darfst du immer stolz auf die Sternenzeit zurückblicken, als du die beste Forschung besessen hattest.rnDas Schiff ist nach wawa benannt, ein grossartiger Herrscher, der in der Galaxie der Schnelligkeit der mächtigste war.', 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 1000, 0, 1, 10000, 600, 600, 0, 0, 0, 'position,attack,flight', 0.37, 0, 1, 0, 0, 0, 1, 0, 6, 0, 0, 0, 0, 0, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.000, 0, 0, 1),
-	(99, 'AUREA Chupacabra', 1, 'Ein goldenes Schiff, das deine Flotte verschönert und eine echte Errungenschaft ist.', 'Das Aurea Chupacabra kann man nicht bauen, man kann es sich nur verdienen. Es ist ein wunderschönes goldenes Schiff, ähnlich einem Mysticum, nur viel schöner. Wenn du ein solches Schiff besitzt, darfst du immer stolz auf die Sternenzeit zurückblicken, als du die höchste Kampferfahrung besessen hast.rnDas Schiff wurde Chupacabra zu Ehren nach ihm benannt, um an die glorreiche Zeit der Erfahrungsjagd in der schnellsten Runde zu erinnern.', 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 1000, 0, 1, 10000, 600, 600, 0, 0, 0, 'position,attack,flight', 0.33, 0, 1, 0, 0, 0, 1, 0, 6, 0, 0, 0, 0, 0, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.000, 0, 0, 1),
-	(100, 'SCORPIUS OMEGA Trägerschiff', 1, 'Transportiert mobile Verteidigungsanlagen.', 'Transportiert mobile Verteidigungsanlagen.', 650000, 425000, 265000, 425000, 0, 0, 0, 5, 5, 5, 0, 1000, 0, 0, 11000, 60, 60, 1, 1, 14, 'position', 0.33, 0, 7500, 1, 1, 10, 1, 0, 4, 0, 0, 0, 0, 0, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 1765.000, 0, 0, 0),
-	(101, 'AMYNA Drohne', 1, 'Eine verteidigungsbasierte Kampfdrohne.', 'Die Rigelianer waren extrem stolz auf ihre HELIOS Drohne, welche aufgrund ihrer Waffenstärke im ganzen Universum gefürchtet wurde. Sie hatten jedoch Probleme mit der Verteidigung. Deshalb entwickelten sie eine modifizierte Version der HELIOS Drohne. Die Geschütztürme wurden durch Schild- und Strukturgeneratoren ersetzt. Es entstand die AMYNA Drohne.', 4750, 2000, 1750, 3500, 0, 0, 0, 1, 3, 3, 0, 5000, 0, 1, 4750, 200, 200, 1, 1, 0, 'transport,position,attack,flight,support,alliance', 0.33, 0, 3400, 1700, 1, 3, 1, 0, 4, 0, 0, 0, 0, 0, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 12.000, 0, 0, 0),
-	(102, 'PUMPKIN Explorer', 1, 'Ist es ein Vogel?\r\nIst es ein Flugzeug?\r\nNein! Es ist ein fliegender Kürbis!\r\nWer kam bloß auf diese verrückte Idee?', '', 0, 0, 0, 0, 0, 0, 0, 35, 70, 10, 0, 40000, 0, 1, 22000, 300, 150, 0, 0, 0, 'transport,fetch,collectdebris,position,attack,collectmetal,collectcrystal,collectfuel,analyze,explore,flight,support,alliance', 0.33, 0, 7000, 5500, 100, 0, 1, 0, 3, 0, 0, 1, 0, 0, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.000, 0, 16777215, 1),
-	(104, 'AUREA Andoria', 1, 'Goldenes Schiff der Andorianer', 'Eines von nur zwei existierenden goldenen Schiffe der Andorianer. Das Aurea Andoria wird an einen aussergewöhnlichen Imperator verliehen, dessen Reich alle anderen überragt.', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1000, 0, 0, 50000, 0, 0, 0, 0, 0, 'position,flight,support', 0.33, 0, 1, 1, 1, 2, 1, 0, 6, 0, 0, 0, 0, 0, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.000, 99, 9999999, 1),
-	(105, 'AUREA Andreia', 1, 'Goldenes Schiff der Andorianer', 'Eines von nur zwei existierenden goldenen Schiffe der Andorianer. Das Aurea Andreia wird an einen aussergewöhnlichen Imperator verliehen, der in seinen Schlachten am siegreichsten war.', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1000, 0, 0, 50000, 0, 0, 0, 0, 0, 'position,flight,support', 0.33, 0, 1, 1, 1, 2, 1, 0, 6, 0, 0, 0, 0, 0, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.000, 99, 9999999, 1),
-	(106, 'AUREA Cardassia', 1, 'Goldenes Schiff der Cardassianer', 'Eines von nur zwei existierenden goldenen Schiffe der Cardassianer. Das Aurea Cardassia wird an einen aussergewöhnlichen Imperator verliehen, dessen Reich alle anderen überragt.', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1000, 0, 0, 50000, 0, 0, 0, 0, 0, 'position,flight,support', 0.33, 0, 1, 1, 1, 9, 1, 0, 6, 0, 0, 0, 0, 0, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.000, 99, 9999999, 1),
-	(107, 'AUREA Centauri', 1, 'Goldenes Schiff der Centauri', 'Eines von nur zwei existierenden goldenen Schiffe der Centauri. Das Aurea Centauri wird an einen aussergewöhnlichen Imperator verliehen, dessen Reich alle anderen überragt.', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1000, 0, 0, 50000, 0, 0, 0, 0, 0, 'position,flight,support', 0.33, 0, 1, 1, 1, 8, 1, 0, 6, 0, 0, 0, 0, 0, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.000, 99, 9999999, 1),
-	(108, 'AUREA Ferengi', 1, 'Goldenes Schiff der Ferengi', 'Eines von nur zwei existierenden goldenen Schiffe der Ferengi. Das Aurea Ferengi wird an einen aussergewöhnlichen Imperator verliehen, dessen Reich alle anderen überragt.', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1000, 0, 0, 50000, 0, 0, 0, 0, 0, 'position,flight,support', 0.33, 0, 1, 1, 1, 6, 1, 0, 6, 0, 0, 0, 0, 0, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.000, 99, 9999999, 1),
-	(109, 'AUREA Minbari', 1, 'Goldenes Schiff der Minbari', 'Eines von nur zwei existierenden goldenen Schiffe der Minbari. Das Aurea Minbari wird an einen aussergewöhnlichen Imperator verliehen, dessen Reich alle anderen überragt.', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1000, 0, 0, 50000, 0, 0, 0, 0, 0, 'position,flight,support', 0.33, 0, 1, 1, 1, 5, 1, 0, 6, 0, 0, 0, 0, 0, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.000, 99, 9999999, 1),
-	(110, 'AUREA Orion', 1, 'Goldenes Schiff der Orioner', 'Eines von nur zwei existierenden goldenen Schiffe der Orioner. Das Aurea Orion wird an einen aussergewöhnlichen Imperator verliehen, dessen Reich alle anderen überragt.', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1000, 0, 0, 50000, 0, 0, 0, 0, 0, 'position,flight,support', 0.38, 0, 1, 1, 1, 4, 1, 0, 6, 0, 0, 0, 0, 0, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.000, 99, 9999999, 1),
-	(111, 'AUREA Rigelia', 1, 'Goldenes Schiff der Rigelianer', 'Eines von nur zwei existierenden goldenen Schiffe der Rigelianer. Das Aurea Rigelia wird an einen aussergewöhnlichen Imperator verliehen, dessen Reich alle anderen überragt.', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1000, 0, 0, 50000, 0, 0, 0, 0, 0, 'position,flight,support', 0.33, 0, 1, 1, 1, 3, 1, 0, 6, 0, 0, 0, 0, 0, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.000, 99, 9999999, 0),
-	(112, 'AUREA Serrakin', 1, 'Goldenes Schiff der Serrakin', 'Das einzige reine goldene Schiff der Serrakin. Das Aurea Serrakin wird an einen aussergewöhnlichen Imperator verliehen, dessen Reich alle anderen überragt.', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1000, 0, 0, 50000, 0, 0, 0, 0, 0, 'position,flight,support', 0.33, 0, 1, 1, 1, 10, 1, 0, 6, 0, 0, 0, 0, 0, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.000, 99, 9999999, 1),
-	(113, 'AUREA Terrania', 1, 'Goldenes Schiff der Terraner', 'Eines von nur zwei existierenden goldenen Schiffe der Terraner. Das Aurea Terrania wird an einen aussergewöhnlichen Imperator verliehen, dessen Reich alle anderen überragt.', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1000, 0, 0, 50000, 0, 0, 0, 0, 0, 'position,flight,support', 0.33, 0, 1, 1, 1, 1, 1, 0, 6, 0, 0, 0, 0, 0, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.000, 99, 9999999, 1),
-	(114, 'AUREA Vorgonia', 1, 'Goldenes Schiff der Vorgonen', 'Eines von nur zwei existierenden goldenen Schiffe der Vorgonen. Das Aurea Vorgonia wird an einen aussergewöhnlichen Imperator verliehen, dessen Reich alle anderen überragt.', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1000, 0, 0, 50000, 0, 0, 0, 0, 0, 'position,flight,support', 0.33, 0, 1, 1, 1, 7, 1, 0, 6, 0, 0, 0, 0, 0, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.000, 99, 9999999, 1),
-	(115, 'AUREA Nilam', 1, 'Goldenes Schiff der Cardassianer', 'Eines von nur zwei existierenden goldenen Schiffe der Cardassianer. Das Aurea Nilam wird an einen aussergewöhnlichen Imperator verliehen, der in seinen Schlachten am siegreichsten war.', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1000, 0, 0, 50000, 0, 0, 0, 0, 0, 'position,flight,support', 0.33, 0, 1, 1, 1, 9, 1, 0, 6, 0, 0, 0, 0, 0, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.000, 99, 9999999, 1),
-	(116, 'AUREA Europa', 1, 'Goldenes Schiff der Centauri', 'Eines von nur zwei existierenden goldenen Schiffe der Centauri. Das Aurea Europa wird an einen aussergewöhnlichen Imperator verliehen, der in seinen Schlachten am siegreichsten war.', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1000, 0, 0, 50000, 0, 0, 0, 0, 0, 'position,flight,support', 0.33, 0, 1, 1, 1, 8, 1, 0, 6, 0, 0, 0, 0, 0, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.000, 99, 9999999, 1),
-	(117, 'AUREA Bell', 1, 'Goldenes Schiff der Ferengi', 'Eines von nur zwei existierenden goldenen Schiffe der Ferengi. Das Aurea Bell wird an einen aussergewöhnlichen Imperator verliehen, der in seinen Schlachten am siegreichsten war.', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1000, 0, 0, 50000, 0, 0, 0, 0, 0, 'position,flight,support', 0.33, 0, 1, 1, 1, 6, 1, 0, 6, 0, 0, 0, 0, 0, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.000, 99, 9999999, 1),
-	(118, 'AUREA Wezea', 1, 'Goldenes Schiff der Minbari', 'Eines von nur zwei existierenden goldenen Schiffe der Minbari. Das Aurea Wezea wird an einen aussergewöhnlichen Imperator verliehen, der in seinen Schlachten am siegreichsten war.', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1000, 0, 0, 50000, 0, 0, 0, 0, 0, 'position,flight,support', 0.33, 0, 1, 1, 1, 5, 1, 0, 6, 0, 0, 0, 0, 0, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.000, 99, 9999999, 1),
-	(119, 'AUREA Sirrah', 1, 'Goldenes Schiff der Orioner', 'Eines von nur zwei existierenden goldenen Schiffe der Orioner. Das Aurea Sirrah wird an einen aussergewöhnlichen Imperator verliehen, der in seinen Schlachten am siegreichsten war.', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1000, 0, 0, 50000, 0, 0, 0, 0, 0, 'position,flight,support', 0.33, 0, 1, 1, 1, 4, 1, 0, 6, 0, 0, 0, 0, 0, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.000, 99, 9999999, 1),
-	(120, 'AUREA Helios', 1, 'Goldenes Schiff der Rigelianer', 'Eines von nur zwei existierenden goldenen Schiffe der Rigelianer. Das Aurea Helios wird an einen aussergewöhnlichen Imperator verliehen, der in seinen Schlachten am siegreichsten war.', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1000, 0, 0, 50000, 0, 0, 0, 0, 0, 'position,flight,support', 0.33, 0, 1, 1, 1, 3, 1, 0, 6, 0, 0, 0, 0, 0, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.000, 99, 9999999, 1),
-	(121, 'AUREA Scorpius', 1, 'Goldenes Transportschiff der Serrakin', 'Die mobile Version der goldenen Verteidigungsanlage der Serrakin. Das Aurea Scorpius wird an einen aussergewöhnlichen Imperator verliehen, der in seinen Schlachten am siegreichsten war.', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1000, 0, 0, 50000, 0, 0, 0, 0, 0, 'position,flight,support', 0.33, 0, 1, 1, 1, 10, 1, 0, 6, 0, 0, 0, 0, 0, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.000, 99, 9999999, 1),
-	(122, 'AUREA Daedalus', 1, 'Goldenes Schiff der Terraner', 'Eines von nur zwei existierenden goldenen Schiffe der Terraner. Das Aurea Daedalus wird an einen aussergewöhnlichen Imperator verliehen, der in seinen Schlachten am siegreichsten war.', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1000, 0, 0, 50000, 0, 0, 0, 0, 0, 'position,flight,support', 0.33, 0, 1, 1, 1, 1, 1, 0, 6, 0, 0, 0, 0, 0, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.000, 99, 9999999, 1),
-	(123, 'AUREA Ikaros', 1, 'Goldenes Schiff der Vorgonen', 'Eines von nur zwei existierenden goldenen Schiffe der Vorgonen. Das Aurea Ikaros wird an einen aussergewöhnlichen Imperator verliehen, der in seinen Schlachten am siegreichsten war.', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1000, 0, 0, 50000, 0, 0, 0, 0, 0, 'position,flight,support', 0.33, 0, 1, 1, 1, 7, 1, 0, 6, 0, 0, 0, 0, 0, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.000, 99, 9999999, 1),
-	(124, 'EASTER Hunter', 1, 'Der EASTER Hunter wurde von Osterhasen entwickelt, die es satt hatten, Eier zu verstecken und gejagt zu werden. Mit diesem Schiff gehen sie selbst auf die Jagd.', 'Der EASTER Hunter wurde von Osterhasen entwickelt, die es satt hatten, Eier zu verstecken und gejagt zu werden. Mit diesem Schiff gehen sie selbst auf die Jagd.', 0, 0, 0, 0, 10, 0, 0, 35, 70, 10, 0, 500000, 0, 1, 30000, 300, 150, 0, 0, 0, 'transport,fetch,collectdebris,position,attack,collectmetal,collectcrystal,collectfuel,analyze,explore,flight,support,alliance', 0.33, 0, 10000, 6000, 100, 0, 1, 0, 6, 0, 0, 1, 1, 1, 10.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.010, 0, 16777215, 0),
-	(125, 'ARAKNA Albtraumjäger', 1, 'Furcht hat einen Namen: ARAKNA!', 'Allen Bemühungen zum Trotz taucht eine lange vergrabene Technologie wieder auf. Selbständig zur hässlichen Fratze des ARAKNA Albtraumjägers gewandelt, macht sie Jagd auf ihresgleichen.', 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 10, 0, 0, 13000, 13, 13, 0, 0, 0, 'transport,fetch,position,attack,spyattack,flight,support,alliance', 0.00, 0, 31000, 10000, 21000, 0, 1, 0, 2, 0, 0, 1, 0, 0, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.000, 0, 0, 0),
-	(132, 'SUPRANALIS Spioschiff', 1, 'Kann von einem anderen Spieler eine Technologie klauen.', 'Die galaktischen Hochprofessoren waren äusserst stolz darauf, dass sie die höchsten Technologien aller Völker besassen. Entsprechend gross war der Neid, als sie von einem andern Volk in einer von ihnen vernachlässigten Technologie übertrumpft wurden. Also erfanden sie dieses Spionageschiff, mit dessen Hilfe sie den anderen Völkern etwaige höher entwickelte Technologien klauen können.', 32500000, 25000000, 25000000, 20000000, 0, 0, 0, 500, 800, 800, 0, 95000, 0, 20, 5000, 1800, 1800, 1, 0, 0, 'position,spyattack,flight,support', 0.33, 0, 50000, 50000, 25000, 0, 1, 0, 6, 0, 0, 0, 0, 0, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 102500.000, 5, 35000, 1),
-	(134, 'EGG-0A0D', 1, 'Das EGG-0A0D ist das ultimative Raumschiff der Easter EGG Cooperation, mit einem revolutionären Reaktor, der alle Schiffsfähigkeiten aktiviert.', 'Das EGG-0A0D von der Easter EGG Cooperation ist das neueste Flaggschiff der Raumfahrttechnologie. Ausgestattet mit einem revolutionären Reaktor bietet es unerreichte Leistung und Vielseitigkeit. Mit seiner eleganten Bauweise, hochmodernen Steuerung und innovativen Funktionen ist das EGG-0A0D bereit, die Grenzen der Raumfahrt zu überschreiten und neue Horizonte zu erkunden.', 0, 0, 0, 0, 0, 0, 0, 1, 4, 2024, 0, 1042024, 0, 1, 1042024, 64, 1224, 0, 0, 0, '', 0.33, 0, 1, 1, 0, 0, 0, 0, 5, 1, 0, 0, 0, 0, 1.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.000, 0, 0, 0),
-	(135, 'NOCTURNUS Dunklerjäger', 1, 'NOCTURNUS ein Jäger der aus der Dunkelheit kommt.', 'Das Raumschiff NOCTURNUS war einst das bestgehütete Geheimnis der Schattenflotte. Es wurde in den dunklen Tiefen des Weltraums entworfen, nach dem Vorbild einer Fledermaus – ein lautloser Schiff der Nacht. NOCTURNUS konnte lautlos durch die Leere gleiten und seine Feinde überraschen, bevor sie es bemerkten. Als der rote Riesenstern Hadrion explodierte, war es NOCTURNUS, das die letzte Rettungsmission anführte, während um es herum die Galaxie in Flammen aufging. Die Legende besagt, dass nur die furchtlosesten Piloten das Schiff beherrschen können, denn es scheint fast lebendig zu sein – als ob die Dunkelheit selbst es durch die Sterne lenkt.\r\n\r\nMaximal Level 1.', 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 3110, 0, 1, 311024, 0, 0, 0, 0, 0, 'transport,fetch,position,attack,stealthattack,flight,support,alliance', 0.33, 0, 3110, 3110, 3110, 0, 0, 0, 2, 0, 1, 1, 1, 1000, 99.99, 0.15, 0.15, 0.15, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.000, 0, 0, 0),
-	(136, 'VORATH Sammler', 1, 'VORATH ein lautloser Sammler der Leere, geschaffen, um Gasnebel zu verschlingen und die Überreste toter Asteroiden einzusammeln.', 'Eventschiff - Nicht Baubar\r\n\r\nDer VORATH ist ein Schiff, erschaffen aus dunklen, kosmischen Kräften, deren Ursprung im Nebel der Zeit verloren ging. Niemand weiß, wer sie gebaut hat oder wie ihre Systeme funktionieren. Wenn sie aktiviert wird, erwacht sie nur langsam, ihre unbekannten Mechanismen benötigen lange Bootzeiten, als müsse sich das Schiff erst an die Realität gewöhnen. Doch sobald sie vollständig erwacht ist, erreicht der VORATH eine beängstigende Geschwindigkeit und gleitet lautlos durch die Sterne, als würde sie von der Dunkelheit selbst getragen.', 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 311025, 0, 1, 311025, 3000, 3000, 1, 0, 0, 'transport,fetch,position,attack,collectmetal,collectcrystal,collectfuel,flight,support,alliance', 0.33, 0, 3110, 3110, 3110, 0, 1, 0, 2, 0, 0, 1, 1, 1000, 99.99, 0.15, 0.15, 0.15, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.000, 0, 0, 0),
-	(137, 'MORVEX Sammler', 1, 'Der MORVEX Sammler ist ein hochentwickeltes Ressourcenschiff, basierend auf VORATH-Technologie, aktuell nur in begrenzter Stückzahl verfügbar.', 'Eventschiff - Nicht Baubar\r\n\r\nDer MORVEX Sammler ist das Ergebnis einer bahnbrechenden Forschungsreihe, die nach der erfolgreichen Studie moderner Sammelschiffe ihren Höhepunkt fand. Aufbauend auf den gewonnenen Erkenntnissen aus der Analyse des mystischen Schiffes VORATH, konnten bislang unerklärliche Technologien teilweise entschlüsselt und in ein kontrollierbares System überführt werden.\r\n\r\nDer MORVEX vereint diese fremdartigen Mechaniken mit bewährter Ingenieurskunst und ist speziell darauf ausgelegt, Asteroiden effizient zu bergen sowie Gas- und Nebelvorkommen gezielt abzusaugen. Seine zahlreichen Greif- und Saugsysteme arbeiten dabei in perfekter Abstimmung und ermöglichen eine bisher unerreichte Ausbeute. Trotz seiner komplexen Systeme gilt der MORVEX als Meilenstein moderner Ressourcengewinnung und als erstes Schiff, das das Wissen der VORATH für die Imperatoren nutzbar macht.\r\n\r\nDa sich die Massenproduktion dieser komplexen Technologie derzeit als äußerst schwierig erweist, wurde zunächst nur eine begrenzte Charge gefertigt und an die Imperatoren verteilt. Die verbleibenden Prototypen befinden sich weiterhin in den Händen der Forschung, um die zugrunde liegende Technologie weiter zu analysieren und künftig besser nutzbar zu machen.', 1, 1, 1, 1, 0, 0, 0, 4, 1, 1, 0, 210326, 0, 1, 2103, 2103, 2103, 0, 0, 0, 'transport,collectdebris,position,attack,collectmetal,collectcrystal,collectfuel,flight,support,alliance', 0.33, 0, 2103, 2103, 0, 0, 1, 0, 2, 0, 0, 0, 0, 0, 1.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.004, 0, 0, 0);
+-- Daten-Export vom Benutzer nicht ausgewählt
 
 -- Exportiere Struktur von Tabelle etoa_test.ship_cat
 CREATE TABLE IF NOT EXISTS `ship_cat` (
@@ -2883,17 +2094,7 @@ CREATE TABLE IF NOT EXISTS `ship_cat` (
   KEY `cat_order` (`cat_order`)
 ) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb3;
 
--- Exportiere Daten aus Tabelle etoa_test.ship_cat: ~0 rows (ungefähr)
-DELETE FROM `ship_cat`;
-INSERT INTO `ship_cat` (`cat_id`, `cat_name`, `cat_order`, `cat_color`) VALUES
-	(1, 'Kriegsschiff', 2, '#0080FF'),
-	(2, 'Ziviles Schiff', 1, '#00FF00'),
-	(3, 'Episches Schiff', 5, '#B048F8'),
-	(4, 'Rassenspezifisches Schiff', 4, '#f00'),
-	(5, 'NPC-Schiff', 7, '#F07902'),
-	(6, 'Allianzschiff', 6, '#ffffff'),
-	(7, 'Ziviles Rassenschiff', 3, '#ffffff'),
-	(8, 'Sammlerschiffe', 1, '#ffffff');
+-- Daten-Export vom Benutzer nicht ausgewählt
 
 -- Exportiere Struktur von Tabelle etoa_test.ship_queue
 CREATE TABLE IF NOT EXISTS `ship_queue` (
@@ -2911,10 +2112,7 @@ CREATE TABLE IF NOT EXISTS `ship_queue` (
   KEY `queue_planet_id` (`queue_entity_id`)
 ) ENGINE=MyISAM AUTO_INCREMENT=22 DEFAULT CHARSET=utf8mb3;
 
--- Exportiere Daten aus Tabelle etoa_test.ship_queue: 0 rows
-DELETE FROM `ship_queue`;
-/*!40000 ALTER TABLE `ship_queue` DISABLE KEYS */;
-/*!40000 ALTER TABLE `ship_queue` ENABLE KEYS */;
+-- Daten-Export vom Benutzer nicht ausgewählt
 
 -- Exportiere Struktur von Tabelle etoa_test.ship_requirements
 CREATE TABLE IF NOT EXISTS `ship_requirements` (
@@ -2934,303 +2132,7 @@ CREATE TABLE IF NOT EXISTS `ship_requirements` (
   CONSTRAINT `FK_4F2112CA7E57261C` FOREIGN KEY (`req_building_id`) REFERENCES `buildings` (`building_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=454 DEFAULT CHARSET=utf8mb3;
 
--- Exportiere Daten aus Tabelle etoa_test.ship_requirements: ~0 rows (ungefähr)
-DELETE FROM `ship_requirements`;
-INSERT INTO `ship_requirements` (`id`, `obj_id`, `req_building_id`, `req_tech_id`, `req_level`) VALUES
-	(1, 1, 9, NULL, 2),
-	(2, 1, 11, NULL, 1),
-	(3, 2, 9, NULL, 2),
-	(4, 3, 9, NULL, 1),
-	(5, 4, 9, NULL, 5),
-	(6, 4, 11, NULL, 2),
-	(7, 6, 9, NULL, 7),
-	(8, 6, 11, NULL, 7),
-	(9, 7, 9, NULL, 8),
-	(10, 7, 11, NULL, 5),
-	(11, 8, 9, NULL, 10),
-	(12, 8, 11, NULL, 8),
-	(13, 8, 8, NULL, 7),
-	(14, 1, NULL, 4, 4),
-	(15, 2, NULL, 4, 1),
-	(16, 3, NULL, 7, 1),
-	(17, 3, NULL, 4, 1),
-	(18, 4, NULL, 5, 3),
-	(19, 7, NULL, 5, 5),
-	(20, 6, NULL, 6, 4),
-	(22, 9, NULL, 4, 2),
-	(25, 11, NULL, 6, 11),
-	(26, 11, 9, NULL, 9),
-	(27, 11, 11, NULL, 10),
-	(33, 12, NULL, 3, 6),
-	(34, 12, NULL, 10, 5),
-	(35, 13, 9, NULL, 12),
-	(36, 13, 11, NULL, 10),
-	(38, 13, NULL, 6, 13),
-	(42, 14, 9, NULL, 4),
-	(43, 14, 11, NULL, 4),
-	(46, 15, NULL, 5, 7),
-	(47, 15, 9, NULL, 4),
-	(49, 15, NULL, 8, 12),
-	(50, 15, NULL, 3, 9),
-	(51, 8, NULL, 5, 8),
-	(52, 12, NULL, 4, 7),
-	(53, 42, 9, NULL, 10),
-	(54, 42, NULL, 16, 7),
-	(55, 42, NULL, 11, 11),
-	(57, 43, NULL, 20, 5),
-	(58, 42, NULL, 6, 6),
-	(60, 43, NULL, 16, 2),
-	(64, 40, 9, NULL, 5),
-	(68, 41, 9, NULL, 3),
-	(70, 41, NULL, 20, 5),
-	(71, 45, 9, NULL, 7),
-	(72, 45, NULL, 20, 7),
-	(73, 45, NULL, 16, 6),
-	(78, 37, 9, NULL, 3),
-	(79, 37, NULL, 16, 2),
-	(80, 37, NULL, 20, 5),
-	(81, 38, 9, NULL, 5),
-	(82, 38, NULL, 16, 4),
-	(83, 38, NULL, 6, 5),
-	(84, 33, 9, NULL, 3),
-	(85, 33, NULL, 16, 2),
-	(86, 33, NULL, 20, 5),
-	(87, 34, 9, NULL, 5),
-	(88, 34, NULL, 16, 4),
-	(89, 34, NULL, 5, 10),
-	(90, 34, NULL, 8, 13),
-	(91, 32, 9, NULL, 7),
-	(92, 32, NULL, 16, 6),
-	(93, 32, NULL, 20, 6),
-	(94, 32, NULL, 17, 3),
-	(95, 30, 9, NULL, 5),
-	(96, 30, NULL, 16, 6),
-	(98, 30, NULL, 5, 6),
-	(99, 29, 9, NULL, 3),
-	(100, 29, NULL, 16, 2),
-	(101, 29, NULL, 20, 5),
-	(106, 28, 9, NULL, 5),
-	(107, 28, NULL, 16, 4),
-	(109, 28, 11, NULL, 6),
-	(113, 26, 9, NULL, 8),
-	(114, 26, NULL, 16, 10),
-	(117, 23, 9, NULL, 7),
-	(118, 23, NULL, 16, 6),
-	(119, 23, NULL, 6, 5),
-	(120, 23, NULL, 7, 15),
-	(121, 25, 9, NULL, 3),
-	(122, 25, 11, NULL, 7),
-	(123, 25, NULL, 20, 5),
-	(124, 25, NULL, 16, 2),
-	(125, 24, 9, NULL, 8),
-	(126, 24, NULL, 16, 6),
-	(127, 24, NULL, 5, 9),
-	(129, 20, 9, NULL, 7),
-	(130, 20, NULL, 16, 6),
-	(131, 20, NULL, 6, 6),
-	(133, 21, 9, NULL, 3),
-	(134, 21, NULL, 16, 2),
-	(135, 21, NULL, 20, 5),
-	(136, 22, 9, NULL, 7),
-	(137, 22, NULL, 6, 7),
-	(138, 22, NULL, 10, 7),
-	(139, 22, NULL, 16, 6),
-	(140, 19, 9, NULL, 3),
-	(142, 19, NULL, 20, 5),
-	(143, 18, 9, NULL, 5),
-	(147, 17, 9, NULL, 7),
-	(148, 17, NULL, 16, 6),
-	(149, 17, NULL, 6, 6),
-	(151, 46, 9, NULL, 6),
-	(152, 46, NULL, 12, 3),
-	(153, 46, NULL, 4, 6),
-	(163, 50, 9, NULL, 6),
-	(164, 50, NULL, 14, 5),
-	(167, 9, 11, NULL, 1),
-	(169, 51, 9, NULL, 1),
-	(170, 51, NULL, 4, 3),
-	(171, 51, NULL, 14, 9),
-	(172, 51, NULL, 7, 8),
-	(173, 51, NULL, 11, 5),
-	(174, 52, 9, NULL, 6),
-	(176, 52, NULL, 3, 4),
-	(178, 22, 11, NULL, 5),
-	(180, 37, NULL, 21, 3),
-	(181, 23, NULL, 21, 5),
-	(182, 53, 11, NULL, 8),
-	(184, 53, NULL, 14, 10),
-	(185, 53, NULL, 21, 8),
-	(186, 53, 9, NULL, 10),
-	(187, 53, NULL, 9, 4),
-	(188, 13, NULL, 10, 7),
-	(189, 13, NULL, 9, 6),
-	(190, 13, NULL, 8, 7),
-	(191, 6, NULL, 9, 6),
-	(193, 2, NULL, 5, 1),
-	(194, 43, 9, NULL, 3),
-	(195, 57, 9, NULL, 5),
-	(196, 57, NULL, 4, 3),
-	(214, 63, 9, NULL, 9),
-	(215, 63, NULL, 5, 10),
-	(216, 63, NULL, 16, 8),
-	(220, 57, 11, NULL, 4),
-	(221, 59, NULL, 11, 12),
-	(222, 59, 9, NULL, 9),
-	(224, 59, NULL, 16, 8),
-	(225, 64, NULL, 20, 7),
-	(227, 64, 9, NULL, 9),
-	(228, 64, NULL, 16, 8),
-	(229, 65, NULL, 17, 5),
-	(231, 65, NULL, 20, 7),
-	(232, 65, NULL, 16, 8),
-	(233, 65, 9, NULL, 9),
-	(236, 66, NULL, 20, 7),
-	(237, 66, NULL, 16, 8),
-	(238, 66, 9, NULL, 9),
-	(242, 67, 9, NULL, 9),
-	(244, 68, NULL, 3, 2),
-	(245, 68, NULL, 5, 2),
-	(247, 69, 11, NULL, 6),
-	(248, 69, NULL, 5, 5),
-	(249, 69, NULL, 9, 4),
-	(250, 69, NULL, 25, 2),
-	(251, 70, NULL, 20, 5),
-	(252, 70, 9, NULL, 3),
-	(253, 70, NULL, 16, 2),
-	(268, 72, 9, NULL, 9),
-	(274, 71, NULL, 4, 1),
-	(275, 71, 9, NULL, 1),
-	(279, 72, NULL, 16, 8),
-	(280, 68, 9, NULL, 1),
-	(281, 9, 9, NULL, 1),
-	(282, 79, NULL, 5, 4),
-	(286, 82, NULL, 5, 5),
-	(287, 81, NULL, 5, 2),
-	(288, 80, NULL, 5, 1),
-	(304, 1, NULL, 5, 1),
-	(305, 70, NULL, 21, 3),
-	(306, 20, NULL, 15, 4),
-	(307, 14, NULL, 5, 5),
-	(308, 14, NULL, 4, 5),
-	(309, 28, NULL, 20, 7),
-	(311, 80, 9, NULL, 1),
-	(315, 81, 9, NULL, 3),
-	(317, 82, 9, NULL, 8),
-	(318, 82, NULL, 19, 3),
-	(321, 82, NULL, 16, 4),
-	(322, 82, NULL, 25, 3),
-	(323, 82, NULL, 12, 8),
-	(324, 79, 9, NULL, 6),
-	(325, 79, NULL, 3, 5),
-	(326, 79, 10, NULL, 5),
-	(329, 91, 9, NULL, 6),
-	(330, 91, NULL, 16, 4),
-	(331, 24, NULL, 3, 15),
-	(332, 24, NULL, 21, 8),
-	(333, 27, NULL, 14, 4),
-	(334, 27, 9, NULL, 5),
-	(335, 27, NULL, 9, 5),
-	(336, 27, NULL, 16, 4),
-	(337, 94, NULL, 6, 8),
-	(338, 94, 9, NULL, 9),
-	(339, 94, NULL, 9, 10),
-	(340, 94, NULL, 16, 9),
-	(341, 26, NULL, 21, 10),
-	(342, 26, NULL, 20, 9),
-	(343, 26, 11, NULL, 9),
-	(344, 95, NULL, 5, 7),
-	(345, 95, 9, NULL, 5),
-	(346, 95, NULL, 16, 2),
-	(347, 95, NULL, 10, 8),
-	(350, 60, 9, NULL, 9),
-	(351, 60, NULL, 20, 7),
-	(352, 60, NULL, 5, 10),
-	(353, 60, NULL, 16, 8),
-	(354, 61, NULL, 19, 4),
-	(355, 61, 9, NULL, 9),
-	(356, 61, NULL, 20, 7),
-	(357, 61, NULL, 5, 10),
-	(358, 61, NULL, 16, 8),
-	(359, 62, NULL, 7, 14),
-	(360, 62, 9, NULL, 9),
-	(361, 62, NULL, 20, 7),
-	(362, 62, NULL, 5, 10),
-	(363, 62, NULL, 16, 8),
-	(364, 63, NULL, 20, 7),
-	(365, 59, NULL, 20, 7),
-	(366, 59, NULL, 5, 10),
-	(367, 64, NULL, 5, 10),
-	(368, 64, NULL, 8, 10),
-	(369, 65, NULL, 5, 10),
-	(370, 72, NULL, 12, 5),
-	(371, 72, NULL, 20, 7),
-	(372, 72, NULL, 5, 10),
-	(373, 66, NULL, 5, 10),
-	(376, 67, NULL, 25, 15),
-	(377, 67, NULL, 16, 8),
-	(378, 67, NULL, 20, 7),
-	(379, 67, NULL, 5, 10),
-	(380, 66, NULL, 9, 10),
-	(381, 52, NULL, 6, 5),
-	(382, 47, 9, NULL, 4),
-	(383, 47, 11, NULL, 5),
-	(384, 47, NULL, 21, 5),
-	(385, 47, NULL, 3, 6),
-	(386, 12, 9, NULL, 6),
-	(387, 10, 9, NULL, 3),
-	(388, 10, NULL, 4, 1),
-	(390, 31, NULL, 3, 5),
-	(391, 31, NULL, 14, 5),
-	(393, 31, NULL, 16, 7),
-	(394, 36, 9, NULL, 7),
-	(395, 36, NULL, 16, 6),
-	(396, 36, NULL, 20, 6),
-	(397, 36, NULL, 19, 10),
-	(402, 91, NULL, 20, 4),
-	(404, 44, NULL, 5, 5),
-	(405, 97, 9, NULL, 3),
-	(406, 97, NULL, 16, 2),
-	(408, 69, 9, NULL, 5),
-	(409, 60, NULL, 10, 10),
-	(410, 63, NULL, 9, 10),
-	(411, 101, 9, NULL, 5),
-	(412, 101, NULL, 9, 12),
-	(413, 101, NULL, 16, 6),
-	(414, 101, NULL, 20, 8),
-	(415, 52, NULL, 14, 5),
-	(416, 32, NULL, 18, 3),
-	(417, 40, NULL, 4, 7),
-	(418, 44, 9, NULL, 5),
-	(419, 44, NULL, 16, 2),
-	(420, 44, NULL, 4, 6),
-	(421, 44, 11, NULL, 4),
-	(422, 31, 9, NULL, 7),
-	(423, 100, 9, NULL, 8),
-	(424, 100, NULL, 3, 7),
-	(425, 100, NULL, 5, 9),
-	(427, 100, NULL, 12, 10),
-	(428, 100, NULL, 8, 7),
-	(429, 134, 6, NULL, 2),
-	(430, 134, NULL, 23, 10),
-	(431, 134, NULL, 22, 2),
-	(432, 50, NULL, 10, 5),
-	(433, 18, NULL, 16, 1),
-	(434, 18, NULL, 9, 2),
-	(435, 18, NULL, 5, 2),
-	(436, 18, 11, NULL, 2),
-	(437, 30, NULL, 9, 12),
-	(438, 31, NULL, 12, 7),
-	(440, 40, 11, NULL, 4),
-	(441, 40, NULL, 16, 2),
-	(442, 79, NULL, 12, 4),
-	(443, 80, NULL, 12, 1),
-	(444, 81, NULL, 12, 2),
-	(445, 97, NULL, 20, 5),
-	(446, 136, NULL, 4, 1),
-	(447, 136, NULL, 14, 1),
-	(450, 137, NULL, 4, 1),
-	(451, 137, NULL, 14, 1),
-	(453, 137, NULL, 6, 1);
+-- Daten-Export vom Benutzer nicht ausgewählt
 
 -- Exportiere Struktur von Tabelle etoa_test.sol_types
 CREATE TABLE IF NOT EXISTS `sol_types` (
@@ -3251,18 +2153,7 @@ CREATE TABLE IF NOT EXISTS `sol_types` (
   KEY `type_name` (`sol_type_name`)
 ) ENGINE=MyISAM AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb3;
 
--- Exportiere Daten aus Tabelle etoa_test.sol_types: 0 rows
-DELETE FROM `sol_types`;
-/*!40000 ALTER TABLE `sol_types` DISABLE KEYS */;
-INSERT INTO `sol_types` (`sol_type_id`, `sol_type_name`, `sol_type_f_metal`, `sol_type_f_crystal`, `sol_type_f_plastic`, `sol_type_f_fuel`, `sol_type_f_food`, `sol_type_f_power`, `sol_type_f_population`, `sol_type_f_buildtime`, `sol_type_comment`, `sol_type_f_researchtime`, `sol_type_consider`) VALUES
-	(1, 'Gelber Stern', 1.35, 1.30, 1.10, 1.00, 0.90, 1.10, 1.10, 1.10, 'Die gelben Sterne gehören zu der Kategorie "mittelgrosse Sterne". Das Alter solcher Gelben Sterne kann extrem variieren; sie können zwischen einigen Jahrtausenden bis hin zu Jahrmillionen alt sein.<br>Generell gilt jedoch, dass auf Gelben Sternen gemässigte und gute Lebensbedingungen herrschen. Ausserdem ist die Geodiversität relativ gross, was den Abbau von Metallen genauso fördert wie die Entwicklung von Chemikalien. Dank dem mineralhaltigen Boden ist sogar ein gewisser Kristallabbau möglich.<br>Einzig der Nahrung scheint der mineralienhaltige Boden nicht ganz so gut zu bekommen...', 1.00, 1),
-	(2, 'Blauer Stern', 1.00, 1.30, 1.00, 1.00, 1.05, 0.90, 1.00, 1.00, 'Diese Art von Sternen erscheint dem Beobachter meist blau; das liegt daran, dass im Innern des Sterns eine gewaltige Hitze herrscht, vergleichbar mit der blauen Färbung einer Flamme beim Schweissen.<br>Durch die gigantischen Hitzewellen sind die Lebensbedingungen im Umfeld Blauer Sterne für die verschiedenen Völker nicht optimal. Einige jedoch haben sich inzwischen dem heissen Klima anpassen können und nutzen genau dieses zur Verschmelzung von Kristallinem Material, um qualitativ hochstehende Kristallite herzustellen.<br>Bisher wollte es jedoch noch keinem Volk so richtig gelingen, aus dem heissen Klima einen weiteren Nutzen in Sachen Industrie zu ziehen. Im Gegenteil, meist ist die Stromproduktion und das Wachstum der Bevölkerung tiefer als in anderen Sternsystemen.', 1.00, 1),
-	(4, 'Weisser Stern', 0.90, 1.20, 1.25, 1.30, 0.95, 1.10, 1.00, 1.00, 'Weisse Sterne sind stark energiehaltige Sterne, deren Energieausstösse für das extrem helle Licht verantwortlich sind.<br>Dadurch lässt sich in der Nähe von Weissen Sternen mit relativ wenig Aufwand Tritium und Strom herstellen. Ebenfalls positiv wirkt sich die Energiestrahlung auf die Kristallisation aus, jedoch nicht auf die Menschen. Jene ertragen die gewaltigen Energiemengen nicht zu lange, weshalb der Bevölkerungswachstum in Weissen Sternen meist kleiner als in anderen Sternen ist.', 0.90, 1),
-	(3, 'Roter Stern', 0.95, 0.95, 1.00, 0.85, 0.95, 0.90, 1.10, 0.85, 'Rote Sterne sind eher klein und schon recht alt. Dadurch ist ihre Energieaustrahlung nicht mehr ganz so gross, was wiederum eine gute Klimabedingung für die meisten Völker ist. Deshalb verwundert es nicht, dass man in vielen Roten Sternen alle möglichen Völker antrifft, welche dort seit ewigen Zeiten eine neue Heimat gefunden haben.<br>Ebenfalls positiv wirkt sich die gemässigte Energieabgabe der Roten Sterne auf verschiedenste Produktionen aus, was dann wiederum den dort wohnhaften Völkern zugute kommt.', 1.00, 1),
-	(7, 'Grüner Stern', 1.40, 1.10, 1.00, 1.00, 1.30, 1.00, 1.00, 1.10, 'Grüne Sterne wirken auf den ersten Blick giftig - und so ganz unrecht ist das auch nicht. Durch Gase aus dem Inneren der Sterne werden immer wieder Epidemien ausgelöst, die Teile der Bewohner von Grünen Sternen dahinraffen.<br>Entgegen den unwirtlichen Lebensbedingungen wirken sich die Gase und die Geostruktur positiv auf die Steingefüge der Sterne aus.<br>Es verwundert daher nicht, dass in Grünen Sternen oftmals Raffinerien, Erzwerke und Metallverarbeitungsanlagen anzutreffen sind.', 1.00, 1),
-	(5, 'Violetter Stern', 1.20, 0.90, 1.10, 1.00, 1.20, 1.10, 1.00, 1.00, 'Violette Sterne sind sehr junge Sterne, die sich meistens innerhalb von Gaswolken befinden. Die für den Betrachter violette Färbung der Sonne entsteht durch die vielen verschiedenen Nebel, welche das Sonnenlicht jeweils verschieden brechen.<br>Weil die Sterne noch ziemlich jung sind, ist noch nicht viel über sie bekannt; die Beobachtungen der verschiedenen Völker haben erst begonnen.', 0.90, 1),
-	(6, 'Schwarzer Stern', 1.00, 1.05, 1.05, 0.90, 1.00, 1.00, 1.00, 0.90, 'Praktisch keiner weiss etwas über schwarze Sterne, da sie erst vor kurzem durch eine neuartige Objektivtechnologie sichtbar gemacht werden konnten.<br>Erst einzelne überragende Forscher haben angefangen, sich an diese Mysterien im All heranzuwagen.<br>Ungenannte Quellen munkeln jedoch, dass die schwarze Färbung durch aktive schwarze Löcher auftritt, was die Völker natürlich davor abschreckt, mehr über die Schwarzen Sterne rauszufinden.', 1.00, 1);
-/*!40000 ALTER TABLE `sol_types` ENABLE KEYS */;
+-- Daten-Export vom Benutzer nicht ausgewählt
 
 -- Exportiere Struktur von Tabelle etoa_test.space
 CREATE TABLE IF NOT EXISTS `space` (
@@ -3271,10 +2162,7 @@ CREATE TABLE IF NOT EXISTS `space` (
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb3;
 
--- Exportiere Daten aus Tabelle etoa_test.space: 0 rows
-DELETE FROM `space`;
-/*!40000 ALTER TABLE `space` DISABLE KEYS */;
-/*!40000 ALTER TABLE `space` ENABLE KEYS */;
+-- Daten-Export vom Benutzer nicht ausgewählt
 
 -- Exportiere Struktur von Tabelle etoa_test.specialists
 CREATE TABLE IF NOT EXISTS `specialists` (
@@ -3314,10 +2202,7 @@ CREATE TABLE IF NOT EXISTS `specialists` (
   PRIMARY KEY (`specialist_id`)
 ) ENGINE=MyISAM AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
 
--- Exportiere Daten aus Tabelle etoa_test.specialists: 0 rows
-DELETE FROM `specialists`;
-/*!40000 ALTER TABLE `specialists` DISABLE KEYS */;
-/*!40000 ALTER TABLE `specialists` ENABLE KEYS */;
+-- Daten-Export vom Benutzer nicht ausgewählt
 
 -- Exportiere Struktur von Tabelle etoa_test.stars
 CREATE TABLE IF NOT EXISTS `stars` (
@@ -3327,10 +2212,7 @@ CREATE TABLE IF NOT EXISTS `stars` (
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb3;
 
--- Exportiere Daten aus Tabelle etoa_test.stars: 0 rows
-DELETE FROM `stars`;
-/*!40000 ALTER TABLE `stars` DISABLE KEYS */;
-/*!40000 ALTER TABLE `stars` ENABLE KEYS */;
+-- Daten-Export vom Benutzer nicht ausgewählt
 
 -- Exportiere Struktur von Tabelle etoa_test.techlist
 CREATE TABLE IF NOT EXISTS `techlist` (
@@ -3349,12 +2231,9 @@ CREATE TABLE IF NOT EXISTS `techlist` (
   KEY `techlist_tech_id` (`techlist_tech_id`),
   KEY `techlist_planet_id` (`techlist_entity_id`),
   KEY `techlist_build_end_time` (`techlist_build_end_time`)
-) ENGINE=MyISAM AUTO_INCREMENT=67 DEFAULT CHARSET=utf8mb3;
+) ENGINE=MyISAM AUTO_INCREMENT=89 DEFAULT CHARSET=utf8mb3;
 
--- Exportiere Daten aus Tabelle etoa_test.techlist: 0 rows
-DELETE FROM `techlist`;
-/*!40000 ALTER TABLE `techlist` DISABLE KEYS */;
-/*!40000 ALTER TABLE `techlist` ENABLE KEYS */;
+-- Daten-Export vom Benutzer nicht ausgewählt
 
 -- Exportiere Struktur von Tabelle etoa_test.technologies
 CREATE TABLE IF NOT EXISTS `technologies` (
@@ -3379,32 +2258,7 @@ CREATE TABLE IF NOT EXISTS `technologies` (
   KEY `tech_order` (`tech_order`)
 ) ENGINE=InnoDB AUTO_INCREMENT=26 DEFAULT CHARSET=utf8mb3;
 
--- Exportiere Daten aus Tabelle etoa_test.technologies: ~0 rows (ungefähr)
-DELETE FROM `technologies`;
-INSERT INTO `technologies` (`tech_id`, `tech_name`, `tech_type_id`, `tech_shortcomment`, `tech_longcomment`, `tech_costs_metal`, `tech_costs_crystal`, `tech_costs_fuel`, `tech_costs_plastic`, `tech_costs_food`, `tech_costs_power`, `tech_build_costs_factor`, `tech_last_level`, `tech_show`, `tech_order`, `tech_stealable`) VALUES
-	(3, 'Energietechnik', 4, 'Diese Technologie dient zur Erforschung neuer Arten der Energiegewinnung.', 'Durch die Unterstützung der Energietechnik können neue Arten der Energiegewinnung erforscht werden.', 300, 250, 30, 50, 0, 0, 1.50, 50, 1, 0, 1),
-	(4, 'Wasserstoffantrieb', 1, 'Einfacher Antrieb für Raumschiffe', 'Ein Wasserstoffantrieb nutzt Wasserstoff als Treibstoff. Dieser wird durch Elektrolyse von Wasser, Reformation von Methanol oder durch Dampfreformation von Erdgas gewonnen.', 500, 300, 250, 50, 0, 0, 1.50, 50, 1, 0, 1),
-	(5, 'Ionenantrieb', 1, 'Hoch entwickelter Antrieb für Spezialschiffe. Er ist weniger schnell als der Wasserstoffantrieb, dafür kostensparend.', 'Ein Ionenantrieb ist ein Antrieb für Raumfahrzeuge, bei dem die Abstossung von einem Ionenstrahl zur Fortbewegung genutzt wird. Es werden auch je nach Energiequelle die Begriffe \\"solar-elektrischer Antrieb\\" bzw. \\"Solar Electric Propulsion\\" \n(SEP) und \\"nuklear-elektrischer Antrieb\\" bzw. \\"Nuclear Electric Propulsion\\" \n(NEP) verwendet.\r\nDer Ionenstrahl besteht aus einem elektrisch geladenen Gas \n(z.B. Xenon). Erzeugt wird der Ionenstrahl durch ionisierte Gasteilchen, die in einem elektrischen Feld oder mittels einer Kombination eines elektrischen Feldes und eines Magnetfeldes unter Ausnutzung des Hall-Effektes beschleunigt und dann in Form eines Strahls ausgestossen werden. Die Energie zur Erzeugung der Felder wird üblicherweise mit Hilfe von Solarzellen gewonnen. Als Treibstoff des Ionenantriebs dient sowohl das Gas als auch die zusätzlich benötigte elektrische Energie.\r\nDer Vorteil des Ionenantriebs gegenüber dem chemischen Antrieb liegt darin, dass er weniger Treibstoff verbraucht, weil die Geschwindigkeit der austretenden Teilchen wesentlich grösser ist.', 1000, 1500, 800, 300, 0, 0, 1.50, 50, 1, 1, 1),
-	(6, 'Hyperraumantrieb', 1, 'Sehr schneller Antrieb für grosse Schiffe, der den Hyperraum als Transportmedium benutzt.', 'Der Hyperraumantrieb schafft eine technisch hervorgerufene Abkürzung zwischen weit entfernten Punkten in der Raumzeit. Die Idee ist dabei folgende: Um den Weg vom Nordpol zum Südpol abzukürzen, reise man quer durch die Erde, anstatt entlang der Oberfläche. Der Weg durch die Erde \n(in die dritte Dimension) ist kürzer als der Weg auf der \n(zweidimensionalen) Erdoberfläche. Genauso könnte man sich vorstellen, dass unsere Raumzeit auch in einen höherdimensionalen Hyperraum eingebettet ist \n(wie die Erdoberfläche in den Raum), und man daher durch den Hyperraum abkürzen könnte. Auch hier würde man \n(im Hyperraum) nicht schneller als Lichtgeschwindigkeit fliegen müssen, um schneller als das Licht im Normalraum am Ziel anzukommen.\r\nDiese Antriebstechnologie wird heute für fast jedes grosse und träge Schiff eingesetzt.', 4000, 6000, 1500, 5500, 0, 0, 1.80, 50, 1, 3, 1),
-	(7, 'Spionagetechnik', 4, 'Je höher die Spionagetechnik ist, desto mehr können Spionagesonden über gegnerische Planeten herausfinden.', 'Spionage ist die Auskundschaftung und Erlangung von fremden, wohlgehüteten Geheimnissen oder Wissen von fremden Planeten. Die erlangten Informationen werden dann in den eigenen wirtschaftlichen, politischen oder militärischen Machtbereich eingeführt, ohne dass eine eigenständige Erforschung erfolgen müsste. Annähernd sämtliche Imperien bedienen sich der Spionage oder "nachrichtendienstlicher Mittel", um andere Völker \r\n(unabhängig der feindseligen oder freundlichen Einstellung zum eigenen Volk) auszuspionieren.\r\nEine weitere nützliche Eigenschaft der Spionagetechnik ist das Enttarnen von feindlichen Angriffen, welche mit höherer Spionagetechnik schneller vonstatten geht.', 750, 370, 150, 520, 0, 0, 1.50, 50, 1, 1, 1),
-	(8, 'Waffentechnik', 2, 'Jede Ausbaustufe erhöht die Stärke der Waffen bei Raumschiffen und Verteidigungsanlagen.', 'Durch die Erforschung der Waffentechnik können neue und stärkere Waffen für Raumschiffe und Verteidigungsanlagen gebaut werden.\r\nPro Ausbaustufe erhöht sich die Angriffskraft deiner Schiffe und Verteidigungsanlagen um 10%.', 250, 800, 550, 200, 0, 0, 1.80, 50, 1, 1, 1),
-	(9, 'Panzerung', 2, 'Jede Ausbaustufe erhöht die Stärke der Panzerung bei Raumschiffen und Verteidigungsanlagen.', 'Jedes Schiff und jede Verteidigungsanlage besitzen eine Panzerung zum Schutz vor feindlichen Angriffen. Pro Ausbaustufe erhöht diese Technologie die Panzerung, auch genannt Struktur, um 10%.', 1000, 150, 320, 270, 0, 0, 1.80, 50, 1, 2, 1),
-	(10, 'Schutzschilder', 2, 'Jede Ausbaustufe erhöht die Stärke der Schutzschilder bei Raumschiffen und Verteidigungsanlagen.', 'Ein Schutzschild schützt deine Raumschiffe und Verteidigungsanlagen vor feindlichem Beschuss.\r\nPro Ausbaustufe erhöht sich die Effizienz von den Schutzschildern um 10%.', 290, 330, 250, 950, 0, 0, 1.80, 50, 1, 3, 1),
-	(11, 'Tarntechnik', 2, 'Durch eine hohe Tarntechnik können deine Flotten eine gewisse Zeit vor dem Gegner verborgen bleiben.', 'Die Kriegsära hat begonnen; die Völker erforschen Technologien, mit welchen sie dem Gegner in einem allfälligen Kampf überlegen sind. Die Tarntechnik ist eigentlich schon eine uralte Waffe, welche den Überraschungseffekt ausnutzt, um so eine bessere Ausgangsposition zu haben; doch erst jetzt ist es wirklich möglich, seine Schiffe von der gegnerischen Flottenkontrolle zu verstecken.\r\nJe höher diese Technologie erforscht ist, desto länger bleiben die Schiffe für den Gegner unentdeckt.', 1500, 750, 250, 800, 0, 0, 1.50, 50, 1, 4, 1),
-	(12, 'Recyclingtechnologie', 4, 'Ermöglicht eine effiziente Wiederverwertung von alten Verteidigungsanlagen und Schiffen.', 'Lange Zeit hatte man eine Technik gesucht, welche verbaute Rohstoffe wieder verwerten kann. Nach jahrelanger Forschung wurde ein Verfahren entwickelt, das Schiffe und Verteidigungsanlagen recyceln kann. Jedoch ist diese Technologie in der Anfangsphase noch sehr ineffizient.\r\nDies kann aber mit der Weiterentwicklung ein wenig eingedämpft werden. Man weiss jedoch, dass die Materialien nie zu 100% recycelt werden können.', 6000, 10000, 1000, 4000, 0, 0, 1.90, 50, 1, 2, 1),
-	(13, 'Rettungskapseln', 2, 'Je höher die Rettungskapseln entwickelt sind, desto mehr Piloten können sich retten, wenn ihr Schiff bei einem Kampf zerstört wird. ', 'Je höher die Rettungskapseln entwickelt sind, desto mehr Piloten können sich retten, wenn ihr Schiff bei einem Kampf zerstört wird.\r\nEinige Schiffe können nur gebaut werden, wenn gute Rettungskapseln an Bord sind.\r\nUm Grosse Schiffe zu bauen, muss man die Rettungskapseln entwickelt haben.', 12000, 2000, 3000, 8000, 2000, 0, 1.90, 50, 0, 5, 1),
-	(14, 'Kraftstoffantrieb', 1, 'Verbesserter Wasserstoffantrieb, der mit einer Mischung aus Tritium und Asteroidenteilchen arbeitet. ', 'Verbesserter Wasserstoffantrieb, der mit einer Mischung aus Tritium und Asteroidenteilchen arbeitet. Dieser Antrieb ermöglicht es grösseren Schiffen, sich schneller fortzubewegen.', 25500, 7752, 19347, 10474, 0, 0, 1.30, 50, 1, 2, 1),
-	(15, 'Bombentechnik', 3, 'Mit Hilfe dieser Technik wird die Effektivität von Bombenangriffen gesteigert.', 'Längst hat man rausgefunden, dass das alleinige Zerstören von gegnerischen Flotten nicht mehr unbedingt den gewünschten Effekt hat.\r\nForscher haben aus diesem Grund eine neuartige Waffe entwickelt, mit der es möglich ist, fremde Gebäude zu bombardieren und so den Gegner wieder ins industrielle Mittelalter zu befördern.\r\nDiese Methode der Kriegsführung ist aber noch sehr jung, und deshalb ist die Chance auf eine erfolgreiche Bombardierung noch nicht allzu hoch.\r\nDurch die Erforschung der Bombentechnik wird diese aber deutlich gesteigert.', 13000, 26000, 8000, 13000, 0, 0, 1.75, 50, 0, 0, 1),
-	(16, 'Rassentechnik', 4, 'Mit der Rassentechnologie kann jede Rasse ihre rassenspezifischen Objekte bauen.', 'Mit der Rassentechnologie kann jede Rasse ihre rassenspezifischen Objekte bauen. Je höher sie erforscht ist, desto bessere und stärkere Rassenobjekte können gebaut werden.', 1000, 1000, 1000, 1000, 1000, 0, 1.50, 50, 1, 3, 1),
-	(17, 'EMP-Technik', 3, 'EMP-Bomben löst einen Elektromagnetischen Impuls aus, welcher elektrische Einrichtungen ausser Betrieb setzen kann.', 'Je länger je mehr schützen die Völker ihre Schiffe, indem sie sie ständig auf Erkundungsflüge schicken und so für den Gegner unerreichbar machen.\r\nEin Forschungsteam der Rigelianer hat es sich zur Aufgabe gemacht, diese Strategie zu vernichten.\r\nNach langen Forschungen haben sie ein Schiff entwickelt, mit dem es möglich ist, ganze Einrichtungen unbrauchbar zu machen.\r\nEin elektromagnetischer Impuls setzt alle elektronischen Geräte ausser Gefecht. Mit Hilfe dieser brillianten Waffe kann man nun dem Gegner beispielsweise die Flottenkontrolle lahm legen und den Schiffen den Abflug vom Planeten verweigern.\r\nJedoch ist auch diese Technologie noch nicht ganz ausgereift; so muss man sich beispielsweise mit einer kurzfristigen Deaktivierung zufrieden geben. Durch die Weiterentwicklung der EMP Technologie erhöht sich jedoch die Effizienz des Angriffes.', 15000, 15000, 10000, 15000, 0, 0, 1.70, 50, 1, 1, 1),
-	(18, 'Gifttechnik', 3, 'Diese Technologie wird für B- und C- Waffen gebraucht.', 'Die Gifttechnologie ist eine Massenvernichtungswaffe für Bewohner. Durch Zerstörung der Nervenbahnen und allmähliches Verringern der Wahrnehmungsfähigkeit lässt das Gift die Bewohner erkranken und kurze Zeit später an den Folgen sterben. Eine grausame, aber sehr effektive Waffe.\r\nDie Weiterentwicklung ermöglicht einen noch präziseren Einsatz der Gifte.', 10000, 10000, 5000, 20000, 0, 0, 1.50, 50, 1, 2, 1),
-	(19, 'Regenatechnik', 2, 'Neuartige Materialien ermöglichen gewissen Schiffen, sich während dem Kampf teilweise zu reparieren.', 'Das Heilen von Schiffen war schon immer sehr schwierig und wird sich wohl erst in Zukunft bei einer neuen Generation von Schiffen durchsetzen.\r\nBisher ist es nur einer einzigen Rasse gelungen, ein Schiff herzustellen, welches die eigene Flotte im Kampf heilen kann.\r\nEiner anderen Rasse ist es inzwischen gelungen, diesselbe Technologie für ihre Verteidigungsanlagen anzuwenden.\r\nDurch die Erhöhung der Technologie kann deren Effizienz gesteigert werden.', 600, 600, 300, 300, 0, 0, 1.80, 50, 1, 3, 1),
-	(20, 'Warpantrieb', 1, 'Die Warpgondeln eines Raumschiffes erzeugen ein Feld, welches den Raum krümmt und so das Schiff extrem beschleunigt.', 'Jede Rasse hat nach einer gewissen Zeit angefangen, ihre eigenen Schiffe zu bauen. Eine uns unbekannte Rasse hat den Warpantrieb entwickelt. Die uns bekannten Rassen konnten ihn jedoch nur bedingt anwenden. So sind ihre Schiffe nicht ganz so schnell wie sie eigentlich sein könnten. Die Warpgondeln eines Raumschiffes erzeugen ein Feld, welches den Raum krümmt und so das Schiff extrem beschleunigt.', 6000, 4500, 2000, 5500, 0, 0, 1.70, 50, 1, 5, 1),
-	(21, 'Solarantrieb', 1, 'Hinter dem unspektakulären Namen steckt eine sehr sparsame und interessante Technik. ', 'Hinter dem unspektakulären Namen steckt eine sehr sparsame und interessante Technik. Schiffe mit einem Solarantrieb können während dem Flug ihr Triebwerk ausschalten und ein riesiges Sonnensegel ausfahren, wodurch sie vom Sonnenwind mit unglaublicher Geschwindigkeit durchs All getragen werden.\r\nDie Erforschung ist nicht sehr billig, jedoch birgt es einen unschlagbaren Vorteil. Die Schiffe verbrauchen viel weniger Treibstoff für den Flug. Es soll sogar Schiffe geben, die allein mit den Solarzellen die benötigte Energie zum Flug aufbringen und so ohne Tritiumverbrauch fliegen können.', 2100, 1300, 1100, 300, 0, 0, 1.80, 50, 1, 4, 1),
-	(22, 'Wurmlochforschung', 3, 'Ermöglicht einer Flotte das Reisen durch Wurmlöcher. Dadurch wird die Flugzeit einer Flotte enorm verkürzt.', 'Wurmlöcher sind topologische Konstrukte, die weit voneinander entfernt liegende Bereiche des Universums durch eine \\\'Abkürzung\\\' verbinden. Ein Ende eines Wurmlochs erscheint dem Beobachter als Kugel, die ihm die Umgebung des anderen Endes zeigt. Obwohl ein durch ein Wurmloch Reisender nie die Lichtgeschwindigkeit überschreiten würde, hätte in Bezug auf die betreffenden Start- und Zielbereiche eine Reise mit Überlichtgeschwindigkeit stattgefunden. Durch die Erforschung der Wurmlöcher gelang es Wissenschaftlern, Technologien für das Reisen durch Wurmlöcher zu entwickeln und somit die Flugzeit enorm zu verkürzen. Ob die zwei Wurmlochenden eines Lochs immer miteinander verknüpft bleiben oder ob  die Verknüpfungen von Zeit zu Zeit ändern, ist Gegenstand aktueller Untersuchungen.\r\nBisher ist es den Forschern jedoch noch nicht gelungen, ein solches Wurmloch länger als ein paar Tage offen zu halten.', 100000, 120000, 175000, 290000, 250000, 0, 1.60, 1, 1, 5, 1),
-	(23, 'Gentechnik', 3, 'Durch die Manipulierung der Gene ist es möglich, die Leistung der Arbeiter zu steigern und so die Bauzeit zu verringern.', 'Den Forschern ist ein absoluter Durchbruch im Bereich Genforschung gelungen. Bisher waren alle genmanipulierten Arbeiterversuche fehlgeschlagen und die meisten Versuchsobjekte überlebten dieses Experiment nicht. Doch nun gelang mit Hilfe von Hochpräzisionsmaschinen eine genetische Veränderung, sodass die Arbeiter zu höheren Leistungen fähig sind.\r\nDies hat zur Folge, dass die Bauzeit von jeglichen Produkten nochmals gesenkt werden kann.\r\nDiese revolutionäre Errungenschaft hat aber ihren Preis, denn der Eingriff ist extrem zeit- und kostenaufwändig. Viele Wissenschaftler sind sich aber dennoch einig, dass es sich allemal lohnt, diese Technologie zu verbessern und zu perfektionieren.', 95000000, 57000000, 36100000, 38000000, 19000000, 0, 2.00, 8, 1, 6, 0),
-	(24, 'Raketentechnik', 3, 'Das Wissen um diese Technologie in Verbindung mit dem Raketensilo ermöglichen es, Raketen zu konstruieren.', 'Damit Raketen eingesetzt werden können, muss zuerst die Raketetechnik erforscht sein. Je höher die Raketentechnik erforscht ist, desto bessere und effektivere Raketen können gebaut werden.', 30000, 60000, 400000, 20000, 0, 0, 1.20, 10, 1, 6, 1),
-	(25, 'Computertechnik', 4, 'Mit Computern können Forscher komplexe Gleichungssysteme lösen, um genauere Flugbahnen zu berechnen.', 'Mit Hilfe der Computerwissenschaft können Forscher komplexe Gleichungssysteme lösen, um damit zum Beispiel genaue Flugbahnen zu berechnen. Dies kann zu einem Vorteil in der gegnerischen Flottenüberwachung führen oder eine bessere Steuerbarkeit von Raketen ermöglichen.', 500, 5000, 0, 3000, 0, 0, 1.50, 50, 1, 4, 1);
+-- Daten-Export vom Benutzer nicht ausgewählt
 
 -- Exportiere Struktur von Tabelle etoa_test.tech_points
 CREATE TABLE IF NOT EXISTS `tech_points` (
@@ -3416,12 +2270,9 @@ CREATE TABLE IF NOT EXISTS `tech_points` (
   KEY `bp_tech_id` (`bp_tech_id`),
   KEY `bp_level` (`bp_level`),
   KEY `bp_points` (`bp_points`)
-) ENGINE=MyISAM AUTO_INCREMENT=14503 DEFAULT CHARSET=utf8mb3;
+) ENGINE=MyISAM AUTO_INCREMENT=11786 DEFAULT CHARSET=utf8mb3;
 
--- Exportiere Daten aus Tabelle etoa_test.tech_points: 0 rows
-DELETE FROM `tech_points`;
-/*!40000 ALTER TABLE `tech_points` DISABLE KEYS */;
-/*!40000 ALTER TABLE `tech_points` ENABLE KEYS */;
+-- Daten-Export vom Benutzer nicht ausgewählt
 
 -- Exportiere Struktur von Tabelle etoa_test.tech_requirements
 CREATE TABLE IF NOT EXISTS `tech_requirements` (
@@ -3441,51 +2292,7 @@ CREATE TABLE IF NOT EXISTS `tech_requirements` (
   CONSTRAINT `FK_541D73947E57261C` FOREIGN KEY (`req_building_id`) REFERENCES `buildings` (`building_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=51 DEFAULT CHARSET=utf8mb3;
 
--- Exportiere Daten aus Tabelle etoa_test.tech_requirements: ~0 rows (ungefähr)
-DELETE FROM `tech_requirements`;
-INSERT INTO `tech_requirements` (`id`, `obj_id`, `req_building_id`, `req_tech_id`, `req_level`) VALUES
-	(2, 4, 8, NULL, 4),
-	(3, 4, 9, NULL, 2),
-	(4, 5, 8, NULL, 5),
-	(5, 5, 9, NULL, 4),
-	(6, 6, 8, NULL, 8),
-	(7, 6, 11, NULL, 6),
-	(8, 6, 9, NULL, 6),
-	(11, 9, 8, NULL, 4),
-	(12, 10, 8, NULL, 4),
-	(17, 12, 8, NULL, 7),
-	(18, 12, NULL, 3, 5),
-	(19, 13, 11, NULL, 4),
-	(20, 13, NULL, 5, 2),
-	(21, 14, NULL, 4, 6),
-	(22, 14, 8, NULL, 6),
-	(23, 11, 8, NULL, 5),
-	(24, 11, NULL, 7, 6),
-	(25, 15, 8, NULL, 8),
-	(26, 17, 8, NULL, 8),
-	(27, 20, 9, NULL, 5),
-	(28, 20, 8, NULL, 4),
-	(29, 18, 8, NULL, 8),
-	(30, 19, 8, NULL, 8),
-	(31, 16, 8, NULL, 5),
-	(32, 21, 8, NULL, 6),
-	(33, 21, 9, NULL, 5),
-	(34, 21, NULL, 3, 6),
-	(35, 22, 8, NULL, 10),
-	(36, 22, NULL, 6, 9),
-	(37, 22, NULL, 3, 10),
-	(38, 22, NULL, 10, 11),
-	(39, 23, 8, NULL, 12),
-	(40, 23, 7, NULL, 15),
-	(41, 24, 8, NULL, 10),
-	(42, 24, NULL, 3, 9),
-	(44, 24, NULL, 4, 10),
-	(45, 24, NULL, 14, 10),
-	(46, 25, NULL, 3, 5),
-	(47, 25, 13, NULL, 6),
-	(48, 3, 8, NULL, 1),
-	(49, 7, 8, NULL, 3),
-	(50, 8, 8, NULL, 4);
+-- Daten-Export vom Benutzer nicht ausgewählt
 
 -- Exportiere Struktur von Tabelle etoa_test.tech_types
 CREATE TABLE IF NOT EXISTS `tech_types` (
@@ -3497,8 +2304,7 @@ CREATE TABLE IF NOT EXISTS `tech_types` (
   KEY `type_name` (`type_name`)
 ) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb3;
 
--- Exportiere Daten aus Tabelle etoa_test.tech_types: ~0 rows (ungefähr)
-DELETE FROM `tech_types`;
+-- Daten-Export vom Benutzer nicht ausgewählt
 
 -- Exportiere Struktur von Tabelle etoa_test.texts
 CREATE TABLE IF NOT EXISTS `texts` (
@@ -3509,10 +2315,7 @@ CREATE TABLE IF NOT EXISTS `texts` (
   PRIMARY KEY (`text_id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
 
--- Exportiere Daten aus Tabelle etoa_test.texts: 0 rows
-DELETE FROM `texts`;
-/*!40000 ALTER TABLE `texts` DISABLE KEYS */;
-/*!40000 ALTER TABLE `texts` ENABLE KEYS */;
+-- Daten-Export vom Benutzer nicht ausgewählt
 
 -- Exportiere Struktur von Tabelle etoa_test.tickets
 CREATE TABLE IF NOT EXISTS `tickets` (
@@ -3533,10 +2336,7 @@ CREATE TABLE IF NOT EXISTS `tickets` (
   KEY `abuse_timestamp` (`timestamp`)
 ) ENGINE=MyISAM AUTO_INCREMENT=13 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
 
--- Exportiere Daten aus Tabelle etoa_test.tickets: 0 rows
-DELETE FROM `tickets`;
-/*!40000 ALTER TABLE `tickets` DISABLE KEYS */;
-/*!40000 ALTER TABLE `tickets` ENABLE KEYS */;
+-- Daten-Export vom Benutzer nicht ausgewählt
 
 -- Exportiere Struktur von Tabelle etoa_test.ticket_cat
 CREATE TABLE IF NOT EXISTS `ticket_cat` (
@@ -3546,8 +2346,7 @@ CREATE TABLE IF NOT EXISTS `ticket_cat` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=22 DEFAULT CHARSET=utf8mb3;
 
--- Exportiere Daten aus Tabelle etoa_test.ticket_cat: ~0 rows (ungefähr)
-DELETE FROM `ticket_cat`;
+-- Daten-Export vom Benutzer nicht ausgewählt
 
 -- Exportiere Struktur von Tabelle etoa_test.ticket_msg
 CREATE TABLE IF NOT EXISTS `ticket_msg` (
@@ -3560,10 +2359,7 @@ CREATE TABLE IF NOT EXISTS `ticket_msg` (
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM AUTO_INCREMENT=25 DEFAULT CHARSET=utf8mb3;
 
--- Exportiere Daten aus Tabelle etoa_test.ticket_msg: 0 rows
-DELETE FROM `ticket_msg`;
-/*!40000 ALTER TABLE `ticket_msg` DISABLE KEYS */;
-/*!40000 ALTER TABLE `ticket_msg` ENABLE KEYS */;
+-- Daten-Export vom Benutzer nicht ausgewählt
 
 -- Exportiere Struktur von Tabelle etoa_test.tips
 CREATE TABLE IF NOT EXISTS `tips` (
@@ -3574,10 +2370,7 @@ CREATE TABLE IF NOT EXISTS `tips` (
   KEY `tip_active` (`tip_active`)
 ) ENGINE=MyISAM AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
 
--- Exportiere Daten aus Tabelle etoa_test.tips: 0 rows
-DELETE FROM `tips`;
-/*!40000 ALTER TABLE `tips` DISABLE KEYS */;
-/*!40000 ALTER TABLE `tips` ENABLE KEYS */;
+-- Daten-Export vom Benutzer nicht ausgewählt
 
 -- Exportiere Struktur von Tabelle etoa_test.tutorial
 CREATE TABLE IF NOT EXISTS `tutorial` (
@@ -3586,10 +2379,7 @@ CREATE TABLE IF NOT EXISTS `tutorial` (
   PRIMARY KEY (`tutorial_id`)
 ) ENGINE=MyISAM AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
 
--- Exportiere Daten aus Tabelle etoa_test.tutorial: 0 rows
-DELETE FROM `tutorial`;
-/*!40000 ALTER TABLE `tutorial` DISABLE KEYS */;
-/*!40000 ALTER TABLE `tutorial` ENABLE KEYS */;
+-- Daten-Export vom Benutzer nicht ausgewählt
 
 -- Exportiere Struktur von Tabelle etoa_test.tutorial_texts
 CREATE TABLE IF NOT EXISTS `tutorial_texts` (
@@ -3601,10 +2391,7 @@ CREATE TABLE IF NOT EXISTS `tutorial_texts` (
   PRIMARY KEY (`text_id`)
 ) ENGINE=MyISAM AUTO_INCREMENT=20 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
 
--- Exportiere Daten aus Tabelle etoa_test.tutorial_texts: 0 rows
-DELETE FROM `tutorial_texts`;
-/*!40000 ALTER TABLE `tutorial_texts` DISABLE KEYS */;
-/*!40000 ALTER TABLE `tutorial_texts` ENABLE KEYS */;
+-- Daten-Export vom Benutzer nicht ausgewählt
 
 -- Exportiere Struktur von Tabelle etoa_test.tutorial_user_progress
 CREATE TABLE IF NOT EXISTS `tutorial_user_progress` (
@@ -3615,10 +2402,7 @@ CREATE TABLE IF NOT EXISTS `tutorial_user_progress` (
   UNIQUE KEY `tup_user_id` (`tup_user_id`,`tup_tutorial_id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
 
--- Exportiere Daten aus Tabelle etoa_test.tutorial_user_progress: 0 rows
-DELETE FROM `tutorial_user_progress`;
-/*!40000 ALTER TABLE `tutorial_user_progress` DISABLE KEYS */;
-/*!40000 ALTER TABLE `tutorial_user_progress` ENABLE KEYS */;
+-- Daten-Export vom Benutzer nicht ausgewählt
 
 -- Exportiere Struktur von Tabelle etoa_test.users
 CREATE TABLE IF NOT EXISTS `users` (
@@ -3695,10 +2479,9 @@ CREATE TABLE IF NOT EXISTS `users` (
   KEY `user_points` (`user_points`),
   KEY `user_session_key` (`user_session_key`),
   KEY `user_acttime` (`user_acttime`)
-) ENGINE=InnoDB AUTO_INCREMENT=21 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=22 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
 
--- Exportiere Daten aus Tabelle etoa_test.users: ~0 rows (ungefähr)
-DELETE FROM `users`;
+-- Daten-Export vom Benutzer nicht ausgewählt
 
 -- Exportiere Struktur von Tabelle etoa_test.user_comments
 CREATE TABLE IF NOT EXISTS `user_comments` (
@@ -3711,10 +2494,7 @@ CREATE TABLE IF NOT EXISTS `user_comments` (
   KEY `comment_user_id` (`comment_user_id`)
 ) ENGINE=MyISAM AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci COMMENT='Admin comments on users';
 
--- Exportiere Daten aus Tabelle etoa_test.user_comments: 0 rows
-DELETE FROM `user_comments`;
-/*!40000 ALTER TABLE `user_comments` DISABLE KEYS */;
-/*!40000 ALTER TABLE `user_comments` ENABLE KEYS */;
+-- Daten-Export vom Benutzer nicht ausgewählt
 
 -- Exportiere Struktur von Tabelle etoa_test.user_log
 CREATE TABLE IF NOT EXISTS `user_log` (
@@ -3728,12 +2508,9 @@ CREATE TABLE IF NOT EXISTS `user_log` (
   PRIMARY KEY (`id`),
   KEY `user_id` (`user_id`),
   KEY `timestamp` (`timestamp`)
-) ENGINE=MyISAM AUTO_INCREMENT=106 DEFAULT CHARSET=utf8mb3;
+) ENGINE=MyISAM AUTO_INCREMENT=108 DEFAULT CHARSET=utf8mb3;
 
--- Exportiere Daten aus Tabelle etoa_test.user_log: 0 rows
-DELETE FROM `user_log`;
-/*!40000 ALTER TABLE `user_log` DISABLE KEYS */;
-/*!40000 ALTER TABLE `user_log` ENABLE KEYS */;
+-- Daten-Export vom Benutzer nicht ausgewählt
 
 -- Exportiere Struktur von Tabelle etoa_test.user_multi
 CREATE TABLE IF NOT EXISTS `user_multi` (
@@ -3748,10 +2525,7 @@ CREATE TABLE IF NOT EXISTS `user_multi` (
   KEY `user_multi_multi_id` (`multi_id`)
 ) ENGINE=MyISAM AUTO_INCREMENT=14 DEFAULT CHARSET=utf8mb3;
 
--- Exportiere Daten aus Tabelle etoa_test.user_multi: 0 rows
-DELETE FROM `user_multi`;
-/*!40000 ALTER TABLE `user_multi` DISABLE KEYS */;
-/*!40000 ALTER TABLE `user_multi` ENABLE KEYS */;
+-- Daten-Export vom Benutzer nicht ausgewählt
 
 -- Exportiere Struktur von Tabelle etoa_test.user_onlinestats
 CREATE TABLE IF NOT EXISTS `user_onlinestats` (
@@ -3761,12 +2535,9 @@ CREATE TABLE IF NOT EXISTS `user_onlinestats` (
   `stats_regcount` int unsigned NOT NULL,
   PRIMARY KEY (`stats_id`),
   KEY `stats_count` (`stats_count`)
-) ENGINE=MyISAM AUTO_INCREMENT=27691 DEFAULT CHARSET=utf8mb3;
+) ENGINE=MyISAM AUTO_INCREMENT=28271 DEFAULT CHARSET=utf8mb3;
 
--- Exportiere Daten aus Tabelle etoa_test.user_onlinestats: 0 rows
-DELETE FROM `user_onlinestats`;
-/*!40000 ALTER TABLE `user_onlinestats` DISABLE KEYS */;
-/*!40000 ALTER TABLE `user_onlinestats` ENABLE KEYS */;
+-- Daten-Export vom Benutzer nicht ausgewählt
 
 -- Exportiere Struktur von Tabelle etoa_test.user_points
 CREATE TABLE IF NOT EXISTS `user_points` (
@@ -3779,12 +2550,9 @@ CREATE TABLE IF NOT EXISTS `user_points` (
   `point_building_points` bigint unsigned NOT NULL DEFAULT '0',
   PRIMARY KEY (`point_id`),
   KEY `point_user_id` (`point_user_id`)
-) ENGINE=MyISAM AUTO_INCREMENT=2196 DEFAULT CHARSET=utf8mb3 COMMENT='Speichert den Punkteverlauf der Spieler';
+) ENGINE=MyISAM AUTO_INCREMENT=2250 DEFAULT CHARSET=utf8mb3 COMMENT='Speichert den Punkteverlauf der Spieler';
 
--- Exportiere Daten aus Tabelle etoa_test.user_points: 0 rows
-DELETE FROM `user_points`;
-/*!40000 ALTER TABLE `user_points` DISABLE KEYS */;
-/*!40000 ALTER TABLE `user_points` ENABLE KEYS */;
+-- Daten-Export vom Benutzer nicht ausgewählt
 
 -- Exportiere Struktur von Tabelle etoa_test.user_properties
 CREATE TABLE IF NOT EXISTS `user_properties` (
@@ -3822,10 +2590,7 @@ CREATE TABLE IF NOT EXISTS `user_properties` (
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
 
--- Exportiere Daten aus Tabelle etoa_test.user_properties: 0 rows
-DELETE FROM `user_properties`;
-/*!40000 ALTER TABLE `user_properties` DISABLE KEYS */;
-/*!40000 ALTER TABLE `user_properties` ENABLE KEYS */;
+-- Daten-Export vom Benutzer nicht ausgewählt
 
 -- Exportiere Struktur von Tabelle etoa_test.user_ratings
 CREATE TABLE IF NOT EXISTS `user_ratings` (
@@ -3845,10 +2610,7 @@ CREATE TABLE IF NOT EXISTS `user_ratings` (
   KEY `id_3` (`id`,`diplomacy_rating`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb3;
 
--- Exportiere Daten aus Tabelle etoa_test.user_ratings: 0 rows
-DELETE FROM `user_ratings`;
-/*!40000 ALTER TABLE `user_ratings` DISABLE KEYS */;
-/*!40000 ALTER TABLE `user_ratings` ENABLE KEYS */;
+-- Daten-Export vom Benutzer nicht ausgewählt
 
 -- Exportiere Struktur von Tabelle etoa_test.user_sessionlog
 CREATE TABLE IF NOT EXISTS `user_sessionlog` (
@@ -3861,10 +2623,9 @@ CREATE TABLE IF NOT EXISTS `user_sessionlog` (
   `time_action` int unsigned NOT NULL DEFAULT '0',
   `time_logout` int unsigned NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=362 DEFAULT CHARSET=utf8mb3;
+) ENGINE=InnoDB AUTO_INCREMENT=864 DEFAULT CHARSET=utf8mb3;
 
--- Exportiere Daten aus Tabelle etoa_test.user_sessionlog: ~0 rows (ungefähr)
-DELETE FROM `user_sessionlog`;
+-- Daten-Export vom Benutzer nicht ausgewählt
 
 -- Exportiere Struktur von Tabelle etoa_test.user_sessions
 CREATE TABLE IF NOT EXISTS `user_sessions` (
@@ -3880,10 +2641,7 @@ CREATE TABLE IF NOT EXISTS `user_sessions` (
   UNIQUE KEY `user_id` (`user_id`)
 ) ENGINE=MEMORY DEFAULT CHARSET=utf8mb3;
 
--- Exportiere Daten aus Tabelle etoa_test.user_sessions: 0 rows
-DELETE FROM `user_sessions`;
-/*!40000 ALTER TABLE `user_sessions` DISABLE KEYS */;
-/*!40000 ALTER TABLE `user_sessions` ENABLE KEYS */;
+-- Daten-Export vom Benutzer nicht ausgewählt
 
 -- Exportiere Struktur von Tabelle etoa_test.user_sitting
 CREATE TABLE IF NOT EXISTS `user_sitting` (
@@ -3898,10 +2656,7 @@ CREATE TABLE IF NOT EXISTS `user_sitting` (
   KEY `user_sitting_user_id` (`user_id`)
 ) ENGINE=MyISAM AUTO_INCREMENT=14 DEFAULT CHARSET=utf8mb3;
 
--- Exportiere Daten aus Tabelle etoa_test.user_sitting: 0 rows
-DELETE FROM `user_sitting`;
-/*!40000 ALTER TABLE `user_sitting` DISABLE KEYS */;
-/*!40000 ALTER TABLE `user_sitting` ENABLE KEYS */;
+-- Daten-Export vom Benutzer nicht ausgewählt
 
 -- Exportiere Struktur von Tabelle etoa_test.user_stats
 CREATE TABLE IF NOT EXISTS `user_stats` (
@@ -3943,10 +2698,7 @@ CREATE TABLE IF NOT EXISTS `user_stats` (
   KEY `points` (`points`)
 ) ENGINE=MEMORY DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
 
--- Exportiere Daten aus Tabelle etoa_test.user_stats: 0 rows
-DELETE FROM `user_stats`;
-/*!40000 ALTER TABLE `user_stats` DISABLE KEYS */;
-/*!40000 ALTER TABLE `user_stats` ENABLE KEYS */;
+-- Daten-Export vom Benutzer nicht ausgewählt
 
 -- Exportiere Struktur von Tabelle etoa_test.user_surveillance
 CREATE TABLE IF NOT EXISTS `user_surveillance` (
@@ -3962,10 +2714,7 @@ CREATE TABLE IF NOT EXISTS `user_surveillance` (
   KEY `user_id` (`user_id`,`timestamp`)
 ) ENGINE=MyISAM AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb3 DELAY_KEY_WRITE=1;
 
--- Exportiere Daten aus Tabelle etoa_test.user_surveillance: 0 rows
-DELETE FROM `user_surveillance`;
-/*!40000 ALTER TABLE `user_surveillance` DISABLE KEYS */;
-/*!40000 ALTER TABLE `user_surveillance` ENABLE KEYS */;
+-- Daten-Export vom Benutzer nicht ausgewählt
 
 -- Exportiere Struktur von Tabelle etoa_test.user_warnings
 CREATE TABLE IF NOT EXISTS `user_warnings` (
@@ -3978,10 +2727,7 @@ CREATE TABLE IF NOT EXISTS `user_warnings` (
   KEY `warning_user_id` (`warning_user_id`)
 ) ENGINE=MyISAM AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
 
--- Exportiere Daten aus Tabelle etoa_test.user_warnings: 0 rows
-DELETE FROM `user_warnings`;
-/*!40000 ALTER TABLE `user_warnings` DISABLE KEYS */;
-/*!40000 ALTER TABLE `user_warnings` ENABLE KEYS */;
+-- Daten-Export vom Benutzer nicht ausgewählt
 
 -- Exportiere Struktur von Tabelle etoa_test.wormholes
 CREATE TABLE IF NOT EXISTS `wormholes` (
@@ -3993,10 +2739,7 @@ CREATE TABLE IF NOT EXISTS `wormholes` (
   KEY `target_id` (`target_id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb3;
 
--- Exportiere Daten aus Tabelle etoa_test.wormholes: 0 rows
-DELETE FROM `wormholes`;
-/*!40000 ALTER TABLE `wormholes` DISABLE KEYS */;
-/*!40000 ALTER TABLE `wormholes` ENABLE KEYS */;
+-- Daten-Export vom Benutzer nicht ausgewählt
 
 /*!40103 SET TIME_ZONE=IFNULL(@OLD_TIME_ZONE, 'system') */;
 /*!40101 SET SQL_MODE=IFNULL(@OLD_SQL_MODE, '') */;
