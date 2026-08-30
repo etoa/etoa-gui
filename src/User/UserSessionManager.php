@@ -42,13 +42,21 @@ class UserSessionManager
             return;
         }
 
+        $ipAddr = $current->getIpAddr();
+        $userAgent = $current->getUserAgent();
+        $timeLogin = $current->getTimeLogin();
+
+        $this->repository->remove($current);
+        $user->setSession(null);
+        $this->repository->save();
+
         $session = new UserSession();
         $session
             ->setId($newSessionId)
             ->setUser($user)
-            ->setIpAddr($current->getIpAddr())
-            ->setUserAgent($current->getUserAgent())
-            ->setTimeLogin($current->getTimeLogin())
+            ->setIpAddr($ipAddr)
+            ->setUserAgent($userAgent)
+            ->setTimeLogin($timeLogin)
             ->setTimeAction(time());
 
         $user->setSession($session);
