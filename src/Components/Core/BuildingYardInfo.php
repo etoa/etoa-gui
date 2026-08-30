@@ -63,6 +63,14 @@ class BuildingYardInfo extends AbstractController
     }
 
     #[ExposeInTemplate]
+    public function baseAvailable(): bool
+    {
+        $planet = $this->getCurrentEntity();
+
+        return !!$this->buildingListItemRepository->findOneBy(['entity' => $planet, 'building' => BuildingId::BUILDING]);
+    }
+
+    #[ExposeInTemplate]
     public function isCurrentlyBuilding(): bool
     {
         return $this->buildingService->isUnderConstruction($this->getCurrentEntity());

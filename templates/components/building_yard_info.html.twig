@@ -25,7 +25,7 @@
                         {% else %}
                             {{ formatNumber(outerScope.working) }}
                         {% endif %}
-                        {% if not outerScope.isCurrentlyBuilding %}
+                        {% if not outerScope.isCurrentlyBuilding and outerScope.baseAvailable%}
                             <a href="javascript:;" onclick="toggleBox('changePeople');">[Ändern]</a>
                         {% endif %}
                     </span>
