@@ -28,6 +28,7 @@ security:
       provider: player
       custom_authenticators:
         - EtoA\Security\Player\PlayerAuthenticator
+        - EtoA\Security\Player\ExternalPlayerAuthenticator
       entry_point: EtoA\Security\Player\PlayerAuthenticator
       logout:
         path: /game/logout

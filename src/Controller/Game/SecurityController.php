@@ -40,6 +40,16 @@ class SecurityController extends AbstractController
         // Dummy method. Request handled by symfony security
     }
 
+    /**
+     * Target of the login widget embedded on the external portal (etoa-web),
+     * see EtoA\Security\Player\ExternalPlayerAuthenticator.
+     */
+    #[Route("/game/login/external", name: "game.login.external", methods: ['POST'])]
+    public function externalLoginCheck(): void
+    {
+        // Dummy method. Request handled by symfony security
+    }
+
     #[Route("/game/logout", name: "game.logout")]
     public function logout(): void
     {
