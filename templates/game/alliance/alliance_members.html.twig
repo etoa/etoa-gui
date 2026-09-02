@@ -22,7 +22,7 @@
                     <td>{{ formatNumber(member.points) }}</td>
                     <td>{{ member.race }}</td>
                     <td>
-                        {% if app.user.getData.alliance.id is same as member.id %}
+                        {% if app.user.getData.alliance.founder.id is same as member.id %}
                             Gründer
                         {% elseif member.rank %}
                             {{ member.rank }}
