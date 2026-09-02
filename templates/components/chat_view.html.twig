@@ -29,7 +29,7 @@
                                     <img src="{{ asset('/build/images/star_c.gif') }}" alt="Entwickler" title="Entwickler"/>
                                 {% endif %}
                                 <<a style="color:{% if message.color %}{{ message.color }}{% else %}#fff{% endif %}"
-                                    href="{{ path('admin.users.view', {id: message.user.id}) }}">{{ message.nick }}</a>
+                                    href="{{ path('game.userinfo', {id: message.user.id}) }}">{{ message.nick }}</a>
                                 | {{ message.timestamp|date('H:i') }}> {{ message.text }}
                             </div>
                         {% endif %}
