@@ -16,7 +16,7 @@
                                 <{{ message.timestamp|date('H:i') }}> {{ message.text }}
                             </div>
                         {% else %}
-                            <div class="chatmsg">
+                            <div class="chatmsg" style="color:{% if message.color %}{{ message.color }}{% else %}#fff{% endif %}">
                                 {% if message.admin == 1 %}
                                     <img src="{{ asset('/build/images/star_y.gif') }}" alt="Admin" title="Admin"/>
                                 {% elseif message.admin == 2 %}

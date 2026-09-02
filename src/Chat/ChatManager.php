@@ -291,8 +291,8 @@ class ChatManager
         $session = $request->getSession();
         // Woo Hoo, Md5 hashtable
         if ($ct != '' && (!$session->has('lastchatmsg') || $session->get('lastchatmsg') != $hash)) {
-            $this->chatRepository->addMessage($user, $ct, $session->has('ccolor') ? '#' . $session->get('ccolor') : '', $admin);
-            $this->chatLogRepository->addLog($user, $ct, $session->has('ccolor') ? '#' . $session->get('ccolor') : '', $admin);
+            $this->chatRepository->addMessage($user, $ct, $user->getUserProperties()->getChatcolor(), $admin);
+            $this->chatLogRepository->addLog($user, $ct, $user->getUserProperties()->getChatcolor(), $admin);
             $session->set('lastchatmsg',$hash);
 
             return new JsonResponse();

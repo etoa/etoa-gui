@@ -85,7 +85,8 @@ class TwigExtension extends AbstractExtension
 
     public function getServerTime(): string
     {
-        return date('H:i:s');
+        $dt = new \DateTime("now", new \DateTimeZone('Europe/Berlin'));
+        return $dt->format('H:i:s');
     }
 
     public function getServerTimeUnix(): int
