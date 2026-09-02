@@ -50,6 +50,9 @@ class UserProperties
     private bool $msgPreview = true;
 
     #[ORM\Column(type: "boolean")]
+    private bool $helpbox = true;
+
+    #[ORM\Column(type: "boolean")]
     private bool $msgCopy = true;
 
     #[ORM\Column(type: "boolean")]
@@ -432,6 +435,18 @@ class UserProperties
     public function setUser(?User $user): static
     {
         $this->user = $user;
+
+        return $this;
+    }
+
+    public function isHelpbox(): ?bool
+    {
+        return $this->helpbox;
+    }
+
+    public function setHelpbox(bool $helpbox): static
+    {
+        $this->helpbox = $helpbox;
 
         return $this;
     }

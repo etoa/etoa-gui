@@ -211,7 +211,7 @@ class UserTwigSubscriber implements EventSubscriberInterface
             'infoText' => $infoText->isEnabled() ? $infoText->getContent() : null,
             'viewportScale' => $_SESSION['viewportScale'] ?? 0,
             'fontSize' => ($_SESSION['viewportScale'] ?? 1) * 16 . "px",
-            'helpBox' => false,
+            'helpBox' => $cu->getData()->getUserProperties()->isHelpBox(),
             'warnings' => $cu->getData()->getUserWarnings()
         ]);
         foreach ($globals as $key => $value) {

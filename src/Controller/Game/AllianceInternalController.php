@@ -92,7 +92,7 @@ class AllianceInternalController extends AbstractGameController
             $members = [];
             foreach ($this->userRepository->findBy(['alliance' => $this->getUser()->getData()->getAlliance()]) as $key => $member) {
                 $planet = $this->planetRepository->findOneBy(['user' => $member, 'mainPlanet' => true]);
-                $entity = $this->entityRepository->find($planet->getId());
+                $entity = $this->entityRepository->find($planet->getEntity()->getId());
 
                 $members[$key]['id'] = $member->getId();
                 $members[$key]['nick'] = $member->getNick();
@@ -100,7 +100,7 @@ class AllianceInternalController extends AbstractGameController
                 $members[$key]['points'] = $member->getPoints();
                 $members[$key]['race'] = $member->getRace()->getName();
                 $members[$key]['rank'] = $member->getAllianceRank()?->getName();
-                $members[$key]['attacks'] = $this->foreignFleetLoader->getVisibleFleets($member->getId())->aggressiveCount;
+                $members[$key]['attacks'] = $this->foreignFleetLoader->getVisibleFleets($member)->aggressiveCount;
                 $members[$key]['online'] = !!$member->getActionTime();
                 $members[$key]['lastLog'] = $member->getLastLogin() ? date("d.m.Y H:i", $member->getLastLogin()) : null;
             }

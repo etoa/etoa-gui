@@ -35,9 +35,9 @@
       <span id="current-planet-name" class="current-planet">{{ currentPlanetName }}</span>
       <a id="navigate-help" class="button-round-blue"
         {% if helpBox %}
-        href="javascript:" onclick="window.open('popup.php?page=help','help','status=no,width=800,height=600,scrollbars=yes,resizable=yes');"
+        href="javascript:" onclick="window.open('{{ path('game.help.overview',{popup:1}) }}','help','status=no,width=800,height=600,scrollbars=yes,resizable=yes');"
       {% else %}
-        href="?page=help"
+        href="{{ path('game.help.overview') }}"
         {% endif %}></a>
       <div id="planet-dropdown" class="planet-dropdown"
            onmouseleave="this.setAttribute('data-expanded', 'false');return true;">

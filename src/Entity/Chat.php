@@ -3,7 +3,6 @@
 namespace EtoA\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use EtoA\Chat\ChatLogRepository;
 use EtoA\Chat\ChatRepository;
 
 #[ORM\Entity(repositoryClass: ChatRepository::class)]

@@ -300,14 +300,14 @@
 
         <map name="pb_info_Map">
             <area shape="circle" alt="" coords="28,31,18"
-                  href="?page=help"
+                  href="{{ path('game.help.overview') }}"
                   onmouseover="changeImages('pb_info', '{{ templateDir }}/images/pb_info-sp_pb_info_over.gif'); return true;"
                   onmouseout="changeImages('pb_info', '{{ templateDir }}/images/pb_info.gif'); return true;"
                   onmousedown="changeImages('pb_info', '{{ templateDir }}/images/pb_info-sp_pb_info_down.gif'); return true;"
                   onmouseup="changeImages('pb_info', '{{ templateDir }}/images/pb_info-sp_pb_info_over.gif'); return true;">
         </map>
         <map name="sp_pb_overview_Map">
-            <area shape="circle" alt="" coords="36,36,27" href="?page=overview"
+            <area shape="circle" alt="" coords="36,36,27" href="{{ path('game.overview') }}"
                   onmouseover="changeImages('sp_pb_overview', '{{ templateDir }}/images/sp_pb_overview-over.gif'); return true;"
                   onmouseout="changeImages('sp_pb_overview', '{{ templateDir }}/images/sp_pb_overview.gif'); return true;"
                   onmousedown="changeImages('sp_pb_overview', '{{ templateDir }}/images/sp_pb_overview-down.gif'); return true;"
