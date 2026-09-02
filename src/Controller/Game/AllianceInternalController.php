@@ -78,9 +78,7 @@ class AllianceInternalController extends AbstractGameController
         $alliance = $this->getUser()->getData()->getAlliance();
         $this->allianceRepository->addVisit($alliance->getId());
 
-        return $this->render('game/alliance/alliance_overview.html.twig',[
-            'overview' =>$this->service->renderOverview($alliance),
-        ]);
+        return $this->render('game/alliance/alliance_overview.html.twig', $this->service->getOverviewData($alliance));
     }
 
     #[Route('/game/alliance/members', name: 'game.alliance.members')]

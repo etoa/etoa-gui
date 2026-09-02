@@ -2,5 +2,242 @@
 {% import 'macros.html.twig' as macros %}
 
 {% block alliance %}
-    {{ overview|raw }}
+    <twig:Table title="{{ alliance.toString }}">
+        {% block table_content %}
+            {% if alliance.imageUrl %}
+                <tr>
+                    <td class="tblblack" colspan="3" style="text-align:center;background:#000">
+                        <img src="{{ alliance.imageUrl }}" alt="Allianz-Logo"/>
+                    </td>
+                </tr>
+            {% endif %}
+
+            <tr>
+                <th>Internes Forum</th>
+                <td colspan="2">
+                    <b><a href="{{ path('game.alliance.allianceboard.overview') }}">Forumübersicht</a></b>
+                    &nbsp;
+                    {% if latestPost %}
+                        Neuster Post:
+                        <a href="{{ path('game.alliance.allianceboard.showposts', {id: latestPost.topic.id}) }}#{{ latestPost.id }}">
+                            <b>{{ latestPost.topic.subject }}</b>, geschrieben von: <b>{{ latestPost.userNick }}</b>, <b>{{ formatTimestamp(latestPost.topic.timestamp) }}</b>
+                        </a>
+                    {% else %}
+                        <i>Noch keine Beiträge vorhanden</i>
+                    {% endif %}
+                </td>
+            </tr>
+
+            {% if polls|length > 0 %}
+                <tr>
+                    <th>Umfrage:</th>
+                    <td colspan="2">
+                        <a href="{{ path('game.alliance.polls.overview') }}"><b>{{ polls[0].title }}:</b> {{ polls[0].question }}</a>
+                        {% if polls|length > 1 %}
+                            &nbsp; (<a href="{{ path('game.alliance.polls.overview') }}">mehr Umfragen</a>)
+                        {% endif %}
+                    </td>
+                </tr>
+            {% endif %}
+
+            {% if applicationsCount > 0 %}
+                <tr>
+                    <th colspan="3">
+                        <div><b><a href="{{ path('game.alliance.applications') }}">Es sind Bewerbungen vorhanden!</a></b></div>
+                    </th>
+                </tr>
+            {% endif %}
+
+            {% if hasWingRequest %}
+                <tr>
+                    <th colspan="3">
+                        <div><b>Es ist eine Wing-Anfrage vorhanden!</b></div>
+                    </th>
+                </tr>
+            {% endif %}
+
+            {% if allowWings and alliance.mother %}
+                <tr>
+                    <th colspan="3" style="text-align:center;">
+                        Diese Allianz ist ein Wing von
+                        <b><a href="{{ path('game.alliance.info', {id: alliance.mother.id}) }}">{{ alliance.mother.toString }}</a></b>
+                    </th>
+                </tr>
+            {% endif %}
+
+            {% if hasPendingBndRequests %}
+                <tr>
+                    <th colspan="3" style="text-align:center;color:#0f0">
+                        <a style="color:#0f0" href="{{ path('game.alliance.diplomacy.relations') }}">Es sind Bündnisanfragen vorhanden!</a>
+                    </th>
+                </tr>
+            {% endif %}
+
+            {% if warDeclaredRecently %}
+                <tr>
+                    <th colspan="3">
+                        <b>
+                            {% if permission.hasRights(constant('EtoA\\Alliance\\AllianceRights::RELATIONS')) %}
+                                <div><a href="{{ path('game.alliance.diplomacy.relations') }}">Deiner Allianz wurde in den letzten 36h der Krieg erklärt!</a></div>
+                            {% else %}
+                                <div>Deiner Allianz wurde in den letzten 36h der Krieg erklärt!</div>
+                            {% endif %}
+                        </b>
+                    </th>
+                </tr>
+            {% endif %}
+
+            <tr>
+                <th>Verwaltung:</th>
+                <td colspan="2">
+                    <div class="threeColumnList allianceManagementLinks">
+                        {% for label, url in adminLinks %}
+                            <a href="{{ url }}">{{ label }}</a><br/>
+                        {% endfor %}
+                    </div>
+                </td>
+            </tr>
+
+            {% if historyEntries|length > 0 %}
+                <tr>
+                    <th>Letzte Ereignisse:</th>
+                    <td colspan="2">
+                        {% for entry in historyEntries %}
+                            <div class="infoLog">{{ BBCodeToHTML(entry.text)|raw }} <span>{{ formatTimestamp(entry.timestamp, false) }}</span></div>
+                        {% endfor %}
+                    </td>
+                </tr>
+            {% endif %}
+
+            {% if alliance.text %}
+                <tr>
+                    <td colspan="3" style="text-align:center">{{ BBCodeToHTML(alliance.text)|raw }}</td>
+                </tr>
+            {% endif %}
+
+            {% if wars|length > 0 %}
+                <tr>
+                    <th>Kriege:</th>
+                    <td>
+                        <table class="tbl">
+                            <tr>
+                                <th>Allianz</th>
+                                <th>Punkte</th>
+                                <th>Zeitraum</th>
+                            </tr>
+                            {% for row in wars %}
+                                <tr>
+                                    <td><a href="{{ path('game.alliance.info', {id: row.opponent.id}) }}">{{ row.opponent.toString }}</a></td>
+                                    <td>{{ formatNumber(row.opponent.points) }} / {{ formatNumber(row.opponent.averagePoints) }}</td>
+                                    <td>{{ formatTimestamp(row.diplomacy.date, false) }} bis {{ formatTimestamp(row.diplomacy.date + warDuration, false) }}</td>
+                                </tr>
+                            {% endfor %}
+                        </table>
+                    </td>
+                </tr>
+            {% endif %}
+
+            {% if peace|length > 0 %}
+                <tr>
+                    <th>Friedensabkommen:</th>
+                    <td>
+                        <table class="tbl">
+                            <tr>
+                                <th>Allianz</th>
+                                <th>Punkte</th>
+                                <th>Zeitraum</th>
+                            </tr>
+                            {% for row in peace %}
+                                <tr>
+                                    <td><a href="{{ path('game.alliance.info', {id: row.opponent.id}) }}">{{ row.opponent.toString }}</a></td>
+                                    <td>{{ formatNumber(row.opponent.points) }} / {{ formatNumber(row.opponent.averagePoints) }}</td>
+                                    <td>{{ formatTimestamp(row.diplomacy.date, false) }} bis {{ formatTimestamp(row.diplomacy.date + warDuration, false) }}</td>
+                                </tr>
+                            {% endfor %}
+                        </table>
+                    </td>
+                </tr>
+            {% endif %}
+
+            {% if bnds|length > 0 %}
+                <tr>
+                    <th>Bündnisse:</th>
+                    <td>
+                        <table class="tbl">
+                            <tr>
+                                <th>Bündnisname</th>
+                                <th>Allianz</th>
+                                <th>Punkte</th>
+                                <th>Seit</th>
+                            </tr>
+                            {% for row in bnds %}
+                                <tr>
+                                    <td>{{ row.diplomacy.name }}</td>
+                                    <td><a href="{{ path('game.alliance.info', {id: row.opponent.id}) }}">{{ row.opponent.toString }}</a></td>
+                                    <td>{{ formatNumber(row.opponent.points) }} / {{ formatNumber(row.opponent.averagePoints) }}</td>
+                                    <td>{{ formatTimestamp(row.diplomacy.date) }}</td>
+                                </tr>
+                            {% endfor %}
+                        </table>
+                    </td>
+                </tr>
+            {% endif %}
+
+            <tr>
+                <th>Besucherzähler:</th>
+                <td colspan="2">{{ formatNumber(alliance.visits) }} intern / {{ formatNumber(alliance.visitsExternal) }} extern</td>
+            </tr>
+
+            {% if wings|length > 0 %}
+                <tr>
+                    <th>Wings:</th>
+                    <td colspan="2">
+                        <table class="tb">
+                            <tr>
+                                <th>Name</th>
+                                <th>Punkte</th>
+                                <th>Mitglieder</th>
+                                <th>Punkteschnitt</th>
+                            </tr>
+                            {% for wing in wings %}
+                                <tr>
+                                    <td><a href="{{ path('game.alliance.info', {id: wing.id}) }}">{{ wing.toString }}</a></td>
+                                    <td>{{ formatNumber(wing.points) }}</td>
+                                    <td>{{ wing.memberCount }}</td>
+                                    <td>{{ formatNumber(wing.averagePoints) }}</td>
+                                </tr>
+                            {% endfor %}
+                        </table>
+                    </td>
+                </tr>
+            {% endif %}
+
+            {% if alliance.url %}
+                <tr>
+                    <th>Website/Forum:</th>
+                    <td colspan="2"><b>{{ formatLink(alliance.url)|raw }}</b></td>
+                </tr>
+            {% endif %}
+
+            <tr>
+                <th>Mitglieder:</th>
+                <td colspan="2">{{ memberCount }}</td>
+            </tr>
+
+            <tr>
+                <th>Punkte / Schnitt:</th>
+                <td colspan="2">{{ formatNumber(alliance.points) }} / {{ formatNumber(averagePoints) }}</td>
+            </tr>
+
+            <tr>
+                <th>Gründer:</th>
+                <td colspan="2"><a href="{{ path('game.userinfo', {id: alliance.founder.id}) }}">{{ alliance.founder.nick }}</a></td>
+            </tr>
+
+            <tr>
+                <th>Gründungsdatum:</th>
+                <td colspan="2">{{ formatTimestamp(alliance.foundationTimestamp) }} (vor {{ formatTimespan(serverTimeUnix() - alliance.foundationTimestamp) }})</td>
+            </tr>
+        {% endblock %}
+    </twig:Table>
 {% endblock %}

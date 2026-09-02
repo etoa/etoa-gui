@@ -50,6 +50,7 @@ class TwigExtension extends AbstractExtension
             new TwigFunction('etoaUrl', [$this, 'getUrl']),
             new TwigFunction('onClick', [$this, 'getOnClick']),
             new TwigFunction('BBCodeToHTML', [$this, 'BBCodeToHTML']),
+            new TwigFunction('formatLink', [$this, 'formatLink']),
             new TwigFunction('configValue', [$this, 'getConfigValue']),
             new TwigFunction('param1', [$this, 'getParam1']),
             new TwigFunction('param2', [$this, 'getParam2']),
@@ -144,6 +145,11 @@ class TwigExtension extends AbstractExtension
         return BBCodeUtils::toHTML($string);
     }
 
+    public function formatLink(string $string): string
+    {
+        return StringUtils::formatLink($string);
+    }
+
     public function getConfigValue(string $key): string
     {
         return $this->config->get($key);
@@ -191,9 +197,9 @@ class TwigExtension extends AbstractExtension
     /**
      * @param int|string $timestamp
      */
-    public function formatTimestamp(int|string $timestamp): string
+    public function formatTimestamp(int|string $timestamp, bool $seconds = true): string
     {
-        return StringUtils::formatDate((int)$timestamp);
+        return StringUtils::formatDate((int)$timestamp, $seconds);
     }
 
     public function formatTimespan(int $timespan): string
