@@ -23,7 +23,7 @@
                 {% if auction.ship is defined %}
                     <td rowspan="5">
                         {{ auction.shipCount }}
-                        <a href="?page=help&site=shipyard&id={{ auction.ship.id }}">{{ auction.ship.name }}</a>
+                        <a href="{{ path('game.help.shipyard.detail',{id:auction.ship.id}) }}">{{ auction.ship.name }}</a>
                     </td>
                 {% else %}
                     <td rowspan="5">Keine Schiffe</td>

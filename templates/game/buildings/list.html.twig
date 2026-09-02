@@ -4,7 +4,7 @@
     {% if buildingData.categories is empty %}
         <p>Keine Gebäude verfügbar.</p>
     {% else %}
-        <form action="?page=" method="post">
+        <form method="post">
             <div>
                 {% for category in buildingData.categories %}
                     <table style="width:{{ buildingData.tableWidth }}" class="tb {{ buildingData.isCompact ? 'compact' : '' }}">

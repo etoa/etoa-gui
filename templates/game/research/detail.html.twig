@@ -52,7 +52,7 @@
         {# Research Options #}
         {% if options.requirementsNotMet is defined and options.requirementsNotMet %}
             <div>
-                Technologie kann nicht erforscht werden, <a href="?page=techtree">Voraussetzungen</a> nicht erfüllt!<br/><br/>
+                Technologie kann nicht erforscht werden, <a href="{{ path('game.help.research') }}">Voraussetzungen</a> nicht erfüllt!<br/><br/>
             </div>
         {% else %}
             {{ form_start(form) }}

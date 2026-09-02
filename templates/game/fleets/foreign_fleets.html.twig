@@ -11,9 +11,9 @@
             <tr>
                 <td>
                     <b>{{ fleetData.fleet.entityFrom.codeString }}</b>
-                    <a href="?page=cell&amp;id={{ fleetData.fleet.entityFrom.cell.id }}&amp;hl={{ fleetData.fleet.entityFrom.id }}">{{ fleetData.fleet.entityFrom.toString }}</a><br/>
+                    <a href="{{ path('game.cell',{id:fleetData.fleet.entityFrom.cell.id,hl:fleetData.fleet.entityFrom.id}) }}">{{ fleetData.fleet.entityFrom.toString }}</a><br/>
                     <b>{{ fleetData.fleet.entityTo.codeString }}</b>
-                    <a href="?page=cell&amp;id={{ fleetData.fleet.entityTo.cell.id }}&amp;hl={{ fleetData.fleet.entityTo.id }}">{{ fleetData.fleet.entityTo.toString }}</a>
+                    <a href="{{ path('game.cell',{id:fleetData.fleet.entityFrom.cell.id,hl:fleetData.fleet.entityTo.id}) }}">{{ fleetData.fleet.entityTo.toString }}</a>
                 </td>
                 <td>
                     {{ fleetData.fleet.launchTime|date('d.m.y, H:i:s') }}<br/>
@@ -25,7 +25,7 @@
                     </span> [{{ fleetData.statusCode }}]
                 </td>
                 <td>
-                    <a href="?page=messages&mode=new&message_user_to={{ fleetData.fleet.user.id }}">{{ fleetData.fleet.user.nick }}</a>
+                    <a href="{{ path(game.messages.newTo,{id:fleetData.fleet.user.id}) }}">{{ fleetData.fleet.user.nick }}</a>
                 </td>
             </tr>
             {% if fleetData.shipsCount is not null %}

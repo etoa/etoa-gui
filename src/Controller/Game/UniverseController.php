@@ -143,20 +143,12 @@ class UniverseController extends Game\AbstractGameController
         ]);
     }
 
-    /**
-     * Sends the configured analyzers to an object of the system map. Replaces the
-     * xajax_launchAnalyzeProbe() call the cell page used before xajax was removed.
-     */
     #[Route('/game/cell/analyze/{id}', name: 'game.cell.analyze')]
     public function cellAnalyze(QuickLaunchService $quickLaunchService, ?Entity $entity = null): Response
     {
         return $this->launchCellProbe($entity, fn (Entity $target) => $quickLaunchService->launchAnalyzeProbe($target));
     }
 
-    /**
-     * Sends the configured spy probes to an object of the system map. Replaces the
-     * xajax_launchSypProbe() call the cell page used before xajax was removed.
-     */
     #[Route('/game/cell/spy/{id}', name: 'game.cell.spy')]
     public function cellSpy(QuickLaunchService $quickLaunchService, ?Entity $entity = null): Response
     {

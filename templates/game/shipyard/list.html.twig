@@ -90,7 +90,7 @@
                                     {% if ship.special %}
                                         <img class='shipImageSmall' src="{{ ship.image }}"/>
                                     {% else %}
-                                        <a href="?page=help&amp;id={{ ship.id }}"><img src="{{ ship.image }}"
+                                        <a href="{{ path(game.help.shipyard.detail,{id:ship.id}) }}"><img src="{{ ship.image }}"
                                                                                        class='shipImageSmall'/></a>
                                     {% endif %}
                                 </td>
@@ -143,7 +143,7 @@
                                         {% if ship.special %}
                                             <img src="{{ ship.imageMedium }}" width="120" height="120"/>
                                         {% else %}
-                                            <a href="?page=help&amp;id={{ ship.id }}"
+                                            <a href="{{ path('game.help.shipyard.detail',{id:ship.id}) }}"
                                                title="Info zu diesem Schiff anzeigen">
                                                 <img src="{{ ship.imageMedium }}" width="120" height="120"/>
                                             </a>

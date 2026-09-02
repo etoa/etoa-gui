@@ -9,7 +9,7 @@
         <tr>
             {% if newsCounts > 0  %}
                 <td>
-                    <a href="?page=townhall" style="color:#ff0">
+                    <a href="{{ path('game.townhall') }}" style="color:#ff0">
                         <b>{{ newsCounts }}</b> neue Nachrichten
                     </a>
                 </td>
@@ -43,7 +43,7 @@
 
             {% if technologyInProgress  %}
                 <td>
-                    <a href="?page=research&amp;change_entity={{ technologyInProgress.entity.id }}" id="tech_counter">
+                    <a href="{{ path('game.research',{'change_entity':technologyInProgress.entity.id}) }}" id="tech_counter">
                         {% if technologyInProgress.endTime - date().timestamp <= 0  %}
                             {{ technologyInProgress.technology.name}} Fertig
                         {% else %}
@@ -63,7 +63,7 @@
             <tr>
                 <td colspan =3/>
                 <td>
-                    <a href="?page=research&amp;change_entity={{genTechnologyInProgress.entityId }}" id="tech_gen">
+                    <a href="{{ path('game.research',{'change_entity':genTechnologyInProgress.entity.id}) }}" id="tech_gen">
                         {% if genTechnologyInProgress.endTime - date().timestamp <= 0  %}
                             {{ technologyNames[genTechnologyInProgress.technologyId ]}} Fertig
                         {% else %}
@@ -84,7 +84,7 @@
             <tr>
                 {% if allianceBuildingInProgress  %}
                     <td>
-                        <a href="?page=alliance&amp;action=base&amp;action2=buildings" id="alliance_building_counter">
+                        <a href="{{ path('game.alliance.base.buildings') }}" id="alliance_building_counter">
                             {% if allianceBuildingInProgress.endTime - date().timestamp <= 0  %}
                                 {{ allianceBuildingInProgress.name}} Fertig
                             {% else %}

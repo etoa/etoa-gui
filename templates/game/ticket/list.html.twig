@@ -50,7 +50,7 @@
                     <td>{{ ticket.getStatusName }}</td>
                     <td>
                         {% if ticket.admin %}
-                            <a href="?page=contact&rcpt=ticket->adminId">{{ ticket.admin.nick }}</a>
+                            <a href="{{ path('game.contact.mail',{adminId:ticket.admin.id}) }}">{{ ticket.admin.nick }}</a>
                         {% endif %}
                     </td>
                     <td>{{ formatTimestamp(ticket.timestamp) }}</td>

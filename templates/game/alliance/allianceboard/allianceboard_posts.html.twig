@@ -11,7 +11,7 @@
         {% for post in topic.posts %}
             <tr>
                 <th style="width:150px;">
-                    <a href="?page=userinfo&amp;id=">{{ post.userNick }}</a><br/>
+                    <a href="{{ path('game.userinfo',{id:post.userId}) }}">{{ post.userNick }}</a><br/>
                     <div style="padding:8px;">
                         <img id="avatar" src="{{ userRepository.user(post.userId).avatar?constant('EtoA\\Admin\\AllianceBoardAvatar::IMAGE_PATH')~userRepository.user(post.userId).avatar:constant('EtoA\\Admin\\AllianceBoardAvatar::IMAGE_PATH')~constant('EtoA\\Admin\\AllianceBoardAvatar::DEFAULT_IMAGE') }}" alt="avatar" style="width:64px;height:64px;"/>
                     </div>

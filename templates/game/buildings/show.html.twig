@@ -34,7 +34,7 @@
         {# Build Options #}
         {% if options.requirementsNotMet is defined and options.requirementsNotMet %}
             <div>
-                Gebäude kann nicht (aus)gebaut werden, <a href="?page=techtree">Voraussetzungen</a> nicht erfüllt!<br/><br/>
+                Gebäude kann nicht (aus)gebaut werden, <a href="{{ path('game.techtree.building') }}">Voraussetzungen</a> nicht erfüllt!<br/><br/>
             </div>
         {% else %}
             {{ form_start(form) }}

@@ -18,7 +18,7 @@
                             <th>Nachricht:</th>
                             <td>
                                 {{ form_widget(form.text) }}
-                                <br/> <a href="?page=help&amp;site=">Hilfe zur Formatierung</a>
+                                <br/> <a href="{{ path('game.help.textformat') }}">Hilfe zur Formatierung</a>
                             </td>
                         </tr>
                     {% endblock %}

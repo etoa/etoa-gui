@@ -51,7 +51,7 @@
                                 <td>{{ user.points }} Punkte</td>
                                 <td>
                                     [<a href="{{ path('admin.users.view', {id: user.id}) }}">details</a>]
-                                    [<a href="?page=messages&amp;sub=sendmsg&amp;user_id={{ user.id }}">msg</a>]
+                                    [<a href="{{ path(game.messages.newTo,{id:user.id}) }}">msg</a>]
                                 </td>
                             </tr>
 

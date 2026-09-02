@@ -18,7 +18,7 @@
                     <tr>
                         <td>
                             {% if hasRights %}
-                                <a href="?page=fleetinfo&id=$fleet.id">
+                                <a href="{{ path('game.fleets.info',{id:fleet.id}) }}">
                             {% endif %}
                             <span style="font-weight:bold;color:{{ fleet.fleetAction.color }}">
                                 {{ fleet.fleetAction.name }}
@@ -39,7 +39,7 @@
                         </td>
                         <td>
                             <b>{{ fleet.entityFrom.getType.entityCodeString }}</b>
-                            <a href="?page=cell&amp;id=$source.cellId">{{ fleet.entityFrom.getCoordinates().toString }} {{ fleet.entityFrom.displayName }}</a><br/>
+                            <a href="{{ path('game.cell',{id:fleet.entityFrom.id}) }}">{{ fleet.entityFrom.getCoordinates().toString }} {{ fleet.entityFrom.displayName }}</a><br/>
                             <b>{{ fleet.entityTo.codeString }}</b>
                             <a href="?page=cell">{{ fleet.entityTo.toString }}</a>
                         </td>
@@ -74,7 +74,7 @@
                 <tr>
                     <td>
                         <b>{{ fleet.entityFrom.getType.entityCodeString }}</b>
-                        <a href="?page=cell&amp;id=$source.cellId">{{ fleet.entityFrom.getCoordinates().toString }} {{ fleet.entityFrom.displayName }}</a><br/>
+                        <a href="{{ path('game.cell',{id:fleet.entityFrom.cell.id}) }}">{{ fleet.entityFrom.getCoordinates().toString }} {{ fleet.entityFrom.displayName }}</a><br/>
                         <b>{{ fleet.entityTo.codeString }}</b>
                         <a href="?page=cell">{{ fleet.entityTo.toString }}</a>
                     </td>
@@ -84,7 +84,7 @@
                     </td>
                     <td>
                         {% if hasRights %}
-                            <a href="?page=fleetinfo&id=$fleet.id">
+                            <a href="{{ path('game.fleets.info',{id:fleet.id}) }}">
                         {% endif %}
                         <span style="font-weight:bold;color:{{ fleet.fleetAction.color }}">
                             {{ fleet.fleetAction.name }}

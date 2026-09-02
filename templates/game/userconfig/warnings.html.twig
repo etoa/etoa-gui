@@ -14,7 +14,7 @@
             <tr>
                 <td>{{ warning.text }}</td>
                 <td>{{ formatTimestamp(warning.date) }}</td>
-                <td><a href="?page=contact&rcpt={{ warning.admin.id }}">{{ warning.admin.nick }}</a>
+                <td><a href="{{ path('game.contact.mail',{id:warning.admin.id}) }}">{{ warning.admin.nick }}</a>
                 </td>
             </tr>
         {% endfor %}

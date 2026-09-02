@@ -89,13 +89,13 @@
                         <tr>
                             {% if ship.vars.data.ship.special %}
                                 <td style="width:40px;background:#000;">
-                                    <a href="?page=ship_upgrade&amp;id={{ ship.vars.data.ship.id }}">
+                                    <a href="{{ path('game.ships.upgrade.detail',{id:ship.vars.data.ship.id}) }}">
                                         <img src="{{ ship.vars.data.ship.getImagePath('small') }}" width="40" height="40" alt="Ship"/>
                                     </a>
                                 </td>
                             {% else %}
                                 <td style="width:40px;background:#000;">
-                                    <a href="?page=help&amp;site=shipyard&amp;id={{ ship.vars.data.ship.id }}">
+                                    <a href="{{ path('game.help.shipyard.detail',{id:ship.vars.data.ship.id}) }}">
                                         <img src="{{ ship.vars.data.ship.getImagePath('small') }}" width="40" height="40" alt="Ship"/>
                                     </a>
                                 </td>
