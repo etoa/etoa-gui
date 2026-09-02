@@ -148,7 +148,9 @@
 
 {% if app.request.query.get('popup') %}
     {% set bodyTopStuff %}
-        {{ currentContent }}
+        <div id="contentwrap">
+            {{ currentContent }}
+        </div>
     {% endset %}
 {% else %}
     {% set content %}
