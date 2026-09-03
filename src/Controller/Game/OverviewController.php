@@ -234,7 +234,7 @@ class OverviewController extends AbstractGameController
             '" . floor($userPlanet->getPeople()) . "',
             '" . floor($userPlanet->getResMetal()) . "',
             '" . floor($userPlanet->getResCrystal()) . "',
-            '" . floor($userPlanet->getProdPlastic()) . "',
+            '" . floor($userPlanet->getResPlastic()) . "',
             '" . floor($userPlanet->getResFuel()) . "',
             '" . floor($userPlanet->getResFood()) . "',
             '" . floor($userPlanet->getUsePower()) . "',
