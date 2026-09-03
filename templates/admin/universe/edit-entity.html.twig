@@ -12,7 +12,7 @@
 
         {{ button("Nächstes Objekt >>", path('admin.universe.entity', {id: entity.id + 1}))|raw }}
 
-        {{ button("Alle Objekte dieser Zelle/dieses Systems anzeigen", path('admin.universe.entities', {cell: entity.cellId}))|raw }}
+        {{ button("Alle Objekte dieser Zelle/dieses Systems anzeigen", path('admin.universe.entities', {cell: entity.cell.id}))|raw }}
     </p>
 
     {% if form %}
