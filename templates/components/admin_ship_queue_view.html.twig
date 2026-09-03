@@ -1,12 +1,8 @@
 <tbody
     {{ attributes }}
     data-original-data="{}" {# Hack to prevent issue with symfony/ux #}
-    data-action="change->live#update"
 >
 {% if this.item %}
-    {% if this.isEdit %}
-        {{ form_start(this.form, {'attr': {'onkeydown' :"return event.key != 'Enter';"}}) }}
-    {% endif %}
     <tr>
         <td>{{ this.item.id }}</td>
         <td>{{ this.item.user?this.item.user.nick:'Niemand' }}</td>
@@ -14,7 +10,7 @@
         <td>{{ this.item.ship.name }}</td>
         <td>
             {% if this.isEdit %}
-                {{ form_row(this.form.count) }}
+                <form data-model="on(change)|*" onkeydown="return event.key != 'Enter';">{{ form_widget(form.count) }}</form>
             {% else %}
                 {{ formatNumber(this.item.count) }}
             {% endif %}
@@ -24,14 +20,14 @@
         </td>
         <td>
             {% if this.isEdit %}
-                {{ form_row(this.form.startTime) }}
+                <form data-model="on(change)|*" onkeydown="return event.key != 'Enter';">{{ form_widget(form.startTime) }}</form>
             {% else %}
                 {{ formatTimestamp(this.item.startTime) }}
             {% endif %}
         </td>
         <td>
             {% if this.isEdit %}
-                {{ form_row(this.form.endTime) }}
+                <form data-model="on(change)|*" onkeydown="return event.key != 'Enter';">{{ form_widget(form.endTime) }}</form>
             {% else %}
                 {{ formatTimestamp(this.item.endTime) }}
             {% endif %}
@@ -47,8 +43,5 @@
             {% endif %}
         </td>
     </tr>
-    {% if this.isEdit %}
-        {{ form_end(this.form) }}
-    {% endif %}
 {% endif %}
 </tbody>

@@ -1,11 +1,7 @@
 <tbody
     {{ attributes }}
-    data-action="change->live#update"
 >
 {% if this.item %}
-    {% if this.isEdit %}
-        {{ form_start(this.form, {'attr': {'onkeydown' :"return event.key != 'Enter';"}}) }}
-    {% endif %}
     <tr>
         <td>{{ this.item.id }}</td>
         <td>{{ this.item.user?this.item.user.nick:'Niemand' }}</td>
@@ -13,28 +9,28 @@
         <td>{{ this.item.building.name }}</td>
         <td>
             {% if this.isEdit %}
-                {{ form_row(this.form.currentLevel) }}
+                <form data-model="on(change)|*" onkeydown="return event.key != 'Enter';">{{ form_widget(form.currentLevel) }}</form>
             {% else %}
                 {{ formatNumber(this.item.currentLevel) }}
             {% endif %}
         </td>
         <td>
             {% if this.isEdit %}
-                {{ form_row(this.form.buildType) }}
+                <form data-model="on(change)|*" onkeydown="return event.key != 'Enter';">{{ form_widget(form.buildType) }}</form>
             {% else %}
                 {{ this.buildTypes[this.item.buildType] }}
             {% endif %}
         </td>
         <td>
             {% if this.isEdit %}
-                {{ form_row(this.form.startTime) }}
+                <form data-model="on(change)|*" onkeydown="return event.key != 'Enter';">{{ form_widget(form.startTime) }}</form>
             {% else %}
                 {{ this.item.isUnderConstruction() ? formatTimestamp(this.item.startTime) : '-' }}
             {% endif %}
         </td>
         <td>
             {% if this.isEdit %}
-                {{ form_row(this.form.endTime) }}
+                <form data-model="on(change)|*" onkeydown="return event.key != 'Enter';">{{ form_widget(form.endTime) }}</form>
             {% else %}
                 {{ this.item.isUnderConstruction() ? formatTimestamp(this.item.endTime) : '-' }}
             {% endif %}
@@ -49,8 +45,5 @@
             {% endif %}
         </td>
     </tr>
-    {% if this.isEdit %}
-        {{ form_end(this.form) }}
-    {% endif %}
 {% endif %}
 </tbody>

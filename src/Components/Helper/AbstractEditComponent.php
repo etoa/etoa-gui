@@ -3,7 +3,6 @@
 namespace EtoA\Components\Helper;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\PropertyAccess\PropertyAccessor;
 use Symfony\UX\LiveComponent\Attribute\LiveAction;
 use Symfony\UX\LiveComponent\Attribute\LiveProp;
 use Symfony\UX\LiveComponent\ComponentWithFormTrait;
@@ -47,15 +46,6 @@ abstract class AbstractEditComponent extends AbstractController
 
     private function resetFormValues(): void
     {
-        $accessor = new PropertyAccessor();
-        $values = $this->formValues;
-        $item = $this->getItem();
-        if (is_array($values)) {
-            foreach ($values as $key => $value) {
-                if (property_exists($item, $key)) {
-                    $this->formValues[$key] = $accessor->getValue($item, $key);
-                }
-            }
-        }
+        $this->resetForm();
     }
 }

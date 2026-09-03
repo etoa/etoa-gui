@@ -1,11 +1,7 @@
 <tbody
     {{ attributes }}
-    data-action="change->live#update"
 >
 {% if this.item %}
-    {% if this.isEdit %}
-        {{ form_start(this.form, {'attr': {'onkeydown' :"return event.key != 'Enter';"}}) }}
-    {% endif %}
     <tr>
         <td>{{ this.item.id }}</td>
         <td>{{ this.item.user.nick }}</td>
@@ -13,14 +9,14 @@
         <td>{{ this.item.ship.name }}</td>
         <td>
             {% if this.isEdit %}
-                {{ form_row(this.form.count) }}
+                <form data-model="on(change)|*" onkeydown="return event.key != 'Enter';">{{ form_widget(form.count) }}</form>
             {% else %}
                 {{ formatNumber(this.item.count) }}
             {% endif %}
         </td>
         <td>
             {% if this.isEdit %}
-                {{ form_row(this.form.bunkered) }}
+                <form data-model="on(change)|*" onkeydown="return event.key != 'Enter';">{{ form_widget(form.bunkered) }}</form>
             {% else %}
                 {{ formatNumber(this.item.bunkered) }}
             {% endif %}
@@ -29,7 +25,7 @@
             {% if this.item.specialShip %}
                 Level {{ this.getLevel() }}
                 {% if this.isEdit %}
-                    {{ form_end(this.form) }}
+                    <form data-model="on(change)|*" onkeydown="return event.key != 'Enter';">{{ form_rest(form) }}</form>
                 {% else %}
                     EXP {{ formatNumber(this.item.specialShipExp) }}
                 {% endif %}
@@ -45,8 +41,5 @@
             {% endif %}
         </td>
     </tr>
-    {% if this.isEdit %}
-        {{ form_end(this.form) }}
-    {% endif %}
 {% endif %}
 </tbody>
