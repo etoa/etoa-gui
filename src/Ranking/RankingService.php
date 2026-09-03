@@ -169,7 +169,7 @@ class RankingService
             foreach ($planets as $planet) {
                 foreach ($planet->getBuildlist() as $build) {
                     $level = $build->getCurrentLevel();
-                    $buildingId = $build->getId();
+                    $buildingId = $build->getBuilding()->getId();
                     if(array_key_exists($buildingId, $buildingPoints) && array_key_exists($level, $buildingPoints[$buildingId])) {
                         $p = $level>0?round($buildingPoints[$buildingId][$level]):0;
                         $points += $p;
