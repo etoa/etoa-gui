@@ -4,7 +4,7 @@ namespace EtoA\Form\Type\Admin;
 
 use EtoA\Form\Type\Core\BuildingType;
 use EtoA\Form\Type\Core\EntityType;
-use EtoA\Universe\Entity\EntitySearch;
+use EtoA\Universe\Entity\EntityLabelSearch;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
@@ -25,7 +25,7 @@ class AddBuildingItemType extends AbstractType
                 'placeholder' => false,
                 'required' => true,
                 'get_type' => true,
-                'search' => EntitySearch::create()->codeIn([\EtoA\Universe\Entity\EntityType::PLANET]),
+                'search' => EntityLabelSearch::create()->planetUserIdNotNull()
             ])
             ->add('currentLevel', IntegerType::class, [
                 'label' => 'Level',

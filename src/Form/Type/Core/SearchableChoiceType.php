@@ -15,9 +15,6 @@ class SearchableChoiceType extends AbstractType
         $resolver->setDefaults([
             'row_attr' => [
                 'data-controller' => 'searchable-choice',
-                // Choices.js replaces the <select> with its own markup. Without this a live
-                // component re-render morphs that markup against the plain <select> the server
-                // sent and ends up inserting a second widget next to the existing one.
                 'data-live-ignore' => true,
             ],
             'attr' => [
