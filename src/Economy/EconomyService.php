@@ -219,11 +219,11 @@ class EconomyService
                 }
 
                 $bonusFactors = [
-                    'metal' => $planet->getProdMetal() + $race->getMetal() + $star->getSolarType()->getMetal() + ($specialist ? $specialist->getProdMetal() : 1) - 4,
-                    'crystal' => $planet->getProdCrystal() + $race->getCrystal() + $star->getSolarType()->getCrystal() + ($specialist ? $specialist->getProdCrystal() : 1) - 4,
-                    'plastic' => $planet->getProdPlastic() + $race->getPlastic() + $star->getSolarType()->getPlastic() + ($specialist ? $specialist->getProdPlastic() : 1) - 4,
-                    'fuel' => $planet->getProdFuel() + $race->getFuel() + $star->getSolarType()->getFuel() + ($specialist ? $specialist->getProdFuel() : 1) - 4 + $planet->getFuelProductionBonusFactor() * -1,
-                    'food' => $planet->getProdFood() + $race->getFood() + $star->getSolarType()->getFood() + ($specialist ? $specialist->getProdFood() : 1) - 4,
+                    'metal' => $planet->getPlanetType()->getMetal() + $race->getMetal() + $star->getSolarType()->getMetal() + ($specialist ? $specialist->getProdMetal() : 1) - 4,
+                    'crystal' => $planet->getPlanetType()->getCrystal() + $race->getCrystal() + $star->getSolarType()->getCrystal() + ($specialist ? $specialist->getProdCrystal() : 1) - 4,
+                    'plastic' => $planet->getPlanetType()->getPlastic() + $race->getPlastic() + $star->getSolarType()->getPlastic() + ($specialist ? $specialist->getProdPlastic() : 1) - 4,
+                    'fuel' => $planet->getPlanetType()->getFuel() + $race->getFuel() + $star->getSolarType()->getFuel() + ($specialist ? $specialist->getProdFuel() : 1) - 4 + $planet->getFuelProductionBonusFactor() * -1,
+                    'food' => $planet->getPlanetType()->getFood() + $race->getFood() + $star->getSolarType()->getFood() + ($specialist ? $specialist->getProdFood() : 1) - 4,
                 ];
 
                 foreach ($resourceKeys as $resourceKey) {
