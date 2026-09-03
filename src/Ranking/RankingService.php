@@ -228,7 +228,7 @@ class RankingService
                 $stats->rankShift = $rankShift;
                 $rank++;
 
-                $this->userRepository->updatePointsAndRank($stats, $user_rank_highest[$stats->user->getId()]);
+                $this->userRepository->updatePointsAndRank($stats, min($stats->rank,$user_rank_highest[$stats->user->getId()]));
 
                 $max_points = max($max_points, $stats->points);
                 $points_arr[$stats->user->getId()] = $stats->points;
