@@ -692,4 +692,45 @@ class AllianceInternalController extends AbstractGameController
             'headline' => 'Allianz'
         ]);
     }
+
+    #[Route('/game/alliance/leave', name: 'game.alliance.leave')]
+    public function leave(Request $request): Response
+    {
+        $cu = $this->getUser()->getData();
+        $alliance = $cu->getAlliance();
+        $isFounder = $alliance->getFounder() === $cu;
+
+        if(!$isFounder && !$this->allianceDiplomacyRepository->isAtWar($alliance)) {
+            $form = $this->createFormBuilder()
+                ->add('leave', SubmitType::class, ['label' => 'Ja'])
+                ->getForm()
+                ->handleRequest($request);
+
+            if ($form->isSubmitted() && $form->isValid()) {
+                if($this->service->kickMember($alliance, $cu)) {
+                    return $this->render('game/success.html.twig',[
+                        'msg' => 'Du bist aus der Allianz ausgetreten!',
+                        'path' => $this->generateUrl('game.overview'),
+                        'headline' => 'Allianz'
+                    ]);
+                }
+
+                return $this->render('game/error.html.twig',[
+                    'msg' => 'Du konntest nicht aus der Allianz austreten, da die Allianz entweder im Krieg ist oder du noch Allianzflotten in der Luft hast!',
+                    'path' => $this->generateUrl('game.alliance.overview'),
+                    'headline' => 'Allianz'
+                ]);
+            }
+
+            return $this->render('game/alliance/alliance_leave.html.twig',[
+                'form' => $form,
+            ]);
+        }
+
+        return $this->render('game/error.html.twig',[
+            'msg' => 'Du konntest nicht aus der Allianz austreten, da die Allianz entweder im Krieg ist oder du noch Allianzflotten in der Luft hast!',
+            'path' => $this->generateUrl('game.alliance.overview'),
+            'headline' => 'Allianz'
+        ]);
+    }
 }

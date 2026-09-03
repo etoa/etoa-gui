@@ -136,7 +136,7 @@ class AllianceService
             return false;
         }
 
-        if($this->security->getUser()->getData() !== $alliance->getFounder()) {
+        if($this->security->getUser()->getData() === $alliance->getFounder()) {
             return false;
         }
 
@@ -286,7 +286,9 @@ class AllianceService
         }
         if ($isFounder && !$this->allianceDiplomacyRepository->isAtWar($alliance)) {
             $adminLinks["Allianz auflösen"] = $this->router->generate('game.alliance.disband');
-            $adminLinks["Allianz verlassen"] = "?page=&action=leave";
+        }
+        if (!$isFounder && !$this->allianceDiplomacyRepository->isAtWar($alliance)) {
+            $adminLinks["Allianz verlassen"] = $this->router->generate('game.alliance.leave');
         }
 
         return [
