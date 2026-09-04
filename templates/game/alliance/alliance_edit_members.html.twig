@@ -62,7 +62,7 @@
                         {# Aktionen #}
                         <td>
                             {% if app.user.data != allianceMember.vars.data %}
-                                <a href="{{ path(game.messages.newTo,{id:allianceMember.vars.data.id}) }}">Nachricht</a><br/>
+                                <a href="{{ path('game.messages.newTo',{id:allianceMember.vars.data.id}) }}">Nachricht</a><br/>
                             {% endif %}
                             <a href="{{ path('game.userinfo',{id:allianceMember.vars.data.id})}}">Profil</a><br/>
                             {% if app.user.data == app.user.data.alliance.founder and app.user.data != allianceMember.vars.data %}

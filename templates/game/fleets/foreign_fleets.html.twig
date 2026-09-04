@@ -25,7 +25,7 @@
                     </span> [{{ fleetData.statusCode }}]
                 </td>
                 <td>
-                    <a href="{{ path(game.messages.newTo,{id:fleetData.fleet.user.id}) }}">{{ fleetData.fleet.user.nick }}</a>
+                    <a href="{{ path('game.messages.newTo',{id:fleetData.fleet.user.id}) }}">{{ fleetData.fleet.user.nick }}</a>
                 </td>
             </tr>
             {% if fleetData.shipsCount is not null %}

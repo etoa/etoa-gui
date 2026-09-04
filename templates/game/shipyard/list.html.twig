@@ -90,7 +90,7 @@
                                     {% if ship.special %}
                                         <img class='shipImageSmall' src="{{ ship.image }}"/>
                                     {% else %}
-                                        <a href="{{ path(game.help.shipyard.detail,{id:ship.id}) }}"><img src="{{ ship.image }}"
+                                        <a href="{{ path('game.help.shipyard.detail',{id:ship.id}) }}"><img src="{{ ship.image }}"
                                                                                        class='shipImageSmall'/></a>
                                     {% endif %}
                                 </td>

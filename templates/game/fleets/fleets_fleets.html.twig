@@ -33,7 +33,7 @@
                         </td>
                         <td>
                             <b>{{ fleet.entityFrom.getType.entityCodeString }}</b>
-                            <a href="{{ path(game.cell,{id:fleet.entityFrom.cell.id}) }}">{{ fleet.entityFrom.getCoordinates().toString }} {{ fleet.entityFrom.displayName }}</a><br/>
+                            <a href="{{ path('game.cell',{id:fleet.entityFrom.cell.id}) }}">{{ fleet.entityFrom.getCoordinates().toString }} {{ fleet.entityFrom.displayName }}</a><br/>
 
                             {% if userUniverseDiscoveryService.isEntityDiscovered(app.user.data, fleet.entityTo) %}
                                 <b>{{ fleet.entityTo.codeString }}</b>

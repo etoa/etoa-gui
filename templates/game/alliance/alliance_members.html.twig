@@ -46,7 +46,7 @@
                     {% endif  %}
                     <td class="tbldata">
                         {% if not app.user.id is same as member.id %}
-                            <a href="{{ path(game.messages.newTo,{id:member.id}) }}">Nachricht</a>
+                            <a href="{{ path('game.messages.newTo',{id:member.id}) }}">Nachricht</a>
                         {% endif  %}
                         <a href="{{ path('game.userinfo',{id:member.id})}}">Profil</a>
                     </td>
