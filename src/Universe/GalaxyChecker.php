@@ -194,9 +194,10 @@ class GalaxyChecker
             $invalidEntities[] = "Keine leeren Räume vorhanden!";
         }
 
+        $usedCellIds = $this->entityRepository->getUsedCellIds();
         foreach ($cellIds as $cellId) {
-            if (!isset($entityCodes[$cellId])) {
-                $invalidEntities[] = "Fehlende Entität " . $cellId . " bei Zelle " . $cellId;
+            if (!in_array($cellId, $usedCellIds, true)) {
+                $invalidEntities[] = "Fehlende Entität bei Zelle " . $cellId;
             }
         }
 

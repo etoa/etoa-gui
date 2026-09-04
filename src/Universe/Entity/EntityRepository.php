@@ -189,6 +189,17 @@ class EntityRepository extends AbstractRepository
         return array_column($data, 'code', 'id');
     }
 
+    /**
+     * @return int[]
+     */
+    public function getUsedCellIds(): array
+    {
+        return $this->createQueryBuilder('q')
+            ->select('IDENTITY(q.cell)')
+            ->getQuery()
+            ->getSingleColumnResult();
+    }
+
     public function getMaxEntityId(): int
     {
         return (int) $this->createQueryBuilder('q')
