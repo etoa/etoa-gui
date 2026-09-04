@@ -200,7 +200,7 @@ class Entity
 
     public function setWormhole(?Wormhole $wormhole): static
     {
-        $wormhole->setEntity($this);
+        $wormhole?->setEntity($this);
         $this->wormhole = $wormhole;
 
         return $this;

@@ -28,7 +28,7 @@ class WormholeService
 
         $wormholes = $this->repository->findNonPersistentInRandomOrder($changedBefore, $numberOfWormholesToChange);
         foreach ($wormholes as $wormhole) {
-            if (!in_array($wormhole->getEntity(), $toBeDeleted, true)) {
+            if (!in_array($wormhole->getEntity(), $toBeDeleted, true) && !in_array($wormhole->getTarget()->getEntity(), $toBeDeleted, true)) {
                 array_push($toBeDeleted, $wormhole->getEntity(), $wormhole->getTarget()->getEntity());
             }
         }
@@ -39,6 +39,7 @@ class WormholeService
 
         foreach ($toBeDeleted as $entity) {
             $this->repository->remove($entity->getType());
+            $entity->setWormhole(null);
             $this->entityRepository->updateCode($entity, EntityType::EMPTY_SPACE);
 
             $this->emptySpaceRepo->add($entity);
@@ -53,7 +54,10 @@ class WormholeService
 
             $this->entityRepository->updateCode($space1, EntityType::WORMHOLE);
             $this->entityRepository->updateCode($space2, EntityType::WORMHOLE);
-            $this->repository->add($space1, false, $space2->getType());
+
+            $this->repository->add($space1, false, null, false);
+            $this->repository->add($space2, false, $space1->getWormhole());
+            $this->repository->updateTarget($space1->getWormhole(), $space2->getWormhole());
         }
     }
 }
