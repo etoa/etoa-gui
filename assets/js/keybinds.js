@@ -53,28 +53,28 @@ if ($) {
   keys[leftArrowKey] = window.prevEntityUrl || "#";
   keys[leftArrowKeyAlternative] = window.prevEntityUrl || "#";
   //keys[enterKey]          = "chatframe.php"; // this results in a bug (multiple chats open)
-  keys[spaceBarKey] = "?page=overview";
+  keys[spaceBarKey] = "/game/overview";
 
-  keys[104] /* 'h' */ = "?page=haven";
-  keys[103] /* 'g' */ = "?page=buildings";
-  keys[102] /* 'f' */ = "?page=research";
-  keys[119] /* 'w' */ = "?page=shipyard";
-  keys[100] /* 'd' */ = "?page=defense";
-  keys[114] /* 'r' */ = "?page=missiles";
-  keys[109] /* 'm' */ = "?page=market";
-  keys[115] /* 's' */ = "?page=stats";
-  keys[107] /* 'k' */ = "?page=galaxy";
-  keys[110] /* 'n' */ = "?page=messages";
-  keys[98]  /* 'b' */ = "?page=reports";
-  keys[97]  /* 'a' */ = "?page=alliance";
+  keys[104] /* 'h' */ = "/game/haven/show";
+  keys[103] /* 'g' */ = "/game/buildings";
+  keys[102] /* 'f' */ = "/game/research";
+  keys[119] /* 'w' */ = "/game/shipyard";
+  keys[100] /* 'd' */ = "/game/defense";
+  keys[114] /* 'r' */ = "/game/missiles";
+  keys[109] /* 'm' */ = "/game/market/home";
+  keys[115] /* 's' */ = "/game/stats/total";
+  keys[107] /* 'k' */ = "/game/galaxy";
+  keys[110] /* 'n' */ = "/game/messages/inbox";
+  keys[98]  /* 'b' */ = "/game/reports/all";
+  keys[97]  /* 'a' */ = "/game/alliance";
   keys[118] /* 'v' */ = "/game/bookmarks/target";
-  keys[108] /* 'l' */ = "?page=fleets";
-  keys[112] /* 'p' */ = "?page=economy";
-  keys[252] /* 'ü' */ = "?page=fleetstats";
+  keys[108] /* 'l' */ = "/game/fleets";
+  keys[112] /* 'p' */ = "/game/economy";
+  keys[252] /* 'ü' */ = "/game/fleetstats";
 
-  shiftKeys[80] /* 'P' */ = "?page=planetstats";
+  shiftKeys[80] /* 'P' */ = "/game/planetstats";
   shiftKeys[86] /* 'V' */ = "/game/bookmarks/fleet";
-  shiftKeys[66] /* 'B' */ = "?page=population";
+  shiftKeys[66] /* 'B' */ = "/game/population";
 
   $(document).ready(keybindsInit);
 }

@@ -267,7 +267,7 @@ function showElement(elemId, value) {
 
 function changeNav(selIndex, page) {
   obj = document.getElementById('nav_mode_select');
-  document.location = '?page=' + page + '&change_entity=' + obj.options[obj.selectedIndex].value;
+  document.location = '?change_entity=' + obj.options[obj.selectedIndex].value;
 }
 
 function servertimeclock() {
@@ -1332,9 +1332,9 @@ function show_info(
 
 
   //Alle Beschriftungen anzeigen
-  document.getElementById("planet_info_text_building").innerHTML = '<a href=\"?page=buildings&change_entity=' + planet_id + '\">Bauhof:</a>';
-  document.getElementById("planet_info_text_shipyard").innerHTML = '<a href=\"?page=shipyard&change_entity=' + planet_id + '\">Schiffswerft:</a>';
-  document.getElementById("planet_info_text_defense").innerHTML = '<a href=\"?page=defense&change_entity=' + planet_id + '\">Waffenfabrik:</a>';
+  document.getElementById("planet_info_text_building").innerHTML = '<a href=\"?change_entity=' + planet_id + '\">Bauhof:</a>';
+  document.getElementById("planet_info_text_shipyard").innerHTML = '<a href=\"?change_entity=' + planet_id + '\">Schiffswerft:</a>';
+  document.getElementById("planet_info_text_defense").innerHTML = '<a href=\"?change_entity=' + planet_id + '\">Waffenfabrik:</a>';
   document.getElementById("planet_info_text_res").firstChild.nodeValue = 'Ressourcen';
   document.getElementById("planet_info_text_res_metal").className = 'resmetalcolor';
   document.getElementById("planet_info_text_res_crystal").className = 'rescrystalcolor';
