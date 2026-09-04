@@ -4,6 +4,7 @@ namespace EtoA\Controller\Admin;
 
 use EtoA\Backend\BackendMessageService;
 use EtoA\Entity\Entity;
+use EtoA\Entity\Planet;
 use EtoA\Form\Type\Admin\EditAsteroidType;
 use EtoA\Form\Type\Admin\EditEmptySpaceType;
 use EtoA\Form\Type\Admin\EditNebualType;
@@ -99,7 +100,7 @@ class EntityController extends AbstractAdminController
 
                 break;
             case EntityType::PLANET:
-                $form = $this->handlePlanet($request, $entity);
+                $form = $this->handlePlanet($request, $entity->getPlanet());
 
                 break;
         }
@@ -174,9 +175,8 @@ class EntityController extends AbstractAdminController
         return $form;
     }
 
-    private function handlePlanet(Request $request, Entity $entity): FormInterface
+    private function handlePlanet(Request $request, Planet $planet): FormInterface
     {
-        $planet = $entity->getPlanet();
         $form = $this->createForm(EditPlanetType::class, $planet);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
@@ -189,23 +189,21 @@ class EntityController extends AbstractAdminController
             if (array_key_exists('mainPlanet',$changeset) && $planet->isMainPlanet()) {
                 $this->planetRepository->setMain($planet);
                 $this->addFlash('success', "Hauptplanet gesetzt; ursprüngliche Hautpplanet-Zuordnung entfernt!");
-
             } elseif (array_key_exists('mainPlanet',$changeset) && !$planet->isMainPlanet()) {
                 $this->planetRepository->unsetMain($planet);
                 $this->addFlash('success', "Hauptplanet-Zuordnung entfernt. Denke daran, einen neuen Hautplanet festzulegen!");
             }
 
             if (array_key_exists('user',$changeset)) {
-                $this->planetService->changeOwner($planet);
+                $this->planetService->changeOwner($planet, $changeset['user'][1]);
 
-                if (!$planet->getUser()) {
-                    $this->planetRepository->reset($planet);
-                }
+                $url = $changeset['user'][0]?($this->generateUrl('admin.users.edit',['id'=>$changeset['user'][0]->getId()])): '';
 
                 //Log Schreiben
-                $this->logRepository->add(LogFacility::GALAXY, LogSeverity::INFO, $this->getUser()->getUsername() . " wechselt den Besitzer vom Planeten: [page galaxy sub=edit id=" . $planet->getId() . "][B]" . $planet->getId() . "[/B][/page]
-Alter Besitzer: [page=".$this->generateUrl('admin.users.edit',['id'=>$changeset['user'][0]?->getId()])."][B]" . $changeset['user'][0]?->getId() . "[/B][/page]
-Neuer Besitzer: [page=".$this->generateUrl('admin.users.edit',['id'=>$planet->getUser()?->getId()])."][B]" . $planet->getUser()?->getId() . "[/B][/page]");
+                $this->logRepository->add(LogFacility::GALAXY, LogSeverity::INFO, $this->getUser()->getUsername() . " wechselt den Besitzer vom Planeten: [page galaxy sub=edit id=" . $planet->getEntity()
+                    ->getId(). "][B]" . $planet->getEntity()->getId() . "[/B][/page]
+Alter Besitzer: [".$url."][B]" . $changeset['user'][0]?->getId() . "[/B][/page]
+Neuer Besitzer: [".$this->generateUrl('admin.users.edit',['id'=>$planet->getUser()?->getId()])."][B]" . $planet->getUser()?->getId() . "[/B][/page]");
 
                 $this->addFlash('success', "Der Planet wurde dem User mit der ID: " . $planet->getUser()->getId() . " übergeben!");
             }

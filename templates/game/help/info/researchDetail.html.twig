@@ -46,11 +46,11 @@
                 {% for level,bc in costs %}
                     <tr>
                         <td class="tbldata">{{ level + 1 }}</td>
-                        <td class="tbldata" style="text-align:right;">{{ formatNumber(bc['metal']) }}</td>
-                        <td class="tbldata" style="text-align:right;">{{ formatNumber(bc['crystal']) }}</td>
-                        <td class="tbldata" style="text-align:right;">{{ formatNumber(bc['plastic']) }}</td>
-                        <td class="tbldata" style="text-align:right;">{{ formatNumber(bc['fuel']) }}</td>
-                        <td class="tbldata" style="text-align:right;">{{ formatNumber(bc['food']) }}</td>
+                        <td class="tbldata" style="text-align:right;">{{ formatNumber(bc.metal) }}</td>
+                        <td class="tbldata" style="text-align:right;">{{ formatNumber(bc.crystal) }}</td>
+                        <td class="tbldata" style="text-align:right;">{{ formatNumber(bc.plastic) }}</td>
+                        <td class="tbldata" style="text-align:right;">{{ formatNumber(bc.fuel) }}</td>
+                        <td class="tbldata" style="text-align:right;">{{ formatNumber(bc.food) }}</td>
                     </tr>
                 {% endfor %}
             {% endblock %}

@@ -21,16 +21,19 @@ use EtoA\Ship\ShipQueueRepository;
 class PlanetService
 {
     public function __construct(
-        private readonly PlanetRepository           $repository,
-        private readonly BuildingListItemRepository $buildingRepository,
-        private readonly DefenseRepository          $defenseRepository,
-        private readonly ConfigurationService       $config,
-        private readonly LogRepository              $logRepository,
-        private readonly ShipListRepository $shipListRepository,
-        private readonly ShipQueueRepository $shipQueueRepository,
-        private readonly DefenseQueueRepository $defenseQueueRepository,
-        private readonly BuildingQueueItemRepository $buildingQueueItemRepository
-    ) {}
+        private readonly PlanetRepository            $repository,
+        private readonly BuildingListItemRepository  $buildingRepository,
+        private readonly DefenseRepository           $defenseRepository,
+        private readonly ConfigurationService        $config,
+        private readonly LogRepository               $logRepository,
+        private readonly ShipListRepository          $shipListRepository,
+        private readonly ShipQueueRepository         $shipQueueRepository,
+        private readonly DefenseQueueRepository      $defenseQueueRepository,
+        private readonly BuildingQueueItemRepository $buildingQueueItemRepository,
+        private readonly PlanetRepository            $planetRepository,
+    )
+    {
+    }
 
     /**
      * @return array<int,string>
@@ -51,14 +54,15 @@ class PlanetService
      * Existing buildings will be transferred to the new owner,
      * but ships and defense will be deleted.
      */
-    public function changeOwner(Planet $planet): void
+    public function changeOwner(Planet $planet, ?User $user): void
     {
-        $this->repository->changeUser($planet, $planet->getUser(), 'Unbenannt');
-        if ($planet->getUser()) {
-            $this->buildingRepository->updateUserForEntity($planet->getUser(), $planet);
+        if ($user) {
+            $this->repository->changeUser($planet, $user, 'Unbenannt');
         } else {
             $this->buildingRepository->removeForEntity($planet);
+            $this->planetRepository->reset($planet);
         }
+
         $this->shipListRepository->removeForEntity($planet);
         $this->defenseRepository->removeForEntity($planet);
     }
@@ -89,7 +93,8 @@ class PlanetService
         $this->logRepository->add(LogFacility::GALAXY, LogSeverity::INFO, "Der Planet mit der ID " . $planet->getEntity()->getId() . " wurde zurückgesetzt!");
     }
 
-    public function getAllowedFleetActions(Planet $planet):array {
+    public function getAllowedFleetActions(Planet $planet): array
+    {
         $planetType = $planet->getPlanetType();
 
         $arr = array();
@@ -124,11 +129,11 @@ class PlanetService
         return $arr;
     }
 
-    public function getTotalPeopleWorking(Planet $planet):int
+    public function getTotalPeopleWorking(Planet $planet): int
     {
         $people_working = 0;
         foreach ($this->buildingRepository->getPeopleWorking($planet) as $building) {
-            $people_working =+ $building->getPeopleWorking();
+            $people_working = +$building->getPeopleWorking();
         }
 
         return $people_working;

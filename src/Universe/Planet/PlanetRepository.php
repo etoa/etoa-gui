@@ -321,8 +321,7 @@ class PlanetRepository extends AbstractRepository
 
     public function changeUser(Planet $planet, ?User $user, ?string $name = null): void
     {
-        if($planet->getUser() !== $user)
-            $planet->setUser($user);
+        $planet->setUser($user);
         $planet->setUserChanged(time());
         $planet->setMainPlanet(false);
 
