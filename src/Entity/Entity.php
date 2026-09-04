@@ -148,7 +148,7 @@ class Entity
 
     public function setStar(?Star $star): static
     {
-        $star->setEntity($this);
+        $star?->setEntity($this);
         $this->star = $star;
 
         return $this;
@@ -161,7 +161,7 @@ class Entity
 
     public function setPlanet(?Planet $planet): static
     {
-        $planet->setEntity($this);
+        $planet?->setEntity($this);
         $this->planet = $planet;
 
         return $this;
@@ -174,7 +174,7 @@ class Entity
 
     public function setAsteroid(?Asteroid $asteroid): static
     {
-        $asteroid->setEntity($this);
+        $asteroid?->setEntity($this);
         $this->asteroid = $asteroid;
 
         return $this;
@@ -187,7 +187,7 @@ class Entity
 
     public function setNebula(?Nebula $nebula): static
     {
-        $nebula->setEntity($this);
+        $nebula?->setEntity($this);
         $this->nebula = $nebula;
 
         return $this;
@@ -213,7 +213,7 @@ class Entity
 
     public function setEmptySpace(?EmptySpace $emptySpace): static
     {
-        $emptySpace->setEntity($this);
+        $emptySpace?->setEntity($this);
         $this->emptySpace = $emptySpace;
 
         return $this;

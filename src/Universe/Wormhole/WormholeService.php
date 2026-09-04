@@ -51,6 +51,8 @@ class WormholeService
             $space2 = $emptySpaceEntities[$x + 1];
             $this->emptySpaceRepo->remove($space1->getEmptySpace());
             $this->emptySpaceRepo->remove($space2->getEmptySpace());
+            $space1->setEmptySpace(null);
+            $space2->setEmptySpace(null);
 
             $this->entityRepository->updateCode($space1, EntityType::WORMHOLE);
             $this->entityRepository->updateCode($space2, EntityType::WORMHOLE);
