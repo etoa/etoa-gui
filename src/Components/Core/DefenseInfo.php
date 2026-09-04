@@ -19,6 +19,7 @@ use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormInterface;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
 use Symfony\UX\LiveComponent\Attribute\LiveAction;
@@ -113,7 +114,7 @@ class DefenseInfo extends AbstractController
             ->add('save', SubmitType::class, [
                 'label' => 'Speichern',
                 'attr' => [
-                    'data-action' => 'live#action:render',
+                    'data-action' => 'live#action:prevent',
                     'data-live-action-param' => "save"
                 ]
             ])
@@ -121,7 +122,7 @@ class DefenseInfo extends AbstractController
     }
 
     #[LiveAction]
-    public function save(): void
+    public function save(): ?RedirectResponse
     {
         $this->submitForm();
 
@@ -143,6 +144,10 @@ class DefenseInfo extends AbstractController
         } else {
             $this->addFlash('error', "Arbeiter konnten nicht zugeteilt werden!");
         }
+
+        $referer = $this->requestStack->getCurrentRequest()?->headers->get('referer');
+
+        return $referer ? new RedirectResponse($referer) : null;
     }
 
     #[ExposeInTemplate]
