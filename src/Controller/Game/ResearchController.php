@@ -102,6 +102,8 @@ class ResearchController extends AbstractGameController
                     $technologyListItem = new TechnologyListItem();
                     $technologyListItem->setUser($this->getUser()->getData());
                     $technologyListItem->setTechnology($technology);
+                    $technologyListItem->setEntity($cp->getEntity());
+                    $this->technologyListItemRepository->persist($technologyListItem);
                 }
 
                 if ($technologyListItem->getBuildType() === 0) {
