@@ -100,7 +100,7 @@
         </tr>
         <tr>
             <th>Wachstumsbonus {{ planet.planetType.name }} </th>
-            <td>{{ formatPercentString(planet.planetType.people, true) }}</td>
+            <td>{{ formatPercentString(planet.planetType.people, true)|raw }}</td>
         </tr>
         <tr>
             <th>Wachstumsbonus {{ app.user.data.race.name }} </th>

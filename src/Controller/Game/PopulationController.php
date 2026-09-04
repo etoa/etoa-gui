@@ -2,6 +2,7 @@
 
 namespace EtoA\Controller\Game;
 
+use EtoA\Defense\DefenseQueueRepository;
 use EtoA\Form\Type\Core\SingleSubmitType;
 use EtoA\Building\BuildingId;
 use EtoA\Building\BuildingListItemRepository;
@@ -9,11 +10,11 @@ use EtoA\Building\BuildingRepository;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Entity\Planet;
 use EtoA\Form\Type\Core\EditPopulationType;
+use EtoA\Ship\ShipQueueRepository;
 use EtoA\Support\StringUtils;
 use EtoA\Technology\TechnologyDataRepository;
 use EtoA\Technology\TechnologyId;
 use EtoA\Technology\TechnologyListItemRepository;
-use EtoA\Technology\TechnologyRequirementRepository;
 use EtoA\Technology\TechnologyService;
 use EtoA\Universe\Entity\EntityRepository;
 use EtoA\Universe\Planet\PlanetService;
@@ -34,7 +35,10 @@ class PopulationController extends AbstractGameController
         private readonly TechnologyDataRepository $technologyDataRepository,
         private readonly BuildingRepository $buildingRepository,
         private readonly PlanetService $planetService,
-        private readonly EntityRepository $entityRepository
+        private readonly EntityRepository $entityRepository,
+        private readonly TechnologyListItemRepository $technologyListItemRepository,
+        private readonly ShipQueueRepository $shipQueueRepository,
+        private readonly DefenseQueueRepository $defenseQueueRepository,
     )
     {
     }
@@ -57,6 +61,15 @@ class PopulationController extends AbstractGameController
                 $workplaces = $this->buildingListItemRepository->getWorkplaceBuildings($planet);
 
                 if (count($workplaces) > 0) {
+                    //überprüft tätigkeit
+                    $workingStatus = [
+                        BuildingId::SHIPYARD->value => $this->shipQueueRepository->countBuildInProgress($planet),
+                        BuildingId::DEFENSE->value => $this->defenseQueueRepository->countBuildInProgress($planet),
+                        BuildingId::TECHNOLOGY->value => $this->technologyListItemRepository->countResearchInProgress($this->getUser()->getData()),
+                        BuildingId::BUILDING->value => $this->buildingListItemRepository->countBuildInProgress($planet),
+                        BuildingId::PEOPLE->value =>  $this->technologyListItemRepository->isTechInProgress($this->getUser()->getData(), TechnologyId::GEN),
+                    ];
+
                     //fake genlab
                     if($this->technologyService->requirementsPassed($this->technologyDataRepository->find(TechnologyId::GEN))) {
                         $genlab = $this->buildingListItemRepository->findOneBy(['user'=>$this->getUser()->getData(),'entity'=>$planet,'building'=>$this->buildingRepository->find(BuildingId::PEOPLE)]);
@@ -67,6 +80,14 @@ class PopulationController extends AbstractGameController
                     foreach ($workplaces as $workplace) {
                         if ($workplace->getBuilding()->getId() === BuildingId::BUILDING) {
                             $workplace->displayName = 'Bauhof';
+                        }
+
+                        if ($workingStatus[$workplace->getBuilding()->getId()] > 0) {
+                            //Sperrt arbeiter
+                            $this->buildingListItemRepository->markBuildingWorkingStatus($this->getUser()->getData(), $planet, $workplace->getBuilding(), true);
+                        } else {
+                            //Entsperrt arbeiter
+                            $this->buildingListItemRepository->markBuildingWorkingStatus($this->getUser()->getData(), $planet, $workplace->getBuilding(), false);
                         }
                     }
                 }

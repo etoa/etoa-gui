@@ -44,6 +44,20 @@ class DefenseQueueRepository extends AbstractRepository
         return $data !== false ? DefenseQueueItem::createFromData($data) : null;
     }
 
+    public function countBuildInProgress(int|Planet $entityId): int
+    {
+        return (int) $this->createQueryBuilder('q')
+            ->select('COUNT(q.id)')
+            ->where('q.entity = :entityId')
+            ->andWhere('q.startTime > 0')
+            ->andWhere('q.endTime > 0')
+            ->setParameters([
+                'entityId' => $entityId,
+            ])
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
+
     /**
      * @return DefenseQueueItem[]
      */

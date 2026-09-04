@@ -104,21 +104,7 @@ class DefenseRepository extends AbstractRepository
             ->fetchOne();
     }
 
-    public function countBuildInProgress(int $userId, int $entityId): int
-    {
-        return (int) $this->createQueryBuilder('q')
-            ->select('COUNT(queue_id)')
-            ->from('def_queue')
-            ->where('queue_entity_id = :entityId')
-            ->andWhere('queue_user_id = :userId')
-            ->andWhere('queue_starttime > 0')
-            ->andWhere('queue_endtime > 0')
-            ->setParameters([
-                'userId' => $userId,
-                'entityId' => $entityId,
-            ])
-            ->fetchOne();
-    }
+
 
     public function countJammingDevicesOnEntity(Planet $entity): ?int
     {

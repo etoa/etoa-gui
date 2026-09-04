@@ -17,20 +17,18 @@ class ShipQueueRepository extends AbstractRepository
         parent::__construct($registry, ShipQueueItem::class);
     }
 
-    public function countBuildInProgress(int $userId, int $entityId): int
+    public function countBuildInProgress(int|Planet $entityId): int
     {
         return (int) $this->createQueryBuilder('q')
-            ->select('COUNT(queue_id)')
-            ->from('ship_queue')
-            ->where('queue_entity_id = :entityId')
-            ->andWhere('queue_user_id = :userId')
-            ->andWhere('queue_starttime > 0')
-            ->andWhere('queue_endtime > 0')
+            ->select('COUNT(q.id)')
+            ->where('q.entity = :entityId')
+            ->andWhere('q.startTime > 0')
+            ->andWhere('q.endTime > 0')
             ->setParameters([
-                'userId' => $userId,
                 'entityId' => $entityId,
             ])
-            ->fetchOne();
+            ->getQuery()
+            ->getSingleScalarResult();
     }
 
     public function add(User $user, Ship $ship, Planet $entity, int $count, int $startTime, int $endTime, int $objectTime): void

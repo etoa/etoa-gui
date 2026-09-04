@@ -117,18 +117,15 @@ class TechnologyListItemRepository extends AbstractRepository
     /**
      * Researches running on the entity, without the gen lab which is counted separately.
      */
-    public function countResearchInProgress(int $userId, int $entityId): int
+    public function countResearchInProgress(int|User $userId): int
     {
         return (int) $this->createQueryBuilder('q')
             ->select('COUNT(q.id)')
             ->where('q.user = :userId')
-            // the entity condition used a second where() before and was therefore dropped
-            ->andWhere('q.entity = :entityId')
             ->andWhere('q.buildType > 2')
             ->andWhere('q.technology <> :techId')
             ->setParameters([
                 'userId' => $userId,
-                'entityId' => $entityId,
                 'techId' => TechnologyId::GEN,
             ])
             ->getQuery()

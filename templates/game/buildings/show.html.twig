@@ -181,6 +181,10 @@
                 {{ form_widget(form._token) }}
                 {{ form_widget(form.checker) }}
             {{ form_end(form,{render_rest:false}) }}
+            <input type="button" onclick="window.location.reload()" value="Aktualisieren" />
+            <a href="{{ path('game.buildings') }}">
+                <input type="button" value="Zurück zur Übersicht" />
+            </a>
         {% endif %}
     {% endif %}
 {% endblock %}
