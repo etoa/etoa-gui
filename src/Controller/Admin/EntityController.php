@@ -177,6 +177,9 @@ class EntityController extends AbstractAdminController
 
     private function handlePlanet(Request $request, Planet $planet): FormInterface
     {
+        $originalUser = $planet->getUser();
+        $originalMainPlanet = $planet->isMainPlanet();
+
         $form = $this->createForm(EditPlanetType::class, $planet);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
@@ -184,26 +187,27 @@ class EntityController extends AbstractAdminController
                 $planet->setUserChanged(0);
             }
 
-            $changeset = $this->planetRepository->getChangeset($planet);
-
-            if (array_key_exists('mainPlanet',$changeset) && $planet->isMainPlanet()) {
+            if ($planet->isMainPlanet() !== $originalMainPlanet && $planet->isMainPlanet()) {
                 $this->planetRepository->setMain($planet);
                 $this->addFlash('success', "Hauptplanet gesetzt; ursprüngliche Hautpplanet-Zuordnung entfernt!");
-            } elseif (array_key_exists('mainPlanet',$changeset) && !$planet->isMainPlanet()) {
+            } elseif ($planet->isMainPlanet() !== $originalMainPlanet && !$planet->isMainPlanet()) {
                 $this->planetRepository->unsetMain($planet);
                 $this->addFlash('success', "Hauptplanet-Zuordnung entfernt. Denke daran, einen neuen Hautplanet festzulegen!");
             }
 
-            if (array_key_exists('user',$changeset)) {
-                $this->planetService->changeOwner($planet, $changeset['user'][1]);
+            if ($planet->getUser() !== $originalUser) {
+                $newUser = $planet->getUser();
+                $this->planetService->changeOwner($planet, $newUser);
 
-                $url = $changeset['user'][0]?($this->generateUrl('admin.users.edit',['id'=>$changeset['user'][0]->getId()])): '';
+                $url = $originalUser?($this->generateUrl('admin.users.edit',['id'=>$originalUser->getId()])): '';
+                $url2 = $originalUser?($this->generateUrl('admin.users.edit',['id'=>$planet->getUser()->getId()])): '';
+
 
                 //Log Schreiben
                 $this->logRepository->add(LogFacility::GALAXY, LogSeverity::INFO, $this->getUser()->getUsername() . " wechselt den Besitzer vom Planeten: [page galaxy sub=edit id=" . $planet->getEntity()
                     ->getId(). "][B]" . $planet->getEntity()->getId() . "[/B][/page]
-Alter Besitzer: [".$url."][B]" . $changeset['user'][0]?->getId() . "[/B][/page]
-Neuer Besitzer: [".$this->generateUrl('admin.users.edit',['id'=>$planet->getUser()?->getId()])."][B]" . $planet->getUser()?->getId() . "[/B][/page]");
+Alter Besitzer: [".$url."][B]" . $originalUser?->getId() . "[/B][/page]
+Neuer Besitzer: [".$url2."][B]" . $planet->getUser()?->getId() . "[/B][/page]");
 
                 $this->addFlash('success', "Der Planet wurde dem User mit der ID: " . $planet->getUser()->getId() . " übergeben!");
             }
