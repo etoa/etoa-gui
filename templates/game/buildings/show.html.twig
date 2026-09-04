@@ -60,7 +60,7 @@
                                     </td>
                                     <td>{{ formatTimespan(options.buildCosts.time) }}</td>
                                     {% for resource in ['metal', 'crystal', 'plastic', 'fuel', 'food'] %}
-                                        <td{% if not options.buildCosts.resources[resource].sufficient %} style="color:red;"{% endif %}>
+                                        <td{% if not options.buildCosts.resources[resource].sufficient %} style="color:red;" {{ tm('Fehlender Rohstoff', formatNumber(options.buildCosts.resources[resource].cost - options.buildCosts.resources[resource].available) ~ ' ' ~ attribute(resourceNames, 'get' ~ resource|capitalize) ~ '<br />Bereit in ' ~ formatTimespan(options.buildCosts.resources[resource].waitTime))|raw }}{% endif %}>
                                             {{ options.buildCosts.resources[resource].cost|number_format }}
                                         </td>
                                     {% endfor %}
@@ -72,7 +72,7 @@
                                         <td style="color:red;">{{ info.currentLevel == 0 ? 'Bauen' : 'Ausbauen' }}</td>
                                         <td>{{ formatTimespan(options.buildCosts.time) }}</td>
                                         {% for resource in ['metal', 'crystal', 'plastic', 'fuel', 'food'] %}
-                                            <td{% if not options.buildCosts.resources[resource].sufficient %} style="color:red;"{% endif %}>
+                                            <td{% if not options.buildCosts.resources[resource].sufficient %} style="color:red;" {{ tm('Fehlender Rohstoff', formatNumber(options.buildCosts.resources[resource].cost - options.buildCosts.resources[resource].available) ~ ' ' ~ attribute(resourceNames, 'get' ~ resource|capitalize) ~ '<br />Bereit in ' ~ formatTimespan(options.buildCosts.resources[resource].waitTime))|raw }}{% endif %}>
                                                 {{ options.buildCosts.resources[resource].cost|number_format }}
                                             </td>
                                         {% endfor %}
@@ -98,7 +98,7 @@
                                     </td>
                                     <td>{{ formatTimespan(options.demolishCosts.time) }}</td>
                                     {% for resource in ['metal', 'crystal', 'plastic', 'fuel', 'food'] %}
-                                        <td{% if not options.demolishCosts.resources[resource].sufficient %} style="color:red;"{% endif %}>
+                                        <td{% if not options.demolishCosts.resources[resource].sufficient %} style="color:red;" {{ tm('Fehlender Rohstoff', formatNumber(options.demolishCosts.resources[resource].cost - options.demolishCosts.resources[resource].available) ~ ' ' ~ attribute(resourceNames, 'get' ~ resource|capitalize) ~ '<br />Bereit in ' ~ formatTimespan(options.demolishCosts.resources[resource].waitTime))|raw }}{% endif %}>
                                             {{ options.demolishCosts.resources[resource].cost|number_format }}
                                         </td>
                                     {% endfor %}
@@ -109,7 +109,7 @@
                                     <td style="color:red;">Abreissen</td>
                                     <td>{{ formatTimespan(options.demolishCosts.time) }}</td>
                                     {% for resource in ['metal', 'crystal', 'plastic', 'fuel', 'food'] %}
-                                        <td{% if not options.demolishCosts.resources[resource].sufficient %} style="color:red;"{% endif %}>
+                                        <td{% if not options.demolishCosts.resources[resource].sufficient %} style="color:red;" {{ tm('Fehlender Rohstoff', formatNumber(options.demolishCosts.resources[resource].cost - options.demolishCosts.resources[resource].available) ~ ' ' ~ attribute(resourceNames, 'get' ~ resource|capitalize) ~ '<br />Bereit in ' ~ formatTimespan(options.demolishCosts.resources[resource].waitTime))|raw }}{% endif %}>
                                             {{ options.demolishCosts.resources[resource].cost|number_format }}
                                         </td>
                                     {% endfor %}

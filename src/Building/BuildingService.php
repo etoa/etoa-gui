@@ -20,6 +20,7 @@ use EtoA\Universe\Star\StarRepository;
 use EtoA\User\UserPropertiesRepository;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class BuildingService
 {
@@ -35,7 +36,8 @@ class BuildingService
         private readonly StarRepository               $starRepository,
         private readonly TechnologyListItemRepository $technologyListItemRepository,
         private readonly GameLogRepository            $gameLogRepository,
-        private readonly ConfigurationService         $configurationService
+        private readonly ConfigurationService         $configurationService,
+        private readonly UrlGeneratorInterface        $router,
     )
     {
     }
@@ -260,7 +262,7 @@ class BuildingService
         return [
             'building' => $buildingInfo,
             'options' => $buildOptions,
-            'helpUrl' => '?page=help&site=buildings&id=' . $bid,
+            'helpUrl' => $this->router->generate('game.help.buildings.detail',['building'=>$bid])
         ];
     }
 
@@ -295,26 +297,33 @@ class BuildingService
         $resourcesAvailable = [];
 
         $resourceMapping = [
-            'metal' => 'getResMetal',
-            'crystal' => 'getResCrystal',
-            'plastic' => 'getResPlastic',
-            'fuel' => 'getResFuel',
-            'food' => 'getResFood'
+            'metal' => ['getResMetal', 'getProdMetal'],
+            'crystal' => ['getResCrystal', 'getProdCrystal'],
+            'plastic' => ['getResPlastic', 'getProdPlastic'],
+            'fuel' => ['getResFuel', 'getProdFuel'],
+            'food' => ['getResFood', 'getProdFood'],
         ];
 
-        foreach ($resourceMapping as $resourceKey => $getter) {
+        foreach ($resourceMapping as $resourceKey => [$resGetter, $prodGetter]) {
             $costValue = $costs->{$resourceKey};
-            $currentResource = $planet->{$getter}();
+            $currentResource = $planet->{$resGetter}();
             $isAvailable = $costValue <= $currentResource;
 
+            $waitTime = 0;
             if (!$isAvailable) {
                 $hasInsufficientResources = true;
+
+                $production = $planet->{$prodGetter}();
+                if ($production > 0) {
+                    $waitTime = (int) ceil(($costValue - $currentResource) / $production * 3600);
+                }
             }
 
             $resourcesAvailable[$resourceKey] = [
                 'cost' => (int)ceil($costValue),
                 'available' => $currentResource,
                 'sufficient' => $isAvailable,
+                'waitTime' => $waitTime,
             ];
         }
 
@@ -427,7 +436,7 @@ class BuildingService
 
     public function isUnderConstruction(Planet $planet): bool
     {
-        $buildings = $this->buildingListItemRepository->findBy(['entity'=>$planet]);
+        $buildings = $this->buildingListItemRepository->findBy(['entity' => $planet]);
         foreach ($buildings as $building) {
             if (($building->getBuildType() === 3 || $building->getBuildType() === 4) && $building->getEndTime() > time()) {
                 return true;
@@ -581,7 +590,7 @@ class BuildingService
         if ($item->getEndTime() > time()) {
             $cp = $item->getEntity();
             $cu = $item->getUser();
-            $costs = $this->getBuildCosts($item, $item->getCurrentLevel());
+            $costs = $this->getBuildCosts($item, $item->getCurrentLevel()+1);
             $fac = ($item->getEndTime() - time()) / ($item->getEndTime() - $item->getStartTime());
 
             $this->buildingListItemRepository->updateBuildingListEntry($item, $item->getCurrentLevel(), 0, 0, 0);
