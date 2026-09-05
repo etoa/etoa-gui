@@ -22,7 +22,7 @@
         "symfony/lock": "^5.4",
         "symfony/flex": "^2.0",
         "symfony/monolog-bundle": "^3.7",
-        "doctrine/doctrine-bundle": "^2.4",
+        "doctrine/doctrine-bundle": "^3.0",
         "symfony/proxy-manager-bridge": "^5.4",
         "symfony/twig-bundle": "^5.4",
         "twig/extra-bundle": "^3.0",
