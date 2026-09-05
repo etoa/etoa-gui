@@ -24,6 +24,9 @@ class EditPopulationType extends AbstractType
 
             $event->getForm()->add('peopleWorking', TextType::class, [
                 'disabled' => $data instanceof BuildingListItem && $data->getPeopleWorkingStatus(),
+                'attr' => [
+                    'onKeyUp' => "FormatNumber(this.id,this.value, ".$data->getEntity()->getPeople().", '', '');"
+                ],
             ]);
         });
     }
