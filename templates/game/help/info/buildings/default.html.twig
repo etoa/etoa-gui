@@ -1,0 +1,67 @@
+{% extends 'game/help/help.html.twig' %}
+
+{% block help %}
+    <h2>Gebäude</h2>
+
+    {% block breadcrumbs %}
+        {{ component('breadcrumbs', { items: [
+            { label: 'Hilfe', url: path('game.help.overview') },
+            { label: 'Gebäude', url: path('game.help.buildings') },
+        ], title:"Du befindest dich hier:"}) }}
+    {% endblock %}<br/>
+
+    {% if infos.building %}
+        <twig:Table title="{{ infos.building.name }}">
+            {% block table_content %}
+                <tr>
+                    <th style="width:220px;background:#000;padding:0" rowspan="2">
+                        <img src="{{ infos.building.getImagePath('other') }}"
+                             style="width:220px;height:220px;background:#000;margin:0"
+                             alt="Bild {{ infos.building.name }}"/>
+                    </th>
+                    <td colspan="2">
+                        <div>{{ BBCodeToHTML(infos.building.longComment)|raw }}</div>
+                    </td>
+                </tr>
+                <tr>
+                    <th style="height:20px;width:120px;">Maximale Stufe:</th>
+                    <td style="height:20px;">{{ infos.building.lastLevel }}</td>
+                </tr>
+            {% endblock %}
+        </twig:Table>
+        <twig:Table title="Kostenentwicklung (Faktor: {{ infos.building.buildCostsFactor }})">
+            {% block table_content %}
+                <tr>
+                    <th style="text-align:center;">Level</th>
+                    <th>{{ constant('EtoA\\Universe\\Resources\\ResIcons::METAL')|raw }} {{ constant('EtoA\\Universe\\Resources\\ResourceNames::METAL') }}</th>
+                    <th>{{ constant('EtoA\\Universe\\Resources\\ResIcons::CRYSTAL')|raw }}  {{ constant('EtoA\\Universe\\Resources\\ResourceNames::CRYSTAL') }}</th>
+                    <th>{{ constant('EtoA\\Universe\\Resources\\ResIcons::PLASTIC')|raw }}  {{ constant('EtoA\\Universe\\Resources\\ResourceNames::PLASTIC') }}</th>
+                    <th>{{ constant('EtoA\\Universe\\Resources\\ResIcons::FUEL')|raw }}  {{ constant('EtoA\\Universe\\Resources\\ResourceNames::FUEL') }}</th>
+                    <th>{{ constant('EtoA\\Universe\\Resources\\ResIcons::FOOD')|raw }}  {{ constant('EtoA\\Universe\\Resources\\ResourceNames::FOOD') }}</th>
+                    <th>Felder</th>
+                </tr>
+                {% for level,cost in infos.costs %}
+                    <tr>
+                        <td>{{ level+1 }}</td>
+                        <td style="text-align:right;">{{ formatNumber(cost.metal) }}</td>
+                        <td style="text-align:right;">{{ formatNumber(cost.crystal) }}</td>
+                        <td style="text-align:right;">{{ formatNumber(cost.plastic) }}</td>
+                        <td style="text-align:right;">{{ formatNumber(cost.fuel) }}</td>
+                        <td style="text-align:right;">{{ formatNumber(cost.food) }}</td>
+                        <td style="text-align:right;">{{ formatNumber(infos.building.fields * (level + 1)) }}</td>
+                    </tr>
+                {% endfor %}
+            {% endblock %}
+        </twig:Table>
+        {{ component('game_techtree',{headline:'Technikbaum',showSelection:false,item:infos.building}) }}
+    {% endif %}
+    <a href="{{ path('game.help.buildings') }}">
+        <input type="button" value="Gebäudeübersicht"/>
+    </a>
+    &nbsp;
+    <a href="{{ path('game.help.overview') }}">
+        <input type="button" value="Zurück"/>
+    </a>
+    &nbsp;
+
+{% endblock %}

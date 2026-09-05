@@ -205,32 +205,32 @@ class HelpController extends AbstractGameController
         $infos['building'] = $building;
 
         // Metallmine
-        if ($building->getId() === 1) {
+        if ($building?->getId() === 1) {
             $infos['title'] = "Produktion von " . ResourceNames::METAL . " (ohne Boni)";
 
             return $this->renderProductionBuilding($building, $infos);
         } // Siliziummine
-        elseif ($building->getId() === 2) {
+        elseif ($building?->getId() === 2) {
             $infos['title'] = "Produktion von " . ResourceNames::CRYSTAL . " (ohne Boni)";
 
             return $this->renderProductionBuilding($building, $infos);
         } // Chemiefabrik
-        elseif ($building->getId() === 3) {
+        elseif ($building?->getId() === 3) {
             $infos['title'] = "Produktion von " . ResourceNames::PLASTIC . " (ohne Boni)";
 
             return $this->renderProductionBuilding($building, $infos);
         } // Tritiumsynthetizer
-        elseif ($building->getId() === 4) {
+        elseif ($building?->getId() === 4) {
             $infos['title'] = "Produktion von " . ResourceNames::FUEL . " (ohne Boni)";
 
             return $this->renderProductionBuilding($building, $infos);
         } // Gewächshaus
-        elseif ($building->getId() === 5) {
+        elseif ($building?->getId() === 5) {
             $infos['title'] = "Produktion von " . ResourceNames::FOOD . " (ohne Boni)";
 
             return $this->renderProductionBuilding($building, $infos);
         } // Planetenbasis
-        elseif ($building->getId() === 6) {
+        elseif ($building?->getId() === 6) {
             $infos['title'] = "Produktion (ohne Boni)";
             $infos['costs'] = $this->generateBuildingCosts($building);
 
@@ -240,7 +240,7 @@ class HelpController extends AbstractGameController
                 'infos' => $infos
             ]);
         } // Wohnmodul
-        elseif ($building->getId() === 7) {
+        elseif ($building?->getId() === 7) {
             $infos['title'] = "Platz für Bewohner";
             $basePeoplePlace = $this->buildingDataRepository->getBuilding(6)->getPeoplePlace();
             for ($level = 1; $level < 31; $level++) {
@@ -260,7 +260,7 @@ class HelpController extends AbstractGameController
         // Solarkaftwerk
         // Fusionskraftwerk
         // Gezeitenkraftwerk
-        elseif (in_array($building->getId(), [12, 13, 14, 15], true)) {
+        elseif (in_array($building?->getId(), [12, 13, 14, 15], true)) {
             $infos['title'] = "Energieproduktion (ohne Boni)";
             $infos['levels'] = $this->generateProductionLevels($building);
             $infos['costs'] = $this->generateBuildingCosts($building);
@@ -270,37 +270,37 @@ class HelpController extends AbstractGameController
                 'infos' => $infos
             ]);
         } // Titanspeicher
-        elseif ($building->getId() === 16) {
+        elseif ($building?->getId() === 16) {
             $baseStoreMetal = $this->buildingDataRepository->getBuilding(6)->getStoreMetal();
             $infos['title'] = "Lagerkapazität (inklusive Planetenbasiskapazität (" . StringUtils::formatNumber($baseStoreMetal) . ") und Standardkapazität (" . StringUtils::formatNumber($this->configurationService->getInt("def_store_capacity")) . ") des Planeten)";
 
             return $this->renderStorageBuilding($building, $infos);
         } // Siliziumspeicher
-        elseif ($building->getId() === 17) {
+        elseif ($building?->getId() === 17) {
             $baseStoreCrystal = $this->buildingDataRepository->getBuilding(6)->getStoreCrystal();
             $infos['title'] = "Lagerkapazität (inklusive Planetenbasiskapazität (" . StringUtils::formatNumber($baseStoreCrystal) . ") und Standardkapazität (" . StringUtils::formatNumber($this->configurationService->getInt("def_store_capacity")) . ") des Planeten)";
 
             return $this->renderStorageBuilding($building, $infos);
         } // Lagerhalle
-        elseif ($building->getId() === 18) {
+        elseif ($building?->getId() === 18) {
             $baseStorePlastic = $this->buildingDataRepository->getBuilding(6)->getStorePlastic();
             $infos['title'] = "Kapazität inklusive Planetenbasiskapazität (" . StringUtils::formatNumber($baseStorePlastic) . ") und Standardkapazität (" . StringUtils::formatNumber($this->configurationService->getInt("def_store_capacity")) . ")";
 
             return $this->renderStorageBuilding($building, $infos);
         } // Nahrungssilos
-        elseif ($building->getId() === 19) {
+        elseif ($building?->getId() === 19) {
             $baseStoreFood = $this->buildingDataRepository->getBuilding(6)->getStoreFood();
             $infos['title'] = "Lagerkapazität (inklusive Planetenbasiskapazität (" . StringUtils::formatNumber($baseStoreFood) . ") und Standardkapazität (" . StringUtils::formatNumber($this->configurationService->getInt("def_store_capacity")) . ") des Planeten)";
 
             return $this->renderStorageBuilding($building, $infos);
         } // Tritiumsilo
-        elseif ($building->getId() === 20) {
+        elseif ($building?->getId() === 20) {
             $baseStoreFuel = $this->buildingDataRepository->getBuilding(6)->getStoreFuel();
             $infos['title'] = "Lagerkapazität (inklusive Planetenbasiskapazität (" . StringUtils::formatNumber($baseStoreFuel) . ") und Standardkapazität (" . StringUtils::formatNumber($this->configurationService->getInt("def_store_capacity")) . ") des Planeten)";
 
             return $this->renderStorageBuilding($building, $infos);
         } // Orbitalplatform
-        elseif ($building->getId() === 22) {
+        elseif ($building?->getId() === 22) {
             $infos['title'] = "Zusätzliche Felder";
             $infos['levels'] = $this->generateStorageLevels($building);
             $infos['costs'] = $this->generateBuildingCosts($building);
@@ -310,7 +310,7 @@ class HelpController extends AbstractGameController
                 'infos' => $infos
             ]);
         } //Raketensilo
-        elseif ($building->getId() === 25) {
+        elseif ($building?->getId() === 25) {
             $infos['title'] = "Energieverbrauch (ohne Boni)";
             $infos['levels'] = $this->generateStorageLevels($building);
             $infos['costs'] = $this->generateBuildingCosts($building);
@@ -320,7 +320,7 @@ class HelpController extends AbstractGameController
                 'infos' => $infos
             ]);
         } // Rohstoffbunker
-        elseif ($building->getId() === 26) {
+        elseif ($building?->getId() === 26) {
             $infos['title'] = "Bunkern von Rohstoffen";
             $infos['levels'] = $this->generateBunkerLevels($building);
             $infos['costs'] = $this->generateBuildingCosts($building);
@@ -330,13 +330,20 @@ class HelpController extends AbstractGameController
                 'infos' => $infos
             ]);
         } // Flottenbunker
-        elseif ($building->getId() === 27) {
+        elseif ($building?->getId() === 27) {
             $infos['title'] = "Bunkern von Schiffen";
             $infos['levels'] = $this->generateBunkerLevels($building);
             $infos['costs'] = $this->generateBuildingCosts($building);
 
             return $this->render('game/help/info/buildings/bunker_fleet.html.twig', [
                 'building' => $building,
+                'infos' => $infos
+            ]);
+        }
+        elseif ($building?->isShow()) {
+            $infos['costs'] = $this->generateBuildingCosts($building);
+
+            return $this->render('game/help/info/buildings/default.html.twig', [
                 'infos' => $infos
             ]);
         }
