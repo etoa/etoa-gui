@@ -289,7 +289,7 @@ class ShipyardService
         $request = $this->requestStack->getCurrentRequest();
         $cp = $this->planetRepository->find($request->getSession()->get('cpid'));
 
-        foreach ($ship as $requirement) {
+        foreach ($ship->getObjectRequirements() as $requirement) {
             if ($requirement->getBuilding() && $requirement->getLevel() > $this->buildingListItemRepository->findOneBy(['building' => $requirement->getBuilding(), 'entity' => $cp])?->getCurrentLevel()) {
                 return false;
             }
