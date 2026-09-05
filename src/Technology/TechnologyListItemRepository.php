@@ -72,7 +72,7 @@ class TechnologyListItemRepository extends AbstractRepository
     public function getTechnologyLevels(int|User $userId): array
     {
         $data = $this->createQueryBuilder('q')
-            ->select('IDENTITY(q.technology), q.currentLevel')
+            ->select('IDENTITY(q.technology) as id, q.currentLevel')
             ->where('q.user = :userId')
             ->setParameters([
                 'userId' => $userId,
