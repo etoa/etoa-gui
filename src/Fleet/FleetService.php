@@ -235,14 +235,18 @@ class FleetService
                                             if ($flObj = $this->fleetLaunchService->launch()) {
                                                 $str = "$probeCount Explorer unterwegs. Ankunft in " . StringUtils::formatTimespan($flObj->getRemainingTime());
                                                 $error = false;
-                                            } else
-                                                $str = $this->fleetLaunchService->error;
-                                        } else
-                                            $str = $this->fleetLaunchService->error;
-                                    } else
-                                        $str = $this->fleetLaunchService->error;
-                                } else
-                                    $str = $this->fleetLaunchService->error;
+                                            } else {
+                                                $str = $this->fleetLaunchService->error ?: $fleet->getError();
+                                            }
+                                        } else {
+                                            $str = $this->fleetLaunchService->error ?: $fleet->getError();
+                                        }
+                                    } else {
+                                        $str = $this->fleetLaunchService->error ?: $fleet->getError();
+                                    }
+                                } else {
+                                    $str = $this->fleetLaunchService->error ?: $fleet->getError();
+                                }
                             } else {
                                 $str = "Problem beim Finden des Zielobjekts (Objekt 0)!";
                             }
@@ -250,13 +254,13 @@ class FleetService
                             $str = "Problem beim Finden des Zielobjekts (Zelle)!";
                         }
                     } else {
-                        $str = $this->fleetLaunchService->error;
+                        $str = $this->fleetLaunchService->error ?: $fleet->getError();
                     }
                 } else {
                     $str = "Auf deinem Planeten befinden sich keine Explorer des <a href='" . $this->router->generate('game.config.game') . "'>gewählten</a> Typs!";
                 }
             } else {
-                $str = $this->fleetLaunchService->error;
+                $str = $this->fleetLaunchService->error ?: $fleet->getError();
             }
         } else {
             $str = "Du hast noch keinen Standard-Explorer gewählt, überprüfe bitte deine <a href='" . $this->router->generate('game.config.game') . "'>Spieleinstellungen</a>!";
