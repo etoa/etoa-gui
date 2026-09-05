@@ -97,7 +97,8 @@ class UserController extends AbstractAdminController
         private readonly string                     $projectDir,
         private readonly MessageCategoryRepository  $messageCategoryRepository,
         private readonly UserSessionLogRepository   $userSessionLogRepository,
-        private readonly UserSessionRepository      $userSessionRepository
+        private readonly UserSessionRepository      $userSessionRepository,
+        private readonly UserHolidayService         $userHolidayService,
     )
     {
     }
@@ -519,6 +520,10 @@ class UserController extends AbstractAdminController
             $changeset = $this->userRepository->getChangeset($user);
             if (array_key_exists('nick', $changeset)) {
                 $this->userService->addToUserLog($user, "settings", $changeset['nick'][0] . "hat seinen Namen zu " . $changeset['nick'][0] . " geändert.");
+            }
+
+            if (!$form->get('hmode')->getData() && $user->getHmodTo() > 0) {
+                $this->userHolidayService->deactivateHolidayMode($user,true);
             }
 
             // Handle profile image
@@ -1093,7 +1098,7 @@ class UserController extends AbstractAdminController
                 return $user ? $user->getNick() : '';
             },
             function (?string $nick) {
-                $user = $this->userRepository->findOneBy(['nick'=>$nick]);
+                $user = $this->userRepository->findOneBy(['nick' => $nick]);
 
                 if (!$user) {
                     throw new TransformationFailedException(sprintf('Ein Benutzer mit dem Nickname "%s" wurde nicht gefunden.', $nick));
@@ -1122,7 +1127,7 @@ class UserController extends AbstractAdminController
                 return $this->redirectToRoute('admin.users.user_sitting', ['id' => $user->getId()]);
             }
 
-            if($user === $userSitting->getSitter()) {
+            if ($user === $userSitting->getSitter()) {
                 $this->addFlash('error', "Man kann nicht den selben Nick im Sitting eintragen!");
                 return $this->redirectToRoute('admin.users.user_sitting', ['id' => $user->getId()]);
             }

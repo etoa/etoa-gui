@@ -360,7 +360,7 @@ die Spielleitung";
     {
         if (!$u->getAdmin()) {
             if (!$u->getHmodFrom() != 0 && $u->getHmodTo() != 0) {
-                if ($u->getLastOnline() < time() - USER_INACTIVE_SHOW * 86400) {
+                if ($u->getLastOnline() < time() - $this->config->getInt('user_inactive_days') * 86400) {
                     return true;
                 }
             }

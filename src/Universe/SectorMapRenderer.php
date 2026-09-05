@@ -180,7 +180,12 @@ class SectorMapRenderer
                         $tt->addTitle($entity->codeString());
                         $tt->addText("Position: $sx/$sy : $xcoords/$ycoords");
                         if ($entity->getCode() === EntityType::WORMHOLE) {
-                            $tt->addComment("Ziel: " . $entity->getWormhole()->getTarget()->getEntity()->toString() . "</a>");
+                            $target = $entity->getWormhole()->getTarget();
+                            if ($target !== null && $target->getEntity() !== null) {
+                                $tt->addComment("Ziel: " . $target->getEntity()->toString() . "</a>");
+                            } else {
+                                $tt->addComment("Ziel: unbekannt");
+                            }
                         } else {
                             if($entity->displayName())
                                 $tt->addComment($entity->displayName());

@@ -9,7 +9,7 @@
     {% endif %}
 
     <h2>Details</h2>
-    <table>
+    <table style="width: 100%">
         <tr>
             <td colspan="3">
                 <div class="boxLayout fleetInfoContainer">
@@ -30,7 +30,7 @@
                                 <b><span id="sourceLabel">Start</span>:</b> {{ formatTimestamp(fleet.launchTime) }}
                             </div>
                             <div class="fleetInfoAction">
-                                <div style="color: {{ fleet.fleetAction.color }} ">{{ fleet.fleetAction.name }}[{{ fleet.getStatusCode }}]</div>
+                                <div style="color: {{ fleet.fleetAction.color }} ">{{ fleet.fleetAction.name }}[{{ fleet.getStatusCode|raw }}]</div>
                                 <div><span id="flighttime"></span> (<span id="flightPercent"></span>)</div>
                             </div>
                             <div id="target" class="fleetInfoTarget">

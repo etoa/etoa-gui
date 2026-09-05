@@ -420,9 +420,9 @@ class App {
         video.loop = true;
         video.autoplay = true;
         video.muted = true;
-        video.poster = "/images/fleetbg.png";
+        video.poster = "/build/images/fleetbg.png";
         video.classList.add("fleetInfoBackground");
-        video.src = "/designs/official/Rediscovery/images/bg-fleet.mp4";
+        video.src = "/build/designs/official/Rediscovery/images/bg-fleet.mp4";
 
         infoboxcontent.prepend(video);
     }
