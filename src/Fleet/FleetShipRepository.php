@@ -157,10 +157,11 @@ class FleetShipRepository extends AbstractRepository
     /**
      * @return array<FleetShip>
      */
-    public function findAllShipsForLeader(User $leader): array
+    public function findAllShipsForLeader(Fleet $leader): array
     {
         return $this->createQueryBuilder('q')
-            ->where('q.fleet.leader = :leader')
+            ->join('q.fleet', 'f')
+            ->where('f.leader = :leader')
             ->setParameters([
                 'leader' => $leader,
             ])

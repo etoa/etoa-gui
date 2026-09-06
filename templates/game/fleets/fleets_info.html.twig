@@ -190,14 +190,14 @@
         <a href="{{ path('game.fleets') }}">
             <input type="button" value="Zurück zur Flottenübersicht"> &nbsp;
         </a>
-        {% if valid >= constant('EtoA\\Alliance\\AllianceFleetControlLevel::SEND_HOME') and (fleet.status == 0 and fleet.leader) and fleet.landTime > 'now'|date('U') %}
+        {% if valid >= constant('EtoA\\Alliance\\AllianceFleetControlLevel::SEND_HOME') and (fleet.status == 0 and fleet.action == constant('EtoA\\Fleet\\FleetAction::ALLIANCE') and fleet.leader) and fleet.landTime > 'now'|date('U') %}
             {{ form_widget(form.cancelAlliance) }}
         {% elseif
             valid >= constant('EtoA\\Alliance\\AllianceFleetControlLevel::SEND_HOME_PART') and
             (
                 (
                     fleet.status == 0 and
-                    not fleet.leader
+                    not (fleet.action == constant('EtoA\\Fleet\\FleetAction::ALLIANCE') and fleet.leader)
                 ) or
                 fleet.status == 3
             ) and

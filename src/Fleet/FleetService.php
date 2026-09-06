@@ -97,7 +97,7 @@ class FleetService
         if ($fleet->getStatus() == 0 || $fleet->getStatus() == 3) {
             if ($fleet->getLandTime() > time() || $is_child) {
                 if ($fleet->getFleetAction()->cancelable()) {
-                    if ($fleet->getLeader() !== null && $fleet->getId() === $fleet->getLeader()->getId()) {
+                     if ($fleet->getAction() === FleetAction::ALLIANCE && $fleet->getLeader() !== null && $fleet->getId() === $fleet->getLeader()->getId()) {
                         if ($alliance) {
                             $fleets = $this->fleetRepository->findBy(['leader' => $fleet]);
                             foreach ($fleets as $fleetPart) {
@@ -129,11 +129,6 @@ class FleetService
                     // 3: Supporting
 
                     $time = time();
-                    // how long is the fleet already flying
-                    $difftime = 0; //time() - $this->launchTime;
-                    // what is the total flight time (one-way plus supporting time)
-                    $tottime = 0; //$this->landTime() - $this->launchTime + $this->nextActionTime;
-
                     // status 3 => supporting at target
                     if ($fleet->getAction() === FleetAction::SUPPORT && $fleet->getStatus() === 3) {
                         // time supporting plus single way from source to target
@@ -193,7 +188,7 @@ class FleetService
                     $resourcesEnd->fuel = $fleet->getResFuel();
                     $resourcesEnd->food = $fleet->getResFood();
                     $resourcesEnd->people = $fleet->getResPeople();
-                    $this->fleetLogRepository->addCancel($fleet->getId(), $fleet->getUser()->getId(), $fleet->getEntityTo()->getId(), $fleet->getEntityFrom()->getId(), $logLaunchTime, $logLandTime, $fleet->getAction(), $fleet->getStatus(), $fleet->getPilots(), $fleet->getUsageFuel(), $fleet->getUsageFood(), $resourceStart, $resourcesEnd);
+                    $this->fleetLogRepository->addCancel($fleet, $fleet->getUser(), $fleet->getEntityTo(), $fleet->getEntityFrom(), $logLaunchTime, $logLandTime, $fleet->getAction(), $fleet->getStatus(), $fleet->getPilots(), $fleet->getUsageFuel(), $fleet->getUsageFood(), $resourceStart, $resourcesEnd);
 
                     $this->fleetRepository->update($fleet, $fleet->getLaunchTime(), $fleet->getLandTime(), $fleet->getEntityFrom(), $fleet->getEntityTo(), $fleet->getStatus(), $resourcesEnd, $fleet->getUsageFuel(), $fleet->getUsageFood());
                     return true;

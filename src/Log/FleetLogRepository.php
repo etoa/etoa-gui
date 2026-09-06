@@ -59,15 +59,15 @@ class FleetLogRepository extends AbstractRepository
         $this->save();
     }
 
-    public function addCancel(int $fleetId, int $userId, int $entityFromId, int $targetEntityId, int $launchTime, int $landTime, string $action, int $status, int $pilots, int $fuel, int $food, BaseResources $resourceStart, BaseResources $resourcesEnd): void
+    public function addCancel(Fleet $fleetId, User $userId, Entity $entityFromId, Entity $targetEntityId, int $launchTime, int $landTime, string $action, int $status, int $pilots, int $fuel, int $food, BaseResources $resourceStart, BaseResources $resourcesEnd): void
     {
         $log = new FleetLog();
-        $log->setFleetId($fleetId);
+        $log->setFleet($fleetId);
         $log->setFacility(FleetLogFacility::CANCEL);
         $log->setTimestamp(time());
         $log->setMessage(sprintf('Treibstoff: %s Nahrung: %s Piloten: %s', $fuel, $food, $pilots));
-        $log->setUserId($userId);
-        $log->setEntityUserId($userId);
+        $log->setUser($userId);
+        $log->setEntityUser($userId);
         $log->setEntityFrom($entityFromId);
         $log->setEntityTo($targetEntityId);
         $log->setLaunchTime($launchTime);

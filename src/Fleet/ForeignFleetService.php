@@ -134,8 +134,8 @@ class ForeignFleetService
             if (SpyTechFleetLevel::SHOW_SHIPS <= $foreignFleets->userSpyLevel) {
                 $ships = [];
 
-                if ($fleet->getLeader()) {
-                    $fleetShips = $this->fleetShipRepository->findAllShipsForLeader($fleet->getLeader()->getUser());
+                if ($fleet->getAction() === FleetAction::ALLIANCE && $fleet->getLeader()) {
+                    $fleetShips = $this->fleetShipRepository->findAllShipsForLeader($fleet->getLeader());
                 } else {
                     $fleetShips = $this->fleetShipRepository->findAllShipsInFleet($fleet);
                 }
