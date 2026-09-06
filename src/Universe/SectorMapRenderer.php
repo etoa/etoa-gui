@@ -172,7 +172,8 @@ class SectorMapRenderer
                 $js = null;
 
                 // Discovered cell or no user specified
-                if ($this->impersonatedUser == null || $userUniverseDiscoveryService->discovered($this->impersonatedUser, (($sx - 1) * $this->numberOfCellsX) + $xcoords, (($sy - 1) * $this->numberOfCellsY) + $ycoords)) {
+                $discovered = $userUniverseDiscoveryService->discovered($this->impersonatedUser, (($sx - 1) * $this->numberOfCellsX) + $xcoords, (($sy - 1) * $this->numberOfCellsY) + $ycoords);
+                if ($this->impersonatedUser == null || $discovered) {
                     $entity = $entityRepository->find($cells[$xcoords][$ycoords]['id']);
 
                     if ($this->tooltipsEnabled) {
@@ -240,11 +241,16 @@ class SectorMapRenderer
                 $class = " class=\"" . implode(' ', $classes);
                 $overlayClass = count($overlayClasses) > 0 ? " class=\"" . implode(' ', $overlayClasses) . "\"" : '';
 
-                if ($js != null) {
-                    echo "<a data-action='live#action' data-live-action-param='launchExplorerProbe' href=\"javascript:;\" onclick=\"" . $js . "\" ";
+                if(!$discovered) {
+                    if ($js != null) {
+                        echo "<a data-action='live#action' data-live-action-param='launchExplorerProbe' href=\"javascript:;\" onclick=\"" . $js . "\" ";
+                    } else {
+                        echo "<a data-action='live#action' data-live-action-param='launchExplorerProbe' data-live-id-param='".$cells[$xcoords][$ycoords]['cid']."'  href=\"" . $url . "\" ";
+                    }
                 } else {
-                    echo "<a data-action='live#action' data-live-action-param='launchExplorerProbe' data-live-id-param='".$cells[$xcoords][$ycoords]['cid']."'  href=\"" . $url . "\" ";
+                    echo "<a href=\"" . $url . "\" ";
                 }
+
                 echo " style=\"background-image:url('" . $img . "');\"$class$mouseOver>";
                 echo "<img src=\"/build/images/blank.gif\" alt=\"Raumzelle\" " . $title . " data-id=\"" . $cells[$xcoords][$ycoords]['cid'] . "\" $overlayClass/></a>";
                 echo "</td>";
