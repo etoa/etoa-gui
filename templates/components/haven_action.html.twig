@@ -101,7 +101,7 @@
                     <th colspan="2">Ladung</th>
                 </tr>
                 <tr>
-                    <td style="vertical-align:top;width:220px;">
+                    <td rowspan="9">
                         {% for code, ac in outerScope.this.allowedActionObjects %}
                             <input type="radio" id="haven_action_{{ code }}" name="action" value="{{ code }}" data-model="action"{% if outerScope.this.action == code %} checked="checked"{% endif %}/>
                             <label for="haven_action_{{ code }}" {{ tm(ac.name, ac.desc)|raw }}>{{ ac|raw }}</label><br/>

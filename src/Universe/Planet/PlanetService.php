@@ -117,7 +117,7 @@ class PlanetService
             $arr[] = FleetAction::MARKET;
             $arr[] = FleetAction::EMP;
         }
-        if ($planet->getUser() && $planetType->isHabitable())
+        if (!$planet->getUser() && $planetType->isHabitable())
             $arr[] = FleetAction::COLONIZE;
         if ($planet->getWfMetal() || $planet->getWfCrystal() || $planet->getWfPlastic())
             $arr[] = FleetAction::COLLECT_DEBRIS;

@@ -87,8 +87,7 @@ class HavenController extends AbstractGameController
                 if($this->fleetLaunchService->fixShips()) {
                     $session = $request->getSession();
                     try {
-                        //dd($this->fleetLaunchService->getFleetLaunch());
-                        $serilizedData = $serializer->serialize($this->fleetLaunchService->getFleetLaunch(), 'json', [
+                        $serializer->serialize($this->fleetLaunchService->getFleetLaunch(), 'json', [
                             'circular_reference_handler' => function ($object) {
                                 if(is_a($object,AbstractEntity::class)) {
                                     return $object->getEntity()->getId();
@@ -124,8 +123,6 @@ class HavenController extends AbstractGameController
                         'ignored_attributes' => ['__initializer__', '__cloner__', '__isInitialized__', 'lazyObjectState', 'lazyObjectInitialized', 'lazyObjectAsInitialized'],
                         'skip_null_values' => true,
                     ]));
-
-                    //dd($session->get('fleetLaunch'));
 
                     return $this->redirectToRoute('game.haven.target');
                 }

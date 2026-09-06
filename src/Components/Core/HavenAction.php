@@ -28,12 +28,8 @@ use Symfony\UX\LiveComponent\Attribute\LiveAction;
 use Symfony\UX\LiveComponent\Attribute\LiveArg;
 use Symfony\UX\LiveComponent\Attribute\LiveProp;
 use Symfony\UX\LiveComponent\DefaultActionTrait;
+use Symfony\UX\TwigComponent\Attribute\PostMount;
 
-/**
- * Action selection step of the fleet launch wizard (replaces the legacy xajax
- * havenShowAction / havenShowLaunch / havenCheckAction / havenCheckRes /
- * havenCheckPeople / havenSetResAll / havenSetFetchAll / havenCheckSupport functions).
- */
 #[AsLiveComponent(template: 'components/haven_action.html.twig', route: 'live_component_game')]
 class HavenAction extends AbstractGameController
 {
@@ -120,6 +116,12 @@ class HavenAction extends AbstractGameController
         private readonly MessageCategoryRepository $messageCategoryRepository,
         private readonly EventDispatcherInterface $dispatcher,
     ) {
+    }
+
+    #[PostMount]
+    public function postMount(): void
+    {
+        $this->getFleetLaunch();
     }
 
     /**
