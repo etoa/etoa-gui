@@ -132,7 +132,7 @@ class ShipYardInfo extends AbstractController
             $peopleWorking = $this->getWorking();
 
             $free = floor($planet->getPeople()) - $this->buildingListItemRepository->getTotalPeopleWorking($planet) + $peopleWorking;
-            $people = (int)$this->getForm()->get('peopleWorking')->getData();
+            $people = StringUtils::parseFormattedNumber($this->getForm()->get('peopleWorking')->getData());
 
             if ($free >= $people) {
                 $building->setPeopleWorking($people);
