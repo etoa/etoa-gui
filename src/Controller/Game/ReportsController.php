@@ -55,9 +55,8 @@ class ReportsController extends AbstractGameController
                     $report->setDeleted(true);
 
                     $this->reportRepository->save();
-
-                    return $this->redirectToRoute('game.reports.all');
                 }
+                return $this->redirectToRoute('game.reports.all');
             }
             elseif ($form->get('delete')->isClicked()) {
 
