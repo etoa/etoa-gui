@@ -29,7 +29,7 @@
                         {% set mainPlanet = planetRepository.getUserMain(buddy.buddy) %}
                         <td>
                             {% if mainPlanet %}
-                                <a href="{{ path('game.cell', {id: mainPlanet.entity.cell.id, hl: mainPlanet.entity.id}) }}">{{ mainPlanet.name }}</a>
+                                <a href="{{ path('game.cell', {id: mainPlanet.entity.cell.id, hl: mainPlanet.entity.id}) }}">{{ mainPlanet.entity.coordinatesString }} {{ mainPlanet.name }}</a>
                             {% else %}
                                 Noch kein Hauptplanet vorhanden!
                             {% endif %}
