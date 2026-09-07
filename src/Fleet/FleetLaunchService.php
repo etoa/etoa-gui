@@ -210,7 +210,7 @@ class FleetLaunchService
                     $this->fleetLaunch->setCostsLaunchLand((2 * ($ship->getFuelUseLaunch() + $ship->getFuelUseLanding()) * $cnt)+$this->fleetLaunch->getCostsLaunchLand());
                     $this->fleetLaunch->setPilots(($ship->getPilots() * $cnt)+$this->fleetLaunch->getPilots());
                     $this->fleetLaunch->setCapacityTotal(($ship->getCapacity() * $cnt)+$this->fleetLaunch->getCapacityTotal());
-                    $this->fleetLaunch->setCapacityTotal(($ship->getPeopleCapacity() * $cnt)+$this->fleetLaunch->getCapacityTotal());
+                    $this->fleetLaunch->setCapacityPeopleTotal(($ship->getPeopleCapacity() * $cnt)+$this->fleetLaunch->getCapacityPeopleTotal());
                     $this->fleetLaunch->setShipCount($cnt+$this->fleetLaunch->getShipCount());
 
                     return $cnt;
@@ -705,11 +705,14 @@ class FleetLaunchService
                 }
             }
 
+            $res = $this->getFleetLaunch()->getRes();
+            $res[$id] = 0;
+            $this->getFleetLaunch()->setRes($res);
             $this->calcResLoaded();
 
             switch ($id) {
                 case 4: $loaded = (int) floor(min($ammount, $this->getCapacity(), $this->getFleetLaunch()->getSourceEntity()->getResFuel() - $this->getFleetLaunch()->getSupportFuel() - $this->getFleetLaunch()->getCosts())); break;
-                case 5: $loaded = (int) floor(min($ammount, $this->getCapacity(), $this->getFleetLaunch()->getSourceEntity()->getResFuel() - $this->getFleetLaunch()->getSupportFood() - $this->getFleetLaunch()->getCostsFood())); break;
+                case 5: $loaded = (int) floor(min($ammount, $this->getCapacity(), $this->getFleetLaunch()->getSourceEntity()->getResFood() - $this->getFleetLaunch()->getSupportFood() - $this->getFleetLaunch()->getCostsFood())); break;
                 case 1: $loaded = (int) floor(min($ammount, $this->getCapacity(), $this->getFleetLaunch()->getSourceEntity()->getResMetal()));break;
                 case 2: $loaded = (int) floor(min($ammount, $this->getCapacity(), $this->getFleetLaunch()->getSourceEntity()->getResCrystal()));break;
                 case 3: $loaded = (int) floor(min($ammount, $this->getCapacity(), $this->getFleetLaunch()->getSourceEntity()->getResPlastic()));break;
