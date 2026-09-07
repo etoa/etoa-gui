@@ -41,8 +41,6 @@ class EconomyController extends AbstractGameController
 
     #[Route('/game/economy/{id}', name: 'game.economy')]
     public function economy(Request $request, ?Planet $entity = null): Response {
-        $id = $request->getSession()->get('cpid');
-
         if(!$entity || $entity->getUser() !== $this->getUser()->getData()) {
             return $this->render('game/error.html.twig',[
                 'msg' => 'Dieser Planet existiert nicht oder er gehört nicht dir!',
@@ -51,6 +49,7 @@ class EconomyController extends AbstractGameController
             ]);
         }
 
+        $id = $entity->getEntity()->getId();
         $data = $this->economyService->getPlanetEconomyData();
 
         $form = $this->createFormBuilder();
