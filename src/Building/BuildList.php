@@ -321,6 +321,37 @@ class BuildList implements IteratorAggregate
         }
     }
 
+    /**
+     * @return array<array{name: string, level: int, passed: bool}>
+     */
+    public function getRequirementsStatus(int $bid): array
+    {
+        if (!isset($this->items[$bid])) {
+            return [];
+        }
+
+        $result = [];
+        foreach ($this->items[$bid]->getObjectRequirements() as $requirement) {
+            if ($requirement->getBuilding()) {
+                $currentLevel = $this->items[$requirement->getBuilding()->getId()]->bl?->getCurrentLevel() ?? 0;
+                $result[] = [
+                    'name' => $requirement->getBuilding()->getName(),
+                    'level' => $requirement->getLevel(),
+                    'passed' => $currentLevel >= $requirement->getLevel(),
+                ];
+            } elseif ($requirement->getTech()) {
+                $currentLevel = $this->technologyListItemRepository->findOneBy(['user' => $this->owner, 'technology' => $requirement->getTech()])?->getCurrentLevel() ?? 0;
+                $result[] = [
+                    'name' => $requirement->getTech()->getName(),
+                    'level' => $requirement->getLevel(),
+                    'passed' => $currentLevel >= $requirement->getLevel(),
+                ];
+            }
+        }
+
+        return $result;
+    }
+
     public function requirementsPassed($bid = 0): bool
     {
         if (isset($this->items[$bid])) {

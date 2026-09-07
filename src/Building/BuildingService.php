@@ -90,6 +90,9 @@ class BuildingService
                 if (!$requirementsPassed) {
                     $subtitle = 'Voraussetzungen fehlen';
                     $tmtext = '<span style="color:#999">Baue zuerst die nötigen Gebäude und erforsche die nötigen Technologien um diese Gebäude zu bauen!</span><br/>';
+                    foreach ($this->buildList->getRequirementsStatus($buildingId) as $requirement) {
+                        $tmtext .= '<div style="color:' . ($requirement['passed'] ? '#0f0' : '#f30') . '">' . $requirement['name'] . ' Stufe ' . $requirement['level'] . '</div>';
+                    }
                     $color = '#999';
                     $filterStyleClass = $useImageFilter ? "filter-unavailable" : "";
                 } elseif ($buildType === 3) {
