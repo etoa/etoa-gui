@@ -8,6 +8,7 @@ use EtoA\Building\BuildingId;
 use EtoA\Building\BuildingListItemRepository;
 use EtoA\Building\BuildingRepository;
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Entity\BuildingListItem;
 use EtoA\Entity\Planet;
 use EtoA\Form\Type\Core\EditPopulationType;
 use EtoA\Ship\ShipQueueRepository;
@@ -22,6 +23,7 @@ use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -94,7 +96,7 @@ class PopulationController extends AbstractGameController
 
                 $form = $this->createFormBuilder(['workplaces'=>$workplaces])
                     ->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $event) use ($planet) {
-                        $event->setData($this->validateWorker($event->getData(), $planet));
+                        $this->validateWorker($event->getForm(), $planet);
                     })
                     ->add('workplaces', CollectionType::class, [
                         'entry_type'   => EditPopulationType::class,
@@ -164,25 +166,31 @@ class PopulationController extends AbstractGameController
     }
 
 
-    private function validateWorker(array $data, Planet $planet):array
+    private function validateWorker(FormInterface $form, Planet $planet): void
     {
-        $working = 0;
-        // Frei = total auf Planet - gesperrt auf Planet
-        $free_people = floor($planet->getPeople()) - $this->buildingListItemRepository->getTotalPeopleWorking($planet,true);
+        $maxPeople = (int) floor($planet->getPeople());
 
-        foreach ($data['workplaces'] as $workplace) {
-            $working += StringUtils::parseFormattedNumber($workplace->getPeopleWorking());
+        // Frei = total auf Planet - gesperrt auf Planet
+        $free_people = floor($planet->getPeople()) - $this->buildingListItemRepository->getTotalPeopleWorking($planet, true);
+
+        $requested = [];
+        foreach ($form->get('workplaces') as $key => $workplaceForm) {
+            $num = StringUtils::parseFormattedNumber((string) $workplaceForm->get('peopleWorking')->getData());
+            // Nie mehr Arbeiter zulassen, als überhaupt auf dem Planeten leben,
+            // unabhängig davon, was per POST gesendet wurde (die JS-Begrenzung lässt sich umgehen).
+            $requested[$key] = min($num, $maxPeople);
         }
 
+        $working = array_sum($requested);
         $available = min($free_people, $working);
 
-        foreach ($data['workplaces'] as $workplace) {
-            $num = StringUtils::parseFormattedNumber($workplace->getPeopleWorking());
+        foreach ($form->get('workplaces') as $key => $workplaceForm) {
+            /** @var BuildingListItem $workplace */
+            $workplace = $workplaceForm->getData();
+            $num = $requested[$key];
             $work = $available > 0 ? min($num, $available) : 0;
             $available -= $num;
-            $workplace->setPeopleWorking((int)$work);
+            $workplace->setPeopleWorking((int) $work);
         }
-
-        return $data;
     }
 }

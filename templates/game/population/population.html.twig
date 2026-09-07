@@ -48,7 +48,7 @@
                             {{ form_widget(workplace.children.peopleWorking) }}
                         {% endif %}
                     </td>
-                    <td>{{ formatNumber(workplace.children.peopleWorking.vars.value * configValue('people_food_require')) }} t</td>
+                    <td>{{ formatNumber(workplace.vars.data.peopleWorking * configValue('people_food_require')) }} t</td>
                 </tr>
             {% endfor %}
             <tr>

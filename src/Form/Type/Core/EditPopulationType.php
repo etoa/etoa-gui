@@ -14,15 +14,12 @@ class EditPopulationType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
-        // The template only lets the user edit peopleWorking while the workplace isn't
-        // already active (see population.html.twig); disabling it here (rather than
-        // just not rendering the widget) keeps this entry's form structure intact, so
-        // Symfony ignores the (never submitted) value instead of writing null onto the
-        // non-nullable BuildingListItem::$peopleWorking property.
         $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) {
             $data = $event->getData();
 
             $event->getForm()->add('peopleWorking', TextType::class, [
+                'mapped' => false,
+                'data' => $data instanceof BuildingListItem ? (string) $data->getPeopleWorking() : '0',
                 'disabled' => $data instanceof BuildingListItem && $data->getPeopleWorkingStatus(),
                 'attr' => [
                     'onKeyUp' => "FormatNumber(this.id,this.value, ".$data->getEntity()->getPeople().", '', '');"
