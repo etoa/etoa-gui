@@ -59,7 +59,7 @@
 {% endmacro %}
 
 {% macro marketLink(entity) %}
-    <a href="?page=market&mode=user_sell&change_entity={{ entity.id }}">Marktplatz</a>
+    <a href="{{ path('game.market.sell') }}?change_entity={{ entity.id }}">Marktplatz</a>
 {% endmacro %}
 
 {% macro marketResourceTable(report) %}

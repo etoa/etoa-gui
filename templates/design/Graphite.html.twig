@@ -3,33 +3,33 @@
 {% block layoutContent %}
     <div id="sidebar">
 
-        <a href="?page=overview" id="logo"></a>
+        <a href="{{ path('game.overview') }}" id="logo"></a>
 
         <div id="navcontainer">
-            <a href="?page=planetoverview" id="navplanetoverview"></a>
-            <a href="?page=economy" id="naveconomy"></a>
-            <a href="?page=population" id="navpopulation"></a>
-            <a href="?page=haven" id="navhaven"></a>
-            <a href="?page=market" id="navmarket"></a>
-            <a href="?page=crypto" id="navcrypto"></a>
-            <a href="?page=recycle" id="navrecycle"></a>
-            <a href="?page=bunker" id="navbunker"></a>
+            <a href="{{ path('game.planetoverview.overview') }}" id="navplanetoverview"></a>
+            <a href="{{ path('game.economy',{id:currentPlanetId}) }}" id="naveconomy"></a>
+            <a href="{{ path('game.population',{id:currentPlanetId}) }}" id="navpopulation"></a>
+            <a href="{{ path('game.haven.show') }}" id="navhaven"></a>
+            <a href="{{ path('game.market.home') }}" id="navmarket"></a>
+            <a href="{{ path('game.crypto') }}" id="navcrypto"></a>
+            <a href="{{ path('game.recycle') }}" id="navrecycle"></a>
+            <a href="{{ path('game.bunker.res') }}" id="navbunker"></a>
             <a></a>
-            <a href="?page=buildings" id="navbuildings"></a>
-            <a href="?page=research" id="navresearch"></a>
-            <a href="?page=shipyard" id="navshipyard"></a>
-            <a href="?page=defense" id="navdefense"></a>
-            <a href="?page=missiles" id="navmissiles"></a>
+            <a href="{{ path('game.buildings') }}" id="navbuildings"></a>
+            <a href="{{ path('game.research') }}" id="navresearch"></a>
+            <a href="{{ path('game.shipyard') }}" id="navshipyard"></a>
+            <a href="{{ path('game.defense') }}" id="navdefense"></a>
+            <a href="{{ path('game.missiles') }}" id="navmissiles"></a>
         </div>
         <div id="planetimage">
             {% if currentPlanetImage|default(false) %}
-                <a href="?page=planetoverview">
+                <a href="{{ path('game.planetoverview.overview') }}">
                     <img src="{{ currentPlanetImage }}" alt="Planet" style="width:100px;height:100px;" />
                 </a>
             {% endif %}
         </div>
-        <a id="prevEntity" href="?page={{ page }}&mode={{ mode }}&change_entity={{ prevPlanetId }}"></a>
-        <a id="nextEntity" href="?page={{ page }}&mode={{ mode }}&change_entity={{ nextPlanetId }}"></a>
+        <a id="prevEntity" href="?change_entity={{ prevPlanetId }}"></a>
+        <a id="nextEntity" href="?change_entity={{ nextPlanetId }}"></a>
         <div id="planetname">
             {% if selectField|default(false) %}
                 {{ selectField|raw }}
@@ -37,8 +37,8 @@
         </div>
     </div>
     <div id="hbar">
-        <a href="?page=stats" id="navstats" onmouseover="hideAllHbarMenus();"></a>
-        <a href="?page=cell" id="navmap" onmouseover="
+        <a href="{{ path('game.stats.total') }}" id="navstats" onmouseover="hideAllHbarMenus();"></a>
+        <a href="{{ path('game.cell',{id:currentPlanetCellId}) }}" id="navmap" onmouseover="
                 if (document.getElementById('hbarmapslide').style.display=='none') { document.getElementById('hbarmapslide').style.display='';	}
                 document.getElementById('hbarmessagesslide').style.display='none';
                 document.getElementById('hbarallianceslide').style.display='none';
@@ -54,12 +54,12 @@
         {% endif %}
         <a href="{{ path('game.fleets') }}" id="navfleet" onmouseover="hideAllHbarMenus();"></a>
         {% if messages > 0 or newreports > 0 %}
-            <a href="?page=messages" id="navmessagesgreen" onmouseover="hideAllHbarMenus();"></a>
+            <a href="{{ path('game.messages.inbox') }}" id="navmessagesgreen" onmouseover="hideAllHbarMenus();"></a>
             <script type="text/javascript">
                 Effect.Pulsate('navmessagesgreen',{duration:180,pulses:120,from:0.0});
             </script>
         {% endif %}
-        <a href="?page=messages" id="navmessages" onmouseover="
+        <a href="{{ path('game.messages.inbox') }}" id="navmessages" onmouseover="
                 if (document.getElementById('hbarmessagesslide').style.display=='none') { document.getElementById('hbarmessagesslide').style.display=''; }
                 document.getElementById('hbarallianceslide').style.display='none' ;
                 document.getElementById('hbarmapslide').style.display='none';
@@ -67,7 +67,7 @@
                 document.getElementById('hbarhelpslide').style.display='none';
                 document.getElementById('hbarlogoutslide').style.display='none';
                 return false;"></a>
-        <a href="?page=alliance" id="navalliance" onmouseover="
+        <a href="{{ path('game.alliance') }}" id="navalliance" onmouseover="
                 if (document.getElementById('hbarallianceslide').style.display=='none') { document.getElementById('hbarallianceslide').style.display=''; }
                 document.getElementById('hbarmapslide').style.display='none';
                 document.getElementById('hbarmessagesslide').style.display='none';
@@ -82,7 +82,7 @@
         {% else %}
             <a href="{{ path('game.buddylist.overview') }}" id="navbuddylist" onmouseover="hideAllHbarMenus();"></a>
         {% endif %}
-        <a href="?page=userconfig" id="navuserconfig" onmouseover="
+        <a href="{{ path('game.config.general') }}" id="navuserconfig" onmouseover="
                 if (document.getElementById('hbarsettingsslide').style.display=='none') { document.getElementById('hbarsettingsslide').style.display=''; }
                 document.getElementById('hbarallianceslide').style.display='none';
                 document.getElementById('hbarmapslide').style.display='none';
@@ -90,7 +90,7 @@
                 document.getElementById('hbarhelpslide').style.display='none';
                 document.getElementById('hbarlogoutslide').style.display='none';
                 return false;"></a>
-        <a href="?page=help" id="navhelp" onmouseover="
+        <a href="{{ path('game.help.overview') }}" id="navhelp" onmouseover="
                 if (document.getElementById('hbarhelpslide').style.display=='none'){ document.getElementById('hbarhelpslide').style.display=''; }
                 document.getElementById('hbarsettingsslide').style.display='none';
                 document.getElementById('hbarallianceslide').style.display='none';
@@ -98,7 +98,7 @@
                 document.getElementById('hbarmessagesslide').style.display='none';
                 document.getElementById('hbarlogoutslide').style.display='none';
                 return false;"></a>
-        <a href="?logout=1" id="navlogout" onmouseover="
+        <a href="{{ path('game.logout') }}" id="navlogout" onmouseover="
                 if (document.getElementById('hbarlogoutslide').style.display=='none'){ document.getElementById('hbarlogoutslide').style.display=''; }
                 document.getElementById('hbarhelpslide').style.display='none';
                 document.getElementById('hbarsettingsslide').style.display='none';
@@ -110,62 +110,62 @@
     <div id="hbarmap">
         <div id="hbarmapslide" style="display:none;">
             <div>
-                <a href="?page=cell">Sonnensystem</a>
-                <a href="?page=sector">Sektor</a>
-                <a href="?page=galaxy">Galaxie</a>
+                <a href="{{ path('game.cell',{id:currentPlanetCellId}) }}">Sonnensystem</a>
+                <a href="{{ path('game.sector') }}">Sektor</a>
+                <a href="{{ path('game.galaxy') }}">Galaxie</a>
             </div>
         </div>
     </div>
     <div id="hbarmessages">
         <div id="hbarmessagesslide" style="display:none;">
             <div>
-                <a href="?page=messages">Nachrichten {% if messages > 0 %}({{ messages }} neu){% endif %}</a>
-                <a href="?page=reports">Berichte {% if newreports > 0 %}({{ newreports }} neu){% endif %}</a>
+                <a href="{{ path('game.messages.inbox') }}">Nachrichten {% if messages > 0 %}({{ messages }} neu){% endif %}</a>
+                <a href="{{ path('game.reports.all') }}">Berichte {% if newreports > 0 %}({{ newreports }} neu){% endif %}</a>
             </div>
         </div>
     </div>
     <div id="hbaralliance">
         <div id="hbarallianceslide" style="display:none;">
             <div>
-                <a href="?page=alliance">Allianz</a>
-                <a href="?page=allianceboard">Allianzforum</a>
-                <a href="?page=alliance&amp;action=base">Allianzbasis</a>
-                <a href="?page=townhall">Rathaus</a>
+                <a href="{{ path('game.alliance') }}">Allianz</a>
+                <a href="{{ path('game.alliance.allianceboard.overview') }}">Allianzforum</a>
+                <a href="{{ path('game.alliance.base.buildings') }}">Allianzbasis</a>
+                <a href="{{ path('game.townhall') }}">Rathaus</a>
             </div>
         </div>
     </div>
     <div id="hbarsettings">
         <div id="hbarsettingsslide" style="display:none;">
             <div>
-                <a href="?page=userconfig">Einstellungen</a>
-                <a href="?page=bookmarks">Favoriten</a>
-                <a href="?page=userinfo">Profil</a>
-                <a href="?page=notepad">Notizen</a>
+                <a href="{{ path('game.config.general') }}">Einstellungen</a>
+                <a href="{{ path('game.bookmarks.target') }}">Favoriten</a>
+                <a href="{{ path('game.userinfo',{id:app.user.id}) }}">Profil</a>
+                <a href="{{ path('game.notepad.list') }}">Notizen</a>
             </div>
         </div>
     </div>
     <div id="hbarhelp">
         <div id="hbarhelpslide" style="display:none;">
             <div>
-                <a href="?page=help">Hilfe</a>
-                <a href="?page=techtree">Technikbaum</a>
-                <a href="?page=ticket">Ticketsystem</a>
+                <a href="{{ path('game.help.overview') }}">Hilfe</a>
+                <a href="{{ path('game.techtree.general') }}">Technikbaum</a>
+                <a href="{{ path('game.ticket.list') }}">Ticketsystem</a>
                 <a href="#" onclick="window.open('{{ etoaUrl('bugreport') }}');">Fehler melden</a>
                 <a href="#" onclick="{{ onClick('helpcenter') }}">Häufige Fragen</a>
-                <a href="?page=changelog">Changelog</a>
-                <a href="?page=contact">Über EtoA</a>
+                <a href="{{ path('game.changelog') }}">Changelog</a>
+                <a href="{{ path('game.contact.list') }}">Über EtoA</a>
             </div>
         </div>
     </div>
     <div id="hbarlogout">
         <div id="hbarlogoutslide" style="display:none;">
             <div>
-                <a href="?logout=1">Logout</a>
+                <a href="{{ path('game.logout') }}">Logout</a>
                 <a href="#" onclick="window.open('{{ etoaUrl('forum') }}')">Forum</a>
                 <a href="#" onclick="{{ onClick('chat') }}">Chat</a>
                 <a href="#" onclick="{{ onClick('rules') }}">Regeln</a>
                 {% if isAdmin %}
-                    <a href="admin" target="_blank">Administration</a>
+                    <a href="{{ path('admin.login') }}" target="_blank">Administration</a>
                 {% endif %}
             </div>
         </div>

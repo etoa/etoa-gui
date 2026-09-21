@@ -37,10 +37,10 @@
 
                             {% if userUniverseDiscoveryService.isEntityDiscovered(app.user.data, fleet.entityTo) %}
                                 <b>{{ fleet.entityTo.codeString }}</b>
-                                <a href="?page=cell">{{ fleet.entityTo.toString }}</a>
+                                <a href="{{ path('game.cell',{id:fleet.entityTo.cell.id}) }}">{{ fleet.entityTo.toString }}</a>
                             {% else %}
                                 <b>{{ fleet.entityTo.getType.entityCodeString }}</b>
-                                <a href="?page=cell&amp">{{ fleet.entityTo.getCoordinates().toString }} {{ fleet.entityTo.displayName }}</a>
+                                <a href="{{ path('game.cell',{id:fleet.entityTo.cell.id}) }}">{{ fleet.entityTo.getCoordinates().toString }} {{ fleet.entityTo.displayName }}</a>
                             {% endif %}
                         </td>
                         <td>

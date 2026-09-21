@@ -123,7 +123,7 @@
                    onmouseup="changeImages('nb_schiffshafen', '{{ templateDir }}/images/nb_schiffshafen-over.gif'); return true;">
                     <img width="164px" height="21px" name="nb_schiffshafen" src="{{ templateDir }}/images/nb_schiffshafen.gif" alt="Raumschiffhafen" /></a></div>
             <div class="nb-technikbuam_">
-                <a href="?page=techtree"
+                <a href="{{ path('game.techtree.general') }}"
                    onmouseover="changeImages('nb_technikbuam', '{{ templateDir }}/images/nb_technikbuam-over.gif'); return true;"
                    onmouseout="changeImages('nb_technikbuam', '{{ templateDir }}/images/nb_technikbuam.gif'); return true;"
                    onmousedown="changeImages('nb_technikbuam', '{{ templateDir }}/images/nb_technikbuam-down.gif'); return true;"

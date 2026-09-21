@@ -32,7 +32,7 @@
         <a href="{{ path('game.config.general') }}" id="h_optionen"></a>
         <a href="#" id="h_rules" onclick="{{ onClick('rules') }}"></a>
         <a href="{{ path('game.ticket.list') }}" id="h_tickets"></a>
-        <a href="?page=help" id="h_wiki" class="bottom-tip" data-tips=" ETOA - Wiki "></a>
+        <a href="{{ path('game.help.overview') }}" id="h_wiki" class="bottom-tip" data-tips=" ETOA - Wiki "></a>
         <a href="{{ path('game.logout') }}" id="h_logout" class="bottom-tip" data-tips=" abmelden "></a>
 
     </div>
@@ -44,12 +44,12 @@
         <nav id="nav">
 
             {% if currentPlanetImage|default(false) %}
-                <a href="{{ path('game.config.general') }}" id="planetimage">
+                <a href="{{ path('game.overview') }}" id="planetimage">
                     <img src="{{ currentPlanetImage }}" width="73.5" height="73.5">
                 </a>
                 <div id="planetname">{{ currentPlanetName }}</div>
             {% else %}
-                <a href="{{ path('game.config.general') }}" id="planetimage">
+                <a href="{{ path('game.overview') }}" id="planetimage">
                     <img src="{{ asset('build/designs/official/Revolution/images/dummy.gif') }}" width="73.5" height="73.5">
                 </a>
                 <div id="planetname">noch nicht ausgewählt</div>
@@ -63,7 +63,7 @@
                 {% endfor %}
             </div>
 
-            <a href="{{ path('game.cell',{id:currentPlanetId}) }}" class="right-tip" data-tips=" System " id="navcell"></a>
+            <a href="{{ path('game.cell',{id:currentPlanetCellId}) }}" class="right-tip" data-tips=" System " id="navcell"></a>
             <a href="{{ path('game.sector') }}" class="right-tip" data-tips=" Sektor " id="navsektor"></a>
             <a href="{{ path('game.galaxy') }}" class="right-tip" data-tips=" Galaxie {% if enableKeybinds %}[k] {% endif %}" id="navgalaxie"></a>
 
@@ -76,7 +76,7 @@
             <a href="{{ path('game.economy',{id:currentPlanetId}) }}" class="top-tip" data-tips=" Wirtschaft {% if enableKeybinds %}[p] {% endif %}" id="naveconomy"></a>
             <a href="{{ path('game.population',{id:currentPlanetId}) }}" class="top-tip" data-tips=" Bewohner {% if enableKeybinds %}[B] {% endif %}" id="navpopulation"></a>
             <a href="{{ path('game.planetoverview.overview') }}" class="top-tip" data-tips=" Planeteninfo " id="navplanetoverview"></a>
-            <a href="?page=techtree" class="top-tip" data-tips=" Technikbaum " id="navtechtree"></a>
+            <a href="{{ path('game.techtree.general') }}" class="top-tip" data-tips=" Technikbaum " id="navtechtree"></a>
 
             <a href="{{ path('game.haven.show') }}" class="top-tip" data-tips=" Raumhafen {% if enableKeybinds %}[h] {% endif %}" id="navhaven"></a>
             <a href="{{ path('game.bookmarks.target') }}" class="right-tip" data-tips=" Favoriten {% if enableKeybinds %}[v] {% endif %}" id="navfavorite"></a>
@@ -158,6 +158,5 @@
 
         <a href="#" id="f_chat" ></a>
         <a href="#" id="f_chat_on" ></a>
-        <a href=""  id="open-chat" title="Chat">Chat</a>
     </div>
 {% endblock %}

@@ -123,7 +123,7 @@
 
                 {% if allianceTechnologyInProgress  %}
                     <td>
-                        <a href="?page=research&amp;change_entity=" id="alliance_tech_counter">
+                        <a href="{{ path('game.alliance.base.research') }}" id="alliance_tech_counter">
                             {% if allianceTechnologyInProgress.endTime - date().timestamp <= 0  %}
                                 {{ allianceTechnologyInProgress.name }} Fertig
                             {% else %}

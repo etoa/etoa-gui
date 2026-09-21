@@ -73,10 +73,10 @@
             <h3>Datenbanktabellen</h3>
             <table style="width:100%" class="tb">
                 <tr>
-                    <th><a href="?page={{ page }}&amp;sort=name">Name</a></th>
-                    <th><a href="?page={{ page }}&amp;sort=size">Grösse</a></th>
-                    <th><a href="?page={{ page }}&amp;sort=rows">Einträge</a></th>
-                    <th><a href="?page={{ page }}&amp;sort=engine">Engine</a></th>
+                    <th><a href="{{ path('admin.db', {sort: 'name'}) }}">Name</a></th>
+                    <th><a href="{{ path('admin.db', {sort: 'size'}) }}">Grösse</a></th>
+                    <th><a href="{{ path('admin.db', {sort: 'rows'}) }}">Einträge</a></th>
+                    <th><a href="{{ path('admin.db', {sort: 'engine'}) }}">Engine</a></th>
                 </tr>
                 {% for table in dbStats %}
                     <tr>

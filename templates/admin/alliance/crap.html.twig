@@ -17,7 +17,7 @@
                         <td class="tbldata">{{ alliance.alliance_name }}</td>
                         <td class="tbldata">{{ alliance.alliance_tag }}</td>
                         <td class="tbldata">
-                            <a href="?page=$page&amp;sub=edit&amp;alliance_id={{ alliance.alliance_id }}">detail</a>
+                            <a href="{{ path('admin.alliances.edit', {id: alliance.alliance_id}) }}">detail</a>
                         </td>
                     </tr>
                 {% endfor %}

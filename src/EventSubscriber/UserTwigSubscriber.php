@@ -172,6 +172,7 @@ class UserTwigSubscriber implements EventSubscriberInterface
         if (isset($cp, $pm)) {
             $currentPlanetData = [
                 'currentPlanetId' => $cp->getEntity()->getId(),
+                'currentPlanetCellId' => $cp->getEntity()->getCell()->getId(),
                 'currentPlanetName' => $cp->getEntity()->toString(),
                 'currentPlanetImage' => $cp->getImagePath('m'),
                 'planetList' => $pm->getLinkList($s->get('cpid')),
@@ -182,6 +183,7 @@ class UserTwigSubscriber implements EventSubscriberInterface
         } else {
             $currentPlanetData = [
                 'currentPlanetId' => 0,
+                'currentPlanetCellId' => 0,
                 'currentPlanetName' => 'Unbekannt',
                 'planetList' => [],
                 'nextPlanetId' => 0,

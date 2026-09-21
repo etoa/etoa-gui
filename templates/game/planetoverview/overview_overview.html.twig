@@ -18,7 +18,7 @@
                         <div class="planetOverviewItem">Temperatur</div>
                         {{ planet.tempFrom }} °C bis {{ planet.tempTo }} °C <br style="clear:left;"/>
                         <div class="planetOverviewItem">System</div>
-                        <a href="{{ path('game.cell',{id:planet.entity.cell.id}) }}&hl={{ planet.entity.id }}">
+                        <a href="{{ path('game.cell',{id:planet.entity.cell.id, hl:planet.entity.id}) }}">
                             {{ planet.entity.coordinatesString }}
                         </a><br style="clear:left;"/>
                         <div class="planetOverviewItem">Kennung</div>

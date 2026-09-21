@@ -23,7 +23,7 @@
         </script>
     {% else %}
         {{ macros.messagebox('Ungültige Text ID', 'error') }}
-        <p><button type="button" onclick="document.location='?page={{ page }}'">Schliessen</button></p>
+        <p><button type="button" onclick="document.location='{{ path('admin.texts') }}'">Schliessen</button></p>
     {% endif %}
 
 {% endblock %}

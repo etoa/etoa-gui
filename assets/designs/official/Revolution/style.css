@@ -1024,6 +1024,80 @@ a:hover {
   display: none;
 }
 
+/* Übersicht -> Planetenkreis Info-Box (per-planet hover info) */
+.PlaniTextLinks {
+  color: #dae9ff;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 11px;
+  text-align: right;
+  vertical-align: middle;
+}
+.PlaniTextRechts {
+  color: #dae9ff;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 11px;
+  text-align: left;
+  vertical-align: middle;
+}
+.PlaniTextOben {
+  color: #dae9ff;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 11px;
+  text-align: center;
+  vertical-align: bottom;
+}
+.PlaniTextCenter {
+  color: #dae9ff;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 14px;
+  text-align: left;
+  vertical-align: baseline;
+  font-weight: lighter;
+}
+.PlaniTextCenterPlanetname {
+  color: #dae9ff;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 20px;
+  text-align: center;
+  vertical-align: baseline;
+  font-weight: lighter;
+}
+.PlaniTextCenterBeschreibung {
+  color: #dae9ff;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 14px;
+  text-align: right;
+  vertical-align: baseline;
+  font-weight: lighter;
+}
+.PlaniTextCenterBeschreibung a {
+  text-decoration: underline;
+}
+.PlaniTextCenterRessourcen {
+  color: #dae9ff;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 16px;
+  text-align: center;
+  vertical-align: baseline;
+  font-weight: lighter;
+}
+.PlaniTextCenterStore {
+  color: red;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 14px;
+  text-align: left;
+  vertical-align: baseline;
+  font-weight: lighter;
+}
+.PlaniTextCenterPower {
+  color: #0f0;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 14px;
+  text-align: left;
+  vertical-align: baseline;
+  font-weight: lighter;
+}
+
 /* Navigationen etc - Fussbereich */
 
 #f_nachricht:link {

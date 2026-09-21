@@ -39,9 +39,9 @@
                         </td>
                         <td>
                             <b>{{ fleet.entityFrom.getType.entityCodeString }}</b>
-                            <a href="{{ path('game.cell',{id:fleet.entityFrom.id}) }}">{{ fleet.entityFrom.getCoordinates().toString }} {{ fleet.entityFrom.displayName }}</a><br/>
+                            <a href="{{ path('game.cell',{id:fleet.entityFrom.cell.id}) }}">{{ fleet.entityFrom.getCoordinates().toString }} {{ fleet.entityFrom.displayName }}</a><br/>
                             <b>{{ fleet.entityTo.codeString }}</b>
-                            <a href="?page=cell">{{ fleet.entityTo.toString }}</a>
+                            <a href="{{ path('game.cell',{id:fleet.entityTo.cell.id}) }}">{{ fleet.entityTo.toString }}</a>
                         </td>
                         <td>
                             {{ formatTimestamp(fleet.launchTime) }}<br/>
@@ -76,7 +76,7 @@
                         <b>{{ fleet.entityFrom.getType.entityCodeString }}</b>
                         <a href="{{ path('game.cell',{id:fleet.entityFrom.cell.id}) }}">{{ fleet.entityFrom.getCoordinates().toString }} {{ fleet.entityFrom.displayName }}</a><br/>
                         <b>{{ fleet.entityTo.codeString }}</b>
-                        <a href="?page=cell">{{ fleet.entityTo.toString }}</a>
+                        <a href="{{ path('game.cell',{id:fleet.entityTo.cell.id}) }}">{{ fleet.entityTo.toString }}</a>
                     </td>
                     <td>
                         {{ formatTimestamp(fleet.launchTime) }}<br/>
