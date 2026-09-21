@@ -287,7 +287,7 @@ void BattleHandler::battle(Fleet* fleet, Entity* entity, Log* log, bool ratingEf
         report->setRestoreCivilShips(round(config.nget("civil_ship_restore_percent",0)*100));
 
         //Log schreiben
-        query << "INSERT DELAYED INTO "
+        query << "INSERT INTO "
         << "	logs_battle "
         << "("
         << "	fleet_id, "

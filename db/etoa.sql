@@ -2899,8 +2899,8 @@ CREATE TABLE IF NOT EXISTS `logs_battle` (
   `entity_weapon_bonus` smallint unsigned NOT NULL DEFAULT '0',
   `entity_shield_bonus` smallint unsigned NOT NULL DEFAULT '0',
   `entity_structure_bonus` smallint unsigned NOT NULL DEFAULT '0',
-  `fleet_win_exp` int unsigned NOT NULL DEFAULT '0',
-  `entity_win_exp` int unsigned NOT NULL DEFAULT '0',
+  `fleet_win_exp` int NOT NULL DEFAULT '-1',
+  `entity_win_exp` int NOT NULL DEFAULT '-1',
   `win_metal` bigint unsigned NOT NULL DEFAULT '0',
   `win_crystal` bigint unsigned NOT NULL DEFAULT '0',
   `win_pvc` bigint unsigned NOT NULL DEFAULT '0',
@@ -2918,56 +2918,6 @@ CREATE TABLE IF NOT EXISTS `logs_battle` (
 DELETE FROM `logs_battle`;
 /*!40000 ALTER TABLE `logs_battle` DISABLE KEYS */;
 /*!40000 ALTER TABLE `logs_battle` ENABLE KEYS */;
-
--- Exportiere Struktur von Tabelle etoa_test.logs_battle_queue
-DROP TABLE IF EXISTS `logs_battle_queue`;
-CREATE TABLE IF NOT EXISTS `logs_battle_queue` (
-  `id` int unsigned NOT NULL AUTO_INCREMENT,
-  `facility` tinyint unsigned NOT NULL DEFAULT '0',
-  `severity` tinyint unsigned NOT NULL DEFAULT '1',
-  `fleet_id` int unsigned NOT NULL DEFAULT '0',
-  `user_id` text NOT NULL,
-  `entity_user_id` text NOT NULL,
-  `user_alliance_id` int unsigned NOT NULL DEFAULT '0',
-  `entity_user_alliance_id` int unsigned NOT NULL DEFAULT '0',
-  `war` tinyint unsigned NOT NULL DEFAULT '0',
-  `entity_id` int unsigned NOT NULL DEFAULT '1',
-  `action` char(15) NOT NULL,
-  `landtime` int unsigned NOT NULL DEFAULT '1',
-  `result` tinyint unsigned NOT NULL,
-  `fleet_ships_cnt` int unsigned NOT NULL DEFAULT '0',
-  `entity_ships_cnt` int unsigned NOT NULL DEFAULT '0',
-  `entity_defs_cnt` int unsigned NOT NULL DEFAULT '0',
-  `fleet_weapon` bigint unsigned NOT NULL DEFAULT '10',
-  `fleet_shield` bigint unsigned NOT NULL DEFAULT '0',
-  `fleet_structure` bigint unsigned NOT NULL DEFAULT '0',
-  `fleet_weapon_bonus` smallint unsigned NOT NULL DEFAULT '0',
-  `fleet_shield_bonus` smallint unsigned NOT NULL DEFAULT '0',
-  `fleet_structure_bonus` smallint unsigned NOT NULL DEFAULT '0',
-  `entity_weapon` bigint unsigned NOT NULL DEFAULT '0',
-  `entity_shield` bigint unsigned NOT NULL DEFAULT '0',
-  `entity_structure` bigint unsigned NOT NULL DEFAULT '0',
-  `entity_weapon_bonus` smallint unsigned NOT NULL DEFAULT '0',
-  `entity_shield_bonus` smallint unsigned NOT NULL DEFAULT '0',
-  `entity_structure_bonus` smallint unsigned NOT NULL DEFAULT '0',
-  `fleet_win_exp` int NOT NULL DEFAULT '-1',
-  `entity_win_exp` int NOT NULL DEFAULT '-1',
-  `win_metal` bigint unsigned NOT NULL DEFAULT '0',
-  `win_crystal` bigint unsigned NOT NULL DEFAULT '0',
-  `win_pvc` bigint unsigned NOT NULL DEFAULT '0',
-  `win_tritium` bigint unsigned NOT NULL DEFAULT '0',
-  `win_food` bigint unsigned NOT NULL DEFAULT '0',
-  `tf_metal` bigint unsigned NOT NULL DEFAULT '0',
-  `tf_crystal` bigint unsigned NOT NULL DEFAULT '0',
-  `tf_pvc` bigint unsigned NOT NULL DEFAULT '0',
-  `timestamp` int unsigned NOT NULL DEFAULT '0',
-  PRIMARY KEY (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8mb3 DELAY_KEY_WRITE=1;
-
--- Exportiere Daten aus Tabelle etoa_test.logs_battle_queue: 0 rows
-DELETE FROM `logs_battle_queue`;
-/*!40000 ALTER TABLE `logs_battle_queue` DISABLE KEYS */;
-/*!40000 ALTER TABLE `logs_battle_queue` ENABLE KEYS */;
 
 -- Exportiere Struktur von Tabelle etoa_test.logs_debris
 DROP TABLE IF EXISTS `logs_debris`;
