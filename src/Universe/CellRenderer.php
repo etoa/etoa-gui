@@ -195,11 +195,11 @@ class CellRenderer
                 if ($planet->hasDebrisField()) {
                     echo "<br/><span style=\"color:#817339;font-weight:bold\" " . $this->tooltip->mTT(
                             "Trümmerfeld",
-                            ResIcons::METAL . StringUtils::formatNumber($planet->wfMetal) . " " .
+                            ResIcons::METAL . StringUtils::formatNumber($planet->getWfMetal()) . " " .
                             ResourceNames::METAL . "<br style=\"clear:both\" />" .
-                            ResIcons::CRYSTAL . StringUtils::formatNumber($planet->wfCrystal) . " " .
+                            ResIcons::CRYSTAL . StringUtils::formatNumber($planet->getWfCrystal()) . " " .
                             ResourceNames::CRYSTAL . "<br style=\"clear:both\" />" .
-                            ResIcons::PLASTIC . StringUtils::formatNumber($planet->wfPlastic) . " " .
+                            ResIcons::PLASTIC . StringUtils::formatNumber($planet->getWfPlastic()) . " " .
                             ResourceNames::PLASTIC . "<br style=\"clear:both\" />"
                         ) . ">Trümmerfeld</span> ";
                 }
