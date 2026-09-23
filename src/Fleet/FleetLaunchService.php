@@ -184,6 +184,7 @@ class FleetLaunchService
                         "pilots" => $ship->getPilots() * $cnt,
                         "special" => $ship->isSpecial(),
                         "actions" => array_filter(explode(",", $ship->getActions())),
+                        "item" => $shipListItem->getId(),
                     );
 
                     $this->fleetLaunch->setShips($ships);
@@ -416,7 +417,7 @@ class FleetLaunchService
                     foreach ($this->getFleetLaunch()->getShips() as $sid => $sda) {
                         $shipLog .= $sid . ":" . $sda['count'] . ",";
                         if ($sda['special']) {
-                            $this->fleetShipRepository->addSpecialShipsToFleet($fid, $this->shipRepository->find($sid), $sda['count'], $sda['item']);
+                            $this->fleetShipRepository->addSpecialShipsToFleet($fid, $this->shipRepository->find($sid), $sda['count'], $this->shipListRepository->find($sda['item']));
                         } elseif ($sda['fake'] !== false) {
                             $this->fleetShipRepository->addShipsToFleet($fid, $this->shipRepository->find($sid), $sda['count'], $this->getFleetLaunch()->getFakeId());
                         } else {
