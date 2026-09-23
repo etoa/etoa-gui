@@ -23,9 +23,10 @@ class UserSessionManager
 
     public function unregisterSession(User $user, bool $logoutPressed = true): void
     {
-        if ($user->getSession() != null) {
-            $this->userSessionLogRepository->addSessionLog($user->getSession(), $logoutPressed ? time() : 0);
-            $user->setSession(null);
+        $session = $user->getSession();
+        if ($session !== null) {
+            $this->userSessionLogRepository->addSessionLog($session, $logoutPressed ? time() : 0);
+            $this->repository->remove($session);
             $this->userRepository->save();
         }
     }
@@ -65,6 +66,8 @@ class UserSessionManager
 
     public function cleanup(): void
     {
+        $this->repository->removeOrphaned();
+
         $sessions = $this->repository->findByTimeout($this->config->getInt('user_timeout'));
         foreach ($sessions as $session) {
             if ($session->getUser() !== null) {

@@ -46,6 +46,7 @@ class UserService
         private readonly AllianceDiplomacyRepository   $allianceDiplomacyRepository,
         private readonly Security                      $security,
         private readonly UserPasswordHasherInterface   $passwordHasher,
+        private readonly UserSessionRepository         $userSessionRepository,
     )
     {
     }
@@ -172,6 +173,8 @@ Mit freundlichen Grüssen,
 die Spielleitung";
 
         $this->mailSenderService->send("Accountlöschung", $text, $user->getEmail());
+
+        $this->userSessionRepository->removeForUser($user->getId());
 
         $this->userRepository->remove($user);
         $this->userRepository->save();

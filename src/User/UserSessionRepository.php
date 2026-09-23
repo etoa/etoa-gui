@@ -130,5 +130,12 @@ class UserSessionRepository extends AbstractRepository
             ->execute();
     }
 
+    public function removeOrphaned(): int
+    {
+        return (int) $this->entityManager->getConnection()->executeStatement(
+            'DELETE FROM user_sessions WHERE user_id NOT IN (SELECT user_id FROM users)'
+        );
+    }
+
 
 }
