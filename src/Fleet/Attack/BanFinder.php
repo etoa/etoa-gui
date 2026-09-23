@@ -120,7 +120,13 @@ class BanFinder
 
                         // Es liegt eine Angriffsverletzung vor
                         if ($ban) {
-                            $bans[] = new Ban($eData[2], $eData[0], $this->userRepository->find($fUser), $this->userRepository->find($eUser), $this->planetRepository->find($entityId), $banReason);
+                            $fleetUser = $this->userRepository->find($fUser);
+                            $entityUser = $this->userRepository->find($eUser);
+                            $entity = $this->planetRepository->find($entityId);
+
+                            if ($fleetUser !== null && $entityUser !== null && $entity !== null) {
+                                $bans[] = new Ban($eData[2], $eData[0], $fleetUser, $entityUser, $entity, $banReason);
+                            }
                         }
                     }
                 }
