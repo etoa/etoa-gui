@@ -148,7 +148,7 @@ class FleetLaunchService
      *
      * >> Step 3 <<
      */
-    public function addShip(?ShipListItem $shipListItem, int $cnt)
+    public function addShip(?ShipListItem $shipListItem, int|string $cnt)
     {
         if ($this->fleetLaunch->isHavenOk()) {
             if (!$this->fleetLaunch->isShipsFixed()) {
@@ -169,7 +169,7 @@ class FleetLaunchService
                             }
                         }
                     }
-                    $cnt = min(StringUtils::parseFormattedNumber($cnt), $shipListItem->getCount());
+                    $cnt = min(StringUtils::parseFormattedNumber((string) $cnt), $shipListItem->getCount());
                     $factorF = $this->configurationService->getFloat('flight_flight_time');
                     $factorS = $this->configurationService->getFloat('flight_start_time');
                     $factorL = $this->configurationService->getFloat('flight_land_time');
