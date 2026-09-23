@@ -5,6 +5,8 @@ namespace EtoA\Controller\Admin;
 use EtoA\Form\Type\Core\UserType;
 use EtoA\User\UserRepository;
 use EtoA\User\UserToXml;
+use EtoA\User\UserXmlRestoreService;
+use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
@@ -19,8 +21,9 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 class UsersXmlController extends AbstractController
 {
     public function __construct(
-        private readonly UserRepository $userRepository,
-        private readonly UserToXml      $userToXml,
+        private readonly UserRepository       $userRepository,
+        private readonly UserToXml            $userToXml,
+        private readonly UserXmlRestoreService $userXmlRestoreService,
     )
     {
     }
@@ -86,15 +89,46 @@ class UsersXmlController extends AbstractController
     #[IsGranted('ROLE_ADMIN_GAME-ADMIN')]
     public function details(string $file): Response
     {
-        $file = $this->userToXml->getDataDirectory() . "/" . base64_decode($file, true);
-        if (!is_file($file)) {
+        $filePath = $this->userToXml->getDataDirectory() . "/" . base64_decode($file, true);
+        if (!is_file($filePath)) {
             $this->addFlash('error', 'File existiert nicht');
 
             return $this->redirectToRoute('admin.users.xml');
         }
 
         return $this->render('admin/user-xml/details.html.twig', [
-            'xml' => simplexml_load_file($file),
+            'xml' => simplexml_load_file($filePath),
+            'file' => $file,
+        ]);
+    }
+
+    #[Route('/admin/users/xml/{file}/restore', name: 'admin.users.xml.restore', methods: ['POST'])]
+    #[IsGranted('ROLE_ADMIN_GAME-ADMIN')]
+    public function restore(string $file, Request $request): Response
+    {
+        if (!$this->isCsrfTokenValid('restore_user_xml_' . $file, (string) $request->request->get('_token'))) {
+            $this->addFlash('error', 'Ungültiges Sicherheits-Token.');
+
+            return $this->redirectToRoute('admin.users.xml.details', ['file' => $file]);
+        }
+
+        $filePath = $this->userToXml->getDataDirectory() . "/" . base64_decode($file, true);
+        if (!is_file($filePath)) {
+            $this->addFlash('error', 'File existiert nicht');
+
+            return $this->redirectToRoute('admin.users.xml');
+        }
+
+        try {
+            $result = $this->userXmlRestoreService->restore($filePath);
+        } catch (Exception $ex) {
+            $this->addFlash('error', 'Wiederherstellung fehlgeschlagen: ' . $ex->getMessage());
+
+            return $this->redirectToRoute('admin.users.xml.details', ['file' => $file]);
+        }
+
+        return $this->render('admin/user-xml/restore-result.html.twig', [
+            'result' => $result,
         ]);
     }
 

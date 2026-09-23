@@ -1,0 +1,66 @@
+{% extends 'admin/layout/admin.html.twig' %}
+
+{% block content %}
+    <h1>Spieler</h1>
+    <h2>Wiederherstellung abgeschlossen</h2>
+
+    <fieldset><legend>Neuer Account</legend>
+        <table>
+            <tr>
+                <th class="tbltitle" style="width:200px;">ID:</th>
+                <td class="tbldata">{{ result.user.id }}</td>
+            </tr>
+            <tr>
+                <th class="tbltitle">Nick:</th>
+                <td class="tbldata">{{ result.user.nick }}</td>
+            </tr>
+            <tr>
+                <th class="tbltitle">E-Mail:</th>
+                <td class="tbldata">{{ result.user.email }}</td>
+            </tr>
+            <tr>
+                <th class="tbltitle">Passwort:</th>
+                <td class="tbldata"><strong>{{ result.generatedPassword }}</strong> (nur jetzt sichtbar, bitte dem Spieler mitteilen)</td>
+            </tr>
+            {% if result.originalAlliance %}
+            <tr>
+                <th class="tbltitle">Ursprüngliche Allianz:</th>
+                <td class="tbldata">{{ result.originalAlliance }} (wurde NICHT automatisch wiederhergestellt)</td>
+            </tr>
+            {% endif %}
+        </table>
+        <p><a href="{{ path('admin.users.view', {id: result.user.id}) }}">Account öffnen</a></p>
+    </fieldset>
+
+    <fieldset><legend>Wiederhergestellte Planeten ({{ result.restoredPlanets|length }})</legend>
+        {% if result.restoredPlanets is empty %}
+            <p>Keine Planeten wiederhergestellt.</p>
+        {% else %}
+            <ul>
+                {% for planet in result.restoredPlanets %}
+                    <li>{{ planet }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+    </fieldset>
+
+    {% if result.skippedPlanets is not empty %}
+    <fieldset><legend>Nicht wiederherstellbare Planeten ({{ result.skippedPlanets|length }})</legend>
+        <ul>
+            {% for planet in result.skippedPlanets %}
+                <li>{{ planet }}</li>
+            {% endfor %}
+        </ul>
+    </fieldset>
+    {% endif %}
+
+    {% if result.skippedItems is not empty %}
+    <fieldset><legend>Nicht wiederherstellbare Objekte ({{ result.skippedItems|length }})</legend>
+        <ul>
+            {% for item in result.skippedItems %}
+                <li>{{ item }}</li>
+            {% endfor %}
+        </ul>
+    </fieldset>
+    {% endif %}
+{% endblock %}

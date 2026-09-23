@@ -4,6 +4,20 @@
     <h1>Spieler</h1>
     <h2>XML-Import/Export Details</h2>
 
+    <fieldset><legend>Wiederherstellung</legend>
+        <p>
+            Erstellt einen neuen Account mit den Daten aus diesem Backup und beansprucht die Planeten wieder,
+            sofern deren Zelle inzwischen nicht neu besiedelt wurde. Passwort, Speicherkapazitäten, Warteschlangen,
+            Nachrichten/Reports/Logs, Allianz-Zugehörigkeit und der Flugstatus unterwegs befindlicher Flotten
+            werden dabei NICHT wiederhergestellt (im Backup nicht enthalten bzw. bewusst ausgelassen).
+        </p>
+        <form method="post" action="{{ path('admin.users.xml.restore', {file: file}) }}"
+              onsubmit="return confirm('Wirklich einen neuen Account aus diesem Backup wiederherstellen?');">
+            <input type="hidden" name="_token" value="{{ csrf_token('restore_user_xml_' ~ file) }}">
+            <button type="submit">User wiederherstellen</button>
+        </form>
+    </fieldset>
+
     <fieldset><legend>Allgemeines</legend>
     <table>
             <tr>
