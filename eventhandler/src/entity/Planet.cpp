@@ -148,15 +148,20 @@
 				query << "	planet_user_id='" << this->getUserId() << "', ";
 			else
 				query << "	planet_user_id=NULL, ";
-			query << "	planet_res_metal=planet_res_metal+'" << (this->getResMetal() - this->initResMetal) << "', ";
-			query << "	planet_res_crystal=planet_res_crystal+'" << (this->getResCrystal() - this->initResCrystal) << "', ";
-			query << "	planet_res_fuel=planet_res_fuel+'" << (this->getResFuel() - this->initResFuel) << "', ";
-			query << "	planet_res_plastic=planet_res_plastic+'" << (this->getResPlastic() - this->initResPlastic) << "', ";
-			query << "	planet_res_food=planet_res_food+'" << (this->getResFood() - this->initResFood) << "', ";
-			query << "	planet_wf_metal=planet_wf_metal+'" << (this->getWfMetal() - this->initWfMetal) << "', ";
-			query << "	planet_wf_crystal=planet_wf_crystal+'" << (this->getWfCrystal() - this->initWfCrystal) << "', ";
-			query << "	planet_wf_plastic=planet_wf_plastic+'" << (this->getWfPlastic() - this->initWfPlastic) << "', ";
-			query << "	planet_people=planet_people+'" << (this->getResPeople() - this->initResPeople) << "', ";
+			// etoa::d2s statt die Werte direkt in den Query-Stream zu schreiben: ein
+			// ostream formatiert double mit 6 signifikanten Stellen, ein Delta wie
+			// -1184898300 wird so zu '-1.1849e+09' (= -1184900000). Die Rundung kann
+			// den tatsächlichen Bestand übersteigen, das Ergebnis wird negativ und die
+			// unsigned-Spalte lehnt den Wert ab ("Out of range value").
+			query << "	planet_res_metal=planet_res_metal+'" << etoa::d2s(this->getResMetal() - this->initResMetal) << "', ";
+			query << "	planet_res_crystal=planet_res_crystal+'" << etoa::d2s(this->getResCrystal() - this->initResCrystal) << "', ";
+			query << "	planet_res_fuel=planet_res_fuel+'" << etoa::d2s(this->getResFuel() - this->initResFuel) << "', ";
+			query << "	planet_res_plastic=planet_res_plastic+'" << etoa::d2s(this->getResPlastic() - this->initResPlastic) << "', ";
+			query << "	planet_res_food=planet_res_food+'" << etoa::d2s(this->getResFood() - this->initResFood) << "', ";
+			query << "	planet_wf_metal=planet_wf_metal+'" << etoa::d2s(this->getWfMetal() - this->initWfMetal) << "', ";
+			query << "	planet_wf_crystal=planet_wf_crystal+'" << etoa::d2s(this->getWfCrystal() - this->initWfCrystal) << "', ";
+			query << "	planet_wf_plastic=planet_wf_plastic+'" << etoa::d2s(this->getWfPlastic() - this->initWfPlastic) << "', ";
+			query << "	planet_people=planet_people+'" << etoa::d2s(this->getResPeople() - this->initResPeople) << "', ";
 			if (this->userChanged) {
 				query << " planet_user_changed='" << this->userChanged << "', ";
 				if (this->lastUserId > 0)

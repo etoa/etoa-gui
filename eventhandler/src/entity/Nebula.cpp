@@ -150,12 +150,13 @@
 			query << "UPDATE ";
 			query << "	nebulas ";
 			query << "SET ";
-			query << "	res_metal=res_metal+" << (this->getResMetal() - this->initResMetal) << ", ";
-			query << "	res_crystal=res_crystal+" << (this->getResCrystal() - this->initResCrystal) << ", ";
-			query << "	res_plastic=res_plastic+" << (this->getResPlastic() - this->initResPlastic) << ", ";
-			query << "	res_fuel=res_fuel+" << (this->getResFuel() - this->initResFuel) << ", ";
-			query << "	res_food=res_food+" << (this->getResFood() - this->initResFood) << ", ";
-			query << "	res_power=res_power+" << (this->getResPower() - this->initResPower) << " ";
+			// siehe Planet.cpp: ohne d2s() rundet der ostream auf 6 signifikante Stellen
+			query << "	res_metal=res_metal+" << etoa::d2s(this->getResMetal() - this->initResMetal) << ", ";
+			query << "	res_crystal=res_crystal+" << etoa::d2s(this->getResCrystal() - this->initResCrystal) << ", ";
+			query << "	res_plastic=res_plastic+" << etoa::d2s(this->getResPlastic() - this->initResPlastic) << ", ";
+			query << "	res_fuel=res_fuel+" << etoa::d2s(this->getResFuel() - this->initResFuel) << ", ";
+			query << "	res_food=res_food+" << etoa::d2s(this->getResFood() - this->initResFood) << ", ";
+			query << "	res_power=res_power+" << etoa::d2s(this->getResPower() - this->initResPower) << " ";
 			query << "WHERE ";
 			query << "	id=" << this->getId() << " ";
 			query << "LIMIT 1;";
