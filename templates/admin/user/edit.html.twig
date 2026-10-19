@@ -128,6 +128,7 @@
                                     <td><label for="user_blocked_to">Bis</label></td>
                                     <td>
                                         {{ form_widget(form.blockedTo, form.vars.data.blockedFrom == 0 ? {value: userBlockedDefaultTime|date('Y-m-d\\TH:i')} : {}) }}
+                                        {{ form_errors(form.blockedTo) }}
                                     </td>
                                 </tr>
                                 <tr>

@@ -67,7 +67,9 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Symfony\Component\Validator\Constraints\Callback;
 use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Component\Validator\Context\ExecutionContextInterface;
 use WhichBrowser\Parser as BrowserParser;
 use EtoA\Support\ValidationUtils;
 
@@ -334,7 +336,12 @@ class UserController extends AbstractAdminController
             ])
             ->add('blockedTo', DateTimeType::class, [
                 'widget' => 'single_text',
-                'input' => 'timestamp'
+                'input' => 'timestamp',
+                'constraints' => new Callback(function (?int $blockedTo, ExecutionContextInterface $context) {
+                    if ($context->getRoot()->get('blocked')->getData() && $blockedTo <= time()) {
+                        $context->addViolation('Das Ende der Sperre muss in der Zukunft liegen!');
+                    }
+                }),
             ])
             ->add('banReason', TextareaType::class, [
                 'label' => false,
