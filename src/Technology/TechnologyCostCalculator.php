@@ -31,7 +31,7 @@ class TechnologyCostCalculator
 
     public function calculateBuildTime(PreciseResources $costs, BuildingCostContext $context): int
     {
-        $time = $costs->getSum() / $this->config->getInt('global_time') * $this->config->getFloat('res_build_time');
+        $time = $costs->getSum() / $this->config->getInt('global_time') * $this->config->getFloat('res_build_time') * $context->timeBonusFactor;
 
         $factor = 1;
         if ($context->race !== null) {

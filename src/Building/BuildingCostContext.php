@@ -15,6 +15,8 @@ class BuildingCostContext
     public ?SolarType $solarType = null;
     public int $peopleWorking = 0;
     public int $gentech = 0;
+    public float $boostBonus = 0;
+    public float $timeBonusFactor = 1;
 
     public static function admin(): BuildingCostContext
     {

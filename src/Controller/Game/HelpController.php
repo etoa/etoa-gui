@@ -1174,7 +1174,7 @@ class HelpController extends AbstractGameController
     {
         $costs = [];
         for ($x = 0; $x < min(30, $building->getLastLevel()); $x++) {
-            $costs[] = $this->buildingCostCalculator->calculate($building, $x, $this->buildingCostContext);
+            $costs[] = $this->buildingCostCalculator->calculate($building, $x + 1, $this->buildingCostContext);
         }
 
         return $costs;
@@ -1184,7 +1184,7 @@ class HelpController extends AbstractGameController
     {
         $costs = [];
         for ($x = 0; $x < min(30, $technology->getLastLevel()); $x++) {
-            $costs[] = $this->technologyCostCalculator->calculate($technology, $x, $this->buildingCostContext);
+            $costs[] = $this->technologyCostCalculator->calculate($technology, $x + 1, $this->buildingCostContext);
         }
 
         return $costs;

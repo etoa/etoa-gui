@@ -50,6 +50,7 @@ class BuildingCostCalculator
         }
 
         $buildTime = ($time * $factor);
+        $buildTime /= 1 + $context->boostBonus;
 
         $timeMin = $buildTime * (0.1 - ($context->gentech / 100));
         $buildTime = $buildTime - $context->peopleWorking * $this->config->getInt('people_work_done');

@@ -52,7 +52,7 @@ class DefenseInfo extends AbstractController
     #[ExposeInTemplate]
     public function getWorking(): int
     {
-        $base = $this->buildingListItemRepository->findOneBy(['entity' => $this->getCurrentEntity(), 'building' => BuildingId::SHIPYARD]);
+        $base = $this->buildingListItemRepository->findOneBy(['entity' => $this->getCurrentEntity(), 'building' => BuildingId::DEFENSE]);
         return $base?->getPeopleWorking() ?? 0;
     }
 
@@ -128,7 +128,7 @@ class DefenseInfo extends AbstractController
 
         if (!$this->isCurrentlyBuilding()) {
             $planet = $this->getCurrentEntity();
-            $building = $this->buildingListItemRepository->findOneBy(['entity' => $planet, 'building' => BuildingId::SHIPYARD]);
+            $building = $this->buildingListItemRepository->findOneBy(['entity' => $planet, 'building' => BuildingId::DEFENSE]);
             $peopleWorking = $this->getWorking();
 
             $free = floor($planet->getPeople()) - $this->buildingListItemRepository->getTotalPeopleWorking($planet) + $peopleWorking;
@@ -172,7 +172,7 @@ class DefenseInfo extends AbstractController
         if ($need_bonus_level >= 0) {
             return StringUtils::formatPercentString($time_boni_factor) . " durch Stufe " . $yard->getCurrentLevel();
         } else {
-            return "Stufe " . $this->configurationService->getInt('build_time_boni_waffenfabrik') . " erforderlich!";
+            return "Stufe " . $this->configurationService->param1Int('build_time_boni_waffenfabrik') . " erforderlich!";
         }
     }
 

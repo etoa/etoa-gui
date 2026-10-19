@@ -52,7 +52,7 @@
                     <td style='white-space: nowrap;'>{{ formatTimespan(item.remaining) }}</td>
                     <td>
                         {% if item.cancelable %}
-                            <a href="{{ path('game.shipyard.cancel',{id:item.id}) }}"
+                            <a href="{{ path('game.shipyard.cancel',{id:item.id, token:csrf_token('shipyard_cancel_' ~ item.id)}) }}"
                                onclick="return confirm('Soll dieser Auftrag wirklich abgebrochen werden?');">Abbrechen</a>
                         {% else %}
                             -

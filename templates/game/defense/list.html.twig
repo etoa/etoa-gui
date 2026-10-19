@@ -52,7 +52,7 @@
                     <td style='white-space: nowrap;'>{{ formatTimespan(item.remaining) }}</td>
                     <td>
                         {% if item.cancelable %}
-                            <a href="{{ path('game.defense.cancel',{id:item.id}) }}"
+                            <a href="{{ path('game.defense.cancel',{id:item.id, token:csrf_token('defense_cancel_' ~ item.id)}) }}"
                                onclick="return confirm('Soll dieser Auftrag wirklich abgebrochen werden?');">Abbrechen</a>
                         {% else %}
                             -
@@ -107,7 +107,9 @@
                             <td width="10%"
                                 {% if defense.costs.food > defense.available.food %}style="color:red;"{% endif %}>{{ defense.costs.food|number_format }}</td>
                             <td>
-                                {% if defense.defenseCount >= defense.maxCount and defense.maxCount != 0 %}
+                                {% if not defense.buildable %}
+                                    Nicht baubar
+                                {% elseif defense.defenseCount >= defense.maxCount and defense.maxCount != 0 %}
                                     Max
                                 {% else %}
                                     {% if defense.maxBuildable > 0 %}
@@ -153,14 +155,16 @@
                         <tr>
                             <th height="30">Bauzeit</th>
                             <td>{{ formatTimespan(defense.buildTime) }}</td>
-                            {% if defense.defenseCount >= defense.maxCount and defense.maxCount != 0 %}
+                            {% if not defense.buildable %}
+                                <th height="30" colspan="2"><i>Nicht baubar</i></th>
+                            {% elseif defense.defenseCount >= defense.maxCount and defense.maxCount != 0 %}
                                 <th height="30" colspan="2"><i>Maximalanzahl erreicht</i></th>
                             {% else %}
                                 <th height="30">In Auftrag geben:</th>
                                 <td>
                                     {% if defense.maxBuildable > 0 %}
                                         {% set attr = {
-                                            'onmouseover': 'showTT("","Es können maximal '~defense.maxBuildable~' Schiffe gebaut werden",1,event,this);'
+                                            'onmouseover': 'showTT("","Es können maximal '~defense.maxBuildable~' Anlagen gebaut werden",1,event,this);'
                                         } %}
                                     {% else %}
                                         {% set attr = {

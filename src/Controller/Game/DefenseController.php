@@ -19,6 +19,7 @@ use EtoA\Support\StringUtils;
 use EtoA\Technology\TechnologyId;
 use EtoA\Technology\TechnologyListItemRepository;
 use EtoA\Universe\Planet\PlanetRepository;
+use EtoA\Universe\Resources\PreciseResources;
 use EtoA\Universe\Resources\ResourceNames;
 use EtoA\User\UserPropertiesRepository;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
@@ -81,6 +82,10 @@ class DefenseController extends AbstractGameController
 
                 foreach ($defenseyardData['categories'] as $category) {
                     foreach ($category['defenses'] as $defense) {
+                        if (!$defense['buildable']) {
+                            continue;
+                        }
+
                         //TODO: use formCollection and refactor template
                         $defenseForm = $defenseForm->add($defense['id'], TextType::class, [
                             'attr' => [
@@ -114,7 +119,7 @@ class DefenseController extends AbstractGameController
 
                     // Bauliste vom Planeten laden und nach Verteidigung zusammenfassen
                     $queueFields = 0;
-                    foreach ($this->defenseQueueRepository->findAll() as $item) {
+                    foreach ($this->defenseQueueRepository->searchQueueItems(DefenseQueueSearch::create()->entity($cp)->endAfter(time())) as $item) {
                         $queueFields += $item->getCount() * $item->getDefense()->getFields();
                     }
 
@@ -139,10 +144,14 @@ class DefenseController extends AbstractGameController
                     $counter = 0;
                     foreach ($defenseyardData['categories'] as $category) {
                         foreach ($category['defenses'] as $defense) {
+                            if (!$defense['buildable']) {
+                                continue;
+                            }
+
                             $defense_id = intval($defense['id']);
                             $build_cnt = StringUtils::parseFormattedNumber($defenseForm->get($defense['id'])->getData());
                             $buildDefense = $this->defenseDataRepository->find($defense_id);
-                            if ($build_cnt > 0 && $buildDefense) {
+                            if ($build_cnt > 0 && $buildDefense && $buildDefense->isBuildable()) {
                                 $buildCountOriginal = $build_cnt;
                                 $defense_count = $this->defenseyardService->getAllDefenseCount($defense_id);
 
@@ -159,42 +168,43 @@ class DefenseController extends AbstractGameController
                                 //Wenn der User nicht genug Ress hat, die Anzahl Schiffe drosseln
                                 $bf = [];
                                 $bc = [];
+                                $costs = PreciseResources::createFromBase($buildDefense->getCosts())->multiply($specialist ? $specialist->getCostsDefense() : 1);
 
                                 //Titan
-                                if ($buildDefense->getCosts()->metal > 0) {
-                                    $bf['metal'] = $cp->getResMetal() / $buildDefense->getCosts()->metal;
+                                if ($costs->metal > 0) {
+                                    $bf['metal'] = ($cp->getResMetal() - $totalMetal) / $costs->metal;
                                 } else {
                                     $bc['metal'] = 0;
                                 }
                                 //Silizium
-                                if ($buildDefense->getCosts()->crystal > 0) {
-                                    $bf['crystal'] = $cp->getResCrystal() / $buildDefense->getCosts()->crystal;
+                                if ($costs->crystal > 0) {
+                                    $bf['crystal'] = ($cp->getResCrystal() - $totalCrystal) / $costs->crystal;
                                 } else {
                                     $bc['crystal'] = 0;
                                 }
                                 //PVC
-                                if ($buildDefense->getCosts()->plastic > 0) {
-                                    $bf['plastic'] = $cp->getResPlastic() / $buildDefense->getCosts()->plastic;
+                                if ($costs->plastic > 0) {
+                                    $bf['plastic'] = ($cp->getResPlastic() - $totalPlastic) / $costs->plastic;
                                 } else {
                                     $bc['plastic'] = 0;
                                 }
                                 //Tritium
-                                if ($buildDefense->getCosts()->fuel > 0) {
-                                    $bf['fuel'] = $cp->getResFuel() / $buildDefense->getCosts()->fuel;
+                                if ($costs->fuel > 0) {
+                                    $bf['fuel'] = ($cp->getResFuel() - $totalFuel) / $costs->fuel;
                                 } else {
                                     $bc['fuel'] = 0;
                                 }
                                 //Nahrung
                                 $additional_food_costs = $yard->getPeopleWorking() * $this->configurationService->getInt('people_food_require');
-                                if ($additional_food_costs > 0 || $buildDefense->getCosts()->food > 0) {
-                                    $bf['food'] = $cp->getResFood() / (intval($additional_food_costs) + $buildDefense->getCosts()->food);
+                                if ($additional_food_costs > 0 || $costs->food > 0) {
+                                    $bf['food'] = ($cp->getResFood() - $totalFood) / (intval($additional_food_costs) + $costs->food);
                                 } else {
                                     $bc['food'] = 0;
                                 }
 
                                 //Anzahl Drosseln ???
-                                if ($build_cnt > floor(min($bf))) {
-                                    $build_cnt = floor(min($bf));
+                                if (count($bf) > 0 && $build_cnt > floor(min($bf))) {
+                                    $build_cnt = max(0, floor(min($bf)));
                                 }
 
                                 //Check for Rene-Bug
@@ -205,14 +215,14 @@ class DefenseController extends AbstractGameController
                                 //Anzahl muss grösser als 0 sein
                                 if ($build_cnt > 0) {
                                     //Errechne Kosten pro auftrag schiffe
-                                    $bc['metal'] = $buildDefense->getCosts()->metal * $build_cnt;
-                                    $bc['crystal'] = $buildDefense->getCosts()->crystal * $build_cnt;
-                                    $bc['plastic'] = $buildDefense->getCosts()->plastic * $build_cnt;
-                                    $bc['fuel'] = $buildDefense->getCosts()->fuel * $build_cnt;
-                                    $bc['food'] = ($additional_food_costs + $buildDefense->getCosts()->food) * $build_cnt;
+                                    $bc['metal'] = $costs->metal * $build_cnt;
+                                    $bc['crystal'] = $costs->crystal * $build_cnt;
+                                    $bc['plastic'] = $costs->plastic * $build_cnt;
+                                    $bc['fuel'] = $costs->fuel * $build_cnt;
+                                    $bc['food'] = ($additional_food_costs + $costs->food) * $build_cnt;
 
                                     // Bauzeit pro Schiff berechnen
-                                    $btime = $buildDefense->getCosts()->getSum()
+                                    $btime = $costs->getSum()
                                         / $this->configurationService->getInt('global_time') * $this->configurationService->getFloat('def_build_time')
                                         * $time_boni_factor
                                         * ($specialist ? $specialist->getTimeDefense() : 1);
@@ -234,6 +244,7 @@ class DefenseController extends AbstractGameController
                                     // Auftrag speichern
                                     $this->defenseQueueRepository->add($this->getUser()->getData(), $buildDefense, $cp, $build_cnt, $start_time, (int)$end_time, (int)$obj_time);
                                     $this->buildingListItemRepository->markBuildingWorkingStatus($this->getUser()->getData(), $cp, BuildingId::DEFENSE->value, true);
+                                    $fields_available -= $build_cnt * $buildDefense->getFields();
 
                                     //Rohstoffe summieren, diese werden nach der Schleife abgezogen
                                     $totalMetal += $bc['metal'];
@@ -243,13 +254,13 @@ class DefenseController extends AbstractGameController
                                     $totalFood += $bc['food'];
 
                                     //Log schreiben
-                                    $log_text = "[b]Schiffsauftrag Bauen[/b]
+                                    $log_text = "[b]Verteidigungsauftrag Bauen[/b]
 
-                        [b]Start:[/b] " . date("d.m.Y H:i:s", $end_time) . "
+                        [b]Start:[/b] " . date("d.m.Y H:i:s", $start_time) . "
                         [b]Ende:[/b] " . date("d.m.Y H:i:s", $end_time) . "
                         [b]Dauer:[/b] " . StringUtils::formatTimespan($duration) . "
                         [b]Dauer pro Einheit:[/b] " . StringUtils::formatTimespan($obj_time) . "
-                        [b]Schiffswerft Level:[/b] " . $yard->getCurrentLevel() . "
+                        [b]Waffenfabrik Level:[/b] " . $yard->getCurrentLevel() . "
                         [b]Eingesetzte Bewohner:[/b] " . StringUtils::formatNumber($yard->getPeopleWorking()) . "
                         [b]Gen-Tech Level:[/b] " . $gen_tech_level . "
                         [b]Eingesetzter Spezialist:[/b] " . ($specialist ? $specialist->getName() : "Kein Spezialist") . "
@@ -280,7 +291,7 @@ class DefenseController extends AbstractGameController
                     $this->planetRepository->addResources($cp, -$totalMetal, -$totalCrystal, -$totalPlastic, -$totalFuel, -$totalFood);
 
                     if ($counter == 0) {
-                        $this->addFlash('error', 'Keine Schiffe gewählt!');
+                        $this->addFlash('error', 'Keine Verteidigungsanlagen gewählt!');
                     }
 
                     return $this->redirectToRoute('game.defense');
@@ -308,22 +319,30 @@ class DefenseController extends AbstractGameController
     }
 
     #[Route('/game/defense/cancel/{id}', name: 'game.defense.cancel')]
-    public function cancel(?DefenseQueueItem $defenseQueueItem): Response
+    public function cancel(Request $request, ?DefenseQueueItem $defenseQueueItem): Response
     {
         $cp = $this->defenseyardService->getCurrentPlanet();
         $cancel_res_factor = $this->defenseyardService->getCancelResFactor();
 
-        if ($defenseQueueItem && $cancel_res_factor > 0 && $defenseQueueItem->getEntity() === $cp) {
+        if (!$defenseQueueItem || !$this->isCsrfTokenValid('defense_cancel_' . $defenseQueueItem->getId(), (string) $request->query->get('token'))) {
+            $this->addFlash('error', 'Ungültige Anfrage, bitte erneut versuchen!');
+
+            return $this->redirectToRoute('game.defense');
+        }
+
+        if ($cancel_res_factor > 0 && $defenseQueueItem->getEntity() === $cp && $defenseQueueItem->getEndTime() > time()) {
             //Zu erhaltende Rohstoffe errechnen
             $obj_cnt = min(ceil(($defenseQueueItem->getEndTime() - max(time(), $defenseQueueItem->getStartTime())) / $defenseQueueItem->getObjectTime()), $defenseQueueItem->getCount());
-            $defense_id = $defenseQueueItem->getId();
+            $defense_id = $defenseQueueItem->getdefense()->getId();
+            $specialist = $this->getUser()->getData()->getSpecialist();
+            $costs = PreciseResources::createFromBase($defenseQueueItem->getdefense()->getCosts())->multiply($specialist ? $specialist->getCostsDefense() : 1);
 
             $ret = [];
-            $ret['metal'] = $defenseQueueItem->getdefense()->getCosts()->metal * $obj_cnt * $cancel_res_factor;
-            $ret['crystal'] = $defenseQueueItem->getdefense()->getCosts()->crystal * $obj_cnt * $cancel_res_factor;
-            $ret['plastic'] = $defenseQueueItem->getdefense()->getCosts()->plastic * $obj_cnt * $cancel_res_factor;
-            $ret['fuel'] = $defenseQueueItem->getdefense()->getCosts()->fuel * $obj_cnt * $cancel_res_factor;
-            $ret['food'] = $defenseQueueItem->getdefense()->getCosts()->food * $obj_cnt * $cancel_res_factor;
+            $ret['metal'] = $costs->metal * $obj_cnt * $cancel_res_factor;
+            $ret['crystal'] = $costs->crystal * $obj_cnt * $cancel_res_factor;
+            $ret['plastic'] = $costs->plastic * $obj_cnt * $cancel_res_factor;
+            $ret['fuel'] = $costs->fuel * $obj_cnt * $cancel_res_factor;
+            $ret['food'] = $costs->food * $obj_cnt * $cancel_res_factor;
 
             // Daten für Log speichern
             $queue_count = $defenseQueueItem->getCount();
@@ -340,8 +359,9 @@ class DefenseController extends AbstractGameController
             if (count($queueItems) > 0) {
                 $new_starttime = max($start_time, time());
                 foreach ($queueItems as $item) {
+                    $duration = $item->getEndTime() - $item->getStartTime();
                     $item->setStartTime($new_starttime);
-                    $item->setEndTime($new_starttime + $item->getEndTime() - $item->getStartTime());
+                    $item->setEndTime($new_starttime + $duration);
                     $new_starttime = $item->getEndTime();
                 }
                 $this->defenseQueueRepository->save();
@@ -351,7 +371,7 @@ class DefenseController extends AbstractGameController
             $this->planetRepository->addResources($cp, $ret['metal'], $ret['crystal'], $ret['plastic'], $ret['fuel'], $ret['food']);
 
             //Log schreiben
-            $log_text = "[b]Schiffsauftrag Abbruch[/b]
+            $log_text = "[b]Verteidigungsauftrag Abbruch[/b]
 
                 [b]Auftragsdauer:[/b] " . StringUtils::formatTimespan($queue_objtime * $queue_count) . "
 

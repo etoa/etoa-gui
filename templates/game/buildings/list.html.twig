@@ -5,6 +5,7 @@
         <p>Keine Gebäude verfügbar.</p>
     {% else %}
         <form method="post">
+            <input type="hidden" name="_token" value="{{ csrf_token('buildings_list') }}">
             <div>
                 {% for category in buildingData.categories %}
                     <table style="width:{{ buildingData.tableWidth }}" class="tb {{ buildingData.isCompact ? 'compact' : '' }}">
@@ -27,7 +28,7 @@
                             {% for building in category.buildings %}
                                 <tr>
                                     <td class='buildingCellImage'>
-                                        <a href="{{ buildingData.helpUrl }}&amp;id={{ building.id }}">
+                                        <a href="{{ path('game.buildings.show',{id:building.id}) }}">
                                             <img class="{{ building.filterStyleClass }} buildingImageSmall" src="{{ building.img }}" border="0" />
                                         </a>
                                     </td>
@@ -44,7 +45,8 @@
                                         <td colspan="5" id="progressbar_{{ building.id }}" style="text-align:center;vertical-align:middle;font-weight:bold;"></td>
                                         <td id="buildcancel_{{ building.id }}">
                                             <input type="hidden" name="id[{{ building.id }}]" value="{{ building.id }}">
-                                            <input type="submit" class="button" name="command_cbuild[{{ building.id }}]" value="Bau abbrechen" onclick="if (this.value=='Bau abbrechen'){return confirm('Wirklich abbrechen?');}">
+                                            {% set cancelLabel = building.buildType == 4 ? 'Abriss abbrechen' : 'Bau abbrechen' %}
+                                            <input type="submit" class="button" name="command_cbuild[{{ building.id }}]" value="{{ cancelLabel }}" onclick="return confirm('Wirklich abbrechen?');">
                                         </td>
                                         <twig:countdown
                                             :element="'buildtime_' ~ building.id"

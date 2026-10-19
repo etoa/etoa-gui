@@ -325,15 +325,15 @@ class ShipyardService
         $cp = $this->planetRepository->find($request->getSession()->get('cpid'));
 
         $ship_count = 0;
-        // ... auf den Planeten
-        $shiplist = $this->shipListRepository->findOneBy(['entity' => $cp, 'ship' => $ship]);
-        if ($shiplist) {
-            $ship_count += $shiplist->getCount();
+        // ... auf allen Planeten und im Bunker
+        foreach ($this->shipListRepository->findBy(['user' => $cp->getUser(), 'ship' => $ship]) as $shiplist) {
+            $ship_count += $shiplist->getCount() + $shiplist->getBunkered();
         }
-        $queuelist = $this->shipQueueRepository->findBy(['entity' => $cp, 'ship' => $ship]);
-        // ... in der Bauliste
-        foreach ($queuelist as $item) {
-            $ship_count += $item->getCount();
+        // ... in den Baulisten aller Planeten
+        foreach ($this->shipQueueRepository->findBy(['user' => $cp->getUser(), 'ship' => $ship]) as $item) {
+            if ($item->getEndTime() > time()) {
+                $ship_count += $item->getCount();
+            }
         }
 
         $fleetlist = $this->fleetShipRepository->getByUserAndShip($cp->getUser(), $ship);

@@ -60,9 +60,6 @@ class ResearchController extends AbstractGameController
     {
         $cp = $this->planetRepository->find($request->getSession()->get('cpid'));
         $researchBuilding = $this->buildingListItemRepository->findOneBy(['entity' => $cp, 'building' => BuildingId::TECHNOLOGY]);
-        $data = $this->technologyService->getTechnologyData($technology);
-        $technologyListItem = $this->technologyListItemRepository->findOneBy(['user' => $this->getUser()->getData(), 'technology' => $technology]);
-
         if (!$technology || !$technology->isShow()) {
             return $this->render('game/error.html.twig', [
                 'msg' => 'Technik nicht vorhanden!',
@@ -79,6 +76,9 @@ class ResearchController extends AbstractGameController
                 'headline' => 'Forschungslabor des Planeten ' . $cp->getName()
             ]);
         }
+
+        $data = $this->technologyService->getTechnologyData($technology);
+        $technologyListItem = $this->technologyListItemRepository->findOneBy(['user' => $this->getUser()->getData(), 'technology' => $technology]);
 
         $form = $this->container->get('form.factory')->createNamed('research_form', FormType::class)
             ->add('research', SubmitType::class, [
@@ -106,71 +106,56 @@ class ResearchController extends AbstractGameController
                     $this->technologyListItemRepository->persist($technologyListItem);
                 }
 
-                if ($technologyListItem->getBuildType() === 0) {
-                    $researching = false;
+                if (!empty($data['options']['requirementsNotMet'])) {
+                    $this->addFlash('error', 'Forschung kann nicht gestartet werden, Voraussetzungen nicht erfüllt!');
+                } elseif (empty($data['options']['researchCosts']) || $data['options']['researchError'] !== null) {
+                    $this->addFlash('error', 'Forschung kann nicht gestartet werden: ' . ($data['options']['researchError'] ?? 'Maximalstufe erreicht!'));
+                } elseif ($technologyListItem->getBuildType() === 0) {
+                    $start_time = time();
+                    $end_time = time() + $data['options']['researchCosts']['time'];
+                    $this->technologyListItemRepository->updateBuildStatus($technologyListItem, 3, $start_time, (int)$end_time);
+                    $buildingId = $technology->getId() === TechnologyId::GEN ? BuildingId::PEOPLE->value : BuildingId::TECHNOLOGY->value;
+                    $this->buildingListItemRepository->markBuildingWorkingStatus($technologyListItem->getUser(), $cp, $buildingId, true);
 
-                    if ($technologyListItem->getTechnology()->getId() !== TechnologyId::GEN) {
-                        $researching = $this->technologyListItemRepository->isTechInProgress($this->getUser()->getData(), $technology);
-                    }
+                    //Rohstoffe vom Planeten abziehen und aktualisieren
+                    $this->planetRepository->addResources($cp,
+                        -$data['options']['researchCosts']['resources']['metal']['cost'],
+                        -$data['options']['researchCosts']['resources']['crystal']['cost'],
+                        -$data['options']['researchCosts']['resources']['plastic']['cost'],
+                        -$data['options']['researchCosts']['resources']['fuel']['cost'],
+                        -$data['options']['researchCosts']['resources']['food']['cost']);
 
-                    if (!$researching) {
-                        $sufficient = true;
+                    $b_status = 3;
 
-                        foreach ($data['options']['researchCosts']['resources'] as $resource) {
-                            if (!$resource['sufficient'])
-                                $sufficient = false;
-                        }
+                    if ($technology->getId() === TechnologyId::GEN)
+                        $peopleWorking = $this->technologyService->getPeopleWorkingGen();
+                    else
+                        $peopleWorking = $this->technologyService->getPeopleWorking();
+                    //Log schreiben
+                    $log_text = "[b]Forschung Ausbau[/b]
 
-                        if ($sufficient) {
-                            $start_time = time();
-                            $end_time = time() + $data['options']['researchCosts']['time'];
-                            $this->technologyListItemRepository->updateBuildStatus($technologyListItem, 3, $start_time, (int)$end_time);
-                            $buildingId = $technology->getId() === TechnologyId::GEN ? BuildingId::PEOPLE->value : BuildingId::TECHNOLOGY->value;
-                            $this->buildingListItemRepository->markBuildingWorkingStatus($technologyListItem->getUser(), $cp, $buildingId, true);
+                    [b]Erforschungsdauer:[/b] " . StringUtils::formatTimespan($data['options']['researchCosts']['time']) . "
+                    [b]Ende:[/b] " . date("d.m.Y H:i:s", (int)$end_time) . "
+                    [b]Forschungslabor Level:[/b] " . $researchBuilding->getCurrentLevel() . "
+                    [b]Eingesetzte Bewohner:[/b] " . StringUtils::formatNumber($peopleWorking) . "
+                    [b]Gen-Tech Level:[/b] " . ($this->technologyListItemRepository->getTechnologyLevel($this->getUser()->getData(), TechnologyId::GEN) ?? 0) . "
+                    [b]Eingesetzter Spezialist:[/b] " . ($this->getUser()->getData()->getSpecialist() ? $this->getUser()->getData()->getSpecialist()->getName() : "Kein Spezialist") . "
 
-                            //Rohstoffe vom Planeten abziehen und aktualisieren
-                            $this->planetRepository->addResources($cp,
-                                -$data['options']['researchCosts']['resources']['metal']['cost'],
-                                -$data['options']['researchCosts']['resources']['crystal']['cost'],
-                                -$data['options']['researchCosts']['resources']['plastic']['cost'],
-                                -$data['options']['researchCosts']['resources']['fuel']['cost'],
-                                -$data['options']['researchCosts']['resources']['food']['cost']);
+                    [b]Kosten[/b]
+                    [b]" . ResourceNames::METAL . ":[/b] " . StringUtils::formatNumber($data['options']['researchCosts']['resources']['metal']['cost']) . "
+                    [b]" . ResourceNames::CRYSTAL . ":[/b] " . StringUtils::formatNumber($data['options']['researchCosts']['resources']['crystal']['cost']) . "
+                    [b]" . ResourceNames::PLASTIC . ":[/b] " . StringUtils::formatNumber($data['options']['researchCosts']['resources']['plastic']['cost']) . "
+                    [b]" . ResourceNames::FUEL . ":[/b] " . StringUtils::formatNumber($data['options']['researchCosts']['resources']['fuel']['cost']) . "
+                    [b]" . ResourceNames::FOOD . ":[/b] " . StringUtils::formatNumber($data['options']['researchCosts']['resources']['food']['cost']) . "
 
-                            $b_status = 3;
+                    [b]Restliche Rohstoffe auf dem Planeten[/b]
+                    [b]" . ResourceNames::METAL . ":[/b] " . StringUtils::formatNumber($cp->getResMetal()) . "
+                    [b]" . ResourceNames::CRYSTAL . ":[/b] " . StringUtils::formatNumber($cp->getResCrystal()) . "
+                    [b]" . ResourceNames::PLASTIC . ":[/b] " . StringUtils::formatNumber($cp->getResPlastic()) . "
+                    [b]" . ResourceNames::FUEL . ":[/b] " . StringUtils::formatNumber($cp->getResFuel()). "
+                    [b]" . ResourceNames::FOOD . ":[/b] " . StringUtils::formatNumber($cp->getResFood());
 
-                            if ($technology->getId() === TechnologyId::GEN)
-                                $peopleWorking = $this->technologyService->getPeopleWorkingGen();
-                            else
-                                $peopleWorking = $this->technologyService->getPeopleWorking();
-                            //Log schreiben
-                            $log_text = "[b]Forschung Ausbau[/b]
-
-                            [b]Erforschungsdauer:[/b] " . StringUtils::formatTimespan($data['options']['researchCosts']['time']) . "
-                            [b]Ende:[/b] " . date("d.m.Y H:i:s", (int)$end_time) . "
-                            [b]Forschungslabor Level:[/b] " . $researchBuilding->getCurrentLevel() . "
-                            [b]Eingesetzte Bewohner:[/b] " . StringUtils::formatNumber($peopleWorking) . "
-                            [b]Gen-Tech Level:[/b] " . $this->technologyListItemRepository->getTechnologyLevel($this->getUser()->getData(), TechnologyId::GEN) ?? 0 . "
-                            [b]Eingesetzter Spezialist:[/b] " . ($this->getUser()->getData()->getSpecialist() ? $this->getUser()->getData()->getSpecialist()->getName() : "Kein Spezialist") . "
-
-                            [b]Kosten[/b]
-                            [b]" . ResourceNames::METAL . ":[/b] " . StringUtils::formatNumber($data['options']['researchCosts']['resources']['metal']['cost']) . "
-                            [b]" . ResourceNames::CRYSTAL . ":[/b] " . StringUtils::formatNumber($data['options']['researchCosts']['resources']['crystal']['cost']) . "
-                            [b]" . ResourceNames::PLASTIC . ":[/b] " . StringUtils::formatNumber($data['options']['researchCosts']['resources']['plastic']['cost']) . "
-                            [b]" . ResourceNames::FUEL . ":[/b] " . StringUtils::formatNumber($data['options']['researchCosts']['resources']['fuel']['cost']) . "
-                            [b]" . ResourceNames::FOOD . ":[/b] " . StringUtils::formatNumber($data['options']['researchCosts']['resources']['food']['cost']) . "
-
-                            [b]Restliche Rohstoffe auf dem Planeten[/b]
-                            [b]" . ResourceNames::METAL . ":[/b] " . StringUtils::formatNumber($cp->getResMetal()) . "
-                            [b]" . ResourceNames::CRYSTAL . ":[/b] " . StringUtils::formatNumber($cp->getResCrystal()) . "
-                            [b]" . ResourceNames::PLASTIC . ":[/b] " . StringUtils::formatNumber($cp->getResPlastic()) . "
-                            [b]" . ResourceNames::FUEL . ":[/b] " . StringUtils::formatNumber($cp->getResFuel()). "
-                            [b]" . ResourceNames::FOOD . ":[/b] " . StringUtils::formatNumber($cp->getResFood());
-
-                            $this->gameLogRepository->add(GameLogFacility::TECH, LogSeverity::INFO, $log_text, $this->getUser()->getData(), $this->getUser()->getData()->getAlliance(), $cp->getEntity(), $technology->getId(), $b_status, $data['technology']['currentLevel']);
-                        } else
-                            $this->addFlash('error', 'Forschung kann nicht gestartet werden, zuwenig Rohstoffe vorhanden!');
-                    } else
-                        $this->addFlash('error', 'Forschung kann nicht gestartet werden, es wird bereits an einer Technologie geforscht!');
+                    $this->gameLogRepository->add(GameLogFacility::TECH, LogSeverity::INFO, $log_text, $this->getUser()->getData(), $this->getUser()->getData()->getAlliance(), $cp->getEntity(), $technology->getId(), $b_status, $data['technology']['currentLevel']);
                 }
             }
 

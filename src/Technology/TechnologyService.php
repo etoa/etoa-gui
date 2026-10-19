@@ -82,6 +82,11 @@ class TechnologyService
             $techlist[$userTechnology->getTechnology()->getId()] = $userTechnology;
         }
 
+        $buildlist = [];
+        foreach ($this->buildingListItemRepository->findBy(['user' => $user, 'entity' => $planet]) as $buildListItem) {
+            $buildlist[$buildListItem->getBuilding()->getId()] = $buildListItem->getCurrentLevel();
+        }
+
         ob_start();
 
         // Load categories
@@ -98,8 +103,6 @@ class TechnologyService
 
                 array_unshift($groupedTechnologies[$tech->getType()->getId()], $tech);
             }
-
-            $technologyNames = $this->technologyDataRepository->getTechnologyNames(true);
 
             $cstr = '';
             echo "<div>";
@@ -127,23 +130,21 @@ class TechnologyService
                         $requirements_passed = true;
                         $b_req_info = array();
                         $t_req_info = array();
-                        if (isset($b_req[$tech->getId()]['t']) && count($b_req[$tech->getId()]['t']) > 0) {
-                            foreach ($b_req[$tech->getId()]['t'] as $b => $l) {
-                                if (!$techlist[$b]->getCurrentLevel() || $techlist[$b]->getCurrentLevel() < $l) {
-                                    $t_req_info[] = array($b, $l, false);
-                                    $requirements_passed = false;
-                                } else
-                                    $t_req_info[] = array($b, $l, true);
+                        foreach ($tech->getObjectRequirements() as $requirement) {
+                            if ($requirement->getTech()) {
+                                $id = $requirement->getTech()->getId();
+                                $passed = (isset($techlist[$id]) ? $techlist[$id]->getCurrentLevel() : 0) >= $requirement->getLevel();
+                                $t_req_info[] = array($requirement->getTech()->getName(), $requirement->getLevel(), $passed);
+                            } elseif ($requirement->getBuilding()) {
+                                $id = $requirement->getBuilding()->getId();
+                                $passed = ($buildlist[$id] ?? 0) >= $requirement->getLevel();
+                                $b_req_info[] = array($requirement->getBuilding()->getName(), $requirement->getLevel(), $passed);
+                            } else {
+                                continue;
                             }
-                        }
-                        if (isset($b_req[$tech->getId()]['b']) && count($b_req[$tech->getId()]['b']) > 0) {
-                            foreach ($b_req[$tech->getId()]['b'] as $id => $level) {
-                                if (!isset($buildlist[$id]) || $buildlist[$id] < $level) {
-                                    $requirements_passed = false;
-                                    $b_req_info[] = array($id, $level, false);
-                                } else {
-                                    $b_req_info[] = array($id, $level, true);
-                                }
+
+                            if (!$passed) {
+                                $requirements_passed = false;
                             }
                         }
 
@@ -162,14 +163,8 @@ class TechnologyService
                                 $subtitle = 'Voraussetzungen fehlen';
                                 $tmtext = '<span style="color:#999">Baue zuerst die nötigen Gebäude und erforsche die nötigen Technologien um diese Technologie zu erforschen!</span><br/>';
 
-                                /** @var BuildingDataRepository $buildingRepository */
-                                $buildingNames = $this->buildingRepository->getBuildingNames(true);
-                                foreach ($b_req_info as $v) {
-                                    $tmtext .= "<div style=\"color:" . ($v[2] ? '#0f0' : '#f30') . "\">" . $buildingNames[$v[0]] . " Stufe " . $v[1] . "</div>";
-                                }
-
-                                foreach ($t_req_info as $v) {
-                                    $tmtext .= "<div style=\"color:" . ($v[2] ? '#0f0' : '#f30') . "\">" . $technologyNames[$v[0]] . " Stufe " . $v[1] . "</div>";
+                                foreach (array_merge($b_req_info, $t_req_info) as $v) {
+                                    $tmtext .= "<div style=\"color:" . ($v[2] ? '#0f0' : '#f30') . "\">" . $v[0] . " Stufe " . $v[1] . "</div>";
                                 }
 
                                 $color = '#999';
@@ -189,7 +184,7 @@ class TechnologyService
                             } // Untätig
                             else {
                                 // Baukostenberechnung          Baukosten = Grundkosten * (Kostenfaktor ^ Ausbaustufe)
-                                $bc = $this->getResearchCosts($tech, $b_level);
+                                $bc = $this->getResearchCosts($tech, $b_level + 1);
 
                                 // Zuwenig Ressourcen
                                 if ($b_level < $tech->getLastLevel() && ($planet->getResMetal() < $bc->metal || $planet->getResCrystal() < $bc->crystal || $planet->getResPlastic() < $bc->plastic || $planet->getResFuel() < $bc->fuel || $planet->getResFood() < $bc->food)) {
@@ -350,20 +345,22 @@ class TechnologyService
             $nextLevelCosts = null;
 
             if ($nextLevel <= $technology->getLastLevel()) {
-                $costs = $this->getResearchCosts($technology, $currentLevel);
+                $costs = $this->getResearchCosts($technology, $nextLevel);
                 $researchCosts = $this->formatCosts($costs, $cp);
             }
 
             if (($technologyListItem->getBuildType() == 3) && $nextLevel + 1 <= $technology->getLastLevel()) {
-                $costsNext = $this->getResearchCosts($technology, $nextLevel);
+                $costsNext = $this->getResearchCosts($technology, $nextLevel + 1);
                 $nextLevelCosts = $this->formatCosts($costsNext, $cp);
             }
+
+            $researchError = $this->getResearchError($technologyListItem, $researchCosts, $technology);
 
             $researchOptions = [
                 'canResearch' => $technologyListItem->getBuildType() == 0 && $currentLevel < $technology->getLastLevel(),
                 'canCancelResearch' => $technologyListItem->getBuildType() == 3,
-                'isResearchable' => $researchCosts && !$researchCosts['hasInsufficientResources'] && !$this->isCurrentlyResearching(),
-                'researchError' => $this->getResearchError($technologyListItem, $researchCosts, $technology),
+                'isResearchable' => $researchCosts && $researchError === null,
+                'researchError' => $researchError,
                 'researchCosts' => $researchCosts,
                 'nextLevelCosts' => $nextLevelCosts,
                 'isUnderResearch' => $technologyListItem->getBuildType() == 3,
@@ -493,8 +490,26 @@ class TechnologyService
         $context->solarType = $this->starRepository->findStarForCell($planet->getEntity()->getCell())->getSolarType();
         $context->gentech = $this->technologyListItemRepository->getTechnologyLevel($user, TechnologyId::GEN) ?? 0;
         $context->peopleWorking = $peopleWorking;
+        $context->timeBonusFactor = $this->getLabTimeBonusFactor();
 
         return $this->technologyCostCalculator->calculate($item, $level, $context);
+    }
+
+    public function getLabTimeBonusFactor(): float
+    {
+        $request = $this->requestStack->getCurrentRequest();
+        $planet = $this->planetRepository->find($request->getSession()->get('cpid'));
+        $lab = $this->buildingListItemRepository->findOneBy(['entity' => $planet, 'building' => BuildingId::TECHNOLOGY]);
+        $needBonusLevel = ($lab?->getCurrentLevel() ?? 0) - $this->configurationService->param1Int('build_time_boni_forschungslabor');
+
+        if ($needBonusLevel <= 0) {
+            return 1;
+        }
+
+        return max(
+            $this->configurationService->param2Float('build_time_boni_forschungslabor'),
+            1 - ($needBonusLevel * ($this->configurationService->getInt('build_time_boni_forschungslabor') / 100))
+        );
     }
 
     public function getPeopleWorking()

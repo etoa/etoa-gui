@@ -3,6 +3,7 @@
 namespace EtoA\Controller\Game;
 
 use EtoA\Building\BuildingService;
+use EtoA\Building\BuildList;
 use EtoA\Entity\Building;
 use EtoA\Form\Type\Core\SingleSubmitType;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
@@ -16,7 +17,8 @@ class BuildingsController extends AbstractGameController
 {
     public function __construct(
         private readonly BuildingService $buildingService,
-        private readonly PlanetRepository $planetRepository
+        private readonly PlanetRepository $planetRepository,
+        private readonly BuildList $buildList
     )
     {
     }
@@ -29,6 +31,38 @@ class BuildingsController extends AbstractGameController
         //only allow own planets
         if ($planet->getUser() !== $this->getUser()->getData()) {
             return $this->redirectToRoute('game.overview');
+        }
+
+        if ($request->isMethod('POST')) {
+            if (!$this->isCsrfTokenValid('buildings_list', (string) $request->request->get('_token'))) {
+                $this->addFlash('error', 'Ungültige Anfrage, bitte erneut versuchen!');
+            } else {
+                $post = $request->request->all();
+                $buildIds = array_keys((array) ($post['command_build'] ?? []));
+                $cancelIds = array_keys((array) ($post['command_cbuild'] ?? []));
+
+                if (count($buildIds) > 0 && ($building = $this->buildList->item((int) $buildIds[0]))) {
+                    if ($this->buildingService->build($building)) {
+                        $this->addFlash('success', 'Bauauftrag wurde erfolgreich gestartet!');
+                    } else {
+                        $this->addFlash('error', 'Gebäude nicht baubar!');
+                    }
+                } elseif (count($cancelIds) > 0 && ($building = $this->buildList->item((int) $cancelIds[0])) && $building->bl) {
+                    if ($building->bl->getBuildType() === 4) {
+                        $cancelled = $this->buildingService->cancelDemolish($building->bl);
+                    } else {
+                        $cancelled = $this->buildingService->cancelBuild($building->bl);
+                    }
+
+                    if ($cancelled) {
+                        $this->addFlash('success', 'Auftrag wurde erfolgreich abgebrochen!');
+                    } else {
+                        $this->addFlash('error', 'Auftrag kann nicht mehr abgebrochen werden, die Arbeit ist bereits fertiggestellt!');
+                    }
+                }
+            }
+
+            return $this->redirectToRoute('game.buildings');
         }
 
         $buildingData = $this->buildingService->getBuildingsData();

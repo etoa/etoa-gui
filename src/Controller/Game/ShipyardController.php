@@ -19,6 +19,7 @@ use EtoA\Support\StringUtils;
 use EtoA\Technology\TechnologyId;
 use EtoA\Technology\TechnologyListItemRepository;
 use EtoA\Universe\Planet\PlanetRepository;
+use EtoA\Universe\Resources\PreciseResources;
 use EtoA\Universe\Resources\ResourceNames;
 use EtoA\User\UserPropertiesRepository;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
@@ -145,42 +146,43 @@ class ShipyardController extends AbstractGameController
                                 //Wenn der User nicht genug Ress hat, die Anzahl Schiffe drosseln
                                 $bf = [];
                                 $bc = [];
+                                $costs = PreciseResources::createFromBase($buildShip->getCosts())->multiply($specialist ? $specialist->getCostsShips() : 1);
 
                                 //Titan
-                                if ($buildShip->getCosts()->metal > 0) {
-                                    $bf['metal'] = $cp->getResMetal() / $buildShip->getCosts()->metal;
+                                if ($costs->metal > 0) {
+                                    $bf['metal'] = ($cp->getResMetal() - $totalMetal) / $costs->metal;
                                 } else {
                                     $bc['metal'] = 0;
                                 }
                                 //Silizium
-                                if ($buildShip->getCosts()->crystal > 0) {
-                                    $bf['crystal'] = $cp->getResCrystal() / $buildShip->getCosts()->crystal;
+                                if ($costs->crystal > 0) {
+                                    $bf['crystal'] = ($cp->getResCrystal() - $totalCrystal) / $costs->crystal;
                                 } else {
                                     $bc['crystal'] = 0;
                                 }
                                 //PVC
-                                if ($buildShip->getCosts()->plastic > 0) {
-                                    $bf['plastic'] = $cp->getResPlastic() / $buildShip->getCosts()->plastic;
+                                if ($costs->plastic > 0) {
+                                    $bf['plastic'] = ($cp->getResPlastic() - $totalPlastic) / $costs->plastic;
                                 } else {
                                     $bc['plastic'] = 0;
                                 }
                                 //Tritium
-                                if ($buildShip->getCosts()->fuel > 0) {
-                                    $bf['fuel'] = $cp->getResFuel() / $buildShip->getCosts()->fuel;
+                                if ($costs->fuel > 0) {
+                                    $bf['fuel'] = ($cp->getResFuel() - $totalFuel) / $costs->fuel;
                                 } else {
                                     $bc['fuel'] = 0;
                                 }
                                 //Nahrung
                                 $additional_food_costs = $yard->getPeopleWorking() * $this->configurationService->getInt('people_food_require');
-                                if ($additional_food_costs > 0 || $buildShip->getCosts()->food > 0) {
-                                    $bf['food'] = $cp->getResFood() / (intval($additional_food_costs) + $buildShip->getCosts()->food);
+                                if ($additional_food_costs > 0 || $costs->food > 0) {
+                                    $bf['food'] = ($cp->getResFood() - $totalFood) / (intval($additional_food_costs) + $costs->food);
                                 } else {
                                     $bc['food'] = 0;
                                 }
 
                                 //Anzahl Drosseln ???
-                                if ($build_cnt > floor(min($bf))) {
-                                    $build_cnt = floor(min($bf));
+                                if (count($bf) > 0 && $build_cnt > floor(min($bf))) {
+                                    $build_cnt = max(0, floor(min($bf)));
                                 }
 
                                 //Check for Rene-Bug
@@ -191,14 +193,14 @@ class ShipyardController extends AbstractGameController
                                 //Anzahl muss grösser als 0 sein
                                 if ($build_cnt > 0) {
                                     //Errechne Kosten pro auftrag schiffe
-                                    $bc['metal'] = $buildShip->getCosts()->metal * $build_cnt;
-                                    $bc['crystal'] = $buildShip->getCosts()->crystal * $build_cnt;
-                                    $bc['plastic'] = $buildShip->getCosts()->plastic * $build_cnt;
-                                    $bc['fuel'] = $buildShip->getCosts()->fuel * $build_cnt;
-                                    $bc['food'] = ($additional_food_costs + $buildShip->getCosts()->food) * $build_cnt;
+                                    $bc['metal'] = $costs->metal * $build_cnt;
+                                    $bc['crystal'] = $costs->crystal * $build_cnt;
+                                    $bc['plastic'] = $costs->plastic * $build_cnt;
+                                    $bc['fuel'] = $costs->fuel * $build_cnt;
+                                    $bc['food'] = ($additional_food_costs + $costs->food) * $build_cnt;
 
                                     // Bauzeit pro Schiff berechnen
-                                    $btime = $buildShip->getCosts()->getSum()
+                                    $btime = $costs->getSum()
                                         / $this->configurationService->getInt('global_time') * $this->configurationService->getFloat('ship_build_time')
                                         * $time_boni_factor
                                         * ($specialist ? $specialist->getTimeShips() : 1);
@@ -231,7 +233,7 @@ class ShipyardController extends AbstractGameController
                                     //Log schreiben
                                     $log_text = "[b]Schiffsauftrag Bauen[/b]
 
-                        [b]Start:[/b] " . date("d.m.Y H:i:s", $end_time) . "
+                        [b]Start:[/b] " . date("d.m.Y H:i:s", $start_time) . "
                         [b]Ende:[/b] " . date("d.m.Y H:i:s", $end_time) . "
                         [b]Dauer:[/b] " . StringUtils::formatTimespan($duration) . "
                         [b]Dauer pro Einheit:[/b] " . StringUtils::formatTimespan($obj_time) . "
@@ -301,17 +303,25 @@ class ShipyardController extends AbstractGameController
         $cp = $this->shipyardService->getCurrentPlanet();
         $cancel_res_factor = $this->shipyardService->getCancelResFactor();
 
-        if ($shipQueueItem && $cancel_res_factor > 0 && $shipQueueItem->getEntity() === $cp) {
+        if (!$shipQueueItem || !$this->isCsrfTokenValid('shipyard_cancel_' . $shipQueueItem->getId(), (string) $request->query->get('token'))) {
+            $this->addFlash('error', 'Ungültige Anfrage, bitte erneut versuchen!');
+
+            return $this->redirectToRoute('game.shipyard');
+        }
+
+        if ($cancel_res_factor > 0 && $shipQueueItem->getEntity() === $cp && $shipQueueItem->getEndTime() > time()) {
             //Zu erhaltende Rohstoffe errechnen
             $obj_cnt = min(ceil(($shipQueueItem->getEndTime() - max(time(), $shipQueueItem->getStartTime())) / $shipQueueItem->getObjectTime()), $shipQueueItem->getCount());
-            $ship_id = $shipQueueItem->getId();
+            $ship_id = $shipQueueItem->getShip()->getId();
+            $specialist = $this->getUser()->getData()->getSpecialist();
+            $costs = PreciseResources::createFromBase($shipQueueItem->getShip()->getCosts())->multiply($specialist ? $specialist->getCostsShips() : 1);
 
             $ret = [];
-            $ret['metal'] = $shipQueueItem->getShip()->getCosts()->metal * $obj_cnt * $cancel_res_factor;
-            $ret['crystal'] = $shipQueueItem->getShip()->getCosts()->crystal * $obj_cnt * $cancel_res_factor;
-            $ret['plastic'] = $shipQueueItem->getShip()->getCosts()->plastic * $obj_cnt * $cancel_res_factor;
-            $ret['fuel'] = $shipQueueItem->getShip()->getCosts()->fuel * $obj_cnt * $cancel_res_factor;
-            $ret['food'] = $shipQueueItem->getShip()->getCosts()->food * $obj_cnt * $cancel_res_factor;
+            $ret['metal'] = $costs->metal * $obj_cnt * $cancel_res_factor;
+            $ret['crystal'] = $costs->crystal * $obj_cnt * $cancel_res_factor;
+            $ret['plastic'] = $costs->plastic * $obj_cnt * $cancel_res_factor;
+            $ret['fuel'] = $costs->fuel * $obj_cnt * $cancel_res_factor;
+            $ret['food'] = $costs->food * $obj_cnt * $cancel_res_factor;
 
             // Daten für Log speichern
             $queue_count = $shipQueueItem->getCount();
@@ -328,8 +338,9 @@ class ShipyardController extends AbstractGameController
             if (count($queueItems) > 0) {
                 $new_starttime = max($start_time, time());
                 foreach ($queueItems as $item) {
+                    $duration = $item->getEndTime() - $item->getStartTime();
                     $item->setStartTime($new_starttime);
-                    $item->setEndTime($new_starttime + $item->getEndTime() - $item->getStartTime());
+                    $item->setEndTime($new_starttime + $duration);
                     $new_starttime = $item->getEndTime();
                 }
                 $this->shipQueueRepository->save();

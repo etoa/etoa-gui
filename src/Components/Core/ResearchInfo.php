@@ -90,7 +90,7 @@ class ResearchInfo extends AbstractController
     {
         $planet = $this->getCurrentEntity();
         $peopleWorking = $this->isGen() ? $this->getWorkingGen() : $this->getWorking();
-        $peopleFree = floor($planet->getPeople()) - $this->buildingListItemRepository->getTotalPeopleWorking($planet) + $this->getWorkingGen() + $this->getWorking();
+        $peopleFree = floor($planet->getPeople()) - $this->buildingListItemRepository->getTotalPeopleWorking($planet) + $peopleWorking;
         $workDone = $this->configurationService->getInt('people_work_done');
         $foodRequired = $this->configurationService->getInt('people_food_require');
 
@@ -163,7 +163,7 @@ class ResearchInfo extends AbstractController
         }
 
         if ($lab) {
-            $peopleWorking = $this->getWorking();
+            $peopleWorking = $lab->getPeopleWorking();
 
             $free = floor($planet->getPeople()) - $this->buildingListItemRepository->getTotalPeopleWorking($planet) + $peopleWorking;
             $people = StringUtils::parseFormattedNumber($this->getForm()->get('peopleWorking')->getData());
@@ -230,17 +230,12 @@ class ResearchInfo extends AbstractController
     {
         $lab = $this->buildingListItemRepository->findOneBy(['entity' => $this->getCurrentEntity(), 'building' => BuildingId::TECHNOLOGY]);
         $need_bonus_level = $lab->getCurrentLevel() - $this->configurationService->param1Int('build_time_boni_forschungslabor');
-
-        if ($need_bonus_level <= 0) {
-            $time_boni_factor = 1;
-        } else {
-            $time_boni_factor = 1 - ($need_bonus_level * ($this->configurationService->getInt('build_time_boni_forschungslabor') / 100));
-        }
+        $time_boni_factor = $this->technologyService->getLabTimeBonusFactor();
 
         if ($need_bonus_level >= 0) {
             return StringUtils::formatPercentString($time_boni_factor) . " durch Stufe " . $lab->getCurrentLevel() . " (-" . ((1 - $this->configurationService->param2Float('build_time_boni_forschungslabor')) * 100) . "% maximum)";
         } else {
-            return "Stufe " . $this->configurationService->getInt('build_time_boni_forschungslabor') . " erforderlich!";
+            return "Stufe " . $this->configurationService->param1Int('build_time_boni_forschungslabor') . " erforderlich!";
         }
     }
 

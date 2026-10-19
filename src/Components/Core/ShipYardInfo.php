@@ -172,7 +172,7 @@ class ShipYardInfo extends AbstractController
         if ($need_bonus_level >= 0) {
             return StringUtils::formatPercentString($time_boni_factor) . " durch Stufe " . $shipyard->getCurrentLevel();
         } else {
-            return "Stufe " . $this->configurationService->getInt('build_time_boni_schiffswerft') . " erforderlich!";
+            return "Stufe " . $this->configurationService->param1Int('build_time_boni_schiffswerft') . " erforderlich!";
         }
     }
 

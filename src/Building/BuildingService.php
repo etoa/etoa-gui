@@ -7,6 +7,7 @@ use EtoA\Core\ObjectWithImage;
 use EtoA\Entity\Building;
 use EtoA\Entity\BuildingListItem;
 use EtoA\Entity\Planet;
+use EtoA\Entity\User;
 use EtoA\Log\GameLogFacility;
 use EtoA\Log\GameLogRepository;
 use EtoA\Log\LogSeverity;
@@ -65,6 +66,9 @@ class BuildingService
         $context->specialist = $user->getSpecialist();
         $context->planetType = $cp->getPlanetType();
         $context->solarType = $this->starRepository->findStarForCell($cp->getEntity()->getCell())->getSolarType();
+        $context->peopleWorking = $this->getPeopleWorking();
+        $context->gentech = $this->technologyListItemRepository->getTechnologyLevel($user, TechnologyId::GEN) ?? 0;
+        $context->boostBonus = $this->getBoostBonus($user);
 
         $categories = [];
 
@@ -219,17 +223,7 @@ class BuildingService
             // Calculate demolish costs if applicable
             if ($item->bl->getCurrentLevel() > 0) {
 
-                $demolishCostsRaw = $this->getBuildCosts($item->bl, $currentLevel);
-                // Apply demolish factor
-                $demolishCostsAdjusted = clone $demolishCostsRaw;
-                $demolishCostsAdjusted->metal *= $item->getDemolishCostsFactor();
-                $demolishCostsAdjusted->crystal *= $item->getDemolishCostsFactor();
-                $demolishCostsAdjusted->plastic *= $item->getDemolishCostsFactor();
-                $demolishCostsAdjusted->fuel *= $item->getDemolishCostsFactor();
-                $demolishCostsAdjusted->food *= $item->getDemolishCostsFactor();
-                $demolishCostsAdjusted->time *= $item->getDemolishCostsFactor();
-
-                $demolishCosts = $this->formatCosts($demolishCostsAdjusted, $cp);
+                $demolishCosts = $this->formatCosts($this->getDemolishCosts($item->bl), $cp);
             }
 
             // Calculate next level costs if currently building
@@ -241,7 +235,7 @@ class BuildingService
             // Build action information
             $buildOptions = [
                 'canBuild' => $item->bl->getBuildType() == 0 && $item->bl->getCurrentLevel() < $item->getLastLevel(),
-                'canDemolish' => $item->bl->getCurrentLevel() > 0 && $item->getDemolishCostsFactor() !== 0 && $item->bl->getBuildType() === 0,
+                'canDemolish' => $item->bl->getCurrentLevel() > 0 && $item->getDemolishCostsFactor() > 0 && $item->bl->getBuildType() === 0,
                 'canCancelBuild' => $item->bl->getBuildType() == 3,
                 'canCancelDemolish' => $item->bl->getBuildType() == 4,
                 'isBuildable' => $this->checkBuildable($item->bl) > 0,
@@ -463,8 +457,14 @@ class BuildingService
         $context->solarType = $this->starRepository->findStarForCell($item->getEntity()->getEntity()->getCell())->getSolarType();
         $context->peopleWorking = $peopleWorking ?? $this->getPeopleWorking();
         $context->gentech = $this->technologyListItemRepository->getTechnologyLevel($user, TechnologyId::GEN) ?? 0;
+        $context->boostBonus = $this->getBoostBonus($user);
 
         return $this->buildingCostCalculator->calculate($item->getBuilding(), $level, $context);
+    }
+
+    private function getBoostBonus(User $user): float
+    {
+        return $this->configurationService->getBoolean('boost_system_enable') ? ($user->getBoostBonusBuilding() ?? 0) : 0;
     }
 
     private function getDemolishCosts(BuildingListItem $item): float|int|PreciseResources
@@ -475,7 +475,8 @@ class BuildingService
         $demolishCosts->crystal = $demolishCosts->crystal * $item->getBuilding()->getDemolishCostsFactor();
         $demolishCosts->plastic = $demolishCosts->plastic * $item->getBuilding()->getDemolishCostsFactor();
         $demolishCosts->fuel = $demolishCosts->fuel * $item->getBuilding()->getDemolishCostsFactor();
-        $demolishCosts->food = 0;
+        $demolishCosts->food = $demolishCosts->food * $item->getBuilding()->getDemolishCostsFactor();
+        $demolishCosts->time = $demolishCosts->time * $item->getBuilding()->getDemolishCostsFactor();
 
         return $demolishCosts;
     }
@@ -501,6 +502,11 @@ class BuildingService
      */
     private function checkDemolishable(BuildingListItem $item): bool
     {
+        if ($item->getCurrentLevel() <= 0 || $item->getBuilding()->getDemolishCostsFactor() <= 0 || $item->getBuildType() !== 0) {
+            $this->errorMsg = "Das Geb&auml;ude kann nicht abgerissen werden!";
+            return false;
+        }
+
         if (!$this->getDeactivated($item)) {
             if (!$this->isUnderConstruction($item->getEntity())) {
                 $cst = $this->getDemolishCosts($item);
@@ -590,7 +596,7 @@ class BuildingService
 
     public function cancelBuild(BuildingListItem $item): bool
     {
-        if ($item->getEndTime() > time()) {
+        if ($item->getBuildType() === 3 && $item->getEndTime() > time()) {
             $cp = $item->getEntity();
             $cu = $item->getUser();
             $costs = $this->getBuildCosts($item, $item->getCurrentLevel()+1);
@@ -672,7 +678,7 @@ class BuildingService
 
     public function cancelDemolish(BuildingListItem $item): bool
     {
-        if ($item->getEndTime() > time()) {
+        if ($item->getBuildType() === 4 && $item->getEndTime() > time()) {
             $costs = $this->getDemolishCosts($item);
             $fac = ($item->getEndTime() - time()) / ($item->getEndTime() - $item->getStartTime());
             $cp = $item->getEntity();

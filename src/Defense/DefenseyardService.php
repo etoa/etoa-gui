@@ -240,6 +240,7 @@ class DefenseyardService
                 'food' => $cp->getResFood(),
             ],
             'maxBuildable' => $defense_max_build,
+            'buildable' => (bool) $defenseData->isBuildable(),
             'defenseCount' => $defense_count,
             'maxCount' => $defenseData->getMaxCount(),
             'waitTimes' => $waitTimes,
@@ -280,7 +281,7 @@ class DefenseyardService
         $request = $this->requestStack->getCurrentRequest();
         $cp = $this->planetRepository->find($request->getSession()->get('cpid'));
 
-        foreach ($defense as $requirement) {
+        foreach ($defense->getObjectRequirements() as $requirement) {
             if ($requirement->getBuilding() && $requirement->getLevel() > $this->buildingListItemRepository->findOneBy(['building' => $requirement->getBuilding(), 'entity' => $cp])?->getCurrentLevel()) {
                 return false;
             }
