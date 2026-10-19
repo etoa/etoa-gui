@@ -11,8 +11,8 @@ class FleetActionCollectDebris extends FleetAction
     {
         $this->code = "collectdebris";
         $this->name = "Trümmer sammeln";
-        $this->desc = ">Sammelt &Uuml;berreste eines Kampfes, um daraus Rohstoffe  wiederzugewinnen.";
-        $this->longDesc = "In K&auml;mpfen, bei denen Schiffe oder Verteidigungsanlagen zerst&ouml;rt werden, entstehen zum Teil massive Tr&uuml;mmerfelder (TFs). Sammle diese mit speziell daf&uuml;r vorgesehenen Schiffen ein und gewinne dadurch viele Ressourcen wieder. Beim Sammeln von Tr&uuml;mmerfeldern k&ouml;nnen normale Schiffe f&uuml;r mehr Laderaum mitgeschickt werden.";
+        $this->desc = ">Sammelt Überreste eines Kampfes, um daraus Rohstoffe  wiederzugewinnen.";
+        $this->longDesc = "In Kämpfen, bei denen Schiffe oder Verteidigungsanlagen zerstört werden, entstehen zum Teil massive Trümmerfelder (TFs). Sammle diese mit speziell dafür vorgesehenen Schiffen ein und gewinne dadurch viele Ressourcen wieder. Beim Sammeln von Trümmerfeldern können normale Schiffe für mehr Laderaum mitgeschickt werden.";
         $this->visible = false;
         $this->exclusive = false;
         $this->attitude = 0;

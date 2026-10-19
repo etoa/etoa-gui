@@ -12,7 +12,7 @@ class FleetActionSpyattack extends FleetAction
         $this->code = "spyattack";
         $this->name = "Spionageangriff";
         $this->desc = "Stiehlt eine Technologie vom Ziel.";
-        $this->longDesc = "Mit der Option Spionageangriff hat man die M&ouml;glichkeit einem anderen Spieler eine spezielle Technologie (welche durch Zufallsprinzip bestimmt wird) abzuschauen. Bei Gelingen hat man sofort die gleiche Stufe der Technologie, wie sie der Spieler, dem ihr sie abgeschaut habt, hat. Es k&ouml;nnen nur Technologien abgeschaut werden die man selbst schon mindestens auf Stufe 1 erforscht hat. Die Chance f&uuml;r ein Gelingen ist relativ klein, kann aber durch Erforschen der Spionagetechnologie erh&ouml;ht werden. Die Chance wird durch mehreren Spionageschiffen in einer Flotte erh&ouml;ht.";
+        $this->longDesc = "Mit der Option Spionageangriff hat man die Möglichkeit einem anderen Spieler eine spezielle Technologie (welche durch Zufallsprinzip bestimmt wird) abzuschauen. Bei Gelingen hat man sofort die gleiche Stufe der Technologie, wie sie der Spieler, dem ihr sie abgeschaut habt, hat. Es können nur Technologien abgeschaut werden die man selbst schon mindestens auf Stufe 1 erforscht hat. Die Chance für ein Gelingen ist relativ klein, kann aber durch Erforschen der Spionagetechnologie erhöht werden. Die Chance wird durch mehreren Spionageschiffen in einer Flotte erhöht.";
         $this->visible = true;
         $this->exclusive = false;
         $this->attitude = 3;

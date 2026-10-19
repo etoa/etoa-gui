@@ -12,7 +12,7 @@ class FleetActionDelivery extends FleetAction
         $this->code = "delivery";
         $this->name = "Allianzlieferung";
         $this->desc = "Liefert Allianzschiffe.";
-        $this->longDesc = "Diese Aktion kann nur ausgef&uuml;hrt werden, um Allianzschiffe von der Allianzbasis zum Spieler zu liefern.";
+        $this->longDesc = "Diese Aktion kann nur ausgeführt werden, um Allianzschiffe von der Allianzbasis zum Spieler zu liefern.";
         $this->visible = true;
         $this->exclusive = false;
         $this->attitude = 1;

@@ -101,7 +101,7 @@ abstract class FleetAction
     static public array $attitudeString = array("Neutral", "Friedlich", "Aggressiv", "Feindlich", "Unbekannt");
 
     // Status descriptions
-    static public array $statusCode = array("Hinflug", "R&uuml;ckflug", "Abgebrochen", "Allianz");
+    static public array $statusCode = array("Hinflug", "Rückflug", "Abgebrochen", "Allianz");
 
     //
     // Class variables

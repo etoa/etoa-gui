@@ -630,7 +630,7 @@ class FleetLaunchService
                 // print error message if support slots check failed
                 if (!$supportPossible) {
                     // Meldung ausgeben, dass Support nicht möglich ist
-                    $this->error .= 'Support nicht m&ouml;glich, die Maximalzahl von ' .
+                    $this->error .= 'Support nicht möglich, die Maximalzahl von ' .
                         $this->configurationService->param1Int('alliance_fleets_max_players') .
                         ' Verteidigern ist auf diesem Planet bereits erreicht.<br />';
                     $supportPossible = true;

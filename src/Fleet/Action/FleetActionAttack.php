@@ -12,7 +12,7 @@ class FleetActionAttack extends FleetAction
         $this->code = "attack";
         $this->name = "Angriff";
         $this->desc = "Greift das Ziel an und raubt dort Rohstoffe.";
-        $this->longDesc = "Der Standard-Angriff auf ein bewohntes Ziel. Falls der Kampf gewonnen wird, wird (meistens) die H&auml;lfte der auf dem Planeten befindlichen Rohstoffe geraubt.";
+        $this->longDesc = "Der Standard-Angriff auf ein bewohntes Ziel. Falls der Kampf gewonnen wird, wird (meistens) die Hälfte der auf dem Planeten befindlichen Rohstoffe geraubt.";
         $this->visible = true;
         $this->exclusive = false;
         $this->attitude = 3;
