@@ -121,13 +121,13 @@
                                 <tr>
                                     <td><label for="user_blocked_from">Von</label></td>
                                     <td>
-                                        {{ form_widget(form.blockedFrom) }}
+                                        {{ form_widget(form.blockedFrom, form.vars.data.blockedFrom == 0 ? {value: 'now'|date('Y-m-d\\TH:i')} : {}) }}
                                     </td>
                                 </tr>
                                 <tr>
                                     <td><label for="user_blocked_to">Bis</label></td>
                                     <td>
-                                        {{ form_widget(form.blockedTo) }}
+                                        {{ form_widget(form.blockedTo, form.vars.data.blockedFrom == 0 ? {value: userBlockedDefaultTime|date('Y-m-d\\TH:i')} : {}) }}
                                     </td>
                                 </tr>
                                 <tr>

@@ -522,6 +522,15 @@ class UserController extends AbstractAdminController
                 $this->userService->addToUserLog($user, "settings", $changeset['nick'][0] . "hat seinen Namen zu " . $changeset['nick'][0] . " geändert.");
             }
 
+            if ($form->get('blocked')->getData()) {
+                if (array_intersect(['blockedFrom', 'blockedTo', 'banReason', 'banAdmin'], array_keys($changeset))) {
+                    $this->userService->addToUserLog($user, "account", "{nick} wird von [b]" . date("d.m.Y H:i", $user->getBlockedFrom()) . "[/b] bis [b]" . date("d.m.Y H:i", $user->getBlockedTo()) . "[/b] gesperrt.\n[b]Grund:[/b] " . $user->getBanReason() . "\n[b]Verantwortlich: [/b] " . $user->getBanAdmin()?->getNick());
+                }
+            } else {
+                $user->setBlockedFrom(0);
+                $user->setBlockedTo(0);
+            }
+
             if (!$form->get('hmode')->getData() && $user->getHmodTo() > 0) {
                 $this->userHolidayService->deactivateHolidayMode($user,true);
             }
