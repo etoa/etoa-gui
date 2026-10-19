@@ -25,7 +25,7 @@ class ReportsController extends AbstractGameController
 
     #[Route('/game/reports/all', name: 'game.reports.all')]
     public function all(Request $request): Response {
-        $reports = $this->reportRepository->findBy(['deleted'=>false,'archived'=>false, 'user'=>$this->getUser()->getData()]);
+        $reports = $this->reportRepository->findBy(['deleted'=>false,'archived'=>false, 'user'=>$this->getUser()->getData()], ['timestamp' => 'DESC', 'id' => 'DESC']);
 
         $currentPage = $request->query->getInt('page', 1);
 
@@ -89,7 +89,7 @@ class ReportsController extends AbstractGameController
 
     #[Route('/game/reports/battle', name: 'game.reports.battle')]
     public function battle(Request $request): Response {
-        $reports = $this->reportRepository->findBy(['deleted'=>false,'archived'=>false,'user'=>$this->getUser()->getData(),'type'=>'battle']);
+        $reports = $this->reportRepository->findBy(['deleted'=>false,'archived'=>false,'user'=>$this->getUser()->getData(),'type'=>'battle'], ['timestamp' => 'DESC', 'id' => 'DESC']);
 
         $currentPage = $request->query->getInt('page', 1);
 
@@ -154,7 +154,7 @@ class ReportsController extends AbstractGameController
 
     #[Route('/game/reports/spy', name: 'game.reports.spy')]
     public function spy(Request $request): Response {
-        $reports = $this->reportRepository->findBy(['deleted'=>false,'archived'=>false,'user'=>$this->getUser()->getData(),'type'=>'spy']);
+        $reports = $this->reportRepository->findBy(['deleted'=>false,'archived'=>false,'user'=>$this->getUser()->getData(),'type'=>'spy'], ['timestamp' => 'DESC', 'id' => 'DESC']);
 
         $currentPage = $request->query->getInt('page', 1);
 
@@ -219,7 +219,7 @@ class ReportsController extends AbstractGameController
 
     #[Route('/game/reports/explore', name: 'game.reports.explore')]
     public function explore(Request $request): Response {
-        $reports = $this->reportRepository->findBy(['deleted'=>false,'archived'=>false,'user'=>$this->getUser()->getData(),'type'=>'explore']);
+        $reports = $this->reportRepository->findBy(['deleted'=>false,'archived'=>false,'user'=>$this->getUser()->getData(),'type'=>'explore'], ['timestamp' => 'DESC', 'id' => 'DESC']);
 
         $currentPage = $request->query->getInt('page', 1);
 
@@ -284,7 +284,7 @@ class ReportsController extends AbstractGameController
 
     #[Route('/game/reports/market', name: 'game.reports.market')]
     public function market(Request $request): Response {
-        $reports = $this->reportRepository->findBy(['deleted'=>false,'archived'=>false,'user'=>$this->getUser()->getData(),'type'=>'market']);
+        $reports = $this->reportRepository->findBy(['deleted'=>false,'archived'=>false,'user'=>$this->getUser()->getData(),'type'=>'market'], ['timestamp' => 'DESC', 'id' => 'DESC']);
 
         $currentPage = $request->query->getInt('page', 1);
 
@@ -349,7 +349,7 @@ class ReportsController extends AbstractGameController
 
     #[Route('/game/reports/crypto', name: 'game.reports.crypto')]
     public function crypto(Request $request): Response {
-        $reports = $this->reportRepository->findBy(['deleted'=>false,'archived'=>false,'user'=>$this->getUser()->getData(),'type'=>'crypto']);
+        $reports = $this->reportRepository->findBy(['deleted'=>false,'archived'=>false,'user'=>$this->getUser()->getData(),'type'=>'crypto'], ['timestamp' => 'DESC', 'id' => 'DESC']);
 
         $currentPage = $request->query->getInt('page', 1);
 
@@ -414,7 +414,7 @@ class ReportsController extends AbstractGameController
 
     #[Route('/game/reports/other', name: 'game.reports.other')]
     public function other(Request $request): Response {
-        $reports = $this->reportRepository->findBy(['deleted'=>false,'archived'=>false,'user'=>$this->getUser()->getData(),'type'=>'other']);
+        $reports = $this->reportRepository->findBy(['deleted'=>false,'archived'=>false,'user'=>$this->getUser()->getData(),'type'=>'other'], ['timestamp' => 'DESC', 'id' => 'DESC']);
 
         $currentPage = $request->query->getInt('page', 1);
 
@@ -479,7 +479,7 @@ class ReportsController extends AbstractGameController
 
     #[Route('/game/reports/archive', name: 'game.reports.archive')]
     public function archive(Request $request): Response {
-        $reports = $this->reportRepository->findBy(['deleted'=>false,'archived'=>true,'user'=>$this->getUser()->getData()]);
+        $reports = $this->reportRepository->findBy(['deleted'=>false,'archived'=>true,'user'=>$this->getUser()->getData()], ['timestamp' => 'DESC', 'id' => 'DESC']);
 
         $currentPage = $request->query->getInt('page', 1);
 
