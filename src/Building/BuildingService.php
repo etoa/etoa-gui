@@ -449,7 +449,7 @@ class BuildingService
         return false;
     }
 
-    private function getBuildCosts(BuildingListItem $item, int $level): PreciseResources
+    private function getBuildCosts(BuildingListItem $item, int $level, ?int $peopleWorking = null): PreciseResources
     {
         $request = $this->requestStack->getCurrentRequest();
         $planet = $this->planetRepository->find($request->getSession()->get('cpid'));
@@ -461,7 +461,7 @@ class BuildingService
         $context->specialist = $item->getEntity()->getUser()->getSpecialist();
         $context->planetType = $item->getEntity()->getPlanetType();
         $context->solarType = $this->starRepository->findStarForCell($item->getEntity()->getEntity()->getCell())->getSolarType();
-        $context->peopleWorking = $this->getPeopleWorking();
+        $context->peopleWorking = $peopleWorking ?? $this->getPeopleWorking();
         $context->gentech = $this->technologyListItemRepository->getTechnologyLevel($user, TechnologyId::GEN) ?? 0;
 
         return $this->buildingCostCalculator->calculate($item->getBuilding(), $level, $context);
@@ -712,7 +712,7 @@ class BuildingService
 
     public function getPeopleOptimized(BuildingListItem $buildingListItem): float
     {
-        $bc = $this->getBuildCosts($buildingListItem, $buildingListItem->getCurrentLevel() + 1);
+        $bc = $this->getBuildCosts($buildingListItem, $buildingListItem->getCurrentLevel() + 1, 0);
 
         $maxReduction = $bc->time - $bc->time * $this->minBuildTimeFactor();
 

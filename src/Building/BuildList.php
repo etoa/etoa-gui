@@ -97,27 +97,31 @@ class BuildList implements IteratorAggregate
     private function load(): void
     {
         $request = $this->requestStack->getCurrentRequest();
-        $cp = $this->planetRepository->find($request->getSession()->get('cpid'));
-        $this->owner = $cp->getUser();
-        self::$GENTECH = $this->technologyListItemRepository->getTechnologyLevel($this->owner, TechnologyId::GEN)??0;
-        $this->items = array();
+        $cpId = $request->getSession()->get('cpid');
 
-        $list = $this->buildingDataRepository->getBuildingsWithBuildList($cp);
+        if($cpId) {
+            $cp = $this->planetRepository->find($cpId);
+            $this->owner = $cp->getUser();
+            self::$GENTECH = $this->technologyListItemRepository->getTechnologyLevel($this->owner, TechnologyId::GEN)??0;
+            $this->items = array();
 
-        foreach ($list as $arr) {
-            if(!$arr?->bl) {
-                $item = new BuildingListItem();
-                $item->setBuilding($arr);
-                $item->setUser($this->owner);
-                $item->setEntity($cp);
+            $list = $this->buildingDataRepository->getBuildingsWithBuildList($cp);
 
-                $arr->bl = $item;
-            }
+            foreach ($list as $arr) {
+                if(!$arr?->bl) {
+                    $item = new BuildingListItem();
+                    $item->setBuilding($arr);
+                    $item->setUser($this->owner);
+                    $item->setEntity($cp);
 
-            $this->items[$arr->getId()] = $arr;
+                    $arr->bl = $item;
+                }
 
-            if (($arr->bl?->getBuildType() === 3 || $arr->bl?->getBuildType() === 4) && $arr->bl?->getEndTime() > time()) {
-                self::$underConstruction = true;
+                $this->items[$arr->getId()] = $arr;
+
+                if (($arr->bl?->getBuildType() === 3 || $arr->bl?->getBuildType() === 4) && $arr->bl?->getEndTime() > time()) {
+                    self::$underConstruction = true;
+                }
             }
         }
     }

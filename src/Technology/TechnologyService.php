@@ -459,7 +459,7 @@ class TechnologyService
 
     public function getPeopleOptimized(TechnologyListItem $technologyListItem): float
     {
-        $bc = $this->getResearchCosts($technologyListItem->getTechnology(), $technologyListItem->getCurrentLevel() + 1);
+        $bc = $this->getResearchCosts($technologyListItem->getTechnology(), $technologyListItem->getCurrentLevel() + 1, 0);
 
         $maxReduction = $bc->time - $bc->time * $this->minBuildTimeFactor();
 
@@ -473,17 +473,19 @@ class TechnologyService
         return (0.1 - ($gentech / 100));
     }
 
-    private function getResearchCosts(Technology $item, int $level): PreciseResources
+    private function getResearchCosts(Technology $item, int $level, ?int $peopleWorking = null): PreciseResources
     {
         // Build context for cost calculation
         $context = new BuildingCostContext();
         $request = $this->requestStack->getCurrentRequest();
         $planet = $this->planetRepository->find($request->getSession()->get('cpid'));
         $user = $planet->getUser();
-        if ($item->getId() === TechnologyId::GEN)
-            $peopleWorking = $this->getPeopleWorkingGen();
-        else
-            $peopleWorking = $this->getPeopleWorking();
+        if ($peopleWorking === null) {
+            if ($item->getId() === TechnologyId::GEN)
+                $peopleWorking = $this->getPeopleWorkingGen();
+            else
+                $peopleWorking = $this->getPeopleWorking();
+        }
 
         $context->race = $user->getRace();
         $context->specialist = $user->getSpecialist();

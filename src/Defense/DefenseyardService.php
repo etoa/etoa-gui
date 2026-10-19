@@ -190,11 +190,12 @@ class DefenseyardService
 
         $btime = ($costs->getSum()) / $this->config->getInt('global_time') * $this->config->getFloat('def_build_time') * $time_boni_factor * ($specialist ? $specialist->getTimeDefense() : 1);
         $btime_min = $btime * (0.1 - ($gen_tech_level / 100));
-        $peopleOptimized = ceil(($btime - $btime_min) / $this->config->getInt('people_work_done'));
 
         if ($btime_min < $this->config->getInt('shipyard_min_build_time')) {
             $btime_min = $this->config->getInt('shipyard_min_build_time');
         }
+
+        $peopleOptimized = max(0, ceil(($btime - $btime_min) / $this->config->getInt('people_work_done')));
 
         $btime = ceil($btime - $defenseyard->getPeopleWorking() * $this->config->getInt('people_work_done'));
         if ($btime < $btime_min) {
