@@ -230,6 +230,7 @@ class EconomyService
                     if ($bareBuildingProduction[$resourceKey] != 0) {
                         $prodIncludingBoni[$resourceKey] += $bareBuildingProduction[$resourceKey] * $bonusFactors[$resourceKey];
                     }
+                    $prodIncludingBoni[$resourceKey] *= $buildlist->getProdPercent();
                     $cnt[$resourceKey] += floor($prodIncludingBoni[$resourceKey]);
                 }
 
