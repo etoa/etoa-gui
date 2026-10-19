@@ -14,6 +14,7 @@ use EtoA\Missile\MissileCategory;
 use EtoA\Missile\MissileDataRepository;
 use EtoA\Ship\ShipCategoryRepository;
 use EtoA\Ship\ShipDataRepository;
+use EtoA\Ship\ShipListRepository;
 use EtoA\Ship\ShipSearch;
 use EtoA\Ship\ShipSort;
 use EtoA\Technology\TechnologyDataRepository;
@@ -36,7 +37,8 @@ class TechtreeController extends AbstractGameController
         private readonly ShipDataRepository         $shipDataRepository,
         private readonly DefenseCategoryRepository  $defenseCategoryRepository,
         private readonly DefenseDataRepository      $defenseDataRepository,
-        private readonly MissileDataRepository      $missileDataRepository
+        private readonly MissileDataRepository      $missileDataRepository,
+        private readonly ShipListRepository         $shipListRepository
     )
     {
     }
@@ -104,7 +106,17 @@ class TechtreeController extends AbstractGameController
         $shipOrder = ShipSort::name();
         $ships = $this->shipDataRepository->searchShips($shipSearch, $shipOrder);
 
+        $planet = $this->techtreeService->getCurrentPlanet();
+        $planetShipIds = [];
+        foreach ($this->shipListRepository->getEntityShipCounts($this->getUser()->getData(), $planet) as $shipListItem) {
+            $planetShipIds[$shipListItem->getShip()->getId()] = true;
+        }
+
         foreach ($ships as $ship) {
+            if ($ship->isSpecial() && !isset($planetShipIds[$ship->getId()])) {
+                continue;
+            }
+
             $shipsByCategory[$ship->getCat()->getId()][] = $ship;
         }
 
@@ -114,7 +126,7 @@ class TechtreeController extends AbstractGameController
         );
 
         return $this->render('game/techtree/info.html.twig', [
-            'planet' => $this->techtreeService->getCurrentPlanet(),
+            'planet' => $planet,
             'data' => $categoriesData
         ]);
     }
