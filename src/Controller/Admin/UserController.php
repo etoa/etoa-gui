@@ -519,7 +519,7 @@ class UserController extends AbstractAdminController
 
             $changeset = $this->userRepository->getChangeset($user);
             if (array_key_exists('nick', $changeset)) {
-                $this->userService->addToUserLog($user, "settings", $changeset['nick'][0] . "hat seinen Namen zu " . $changeset['nick'][0] . " geändert.");
+                $this->userService->addToUserLog($user, "settings", $changeset['nick'][0] . " hat seinen Namen zu " . $changeset['nick'][1] . " geändert.");
             }
 
             if ($form->get('blocked')->getData()) {
