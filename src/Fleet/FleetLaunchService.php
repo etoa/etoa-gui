@@ -521,6 +521,8 @@ class FleetLaunchService
         } else {
             $noobProtectionErrorAdded = false;
 
+            $sameEntity = $this->fleetLaunch->getSourceEntity()->getEntity()->getId() === $this->fleetLaunch->getTargetEntity()->getId();
+
             // Test each possible action
             foreach ($actions as $i) {
                 // variable to check whether a support overflow error message should be printed
@@ -557,9 +559,9 @@ class FleetLaunchService
                     // Action is allowed if:
                     (
                         // * Source and target are the same and the action allows that
-                        ($this->fleetLaunch->getSourceEntity() === $this->fleetLaunch->getTargetEntity() && $ai->allowSourceEntity()) ||
+                        ($sameEntity && $ai->allowSourceEntity()) ||
                         // * source and target are different but belong to the same user and the action is possible for the same user (e.g. ok for transport, not ok for attack)
-                        ($this->fleetLaunch->getSourceEntity()->getEntity()->getOwner() === $this->fleetLaunch->getTargetEntity()->getOwner() && $this->fleetLaunch->getSourceEntity() !== $this->fleetLaunch->getTargetEntity() && $ai->allowOwnEntities()) ||
+                        ($this->fleetLaunch->getSourceEntity()->getEntity()->getOwner() === $this->fleetLaunch->getTargetEntity()->getOwner() && !$sameEntity && $ai->allowOwnEntities()) ||
                         // * source and target are from different users and target belongs to an user (so it's not a nebula for example) and the action allows any other player's planet as target
                         ($this->fleetLaunch->getTargetEntity()->getOwner() && $this->fleetLaunch->getSourceEntity()->getEntity()->getOwner() !== $this->fleetLaunch->getTargetEntity()->getOwner() && $ai->allowPlayerEntities()) ||
                         // * target doesn't belong to an user and action allows that (e.g. crystal collection from nebulas)
