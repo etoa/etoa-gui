@@ -105,6 +105,11 @@ class Auction extends AbstractGameController
             $marketAuction->setUser($this->getUser()->getData());
             $marketAuction->setEntity($this->planet);
 
+            $auctionMinTime = $this->minDuration() * 24 * 3600;
+            $auctionEndTime = time() + $auctionMinTime + $this->form->get('auction_time_days')->getData() * 24 * 3600 + $this->form->get('auction_time_hours')->getData() * 3600;
+            $marketAuction->setDateStart(time());
+            $marketAuction->setDateEnd($auctionEndTime);
+
             // Rohstoffe vom Planet abziehen
             if ($this->planetRepository->removeResources($this->planet, $offerCosts)) {
 
@@ -112,8 +117,6 @@ class Auction extends AbstractGameController
                 $this->marketAuctionRepository->persist($marketAuction);
                 $this->marketAuctionRepository->save();
 
-                $auctionMinTime = $this->minDuration() * 24 * 3600;
-                $auctionEndTime = time() + $auctionMinTime + $this->form->get('auction_time_days')->getData() * 24 * 3600 + $this->form->get('auction_time_hours')->getData() * 3600;
                 $this->marketReportRepository->addAuctionReport($marketAuction->getId(), $this->getUser()->getData(), $this->planet->getEntity(), null, $sellResources, "auction", $costs,$marketAuction->getText(), $marketTax, $auctionEndTime);
 
                 $this->addFlash('success', "Angebot erfolgreich aufgegeben");

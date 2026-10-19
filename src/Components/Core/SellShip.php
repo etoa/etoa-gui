@@ -116,6 +116,27 @@ class SellShip extends AbstractGameController
     private function processOffer(MarketShip $marketShip)
     {
         $ship_count =$marketShip->getCount();
+        if ($ship_count <= 0) {
+            $this->addFlash('error', 'Keine Schiffe angegeben!');
+            return;
+        }
+
+        // choice values are strings
+        $reservation = (int) $this->form->get('ship_offer_reservation')->getData();
+        if ($reservation === 1) {
+            $forUser = $this->form->get('forUser')->getData();
+            if (!$forUser) {
+                $this->addFlash('error', 'Reservation nicht möglich, Spieler nicht gefunden!');
+                return;
+            }
+            $marketShip->setForUser($forUser);
+        }
+        $forAlliance = $reservation === 2;
+        if ($forAlliance && !($this->allianceMarketLevel() > 0 && !$this->cdEnabled())) {
+            $this->addFlash('error', 'Reservation nicht möglich, Allianzmarkt nicht vorhanden oder nicht bereit!');
+            return;
+        }
+
         $marketShip->setShip($this->form->get('ship')->getData()->getShip());
         $marketShip->setUser($this->getUser()->getData());
         $marketShip->setEntity($this->planet);
@@ -132,7 +153,6 @@ class SellShip extends AbstractGameController
 
         // Falls alle Schiffe abgezogen werden konnten
         if ($ship_count === $removed_ships_count) {
-            $forAlliance = $this->form->get('ship_offer_reservation')->getData() === 2;
             if($forAlliance) {
                 $marketShip->setForAlliance($this->getUser()->getData()->getAlliance());
                 $allianceMarketLevel = $this->allianceMarketLevel();

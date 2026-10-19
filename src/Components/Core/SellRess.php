@@ -97,12 +97,16 @@ class SellRess extends AbstractGameController
     {
         $errMsg = '';
 
-        if ($this->form->get('ressource_offer_reservation')->getData() === 1) {
-            if (!$marketResource->getForUser()) {
-                $this->addFlash('error', 'Reservation nicht möglich, Spieler nicht gefunden!');
+        $reservation = (int) $this->form->get('ressource_offer_reservation')->getData();
+        if ($reservation === 1) {
+            $forUser = $this->form->get('forUser')->getData();
+            if ($forUser) {
+                $marketResource->setForUser($forUser);
+            } else {
+                $errMsg = 'Reservation nicht möglich, Spieler nicht gefunden!';
             }
         }
-        if ($this->form->get('ressource_offer_reservation')->getData() === 2) {
+        if ($reservation === 2) {
             if ($this->allianceMarketLevel() > 0 && !$this->cdEnabled()) {
                 $marketResource->setForAlliance($this->getUser()->getData()->getAlliance());
             } else {
@@ -139,10 +143,11 @@ class SellRess extends AbstractGameController
             if ($ok) {
                 $marketResource->setUser($this->getUser()->getData());
                 $marketResource->setEntity($this->planet);
+                $marketResource->setDate(time());
 
                 // Rohstoffe vom Planet abziehen
                 if ($this->planetRepository->removeResources($this->planet, $offerCosts)) {
-                    $forAlliance = $this->form->get('ressource_offer_reservation')->getData() === 2;
+                    $forAlliance = $reservation === 2;
                     if($forAlliance) {
                         $marketResource->setForAlliance($this->getUser()->getData()->getAlliance());
                         $allianceMarketLevel = $this->allianceMarketLevel();

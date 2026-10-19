@@ -5,5 +5,5 @@ Du wurdest bei folgendem Angebot (#{{ report.marketReportData.recordId }}) von {
     Die Auktion dauert noch bis am {{ formatTimestamp(report.marketReportData.timestamp2) }}<br />
 {% else %}
 Die Auktion ist nun zu Ende und wird nach {{ configValue('market_auction_delay_time')}} Stunden gelöscht.<br />
-<a href="?page=market&mode=auction&id={{ report.marketReportData.recordId }}">Hier</a> gehts zu der Auktion.
+<a href="{{ path('game.market.sell') }}">Hier</a> gehts zu der Auktion.
 {% endif %}
