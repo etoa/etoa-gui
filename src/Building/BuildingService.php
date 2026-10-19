@@ -218,7 +218,7 @@ class BuildingService
 
             if ($nextLevel <= $item->getLastLevel()) {
                 $costs = $this->getBuildCosts($item->bl, $nextLevel);
-                $buildCosts = $this->formatCosts($costs, $cp);
+                $buildCosts = $this->formatCosts($costs, $cp, $this->getPowerCosts($item->bl, $nextLevel));
             }
             // Calculate demolish costs if applicable
             if ($item->bl->getCurrentLevel() > 0) {
@@ -229,7 +229,7 @@ class BuildingService
             // Calculate next level costs if currently building
             if (($item->bl->getBuildType() == 3 || $item->bl->getBuildType() == 4) && $nextLevel + 1 <= $item->getLastLevel()) {
                 $costsNext = $this->getBuildCosts($item->bl, $nextLevel + 1);
-                $nextLevelCosts = $this->formatCosts($costsNext, $cp);
+                $nextLevelCosts = $this->formatCosts($costsNext, $cp, $this->getPowerCosts($item->bl, $nextLevel + 1));
             }
 
             // Build action information
@@ -288,7 +288,22 @@ class BuildingService
         ];
     }
 
-    private function formatCosts($costs, $planet): array
+    private function getPowerCosts(BuildingListItem $item, int $level): float
+    {
+        $building = $item->getBuilding();
+        $specialist = $item->getEntity()->getUser()->getSpecialist();
+        $power = $building->getCostsPower() * ($specialist ? $specialist->getCostsBuildings() : 1);
+        $currentLevel = $item->getCurrentLevel();
+
+        $powerTarget = $power * $building->getProductionFactor() ** ($level - 1);
+        if ($currentLevel > 0) {
+            return $powerTarget - $power * $building->getProductionFactor() ** ($currentLevel - 1);
+        }
+
+        return $powerTarget;
+    }
+
+    private function formatCosts($costs, $planet, float $power = 0): array
     {
         $hasInsufficientResources = false;
         $resourcesAvailable = [];
@@ -326,7 +341,7 @@ class BuildingService
 
         return [
             'time' => $costs->time,
-            'power' => $costs->power ?? 0,
+            'power' => (int) ceil($power),
             'resources' => $resourcesAvailable,
             'hasInsufficientResources' => $hasInsufficientResources,
         ];
