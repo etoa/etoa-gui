@@ -251,6 +251,7 @@ class ShipyardService
             ],
             'maxBuildable' => $ship_max_build,
             'shipCount' => $ship_count,
+            'planetShipCount' => $this->shipListRepository->findOneBy(['entity' => $cp, 'ship' => $shipData])?->getCount() ?? 0,
             'maxCount' => $shipData->getMaxCount(),
             'waitTimes' => $waitTimes,
             'hasQueue' => $hasQueue,

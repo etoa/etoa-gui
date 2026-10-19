@@ -7,7 +7,7 @@
     </a>
     {% if supportFleets %}
         Klicke auf den Auftrag um die Details einer Flotte anzuzeigen<br/><br/>
-        <twig:Table title="Allianz Angriffe">
+        <twig:Table title="Allianz Supportflotten">
             {% block table_content %}
                 <tr>
                     <th>Auftrag</th>
@@ -84,7 +84,7 @@
                     </td>
                     <td>
                         {% if hasRights %}
-                            <a href="{{ path('game.fleets.info',{id:fleet.id}) }}">
+                            <a href="{{ path('game.fleets.info',{id:fleet.id, lead:fleet.id}) }}">
                         {% endif %}
                         <span style="font-weight:bold;color:{{ fleet.fleetAction.color }}">
                             {{ fleet.fleetAction.name }}

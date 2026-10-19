@@ -90,10 +90,15 @@ class FleetController extends AbstractGameController
         $alliance = $cu->getAlliance();
         $valid = 0;
 
+        $leaderView = $fleet
+            && $request->query->getInt('lead') === $fleet->getId()
+            && $fleet->getAction() === FleetAction::ALLIANCE
+            && $fleet->getLeader()?->getId() === $fleet->getId();
+
         if ($fleet) {
             if($fleet->getUser() === $cu) {
                 $valid = 10;
-            } else {
+            } elseif ($alliance) {
                 $userAlliancePermission = $this->allianceService->getUserAlliancePermissions($alliance, $cu);
                 if ($userAlliancePermission->hasRights(AllianceRights::FLEET_MINISTER)) {
                     $allianceFleetControlLevel = $this->allianceBuildListRepository->getLevel($alliance, AllianceBuildingId::FLEET_CONTROL->value);
@@ -101,7 +106,7 @@ class FleetController extends AbstractGameController
                         $valid = $allianceFleetControlLevel;
                     } elseif ($fleet->getAction() === FleetAction::ALLIANCE && $fleet->getUser()->getAlliance() === $alliance) {
                         if ($fleet->getStatus() === 0) {
-                            if ($fleet->getLeader() && ($allianceFleetControlLevel >= AllianceFleetControlLevel::SHOW)) {
+                            if ($leaderView && ($allianceFleetControlLevel >= AllianceFleetControlLevel::SHOW)) {
                                 $valid = $allianceFleetControlLevel;
                             }
                         } elseif ($fleet->getStatus() == 3) {
@@ -155,7 +160,7 @@ class FleetController extends AbstractGameController
                 }
 
                 if ($form->has('cancelAlliance') && $form->get('cancelAlliance')->isClicked()) {
-                    if ($valid >= AllianceFleetControlLevel::SEND_HOME) {
+                    if ($leaderView && $valid >= AllianceFleetControlLevel::SEND_HOME) {
                         $cancel = $this->fleetService->cancelFlight($fleet,true);
                         if (is_bool($cancel)) {
                             $msg['success'] = "Flug erfolgreich abgebrochen!";
@@ -182,6 +187,7 @@ class FleetController extends AbstractGameController
                 'userUniverseDiscoveryService' => $this->userUniverseDiscoveryService,
                 'form' => $form,
                 'valid' => $valid,
+                'leaderView' => $leaderView,
                 'msg' => $msg??null
             ]);
         }
