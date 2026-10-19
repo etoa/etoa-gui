@@ -93,7 +93,7 @@
                             </td>
                             <th class='defenseCellName'>
                                     <span style="font-weight:500">{{ defense.name }}<br/>
-                                    Gebaut:</span> {{ defense.defenseCount|number_format }}
+                                    Gebaut:</span> {{ defense.planetDefenseCount|number_format }}
                             </th>
                             <td width="13%">{{ formatTimespan(defense.buildTime) }}</td>
                             <td width="10%"
@@ -150,7 +150,7 @@
                         </tr>
                         <tr>
                             <th height="30">Vorhanden:</th>
-                            <td colspan="3">{{ defense.defenseCount|number_format }}</td>
+                            <td colspan="3">{{ defense.planetDefenseCount|number_format }}</td>
                         </tr>
                         <tr>
                             <th height="30">Bauzeit</th>

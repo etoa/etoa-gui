@@ -242,6 +242,7 @@ class DefenseyardService
             'maxBuildable' => $defense_max_build,
             'buildable' => (bool) $defenseData->isBuildable(),
             'defenseCount' => $defense_count,
+            'planetDefenseCount' => $this->defenseListRepository->findOneBy(['entity' => $cp, 'defense' => $defenseData])?->getCount() ?? 0,
             'maxCount' => $defenseData->getMaxCount(),
             'waitTimes' => $waitTimes,
             'hasQueue' => $hasQueue,
@@ -320,7 +321,9 @@ class DefenseyardService
         $queuelist = $this->defenseQueueRepository->findBy(['entity' => $cp, 'defense' => $defense]);
         // ... in der Bauliste
         foreach ($queuelist as $item) {
-            $defense_count += $item->getCount();
+            if ($item->getEndTime() > time()) {
+                $defense_count += $item->getCount();
+            }
         }
 
         return $defense_count;

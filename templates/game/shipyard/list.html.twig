@@ -96,7 +96,7 @@
                                 </td>
                                 <th class='shipCellName'>
                                     <span style="font-weight:500">{{ ship.name }}<br/>
-                                    Gebaut:</span> {{ ship.shipCount|number_format }}
+                                    Gebaut:</span> {{ ship.planetShipCount|number_format }}
                                 </th>
                                 <td width="13%">{{ formatTimespan(ship.buildTime) }}</td>
                                 <td width="10%"
@@ -154,7 +154,7 @@
                             </tr>
                             <tr>
                                 <th height="30">Vorhanden:</th>
-                                <td colspan="3">{{ ship.shipCount|number_format }}</td>
+                                <td colspan="3">{{ ship.planetShipCount|number_format }}</td>
                             </tr>
                             <tr>
                                 <th height="30">Bauzeit</th>
