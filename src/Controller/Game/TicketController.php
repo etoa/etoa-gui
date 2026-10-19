@@ -74,7 +74,7 @@ class TicketController extends AbstractGameController
 
     #[Route('/game/ticket/view/{id}', name: 'game.ticket.view')]
     public function view(Request $request, ?Ticket $ticket = null): Response {
-        if($ticket) {
+        if ($ticket && $ticket->getUser() === $this->getUser()->getData()) {
             $ticketMessage = new TicketMessage();
             $ticketMessage->setUser($this->getUser()->getData());
 

@@ -140,7 +140,7 @@ class TicketService
 
 Dein Ticket " . $ticket->getIdString() . " wurde aktualisiert!
 
-[page ticket id=".$this->router->generate('game.ticket.view',['id'=>$ticket->getId()])."]Klicke HIER um die Änderungen anzusehen.[/page]
+[page=".$this->router->generate('game.ticket.view',['id'=>$ticket->getId()])."]Klicke HIER um die Änderungen anzusehen.[/page]
 
 Dein Admin-Team";
             $this->userMessageRepo->createSystemMessage($ticket->getUser(), $this->messageCategoryRepository->find(MessageCategoryId::USER), "Dein Ticket " . $ticket->getIdString() . ' wurde aktualisiert', $text);

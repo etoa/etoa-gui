@@ -57,7 +57,7 @@
                             {{ message.admin.nick }}
                         {% endif %}
                     </td>
-                    <td>{{ BBCodeToHTML(message.message) }}</td>
+                    <td>{{ BBCodeToHTML(message.message)|raw }}</td>
                 </tr>
             {% endfor %}
         {% endblock %}
