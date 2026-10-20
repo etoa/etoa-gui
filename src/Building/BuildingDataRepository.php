@@ -91,7 +91,7 @@ class BuildingDataRepository extends AbstractRepository
      */
     public function getBuildingsWithBuildList(int|Planet $entityId): array
     {
-        $buildings = $this->findBy(['show'=>true]);
+        $buildings = $this->findBy(['show' => true], ['order' => 'ASC', 'name' => 'ASC']);
 
         foreach ($buildings as $building) {
             $bl = $this->buildingListItemRepository->findOneBy(['building'=>$building, 'entity'=>$entityId]);
