@@ -207,7 +207,7 @@ class UniverseController extends Game\AbstractGameController
             $idnext = ($request->attributes->get('id') + 1) <= $idmax ? ($request->attributes->get('id') + 1):null;
 
             $cell = $ent->getCell();
-            $abs = $cell->getAbsoluteCoordinates($cell->getSx(),$cell->getSy());
+            $abs = $cell->getAbsoluteCoordinates($this->config->param1Int('num_of_cells'), $this->config->param2Int('num_of_cells'));
             if ($this->userUniverseDiscoveryService->discovered($this->getUser()->getData(), $abs[0], $abs[1])) {
                 if ($ent->getCode() === EntityType::PLANET) {
                     $rowSpan = 7;
