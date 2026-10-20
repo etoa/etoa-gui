@@ -39,7 +39,7 @@
             {% else %}
                 <a href="#defense-{{ this.item.id }}" data-action="click->live#action:prevent" data-live-action-param="showEdit">Bearbeiten</a>
                 <a href="#defense-{{ this.item.id }}" data-action="click->live#action:prevent" data-live-action-param="finish">Fertig stellen</a>
-                <a onclick="confirm('Sollen {{ this.item.count}} {{ this.item.defense.name }} von diesem Planeten gelöscht werden?')" href="#defense-{{ this.item.id }}" data-action="click->live#action:prevent" data-live-action-param="delete">Löschen</a>
+                <a onclick="if (!confirm('Sollen {{ this.item.count}} {{ this.item.defense.name }} von diesem Planeten gelöscht werden?')) { event.preventDefault(); event.stopImmediatePropagation(); }" href="#defense-{{ this.item.id }}" data-action="click->live#action:prevent" data-live-action-param="delete">Löschen</a>
             {% endif %}
         </td>
     </tr>

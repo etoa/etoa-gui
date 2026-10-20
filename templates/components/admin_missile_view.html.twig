@@ -20,7 +20,7 @@
                 <a href="#missile-{{ this.item.id }}" data-action="click->live#action:prevent" data-live-action-param="abortEdit">Abbrechen</a>
             {% else %}
                 <a href="#missile-{{ this.item.id }}" data-action="click->live#action:prevent" data-live-action-param="showEdit">Bearbeiten</a>
-                <a onclick="confirm('Sollen {{ this.item.count}} {{ this.item.missile.name }} von diesem Planeten gelöscht werden?')" href="#missile-{{ this.item.id }}" data-action="click->live#action:prevent" data-live-action-param="delete">Löschen</a>
+                <a onclick="if (!confirm('Sollen {{ this.item.count}} {{ this.item.missile.name }} von diesem Planeten gelöscht werden?')) { event.preventDefault(); event.stopImmediatePropagation(); }" href="#missile-{{ this.item.id }}" data-action="click->live#action:prevent" data-live-action-param="delete">Löschen</a>
             {% endif %}
         </td>
     </tr>

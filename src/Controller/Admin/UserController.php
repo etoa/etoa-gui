@@ -607,107 +607,107 @@ class UserController extends AbstractAdminController
             $val_time = [];
             foreach ($userPlanets as $planet) {
                 //Speichert die aktuellen Rohstoffe in ein Array
-                $val_res[$planet->getId()][0] = floor($planet->getResMetal());
-                $val_res[$planet->getId()][1] = floor($planet->getResCrystal());
-                $val_res[$planet->getId()][2] = floor($planet->getResPlastic());
-                $val_res[$planet->getId()][3] = floor($planet->getResFuel());
-                $val_res[$planet->getId()][4] = floor($planet->getResFood());
-                $val_res[$planet->getId()][5] = floor($planet->getPeople());
+                $val_res[$planet->getEntity()->getId()][0] = floor($planet->getResMetal());
+                $val_res[$planet->getEntity()->getId()][1] = floor($planet->getResCrystal());
+                $val_res[$planet->getEntity()->getId()][2] = floor($planet->getResPlastic());
+                $val_res[$planet->getEntity()->getId()][3] = floor($planet->getResFuel());
+                $val_res[$planet->getEntity()->getId()][4] = floor($planet->getResFood());
+                $val_res[$planet->getEntity()->getId()][5] = floor($planet->getPeople());
 
                 for ($x = 0; $x < 6; $x++) {
-                    $max_res[$x] = max($max_res[$x], $val_res[$planet->getId()][$x]);
-                    $min_res[$x] = min($min_res[$x], $val_res[$planet->getId()][$x]);
-                    $tot_res[$x] += $val_res[$planet->getId()][$x];
+                    $max_res[$x] = max($max_res[$x], $val_res[$planet->getEntity()->getId()][$x]);
+                    $min_res[$x] = min($min_res[$x], $val_res[$planet->getEntity()->getId()][$x]);
+                    $tot_res[$x] += $val_res[$planet->getEntity()->getId()][$x];
                 }
 
                 //Speichert die aktuellen Rohstoffproduktionen in ein Array
-                $val_prod[$planet->getId()][0] = floor($planet->getProdMetal());
-                $val_prod[$planet->getId()][1] = floor($planet->getStoreCrystal());
-                $val_prod[$planet->getId()][2] = floor($planet->getProdPlastic());
-                $val_prod[$planet->getId()][3] = floor($planet->getProdFuel());
-                $val_prod[$planet->getId()][4] = floor($planet->getProdFood());
-                $val_prod[$planet->getId()][5] = floor($planet->getProdPeople());
+                $val_prod[$planet->getEntity()->getId()][0] = floor($planet->getProdMetal());
+                $val_prod[$planet->getEntity()->getId()][1] = floor($planet->getStoreCrystal());
+                $val_prod[$planet->getEntity()->getId()][2] = floor($planet->getProdPlastic());
+                $val_prod[$planet->getEntity()->getId()][3] = floor($planet->getProdFuel());
+                $val_prod[$planet->getEntity()->getId()][4] = floor($planet->getProdFood());
+                $val_prod[$planet->getEntity()->getId()][5] = floor($planet->getProdPeople());
 
                 for ($x = 0; $x < 6; $x++) {
-                    $max_prod[$x] = max($max_prod[$x], $val_prod[$planet->getId()][$x]);
-                    $min_prod[$x] = min($min_prod[$x], $val_prod[$planet->getId()][$x]);
-                    $tot_prod[$x] += $val_prod[$planet->getId()][$x];
+                    $max_prod[$x] = max($max_prod[$x], $val_prod[$planet->getEntity()->getId()][$x]);
+                    $min_prod[$x] = min($min_prod[$x], $val_prod[$planet->getEntity()->getId()][$x]);
+                    $tot_prod[$x] += $val_prod[$planet->getEntity()->getId()][$x];
                 }
 
                 //Speichert die aktuellen Speicher in ein Array
-                $val_store[$planet->getId()][0] = floor($planet->getStoreMetal());
-                $val_store[$planet->getId()][1] = floor($planet->getStoreCrystal());
-                $val_store[$planet->getId()][2] = floor($planet->getStorePlastic());
-                $val_store[$planet->getId()][3] = floor($planet->getStoreFuel());
-                $val_store[$planet->getId()][4] = floor($planet->getStoreFood());
-                $val_store[$planet->getId()][5] = floor($planet->getPeoplePlace());
+                $val_store[$planet->getEntity()->getId()][0] = floor($planet->getStoreMetal());
+                $val_store[$planet->getEntity()->getId()][1] = floor($planet->getStoreCrystal());
+                $val_store[$planet->getEntity()->getId()][2] = floor($planet->getStorePlastic());
+                $val_store[$planet->getEntity()->getId()][3] = floor($planet->getStoreFuel());
+                $val_store[$planet->getEntity()->getId()][4] = floor($planet->getStoreFood());
+                $val_store[$planet->getEntity()->getId()][5] = floor($planet->getPeoplePlace());
 
                 //Berechnet die dauer bis die Speicher voll sind (zuerst prüfen ob Division By Zero!)
 
                 //Titan
                 if ($planet->getProdMetal() > 0) {
                     if ($planet->getStoreMetal() - $planet->getResMetal() > 0) {
-                        $val_time[$planet->getId()][0] = ceil(($planet->getStoreMetal() - $planet->getResMetal()) / $planet->getProdMetal() * 3600);
+                        $val_time[$planet->getEntity()->getId()][0] = ceil(($planet->getStoreMetal() - $planet->getResMetal()) / $planet->getProdMetal() * 3600);
                     } else {
-                        $val_time[$planet->getId()][0] = 0;
+                        $val_time[$planet->getEntity()->getId()][0] = 0;
                     }
                 } else {
-                    $val_time[$planet->getId()][0] = 0;
+                    $val_time[$planet->getEntity()->getId()][0] = 0;
                 }
 
                 //Silizium
                 if ($planet->getProdCrystal() > 0) {
                     if ($planet->getStoreCrystal() - $planet->getResCrystal() > 0) {
-                        $val_time[$planet->getId()][1] = ceil(($planet->getStoreCrystal() - $planet->getResCrystal()) / $planet->getProdCrystal() * 3600);
+                        $val_time[$planet->getEntity()->getId()][1] = ceil(($planet->getStoreCrystal() - $planet->getResCrystal()) / $planet->getProdCrystal() * 3600);
                     } else {
-                        $val_time[$planet->getId()][1] = 0;
+                        $val_time[$planet->getEntity()->getId()][1] = 0;
                     }
                 } else {
-                    $val_time[$planet->getId()][1] = 0;
+                    $val_time[$planet->getEntity()->getId()][1] = 0;
                 }
 
                 //PVC
                 if ($planet->getProdPlastic() > 0) {
                     if ($planet->getStorePlastic() - $planet->getResPlastic() > 0) {
-                        $val_time[$planet->getId()][2] = ceil(($planet->getStorePlastic() - $planet->getResPlastic()) / $planet->getProdPlastic() * 3600);
+                        $val_time[$planet->getEntity()->getId()][2] = ceil(($planet->getStorePlastic() - $planet->getResPlastic()) / $planet->getProdPlastic() * 3600);
                     } else {
-                        $val_time[$planet->getId()][2] = 0;
+                        $val_time[$planet->getEntity()->getId()][2] = 0;
                     }
                 } else {
-                    $val_time[$planet->getId()][2] = 0;
+                    $val_time[$planet->getEntity()->getId()][2] = 0;
                 }
 
                 //Tritium
                 if ($planet->getProdFuel() > 0) {
                     if ($planet->getStoreFuel() - $planet->getResFuel() > 0) {
-                        $val_time[$planet->getId()][3] = ceil(($planet->getStoreFuel() - $planet->getResFuel()) / $planet->getProdFuel() * 3600);
+                        $val_time[$planet->getEntity()->getId()][3] = ceil(($planet->getStoreFuel() - $planet->getResFuel()) / $planet->getProdFuel() * 3600);
                     } else {
-                        $val_time[$planet->getId()][3] = 0;
+                        $val_time[$planet->getEntity()->getId()][3] = 0;
                     }
                 } else {
-                    $val_time[$planet->getId()][3] = 0;
+                    $val_time[$planet->getEntity()->getId()][3] = 0;
                 }
 
                 //Nahrung
                 if ($planet->getProdFood() > 0) {
                     if ($planet->getStoreFood() - $planet->getResFood() > 0) {
-                        $val_time[$planet->getId()][4] = ceil(($planet->getStoreFood() - $planet->getResFood()) / $planet->getProdFood() * 3600);
+                        $val_time[$planet->getEntity()->getId()][4] = ceil(($planet->getStoreFood() - $planet->getResFood()) / $planet->getProdFood() * 3600);
                     } else {
-                        $val_time[$planet->getId()][4] = 0;
+                        $val_time[$planet->getEntity()->getId()][4] = 0;
                     }
                 } else {
-                    $val_time[$planet->getId()][4] = 0;
+                    $val_time[$planet->getEntity()->getId()][4] = 0;
                 }
 
                 //Bewohner
                 if ($planet->getProdPeople() > 0) {
                     if ($planet->getPeoplePlace() - $planet->getPeople() > 0) {
-                        $val_time[$planet->getId()][5] = ceil(($planet->getPeoplePlace() - $planet->getPeople()) / $planet->getProdPeople() * 3600);
+                        $val_time[$planet->getEntity()->getId()][5] = ceil(($planet->getPeoplePlace() - $planet->getPeople()) / $planet->getProdPeople() * 3600);
                     } else {
-                        $val_time[$planet->getId()][5] = 0;
+                        $val_time[$planet->getEntity()->getId()][5] = 0;
                     }
                 } else {
-                    $val_time[$planet->getId()][5] = 0;
+                    $val_time[$planet->getEntity()->getId()][5] = 0;
                 }
             }
         }
@@ -720,12 +720,12 @@ class UserController extends AbstractAdminController
         foreach ($userPlanets as $planet) {
             // TODO
             //Speichert die aktuellen Energieproduktionen in ein Array (Bewohnerproduktion [5] wird überschrieben)
-            $val_prod[$planet->getId()][5] = floor($planet->getProdPower());
+            $val_prod[$planet->getEntity()->getId()][5] = floor($planet->getProdPower());
 
             // Gibt Min. / Max. aus
-            $max_prod[5] = max($max_prod[5], $val_prod[$planet->getId()][5]);
-            $min_prod[5] = min($min_prod[5], $val_prod[$planet->getId()][5]);
-            $tot_prod[5] += $val_prod[$planet->getId()][5];
+            $max_prod[5] = max($max_prod[5], $val_prod[$planet->getEntity()->getId()][5]);
+            $min_prod[5] = min($min_prod[5], $val_prod[$planet->getEntity()->getId()][5]);
+            $tot_prod[5] += $val_prod[$planet->getEntity()->getId()][5];
         }
 
         $buildLogs = $this->gameLogRepository->searchLogs(GameLogSearch::create()->user($user)->facility(GameLogFacility::BUILD), 5);
@@ -753,7 +753,7 @@ class UserController extends AbstractAdminController
                 'severity' => LogSeverity::SEVERITIES[$log->getSeverity()],
                 'ip' => $log->getIp(),
                 'te' => $log->getEntity() ? $log->getEntity()->toString() : "-",
-                'ob' => $log->getBuilding()->getName() . " " . ($log->getLevel() > 0 ? $log->getLevel() : ''),
+                'ob' => ($log->getBuilding()?->getName() ?? '-') . " " . ($log->getLevel() > 0 ? $log->getLevel() : ''),
                 'obStatus' => match ($log->getStatus()) {
                     1 => "Ausbau abgebrochen",
                     2 => "Abriss abgebrochen",
@@ -769,7 +769,7 @@ class UserController extends AbstractAdminController
                 'severity' => LogSeverity::SEVERITIES[$log->getSeverity()],
                 'ip' => $log->getIp(),
                 'te' => $log->getEntity() ? $log->getEntity()->toString() : "-",
-                'ob' => $log->getTechnology()->getName() . " " . ($log->getLevel() > 0 ? $log->getLevel() : ''),
+                'ob' => ($log->getTechnology()?->getName() ?? '-') . " " . ($log->getLevel() > 0 ? $log->getLevel() : ''),
                 'obStatus' => match ($log->getStatus()) {
                     3 => "Erforschung",
                     0 => "Erforschung abgebrochen",
@@ -783,7 +783,7 @@ class UserController extends AbstractAdminController
                 'severity' => LogSeverity::SEVERITIES[$log->getSeverity()],
                 'ip' => $log->getIp(),
                 'te' => $log->getEntity() ? $log->getEntity()->toString() : "-",
-                'ob' => $log->getShip()->getName() . " " . ($log->getLevel() > 0 ? $log->getLevel() : ''),
+                'ob' => ($log->getShip()?->getName() ?? '-') . " " . ($log->getLevel() > 0 ? $log->getLevel() : ''),
                 'obStatus' => match ($log->getStatus()) {
                     1 => "Bau",
                     0 => "Bau abgebrochen",
@@ -797,7 +797,7 @@ class UserController extends AbstractAdminController
                 'severity' => LogSeverity::SEVERITIES[$log->getSeverity()],
                 'ip' => $log->getIp(),
                 'te' => $log->getEntity() ? $log->getEntity()->toString() : "-",
-                'ob' => $log->getShip()->getName() . " " . ($log->getLevel() > 0 ? $log->getLevel() : ''),
+                'ob' => ($log->getDefense()?->getName() ?? '-') . " " . ($log->getLevel() > 0 ? $log->getLevel() : ''),
                 'obStatus' => match ($log->getStatus()) {
                     1 => "Bau",
                     0 => "Bau abgebrochen",

@@ -125,11 +125,11 @@ class EconomyController extends AbstractGameController
         $cu = $this->getUser()->getData();
         $specialist = $cu->getSpecialist();
 
-        $formDischarge = $this->createFormBuilder()
+        $formDischarge = $this->container->get('form.factory')->createNamedBuilder('specialist_discharge')
               ->add('discharge', SubmitType::class, [
                 'label' => 'Entlassen',
                 'attr' => [
-                    'onclick' => "confirm('Willst du den Spezialisten wirklich entlassen? Es werden keine Ressourcen zurückerstattet, da der Spezialist diese als Abgangsentschädigung behält!')"
+                    'onclick' => "return confirm('Willst du den Spezialisten wirklich entlassen? Es werden keine Ressourcen zurückerstattet, da der Spezialist diese als Abgangsentschädigung behält!')"
                 ]
             ])
             ->getForm()
@@ -219,7 +219,7 @@ class EconomyController extends AbstractGameController
             }
         }
 
-        $formSpecialists = $this->createFormBuilder($this->getUser()->getData())
+        $formSpecialists = $this->container->get('form.factory')->createNamedBuilder('specialist_engage')
             ->add('engage', SubmitType::class, [
                 'label' => 'Gewählten Spezialisten einstellen',
             ])
@@ -233,9 +233,9 @@ class EconomyController extends AbstractGameController
             ->handleRequest($request);
 
         if ($formSpecialists->isSubmitted() && $formSpecialists->isValid()) {
-            $specialist = $cu->getSpecialist();
+            $specialist = $formSpecialists->get('specialist')->getData();
             if ($cu->getSpecialistTime() < time()) {
-                $factor = $this->specialistService->getFactor($this->getUser()->getData()->getSpecialist());
+                $factor = $this->specialistService->getFactor($specialist);
 
                 if ($cu->getPoints() >= $specialist->getPointsRequirement()) {
                     if (
@@ -246,6 +246,7 @@ class EconomyController extends AbstractGameController
                         $planet->getResFood() >= $specialist->getCostsFood() * $factor
                     ) {
                         $st = time() + (86400 * $specialist->getDays());
+                        $cu->setSpecialist($specialist);
                         $cu->setSpecialistTime($st);
 
                         $this->planetRepository->addResources(
@@ -261,7 +262,7 @@ class EconomyController extends AbstractGameController
 
                         //Update every planet
                         foreach ($cu->getPlanets() as $userPlanet) {
-                            $this->backendMessageService->updatePlanet($userPlanet->getId());
+                            $this->backendMessageService->updatePlanet($userPlanet->getEntity()->getId());
                         }
                         $msg['success'] = 'Der gewählte Spezialist wurde eingestellt!';
                     } else {
@@ -290,6 +291,7 @@ class EconomyController extends AbstractGameController
         }
 
         return $this->render('game/economy/specialist.html.twig', [
+            'activeSpecialist' => $cu->getSpecialist() !== null && $cu->getSpecialistTime() > time(),
             'form_specialists' => $formSpecialists,
             'form_discharge' => $formDischarge,
             'specialistService' => $this->specialistService,

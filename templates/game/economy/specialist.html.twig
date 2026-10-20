@@ -45,7 +45,7 @@
             }
         </script>
     {% endif %}
-    {% if not app.user.data.specialist %}
+    {% if not activeSpecialist %}
         {{ form_start(form_specialists) }}
     {% endif %}
     <table style="width:100%" class="tb">
@@ -59,7 +59,7 @@
             <th>Anstellbar für</th>
             <th>Verfügbar</th>
             <th>Kosten</th>
-            {% if not app.user.data.specialist %}
+            {% if not activeSpecialist %}
                 <th>Auswahl</th>
             {% endif %}
         </tr>
@@ -98,7 +98,7 @@
                         * specialistService.getFactor(specialist.data)) }}   {{ constant('EtoA\\Universe\\Resources\\ResourceNames::FOOD') }}
                     <br style="clear:both;"/>
                 </td>
-                {% if not app.user.data.specialist %}
+                {% if not activeSpecialist %}
                     <td>
                         {% if specialistService.getAvailable(specialist.data) %}
                             {% if
@@ -121,7 +121,7 @@
         {% endfor %}
         </tbody>
     </table>
-    {% if not app.user.data.specialist %}
+    {% if not activeSpecialist %}
         {{ form_widget(form_specialists.engage) }}
         {{ form_widget(form_specialists._token) }}
         {{ form_end(form_specialists,{render_rest:false}) }}

@@ -40,19 +40,19 @@
                 {% for planet in userPlanets %}
                     <tr>
                         <td>
-                            <a href="{{ path('admin.universe.entity', { id: planet.id }) }}">{{ planet.entity.toString }}</a>
+                            <a href="{{ path('admin.universe.entity', { id: planet.entity.id }) }}">{{ planet.entity.toString }}</a>
                         </td>
                         {% for x in range(0,5) %}
                             <td
-                                    {% if max_res[x] == val_res[planet.id][x] %} class="tbldata3" {% elseif min_res[x] == val_res[planet.id][x] %} class="tbldata2" {% else %} class="tbldata" {% endif %}
-                                    {% if val_res[planet.id][x] < val_store[planet.id][x] and val_time[planet.id][x] != 0 %}
-                                        {{ tm("Speicher", "Speicher voll in " ~  formatTimespan(val_time[planet.id][x])) }}
-                                        {% if val_time[planet.id][x] < 43200 %} style="font-style:italic;" {% endif %}
+                                    {% if max_res[x] == val_res[planet.entity.id][x] %} class="tbldata3" {% elseif min_res[x] == val_res[planet.entity.id][x] %} class="tbldata2" {% else %} class="tbldata" {% endif %}
+                                    {% if val_res[planet.entity.id][x] < val_store[planet.entity.id][x] and val_time[planet.entity.id][x] != 0 %}
+                                        {{ tm("Speicher", "Speicher voll in " ~  formatTimespan(val_time[planet.entity.id][x]))|raw }}
+                                        {% if val_time[planet.entity.id][x] < 43200 %} style="font-style:italic;" {% endif %}
                                     {% else %}
-                                        {{ tm("Speicher", "Speicher voll!") }}
+                                        {{ tm("Speicher", "Speicher voll!")|raw }}
                                         style="font-weight:bold;"
                                     {% endif %}
-                            >{{ formatNumber(val_res[planet.id][x]) }}</td>
+                            >{{ formatNumber(val_res[planet.entity.id][x]) }}</td>
                         {% endfor %}
                     </tr>
                 {% endfor %}
@@ -104,18 +104,18 @@
                 {% for planet in userPlanets %}
                     <tr>
                         <td>
-                            <a href="{{ path('admin.universe.entity', { id: planet.id }) }}">{{ planet.entity.toString }}</a>
+                            <a href="{{ path('admin.universe.entity', { id: planet.entity.id }) }}">{{ planet.entity.toString }}</a>
                         </td>
                         {% for x in range(0,5) %}
                             <td
-                                    {% if max_prod[x] == val_prod[planet.id][x] %}
+                                    {% if max_prod[x] == val_prod[planet.entity.id][x] %}
                                         class="tbldata3"
-                                    {% elseif min_prod[x] == val_prod[planet.id][x] %}
+                                    {% elseif min_prod[x] == val_prod[planet.entity.id][x] %}
                                         class="tbldata2"
                                     {% else %}
                                         class="tbldata"
                                     {% endif %}
-                            >{{ formatNumber(val_prod[planet.id][x]) }}
+                            >{{ formatNumber(val_prod[planet.entity.id][x]) }}
                             </td>
                         {% endfor %}
                     </tr>
