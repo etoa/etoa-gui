@@ -127,7 +127,11 @@
                     {% endfor %}
                 {% endblock %}
             </twig:Table>
-            {{ form_widget(form.submit) }}
+            {% if havenError %}
+                <twig:Box title="Fehler">{{ havenError }}</twig:Box>
+            {% else %}
+                {{ form_widget(form.submit) }}
+            {% endif %}
             {{ form_widget(form._token) }}
         {% else %}
             <twig:Box>

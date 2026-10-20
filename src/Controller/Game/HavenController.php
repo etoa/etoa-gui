@@ -48,6 +48,8 @@ class HavenController extends AbstractGameController
         }
 
         if(!$error) {
+            $havenError = $this->fleetLaunchService->checkHaven() ? '' : $this->fleetLaunchService->getFleetLaunch()->getError();
+
             /** @var Planet $cp */
             $cp = $this->planetRepository->find($request->getSession()->get('cpid'));
             $hasMobileObjects = $this->shipTransformRepository->hasUserTransformableObjects($this->getUser()->getData(), $cp);
@@ -75,7 +77,7 @@ class HavenController extends AbstractGameController
                 ->getForm()
                 ->handleRequest($request);
 
-            if ($form->isSubmitted() && $form->isValid()) {
+            if ($form->isSubmitted() && $form->isValid() && !$havenError) {
                 $this->fleetLaunchService->resetShips();
                 foreach ($form->get('ships')->all() as $shipListItem) {
                     $cnt = $shipListItem->get('count')->getData();
@@ -140,7 +142,8 @@ class HavenController extends AbstractGameController
                 'form' => $form,
                 'planet' => $cp,
                 'fleetActions' => FleetAction::getAll(),
-                'shipSpeedInfo' => $shipSpeedInfo
+                'shipSpeedInfo' => $shipSpeedInfo,
+                'havenError' => $havenError,
             ]);
         }
 
@@ -257,18 +260,12 @@ class HavenController extends AbstractGameController
 
     private function baseCheck():string
     {
-        $error = '';
         // A (non-empty) verification key means the e-mail address is NOT yet confirmed
         if ($this->getUser()->getData()->getVerificationKey()) {
-            $error = 'Solange deine E-Mail Adresse nicht bestätigt ist, kannst du keine Flotten versenden!';
-        }
-        else {
-            if(!$this->fleetLaunchService->checkHaven()) {
-               $error = $this->fleetLaunchService->getFleetLaunch()->getError();
-            }
+            return 'Solange deine E-Mail Adresse nicht bestätigt ist, kannst du keine Flotten versenden!';
         }
 
-        return $error;
+        return '';
     }
 
     #[Route('/game/haven/target', name: 'game.haven.target')]
