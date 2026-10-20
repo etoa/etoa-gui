@@ -55,6 +55,13 @@ class AdminSessionSubscriber implements EventSubscriberInterface
 
     public function onKernelRequest(RequestEvent $event): void
     {
+        // Session bookkeeping belongs to the main request only. Sub-requests (error pages, live component
+        // batches) must not touch it: an error page may be rendered after the headers were sent, when the
+        // session can no longer be started.
+        if (!$event->isMainRequest()) {
+            return;
+        }
+
         $token = $this->tokenStorage->getToken();
         if ($token !== null && $token->getUser() instanceof CurrentAdmin) {
             /** @var CurrentAdmin $user */

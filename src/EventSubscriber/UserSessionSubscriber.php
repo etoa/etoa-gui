@@ -66,6 +66,10 @@ class UserSessionSubscriber implements EventSubscriberInterface
 
     public function onKernelRequest(RequestEvent $event): void
     {
+        if (!$event->isMainRequest()) {
+            return;
+        }
+
         $token = $this->tokenStorage->getToken();
         if ($token !== null && $token->getUser() instanceof CurrentPlayer) {
             /** @var CurrentPlayer $user */
