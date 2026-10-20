@@ -27,6 +27,7 @@ class UserSessionManager
         if ($session !== null) {
             $this->userSessionLogRepository->addSessionLog($session, $logoutPressed ? time() : 0);
             $this->repository->remove($session);
+            $user->setLogoutTime(time());
             $this->userRepository->save();
         }
     }

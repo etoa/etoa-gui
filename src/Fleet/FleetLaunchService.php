@@ -593,7 +593,7 @@ class FleetLaunchService
                                     if (!$battleban) {
                                         if (
                                             $ai->allowActivePlayerEntities()
-                                            || $this->fleetLaunch->getTargetEntity()->getOwner()->getLastOnline() < ((time() -  $this->configurationService->param2Int('user_inactive_days')) * 86400)
+                                            || $this->fleetLaunch->getTargetEntity()->getOwner()->getLogoutTime() < time() - $this->configurationService->param2Int('user_inactive_days') * 86400
                                             || ($this->fleetLaunch->getOwner() === $this->fleetLaunch->getSourceEntity()->getLastUser())
                                         ) {
                                             if ($this->userService->canAttackUser($this->fleetLaunch->getTargetEntity()->getOwner())) {

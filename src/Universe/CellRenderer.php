@@ -92,12 +92,12 @@ class CellRenderer
                     $tm_info = "Urlaubsmodus";
                 }
                 // Lange Inaktiv
-                elseif ($owner->getLastOnline() < time() - $this->config->param2Int('user_inactive_days') * 86400) {
+                elseif ($owner->getLogoutTime() < time() - $this->config->param2Int('user_inactive_days') * 86400) {
                     $class .= "userLongInactiveColor";
                     $tm_info = "Lange Inaktiv";
                 }
                 // Inaktiv
-                elseif ($owner->getLastOnline() < time() - $this->config->getInt('user_inactive_days') * 86400) {
+                elseif ($owner->getLogoutTime() < time() - $this->config->getInt('user_inactive_days') * 86400) {
                     $class .= "userInactiveColor";
                     $tm_info = "Inaktiv";
                 }
