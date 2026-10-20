@@ -16,20 +16,6 @@ class AdminUserRepository extends AbstractRepository
         parent::__construct($registry, AdminUser::class);
     }
 
-    /**
-     * @return int[]
-     */
-    public function getAdminPlayerIds(): array
-    {
-        $data = $this->createQueryBuilder('q')
-            ->select('player_id')
-            ->from('admin_users')
-            ->where('player_id <> 0')
-            ->fetchAllAssociative();
-
-        return array_map(fn($value) => (int)$value, $data);
-    }
-
     public function findOneByNickAndEmail(string $nick, string $email): ?AdminUser
     {
         return $this->findOneBy(['nick'=>$nick,'email'=>$email]);

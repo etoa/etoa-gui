@@ -60,7 +60,7 @@ class FleetStatController extends AbstractGameController
         foreach ($queuelist as $item) {
             $shipId = $item->getShip()->getId();
             $entityId = $item->getEntity()->getEntity()->getId();
-            $queueData[$shipId][$entityId] = $item->getCount();
+            $queueData[$shipId][$entityId] = ($queueData[$shipId][$entityId] ?? 0) + $item->getCount();
         }
 
         // Speichert alle Schiffe des Users, die sich im All befinden

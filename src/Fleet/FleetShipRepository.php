@@ -97,8 +97,6 @@ class FleetShipRepository extends AbstractRepository
         $this->save();
     }
 
-
-
     public function removeShipsFromFleet(Fleet $fleet, Ship $ship): void
     {
         $this->createQueryBuilder('q')
@@ -178,36 +176,6 @@ class FleetShipRepository extends AbstractRepository
             ->setMaxResults(1)
             ->getQuery()
             ->getSingleScalarResult();
-    }
-
-    /**
-     * @return array<int, int>
-     */
-    public function getFleetShipCounts(int $fleetId): array
-    {
-        return array_map(fn ($value) => (int) $value, $this->createQueryBuilder('q')
-            ->select('fs_ship_id, fs_ship_cnt')
-            ->from('fleet_ships')
-            ->where('fs_fleet_id = :fleetId')
-            ->andWhere('fs_ship_cnt > 0')
-            ->setParameter('fleetId', $fleetId)
-            ->fetchAllKeyValue());
-    }
-
-    /**
-     * @return array<int, int>
-     */
-    public function getLeaderShipCounts(int $leaderId): array
-    {
-        return array_map(fn ($value) => (int) $value, $this->createQueryBuilder('q')
-            ->select('fs_ship_id, SUM(fs_ship_cnt)')
-            ->from('fleet_ships')
-            ->innerJoin('fleet_ships', 'fleet', 'fleet', 'fleet.id = fs_fleet_id')
-            ->where('fleet.leader_id = :leaderId')
-            ->andWhere('fs_ship_cnt > 0')
-            ->groupBy('fs_ship_id')
-            ->setParameter('leaderId', $leaderId)
-            ->fetchAllKeyValue());
     }
 
     public function getByUserAndShip(int|User $userId, int|Ship $ship): array

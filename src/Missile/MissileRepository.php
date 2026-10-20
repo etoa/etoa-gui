@@ -48,25 +48,6 @@ class MissileRepository extends AbstractRepository
     }
 
     /**
-     * @return array<int, int>
-     */
-    public function getMissilesCounts(int $userId, int $entityId): array
-    {
-        $data = $this->createQueryBuilder('q')
-            ->select("missilelist_missile_id, missilelist_count")
-            ->from('missilelist')
-            ->where('missilelist_user_id = :userId')
-            ->andWhere('missilelist_entity_id = :entityId')
-            ->setParameters([
-                'userId' => $userId,
-                'entityId' => $entityId,
-            ])
-            ->fetchAllKeyValue();
-
-        return array_map(fn ($value) => (int) $value, $data);
-    }
-
-    /**
      * @return MissileListItem[]
      */
     public function search(MissileListSearch $search, int $limit, int $offset): array

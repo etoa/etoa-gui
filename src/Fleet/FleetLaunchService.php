@@ -351,7 +351,7 @@ class FleetLaunchService
                 return true;
             }
         }
-        $this->fleetLaunch->setError("Es befindet sich kein Schiff in der Flotte, welches die Aktion ausführen kann.");
+        $this->fleetLaunch->setError($this->error ?: "Es befindet sich kein Schiff in der Flotte, welches die Aktion ausführen kann.");
         return false;
     }
 

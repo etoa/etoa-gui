@@ -64,7 +64,7 @@ class ShipQueueRepository extends AbstractRepository
     public function getUserQueuedShipCounts(User $user): array
     {
         $data = $this->createQueryBuilder('q')
-            ->select('IDENTITY(q.ship), SUM(q.count)')
+            ->select('IDENTITY(q.ship) AS shipId, SUM(q.count) AS cnt')
             ->where('q.user = :user')
             ->andWhere('q.endTime > :now')
             ->setParameters([
@@ -75,7 +75,7 @@ class ShipQueueRepository extends AbstractRepository
             ->getQuery()
             ->getArrayResult();
 
-        return array_map(fn ($value) => (int) $value, $data);
+        return array_map(fn ($value) => (int) $value, array_column($data, 'cnt', 'shipId'));
     }
 
     /**

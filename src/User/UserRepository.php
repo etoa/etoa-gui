@@ -88,76 +88,11 @@ class UserRepository extends AbstractRepository
             ->execute();
     }
 
-    public function hasUserRankId(int $allianceId, int $userId, int $rankId): bool
-    {
-        return (bool)$this->createQueryBuilder('q')
-            ->select('user_id')
-            ->from('users')
-            ->where('user_id = :userId')
-            ->andWhere('user_alliance_id = :allianceId')
-            ->andWhere('user_alliance_rank_id = :rankId')
-            ->setParameters([
-                'userId' => $userId,
-                'allianceId' => $allianceId,
-                'rankId' => $rankId,
-            ])
-            ->setMaxResults(1)
-            ->fetchOne();
-    }
-
     public function setLogoutTime(User $user, ?int $time = null): void
     {
         $user->setLogoutTime($time??time());
 
         $this->save();
-    }
-
-    public function setSpecialist(int $userId, int $specialistId, int $time): void
-    {
-        $this->createQueryBuilder('q')
-            ->update('users')
-            ->set('user_specialist_time', ':time')
-            ->set('user_specialist_id', ':specialistId')
-            ->where('user_id = :id')
-            ->setParameters([
-                'id' => $userId,
-                'specialistId' => $specialistId,
-                'time' => $time,
-            ])
-            ->executeQuery();
-    }
-
-    /**
-     * associative array: for each specialist (id), get number of users which have this specialist active (count)
-     * @return array<int, int>
-     */
-    public function countUsersWithSpecialists(): array
-    {
-        $data = $this->createQueryBuilder('q')
-            ->select('user_specialist_id, COUNT(user_id)')
-            ->from('users')
-            ->where('user_specialist_time > :now')
-            ->groupBy('user_specialist_id')
-            ->setParameters([
-                'now' => time(),
-            ])
-            ->fetchAllKeyValue();
-
-        return array_map(fn($value) => (int)$value, $data);
-    }
-
-    public function activateHolidayMode(int $userId, int $from, int $to): void
-    {
-        $this->createQueryBuilder('q')
-            ->update('users')
-            ->set('user_hmode_from', (string)$from)
-            ->set('user_hmode_to', (string)$to)
-            ->set('user_logouttime', (string)$from)
-            ->where('user_id = :id')
-            ->setParameters([
-                'id' => $userId,
-            ])
-            ->executeQuery();
     }
 
     public function getUserIdByNick(string $nick): ?int
@@ -218,7 +153,6 @@ class UserRepository extends AbstractRepository
         $query = $this->applySearchSortLimit($this->createQueryBuilder('q'), $search)
             ->setMaxResults(1)
             ->getQuery();
-
 
         return $query->getOneOrNullResult();
     }
@@ -518,18 +452,6 @@ class UserRepository extends AbstractRepository
         $user->setMultiDelets($user->getMultiDelets() + 1);
 
         $this->save();
-    }
-
-    public function markMainPlanetChanged(int $userId): void
-    {
-        $this->createQueryBuilder('q')
-            ->update('users')
-            ->set('user_changed_main_planet', '1')
-            ->where('user_id = :userId')
-            ->setParameters([
-                'userId' => $userId,
-            ])
-            ->executeQuery();
     }
 
     /**

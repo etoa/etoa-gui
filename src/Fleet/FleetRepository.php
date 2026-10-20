@@ -80,15 +80,15 @@ class FleetRepository extends AbstractRepository
     public function getUserFleetShipCounts(User $user): array
     {
         $data = $this->createQueryBuilder('q')
-            ->select('IDENTITY(fs.ship), SUM(fs.count)')
+            ->select('IDENTITY(fs.ship) AS shipId, SUM(fs.count) AS cnt')
             ->innerJoin('App:FleetShip', 'fs', 'WITH', 'q.id = fs.fleet')
             ->where('q.user = :user')
             ->setParameter('user', $user)
             ->groupBy('fs.ship')
             ->getQuery()
-            ->execute();
+            ->getArrayResult();
 
-        return array_map(fn ($value) => (int) $value, $data);
+        return array_map(fn ($value) => (int) $value, array_column($data, 'cnt', 'shipId'));
     }
 
     /**
