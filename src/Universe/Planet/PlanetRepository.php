@@ -282,7 +282,33 @@ class PlanetRepository extends AbstractRepository
             ->getQuery()
             ->execute();
 
+        if ($affected > 0) {
+            $this->syncResourceFields($planet, [
+                'resMetal' => $planet->getResMetal() - $resources->metal,
+                'resCrystal' => $planet->getResCrystal() - $resources->crystal,
+                'resPlastic' => $planet->getResPlastic() - $resources->plastic,
+                'resFuel' => $planet->getResFuel() - $resources->fuel,
+                'resFood' => $planet->getResFood() - $resources->food,
+                'people' => $planet->getPeople() - $resources->people,
+            ]);
+        }
+
         return $affected > 0;
+    }
+
+    private function syncResourceFields(Planet $planet, array $values): void
+    {
+        $em = $this->getEntityManager();
+        $metadata = $em->getClassMetadata(Planet::class);
+        $uow = $em->getUnitOfWork();
+        $managed = $em->contains($planet);
+
+        foreach ($values as $field => $value) {
+            $metadata->setFieldValue($planet, $field, $value);
+            if ($managed) {
+                $uow->setOriginalEntityProperty(spl_object_id($planet), $field, $value);
+            }
+        }
     }
 
     public function getPlanetResources(Planet $planet): ?PreciseResources
