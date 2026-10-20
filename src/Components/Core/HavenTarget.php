@@ -300,16 +300,21 @@ class HavenTarget extends AbstractGameController
         $choices = [];
         foreach ($this->planetRepository->findBy(['user' => $this->fleetLaunch->getOwner()]) as $planet) {
             if ($planet->getEntity() !== null) {
-                $choices[] = ['id' => $planet->getEntity()->getId(), 'label' => 'Eigener Planet: ' . $planet->getEntity()->toString()];
+                $choices[] = ['id' => $planet->getEntity()->getId(), 'label' => 'Eigener Planet: ' . $this->entityLabel($planet->getEntity())];
             }
         }
         foreach ($this->bookmarkRepository->findBy(['user' => $this->fleetLaunch->getOwner()]) as $bookmark) {
             if ($bookmark->getEntity() !== null) {
-                $choices[] = ['id' => $bookmark->getEntity()->getId(), 'label' => $bookmark->getEntity()->toString()];
+                $choices[] = ['id' => $bookmark->getEntity()->getId(), 'label' => $this->entityLabel($bookmark->getEntity())];
             }
         }
 
         return $choices;
+    }
+
+    private function entityLabel(Entity $entity): string
+    {
+        return trim($entity->toString() . ' ' . $entity->displayName());
     }
 
     /**
