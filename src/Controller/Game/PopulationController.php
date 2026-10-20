@@ -18,6 +18,7 @@ use EtoA\Technology\TechnologyId;
 use EtoA\Technology\TechnologyListItemRepository;
 use EtoA\Technology\TechnologyService;
 use EtoA\Universe\Entity\EntityRepository;
+use EtoA\Universe\Planet\PlanetRepository;
 use EtoA\Universe\Planet\PlanetService;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
@@ -41,12 +42,14 @@ class PopulationController extends AbstractGameController
         private readonly TechnologyListItemRepository $technologyListItemRepository,
         private readonly ShipQueueRepository $shipQueueRepository,
         private readonly DefenseQueueRepository $defenseQueueRepository,
+        private readonly PlanetRepository $planetRepository,
     )
     {
     }
 
-    #[Route('/game/population/{id}', name: 'game.population')]
-    public function population(Request $request, ?Planet $planet = null): Response {
+    #[Route('/game/population', name: 'game.population')]
+    public function population(Request $request): Response {
+        $planet = $this->planetRepository->find($request->getSession()->get('cpid'));
         if($planet && $planet->getUser() === $this->getUser()->getData()) {
             $peopleStorageBuildings = $this->buildingListItemRepository->getPeopleStorageBuildings($planet);
             if (count($peopleStorageBuildings) > 0) {
