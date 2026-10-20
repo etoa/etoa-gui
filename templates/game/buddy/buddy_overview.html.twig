@@ -54,7 +54,7 @@
                         <a href="{{ path('game.messages.newTo',{id:buddy.buddy.id}) }}" title="Nachricht">Nachricht</a>
                         <a href="{{ path('game.userinfo',{id:buddy.buddy.id}) }}" title="Info">Profil</a><br/>
                         <a href="{{ path('game.buddylist.comment',{id:buddy.id}) }}" title="Kommentar bearbeiten">Kommentar</a>
-                        <a href="{{ path('game.buddylist.remove',{id:buddy.id}) }}" onclick="return confirm('Willst du  {{ buddy.buddy.nick }}  wirklich von deiner Liste entfernen?');">Entfernen</a>
+                        <a href="{{ path('game.buddylist.remove',{id:buddy.id}) }}" onclick="return confirm('Willst du  {{ buddy.buddy.nick|e('js') }}  wirklich von deiner Liste entfernen?');">Entfernen</a>
                     </td>
                 </tr>
             {% endfor %}

@@ -66,10 +66,10 @@
                             {% endif %}
                             <a href="{{ path('game.userinfo',{id:allianceMember.vars.data.id})}}">Profil</a><br/>
                             {% if app.user.data == app.user.data.alliance.founder and app.user.data != allianceMember.vars.data %}
-                                <a href="{{path('game.alliance.editmembers.leader',{id:allianceMember.vars.data.id})}}" onclick="return confirm('Soll der Spieler \'{{ allianceMember.vars.data.nick }}\' wirklich zum Gründer befördert werden? Dir werden dabei die Gründerrechte entzogen!');">Gründer</a><br/>
+                                <a href="{{path('game.alliance.editmembers.leader',{id:allianceMember.vars.data.id})}}" onclick="return confirm('Soll der Spieler \'{{ allianceMember.vars.data.nick|e('js') }}\' wirklich zum Gründer befördert werden? Dir werden dabei die Gründerrechte entzogen!');">Gründer</a><br/>
                             {% endif %}
                             {% if app.user != allianceMember.vars.data and allianceMember.vars.data != app.user.data.alliance.founder and not atWar %}
-                                <a href="{{path('game.alliance.editmembers.kick',{id:allianceMember.vars.data.id})}}" onclick="return confirm('Soll {{ allianceMember.vars.data.nick }} wirklich aus der Allianz ausgeschlossen werden?')">Kicken</a>
+                                <a href="{{path('game.alliance.editmembers.kick',{id:allianceMember.vars.data.id})}}" onclick="return confirm('Soll {{ allianceMember.vars.data.nick|e('js') }} wirklich aus der Allianz ausgeschlossen werden?')">Kicken</a>
                             {% endif %}
                         </td>
                     </tr>

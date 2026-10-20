@@ -42,7 +42,7 @@
                 <a href="#technology-{{ this.item.id }}" data-action="click->live#action:prevent" data-live-action-param="abortEdit">Abbrechen</a>
             {% else %}
                 <a href="#technology-{{ this.item.id }}" data-action="click->live#action:prevent" data-live-action-param="showEdit">Bearbeiten</a>
-                <a onclick="if (!confirm('Soll {{ this.item.technology.name }} {{ this.item.currentLevel}} von diesem Planeten gelöscht werden?')) { event.preventDefault(); event.stopImmediatePropagation(); }" href="#technology-{{ this.item.id }}" data-action="click->live#action:prevent" data-live-action-param="delete">Löschen</a>
+                <a onclick="if (!confirm('Soll {{ this.item.technology.name|e('js') }} {{ this.item.currentLevel|e('js') }} von diesem Planeten gelöscht werden?')) { event.preventDefault(); event.stopImmediatePropagation(); }" href="#technology-{{ this.item.id }}" data-action="click->live#action:prevent" data-live-action-param="delete">Löschen</a>
             {% endif %}
         </td>
     </tr>

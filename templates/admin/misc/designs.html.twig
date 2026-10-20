@@ -40,7 +40,7 @@
                     <a href="{{ path('admin.design.download', {design: key}) }}">Download</a>
                     {% if design.custom %}
                         <a href="{{ path('admin.design.remove', {design: key}) }}"
-                           onclick="return confirm('Soll das Design \'{{ design.name }}\' wirklich entfernt werden?')">Entfernen</a>
+                           onclick="return confirm('Soll das Design \'{{ design.name|e('js') }}\' wirklich entfernt werden?')">Entfernen</a>
                     {% endif %}
                 </td>
             </tr>

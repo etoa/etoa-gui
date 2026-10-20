@@ -53,7 +53,7 @@
                     <td>{{ backup.size }}</td>
                     <td>
                         <a href="{{ path('admin.db.restore', {restorePoint: backup.date }) }}"
-                           onclick="return confirm('Soll die Datenbank mit den im Backup {{ backup.date }} gespeicherten Daten überschrieben werden?');">Wiederherstellen</a>
+                           onclick="return confirm('Soll die Datenbank mit den im Backup {{ backup.date|e('js') }} gespeicherten Daten überschrieben werden?');">Wiederherstellen</a>
                         &nbsp;
                         <a href="{{ path('admin.db.backups.download', { path: base64(backup.filename) }) }}">Download</a>
                     </td>

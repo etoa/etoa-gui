@@ -14,7 +14,7 @@
                         <td style="width:130px;">
                             <a href="{{path('game.notepad.edit',{id:note.id})}}">Bearbeiten</a> &nbsp;
                             <a href="{{path('game.notepad.delete',{id:note.id})}}"
-                               onclick="return confirm('Soll die Notiz {{ note.data.subject }} wirklich gelöscht werden?');">Löschen</a>
+                               onclick="return confirm('Soll die Notiz {{ note.data.subject|e('js') }} wirklich gelöscht werden?');">Löschen</a>
                         </td>
                     </tr>
                 {% endfor %}
