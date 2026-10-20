@@ -57,7 +57,7 @@
                         <th>Rassenbonus:</th>
                         <td>
                             Die Schiffe fliegen aufgrund deiner Rasse <b>{{ fleetLaunch.owner.race.name }}</b> mit
-                            {{ formatPercentString(fleetLaunch.owner.race.fleetTime) }} Geschwindigkeit!
+                            {{ formatPercentString(fleetLaunch.owner.race.fleetTime, true)|raw }} Geschwindigkeit!
                         </td>
                     </tr>
                 {% endif %}
@@ -66,7 +66,7 @@
                         <th>Spezialistenbonus:</th>
                         <td>
                             Die Schiffe fliegen aufgrund des <b>{{ fleetLaunch.owner.specialist.name }}</b> mit
-                            {{ formatPercentString(fleetLaunch.owner.specialist.fleetSpeed) }} Geschwindigkeit!
+                            {{ formatPercentString(fleetLaunch.owner.specialist.fleetSpeed, true)|raw }} Geschwindigkeit!
                         </td>
                     </tr>
                 {% endif %}

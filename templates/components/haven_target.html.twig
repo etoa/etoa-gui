@@ -77,7 +77,7 @@
                 <th>Geschwindigkeit:</th>
                 <td id="speed">{{ outerScope.this.speed }}
                     {% if outerScope.this.fleetLaunch.sBonusSpeed > 1 %}
-                        (inkl. {{ formatPercentString(outerScope.this.fleetLaunch.sBonusSpeed) }} Mysticum-Bonus)
+                        (inkl. {{ formatPercentString(outerScope.this.fleetLaunch.sBonusSpeed, true)|raw }} Mysticum-Bonus)
                     {% endif %}
                 </td>
             </tr>
@@ -101,7 +101,7 @@
                 <th>Piloten:</th>
                 <td>{{ formatNumber(outerScope.this.fleetLaunch.getPilots) }}
                     {% if outerScope.this.fleetLaunch.sBonusPilots != 1 %}
-                        (inkl. {{ formatPercentString(outerScope.this.fleetLaunch.sBonusPilots) }} Mysticum-Bonus)
+                        (inkl. {{ formatPercentString(outerScope.this.fleetLaunch.sBonusPilots, true, true)|raw }} Mysticum-Bonus)
                     {% endif %}
                 </td>
             </tr>
