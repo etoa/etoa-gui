@@ -86,21 +86,21 @@ class BuildingsController extends AbstractGameController
         $form = $this->container->get('form.factory')->createNamed('building_form',FormType::class)
             ->add('build', SubmitType::class)
             ->add('demolish', SubmitType::class, [
-                'label' => 'Abreisen',
+                'label' => 'Abreissen',
                 'attr' => [
-                    'onclick' => "if (this.value=='Abreisen'){return confirm('Wirklich abbrechen?');}"
+                    'onclick' => "return confirm('Gebäude wirklich abreissen?');"
                 ]
             ])
             ->add('cancelBuild', SubmitType::class, [
                 'label' => 'Bau abbrechen',
                 'attr' => [
-                    'onclick' => "if (this.value=='Bau abbrechen'){return confirm('Wirklich abbrechen?');}"
+                    'onclick' => "return confirm('Wirklich abbrechen?');"
                 ]
             ])
             ->add('cancelDemolish', SubmitType::class, [
                 'label' => 'Abriss abbrechen',
                 'attr' => [
-                    'onclick' => "if (this.value=='Abriss abbrechen'){return confirm('Wirklich abbrechen?');}"
+                    'onclick' => "return confirm('Wirklich abbrechen?');"
                 ]
             ])
             ->add('checker', SingleSubmitType::class)

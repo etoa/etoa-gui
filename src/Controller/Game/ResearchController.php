@@ -87,7 +87,7 @@ class ResearchController extends AbstractGameController
             ->add('cancelResearch', SubmitType::class, [
                 'label' => 'Forschung abbrechen',
                 'attr' => [
-                    'onclick' => "if (this.value=='Forschung abbrechen'){return confirm('Wirklich abbrechen?');}"
+                    'onclick' => "return confirm('Wirklich abbrechen?');"
                 ]
             ])
             ->add('refresh', SubmitType::class, [
