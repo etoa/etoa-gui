@@ -9,7 +9,7 @@
     <twig:Table title="{{ topic.subject }}">
     {% block table_content %}
         {% for post in topic.posts %}
-            <tr>
+            <tr id="post{{ post.id }}">
                 <th style="width:150px;">
                     <a href="{{ path('game.userinfo',{id:post.userId}) }}">{{ post.userNick }}</a><br/>
                     <div style="padding:8px;">
