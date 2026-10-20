@@ -703,7 +703,7 @@ class UserRepository extends AbstractRepository
             ->andWhere('q.hmodFrom = 0')
             ->andWhere('q.hmodTo = 0')
             ->groupBy('t.id')
-            ->orderBy('cnt')
+            ->orderBy('cnt', 'DESC')
             ->getQuery()
             ->execute();
     }

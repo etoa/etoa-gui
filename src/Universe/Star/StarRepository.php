@@ -91,7 +91,7 @@ class StarRepository extends AbstractRepository
                 'name' => '',
             ])
             ->groupBy('t.id')
-            ->orderBy('cnt')
+            ->orderBy('cnt', 'DESC')
             ->getQuery()
             ->execute();
     }

@@ -239,8 +239,8 @@ class GameStatsGenerator
                     <td >" . StringUtils::formatNumber((int)$food['res']) . "</td>
                     <td >" . $food['type'] . "</td>
                 </tr>";
-            $out .= "</table>";
         }
+        $out .= "</table>";
 
         return $out;
     }

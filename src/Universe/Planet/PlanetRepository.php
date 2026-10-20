@@ -648,7 +648,7 @@ class PlanetRepository extends AbstractRepository
             ->andWhere('u.ghost = 0')
             ->andWhere('u.hmodFrom = 0')
             ->andWhere('u.hmodTo = 0')
-            ->orderBy('res')
+            ->orderBy('res', 'DESC')
             ->setMaxResults(1)
             ->getQuery()
             ->getOneOrNullResult();
@@ -668,7 +668,7 @@ class PlanetRepository extends AbstractRepository
             ->andWhere('u.hmodFrom = 0')
             ->andWhere('u.hmodTo = 0')
             ->groupBy('t.id')
-            ->orderBy('cnt')
+            ->orderBy('cnt', 'DESC')
             ->getQuery()
             ->execute();
     }
