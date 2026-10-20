@@ -1,0 +1,20 @@
+{% use 'form_div_layout.html.twig' with button_widget as base_button_widget %}
+
+{%- block button_widget -%}
+    {%- if label_html is not same as(false) -%}
+        {{- block('base_button_widget') -}}
+    {%- else -%}
+        {%- if label is empty -%}
+            {%- if label_format is not empty -%}
+                {% set label = label_format|replace({
+                    '%name%': name,
+                    '%id%': id,
+                }) %}
+            {%- elseif label is not same as(false) -%}
+                {% set label = name|humanize %}
+            {%- endif -%}
+        {%- endif -%}
+        <input type="{{ type|default('button') }}" {{ block('button_attributes') }}
+            {%- if label is not same as(false) %} value="{{ translation_domain is same as(false) ? label : label|trans(label_translation_parameters, translation_domain) }}"{% endif %}/>
+    {%- endif -%}
+{%- endblock button_widget -%}

@@ -4,16 +4,32 @@ namespace EtoA\Core\Database;
 
 use EtoA\Entity\User;
 use EtoA\Universe\Resources\ResourceNames;
+use Doctrine\Persistence\ManagerRegistry;
 
 class DataTransformer
 {
+    private static ?ManagerRegistry $registry = null;
+
+    public static function setRegistry(?ManagerRegistry $registry): void
+    {
+        self::$registry = $registry;
+    }
+
+    private static function registry(): ManagerRegistry
+    {
+        if (self::$registry === null) {
+            throw new \LogicException('DataTransformer has no ManagerRegistry, it is set in Kernel::boot().');
+        }
+
+        return self::$registry;
+    }
+
     /**
-     * @return int[]
+     * @return User[]
      */
     public static function userString(string $string): array
     {
-        //TODO: refactor from static to use DI or use container
-        $userRepository = $GLOBALS['app']->getContainer()->get('doctrine')->getRepository(User::class);
+        $userRepository = self::registry()->getRepository(User::class);
 
         $data = [];
         foreach (array_filter(explode(',', $string)) as $ele) {
@@ -26,12 +42,12 @@ class DataTransformer
     }
 
     /**
-     * @return int[]
+     * @param class-string $class
+     * @return array<int, array{data: object, count: string}>
      */
     public static function dataString(string $string, string $class): array
     {
-        //TODO: refactor from static to use DI
-        $repository = $GLOBALS['app']->getContainer()->get('doctrine')->getRepository($class);
+        $repository = self::registry()->getRepository($class);
         $entries = [];
         $dataEntries = array_filter(explode(',', $string));
         foreach ($dataEntries as $entry) {

@@ -234,7 +234,7 @@ class Crypto extends AbstractGameController
                 'label' => 'Analyse für ' . StringUtils::formatNumber($this->configurationService->getInt('crypto_fuel_costs_per_scan')) . ' ' . ResourceNames::FUEL . ' starten',
                 'attr' => [
                     'data-live-action-param'=>"scan",
-                    'data-action'=>"live#action"
+                    'data-action'=>"click->live#action"
                 ],
             ])
             ->getForm();

@@ -69,14 +69,14 @@ class Delete extends AbstractController
                 'label' => 'Löschantrag aufheben',
                 'attr' => [
                     'style' => 'color:#0f0',
-                    'data-action'=>"live#action:render",
+                    'data-action'=>"click->live#action:render",
                     'data-live-action-param'=>"cancelDelete"
                 ]
             ])
             ->add('confirmDelete', ButtonType::class, [
                 'label' => 'Account löschen',
                 'attr' => [
-                    'data-action'=>"live#action:update",
+                    'data-action'=>"click->live#action:update",
                     'data-live-action-param'=>"confirmDelete"
                 ]
             ])
