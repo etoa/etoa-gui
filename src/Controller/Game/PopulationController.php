@@ -6,7 +6,6 @@ use EtoA\Defense\DefenseQueueRepository;
 use EtoA\Form\Type\Core\SingleSubmitType;
 use EtoA\Building\BuildingId;
 use EtoA\Building\BuildingListItemRepository;
-use EtoA\Building\BuildingRepository;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Entity\BuildingListItem;
 use EtoA\Entity\Planet;
@@ -36,7 +35,6 @@ class PopulationController extends AbstractGameController
         private readonly ConfigurationService $configurationService,
         private readonly TechnologyService $technologyService,
         private readonly TechnologyDataRepository $technologyDataRepository,
-        private readonly BuildingRepository $buildingRepository,
         private readonly PlanetService $planetService,
         private readonly EntityRepository $entityRepository,
         private readonly TechnologyListItemRepository $technologyListItemRepository,
@@ -75,15 +73,19 @@ class PopulationController extends AbstractGameController
                         BuildingId::PEOPLE->value =>  $this->technologyListItemRepository->isTechInProgress($this->getUser()->getData(), TechnologyId::GEN),
                     ];
 
-                    //fake genlab
-                    if($this->technologyService->requirementsPassed($this->technologyDataRepository->find(TechnologyId::GEN))) {
-                        $genlab = $this->buildingListItemRepository->findOneBy(['user'=>$this->getUser()->getData(),'entity'=>$planet,'building'=>$this->buildingRepository->find(BuildingId::PEOPLE)]);
-                        $genlab->displayName = 'Genlabor';
-                        $workplaces[] = $genlab;
-                    }
+                    // the workers of the Wohnmodul work in the Genlabor, which only exists once its requirements are passed
+                    $genlabAvailable = $this->technologyService->requirementsPassed($this->technologyDataRepository->find(TechnologyId::GEN));
 
-                    foreach ($workplaces as $workplace) {
-                        if ($workplace->getBuilding()->getId() === BuildingId::BUILDING) {
+                    foreach ($workplaces as $key => $workplace) {
+                        if ($workplace->getBuilding()->getId() === BuildingId::PEOPLE->value) {
+                            if (!$genlabAvailable) {
+                                unset($workplaces[$key]);
+                                continue;
+                            }
+                            $workplace->displayName = 'Genlabor';
+                        }
+
+                        if ($workplace->getBuilding()->getId() === BuildingId::BUILDING->value) {
                             $workplace->displayName = 'Bauhof';
                         }
 
@@ -96,6 +98,8 @@ class PopulationController extends AbstractGameController
                         }
                     }
                 }
+
+                $workplaces = array_values($workplaces);
 
                 $form = $this->createFormBuilder(['workplaces'=>$workplaces])
                     ->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $event) use ($planet) {
