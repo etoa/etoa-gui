@@ -382,10 +382,10 @@ class PlanetRepository extends AbstractRepository
         int $food
     ): void {
         $planet->setBunkerMetal($metal);
-        $planet->setBunkerMetal($crystal);
-        $planet->setBunkerMetal($plastic);
-        $planet->setBunkerMetal($fuel);
-        $planet->setBunkerMetal($food);
+        $planet->setBunkerCrystal($crystal);
+        $planet->setBunkerPlastic($plastic);
+        $planet->setBunkerFuel($fuel);
+        $planet->setBunkerFood($food);
 
         $this->save();
     }

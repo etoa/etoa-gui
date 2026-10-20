@@ -34,7 +34,13 @@ class BunkerController extends AbstractGameController
         $resBunker = $this->buildingListItemRepository->findOneBy(['user'=>$this->getUser()->getData(),'entity'=>$cp,'building'=>BuildingId::RES_BUNKER]);
 
         if ($resBunker) {
-            $form = $this->createFormBuilder()
+            $form = $this->createFormBuilder([
+                    'bunkerMetal' => StringUtils::formatNumber($cp->getBunkerMetal()),
+                    'bunkerCrystal' => StringUtils::formatNumber($cp->getBunkerCrystal()),
+                    'bunkerPlastic' => StringUtils::formatNumber($cp->getBunkerPlastic()),
+                    'bunkerFuel' => StringUtils::formatNumber($cp->getBunkerFuel()),
+                    'bunkerFood' => StringUtils::formatNumber($cp->getBunkerFood()),
+                ])
                 ->add('bunkerMetal', TextType::class, [
                     'attr' => [
                         'size' => 8,
@@ -79,19 +85,30 @@ class BunkerController extends AbstractGameController
 
             if ($form->isSubmitted() && $form->isValid()) {
                 $data = $form->getData();
-                $sum = StringUtils::parseFormattedNumber($cp->getBunkerMetal()) + StringUtils::parseFormattedNumber($cp->getBunkerCrystal()) + StringUtils::parseFormattedNumber($cp->getBunkerPlastic()) + StringUtils::parseFormattedNumber($cp->getBunkerFuel()) + StringUtils::parseFormattedNumber($cp->getBunkerFood());
-                $percent = max($sum / $resBunker->getBuilding()->calculateBunkerResources($resBunker->getCurrentLevel()),1);
+                $amounts = [];
+                foreach (['bunkerMetal', 'bunkerCrystal', 'bunkerPlastic', 'bunkerFuel', 'bunkerFood'] as $field) {
+                    $amounts[$field] = max(0, StringUtils::parseFormattedNumber((string) $data[$field]));
+                }
+
+                // scale all amounts down proportionally if together they exceed the bunker capacity
+                $capacity = $resBunker->getBuilding()->calculateBunkerResources($resBunker->getCurrentLevel());
+                $percent = $capacity > 0 ? max(array_sum($amounts) / $capacity, 1) : 1;
+                if ($capacity <= 0) {
+                    $amounts = array_map(fn () => 0, $amounts);
+                }
 
                 $this->planetRepository->updateBunker(
                     $cp,
-                    StringUtils::parseFormattedNumber($data['bunkerMetal']) / $percent,
-                    StringUtils::parseFormattedNumber($data['bunkerCrystal']) / $percent,
-                    StringUtils::parseFormattedNumber($data['bunkerPlastic']) / $percent,
-                    StringUtils::parseFormattedNumber($data['bunkerFuel']) / $percent,
-                    StringUtils::parseFormattedNumber($data['bunkerFood']) / $percent
+                    (int) floor($amounts['bunkerMetal'] / $percent),
+                    (int) floor($amounts['bunkerCrystal'] / $percent),
+                    (int) floor($amounts['bunkerPlastic'] / $percent),
+                    (int) floor($amounts['bunkerFuel'] / $percent),
+                    (int) floor($amounts['bunkerFood'] / $percent)
                 );
 
-                $msg['success'] = "Änderungen wurden übernommen!";
+                $this->addFlash('success', $percent > 1 ? "Änderungen wurden übernommen! Die Mengen wurden auf die Kapazität des Bunkers gekürzt." : "Änderungen wurden übernommen!");
+
+                return $this->redirectToRoute('game.bunker.res');
             }
 
             return $this->render('game/bunker/bunker_res.html.twig',[
