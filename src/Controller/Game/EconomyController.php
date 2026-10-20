@@ -6,7 +6,6 @@ use EtoA\Backend\BackendMessageService;
 use EtoA\Building\BuildingListItemRepository;
 use EtoA\Defense\DefenseQueueRepository;
 use EtoA\Economy\EconomyService;
-use EtoA\Entity\Planet;
 use EtoA\Fleet\FleetRepository;
 use EtoA\Fleet\FleetStatus;
 use EtoA\Specialist\SpecialistDataRepository;
@@ -39,8 +38,9 @@ class EconomyController extends AbstractGameController
     {
     }
 
-    #[Route('/game/economy/{id}', name: 'game.economy')]
-    public function economy(Request $request, ?Planet $entity = null): Response {
+    #[Route('/game/economy', name: 'game.economy')]
+    public function economy(Request $request): Response {
+        $entity = $this->planetRepository->find($request->getSession()->get('cpid'));
         if(!$entity || $entity->getUser() !== $this->getUser()->getData()) {
             return $this->render('game/error.html.twig',[
                 'msg' => 'Dieser Planet existiert nicht oder er gehört nicht dir!',
@@ -108,7 +108,7 @@ class EconomyController extends AbstractGameController
                     $this->addFlash('success',"Änderungen gespeichert!");
                     // Send
                     $this->backendMessageService->updatePlanet($id);
-                    return $this->redirectToRoute('game.economy',['id'=>$id]);
+                    return $this->redirectToRoute('game.economy');
                 }
             }
         }

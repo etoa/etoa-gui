@@ -271,6 +271,8 @@ class EconomyService
 
         $pwrcnt = floor($pwrcnt);
 
+        $productionWithoutBoost = $cnt;
+
         $boostData = null;
         if ($this->config->getBoolean('boost_system_enable')) {
             $bonusProd = [];
@@ -289,11 +291,12 @@ class EconomyService
         $insufficientPower = false;
         $powerEfficiency = 1;
 
+        $effectiveProduction = $cnt;
         if ($pwrcnt > $planet->getProdPower()) {
             $insufficientPower = true;
             $powerEfficiency = $planet->getProdPower() / $pwrcnt;
             foreach ($resourceKeys as $resourceKey) {
-                $cnt[$resourceKey] = floor($cnt[$resourceKey] * $powerEfficiency);
+                $effectiveProduction[$resourceKey] = floor($cnt[$resourceKey] * $powerEfficiency);
             }
         }
 
@@ -467,7 +470,9 @@ class EconomyService
             'planet' => $planet,
             'resourceKeys' => $resourceKeys,
             'producingBuildings' => $producingBuildingsData,
+            'productionWithoutBoost' => $productionWithoutBoost,
             'totalProduction' => $cnt,
+            'effectiveProduction' => $effectiveProduction,
             'totalProductionDay' => array_map(fn($v) => $v * 24, $cnt),
             'totalProductionWeek' => array_map(fn($v) => $v * 168, $cnt),
             'powerUsed' => $powerUsed,

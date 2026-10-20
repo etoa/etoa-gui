@@ -58,7 +58,7 @@
                         {% for key in resourceKeys %}
                             <td style="color:#0f0"
                                 title="Grundproduktion ohne Boni: {{ formatNumber(boost.baseProduction[key]) }} t/h">
-                                {{ formatNumber(totalProduction[key]) }}
+                                {{ formatNumber(productionWithoutBoost[key]) }}
                             </td>
                         {% endfor %}
                         <td style="color:#f00">{{ formatNumber(powerUsedFormatted) }}</td>
@@ -111,7 +111,7 @@
                     <tr>
                         <th>TOTAL</th>
                         {% for key in resourceKeys %}
-                            <td>{{ totalProduction[key]|number_format(0, ',', '`') }}</td>
+                            <td>{{ effectiveProduction[key]|number_format(0, ',', '`') }}</td>
                         {% endfor %}
                         <td colspan="2">{{ powerProduced|number_format(0, ',', '`') }}</td>
                     </tr>

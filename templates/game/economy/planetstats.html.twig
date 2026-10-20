@@ -19,7 +19,7 @@
                 {% for planet in planetResourcesData.planets %}
                     <tr>
                         <td>
-                            <a href="{{ path('game.economy', {'id': planet.entityId}) }}">
+                            <a href="{{ path('game.economy', {'change_entity': planet.entityId}) }}">
                                 {{ planet.name }}
                             </a>
                         </td>
@@ -84,7 +84,7 @@
                 {% for planet in planetResourcesData.planets %}
                     <tr>
                         <td>
-                            <a href="{{ path('game.economy', {'id': planet.entityId}) }}">
+                            <a href="{{ path('game.economy', {'change_entity': planet.entityId}) }}">
                                 {{ planet.name }}
                             </a>
                         </td>
@@ -118,7 +118,7 @@
         {% endblock %}
     </twig:Table>
     <div><br/>
-        <a href="{{ path('game.economy',{'id':id}) }}">
+        <a href="{{ path('game.economy') }}">
             <input type="button" value="Wirtschaft des aktuellen Planeten anzeigen"/>
         </a>
     </div>
