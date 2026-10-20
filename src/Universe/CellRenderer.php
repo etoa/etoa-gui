@@ -189,7 +189,7 @@ class CellRenderer
                     echo " [veränderlich]";
                 }
                 $tent = $ent->getWormhole();
-                echo "<br/>Ziel: <a href=\"?page=cell&amp;id=" . $tent->getEntity()->getCell()->getId() . "\">" . $tent->getEntity()->toString() . "</a>";
+                echo "<br/>Ziel: <a href=\"" . $this->router->generate('game.cell', ['id' => $tent->getEntity()->getCell()->getId()]) . "\">" . $tent->getEntity()->toString() . "</a>";
             } elseif ($ent->getCode() == EntityType::PLANET) {
                 $planet = $this->planetRepo->find($ent->getId());
                 if ($planet->hasDebrisField()) {
@@ -216,7 +216,7 @@ class CellRenderer
 
                 if ($tm_info != "")
                     $header .= " (<span $class>" . $tm_info . "</span>)";
-                echo "<span style=\"color:#817339;font-weight:bold\" " . $this->tooltip->mTT($header, $tm) . "><a $class href=\"?page=userinfo&amp;id=" . $owner->getId() . "\">" . $owner->getNick() . "</a></span> ";
+                echo "<span style=\"color:#817339;font-weight:bold\" " . $this->tooltip->mTT($header, $tm) . "><a $class href=\"" . $this->router->generate('game.userinfo', ['id' => $owner->getId()]) . "\">" . $owner->getNick() . "</a></span> ";
             } else
                 echo 'Niemand';
             echo "</td>
@@ -236,7 +236,7 @@ class CellRenderer
             if ($ent->getCode() == EntityType::PLANET) {
                 // Nachrichten-Link
                 if ($owner  && $cu != $owner) {
-                    echo "<a href=\"?page=messages&amp;mode=new&amp;message_user_to=" . $owner->getId() . "\" title=\"Nachricht senden\">" . ImageUtil::icon("mail") . "</a> ";
+                    echo "<a href=\"" . $this->router->generate('game.messages.newTo', ['id' => $owner->getId()]) . "\" title=\"Nachricht senden\">" . ImageUtil::icon("mail") . "</a> ";
                 }
 
                 // Diverse Links
@@ -244,8 +244,8 @@ class CellRenderer
                     // Besiedelte Planete
                     if ($owner) {
                         echo "<a href=\"" . $this->router->generate('game.cell.spy', ['id' => $ent->getId()]) . "\" title=\"Ausspionieren\">" . ImageUtil::icon("spy") . "</a>";
-                        echo "<a href=\"?page=missiles&amp;target=" . $ent->getId() . "\" title=\"Raketenangriff starten\">" . ImageUtil::icon("missile") . "</a> ";
-                        echo "<a href=\"?page=crypto&amp;target=" . $ent->getId() . "\" title=\"Flottenbewegungen analysieren\">" . ImageUtil::icon("crypto") . "</a> ";
+                        echo "<a href=\"" . $this->router->generate('game.missiles') . "\" title=\"Raketenangriff starten\">" . ImageUtil::icon("missile") . "</a> ";
+                        echo "<a href=\"" . $this->router->generate('game.crypto') . "\" title=\"Flottenbewegungen analysieren\">" . ImageUtil::icon("crypto") . "</a> ";
                     }
                 }
             }
