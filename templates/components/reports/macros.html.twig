@@ -1,5 +1,7 @@
 {% macro entity(entity) %}
-    {{ entity.toString() }}
+    {% if entity %}
+        <a href="{{ path('game.entity', {id: entity.id}) }}">{{ entity.toString() }}</a>
+    {% endif %}
 {% endmacro %}
 
 {% macro user(user) %}
