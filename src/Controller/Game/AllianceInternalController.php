@@ -457,17 +457,21 @@ class AllianceInternalController extends AbstractGameController
                 if($form->get('save')->isClicked()) {
                     foreach ($form->get('ranks')->all() as $element) {
                         if($element->get('delete')->getData()) {
-                            $this->allianceRankRepository->remove($element->getData());
+                            $rank = $element->getData();
+                            foreach ($this->userRepository->findBy(['allianceRank' => $rank]) as $member) {
+                                $member->setAllianceRank(null);
+                            }
+                            $this->allianceRankRepository->remove($rank);
                         }
-
-                        $this->allianceRankRepository->save();
-
-                        return $this->render('game/success.html.twig',[
-                            'msg' => 'Gründer geändert!',
-                            'path' => $this->generateUrl('game.alliance.ranks'),
-                            'headline' => 'Allianz'
-                        ]);
                     }
+
+                    $this->allianceRankRepository->save();
+
+                    return $this->render('game/success.html.twig',[
+                        'msg' => 'Änderungen wurden übernommen!',
+                        'path' => $this->generateUrl('game.alliance.ranks'),
+                        'headline' => 'Allianz'
+                    ]);
                 }
             }
 
