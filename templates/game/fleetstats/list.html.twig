@@ -22,7 +22,7 @@
                 <tr>
                     <td class="shipCellImage" style="background:#000">
                         {% if stat.ship.special %}
-                            <a href="{{ path('game.ships.upgrade.detail',{id:stat.ship.id}) }}" title="Zum Upgrademenu">
+                            <a href="{{ stat.upgradeItem ? path('game.ships.upgrade.detail',{id:stat.upgradeItem.id}) : path('game.ships.upgrade') }}" title="Zum Upgrademenu">
                                 <img src="{{ stat.ship.imagePath }}" class="shipImageSmall"/>
                             </a>
                         {% else %}

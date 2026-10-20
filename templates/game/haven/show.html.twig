@@ -89,7 +89,7 @@
                         <tr>
                             {% if ship.vars.data.ship.special %}
                                 <td style="width:40px;background:#000;">
-                                    <a href="{{ path('game.ships.upgrade.detail',{id:ship.vars.data.ship.id}) }}">
+                                    <a href="{{ path('game.ships.upgrade.detail',{id:ship.vars.data.id}) }}">
                                         <img src="{{ ship.vars.data.ship.getImagePath('small') }}" width="40" height="40" alt="Ship"/>
                                     </a>
                                 </td>

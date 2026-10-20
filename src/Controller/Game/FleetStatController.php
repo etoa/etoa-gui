@@ -119,6 +119,7 @@ class FleetStatController extends AbstractGameController
             
             $shipStats[] = [
                 'ship' => $ship,
+                'upgradeItem' => $ship->isSpecial() ? $this->shipListRepository->findOneBy(['user' => $cu, 'ship' => $ship]) : null,
                 'orbitTotal' => $orbitTotal,
                 'orbitDetails' => $orbitDetails,
                 'bunkeredTotal' => $bunkeredTotal,
