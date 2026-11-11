@@ -572,8 +572,8 @@ class Fleet
     public function getPeopleCapacity():int
     {
         $this->peopleCapacity = 0;
-        foreach ($this->getShips() as $ship) {
-            $this->peopleCapacity += $ship->getPeopleCapacity();
+        foreach ($this->getFleetShips() as $fleetShip) {
+            $this->peopleCapacity += $fleetShip->getShip()->getPeopleCapacity() * $fleetShip->getCount();
         }
         return $this->peopleCapacity;
     }
@@ -593,9 +593,9 @@ class Fleet
     {
         $this->capacity = 0;
         $BCapa = 1;
-        foreach ($this->getShips() as $ship) {
-            $this->capacity += $ship->getCapacity();
-            $BCapa += $ship->getSpecialBonusCapacity() * 10;
+        foreach ($this->getFleetShips() as $fleetShip) {
+            $this->capacity += $fleetShip->getShip()->getCapacity() * $fleetShip->getCount();
+            $BCapa += $fleetShip->getShip()->getSpecialBonusCapacity() * 10;
         }
 
         return $this->capacity * $BCapa;
