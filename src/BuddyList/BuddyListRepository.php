@@ -37,12 +37,49 @@ class BuddyListRepository extends AbstractRepository
     }
 
     /**
+     * Buddy entries of the user. The inner join skips entries whose buddy account was deleted.
+     *
+     * @return Buddy[]
+     */
+    public function getBuddies(User $user): array
+    {
+        return $this->createQueryBuilder('q')
+            ->innerJoin('q.buddy', 'b')
+            ->addSelect('b')
+            ->where('q.user = :user')
+            ->setParameter('user', $user)
+            ->getQuery()
+            ->getResult();
+    }
+
+    /**
+     * Unconfirmed requests sent to the user. The inner join skips requests from deleted accounts.
+     *
+     * @return Buddy[]
+     */
+    public function getPendingRequests(User $user): array
+    {
+        return $this->createQueryBuilder('q')
+            ->innerJoin('q.user', 'u')
+            ->addSelect('u')
+            ->where('q.buddy = :user')
+            ->andWhere('q.allowed = :allowed')
+            ->setParameters([
+                'user' => $user,
+                'allowed' => false,
+            ])
+            ->getQuery()
+            ->getResult();
+    }
+
+    /**
      * True while someone added the user as a buddy and the user has not confirmed yet.
      */
     public function hasPendingFriendRequest(int $userId): bool
     {
         return (bool) $this->createQueryBuilder('q')
             ->select('COUNT(q.id)')
+            ->innerJoin('q.user', 'u')
             ->where('q.buddy = :userId')
             ->andWhere('q.allowed = :allowed')
             ->setParameters([

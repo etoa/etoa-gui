@@ -36,11 +36,9 @@ class BuddylistController extends AbstractGameController
     #[Route('/game/buddylist/overview', name: 'game.buddylist.overview')]
     public function overview(Request $request): Response
     {
-        /** @var Buddy[] $buddies */
-        $buddies = $this->buddyListRepository->findBy(['user'=>$this->getUser()->getData()]);
+        $buddies = $this->buddyListRepository->getBuddies($this->getUser()->getData());
 
-        /** @var Buddy[] $buddies */
-        $pendingBuddies = $this->buddyListRepository->findBy(['allowed'=>0,'buddy'=>$this->getUser()->getData()]);
+        $pendingBuddies = $this->buddyListRepository->getPendingRequests($this->getUser()->getData());
 
         $form = $this->createFormBuilder()
             ->add('user', TextType::class, [

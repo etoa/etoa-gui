@@ -7,6 +7,7 @@ namespace EtoA\User;
 use EtoA\Admin\AllianceBoardAvatar;
 use EtoA\Alliance\AllianceDiplomacyRepository;
 use EtoA\Alliance\AllianceRepository;
+use EtoA\BuddyList\BuddyListRepository;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Entity\Race;
 use EtoA\Entity\User;
@@ -47,6 +48,7 @@ class UserService
         private readonly Security                      $security,
         private readonly UserPasswordHasherInterface   $passwordHasher,
         private readonly UserSessionRepository         $userSessionRepository,
+        private readonly BuddyListRepository           $buddyListRepository,
     )
     {
     }
@@ -175,6 +177,8 @@ die Spielleitung";
         $this->mailSenderService->send("Accountlöschung", $text, $user->getEmail());
 
         $this->userSessionRepository->removeForUser($user->getId());
+        // Also drop the entries where the user is someone else's buddy; the cascade only covers the user's own entries
+        $this->buddyListRepository->removeForUser($user);
 
         $this->userRepository->remove($user);
         $this->userRepository->save();
