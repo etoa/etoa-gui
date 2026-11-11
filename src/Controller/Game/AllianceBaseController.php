@@ -97,7 +97,7 @@ class AllianceBaseController extends AbstractGameController
     #[Route('/game/alliance/base/storage', name: 'game.alliance.base.storage')]
     public function storage(Request $request): Response {
 
-        $cp = $this->planetRepository->findOneBy(['id' =>$request->getSession()->get('cpid')]);
+        $cp = $this->planetRepository->find($request->getSession()->get('cpid'));
         $sum = false;
         $limit = 10;
         $user_message = "";
@@ -288,17 +288,6 @@ class AllianceBaseController extends AbstractGameController
                 }
             }
 
-            $form = $form->add('buy', SubmitType::class, [
-                    'label' => 'Schiffe herstellen',
-                    'attr' => [
-                        'onmouseover' => "showTT('" . StringUtils::encodeDBStringToJS('Schiffe herstellen') . "','" . StringUtils::replaceBR(StringUtils::encodeDBStringToJS('Stellt aus den vorhandenen Teilen die gewünschten Schiffe für den ausgewählten User her.'))."',1,event,this)",
-                        'onmouseout' => 'hideTT()'
-                    ]
-                ])
-                ->add('checker', SingleSubmitType::class)
-                ->getForm()
-                ->handleRequest($request);
-
             // Userschiffe laden (wenn Schiffswerft gebaut)
             // Gebaute Schiffe laden
             $shiplist = array_map(fn (ShipListItemCount $count) => $count->sum(), $this->shipListRepository->getUserShipCounts($cu));
@@ -332,6 +321,17 @@ class AllianceBaseController extends AbstractGameController
                 }
             }
         }
+
+        $form = $form->add('buy', SubmitType::class, [
+                'label' => 'Schiffe herstellen',
+                'attr' => [
+                    'onmouseover' => "showTT('" . StringUtils::encodeDBStringToJS('Schiffe herstellen') . "','" . StringUtils::replaceBR(StringUtils::encodeDBStringToJS('Stellt aus den vorhandenen Teilen die gewünschten Schiffe für den ausgewählten User her.'))."',1,event,this)",
+                    'onmouseout' => 'hideTT()'
+                ]
+            ])
+            ->add('checker', SingleSubmitType::class)
+            ->getForm()
+            ->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
             // Gebaute Schiffe laden
