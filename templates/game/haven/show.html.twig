@@ -125,6 +125,19 @@
                             </td>
                         </tr>
                     {% endfor %}
+                    {% set selectAllJs %}
+                        {%- for ship in form.ships -%}
+                            {%- if ship.vars.data.ship.launchable and fleetLaunch.pilotsAvailable >= ship.vars.data.ship.pilots -%}
+                                document.getElementById('{{ ship.children.count.vars.id }}').value={{ ship.vars.data.count }};
+                            {%- endif -%}
+                        {%- endfor -%}
+                    {% endset %}
+                    {% if selectAllJs|trim %}
+                        <tr>
+                            <td colspan="5"></td>
+                            <td><a href="javascript:;" onclick="{{ selectAllJs|trim }}">Alle wählen</a></td>
+                        </tr>
+                    {% endif %}
                 {% endblock %}
             </twig:Table>
             {% if havenError %}
