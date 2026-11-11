@@ -118,7 +118,7 @@ class FleetLaunchService
             } elseif ($fleetControl->isDeactivated()) {
                 $this->fleetLaunch->setError("Dieser Raumschiffhafen ist bis " . StringUtils::formatDate($fleetControl->getDeactivated()) . " deaktiviert.");
             } else {
-                $this->fleetLaunch->setFleetSlotsUsed($this->fleetRepository->count(['user' => $this->fleetLaunch->getOwner(), 'entityFrom' => $this->fleetLaunch->getSourceEntity()->getEntity()]));
+                $this->fleetLaunch->setFleetSlotsUsed($this->fleetRepository->countFleet(FleetSearch::create()->user($this->fleetLaunch->getOwner())->controlledByEntity($this->fleetLaunch->getSourceEntity()->getEntity()->getId())));
 
                 $this->fleetLaunch->setFleetControlLevel($fleetControl->getCurrentLevel());
                 $totalSlots = self::FLEET_NOCONTROL_NUM + $this->fleetLaunch->getFleetControlLevel();

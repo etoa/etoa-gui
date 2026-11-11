@@ -59,9 +59,9 @@ class FleetSearch extends AbstractSearch
 
     public function controlledByEntity(int $entityId): self
     {
-        $this->parts[] = '(q.entityFrom = :controlledByEntity AND q.status = :departureState) OR (q.entityTo = :controlledByEntity AND q.status <> :departureState)';
+        $this->parts[] = '((q.entityFrom = :controlledByEntity AND q.status IN (:outboundStates)) OR (q.entityTo = :controlledByEntity AND q.status NOT IN (:outboundStates)))';
         $this->parameters['controlledByEntity'] = $entityId;
-        $this->parameters['departureState'] = FleetStatus::DEPARTURE->value;
+        $this->stringArrayParameters['outboundStates'] = [FleetStatus::DEPARTURE->value, FleetStatus::WAITING->value];
 
         return $this;
     }
