@@ -17,17 +17,17 @@
             <th>Verkaufsgebühren:</th>
             <td>
                 Die Verkaufsgebühr des Marktplatzes beträgt  {{ tax|raw }}
-                {% if app.user.data.specialist %}
-                    (inkl. {{ formatPercentString(app.user.data.specialist) }} Kostenverringerung durch
-                    {{ app.user.data.specialist.name }}!
+                {% if app.user.data.specialist and app.user.data.specialist.tradeBonus != 1 %}
+                    (inkl. {{ formatPercentString(app.user.data.specialist.tradeBonus, true, true)|raw }} Kostenverringerung durch
+                    {{ app.user.data.specialist.name }}!)
                 {% endif %}
             </td>
         </tr>
-        {% if app.user.data.specialist and app.user.data.specialist.tradeTime %}
+        {% if app.user.data.specialist and app.user.data.specialist.tradeTime != 1 %}
             <tr>
                 <th>Handelsflottengeschwindigkeit:</th>
-                <td>Die Handelsflotten fliegen durch {{ app.user.data.specialist }} mit
-                    {{ formatPercentString(app.user.data.specialist.tradeTime) }}  Geschwindigkeit!</td>
+                <td>Die Handelsflotten fliegen durch {{ app.user.data.specialist.name }} mit
+                    {{ formatPercentString(app.user.data.specialist.tradeTime, true)|raw }} Geschwindigkeit!</td>
             </tr>
         {% endif %}
         {% if app.user.data.alliance %}
