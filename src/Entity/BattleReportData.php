@@ -1101,24 +1101,18 @@ class BattleReportData
     {
         $this->wf = new BaseResources();
 
-        $this->wf->metal = $this->getResMetal();
-        $this->wf->crystal = $this->getResCrystal();
-        $this->wf->plastic = $this->getResPlastic();
-        $this->wf->fuel = $this->getResFuel();
-        $this->wf->food = $this->getResFood();
-        $this->wf->people = $this->getResPeople();
+        $this->wf->metal = $this->getWfMetal();
+        $this->wf->crystal = $this->getWfCrystal();
+        $this->wf->plastic = $this->getWfPlastic();
 
         return $this->wf;
     }
 
     public function setWf(BaseResources $wf): void
     {
-        $this->setResMetal($wf->metal);
-        $this->setResCrystal($wf->crystal);
-        $this->setResPlastic($wf->plastic);
-        $this->setResFuel($wf->fuel);
-        $this->setResFood($wf->food);
-        $this->setResPeople($wf->people);
+        $this->setWfMetal($wf->metal);
+        $this->setWfCrystal($wf->crystal);
+        $this->setWfPlastic($wf->plastic);
 
         $this->wf = $wf;
     }
