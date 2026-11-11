@@ -67,6 +67,11 @@ function setReportRead(ele) {
       method: 'POST',
       success: function (response) {
         ele.dataset.read = '1'
+        // the envelope would keep showing "new" until the next page load
+        var icon = document.getElementById('repimg' + ele.dataset.report);
+        if (icon) {
+          icon.src = icon.src.replace('pm_new', 'pm_normal');
+        }
       },
     });
   }
