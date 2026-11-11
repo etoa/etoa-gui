@@ -521,14 +521,16 @@ class AllianceInternalController extends AbstractGameController
                         'rows' => 25,
                         'cols' => 70
                     ],
-                    'required' => false
+                    'required' => false,
+                    'empty_data' => '',
                 ])
                 ->add('url', TextType::class, [
                     'attr' => [
                         'size'=>40,
                         'maxlength' => 255
                     ],
-                    'required' => false
+                    'required' => false,
+                    'empty_data' => '',
                 ])
                 ->add('delete', CheckboxType::class, [
                     'label'    => false,

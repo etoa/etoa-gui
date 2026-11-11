@@ -38,14 +38,17 @@ class AllianceEditType extends AbstractType
             ->add('text', TextareaType::class, [
                 'label' => 'Beschreibung',
                 'required' => false,
+                'empty_data' => '',
             ])
             ->add('url', UrlType::class, [
                 'label' => 'Website',
                 'required' => false,
+                'empty_data' => '',
             ])
             ->add('applicationTemplate', TextareaType::class, [
                 'label' => 'Bewerbungsvorlage',
                 'required' => false,
+                'empty_data' => '',
             ]);
 
         if ($data->getImage()) {
