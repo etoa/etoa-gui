@@ -434,6 +434,8 @@ class HavenTarget extends AbstractGameController
             $this->fleetLaunch->setCostsPerHundredAE(array_sum(array_map(static fn ($s) => $s['costs_per_ae'] ?? 0, $ships)));
         }
 
+        $this->fleetLaunchService->setFleetLaunch($this->fleetLaunch);
+
         $this->hydrated = true;
     }
 
