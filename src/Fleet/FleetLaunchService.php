@@ -321,6 +321,9 @@ class FleetLaunchService
      */
     public function checkTarget(): bool
     {
+        $this->fleetLaunch->setTargetOk(false);
+        $this->fleetLaunch->setCostsFood((int) $this->getCostsFood());
+
         if ($this->fleetLaunch->getSourceEntity()->getResFuel() >= $this->fleetLaunch->getCosts()) {
             if ($this->fleetLaunch->getSourceEntity()->getResFood() >= $this->fleetLaunch->getCostsFood()) {
                 if ($this->fleetLaunch->getCapacity() >= 0) {
@@ -359,6 +362,9 @@ class FleetLaunchService
     public function launch(): bool|Fleet
     {
         if ($this->fleetLaunch->isActionOk()) {
+            if (!$this->checkTarget()) {
+                return false;
+            }
             if ($this->checkHaven()) {
                 $time = time();
                 $this->getFleetLaunch()->setTimeLaunchLand($time + $this->fleetLaunch->getDuration());
