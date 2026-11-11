@@ -115,7 +115,7 @@ class EconomyService
                 'fuel' => $planet->getProdFuel(),
                 'food' => $planet->getProdFood(),
                 'people' => $planet->getProdPeople(),
-                'energy' => $planet->getProdPower()
+                'energy' => $planet->getProdPower() - $planet->getUsePower()
             ];
 
             $timeToFull = [];
