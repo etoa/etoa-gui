@@ -5,6 +5,7 @@
     {% include 'game/shipupgrade/shipdata.html.twig' %}
 
     {{ form_start(form) }}
+    {{ form_errors(form) }}
     <twig:Table title="Boni">
         {% block table_content %}
             <tr>

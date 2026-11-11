@@ -222,7 +222,7 @@ class ShipUpgradeController extends AbstractGameController
             $init_exp = $item->getSpecialShipExp();;
             //Errechnet das Level aus den momentanen erfahrungen (exp)
             $level = ShipXpCalculator::levelByXp($ship->getSpecialNeedExp(), $ship->getSpecialExpFactor(), $item->getSpecialShipExp());
-            $exp_for_next_level = ShipXpCalculator::xpByLevel($ship->getSpecialNeedExp(), $ship->getSpecialExpFactor(), $level);
+            $exp_for_next_level = ShipXpCalculator::xpByLevel($ship->getSpecialNeedExp(), $ship->getSpecialExpFactor(), $level + 1);
 
             $data[] = [
                 'ship' => $ship,
