@@ -19,7 +19,7 @@ class FleetLaunch
     private array $ships = [];
     private int $shipCount = 0;
     private bool $shipsFixed = false;
-    private int $speed = 0;
+    private float $speed = 0;
     private int $speed1 = 0;
     private int $speedPercent = 100;
     private int $speedPercent1 = 0;

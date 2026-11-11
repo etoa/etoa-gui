@@ -16,6 +16,7 @@ use EtoA\Entity\Ship;
 use EtoA\Entity\ShipListItem;
 use EtoA\Entity\User;
 use EtoA\Entity\Wormhole;
+use EtoA\Fleet\Action\FleetActionInvade;
 use EtoA\Log\FleetLogRepository;
 use EtoA\Ship\ShipListRepository;
 use EtoA\Ship\ShipRepository;
@@ -599,6 +600,7 @@ class FleetLaunchService
                                     if (!$battleban) {
                                         if (
                                             $ai->allowActivePlayerEntities()
+                                            || ($ai instanceof FleetActionInvade && $this->configurationService->getBoolean('invade_active_users'))
                                             || $this->fleetLaunch->getTargetEntity()->getOwner()->getLogoutTime() < time() - $this->configurationService->param2Int('user_inactive_days') * 86400
                                             || ($this->fleetLaunch->getOwner() === $this->fleetLaunch->getSourceEntity()->getLastUser())
                                         ) {

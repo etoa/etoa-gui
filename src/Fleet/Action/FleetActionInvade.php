@@ -25,7 +25,7 @@ class FleetActionInvade extends FleetAction
         $this->allowNpcEntities = false;
         $this->allowSourceEntity = false;
         $this->allowAllianceEntities = false;
-        $this->allowActivePlayerEntities = (bool)INVADE_ACTIVE_USER;
+        $this->allowActivePlayerEntities = false;
         $this->allianceAction = false;
     }
 
