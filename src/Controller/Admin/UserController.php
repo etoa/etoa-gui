@@ -529,6 +529,10 @@ class UserController extends AbstractAdminController
                 $this->userService->addToUserLog($user, "settings", $changeset['nick'][0] . " hat seinen Namen zu " . $changeset['nick'][1] . " geändert.");
             }
 
+            if (array_key_exists('alliance', $changeset)) {
+                $user->setAllianceRank(null);
+            }
+
             if ($form->get('blocked')->getData()) {
                 if (array_intersect(['blockedFrom', 'blockedTo', 'banReason', 'banAdmin'], array_keys($changeset))) {
                     $this->userService->addToUserLog($user, "account", "{nick} wird von [b]" . date("d.m.Y H:i", $user->getBlockedFrom()) . "[/b] bis [b]" . date("d.m.Y H:i", $user->getBlockedTo()) . "[/b] gesperrt.\n[b]Grund:[/b] " . $user->getBanReason() . "\n[b]Verantwortlich: [/b] " . $user->getBanAdmin()?->getNick());

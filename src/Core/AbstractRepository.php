@@ -26,11 +26,26 @@ abstract class AbstractRepository extends ServiceEntityRepository
         $this->getEntityManager()->persist($entity);
     }
 
+    /**
+     * @return array<string, array{0: mixed, 1: mixed}>
+     */
     public function getChangeset(Object $model): array
     {
-        $uow = $this->getEntityManager()->getUnitOfWork();
-        $uow->computeChangeSets();
-        return $uow->getEntityChangeSet($model);
+        $em = $this->getEntityManager();
+        $original = $em->getUnitOfWork()->getOriginalEntityData($model);
+        $changeset = [];
+        foreach ($em->getClassMetadata($model::class)->reflFields as $field => $property) {
+            if (!array_key_exists($field, $original)) {
+                continue;
+            }
+
+            $value = $property->getValue($model);
+            if ($value !== $original[$field]) {
+                $changeset[$field] = [$original[$field], $value];
+            }
+        }
+
+        return $changeset;
     }
 
     public function getOriginal(Object $model): array

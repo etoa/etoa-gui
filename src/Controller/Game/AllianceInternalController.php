@@ -331,11 +331,10 @@ class AllianceInternalController extends AbstractGameController
             }
 
             if ($form->isSubmitted() && $form->isValid()) {
-                foreach ($form->get('members')->getData() as $member) {
-                    if($this->userRepository->getChangeset($member)) {
-                        $this->userRepository->save();
-                        $this->allianceHistoryRepository->addEntry($cu->getAlliance(), "Der Spieler [b]" . $member->getNick() . "[/b] erhält den Rang [b]" . $member->getAllianceRank()->getName() . "[/b].");
-                    }
+                $changedMembers = array_filter($form->get('members')->getData(), fn ($member) => (bool) $this->userRepository->getChangeset($member));
+                $this->userRepository->save();
+                foreach ($changedMembers as $member) {
+                    $this->allianceHistoryRepository->addEntry($cu->getAlliance(), "Der Spieler [b]" . $member->getNick() . "[/b] erhält den Rang [b]" . $member->getAllianceRank()?->getName() . "[/b].");
                 }
                 return $this->render('game/success.html.twig',[
                     'msg' => "Änderungen wurden übernommen!",
