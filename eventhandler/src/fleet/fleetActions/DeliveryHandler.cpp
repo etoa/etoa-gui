@@ -36,5 +36,8 @@ namespace delivery
 
 			this->actionLog->addText("Action Failed: Planet error");
 		}
+
+		// Sends the report (the destructor saves it), like every other fleet action
+		delete report;
 	}
 }

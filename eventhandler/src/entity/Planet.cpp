@@ -111,22 +111,38 @@
 	}
 
 	void Planet::saveData() {
-		if (this->getCount()!=this->getInitCount() || this->shipsSave) {
-			while (!objects.empty()) {
-				Object* object = objects.back();
-				delete object;
-				objects.pop_back();
-			}
+		// Ships and defense are only loaded when an action needed them. If neither was loaded,
+		// nothing can have changed - getCount() would load them just for the comparison and
+		// the unchanged objects were then never freed (leaked on every fleet action).
+		if (this->shipsLoaded || this->defLoaded) {
+			if (this->getCount()!=this->getInitCount() || this->shipsSave) {
+				while (!objects.empty()) {
+					Object* object = objects.back();
+					delete object;
+					objects.pop_back();
+				}
 
-			while (!def.empty()) {
-				Object* object = def.back();
-				delete object;
-				def.pop_back();
-			}
-			while (!fleets.empty()) {
-				Fleet* fleet = fleets.back();
-				delete fleet;
-				fleets.pop_back();
+				while (!def.empty()) {
+					Object* object = def.back();
+					delete object;
+					def.pop_back();
+				}
+				while (!fleets.empty()) {
+					Fleet* fleet = fleets.back();
+					delete fleet;
+					fleets.pop_back();
+				}
+			} else {
+				// Unchanged: free the objects anyway, their destructors only write changed rows.
+				// specialObjects holds the same pointers as objects and must not be freed again.
+				while (!objects.empty()) {
+					delete objects.back();
+					objects.pop_back();
+				}
+				while (!def.empty()) {
+					delete def.back();
+					def.pop_back();
+				}
 			}
 		}
 

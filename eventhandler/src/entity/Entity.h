@@ -105,7 +105,11 @@ class Entity
                 }
 
 
-		virtual ~Entity() {}
+		// The derived destructors save the entity first, then the user loaded in loadData() is
+		// released here. It used to be leaked for every entity a fleet action touched.
+		virtual ~Entity() {
+			delete this->entityUser;
+		}
 		virtual void saveData() = 0;
 
 		int getId();
